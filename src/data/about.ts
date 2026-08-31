@@ -58,7 +58,7 @@ export const aboutIntro = {
   opening:
     "I study how people pay attention before I write a word of brand copy.",
   body: [
-    "My background pairs a master's in clinical psychology with an undergraduate degree in English literature: one for how people notice and decide, the other for how language carries meaning. I use both on every project as a working method, rather than a personality trait.",
-    "That's what separates strategy from decoration. Most branding work stops at how a brand looks. This practice treats how a brand gets noticed, believed, and remembered as a discipline: attention and meaning, built with real intention.",
+    "My background pairs a master's in clinical psychology with an undergraduate degree in English literature: one trained me to observe how people notice and decide, the other to examine how language carries meaning. Both shape the questions I ask on every project.",
+    "That changes the work. The visual identity does not begin until the business can name the category it belongs to, the buyer it wants, the promise it can prove, and the memory it wants to leave.",
   ],
 } as const;

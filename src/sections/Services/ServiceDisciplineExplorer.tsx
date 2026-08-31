@@ -34,18 +34,18 @@ const ROUTE_PLANS: Record<
   { label: string; summary: string; order: readonly number[] }
 > = {
   idea: {
-    label: "Beginning with an idea",
-    summary: "Position first, then build the message and the places it must travel.",
+    label: "Building a new brand",
+    summary: "Decide the position, then build the language and identity buyers will meet.",
     order: [0, 1, 3, 4, 5, 2],
   },
   reposition: {
-    label: "Repositioning an existing brand",
-    summary: "Reset the position, align the message, then rebuild the highest-traffic encounters.",
+    label: "Repositioning an established business",
+    summary: "Keep what earns trust, replace what no longer fits, and rebuild the encounters buyers use most.",
     order: [0, 1, 3, 5, 4, 2],
   },
   ongoing: {
-    label: "Building ongoing consistency",
-    summary: "Plan the message, create it in one voice, distribute it, then learn from the response.",
+    label: "Stopping drift across channels",
+    summary: "Write the rules, apply them to live work, and review what buyers actually respond to.",
     order: [1, 4, 2, 5, 3, 0],
   },
 };
@@ -192,14 +192,14 @@ export function ServiceDisciplineExplorer() {
           >
             <div data-services-chapter-copy="true" className="lg:self-center">
               <Reveal>
-                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The full practice</p>
+                <p className="text-sm font-medium uppercase tracking-wide text-sandstone">What the work can cover</p>
                 <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Six disciplines. One route through them.
+                  Six disciplines, used in the order your business needs.
                 </h2>
                 <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
                   {routePlan
-                    ? `${routePlan.label} changes what should come first. The complete practice remains available.`
-                    : "Choose a situation above to order the work around your stage, or explore the complete practice here."}
+                    ? `${routePlan.label} changes what should come first. Nothing is included to make the proposal look larger.`
+                    : "Choose a situation above to see the relevant order, or inspect every discipline here."}
                 </p>
                 <div className="mt-7 flex items-center gap-4" aria-hidden="true">
                   <span className="font-display text-2xl text-ivory">
@@ -340,19 +340,19 @@ export function ServiceDisciplineExplorer() {
                         {routePlan ? (
                           <>
                             <span className="block text-[0.58rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
-                              Your route · {routePlan.label}
+                              Your route: {routePlan.label}
                             </span>
                             <span className="mt-1 block">{routePlan.summary}</span>
                           </>
                         ) : (
-                          "Woven into the package paths below, rather than sold as an isolated output."
+                          "Included when the engagement requires it. Nothing is added to fill a list."
                         )}
                       </p>
                       <a
                         href="#desire"
                         className="link-underline inline-flex min-h-11 items-center gap-2 px-1 text-sm text-sandstone transition-colors duration-300 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
                       >
-                        Explore the package paths
+                        Compare the three engagements
                         <span aria-hidden="true">↓</span>
                       </a>
                     </div>

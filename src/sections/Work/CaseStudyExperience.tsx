@@ -593,7 +593,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
             <Reveal delay={0.1}>
               <div className="rounded-[1.4rem] border border-white/15 bg-black/20 p-5 backdrop-blur-md sm:p-6">
                 <p className="text-[0.58rem] font-medium uppercase tracking-[0.17em]" style={{ color: palette.secondary }}>
-                  Transformation on record
+                  Change on record
                 </p>
                 <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
                   <div>
@@ -607,7 +607,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                   </div>
                 </div>
                 <div className="mt-6 border-t border-white/15 pt-5">
-                  <p className="text-[0.56rem] uppercase tracking-[0.15em] text-white/45">Elements involved</p>
+                  <p className="text-[0.56rem] uppercase tracking-[0.15em] text-white/45">Scope</p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {project.services.map((service) => (
                       <span key={service} className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/70">
@@ -660,10 +660,10 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
           <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start lg:gap-16">
             <Reveal>
               <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.accent }}>
-                Immediate result
+                Recorded result
               </p>
               <h2 className="mt-2 font-display text-3xl font-normal leading-tight sm:text-4xl" style={{ color: palette.ink }}>
-                Evidence before explanation.
+                Start with what the record can support.
               </h2>
             </Reveal>
             <Reveal delay={0.08}>
@@ -698,7 +698,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
         <Container className="max-w-6xl">
           <Reveal>
             <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.secondary }}>
-              Case-study sequence
+              Decision record
             </p>
             <h2 className="mt-2 max-w-3xl font-display text-4xl font-normal leading-tight text-white sm:text-5xl">
               What was made, and why it was made that way.
@@ -708,7 +708,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
           <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_1.08fr] lg:items-center lg:gap-16">
             <div>
               <NarrativeVisual project={project} presentation={presentation} active={activeChapter} total={chapters.length} />
-              <ol className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-7" aria-label="Case-study chapters">
+              <ol className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-7" aria-label="Case study chapters">
                 {chapters.map((chapter, index) => (
                   <li key={chapter.id}>
                     <button
@@ -771,11 +771,11 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
       <section id="system" className="scroll-mt-24 py-20 sm:py-28" style={{ backgroundColor: palette.paper }}>
         <Container className="max-w-6xl">
           <Reveal>
-            <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.accent }}>
-              Evidence of the system
+              <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.accent }}>
+              What the work contained
             </p>
             <h2 className="mt-2 max-w-3xl font-display text-4xl font-normal leading-tight sm:text-5xl" style={{ color: palette.ink }}>
-              The project becomes credible in its details.
+              Inspect the decisions inside the deliverable.
             </h2>
           </Reveal>
 
@@ -836,7 +836,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                 Outcome and boundary
               </p>
               <h2 className="mt-2 font-display text-4xl font-normal leading-tight text-white sm:text-5xl">
-                The result stays as specific as the evidence.
+                What can be claimed, and what cannot.
               </h2>
             </Reveal>
             <Reveal delay={0.08}>
@@ -847,7 +847,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                 </blockquote>
               )}
               <div className="mt-8 border-t border-white/15 pt-6">
-                <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-white/45">This project used</p>
+                <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-white/45">Services in scope</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {project.services.map((service) => (
                     <Link
@@ -881,7 +881,7 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
         <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, ${palette.ink}E8, ${palette.ink}A8 52%, ${palette.ink}D6)` }} />
         <Container className="relative max-w-5xl text-center">
           <Reveal>
-            <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.secondary }}>A similar condition</p>
+            <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: palette.secondary }}>If this is your problem</p>
             <h2 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-normal leading-tight text-white sm:text-5xl">
               {presentation.ctaHeading}
             </h2>
@@ -895,10 +895,10 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                 className="inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-sm font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 style={{ backgroundColor: palette.accent, outlineColor: palette.accent }}
               >
-                Discuss this brand problem
+                Bring this problem to Suman
               </Link>
               <Link href={presentation.serviceHref} className="link-underline inline-flex min-h-11 items-center text-sm font-medium text-white">
-                Explore {presentation.serviceLabel} <span aria-hidden="true">→</span>
+                See {presentation.serviceLabel} <span aria-hidden="true">→</span>
               </Link>
             </div>
           </Reveal>

@@ -191,8 +191,8 @@ assert(
 );
 assert(
   origin.includes("when a founder is beginning") &&
-    origin.includes("existing brand\n              feels difficult to explain") &&
-    origin.includes("recognition needs steadier continuity"),
+    origin.includes("a capable business is difficult to") &&
+    origin.includes("every channel has started to sound different"),
   "The first post-hero chapter no longer connects Suman's formative fields to a buyer's situation.",
 );
 assert(

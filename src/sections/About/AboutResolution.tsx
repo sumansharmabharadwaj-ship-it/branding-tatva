@@ -23,24 +23,24 @@ import styles from "./AboutResolution.module.css";
 const PATH_DEFINITIONS = [
   {
     slug: "brand-beginning",
-    cue: "Beginning",
-    signal: "The idea is ready. The brand still needs its ground.",
+    cue: "Launching",
+    signal: "The offer is credible. The market position is not decided.",
     question: "What should this brand stand for before expression begins?",
-    decision: "Define the position, audience, and founding signal.",
+    decision: "Define the position, audience, and promise the business can prove.",
   },
   {
     slug: "brand-clarity",
-    cue: "Realigning",
-    signal: "The brand exists. Its clearest meaning is still difficult to carry.",
+    cue: "Repositioning",
+    signal: "The business has outgrown the brand buyers still see.",
     question: "Why does a capable brand still feel difficult to understand?",
-    decision: "Clarify the category meaning and rebuild around it.",
+    decision: "Decide the category meaning and rebuild around it.",
   },
   {
     slug: "brand-partnership",
-    cue: "Sustaining",
-    signal: "The system exists. Recognition now needs continuity.",
+    cue: "Directing",
+    signal: "The brand changes whenever the channel or campaign changes.",
     question: "How can recognition compound while expression keeps moving?",
-    decision: "Protect one strategic signal across recurring expression.",
+    decision: "Protect the same position across recurring work.",
   },
 ] as const;
 
@@ -197,13 +197,13 @@ export function AboutResolution() {
     >
       <Container className={styles.inner}>
         <header className={styles.header}>
-          <p className={styles.eyebrow}>The next move · a calm half hour</p>
+          <p className={styles.eyebrow}>A thirty minute brand diagnosis</p>
           <h2 id="about-resolution-title">
-            Your question can arrive unresolved. <em>The next move can leave the room clear.</em>
+            Bring the business condition as it is. <em>Leave knowing what should be decided first.</em>
           </h2>
           <p className={styles.intro}>
-            Bring the condition as it is. The first conversation identifies the decision that deserves to come first,
-            then gives the engagement a grounded starting point.
+            No polished brief is required. We identify the brand decision underneath the visible problem and choose the
+            right place to begin.
           </p>
         </header>
 
@@ -287,7 +287,7 @@ export function AboutResolution() {
                           <dd>{path.package.forWho}</dd>
                         </div>
                         <div>
-                          <dt>First working choices</dt>
+                          <dt>Work that begins first</dt>
                           <dd>{path.package.includes.slice(0, 2).join(" · ")}</dd>
                         </div>
                       </dl>
@@ -317,7 +317,7 @@ export function AboutResolution() {
                 <p>{path.package.forWho}</p>
                 <strong>{path.package.name}</strong>
                 <Link href={`/services#package-${path.slug}`}>
-                  See the engagement route <ArrowUpRight size={14} aria-hidden="true" />
+                  Inspect the engagement <ArrowUpRight size={14} aria-hidden="true" />
                 </Link>
               </article>
             ))}
@@ -326,8 +326,8 @@ export function AboutResolution() {
 
         <footer className={styles.footer}>
           <p className={styles.interactiveSummary} aria-live="polite">
-            <span>Route identified · {activePath.cue}</span>
-            <strong>{activePath.package.name} gives this question a grounded place to begin.</strong>
+            <span>Closest business condition · {activePath.cue}</span>
+            <strong>{activePath.package.name} addresses this condition first.</strong>
           </p>
           <p className={styles.staticSummary}>
             <span>First conversation</span>
@@ -351,7 +351,7 @@ export function AboutResolution() {
                 trackEvent="contextual_cta_clicked"
                 trackProps={{ page: "about", target: "all_engagement_routes" }}
               >
-                Compare engagement routes
+                Compare all engagements
               </LinkButton>
             </div>
             <div className={styles.interactiveContactCta}>

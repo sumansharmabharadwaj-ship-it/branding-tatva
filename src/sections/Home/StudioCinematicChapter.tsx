@@ -30,12 +30,12 @@ const DISCIPLINES = [
     name: "Psychology",
     credential: "Applied psychology",
     verb: "reads people",
-    title: "Find the tension before the audience has words for it.",
-    line: "Behaviour becomes evidence. The work studies the friction, desire and perception shaping a buyer's choice.",
+    title: "Notice the hesitation before it becomes an objection.",
+    line: "Psychology helps examine attention, association, memory, and choice without pretending buyers behave like survey answers.",
     signal: "The choice stalls before the objection is spoken.",
     move: "Name the hidden tension.",
     decision: "Build the position around the belief that must change.",
-    outcome: "Audience tension + perception map",
+    outcome: "Buyer tension and perception map",
     questionFrame: HOME_STUDIO_LENSES[0].question,
     proof: "Applied in HerbalCart",
     proofHref: "/work/herbalcart",
@@ -48,12 +48,12 @@ const DISCIPLINES = [
     name: "Literature",
     credential: "Applied literature",
     verb: "shapes meaning",
-    title: "Turn a strategic choice into language people can carry.",
+    title: "Give a strategic choice language people can repeat.",
     line: "Voice, narrative, rhythm and symbolism give the idea a form people can recognise, repeat and remember.",
     signal: "The strategy makes sense in the room, then leaves no memory.",
     move: "Give the choice rhythm, metaphor and voice.",
     decision: "Turn the position into a story people can repeat.",
-    outcome: "Verbal identity + narrative spine",
+    outcome: "Verbal identity and narrative spine",
     questionFrame: HOME_STUDIO_LENSES[1].question,
     proof: "Applied in MyShopInEurope",
     proofHref: "/work/myshopineurope",
@@ -71,7 +71,7 @@ const DISCIPLINES = [
     signal: "Every output looks considered; together they drift.",
     move: "Set one governing decision.",
     decision: "Align identity, website, content and campaigns to it.",
-    outcome: "A brand system that keeps moving",
+    outcome: "One decision the business can keep applying",
     questionFrame: HOME_STUDIO_LENSES[2].question,
     proof: "Applied in Dr. Haley Nutrition",
     proofHref: "/work/dr-haley-nutrition",
@@ -284,7 +284,7 @@ export function StudioCinematicChapter() {
 
         <div className="studio-film__body">
           <div className="studio-film__statement">
-            <p>One mind · three disciplines</p>
+            <p>Three disciplines, used by one strategist</p>
             <h2 id="studio-film-title">
               <AnimatePresence mode="sync" initial={false}>
                 <motion.span
@@ -328,9 +328,9 @@ export function StudioCinematicChapter() {
               <p>{activeMatchesMethod && methodMatch ? methodMatch.bridge : active.line}</p>
               <ol className="studio-film__synthesis" aria-label={`${active.name} from human signal to brand decision`}>
                 {[
-                  ["Human signal", active.signal],
+                  ["What the buyer is doing", active.signal],
                   [`${active.name} move`, active.move],
-                  ["Brand decision", active.decision],
+                  ["What the brand should do", active.decision],
                 ].map(([label, value], index) => (
                   <motion.li
                     key={label}
@@ -383,7 +383,7 @@ export function StudioCinematicChapter() {
               </span>
               <span>{active.number} / 03</span>
             </div>
-            <div className="studio-film__chapters" role="tablist" aria-label="Explore Suman's three disciplines">
+            <div className="studio-film__chapters" role="tablist" aria-label="Choose one of Suman's three disciplines">
             {DISCIPLINES.map((discipline, index) => {
               const displayed = index === activeIndex;
               const committed = index === committedIndex;

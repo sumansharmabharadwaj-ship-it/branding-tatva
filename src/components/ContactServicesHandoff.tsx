@@ -21,10 +21,10 @@ export function ContactHeroBookingLink() {
         source: "contact_hero",
         ...(packageSlug ? { package: packageSlug } : {}),
       }}
-      data-cursor-label="Book a session"
+      data-cursor-label="Book a brand diagnosis"
       className="inline-flex min-h-12 items-center justify-center rounded-full bg-ivory px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
     >
-      Book {site.consultationMinutes} minutes
+      Book a {site.consultationMinutes} minute brand diagnosis
       <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
     </TrackedLink>
   );

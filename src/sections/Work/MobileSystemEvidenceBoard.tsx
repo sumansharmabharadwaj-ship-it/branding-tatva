@@ -58,17 +58,17 @@ export function MobileSystemEvidenceBoard({ project }: { project: Project }) {
   const steps = [
     {
       label: "The category risk",
-      title: "A real opportunity was about to inherit a generic meaning.",
+      title: "Without a position, buyers would read the platform as another listings site.",
       body: project.challenge,
     },
     {
       label: "The strategic choice",
-      title: "The advantage was not access. It was origin.",
+      title: "Access was easy to copy. Origin was harder to replace.",
       body: project.strategy ?? project.insight ?? "",
     },
     {
       label: "The operating system",
-      title: "The position had to survive contact with every channel.",
+      title: "The position had to guide channel roles and rollout.",
       body: project.execution ?? project.outcome,
     },
   ];
@@ -105,7 +105,7 @@ export function MobileSystemEvidenceBoard({ project }: { project: Project }) {
         <div className="mt-8 lg:hidden" data-mobile-system-project-board="true">
           <div className="relative overflow-hidden rounded-[1.45rem] border" style={{ borderColor: "rgba(198,169,122,0.28)", backgroundColor: "#172027" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={evidencePoster} alt={`${project.title} brand-system evidence diagram`} className="absolute inset-0 h-full w-full object-cover opacity-30" />
+            <img src={evidencePoster} alt={`${project.title} brand system evidence diagram`} className="absolute inset-0 h-full w-full object-cover opacity-30" />
             <div aria-hidden="true" className="absolute inset-0" style={{ background: "linear-gradient(145deg, rgba(16,21,26,0.26), rgba(16,21,26,0.95) 76%)" }} />
 
             <div className="relative p-5">
@@ -143,7 +143,7 @@ export function MobileSystemEvidenceBoard({ project }: { project: Project }) {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-2" role="group" aria-label="Choose a system-building case-study stage">
+          <div className="mt-4 grid grid-cols-3 gap-2" role="group" aria-label="Choose a case study stage">
             {steps.map((item, index) => {
               const selected = active === index;
               return (

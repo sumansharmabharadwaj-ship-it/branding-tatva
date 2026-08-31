@@ -155,7 +155,7 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
       },
     ],
     faq: [
-      { question: "What should be included on a service page?", answer: "Include the customer situation, desired outcome, distinctive method, scope, process, relevant proof, fit guidance, important FAQs, and a clear next step." },
+      { question: "What should be included on a service page?", answer: "Include the customer situation, desired outcome, distinctive method, scope, process, relevant proof, fit guidance, important FAQs, and an explicit action." },
       { question: "How is a service page different from a homepage?", answer: "The homepage establishes overall relevance and routes visitors. A service page helps a buyer evaluate one specific offer in enough detail to decide whether to continue toward enquiry or purchase." },
       { question: "Should service pages show pricing?", answer: "Show pricing when it helps qualified buyers make a useful decision and the offer is standardised enough for the number to remain meaningful. For complex bespoke work, explain the scope and proposal process clearly instead." },
       { question: "How long should a service page be?", answer: "Use enough length to answer the important buying questions for the complexity of the offer. Strong hierarchy and scannable sections matter more than an arbitrary word count." },

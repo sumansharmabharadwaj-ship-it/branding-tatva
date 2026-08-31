@@ -30,18 +30,18 @@ const OPTIONS: ReadonlyArray<{
 }> = [
   {
     id: "idea",
-    label: "I am beginning with an idea",
-    reason: "Positioning gets decided before anything is designed, so every later choice inherits one direction.",
+    label: "I have a credible offer but no settled brand.",
+    reason: "We decide what the business should mean before naming, identity, website, or launch work begins.",
   },
   {
     id: "reposition",
-    label: "My existing brand needs repositioning",
-    reason: "An audit finds where recognition is leaking, then one position replaces the several currently competing.",
+    label: "The business has outgrown the brand people still see.",
+    reason: "We keep the cues buyers already trust, remove the ones that misrepresent the business, and establish the stronger position.",
   },
   {
     id: "ongoing",
-    label: "I need ongoing consistency",
-    reason: "Recognition compounds when one person keeps the system coherent as more goes out into the world.",
+    label: "The brand changes every time the channel changes.",
+    reason: "I set the verbal and visual rules, apply them to live work, and correct drift before it becomes another version of the brand.",
   },
 ];
 
@@ -157,12 +157,12 @@ export function SituationPath() {
     <Container className="max-w-6xl">
       <div data-situation-grid="true" className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
         <div data-services-chapter-copy="true" className="lg:sticky lg:top-28 lg:self-start">
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Choose your situation</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Your situation</p>
           <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-            Three starting points. One of them is yours.
+            Which sentence sounds like your business?
           </h2>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
-            Choose the closest truth. That route will order the work, package and proof that follow.
+            Choose the closest truth. Your answer changes what Suman decides first, the engagement that fits, and the evidence worth inspecting.
           </p>
           <AnimatePresence>
             {carried && (
@@ -320,12 +320,12 @@ export function SituationPath() {
                         </div>
                         {!isCommitted && (
                           <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
-                            Route currently in view
+                            What comes first
                           </p>
                         )}
                         <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{option.reason}</p>
                         <div className="mt-5 flex flex-wrap gap-3">
-                          <LinkButton href="#desire">Explore this package</LinkButton>
+                          <LinkButton href="#desire">See the matching engagement</LinkButton>
                         </div>
                       </div>
                     </motion.div>

@@ -18,22 +18,22 @@ import { publishServicesRecognitionAudit, recognitionAuditGuidance } from "@/lib
 // endpoint with an explicit consent checkbox, first name, and an
 // optional business name.
 const CHECKS = [
-  "One sentence says what the brand stands for, and everyone involved repeats the same one.",
-  "The category you compete in was named deliberately, well before any tagline.",
-  "A stranger could pick your brand out of a lineup with the logo covered.",
-  "Colors, type, and voice repeat exactly across every channel.",
-  "Buyers mention the brand unprompted when they describe the category.",
+  "Everyone who explains the business uses the same sentence.",
+  "The category you compete in was chosen deliberately before the tagline was written.",
+  "A stranger could identify your brand with the logo covered.",
+  "Colour, type, image direction, and voice repeat across every channel.",
+  "Buyers mention the brand without prompting when they describe the category.",
   "Your pricing signals the position you claim.",
   "Every piece of content reads like the same person wrote it.",
   "You could list your three most distinctive assets from memory.",
-  "The last five things you published served one recognizable position.",
-  "Someone who saw the brand six months ago would recognize it today.",
+  "The last five things you published repeated the same position.",
+  "Someone who saw the brand six months ago would recognise it today.",
 ] as const;
 
 const VISIBLE = 5;
 const MOBILE_CHAPTERS = [
   { id: "checks", label: "Five open checks" },
-  { id: "unlock", label: "Unlock all ten" },
+  { id: "unlock", label: "See all ten" },
 ] as const;
 
 type Status = "idle" | "submitting" | "done" | "error";
@@ -125,7 +125,7 @@ export function RecognitionAudit() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong. Please try again.");
+        setError(data.error ?? "The checklist request did not reach the mailing list. Send it once more.");
         setStatus("error");
         return;
       }
@@ -141,7 +141,7 @@ export function RecognitionAudit() {
       // replace the form inside the same frame.
       openMobileChapter("checks");
     } catch {
-      setError("The server was unreachable. Check your connection and try again.");
+      setError("The checklist form cannot reach the server. Check the connection, then send again.");
       setStatus("error");
     }
   }
@@ -204,13 +204,13 @@ export function RecognitionAudit() {
             data-audit-chapter="checks"
             className={`${mobileChapter === "checks" ? "block" : "hidden"} lg:block`}
           >
-            <p className="text-sm font-medium uppercase tracking-wide text-sandstone">The Brand Recognition Audit</p>
+            <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Brand recognition check</p>
             <h2 className="mt-2 max-w-2xl text-display-sm font-display font-normal text-ivory">
-              Ten checks that tell you where recognition stands today.
+              Ten questions that expose where the brand loses recognition.
             </h2>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-ivory/85">
-              Mark what holds true for your brand right now. The first five are open to anyone; the full ten arrive with
-              your name on them.
+              Mark what is true today. Answer the first five without sharing contact details. The remaining five are
+              shown after you request the complete check.
             </p>
             <ol data-public-audit-checks="true" className="mt-7 sm:mt-8" aria-label="Brand recognition checks">
               {shown.map((check, i) => (
@@ -286,7 +286,7 @@ export function RecognitionAudit() {
                   onClick={() => openMobileChapter("unlock")}
                   className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-sandstone/45 px-5 py-2.5 text-sm text-sandstone transition-colors hover:border-sandstone hover:bg-sandstone/10 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone lg:hidden"
                 >
-                  Continue to unlock all ten
+                  Continue to the full check
                   <span aria-hidden="true">→</span>
                 </button>
               </div>
@@ -350,7 +350,7 @@ export function RecognitionAudit() {
                   className="rounded-2xl border border-ivory/20 p-6 shadow-[0_28px_90px_rgba(5,10,8,0.3)] backdrop-blur-xl sm:p-7"
                   style={{ backgroundColor: "rgba(18,26,22,0.84)" }}
                 >
-                  <p className="font-display text-xl font-normal text-ivory">The full audit is open.</p>
+                  <p className="font-display text-xl font-normal text-ivory">All ten questions are ready.</p>
                   <p className="mt-3 text-sm leading-relaxed text-ivory/80">
                     All ten checks are visible in the first chapter. A confirmation email is on its way to {email}, and
                     future insights follow only after you confirm.
@@ -372,10 +372,10 @@ export function RecognitionAudit() {
                   className="rounded-2xl border border-ivory/20 p-6 shadow-[0_28px_90px_rgba(5,10,8,0.3)] backdrop-blur-xl sm:p-7"
                   style={{ backgroundColor: "rgba(18,26,22,0.84)" }}
                 >
-                  <p className="font-display text-lg font-normal text-ivory">See all ten checks</p>
+                  <p className="font-display text-lg font-normal text-ivory">Continue with all ten questions</p>
                   <p className="mt-2 text-sm leading-relaxed text-ivory/82">
-                    Your details deliver the full audit. The checkbox below controls future email, and confirmation is
-                    still required before anything else is sent.
+                    Enter your details to see the remaining questions. Email notes are sent only after you tick the box
+                    and confirm your address.
                   </p>
                   <label className="mt-5 block text-xs font-medium uppercase tracking-[0.12em] text-ivory/78">
                     First name

@@ -11,33 +11,33 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const COST_STAGES = [
   {
     number: "01",
-    title: "A campaign begins.",
-    body: "The audience meets the business through one clear promise.",
-    signal: "New promise",
+    title: "A campaign introduces the business.",
+    body: "Buyers meet a promise and begin deciding where the brand belongs.",
+    signal: "First impression",
     memory: "Association begins",
     cause: "The business enters memory",
   },
   {
     number: "02",
-    title: "The brand changes shape.",
-    body: "The next touchpoint teaches a different expectation.",
-    signal: "Promise reframed",
+    title: "The next touchpoint tells a different story.",
+    body: "Buyers must decide whether they are still looking at the same business.",
+    signal: "Meaning changes",
     memory: "Association splits",
     cause: "A second version arrives",
   },
   {
     number: "03",
-    title: "Every channel explains again.",
-    body: "Content spends more energy rebuilding context before it can create desire.",
-    signal: "Explanation repeats",
+    title: "Every channel starts from the beginning.",
+    body: "Content keeps rebuilding context before it can make the offer desirable.",
+    signal: "Context repeats",
     memory: "Familiarity slows",
     cause: "Channels rebuild context",
   },
   {
     number: "04",
-    title: "Marketing carries the introduction.",
-    body: "Reach grows while recognition continues to trail the effort behind it.",
-    signal: "Spend reintroduces",
+    title: "Marketing keeps paying for the introduction.",
+    body: "Reach grows, yet buyers still struggle to say what the brand stands for.",
+    signal: "Spend repeats",
     memory: "Recognition trails",
     cause: "Investment carries the reset",
   },
@@ -90,7 +90,7 @@ export function V4OpeningScene() {
       <div className="home-v4-opening__shell">
         <div className="home-v4-opening__topline">
           <span>Brand strategy &amp; systems</span>
-          <span>Founder-led · direct authorship</span>
+          <span>Direct with Suman Sharma</span>
         </div>
 
         <div className="home-v4-opening__copy" data-home-reading-plane>
@@ -100,7 +100,7 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.58, delay: 0.08, ease: EASE }}
           >
-            Strategy directed by Suman Sharma
+            Brand strategy, written and directed by Suman Sharma
           </motion.p>
 
           <h1 id="home-v4-opening-title">
@@ -109,14 +109,14 @@ export function V4OpeningScene() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.12, ease: EASE }}
             >
-              Turn a growing business into a brand people
+              Turn a growing business into a brand buyers
             </motion.span>
             <motion.em
               initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.66, delay: 0.24, ease: EASE }}
             >
-              recognise, trust, and choose.
+              understand, remember, and choose.
             </motion.em>
           </h1>
 
@@ -126,7 +126,7 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.58, delay: 0.32, ease: EASE }}
           >
-            Branding Tatva shapes positioning, language, identity, and market expression into one coherent system your business can carry forward.
+            For founders whose business has outgrown the way it sounds or looks, Branding Tatva rebuilds the position first, then the language, identity, website, and content around it.
           </motion.p>
 
           <motion.div
@@ -141,7 +141,7 @@ export function V4OpeningScene() {
               data-magnetic
               data-cursor-label="begin"
             >
-              Open the strategy room <ArrowUpRight size={15} />
+              Bring me the brand question <ArrowUpRight size={15} />
             </Link>
             <Link
               href="#brand-diagnostic"
@@ -160,11 +160,11 @@ export function V4OpeningScene() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: 0.42, ease: EASE }}
         >
-          <span>How the engagement feels</span>
-          <strong>One strategist. One connected system.</strong>
-          <p>Direct access from the first diagnosis through the decisions that shape the final brand.</p>
+          <span>Working with Branding Tatva</span>
+          <strong>You speak with the strategist doing the work.</strong>
+          <p>Nothing passes between sales, strategy, and delivery. Suman keeps the original business problem in view throughout.</p>
           <Link href="#evidence" className="home-v4-opening__proof-link">
-            Inspect verified client evidence <ArrowDownRight size={13} />
+            Inspect the client evidence <ArrowDownRight size={13} />
           </Link>
           <i aria-hidden="true" />
         </motion.aside>
@@ -345,9 +345,9 @@ export function V4HiddenCostScene() {
 
         <div className="cost-film__story">
           <div className="cost-film__lead">
-            <p>What repeated change asks of the market</p>
+            <p>What inconsistency makes buyers do</p>
             <h2 id="cost-film-title">
-              Every new version asks people to <em>learn the brand again.</em>
+              Every new version makes the market <em>learn you again.</em>
             </h2>
           </div>
 
@@ -422,10 +422,10 @@ export function V4HiddenCostScene() {
           <div className="cost-film__resolution">
             <p>
               <span>The alternative</span>
-              One position, repeated with care, lets every new signal strengthen the memory already there.
+              Keep the position stable and every campaign can deepen what buyers already know.
             </p>
             <Link href="#evidence" data-magnetic data-cursor-label="proof">
-              Inspect the proof next <ArrowDownRight size={15} />
+              See what this changed for clients <ArrowDownRight size={15} />
             </Link>
           </div>
         </div>

@@ -29,41 +29,41 @@ type FooterResolution = {
 
 const DEFAULT_RESOLUTION: FooterResolution = {
   headline:
-    "Take one useful question with you—or bring it into a focused conversation.",
+    "Keep reading, or bring the unresolved question into a brand diagnosis.",
   description:
-    "The library stays open. When a decision needs a second mind, the strategy room is here.",
+    "Use the essays to investigate alone. Bring the question to Suman when another article will only add more input.",
 };
 
 const RESOLUTIONS: Record<string, FooterResolution> = {
   positioning: {
     headline:
-      "Keep testing the comparison—or bring the category decision into the room.",
+      "Keep testing the comparison, or discuss the category decision with Suman.",
     description:
-      "Stay with the positioning evidence, or use a focused conversation to choose the market frame worth committing to.",
+      "Stay with the positioning evidence, or ask Suman which market frame is worth committing to.",
   },
   "customer-experience": {
     headline:
-      "Keep tracing the hesitation—or bring the confidence gap into the room.",
+      "Keep tracing the hesitation, or discuss the confidence gap with Suman.",
     description:
-      "Stay with the experience evidence, or use a focused conversation to find where promise and delivery lose alignment.",
+      "Stay with the experience evidence, or ask Suman where promise and delivery begin to disagree.",
   },
   "distinctive-brand": {
     headline:
-      "Keep studying the cue—or bring the recognition decision into the room.",
+      "Keep studying the cue, or discuss the recognition decision with Suman.",
     description:
-      "Stay with the distinctiveness evidence, or use a focused conversation to choose the signals worth repeating.",
+      "Stay with the distinctiveness evidence, or ask Suman which cues deserve repetition.",
   },
   "brand-messaging": {
     headline:
-      "Keep sharpening the claim—or bring the message decision into the room.",
+      "Keep testing the claim, or discuss the message decision with Suman.",
     description:
-      "Stay with the messaging evidence, or use a focused conversation to test the reason to choose before rewriting the surface.",
+      "Stay with the messaging evidence, or ask Suman to test the reason to choose before rewriting the page.",
   },
   "brand-memory": {
     headline:
-      "Keep following the repeated cue—or bring the memory decision into the room.",
+      "Keep following the repeated cue, or discuss the memory decision with Suman.",
     description:
-      "Stay with the recall evidence, or use a focused conversation to decide what the brand should repeat with discipline.",
+      "Stay with the recall evidence, or ask Suman what the brand should repeat with discipline.",
   },
 };
 
@@ -133,8 +133,8 @@ export function InsightsFooterInvitation({
         ) : null}
         <span>
           {selectedPath
-            ? `Final choice · ${selectedPath.name}`
-            : "From reading to decision"}
+            ? `Selected topic · ${selectedPath.name}`
+            : "Choose your route"}
         </span>
       </p>
       <h2>{resolution.headline}</h2>
@@ -143,7 +143,7 @@ export function InsightsFooterInvitation({
       </p>
       <nav
         className="insights-footer-invitation__routes"
-        aria-label="Continue the Insights journey"
+        aria-label="Continue from Insights"
       >
         <Link
           href={
@@ -164,7 +164,7 @@ export function InsightsFooterInvitation({
         >
           {selectedPath
             ? `See where ${selectedPath.service.name} fits`
-            : "Explore the strategy paths"}
+            : "Compare brand engagements"}
           <ArrowRight aria-hidden="true" />
         </Link>
       </nav>

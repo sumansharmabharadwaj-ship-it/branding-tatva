@@ -154,15 +154,15 @@ export const metadata: Metadata = {
 // to point at and no way back to booking except scrolling the whole
 // way. All nine anchors already exist and already carry scroll-mt-24.
 const JUMP_ITEMS = [
-  { href: "#services-opening", label: "Opening signal" },
+  { href: "#services-opening", label: "Where this starts" },
   { href: "#situation", label: "Your situation" },
-  { href: "#offerings", label: "Six disciplines" },
-  { href: "#desire", label: "Package paths" },
-  { href: "#proof", label: "Verified outcome" },
-  { href: "#authority", label: "Brand foundation" },
-  { href: "#education", label: "Perception" },
-  { href: "#audit", label: "Recognition audit" },
-  { href: "#book", label: "Strategy room" },
+  { href: "#offerings", label: "What the work covers" },
+  { href: "#desire", label: "Ways to work" },
+  { href: "#proof", label: "Client evidence" },
+  { href: "#authority", label: "What holds the brand" },
+  { href: "#education", label: "How buyers remember" },
+  { href: "#audit", label: "Brand check" },
+  { href: "#book", label: "Book a diagnosis" },
 ];
 
 // Ambient consolidation (Suman's review: "duplicated ambient effects",
@@ -257,11 +257,11 @@ export default async function ServicesPage() {
                   splitType="words"
                   className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
                 >
-                  One position. Every brand decision moving in the same direction.
+                  When the business has grown past its brand, begin with the position.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
-                  Positioning, identity, messaging and content become one recognition system. Choose the situation
-                  closest to yours, inspect the work, then trace one verified result.
+                  For founders launching, repositioning, or tired of correcting every channel, this page shows what
+                  we decide, what gets built, what it costs, and what the evidence can support.
                 </p>
                 {/* The hero's one quiet action — a visitor sold by the
                     opening claim previously had nowhere to act until the
@@ -277,7 +277,7 @@ export default async function ServicesPage() {
                       href="#situation"
                       className="group inline-flex min-h-11 items-center gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
                     >
-                      <span className="link-underline">Find where the work begins</span>
+                      <span className="link-underline">Choose the situation that sounds like yours</span>
                       <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-y-0.5">
                         ↓
                       </span>

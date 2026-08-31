@@ -32,9 +32,9 @@ import {
 // paths, but only a carried diagnosis or explicit click is treated as a real
 // recommendation. Passive preview never writes preference or analytics.
 const CHOICES = [
-  { slug: "brand-beginning", label: "Starting with an idea", shortLabel: "Idea", element: "earth" },
-  { slug: "brand-clarity", label: "Feeling unclear or inconsistent", shortLabel: "Reposition", element: "water" },
-  { slug: "brand-partnership", label: "Needing ongoing consistency", shortLabel: "Ongoing", element: "space" },
+  { slug: "brand-beginning", label: "Launching a new business", shortLabel: "Idea", element: "earth" },
+  { slug: "brand-clarity", label: "Repositioning an established business", shortLabel: "Reposition", element: "water" },
+  { slug: "brand-partnership", label: "Stopping drift across channels", shortLabel: "Ongoing", element: "space" },
 ] as const;
 
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
@@ -186,9 +186,9 @@ export function PackageSelector() {
       style={{ maxWidth: compare ? "64rem" : "48rem" }}
     >
       <div data-services-chapter-copy="true">
-        <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
+        <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Ways to work</p>
         <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-          Where does your brand actually stand?
+          Choose the condition, then inspect the scope and price.
         </h2>
 
         <AnimatePresence initial={false}>
@@ -203,8 +203,8 @@ export function PackageSelector() {
             >
               {selectionSource === "manual" ? (
                 <>
-                  Your selected route: <span className="font-medium text-sandstone">{activePackage.name}</span>. Proof,
-                  perception and the Strategy Room now follow it.
+                  Your selected engagement: <span className="font-medium text-sandstone">{activePackage.name}</span>.
+                  The examples and booking brief now follow this choice.
                 </>
               ) : (
                 <>
@@ -224,7 +224,7 @@ export function PackageSelector() {
               transition={transition}
               className="mx-auto mt-5 max-w-xl text-xs font-medium uppercase tracking-[0.15em] text-sandstone/80"
             >
-              Path in view · {activePackage.name}
+              Closest fit: {activePackage.name}
             </motion.p>
           )}
         </AnimatePresence>
@@ -386,7 +386,7 @@ export function PackageSelector() {
             </motion.div>
           ) : (
             <motion.p key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-sm text-ivory/70">
-              Three paths, each shaped around a different decision.
+              Three engagements, each built for a different business condition.
             </motion.p>
           )}
       </div>

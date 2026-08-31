@@ -118,14 +118,14 @@ export function ImagineYourBrand() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong. Please try again.");
+        setError(data.error ?? "The project map request did not reach the mailing list. Send it once more.");
         setStatus("error");
         return;
       }
       track("project_map_emailed", { situation, change });
       setStatus("sent");
     } catch {
-      setError("The server was unreachable. Check your connection and try again.");
+      setError("The project map form cannot reach the server. Check the connection, then send again.");
       setStatus("error");
     }
   }

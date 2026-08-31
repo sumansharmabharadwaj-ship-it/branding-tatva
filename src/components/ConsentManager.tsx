@@ -209,13 +209,13 @@ export function ConsentManager() {
               />
               <ConsentRow
                 title="Analytics"
-                detail="Counts which pages hold attention, through Vercel Analytics, so the writing can earn its place."
+                detail="Counts page views through Vercel Analytics so Suman can see which guides people use."
                 checked={draft.analytics}
                 onChange={(value) => setDraft((d) => ({ ...d, analytics: value }))}
               />
               <ConsentRow
                 title="Marketing"
-                detail="Advertising and audience trackers. None run on this site today, and this stays your choice rather than an assumption."
+                detail="Advertising and audience trackers are not used today. This control stays visible so the choice remains yours if that changes."
                 checked={draft.marketing}
                 onChange={(value) => setDraft((d) => ({ ...d, marketing: value }))}
               />

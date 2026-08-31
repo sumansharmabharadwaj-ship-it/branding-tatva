@@ -94,7 +94,7 @@ export function MobileStakesDeck({
             <p className="mt-1 font-display text-xl font-normal text-ivory">Four early decisions.</p>
           </div>
           <span className="font-display text-3xl text-ivory/[0.08]" aria-hidden="true">
-            01–04
+            01 to 04
           </span>
         </div>
         <ol className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-ivory/10 bg-ivory/10">

@@ -94,7 +94,7 @@ assert(invitation.includes("HOME_STUDIO_LENS_EVENT") && invitation.includes("que
 assert(invitation.includes("{ question: questionChoice.id }") && invitation.includes("{ lens: carriedLens.name }"), "Closing conversion events lose the visitor's question or studio lens context.");
 assert(servicesJourney.includes('`/contact?package=${encodeURIComponent(packageSlug)}${hash}`'), "Package-aware contact links no longer preserve their requested chapter anchor.");
 assert(paths.includes('href="#process"'), "The chosen service path no longer continues into the working method.");
-assert(paths.includes("Continue into the working method") && paths.includes('data-path-state={isPreviewing ? "preview" : "chosen"}'), "The service path no longer makes its chosen or preview state and next method step explicit.");
+assert(paths.includes("See how Suman makes the decision") && paths.includes('data-path-state={isPreviewing ? "preview" : "chosen"}'), "The service path no longer makes its chosen or preview state and next method step explicit.");
 assert(paths.includes('publishServicesSituation(PATHS[index].situation, "home_paths")'), "The service-path handoff loses the visitor's chosen situation.");
 assert(paths.includes("setPreviewIndex(null)") && paths.includes("Previewing another starting point"), "Service-path hover can replace a committed choice instead of remaining a reversible preview.");
 assert(paths.includes('detail?.origin === "home_diagnostic"'), "The service-path label can misrepresent an intentional manual choice as a completed diagnosis.");

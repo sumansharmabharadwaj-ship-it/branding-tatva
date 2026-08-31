@@ -151,7 +151,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
         ref={questRailRef}
         className="insights-decision-mirror__quests"
         role="tablist"
-        aria-label="Brand tensions"
+        aria-label="Common brand problems"
         aria-orientation={usesHorizontalRail ? "horizontal" : "vertical"}
       >
         {quests.map((quest, index) => {
@@ -202,9 +202,9 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
 
       <div className="insights-decision-mirror__answer">
         <div className="insights-decision-mirror__signal" aria-hidden="true">
-          <span>Recognition</span>
+          <span>Problem</span>
           <i />
-          <span>First move</span>
+          <span>Relevant decision</span>
         </div>
 
         <AnimatePresence mode="popLayout" initial={false}>
@@ -248,14 +248,14 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
           >
             <p className="insights-decision-mirror__route">
               {committedSlug === activeQuest.topicSlug
-                ? "Path held"
-                : "Likely reading path"}{" "}
+                ? "Selected topic"
+                : "Suggested topic"}{" "}
               <span>{activeQuest.pathName}</span>
             </p>
             <h3>{activeQuest.reading}</h3>
 
             <div className="insights-decision-mirror__question">
-              <span>Question worth asking first</span>
+              <span>Question to ask first</span>
               <p>{activeQuest.firstQuestion}</p>
             </div>
 
@@ -272,7 +272,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
                 match_reason: "recommended_first_read",
               }}
             >
-              <span>Recommended first read</span>
+              <span>Start with this essay</span>
               <strong>{activeQuest.article.title}</strong>
               <p>{activeQuest.article.excerpt}</p>
               <small>
@@ -286,14 +286,14 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               className="insights-decision-mirror__atlas-link"
               onClick={handleAtlasJourney}
             >
-              Trace the complete {activeQuest.pathName.toLowerCase()} path
+              See all {activeQuest.pathName.toLowerCase()} essays
               <ArrowDown aria-hidden="true" className="h-4 w-4" />
             </a>
           </motion.article>
         </AnimatePresence>
         <p className="sr-only" aria-live="polite">
           {committedSlug === activeQuest.topicSlug
-            ? `${activeQuest.pathName} path held for the knowledge atlas.`
+            ? `${activeQuest.pathName} is selected for the topic map.`
             : ""}
         </p>
       </div>

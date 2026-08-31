@@ -37,74 +37,74 @@ type Question = {
 
 const QUESTIONS: readonly Question[] = [
   {
-    eyebrow: "Begin with the friction",
-    prompt: "Where is your brand losing its shape?",
+    eyebrow: "Begin with the cost",
+    prompt: "Where is the brand making the business work harder?",
     choices: [
       {
-        label: "The idea is clear. The market is not.",
-        shortLabel: "Unclear",
+        label: "Prospects understand the offer only after I explain it.",
+        shortLabel: "Late understanding",
         diagnosis: "recognition",
-        centre: "Make the meaning easier to remember.",
+        centre: "Move the reason to choose into the first encounter.",
       },
       {
-        label: "The identity exists. The system does not.",
-        shortLabel: "Unsystemised",
+        label: "The website, content, and identity feel like different businesses.",
+        shortLabel: "Brand drift",
         diagnosis: "coherence",
-        centre: "Give every expression one source.",
+        centre: "Give every channel the same governing choices.",
       },
       {
-        label: "Marketing is moving without one direction.",
-        shortLabel: "Undirected",
+        label: "We keep marketing, but buyers still compare us mainly on price.",
+        shortLabel: "Price pressure",
         diagnosis: "demand",
-        centre: "Turn activity into a repeated signal.",
+        centre: "Make the difference visible before the sales call.",
       },
     ],
   },
   {
-    eyebrow: "Notice the recurring cost",
-    prompt: "Which effort keeps starting again?",
+    eyebrow: "Notice what returns to your desk",
+    prompt: "Which task keeps asking for your approval?",
     choices: [
       {
-        label: "Explaining what makes us different.",
+        label: "Rewriting what makes us different.",
         shortLabel: "Difference",
         diagnosis: "recognition",
-        centre: "Commit to the idea only you can carry.",
+        centre: "Choose the comparison the brand can win.",
       },
       {
-        label: "Approving every message and visual.",
+        label: "Correcting tone, design, and content.",
         shortLabel: "Approval",
         diagnosis: "coherence",
-        centre: "Replace personal taste with shared rules.",
+        centre: "Replace repeated correction with written rules.",
       },
       {
-        label: "Publishing without a clear proof path.",
+        label: "Starting each campaign without proof or a point of view.",
         shortLabel: "Proof",
         diagnosis: "demand",
-        centre: "Put evidence where buyer doubt forms.",
+        centre: "Put evidence beside the claim it must support.",
       },
     ],
   },
   {
-    eyebrow: "Choose the next visible change",
-    prompt: "What should become true in the next 90 days?",
+    eyebrow: "Name the result worth noticing",
+    prompt: "What should be different within 90 days?",
     choices: [
       {
-        label: "People remember us for one clear idea.",
+        label: "Buyers repeat our value in their own words.",
         shortLabel: "Recall",
         diagnosis: "recognition",
-        centre: "Build the position first.",
+        centre: "Make the position easy to repeat.",
       },
       {
-        label: "The team can create from one system.",
-        shortLabel: "System",
+        label: "The team knows what belongs and what does not.",
+        shortLabel: "Judgement",
         diagnosis: "coherence",
-        centre: "Connect language, identity and behaviour.",
+        centre: "Write the rules behind the brand choices.",
       },
       {
-        label: "Proof creates preference before the call.",
+        label: "The website and content make the sales call easier.",
         shortLabel: "Preference",
         diagnosis: "demand",
-        centre: "Make the evidence carry the promise.",
+        centre: "Let proof answer doubt before the meeting.",
       },
     ],
   },
@@ -121,35 +121,35 @@ const RESULTS: Record<
   }
 > = {
   recognition: {
-    title: "Recognition needs a sharper centre.",
+    title: "Your value is arriving too late.",
     detail:
-      "The business has useful substance, while the market still has to work too hard to name what makes it different.",
-    signal: "Position before expression",
+      "The offer becomes persuasive in conversation, but the website and content are asking buyers to do too much interpretation first.",
+    signal: "Move the reason to choose forward",
     situation: "idea",
-    nextAction: "See proof, then the foundation path",
+    nextAction: "See the evidence, then the Foundation engagement",
   },
   coherence: {
-    title: "Coherence needs one living system.",
+    title: "The brand depends too much on your personal approval.",
     detail:
-      "Good elements already exist. They need a shared logic that the website, team and marketing can use without reinterpretation.",
-    signal: "One source for every expression",
+      "Useful pieces already exist, but people are relying on memory and taste to keep them aligned across the website, content, and campaigns.",
+    signal: "Turn your judgement into usable rules",
     situation: "reposition",
-    nextAction: "See proof, then the repositioning path",
+    nextAction: "See the evidence, then the Full Brand System",
   },
   demand: {
-    title: "Demand needs proof with direction.",
+    title: "Marketing is carrying a weak reason to choose.",
     detail:
-      "Visibility is present, while the evidence, message and repeated signals have yet to compound into preference.",
-    signal: "Evidence that reinforces one promise",
+      "The business is visible, yet the message and evidence are not giving buyers enough reason to prefer it before the sales conversation.",
+    signal: "Put proof behind a sharper position",
     situation: "ongoing",
-    nextAction: "See proof, then the ongoing path",
+    nextAction: "See the evidence, then the Brand Partnership",
   },
   mixed: {
-    title: "Your answers point to a connected brand problem.",
+    title: "The business has outgrown the brand representing it.",
     detail:
-      "The friction is moving across positioning, expression and proof. The next decision needs to connect those parts before any one of them is pushed harder.",
-    signal: "One joined-up diagnosis",
-    nextAction: "See proof, then the connected system",
+      "Positioning, expression, and proof are pulling in different directions. Pushing any single channel harder will make the mismatch more visible.",
+    signal: "Diagnose the whole brand before rebuilding a part",
+    nextAction: "See the evidence, then compare the engagements",
   },
 };
 

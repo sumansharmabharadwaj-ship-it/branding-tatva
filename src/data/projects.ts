@@ -41,7 +41,7 @@ export const projects: Project[] = [
     challenge:
       "A nutrition brand's social presence was growing in volume while quality lagged behind. More posts were failing to translate into an audience that would actually stay. The two month engagement, running December 2025 to January 2026, needed to prove whether fewer, sharper posts could outperform a heavier posting schedule.",
     insight:
-      "The account was gaining reach while trust lagged behind. Impressions and follower counts looked fine in isolation, but the content was falling short of the kind of engagement that signals an algorithm to keep showing it to new people.",
+      "The account was gaining reach while meaningful response lagged behind. Impressions and follower counts looked fine in isolation, but comments and followers earned per post showed that the publishing volume was doing too little work.",
     strategy:
       "Shifted the entire approach from volume first to quality first across Instagram, Facebook, and LinkedIn, deliberately posting less but making every post earn its place.",
     execution:
@@ -49,11 +49,11 @@ export const projects: Project[] = [
     services: ["Space · ongoing content management", "Air · content strategy"],
     outcome:
       "Instagram gained 126 new followers in January from 12 posts, more than December's 111 followers from 23 posts. That's a 104% increase in followers earned per post, alongside a 1,350% jump in comments per post. Facebook grew steadily from roughly 59 to 69 total fans over the same period, with engagement per post up 67%. LinkedIn impressions rose 365%, and engagement rate climbed from 0.71% to 2.81%.",
-    hook: "Proof that posting less can outperform posting more, once what remains actually earns attention.",
+    hook: "Twelve sharper Instagram posts earned more followers than the previous twenty three.",
     reflection:
       "The clearest signal was impressions barely dropping (down just 10%) despite posting 48% less. The platform was actively rewarding the more relevant content instead of just showing it to fewer people. That's the difference between reach and trust.",
     closingQuote:
-      "Fewer posts, each one earning its place. That's the difference between being seen and being remembered.",
+      "Twelve sharper posts earned more followers and far more comments than twenty three.",
     cardImage: "/images/card-dr-haley-nutrition-poster.jpg",
     cardVideo: "/videos/card-dr-haley-nutrition.mp4",
     heroVideo: "/videos/higgsfield-nutrition-morning.mp4",
@@ -74,11 +74,11 @@ export const projects: Project[] = [
     title: "MyShopInEurope",
     industry: "B2B marketplace",
     challenge:
-      "A new platform connecting Indian vendors with European buyers had a real opportunity but no brand foundation to build on. Without one, it risked reading as a generic, access only marketplace with nothing to differentiate it from the next listings site.",
+      "A new platform connecting Indian vendors with European buyers had no brand foundation. Without one, it risked reading as another access marketplace with no reason to choose it over the next listings site.",
     audience:
       "European retailers, boutique owners, décor businesses, Ayurveda stores, resellers, and importers: buyers who care about margin and reliability, but also about a product story they can pass on to their own customers.",
     insight:
-      "Three shifts were converging at once. European buyers increasingly want origin and story, beyond just product. Indian vendors want a smoother, more credible path into European retail. And buyers generally are paying more attention to what a brand stands for, beyond just what it sells. A brand built only around 'access' would miss all three.",
+      "Three shifts were converging. European buyers increasingly wanted origin and a product story they could retell. Indian vendors needed a credible route into European retail. Buyers were also examining what a company stood for as well as what it sold. A brand built only around access would miss all three.",
     strategy:
       "Defined a real brand foundation, including a core belief, mission, promise, and value, anchored in a specific bet: Indian products have a genuine edge in craft heritage, wellness and Ayurveda roots, and shelf distinction, and the platform should sell that edge rather than compete on being cheap supply.",
     execution:
@@ -105,7 +105,7 @@ export const projects: Project[] = [
     title: "Executive Springboard",
     industry: "Executive mentoring",
     challenge:
-      "An executive mentoring platform needed its social presence to actually convert, turning content into webinar registrations and mentor engagement, beyond just building awareness.",
+      "An executive mentoring platform needed social content to produce webinar registrations and mentor engagement, rather than stop at awareness.",
     strategy:
       "Built a full competitive audit and an eight pillar content system, with distinct playbooks for each platform rather than one strategy stretched across all of them.",
     execution:
@@ -113,9 +113,9 @@ export const projects: Project[] = [
     services: ["Water · customer journey", "Air · content strategy"],
     outcome:
       "Delivered a structured content system, built platform by platform, specifically around driving webinar registrations rather than generic engagement metrics.",
-    hook: "Content built to end in a registration, a real one, well beyond a like. The difference between attention and a finished strategy.",
+    hook: "Everyday content was given one commercial destination: webinar registration.",
     closingQuote:
-      "Content that only earns attention is unfinished. It has to lead somewhere before it counts as strategy.",
+      "A content system is unfinished until each platform has a defined route to registration.",
     cardImage: "/images/card-executive-springboard-poster.jpg",
     cardVideo: "/videos/card-executive-springboard.mp4",
     heroVideo: "/videos/higgsfield-executive-office.mp4",
@@ -145,7 +145,7 @@ export const projects: Project[] = [
     reflection:
       "The work that landed best was the most native, rather than the most polished. Content that looked like a real person's Instagram, rather than an ad, consistently outperformed anything that read as produced.",
     closingQuote:
-      "The version that felt real outperformed the version that looked expensive, every time.",
+      "Native formats landed better than polished creative that read like advertising.",
     cardImage: "/images/card-herbalcart-poster.jpg",
     cardVideo: "/videos/card-herbalcart.mp4",
     heroVideo: "/videos/higgsfield-herbalcart-modern.mp4",
@@ -162,7 +162,7 @@ export const projects: Project[] = [
     challenge:
       "A technology company needed to build authority with audiences at very different levels of technical fluency, from HR and legal leaders encountering AI governance for the first time, to engineers who live in the subject daily. A single content tone had no way to credibly reach both.",
     strategy:
-      "Built a portfolio of sixteen pieces across four distinct content types, each doing a different job: Research Papers to validate claims with evidence, Perspective Pieces to challenge assumptions leaders had yet to question, Blogs to make emerging technology feel relevant to daily life, and Articles for fast, high visibility consumption.",
+      "Built a portfolio of sixteen pieces across four distinct content types, each doing a different job: Research Papers to validate claims with evidence, Perspective Pieces to challenge assumptions leaders had yet to question, Blogs to explain emerging technology in daily life, and Articles for a shorter read.",
     execution:
       "Grounded the research pillar in a real proof of concept: an IoT edge integration case study with the Delhi Jal Board showing a measurable drop in chemical over dosing (15% to 20% down to under 3%), rather than relying on abstract claims. Paired that rigor with a deliberately provocative perspective piece questioning the industry's SaaS hype cycle, built around three direct questions every technology leader has to answer.",
     services: ["Air · content strategy"],
@@ -179,7 +179,7 @@ export const projects: Project[] = [
       { value: "16", label: "content pieces across four formats" },
     ],
     closingQuote:
-      "Trust with an expert and trust with a beginner are earned in two different languages, both of them necessary.",
+      "Experts needed evidence. Newer readers needed explanation. The portfolio gave each audience its own route.",
     cardImage: "/images/card-plaxonic-poster.jpg",
     cardVideo: "/videos/card-plaxonic.mp4",
     heroVideo: "/videos/higgsfield-plaxonic-tech.mp4",

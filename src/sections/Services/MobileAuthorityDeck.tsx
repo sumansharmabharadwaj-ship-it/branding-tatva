@@ -72,7 +72,7 @@ export function MobileAuthorityDeck({
       <div className="border-b border-ivory/10 pb-4" aria-hidden="true">
         <div className="flex items-center justify-between gap-4">
           <p className="text-[0.6rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
-            What marketing has to work with
+            What must exist before promotion
           </p>
           <span className="font-display text-sm text-sandstone/80">
             {String(activeIndex + 1).padStart(2, "0")} / {String(layers.length).padStart(2, "0")}

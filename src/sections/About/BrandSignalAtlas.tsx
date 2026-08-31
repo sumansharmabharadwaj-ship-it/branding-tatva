@@ -34,7 +34,7 @@ const SURFACES = [
     number: "02",
     label: "Language",
     short: "Expression",
-    title: "Language that carries the same idea clearly.",
+    title: "Language the team can repeat without flattening the idea.",
     description:
       "A message hierarchy, verbal character, and repeatable phrases turn the position into language people can understand and remember.",
     test: "Can different voices still sound like the same brand?",
@@ -46,7 +46,7 @@ const SURFACES = [
     short: "Form",
     title: "A visual world with a strategic reason.",
     description:
-      "Creative principles guide image, type, colour, composition, and movement so expression stays coherent across formats.",
+      "Creative principles guide image, type, colour, composition, and movement so each format is recognisably part of the same brand.",
     test: "Can a new execution feel recognisable before the logo arrives?",
     icon: Palette,
   },
@@ -54,10 +54,10 @@ const SURFACES = [
     number: "04",
     label: "Practice",
     short: "Use",
-    title: "A system the team can keep using.",
+    title: "Rules the team can apply to tomorrow's work.",
     description:
       "Decision rules, examples, and working tools help the brand move through real conversations, campaigns, and growth moments.",
-    test: "Can the system guide tomorrow’s decision without the founder in the room?",
+    test: "Can the rules guide tomorrow's decision without the founder in the room?",
     icon: Waypoints,
   },
 ] as const;
@@ -66,21 +66,21 @@ const STAGES = [
   {
     number: "01",
     label: "Find",
-    cue: "A useful brand system begins by isolating one credible signal from the surrounding noise.",
-    core: "One signal",
-    subline: "Clear enough to choose with.",
+    cue: "Useful brand work begins by deciding which market meaning the business can credibly own.",
+    core: "The position",
+    subline: "Specific enough to guide a choice.",
   },
   {
     number: "02",
     label: "Carry",
-    cue: "The signal travels through language, form, and behaviour without losing its meaning.",
-    core: "One system",
-    subline: "Flexible enough to travel.",
+    cue: "The position moves through language, form, and behaviour without losing its meaning.",
+    core: "The rules",
+    subline: "Useful across real formats.",
   },
   {
     number: "03",
     label: "Recognise",
-    cue: "Repeated coherence gives the audience something familiar to notice, trust, and remember.",
+    cue: "Repeated choices give buyers something familiar to notice, trust, and remember.",
     core: "Recognition",
     subline: "Consistent enough to compound.",
   },
@@ -157,9 +157,9 @@ export function BrandSignalAtlas() {
       <div className={styles.sticky}>
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>The brand atlas · from signal to system</p>
+            <p className={styles.eyebrow}>From position to everyday use</p>
             <h2 id="brand-atlas-title">
-              Strategy becomes valuable when <em>the whole brand can carry it.</em>
+              Strategy matters when <em>the whole business can use it.</em>
             </h2>
           </div>
           <div className={styles.headerAside}>
@@ -197,7 +197,7 @@ export function BrandSignalAtlas() {
               <strong>{stage.subline}</strong>
             </motion.div>
 
-            <div className={styles.surfaceNodes} role="tablist" aria-label="Explore the surfaces of the brand system">
+            <div className={styles.surfaceNodes} role="tablist" aria-label="Choose a surface in the brand system">
               {SURFACES.map((item, index) => {
                 const Icon = item.icon;
                 const selected = selectedSurface === index;
@@ -242,12 +242,12 @@ export function BrandSignalAtlas() {
               >
                 <div className={styles.recordTopline}>
                   <span><ActiveIcon size={18} aria-hidden="true" /></span>
-                  <small>System surface · {surface.number}</small>
+                  <small>Working area · {surface.number}</small>
                 </div>
                 <h3>{surface.title}</h3>
                 <p>{surface.description}</p>
                 <dl>
-                  <dt>Coherence check</dt>
+                  <dt>Use check</dt>
                   <dd>{surface.test}</dd>
                 </dl>
                 <div className={styles.recordFoot}>
@@ -259,7 +259,7 @@ export function BrandSignalAtlas() {
         </div>
 
         <div className={styles.touchAtlas}>
-          <div className={styles.touchRail} role="tablist" aria-label="Explore the surfaces of the brand system">
+          <div className={styles.touchRail} role="tablist" aria-label="Choose a surface in the brand system">
             {SURFACES.map((item, index) => {
               const Icon = item.icon;
               const selected = selectedSurface === index;
@@ -304,7 +304,7 @@ export function BrandSignalAtlas() {
               <h3>{surface.title}</h3>
               <p>{surface.description}</p>
               <div className={styles.touchTest}>
-                <small>Coherence check</small>
+                <small>Use check</small>
                 <strong>{surface.test}</strong>
               </div>
             </motion.article>
@@ -314,7 +314,7 @@ export function BrandSignalAtlas() {
         <div className={styles.staticAtlas}>
           <div className={styles.staticCore}>
             <CheckCircle2 size={18} aria-hidden="true" />
-            <div><small>Resolved system</small><strong>One signal, carried coherently.</strong></div>
+            <div><small>Ready for use</small><strong>The same position guides each working area.</strong></div>
           </div>
           <ol>
             {SURFACES.map((item) => {

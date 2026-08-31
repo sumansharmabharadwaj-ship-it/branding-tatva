@@ -13,7 +13,7 @@ export const insightApplications: Record<string, InsightApplication> = {
   positioning: {
     projectSlug: "myshopineurope",
     proofFrame:
-      "Category, audience, and a craft-and-origin position shaped for a new India-to-Europe marketplace.",
+      "Category, audience, and a craft and origin position shaped for a new marketplace connecting India with Europe.",
     packageSlug: "brand-beginning",
     serviceFrame:
       "Positioning, audience, and identity decisions for a brand at the beginning.",
@@ -21,15 +21,15 @@ export const insightApplications: Record<string, InsightApplication> = {
   "customer-experience": {
     projectSlug: "executive-springboard",
     proofFrame:
-      "Platform-specific content sequences designed to carry attention into webinar registration.",
+      "Content sequences for each platform, designed to carry attention into webinar registration.",
     packageSlug: "brand-clarity",
     serviceFrame:
-      "A full-system response when capable touchpoints produce an uneven journey.",
+      "One scope for connecting touchpoints that currently produce an uneven journey.",
   },
   "distinctive-brand": {
     projectSlug: "herbalcart",
     proofFrame:
-      "Campaign and content direction built to shift an accidental Ayurvedic frame toward a modern supplement-first brand.",
+      "Campaign and content direction built to shift an accidental Ayurvedic frame toward a modern supplement brand.",
     packageSlug: "brand-clarity",
     serviceFrame:
       "Repositioning, messaging, and expression aligned across the full brand system.",

@@ -218,9 +218,9 @@ export function InsightsExplorer({
   posts,
   topics,
   sectionId = "insights-library",
-  eyebrow = "The library",
-  heading = "Find the article closest to the tension.",
-  description = "Search in the language of the problem: price pressure, hesitation, sameness, unclear value, or faint recall. The library ranks the strongest clues first, while the five paths keep wider exploration open.",
+  eyebrow = "Essay library",
+  heading = "Find the article that sounds like your problem.",
+  description = "Search with the words already used in the room: price pressure, buyer hesitation, sameness, a weak value argument, or poor recall. The closest essays appear first.",
   searchPlaceholder = "Try “price pressure” or “hard to explain”",
   video = "/videos/generated/insights-v2/page-insight-library.mp4",
   poster = "/images/generated/insights-v2/page-insight-library.webp",
@@ -368,31 +368,31 @@ export function InsightsExplorer({
     : selectedTopic?.slug ?? carriedTopic?.slug ?? "open";
   const signalLabel = carriedIntent
     ? carriedIntent.origin === "decision-mirror"
-      ? "Carried from your mirror"
+      ? "Carried from your selected problem"
       : carriedIntent.origin === "knowledge-atlas"
-        ? "Carried from your atlas"
-        : carriedIntent.origin === "evidence-ledger"
-          ? "Confirmed in your ledger"
+        ? "Carried from your selected topic"
+      : carriedIntent.origin === "evidence-ledger"
+          ? "Marked in your worksheet"
           : carriedIntent.origin === "insights-article"
             ? "Carried from your last read"
             : "Chosen in this library"
     : settledQuery
       ? inferredTopic
-        ? "Strongest current"
-        : "Signal unresolved"
+        ? "Closest topic"
+        : "No topic found yet"
       : selectedTopic
-        ? "Path in focus"
-        : "Search lens";
+        ? "Selected topic"
+        : "Start with a business problem";
   const signalTitle = signalTopic
     ? signalTopic.name
     : settledQuery
-      ? "A wider phrase will open more paths"
-      : "Five strategic paths remain open";
+      ? "Try a broader business problem"
+      : "Five topics are available";
   const signalDetail = carriedIntent
     ? carriedIntent.origin === "decision-mirror" && carriedIntent.query
       ? `“${carriedIntent.query}” stays in view. ${filteredPosts.length} ${filteredPosts.length === 1 ? "essay matches" : "essays match"} this route.`
       : carriedIntent.origin === "insights-article"
-        ? `${carriedIntent.label} stays connected to the evidence and field-note path below.`
+        ? `${carriedIntent.label} stays connected to the worksheet and letter signup below.`
         : `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay now follows" : "essays now follow"} the ${carriedIntent.label.toLowerCase()} route you chose.`
     : settledQuery
       ? inferredTopic
@@ -415,11 +415,11 @@ export function InsightsExplorer({
       : undefined;
   const resultMessage = settledQuery
     ? filteredPosts.length > 0
-      ? `Best matches ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length} for “${settledQuery}”`
+      ? `Best matches ${firstPostIndex + 1} to ${firstPostIndex + visiblePosts.length} of ${filteredPosts.length} for “${settledQuery}”`
       : `No close matches for “${settledQuery}”`
     : `${
         filteredPosts.length > 0
-          ? `Showing ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length}`
+          ? `Showing ${firstPostIndex + 1} to ${firstPostIndex + visiblePosts.length} of ${filteredPosts.length}`
           : "Showing 0"
       } ${filteredPosts.length === 1 ? "essay" : "essays"}`;
 
@@ -797,7 +797,7 @@ export function InsightsExplorer({
               }}
               className="link-underline text-sm font-medium text-soil"
             >
-              Clear the view
+              Reset search
             </button>
           )}
         </div>
@@ -964,11 +964,10 @@ export function InsightsExplorer({
         ) : (
           <div className="insights-library__empty rounded-[1.5rem] border border-border bg-ivory px-6 py-16 text-center">
             <p className="font-display text-2xl text-soil">
-              This search has wandered beyond the current library.
+              No essay matches that exact phrase yet.
             </p>
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-foreground-secondary">
-              Choose the clue closest to the concern and the archive will open
-              a wider route.
+              Try one of the broader business problems below.
             </p>
             <div
               className="insights-library__recovery"

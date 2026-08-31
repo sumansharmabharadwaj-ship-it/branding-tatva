@@ -205,7 +205,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
                 style={{ borderColor: `${accent}c0`, color: accent }}
               >
-                Book a Session
+                Talk with Suman
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
                   →
                 </span>
@@ -318,7 +318,7 @@ export function Header({ transparent = false }: HeaderProps) {
                     className="flex min-h-12 w-full items-center justify-center rounded-full px-5 text-xs font-semibold uppercase tracking-[0.16em] text-soil"
                     style={{ backgroundColor: element.color }}
                   >
-                    Book a Session
+                    Talk with Suman
                   </Link>
                 </motion.div>
               </motion.nav>

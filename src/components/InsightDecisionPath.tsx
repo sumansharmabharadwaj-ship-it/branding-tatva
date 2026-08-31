@@ -21,13 +21,13 @@ export function InsightDecisionPath({
       <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-12">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
-            From reading to decision
+            Three routes from here
           </p>
           <h2
             id="insight-decision-path-heading"
             className="mt-4 max-w-md font-display text-3xl font-normal leading-tight text-soil sm:text-4xl"
           >
-            Follow the question into the work.
+            Choose the route that matches the decision.
           </h2>
         </div>
 

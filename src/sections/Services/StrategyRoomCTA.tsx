@@ -28,8 +28,8 @@ import { track } from "@/lib/analytics";
 // journey, so that route is carried forward when it exists. Availability is
 // always one action away; the two-question brief is useful preparation, never
 // a gate in front of the calendar.
-const PRIORITIES = ["Getting positioning right", "Building recognition", "Staying consistent", "Still deciding"] as const;
-const FOCUS_AREAS = ["Positioning & identity", "Content & voice", "Ongoing management", "Still exploring"] as const;
+const PRIORITIES = ["Getting positioning right", "Building recognition", "Stopping brand drift", "Still deciding"] as const;
+const FOCUS_AREAS = ["Positioning and identity", "Content and voice", "Ongoing direction", "Still exploring"] as const;
 const QUESTION_COUNT = 2;
 const MODAL_INTERACTION_EVENT = "bt:services-modal-interaction";
 
@@ -42,19 +42,19 @@ const ROUTE_BRIEFS: Record<
   }
 > = {
   idea: {
-    invitation: "Begin with the position, then name the first expression that needs a clear direction.",
-    priorities: ["Getting positioning right", "Building recognition", "Staying consistent", "Still deciding"],
-    focusAreas: ["Positioning & identity", "Content & voice", "Ongoing management", "Still exploring"],
+    invitation: "Begin with the position, then name the first expression that needs direction.",
+    priorities: ["Getting positioning right", "Building recognition", "Stopping brand drift", "Still deciding"],
+    focusAreas: ["Positioning and identity", "Content and voice", "Ongoing direction", "Still exploring"],
   },
   reposition: {
     invitation: "Bring the meaning that no longer fits and the touchpoint where that confusion appears most clearly.",
-    priorities: ["Getting positioning right", "Building recognition", "Staying consistent", "Still deciding"],
-    focusAreas: ["Positioning & identity", "Content & voice", "Ongoing management", "Still exploring"],
+    priorities: ["Getting positioning right", "Building recognition", "Stopping brand drift", "Still deciding"],
+    focusAreas: ["Positioning and identity", "Content and voice", "Ongoing direction", "Still exploring"],
   },
   ongoing: {
     invitation: "Bring the recurring decision that keeps drifting as more content and campaigns go live.",
-    priorities: ["Staying consistent", "Building recognition", "Getting positioning right", "Still deciding"],
-    focusAreas: ["Ongoing management", "Content & voice", "Positioning & identity", "Still exploring"],
+    priorities: ["Stopping brand drift", "Building recognition", "Getting positioning right", "Still deciding"],
+    focusAreas: ["Ongoing direction", "Content and voice", "Positioning and identity", "Still exploring"],
   },
 };
 
@@ -278,7 +278,7 @@ export function StrategyRoomCTA() {
   const progressLabel = step < QUESTION_COUNT ? `Question ${step + 1} of ${QUESTION_COUNT}` : "Brief ready";
   const answers = [
     carriedPackage ? `Route: ${carriedPackage}` : null,
-    recognitionAudit ? `Recognition: ${recognitionAudit.score} / ${recognitionAudit.total} signals` : null,
+    recognitionAudit ? `Recognition: ${recognitionAudit.score} / ${recognitionAudit.total} answers hold` : null,
     priority,
     focus,
   ].filter(
@@ -315,12 +315,12 @@ export function StrategyRoomCTA() {
                 >
                   <div className="flex items-start justify-between gap-6 px-1">
                     <div>
-                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">30-minute strategy call</p>
+                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">30 minute brand diagnosis</p>
                       <h3 id="strategy-calendar-title" className="mt-2 font-display text-3xl font-normal text-ivory sm:text-4xl">
                         Choose a time that feels unhurried.
                       </h3>
                       <p id="strategy-calendar-description" className="mt-2 max-w-2xl text-sm leading-relaxed text-ivory/72">
-                        The calendar opens here without changing your place in the Brand Strategy journey.
+                        Choose a time without losing the brief you have already prepared.
                       </p>
                     </div>
                     <button
@@ -364,16 +364,16 @@ export function StrategyRoomCTA() {
           viewport={{ once: true, margin: "0px 0px -15% 0px" }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book call</p>
+          <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book a brand diagnosis</p>
           <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
-            Open the strategy room.
+            Bring the brand decision that keeps returning.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ivory/90">
-            Thirty minutes with the person who does the work. Bring the unclear part; no polished brief or pitch deck is
-            required.
+            Thirty minutes directly with Suman. Bring the decision, the disagreement, or the sentence nobody can finish.
+            A polished brief is not required.
           </p>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-ivory/68">
-            Founder-led remote projects are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
+            Remote projects led directly by Suman are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
             {entityFacts.delivery.regions.at(-1)}.
           </p>
         </motion.div>
@@ -406,7 +406,7 @@ export function StrategyRoomCTA() {
                       <div className={CARRIED_CONTEXT_CLASS} data-carried-recognition-audit="true">
                         <p className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Carried from your audit</p>
                         <p className="mt-1 font-display text-lg font-normal text-ivory">
-                          {recognitionAudit.score} of {recognitionAudit.total} signals hold
+                          {recognitionAudit.score} of {recognitionAudit.total} answers hold
                         </p>
                         <p className="mt-1 text-xs leading-relaxed text-ivory/62">
                           {recognitionAuditGuidance(recognitionAudit.score, recognitionAudit.total)}
@@ -415,10 +415,9 @@ export function StrategyRoomCTA() {
                     ) : null}
                   </div>
                 ) : null}
-                <p className="font-display text-2xl font-normal text-ivory">Availability is one step away.</p>
+                <p className="font-display text-2xl font-normal text-ivory">Choose a time or write first.</p>
                 <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-ivory/72">
-                  Choose a time now, or add a short two-question brief so the conversation can begin closer to the real
-                  decision.
+                  Open the calendar now, or answer two short questions so the call can begin with the real decision.
                 </p>
                 <div data-strategy-room-actions="true" className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
                   <button
@@ -431,7 +430,7 @@ export function StrategyRoomCTA() {
                     <span aria-hidden="true" className="ml-2">↗</span>
                   </button>
                   <button ref={registerBriefStartButton} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
-                    Add a 60-second brief
+                    Add a short brief
                   </button>
                 </div>
                 <p data-strategy-room-note="true" className="mt-5 text-xs leading-relaxed text-ivory/48">The brief is optional and never blocks the calendar.</p>

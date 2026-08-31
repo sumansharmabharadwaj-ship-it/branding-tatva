@@ -196,7 +196,7 @@ export function InsightCard({
               <span className="insight-card__framework min-w-0">
                 <span>
                   {post.frameworkStepCount
-                    ? `${post.frameworkStepCount}-step framework`
+                    ? `${post.frameworkStepCount} step framework`
                     : "Framework"}
                 </span>
                 <strong>{post.frameworkTitle}</strong>

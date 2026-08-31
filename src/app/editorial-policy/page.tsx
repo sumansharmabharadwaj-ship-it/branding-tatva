@@ -43,11 +43,11 @@ const principles = [
   },
   {
     title: "Three kinds of work stay separate",
-    body: "Verified client work, independent public-record analysis and Branding Tatva Lab concepts carry different labels. Independent or concept work is never presented as a client engagement.",
+    body: "Verified client work, independent analysis of the public record, and Branding Tatva Lab concepts carry different labels. Independent analysis and concept work are never presented as client engagements.",
   },
   {
     title: "Sources remain inspectable",
-    body: "Research-led guides include a visible sources section when external evidence supports the argument. Machine-readable citations mirror those visible sources and never introduce references absent from the page.",
+    body: "Guides built on external research include a visible sources section. Structured citations mirror those sources and never introduce references absent from the page.",
   },
   {
     title: "Diagnostics explain their limits",
@@ -88,7 +88,7 @@ export default function EditorialPolicyPage() {
               as="h1"
               className="mt-5 max-w-4xl font-display text-[clamp(3rem,7vw,6.2rem)] font-normal leading-[0.95]"
             >
-              Trust begins where a claim can be examined.
+              Every claim needs a visible boundary.
             </SplitReveal>
             <Reveal delay={0.1}>
               <p className="mt-7 max-w-2xl text-base leading-8 text-ivory/76 sm:text-lg">
@@ -125,7 +125,7 @@ export default function EditorialPolicyPage() {
                 Current public boundary
               </p>
               <h2 className="mt-4 max-w-2xl font-display text-3xl font-normal sm:text-4xl">
-                A founder-led, remote brand strategy practice.
+                Suman leads every engagement, from diagnosis to delivery.
               </h2>
               <p className="mt-5 max-w-3xl text-sm leading-7 text-ivory/72">
                 {entityFacts.practice.description} Public structured data names {entityFacts.founder.name} as the founder and author, and identifies the current remote service regions without adding unverified biography, award or partner claims.
@@ -141,7 +141,7 @@ export default function EditorialPolicyPage() {
                   href="/insights"
                   className="rounded-full bg-sandstone px-5 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-soil transition-opacity hover:opacity-90"
                 >
-                  Read the source library
+                  Read the research and guides
                 </Link>
               </div>
             </Reveal>

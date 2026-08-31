@@ -38,20 +38,20 @@ const PROOF_ROUTES: Record<
   }
 > = {
   idea: {
-    routeLabel: "Beginning with an idea",
+    routeLabel: "Building a new brand",
     slug: SITUATION_TO_PROOF_SLUG.idea,
-    headline: "MyShopInEurope: foundation before visibility.",
+    headline: "MyShopInEurope: a brand plan before the launch spend.",
     lead: {
       value: "4",
-      label: "quarter rollout plan, from foundation through market position",
-      statement: "A four-quarter rollout plan connected foundation, audience pull, lead quality and market position.",
+      label: "quarters mapped from brand foundation to market position",
+      statement: "The rollout mapped brand foundation, audience pull, lead quality, and market position across four quarters.",
     },
     resultLabel: "Documented delivery",
   },
   reposition: {
-    routeLabel: "Repositioning an existing brand",
+    routeLabel: "Repositioning an established business",
     slug: SITUATION_TO_PROOF_SLUG.reposition,
-    headline: "HerbalCart: the category meaning, reset.",
+    headline: "HerbalCart: a campaign built around one category choice.",
     lead: {
       value: "5",
       label: "content formats ready to shoot after the campaign reset",
@@ -60,9 +60,9 @@ const PROOF_ROUTES: Record<
     resultLabel: "Documented delivery",
   },
   ongoing: {
-    routeLabel: "Building ongoing consistency",
+    routeLabel: "Stopping drift across channels",
     slug: SITUATION_TO_PROOF_SLUG.ongoing,
-    headline: "Dr. Haley Nutrition: eight weeks of exactly this work.",
+    headline: "Dr. Haley Nutrition: eight weeks of repeated brand direction.",
     lead: {
       value: "104%",
       label: "more followers earned per post",
@@ -147,11 +147,11 @@ export function VerifiedOutcome() {
   const lead = proofRoute.lead;
   const beats = [
     {
-      label: "The decision",
+      label: "What the business faced",
       text: proof.strategy ?? proof.challenge,
     },
     {
-      label: "What changed",
+      label: "What was decided",
       text: proof.hook ?? proof.reflection ?? proof.outcome,
     },
     {
@@ -170,7 +170,7 @@ export function VerifiedOutcome() {
         <div data-services-chapter-copy="true">
           <Reveal>
             <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
-              {situation ? `Proof for your route · ${proofRoute.routeLabel}` : "Verified outcome"}
+              {situation ? `Evidence for ${proofRoute.routeLabel}` : "Client evidence"}
             </p>
             <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
               {proofRoute.headline}
@@ -211,7 +211,7 @@ export function VerifiedOutcome() {
 
         <div data-services-chapter-instrument="true" className="relative">
           <p className="mb-4 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/70 sm:ml-14">
-            One decision, followed through
+            The problem, the choice, and the record
           </p>
           <ol className="border-y border-ivory/12">
             {beats.map((beat, index) => {
@@ -269,14 +269,14 @@ export function VerifiedOutcome() {
                   package: selectedPackageSlug ?? "unselected",
                 }}
               >
-                {selectedPackage ? `Bring ${selectedPackage.name} to the Strategy Room` : "Open the Strategy Room"}
+                {selectedPackage ? `Discuss ${selectedPackage.name}` : "Book a brand diagnosis"}
               </LinkButton>
               <LinkButton
                 href={`/work/${proof.slug}`}
                 variant="secondary"
                 className="border-ivory/30 text-ivory hover:bg-ivory/10"
               >
-                See the full decision trail
+                Open the full project record
               </LinkButton>
             </div>
           </Reveal>

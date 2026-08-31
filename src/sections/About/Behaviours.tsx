@@ -25,7 +25,7 @@ const STANDARDS = [
     short: "Evidence",
     title: "Evidence before volume",
     line: "Let the strength of the proof set the strength of the claim.",
-    practice: "Measured outcomes, strategic outputs, and implementation-ready work are recorded as three distinct forms of evidence.",
+    practice: "Measured outcomes, strategic outputs, and work ready for implementation are recorded as three distinct forms of evidence.",
     visible: "A source, an output, or an honest evidence label travels with the statement.",
     recordLabel: "Observed evidence",
     recordValue: "What can be supported now",
@@ -36,11 +36,11 @@ const STANDARDS = [
     short: "Diagnosis",
     title: "Diagnosis before decoration",
     line: "Name the category problem before shaping expression.",
-    practice: "The work examines what buyers think they are seeing, which alternatives frame the category, and where the current signal loses clarity.",
+    practice: "The work examines what buyers think they are seeing, which alternatives frame the category, and where the current meaning breaks.",
     visible: "The category, audience, and positioning choice are stated before visual or verbal routes begin.",
     recordLabel: "Category choice",
     recordValue: "What the brand must mean",
-    trace: "Frame clarified",
+    trace: "Frame decided",
     icon: ScanSearch,
   },
   {
@@ -57,10 +57,10 @@ const STANDARDS = [
   {
     short: "Recognition",
     title: "Recognition before novelty",
-    line: "Let fresh expression carry the same strategic signal.",
+    line: "Let fresh expression carry the same strategic choice.",
     practice: "Positioning, verbal identity, and visual rules return with enough discipline to become familiar in the buyer's mind.",
     visible: "New campaigns can change their surface while preserving the meaning people are learning to recognise.",
-    recordLabel: "Repeatable signal",
+    recordLabel: "Repeatable choice",
     recordValue: "What every expression carries",
     trace: "Pattern protected",
     icon: Repeat2,
@@ -134,10 +134,10 @@ export function Behaviours() {
         <div className={styles.root}>
           <header className={styles.header}>
             <div>
-              <p className={styles.eyebrow}>Working standards · a decision under pressure</p>
+              <p className={styles.eyebrow}>How recommendations are tested</p>
               <h2 id="standards-title">A principle earns its place when <em>the work becomes stronger through it.</em></h2>
             </div>
-            <p>One recommendation travels through four pressure tests. Each test leaves a visible trace another person can inspect, question, and carry.</p>
+            <p>Every recommendation must survive four tests. The source, reasoning, and practical consequence remain visible for the client to inspect.</p>
           </header>
 
           <div className={styles.desktopExperience} aria-labelledby="standards-title">
@@ -148,7 +148,7 @@ export function Behaviours() {
                 <span>Carryable signal</span>
               </div>
 
-              <div className={styles.gateTrack} role="tablist" aria-label="Pressure-test the decision">
+              <div className={styles.gateTrack} role="tablist" aria-label="Test the decision">
                 <div className={styles.trackLine} aria-hidden="true"><i /></div>
                 <span className={styles.signalToken} aria-hidden="true"><b /></span>
                 {STANDARDS.map((standard, index) => {

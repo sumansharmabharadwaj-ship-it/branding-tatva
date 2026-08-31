@@ -56,34 +56,34 @@ type Invitation = {
 
 const INVITATIONS: Record<Situation, Invitation> = {
   default: {
-    eyebrow: "The next clear decision",
-    headline: "Bring the question taking up the most room.",
+    eyebrow: "Begin with the question you cannot settle alone",
+    headline: "Bring the brand problem that keeps returning.",
     body:
-      "One focused conversation gives the question an honest diagnosis and a clearer next move.",
-    thanks: "Thank you for giving the thinking your attention. That care is where clearer work begins.",
+      "The thirty minute call separates the visible symptom from the brand decision underneath it.",
+    thanks: "Thank you for giving the problem your attention before spending money on the wrong answer.",
     accent: "#95622D",
   },
   idea: {
-    eyebrow: "Your path · the idea is ahead of the brand",
+    eyebrow: "Your situation · the offer exists before the brand",
     headline: "Give the idea a position the market can recognise.",
     body:
-      "Bring the category or audience question. The conversation will test where the idea needs clarity first.",
+      "Bring the category or buyer question. The call tests what must be decided before naming, identity, or launch work begins.",
     thanks: "Thank you for staying with the idea long enough to ask what it truly needs.",
     accent: "#A34F35",
   },
   reposition: {
-    eyebrow: "Your path · the brand has drifted",
-    headline: "Bring the scattered pieces back to one recognisable idea.",
+    eyebrow: "Your situation · the business outgrew the brand",
+    headline: "Find which meaning no longer fits the business.",
     body:
-      "Bring the contradiction causing the most friction. The conversation will identify the clearest place to begin.",
-    thanks: "Thank you for looking at the drift honestly. That is where coherence begins.",
+      "Bring the contradiction buyers keep encountering. The call tests whether the position, message, identity, or consistency should change first.",
+    thanks: "Thank you for looking at the mismatch before covering it with new design.",
     accent: "#66724D",
   },
   ongoing: {
-    eyebrow: "Your path · consistency needs a stronger centre",
-    headline: "Give every channel one idea to return to.",
+    eyebrow: "Your situation · every channel is becoming its own brand",
+    headline: "Stop returning every brand choice to the founder.",
     body:
-      "Bring the channel or campaign creating the most drift. The conversation will surface the first rule worth defining.",
+      "Bring the channel or campaign that needs the most correction. The call looks for the first written rule that would reduce the rework.",
     thanks: "Thank you for caring about the pattern, not only the next campaign.",
     accent: "#9B681D",
   },
@@ -303,7 +303,7 @@ export function FinalInvitation() {
                   ease: [0.22, 1, 0.36, 1],
                 }}
               />
-              <ol role="tablist" aria-label="Explore the diagnosis conversation">
+              <ol role="tablist" aria-label="Choose a stage of the diagnosis conversation">
                 {consultation.steps.map((step, index) => (
                   <motion.li
                     key={step}

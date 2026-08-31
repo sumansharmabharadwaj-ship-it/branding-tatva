@@ -60,9 +60,9 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
           <Reveal className="mx-auto max-w-2xl text-center">
             {intro ?? (
               <>
-                <p className="text-xs uppercase tracking-[0.3em] text-ivory/50">Let&apos;s talk</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-ivory/50">When the brand stops keeping up</p>
                 <h2 className="mt-2 font-display text-2xl font-normal leading-tight text-ivory sm:text-3xl">
-                  Every brand is visible. Let&apos;s make yours unforgettable.
+                  If the business has outgrown the brand, let&apos;s find where the gap begins.
                 </h2>
               </>
             )}
@@ -86,7 +86,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
               <div>
                 <Logo light className="scale-90 origin-left" />
                 <p className="mt-3 text-sm text-ivory/80">
-                  A solo practice. Every project led directly by Suman, start to finish.
+                  A solo practice. Suman leads the thinking, writing, and direction from the first question through delivery.
                 </p>
               </div>
             </div>

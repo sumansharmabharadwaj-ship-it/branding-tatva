@@ -177,9 +177,9 @@ const inputClass =
 let rippleId = 0;
 
 const SUCCESS_STEPS = [
-  ["01", "Received", "Your enquiry is in."],
+  ["01", "Delivered", "Your enquiry is in."],
   ["02", "Read personally", "Suman reviews the note."],
-  ["03", "Reply", "A response arrives by email."],
+  ["03", "Reply", "Suman responds by email."],
 ] as const;
 
 const FORM_FIELD_ORDER: ReadonlyArray<{
@@ -289,10 +289,10 @@ export function ContactForm() {
   const completedDetails = requiredDetailChecks.filter(Boolean).length;
   const completionLabel =
     completedDetails === 3
-      ? "Ready when you are"
+      ? "Required details complete"
       : completedDetails > 0
-        ? `${completedDetails} of 3 ready`
-        : "Three details to begin";
+        ? `${completedDetails} of 3 required details complete`
+        : "Three required details";
   const invalidFields = FORM_FIELD_ORDER.filter(({ name }) => Boolean(errors[name]));
   const firstInvalidField = invalidFields[0];
   const showValidationRecovery = submitCount > 0 && invalidFields.length > 0 && status !== "error";
@@ -408,7 +408,7 @@ export function ContactForm() {
         const message =
           data && typeof data === "object" && "error" in data && typeof data.error === "string"
             ? data.error
-            : "The server returned no delivery confirmation. Try once more.";
+            : "The server returned no delivery confirmation. Send the note once more.";
         track("contact_form_delivery_failed", {
           source: "contact_form",
           reason: "server",
@@ -447,8 +447,8 @@ export function ContactForm() {
       });
       setServerError(
         timedOut
-          ? "No delivery confirmation arrived within fifteen seconds. Try once more or email Suman directly."
-          : "No delivery confirmation came back. Check your connection, then try once more.",
+          ? "No delivery confirmation arrived within fifteen seconds. Send the note once more or email Suman directly."
+          : "No delivery confirmation came back. Check your connection, then send the note once more.",
       );
       setServerRequestId(null);
       setStatus("error");
@@ -738,13 +738,13 @@ export function ContactForm() {
           >
             <span className="min-w-0 flex-1">
               <span className="block text-[0.6rem] font-medium uppercase tracking-[0.18em] text-soil/45">
-                Brought into this note
+                Selected engagement
               </span>
               <strong className="mt-1 block font-display text-lg font-normal leading-tight text-clay">
                 {selectedPackage.name}
               </strong>
               <span className="mt-1.5 block text-xs leading-relaxed text-soil/58">
-                This stays with your note and booking links. Your question can still point elsewhere.
+                This appears with your note and booking links. Remove it if the enquiry has changed.
               </span>
             </span>
             <button
@@ -947,7 +947,7 @@ export function ContactForm() {
                 <fieldset className="space-y-5 border-t border-soil/10 pt-5">
                   <legend className="sr-only">Scope and timing</legend>
                   <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
-                    <input maxLength={CONTACT_DRAFT_LIMITS.servicesNeeded} className={inputClass} {...register("servicesNeeded")} placeholder="A rough idea is fine" />
+                    <input maxLength={CONTACT_DRAFT_LIMITS.servicesNeeded} className={inputClass} {...register("servicesNeeded")} placeholder="Name the work you have in mind" />
                   </Field>
                   <div className="grid gap-5 sm:grid-cols-2">
                     <Field label="Estimated budget (optional)" error={errors.budget?.message}>

@@ -67,7 +67,7 @@ export function guardJsonRequest(
   const maxBytes = options.maxBytes ?? DEFAULT_MAX_BYTES;
   if (Number.isFinite(contentLength) && contentLength > maxBytes) {
     return jsonNoStore(
-      { error: "That submission is too large. Please shorten the message and try again." },
+      { error: "That submission is too large. Shorten the message before sending it again." },
       { status: 413 },
     );
   }
@@ -88,7 +88,7 @@ export function guardJsonRequest(
   if (current.count >= limit) {
     const retryAfter = Math.max(1, Math.ceil((current.resetAt - now) / 1000));
     return jsonNoStore(
-      { error: "Too many attempts. Please wait a little before trying again." },
+      { error: "Several requests arrived from this connection. Wait fifteen minutes before sending another." },
       { status: 429, headers: { "Retry-After": String(retryAfter) } },
     );
   }
@@ -107,7 +107,7 @@ export async function readJsonBody(
   maxBytes = DEFAULT_MAX_BYTES,
 ): Promise<JsonBodyResult> {
   if (!request.body) {
-    return { ok: false, status: 400, error: "Invalid submission." };
+    return { ok: false, status: 400, error: "The server could not read the form data." };
   }
 
   const reader = request.body.getReader();
@@ -125,13 +125,13 @@ export async function readJsonBody(
         return {
           ok: false,
           status: 413,
-          error: "That submission is too large. Please shorten the message and try again.",
+          error: "That submission is too large. Shorten the message before sending it again.",
         };
       }
       chunks.push(value);
     }
   } catch {
-    return { ok: false, status: 400, error: "Invalid submission." };
+    return { ok: false, status: 400, error: "The server could not read the form data." };
   } finally {
     reader.releaseLock();
   }
@@ -146,7 +146,7 @@ export async function readJsonBody(
   try {
     return { ok: true, value: JSON.parse(new TextDecoder().decode(body)) };
   } catch {
-    return { ok: false, status: 400, error: "Invalid submission." };
+    return { ok: false, status: 400, error: "The server could not read the form data." };
   }
 }
 

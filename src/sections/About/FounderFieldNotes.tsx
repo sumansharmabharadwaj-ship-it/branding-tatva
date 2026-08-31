@@ -21,11 +21,11 @@ const FIELDS = [
     field: "Psychology",
     credential: credentials[0].label,
     source: credentials[0].detail,
-    record: "Clinical and counselling internships · 90 documented training hours · 2021–22",
+    record: "Clinical and counselling internships · 90 documented training hours · 2021 to 2022",
     instinct: "Read the tension beneath the first answer.",
     application:
       "Audience inquiry begins with attention, context, hesitation, and the patterns people repeat before a positioning decision is made.",
-    result: "Human signal",
+    result: "Observed tension",
     icon: Brain,
   },
   {
@@ -38,7 +38,7 @@ const FIELDS = [
     instinct: "Give a complex idea language people can hold.",
     application:
       "Positioning becomes a message hierarchy, verbal character, and set of phrases a team can understand and repeat.",
-    result: "Verbal signal",
+    result: "Usable language",
     icon: BookOpenText,
   },
   {
@@ -51,7 +51,7 @@ const FIELDS = [
     instinct: "Direct attention through sequence, focus, and restraint.",
     application:
       "Creative direction gives image, rhythm, composition, and campaign formats a shared strategic reason.",
-    result: "Visual signal",
+    result: "Directed attention",
     icon: Clapperboard,
   },
   {
@@ -59,12 +59,12 @@ const FIELDS = [
     verb: "Decide",
     field: "Brand strategy",
     credential: "Branding Tatva",
-    source: "Founder-led brand strategy practice",
-    record: "One strategic thread from the first question to the usable system",
+    source: "Brand strategy practice led directly by Suman",
+    record: "The same strategist follows the work from the first question to the final rules",
     instinct: "Join observation, language, and focus into one choice.",
     application:
       "The practice finds a credible position, gives it language and form, then builds the rules that help recognition compound.",
-    result: "Brand signal",
+    result: "Brand decision",
     icon: Compass,
   },
 ] as const;
@@ -142,16 +142,16 @@ export function FounderFieldNotes() {
       <div className={styles.sticky}>
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>Formative fields · verified record</p>
+            <p className={styles.eyebrow}>Training and practice</p>
             <h2 id="founder-origin-title">
-              Three disciplines trained the same instinct: <em>find what matters, then make it clear.</em>
+              Three disciplines trained the same habit: <em>notice precisely, then name what matters.</em>
             </h2>
           </div>
           <div className={styles.headerAside}>
             <p>
-              Psychology sharpened observation. Literature sharpened language. Film sharpened
-              attention. The combination matters when a founder is beginning, an existing brand
-              feels difficult to explain, or recognition needs steadier continuity.
+              Psychology trained observation. Literature trained language. Film trained attention.
+              I use all three when a founder is beginning, a capable business is difficult to
+              explain, or every channel has started to sound different.
             </p>
             <p className={styles.stageReadout}>
               <span>{active.verb}</span>
@@ -161,7 +161,7 @@ export function FounderFieldNotes() {
         </header>
 
         <div className={styles.desktopComposition}>
-          <ol className={styles.fieldRail} role="tablist" aria-label="Explore Suman Sharma's formative fields">
+          <ol className={styles.fieldRail} role="tablist" aria-label="Choose one of Suman Sharma's formative fields">
             {FIELDS.map((field, index) => {
               const Icon = field.icon;
               const selected = activeIndex === index;
@@ -252,7 +252,7 @@ export function FounderFieldNotes() {
             >
               <Compass size={15} />
               <span>Three trained lenses</span>
-              <strong>One founder-led practice</strong>
+              <strong>One practice led directly by Suman</strong>
             </motion.div>
           </div>
 
@@ -302,7 +302,7 @@ export function FounderFieldNotes() {
           <figure className={styles.mobilePortrait}>
             <Image
               src="/images/suman-sharma-studio-portrait.webp"
-              alt="Black-and-white studio portrait of Suman Sharma"
+              alt="Black and white studio portrait of Suman Sharma"
               fill
               sizes="40rem"
               className={styles.portraitImage}
@@ -332,7 +332,7 @@ export function FounderFieldNotes() {
             <div>
               <small>Branding Tatva</small>
               <strong>Psychology notices. Literature names. Film frames. Strategy decides.</strong>
-              <p>Three trained lenses now work as one founder-led practice.</p>
+              <p>Three trained lenses now guide one practice led directly by Suman.</p>
             </div>
           </div>
         </div>

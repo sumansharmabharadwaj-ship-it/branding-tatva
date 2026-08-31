@@ -34,30 +34,30 @@ type InsightsFieldNotesResolutionProps = {
 };
 
 const DEFAULT_RESOLUTION: FieldNotesResolution = {
-  headline: "Keep the next brand decision close. Each note earns its place.",
+  headline: "Occasional letters for the brand question currently on your desk.",
   description:
-    "A single question, one practical lens, and a focused next move—sent when a new essay can carry real weight.",
+    "Each email examines a specific founder problem, shows the evidence or framework, and ends with a decision to test. Sent only when there is something worth reading.",
   evidenceHeadline:
-    "The evidence has settled into one working thread. Keep the next decision close.",
+    "You marked a brand problem. Future letters can help you investigate it.",
   evidenceDescription:
-    "The route now carries one question, one practical lens, and a focused move into the next field note.",
+    "Your selected area stays attached to the signup so the reading can continue from the question you just marked.",
   cadence: [
-    "A tension worth examining",
-    "Evidence or framework to use",
-    "A focused action to test",
+    "A founder problem worth examining",
+    "Evidence or a framework to use",
+    "A decision to test in the business",
   ],
 };
 
 const RESOLUTIONS: Record<string, FieldNotesResolution> = {
   positioning: {
     headline:
-      "Keep the next positioning decision close. Let evidence finish the comparison.",
+      "When buyers compare on price, examine the comparison itself.",
     description:
-      "The question you chose can keep moving: one buyer-language lens, one focused test, and a new essay only when it adds real weight.",
+      "Expect buyer language, category evidence, and a decision you can test before changing the offer or price.",
     evidenceHeadline:
-      "Your positioning evidence has found the comparison worth testing.",
+      "You marked positioning as the comparison worth testing.",
     evidenceDescription:
-      "Buyer language and category choice now travel as one thread: a sharp question, a usable lens, and one decision to test.",
+      "Future letters can help compare buyer language, category choice, and the position the business can prove.",
     cadence: [
       "A comparison worth testing",
       "Buyer language and choice",
@@ -66,13 +66,13 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
   },
   "customer-experience": {
     headline:
-      "Keep the next confidence decision close. Follow where the experience changes.",
+      "When buyers hesitate, follow the moment confidence changes.",
     description:
-      "The hesitation you noticed can become a useful trail: one experience lens, one focused test, and a new essay when fresh evidence earns attention.",
+      "Expect a specific experience question, evidence from the handoff, and one friction point worth testing.",
     evidenceHeadline:
-      "Your experience evidence has found the confidence seam.",
+      "You marked experience as the place confidence may break.",
     evidenceDescription:
-      "Promise and experience now travel together: one confidence gap, one friction lens, and a focused point to test.",
+      "Future letters can help compare the promise buyers hear with the experience they actually receive.",
     cadence: [
       "A confidence gap to trace",
       "Promise beside experience",
@@ -81,43 +81,43 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
   },
   "distinctive-brand": {
     headline:
-      "Keep the next recognition decision close. Repeat the cue that travels.",
+      "When the brand looks interchangeable, test which cue buyers remember.",
     description:
-      "The recognition gap can keep sharpening: one distinctive-cue lens, one focused test, and a new essay when it strengthens memory.",
+      "Expect a recognition question, a cue to test without the logo, and evidence about what buyers remember.",
     evidenceHeadline:
-      "Your recognition evidence has found the cue worth repeating.",
+      "You marked identity as the place recognition may fail.",
     evidenceDescription:
-      "Recognition now has a working route: one memory gap, one distinctive-cue lens, and a signal ready to repeat.",
+      "Future letters can help identify the colours, shapes, language, or behaviours worth repeating.",
     cadence: [
       "A recognition gap to see",
       "Cues before the logo",
-      "One signal to repeat",
+      "One cue to repeat",
     ],
   },
   "brand-messaging": {
     headline:
-      "Keep the next messaging decision close. Sharpen the reason to choose.",
+      "When the founder explains value better than the website, inspect the message order.",
     description:
-      "The language tension can keep working: one message-hierarchy lens, one focused test, and a new essay when it makes the choice clearer.",
+      "Expect sales language, recurring objections, and a claim you can test before rewriting every page.",
     evidenceHeadline:
-      "Your messaging evidence has found the claim worth sharpening.",
+      "You marked messaging as the claim worth testing.",
     evidenceDescription:
-      "Buyer language and recurring objections now travel as one thread: a choice reason, a hierarchy lens, and one claim to test.",
+      "Future letters can help compare buyer language, recurring objections, and the strongest reason to choose.",
     cadence: [
-      "A choice reason to clarify",
+      "A reason to choose",
       "Sales language and objections",
       "One claim to sharpen",
     ],
   },
   "brand-memory": {
     headline:
-      "Keep the next memory decision close. Let repetition build recognition.",
+      "When publishing grows but recall stays weak, inspect what keeps changing.",
     description:
-      "The recall question can keep travelling: one repetition lens, one focused test, and a new essay when it helps the right cue stay.",
+      "Expect a memory question, evidence about repeated cues, and a decision about what deserves to return.",
     evidenceHeadline:
-      "Your memory evidence has found the cue worth reinforcing.",
+      "You marked memory as the cue worth reinforcing.",
     evidenceDescription:
-      "Recall and repetition now travel together: one memory gap, one reach lens, and a cue ready to reinforce.",
+      "Future letters can help compare reach, repetition, and the cues buyers recall without prompting.",
     cadence: [
       "A recall gap to inspect",
       "Repeated cues and reach",
@@ -181,10 +181,10 @@ export function InsightsFieldNotesResolution({
       ? "carried"
       : "open";
   const readerThreadLabel = isEvidenceThread
-    ? `Working thread · ${readerIntent.label}`
+    ? `Worksheet topic · ${readerIntent.label}`
     : selectedPath
-      ? `Your thread · ${selectedPath.name}`
-      : "Notes worth keeping";
+      ? `Selected topic · ${selectedPath.name}`
+      : "Occasional letters";
   const resolvedHeadline = isEvidenceThread
     ? resolution.evidenceHeadline
     : resolution.headline;
@@ -240,21 +240,21 @@ export function InsightsFieldNotesResolution({
             </p>
             <ol
               className="insights-notes-scene__cadence"
-              aria-label="What each field note contains"
+              aria-label="What each letter contains"
             >
               <li>
                 <span>01</span>
-                <strong>Question</strong>
+                <strong>Problem</strong>
                 <small>{resolution.cadence[0]}</small>
               </li>
               <li>
                 <span>02</span>
-                <strong>Lens</strong>
+                <strong>Evidence</strong>
                 <small>{resolution.cadence[1]}</small>
               </li>
               <li>
                 <span>03</span>
-                <strong>Move</strong>
+                <strong>Decision</strong>
                 <small>{resolution.cadence[2]}</small>
               </li>
             </ol>
@@ -290,8 +290,8 @@ export function InsightsFieldNotesResolution({
                 strokeWidth={1.35}
               />
               <span>
-                <small>Thread ready</small>
-                <strong>{selectedPath.name} is ready to continue.</strong>
+                <small>Topic saved</small>
+                <strong>{selectedPath.name} will stay attached to this request.</strong>
               </span>
               <Check aria-hidden="true" />
             </motion.div>

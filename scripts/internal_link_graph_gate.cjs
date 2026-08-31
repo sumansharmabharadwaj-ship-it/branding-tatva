@@ -7,6 +7,14 @@ const ROOT = path.resolve(__dirname, "..");
 const read = (file) => fs.readFileSync(path.join(ROOT, file), "utf8");
 const failures = [];
 
+function walk(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const absolute = path.join(directory, entry.name);
+    if (entry.isDirectory()) return walk(absolute);
+    return entry.name.endsWith(".ts") ? [absolute] : [];
+  });
+}
+
 function expect(file, label, pattern) {
   const source = read(file);
   if (!pattern.test(source)) failures.push(`${file}: missing ${label}`);
@@ -52,7 +60,26 @@ expect("src/app/insights/topic/[topic]/page.tsx", "contextual adjacent topics", 
 expect("src/app/services/page.tsx", "remote US, UK and India metadata", /service businesses in the US, UK and India/);
 expect("src/app/services/page.tsx", "shared service area fact source", /REMOTE_SERVICE_AREAS\s*=\s*entityFacts\.delivery\.regions/);
 expect("src/app/services/page.tsx", "service area structured data", /areaServed:\s*REMOTE_SERVICE_AREAS/);
-expect("src/sections/Services/StrategyRoomCTA.tsx", "visible remote region copy", /Founder-led remote projects are available across/);
+expect("src/sections/Services/StrategyRoomCTA.tsx", "visible remote region copy", /Remote projects led directly by Suman are available across/);
+expect("src/app/glossary/[term]/page.tsx", "current insights source", /getInsightBySlug/);
+
+const glossarySource = read("src/data/glossary.ts");
+const glossaryArticleSlugs = [
+  ...glossarySource.matchAll(/articleSlug:\s*["'`]([^"'`]+)["'`]/g),
+].map((match) => match[1]);
+const insightSlugs = new Set(
+  walk(path.join(ROOT, "src/data"))
+    .filter((file) => !/[\\/](?:blog|glossary)\.ts$/.test(file))
+    .flatMap((file) => [
+      ...fs.readFileSync(file, "utf8").matchAll(/slug:\s*["'`]([^"'`]+)["'`]/g),
+    ].map((match) => match[1])),
+);
+
+for (const articleSlug of glossaryArticleSlugs) {
+  if (!insightSlugs.has(articleSlug)) {
+    failures.push(`src/data/glossary.ts: ${articleSlug} does not resolve to a current insight`);
+  }
+}
 
 for (const doorwayPath of [
   "src/app/brand-strategy/us/page.tsx",

@@ -90,9 +90,9 @@ export type ServicesRecognitionAuditDetail = {
 
 export function recognitionAuditGuidance(score: number, total: number) {
   if (score === 0) return "Mark each statement that already holds.";
-  if (score < Math.ceil(total * 0.5)) return "Recognition is leaking through more than one signal.";
-  if (score < total) return "A usable pattern is forming; the remaining gaps are specific.";
-  return total > 5 ? "All ten signals are working together." : "The open signals are coherent. Five deeper checks remain.";
+  if (score < Math.ceil(total * 0.5)) return "Buyers are being asked to learn several versions of the brand.";
+  if (score < total) return "Some recognition cues repeat; the unchecked answers show where memory breaks.";
+  return total > 5 ? "All ten answers currently hold." : "The first five answers hold. Five further questions remain.";
 }
 
 export function publishServicesRecognitionAudit(score: number, total: number) {

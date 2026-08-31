@@ -37,7 +37,7 @@ export const contactSchema = z.object({
   email: z
     .string()
     .trim()
-    .email("That looks like it might have a typo, mind checking it?")
+    .email("Check the email address. One character may be out of place.")
     .max(254),
   phone: z.string().trim().max(60).optional(),
   business: z.string().trim().max(160).optional(),

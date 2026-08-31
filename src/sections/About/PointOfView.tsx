@@ -23,7 +23,7 @@ const STAGES = [
     question: "What are people assuming this brand is?",
     decision: "Reset the frame before adding persuasion.",
     proof:
-      "HerbalCart shifted from an inherited herbal frame toward modern, supplement-first wellness.",
+      "HerbalCart shifted from an inherited herbal frame toward modern wellness led by supplements.",
     recordType: "Documented perception reset",
     project: "HerbalCart",
     slug: "herbalcart",
@@ -41,7 +41,7 @@ const STAGES = [
     question: "Which words are carrying the advantage?",
     decision: "Choose the value frame before writing the campaign.",
     proof:
-      "MyShopInEurope built its position around craft and origin, ahead of price-led marketplace language.",
+      "MyShopInEurope built its position around craft and origin instead of marketplace language led by price.",
     recordType: "Documented brand foundation",
     project: "MyShopInEurope",
     slug: "myshopineurope",
@@ -55,18 +55,18 @@ const STAGES = [
     number: "03",
     verb: "Return",
     lens: "Memory",
-    claim: "Repetition turns a clear choice into a familiar pattern.",
+    claim: "Repetition turns a deliberate choice into a familiar pattern.",
     question: "Which useful idea deserves to return?",
-    decision: "Protect the signal from constant reinvention.",
+    decision: "Protect the useful idea from constant reinvention.",
     proof:
       "Dr. Haley Nutrition posted 48% less and earned 104% more followers per post.",
-    recordType: "Measured performance · Dec 2025–Jan 2026",
+    recordType: "Measured performance · December 2025 to January 2026",
     project: "Dr. Haley Nutrition",
     slug: "dr-haley-nutrition",
     image: "/images/card-dr-haley-nutrition-poster.jpg",
     imagePosition: "50% 50%",
-    from: "Volume-first cadence",
-    to: "Quality-first pattern",
+    from: "Cadence led by volume",
+    to: "Pattern led by quality",
     icon: Repeat2,
   },
 ] as const;
@@ -148,19 +148,19 @@ export function PointOfView() {
         <section className={styles.root} aria-labelledby="philosophy-title">
           <header className={styles.header}>
             <div>
-              <p className={styles.eyebrow}>Point of view · the recognition camera</p>
+              <p className={styles.eyebrow}>How buyers form a brand impression</p>
               <h2 id="philosophy-title">
-                A brand enters the mind in an order: <em>category, value, memory.</em>
+                Buyers meet a brand in three movements: <em>place it, value it, remember it.</em>
               </h2>
             </div>
             <p>
-              Buyers place what they see, interpret what it means, then recognise what returns.
-              Brand strategy gives that sequence one deliberate signal.
+              Buyers first decide what kind of business they are looking at. Then they weigh its
+              value. What repeats is what they remember.
             </p>
           </header>
 
           <div className={styles.interactiveExperience}>
-            <ol className={styles.stageRail} role="tablist" aria-label="Explore the recognition sequence">
+            <ol className={styles.stageRail} role="tablist" aria-label="Choose a stage in the recognition sequence">
               {STAGES.map((stage, index) => {
                 const Icon = stage.icon;
                 const selected = activeIndex === index;

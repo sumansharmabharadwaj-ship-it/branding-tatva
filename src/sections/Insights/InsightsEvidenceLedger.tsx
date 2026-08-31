@@ -173,11 +173,11 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const markedRoute =
     markedCount === 2
       ? markedLayers.map((layer) => layer.name).join(" + ")
-      : `the ${markedCount} marked layers`;
+      : `the ${markedCount} marked areas`;
   const primaryDetail = showsSynthesis
     ? markedCount === 1
       ? `${focusedLayer.name} opens the first route. ${focusedLayer.signal}`
-      : `Read ${markedRoute} as one connected buyer journey; evidence can reveal where confidence changes.`
+      : `Read ${markedRoute} as one connected buyer experience; the evidence can show where confidence changes.`
     : focusedIsCarried
       ? `${focusedLayer.name} may be where confidence changes. ${focusedLayer.signal}`
       : focusedLayer.signal;
@@ -189,11 +189,11 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const statusLabel =
     markedCount === 0
       ? intentLayer
-        ? `${intentLayer.name} enters as the first hypothesis`
-        : `${layers.length} ${layers.length === 1 ? "layer remains" : "layers remain"} open`
+        ? `${intentLayer.name} is the first question to test`
+        : `${layers.length} ${layers.length === 1 ? "area remains" : "areas remain"} open`
       : markedCount === 1
-        ? `${markedLayers[0]?.name ?? "One layer"} opens the first route`
-        : `${markedCount} layers form one working route`;
+        ? `${markedLayers[0]?.name ?? "The first area"} is marked for review`
+        : `${markedCount} areas are marked for review`;
   const latestMarkedSlug = markedSlugs[markedSlugs.length - 1];
   const latestMarkedLayer = latestMarkedSlug
     ? layers.find((layer) => layer.slug === latestMarkedSlug)
@@ -212,15 +212,15 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       ? "carried"
       : "open";
   const actionTitle = latestMarkedLayer
-    ? `This evidence route points to ${latestMarkedLayer.service.name}.`
+    ? `The evidence suggests ${latestMarkedLayer.service.name}.`
     : intentLayer
-      ? `Test ${intentLayer.name.toLowerCase()} as the first confidence seam.`
-      : "Mark one layer to turn concern into a working route.";
+      ? `Test ${intentLayer.name.toLowerCase()} as the first place confidence changes.`
+      : "Mark the area where buyer confidence changes first.";
   const actionDetail = latestMarkedLayer
     ? latestMarkedLayer.service.frame
     : intentLayer
-      ? `${intentLayer.move} The first mark turns this reading thread into a committed evidence route.`
-      : "Choose the place where buyer confidence changes. The full checklist remains available when you need the complete sequence.";
+      ? `${intentLayer.move} Mark it when the question deserves a place in the worksheet.`
+      : "Choose the place where buyer confidence changes. The full checklist remains available for a deeper review.";
 
   function toggleLayer(slug: string, index: number) {
     const selectedLayer = layers[index];
@@ -352,7 +352,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         data-threaded={Boolean(threadLayer)}
       >
         <div className="insights-evidence-ledger__status">
-          <span>Working brief</span>
+          <span>Audit worksheet</span>
           <strong aria-live="polite">{statusLabel}</strong>
           <i aria-hidden="true">
             <span />
@@ -362,7 +362,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         <ol
           ref={layerRailRef}
           className="insights-evidence-ledger__layers"
-          aria-label="Evidence layers to review"
+          aria-label="Brand areas to review"
           onBlur={(event) => {
             const nextTarget = event.relatedTarget;
             if (
@@ -465,7 +465,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                   strokeWidth={1.35}
                 />
                 <span>
-                  <small>Layer 0{focusedIndex + 1}</small>
+                  <small>Area 0{focusedIndex + 1}</small>
                   <strong>{focusedLayer.name}</strong>
                 </span>
                 <em>{focusedStateLabel}</em>
@@ -475,7 +475,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                   <span>
                     {showsWorkingHypothesis
                       ? "Working hypothesis"
-                      : "Signal to investigate"}
+                      : "Problem to investigate"}
                   </span>
                   {primaryDetail}
                 </p>
@@ -502,10 +502,10 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
           <div className="insights-evidence-ledger__bridge-copy" aria-live="polite">
             <span>
               {latestMarkedLayer
-                ? `Evidence thread · ${latestMarkedLayer.name}`
+                ? `Worksheet answer · ${latestMarkedLayer.name}`
                 : intentLayer
-                  ? `Reading thread · ${readerIntent?.label ?? intentLayer.name}`
-                  : "Apply this idea"}
+                  ? `Reading topic · ${readerIntent?.label ?? intentLayer.name}`
+                  : "Start a brand check"}
             </span>
             <strong>{actionTitle}</strong>
             <p>{actionDetail}</p>
@@ -536,7 +536,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                   reader_path: readerIntent?.topicSlug ?? "none",
                 }}
               >
-                See where {latestMarkedLayer.service.name} fits
+                Inspect {latestMarkedLayer.service.name}
                 <ArrowUpRight aria-hidden="true" />
               </TrackedLink>
             ) : null}

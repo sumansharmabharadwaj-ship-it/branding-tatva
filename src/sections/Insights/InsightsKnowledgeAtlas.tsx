@@ -355,7 +355,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                 className="h-4 w-4"
                 strokeWidth={1.35}
               />
-              <small>Mirror held · {carriedPath.name}</small>
+              <small>Problem selected · {carriedPath.name}</small>
             </>
           ) : null}
         </span>
@@ -380,15 +380,15 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       <Container className="insights-atlas__container">
         <header className="insights-atlas__header">
           <div>
-            <p className="insights-atlas__eyebrow">Knowledge atlas</p>
+            <p className="insights-atlas__eyebrow">Topic map</p>
             <h2 id="insights-atlas-title">
-              Trace the decision beneath the visible brand problem.
+              Follow the visible problem to the decision underneath it.
             </h2>
           </div>
           <p>
             {carriedPath
-              ? `${carriedPath.name} is now the active thread. The atlas gathers its sharpest questions, evidence, and useful next reads in one frame.`
-              : "Five connected paths turn a vague concern into a sharper question, then carry that question into essays and working frameworks."}
+              ? `${carriedPath.name} is selected. Its questions, evidence, essays, and relevant engagement are gathered here.`
+              : "Five topics connect common founder concerns to sharper questions, evidence, essays, and relevant client work."}
           </p>
         </header>
 
@@ -544,7 +544,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   </div>
 
                   <div>
-                    <p className="insights-atlas__label">Recent field notes</p>
+                    <p className="insights-atlas__label">Recent essays</p>
                     <div className="insights-atlas__articles">
                       {activePath.articles.map((article, articleIndex) => (
                         <TrackedLink
@@ -577,7 +577,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                     <strong>{activePath.proof.title}</strong>
                     <p>{activePath.proof.frame}</p>
                     <span>
-                      See the decision trail
+                      Open the project record
                       <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                     </span>
                   </Link>
@@ -585,11 +585,11 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                     href={`/services#package-${activePath.service.slug}`}
                     onClick={() => carryPath(activeIndex)}
                   >
-                    <small>Strategy path</small>
+                    <small>Matching engagement</small>
                     <strong>{activePath.service.name}</strong>
                     <p>{activePath.service.frame}</p>
                     <span>
-                      Explore the engagement
+                      Inspect the engagement
                       <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                     </span>
                   </Link>
@@ -600,7 +600,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   className="insights-atlas__cta"
                   onClick={() => carryPath(activeIndex)}
                 >
-                  Explore {activePath.name.toLowerCase()}
+                  Read all {activePath.name.toLowerCase()} essays
                   <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                 </Link>
             </motion.article>

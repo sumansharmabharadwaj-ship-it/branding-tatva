@@ -8,7 +8,7 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { allTerms, findTerm } from "@/data/glossary";
-import { blogPosts } from "@/data/blog";
+import { getInsightBySlug } from "@/data/insights";
 import { site } from "@/data/site";
 
 // One glossary term per route (bible §13: "glossary pages that link
@@ -40,7 +40,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
 
   const siblings = entry.pillar.terms.filter((t) => t.slug !== entry.slug);
   const article = entry.pillar.articleSlug
-    ? blogPosts.find((p) => p.slug === entry.pillar.articleSlug)
+    ? getInsightBySlug(entry.pillar.articleSlug)
     : undefined;
 
   const schema = {
@@ -122,7 +122,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             <Reveal>
               <div className="mt-10 border-l-2 border-clay/60 pl-5">
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
-                  In this practice
+                  How Branding Tatva uses it
                 </p>
                 <p className="mt-2 text-base leading-relaxed text-foreground-secondary">{entry.practice}</p>
               </div>
@@ -131,7 +131,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             <Reveal>
               <div className="mt-12 border-t border-border pt-8">
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
-                  Questions this pillar answers
+                  Decisions it helps you make
                 </p>
                 <ul className="mt-3 space-y-2">
                   {entry.pillar.questions.map((q) => (
@@ -143,14 +143,14 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                 <div className="mt-6 flex flex-col gap-2 text-sm">
                   {article && (
                     <Link href={`/insights/${article.slug}`} className="link-underline inline-flex items-center gap-2 text-clay">
-                      Read: {article.title} <span aria-hidden="true">→</span>
+                      Read Suman&apos;s guide: {article.title} <span aria-hidden="true">→</span>
                     </Link>
                   )}
                   <Link href="/services#offerings" className="link-underline inline-flex items-center gap-2 text-clay">
-                    The service paths that apply this <span aria-hidden="true">→</span>
+                    See how Suman handles this decision <span aria-hidden="true">→</span>
                   </Link>
                   <Link href="/services#proof" className="link-underline inline-flex items-center gap-2 text-clay">
-                    The client proof behind these decisions <span aria-hidden="true">→</span>
+                    Read the project evidence <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </div>

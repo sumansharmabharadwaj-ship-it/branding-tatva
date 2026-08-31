@@ -37,20 +37,20 @@ const PAIRINGS = [
     language: "Narrative",
     result: "Recognition",
     coreLine: "A structure the audience can meet again.",
-    explanation: "A coherent story gives the same strategic signal a structure worth remembering.",
+    explanation: "A recognisable story gives the same idea a structure worth remembering.",
   },
   {
     human: "Choice",
     language: "Tone",
     result: "Confidence",
     coreLine: "Language that makes the next choice feel credible.",
-    explanation: "The right verbal character makes the next decision feel clear, credible, and possible.",
+    explanation: "The right verbal character makes the next decision feel credible and possible.",
   },
 ] as const;
 
 const OUTPUTS = [
   { label: "Positioning", line: "What the brand should mean in the market." },
-  { label: "Language", line: "How that meaning becomes clear and repeatable." },
+  { label: "Language", line: "How that meaning becomes specific and repeatable." },
   { label: "Recognition", line: "What stays consistent enough to become familiar." },
 ] as const;
 
@@ -58,7 +58,7 @@ const STAGES = [
   {
     number: "01",
     label: "Read",
-    cue: "Hold the human signal and the language separately long enough to see both clearly.",
+    cue: "Study the human behaviour and the language separately before connecting them.",
     centreLabel: "Business tension",
     centreLine: "Read what is really happening.",
   },
@@ -72,9 +72,9 @@ const STAGES = [
   {
     number: "03",
     label: "Carry",
-    cue: "Resolve the connections into one strategic signal the brand can keep using.",
-    centreLabel: "Brand signal",
-    centreLine: "One idea, clear enough to carry.",
+    cue: "Resolve the connections into a position the brand can keep using.",
+    centreLabel: "Brand position",
+    centreLine: "The idea the whole brand can carry.",
   },
 ] as const;
 
@@ -150,9 +150,9 @@ export function Convergence() {
       <div className={styles.shell}>
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>The synthesis · from observation to signal</p>
+            <p className={styles.eyebrow}>How the method works</p>
             <h2 id="convergence-title">
-              Two disciplines meet inside <em>one brand decision.</em>
+              Psychology finds the tension. <em>Literature gives it language.</em>
             </h2>
           </div>
           <div className={styles.headerAside}>
@@ -316,14 +316,14 @@ export function Convergence() {
             ))}
           </ol>
           <div className={styles.mobileResolution}>
-            <small>One usable brand signal</small>
+            <small>What the business can use</small>
             <ul>{OUTPUTS.map((output) => <li key={output.label}>{output.label}</li>)}</ul>
-            <Link href="/services#proof">See the synthesis applied <ArrowRight size={14} aria-hidden="true" /></Link>
+            <Link href="/services#proof">Inspect a client record <ArrowRight size={14} aria-hidden="true" /></Link>
           </div>
         </div>
 
         <footer className={styles.footer}>
-          <div className={styles.tabs} role="tablist" aria-label="Explore how the disciplines combine">
+          <div className={styles.tabs} role="tablist" aria-label="Choose a discipline combination">
             {STAGES.map((item, index) => {
               const selected = stage === index;
               return (
@@ -351,7 +351,7 @@ export function Convergence() {
               );
             })}
           </div>
-          <Link href="/services#proof">See the synthesis applied <ArrowRight size={14} aria-hidden="true" /></Link>
+          <Link href="/services#proof">Inspect a client record <ArrowRight size={14} aria-hidden="true" /></Link>
         </footer>
       </div>
     </section>

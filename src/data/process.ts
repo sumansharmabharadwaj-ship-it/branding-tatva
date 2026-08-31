@@ -22,7 +22,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Question",
     description:
-      "Before any framework: what does this business actually believe, and where does its own language contradict it? The real position is usually already there, buried under how it thinks it should sound.",
+      "We begin with what the business believes, what buyers currently hear, and where those two accounts disagree. The useful position is often hidden beneath language borrowed from the category.",
     element: "Air",
     video: "/videos/higgsfield-process-listen.mp4",
     poster: "/images/higgsfield-process-listen-poster.jpg",
@@ -30,7 +30,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Decode",
     description:
-      "What attention is actually doing right now: what gets read, what gets skipped, where the story stops making sense to someone outside the business. Pattern, always, over opinion.",
+      "We study what buyers notice, skip, misunderstand, and repeat. Customer language, sales friction, and competitor patterns matter more than personal preference.",
     element: "Fire",
     video: "/videos/higgsfield-process-notice.mp4",
     poster: "/images/higgsfield-process-notice-poster.jpg",
@@ -38,31 +38,31 @@ export const process: ProcessStage[] = [
   {
     stage: "Architect",
     description:
-      "Purpose, audience, and category get committed to language, the brand's own architecture, before anything else moves. Everything built after this step either compounds it or fights it.",
+      "We decide the category, priority buyer, value, and reason to believe. Those choices govern the name, message, identity, website, and content that follow.",
     element: "Earth",
     video: "/videos/higgsfield-process-ground.mp4",
     poster: "/images/higgsfield-process-ground-poster.jpg",
   },
   {
-    stage: "Signal",
+    stage: "Express",
     description:
-      "Voice, identity, and messaging take the shape the architecture demands, always built on what Architect already decided, always after it.",
+      "Voice, messaging, and creative direction turn the position into words and forms buyers can recognise across different encounters.",
     element: "Water",
     video: "/videos/higgsfield-process-shape.mp4",
     poster: "/images/higgsfield-process-shape-poster.jpg",
   },
   {
-    stage: "Influence",
+    stage: "Apply",
     description:
-      "The brand becomes something people actually encounter: the site, the content, the campaign. Strategy only counts once it reaches an audience. Anything short of that stays a deck.",
+      "The decisions move into the website, content, campaigns, proposals, and sales material. A strategy earns its value in use, not in the presentation where it was approved.",
     element: "Fire",
     video: "/videos/higgsfield-process-express.mp4",
     poster: "/images/higgsfield-process-express-poster.jpg",
   },
   {
-    stage: "Compound",
+    stage: "Repeat",
     description:
-      "Recognition accrues gradually across the months after a campaign ends, exactly where most brands already stopped paying attention.",
+      "The brand repeats the same valuable meaning without repeating the same execution. Recognition grows after the launch, while most businesses have already moved on to a new idea.",
     element: "Space",
     video: "/videos/higgsfield-process-stay.mp4",
     poster: "/images/higgsfield-process-stay-poster.jpg",

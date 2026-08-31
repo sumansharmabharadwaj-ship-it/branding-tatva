@@ -7,9 +7,9 @@ export const site = {
   heroHeadline: "Most brands are visible. Very few are remembered.",
   tagline: "Essence first. Recognition follows.",
   positioning:
-    "Branding Tatva finds the elements that make a business worth noticing, and shapes them into a brand people recognise, trust, and remember.",
+    "Branding Tatva finds the reason buyers choose a business, then gives that reason language, identity, and repetition.",
   description:
-    "Suman Sharma works directly with founders and growing businesses to shape positioning, voice, identity and the systems that turn attention into recognition.",
+    "Suman Sharma works directly with founders whose business has outgrown the words, identity, or habits representing it. Positioning, voice, identity, and content are rebuilt around the reason buyers choose.",
   url: "https://brandingtatva.com",
   email: "suman@brandingtatva.com",
   phone: {
@@ -30,16 +30,16 @@ export const site = {
 export const consultation = {
   minutes: site.consultationMinutes,
   actionLabel: `Book the ${site.consultationMinutes} minute diagnosis`,
-  preparation: "No prepared brief or deck is needed.",
+  preparation: "Bring the question as it stands. No deck is required.",
   steps: [
-    "Name the question",
-    "Receive honest feedback",
-    "Choose the clearest next step",
+    "Describe what is no longer working",
+    "Test the assumption beneath it",
+    "Leave knowing what deserves attention first",
   ],
   fullSteps: [
-    "You describe where the brand stands today.",
-    "Suman tests the question against positioning, audience, and recognition.",
-    "You receive honest feedback and the clearest next step.",
+    "You describe what has changed in the business and what the brand is failing to carry.",
+    "Suman tests the question against the buyer, the category, and the evidence already available.",
+    "You leave knowing which brand decision deserves attention before the rest.",
   ],
 } as const;
 

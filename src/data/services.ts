@@ -30,14 +30,14 @@ export const packages: Package[] = [
   {
     slug: "brand-beginning",
     name: "Foundation",
-    forWho: "For founders starting with an idea, before anything is built.",
+    forWho: "For founders with a credible offer and no settled market position.",
     price: 1850,
     billing: "one-time",
     description:
-      "The Earth work, done first: what the brand believes, who it's for, and why it matters, so nothing built afterward has to guess.",
+      "We decide what the business should mean, who should choose it, and which promise it can prove before identity or launch work begins.",
     includes: [
-      "Brand discovery & positioning workshop",
-      "Audience & purpose definition",
+      "Brand discovery and positioning workshop",
+      "Audience and purpose definition",
       "Core visual identity (logo, colour, type system)",
       "Brand guidelines starter document",
       "Launch messaging direction",
@@ -47,16 +47,16 @@ export const packages: Package[] = [
   {
     slug: "brand-clarity",
     name: "Full Brand System",
-    forWho: "For existing brands that feel unclear, inconsistent, or hard to explain in one sentence.",
+    forWho: "For established businesses whose brand no longer represents the work, value, or market they serve.",
     price: 4200,
     billing: "one-time",
     description:
-      "Everything in Foundation, plus a full audit, repositioning, and the visual direction to carry it across every channel.",
+      "We find what buyers still recognise, decide the stronger position, then rebuild the language and identity around it.",
     includes: [
       "Everything in Foundation",
-      "Full brand audit & repositioning",
-      "Voice & messaging alignment across channels",
-      "Campaign concept & visual direction",
+      "Full brand audit and repositioning",
+      "Voice and messaging rules across channels",
+      "Campaign concept and visual direction",
       "Website content structure",
       "3 months of async support",
     ],
@@ -66,15 +66,15 @@ export const packages: Package[] = [
   {
     slug: "brand-partnership",
     name: "Brand Partnership",
-    forWho: "For brands that need ongoing content, consistency, and someone watching the whole system.",
+    forWho: "For businesses whose website, content, and campaigns keep drifting into different voices.",
     price: 950,
     billing: "monthly",
     description:
-      "Recognition built month over month through sustained content and consistency work, rather than a single campaign.",
+      "I direct the brand across live work, correct drift early, and keep repeated decisions recognisable as the business moves.",
     includes: [
       "Ongoing content management",
-      "Monthly consistency review",
-      "Performance tracking & adjustment",
+      "Monthly brand review",
+      "Performance review and adjustment",
       "Priority access",
       "Quarterly strategy review",
     ],
@@ -93,33 +93,33 @@ export const packages: Package[] = [
 // operate in.
 export const offerings: Offering[] = [
   {
-    name: "Brand Strategy & Identity",
-    detail: "Positioning decided before a single pixel exists. The identity system, the actual architecture, carries that decision forward, always second, never the source of it.",
+    name: "Brand Strategy and Identity",
+    detail: "We decide the position before designing the identity. The logo, colour, type, and image direction then make that position visible.",
     color: "#B85A34", // clay
   },
   {
     name: "Content Strategy",
-    detail: "A messaging framework decided before the first post goes out. Real planning, well ahead of improvising one caption at a time.",
+    detail: "We define the subjects, arguments, and language the brand can own before the first post or campaign is written.",
     color: "#24394D", // indigo
   },
   {
     name: "Social Media Marketing",
-    detail: "Recall that compounds because the positioning underneath it stays consistent, mental availability building post by post, far more than posting volume alone.",
+    detail: "Each post repeats a recognisable point of view, so buyers learn what the business stands for before they need it.",
     color: "#5C6B4A", // sage
   },
   {
     name: "Website Development",
-    detail: "The most visited stop on a customer's whole journey through a brand, and often its most overlooked one. Built to carry the position, far beyond hosting a logo.",
+    detail: "The website explains the offer, answers buyer doubt, and turns the position into a useful path toward enquiry.",
     color: "#C28A28", // ochre
   },
   {
     name: "Content Creation",
-    detail: "Written in the verbal identity the strategy actually defined. A specific tone of voice, distinct from any generic one with the name swapped in.",
+    detail: "Copy and creative work use the same verbal rules, so the brand sounds like itself wherever buyers meet it.",
     color: "#AD6F5C", // rose-earth
   },
   {
     name: "Marketing Strategy",
-    detail: "Marketing amplifies a value proposition that already exists. This is where the two finally connect, working together instead of running in parallel.",
+    detail: "Campaign decisions begin with the promise the business can prove, then connect that promise to the right buyer and moment.",
     color: "#CD7A4C", // terracotta
   },
 ];

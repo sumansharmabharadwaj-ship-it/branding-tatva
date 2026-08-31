@@ -94,11 +94,10 @@ export function CalendlyEmbed({ url }: { url: string }) {
               Scheduling
             </p>
             <p className="mt-3 font-display text-2xl font-normal text-[#27221E]">
-              {scriptFailed ? "The embedded calendar is taking the scenic route." : "Opening the calendar."}
+              {scriptFailed ? "The embedded calendar has not loaded." : "Opening the calendar."}
             </p>
             <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-[#4A433D]">
-              Choose the separate scheduling page below whenever a browser extension or network policy slows the
-              embedded version.
+              Open Calendly directly if a browser extension or network policy blocks the embedded version.
             </p>
             <a
               href={url}

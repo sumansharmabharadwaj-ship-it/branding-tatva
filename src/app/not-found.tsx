@@ -12,14 +12,14 @@ export default function NotFound() {
           <Container>
             <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">404</p>
             <h1 className="mt-3 text-display-lg font-display font-normal text-soil">
-              This page is still finding its shape.
+              That address does not lead to a page.
             </h1>
             <p className="mx-auto mt-4 max-w-md text-foreground-secondary">
-              The page you&apos;re looking for may have moved, or the link may be outdated.
+              The page may have moved, or the address may be incomplete.
             </p>
             <div className="mt-8 flex justify-center gap-4">
-              <LinkButton href="/">Back to home</LinkButton>
-              <LinkButton href="/contact" variant="secondary">Contact</LinkButton>
+              <LinkButton href="/">Go to the homepage</LinkButton>
+              <LinkButton href="/contact" variant="secondary">Ask Suman</LinkButton>
             </div>
           </Container>
         </section>

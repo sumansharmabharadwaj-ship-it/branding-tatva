@@ -245,7 +245,7 @@ export function SeasonalCalendarPanel() {
           className="text-xs text-ivory/85 sm:text-sm"
           style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
         >
-          Thirty minutes, just a real conversation.
+          Thirty minutes. One decision to untangle.
         </span>
         <motion.button
           type="button"
@@ -257,7 +257,7 @@ export function SeasonalCalendarPanel() {
           aria-controls="footer-booking-dialog"
           className="shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory"
         >
-          + Book a call
+          Talk with Suman
         </motion.button>
       </div>
       </div>
@@ -274,9 +274,9 @@ export function SeasonalCalendarPanel() {
     >
       <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-white/15 bg-soil px-5 py-4 sm:px-7">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-ivory/55">Strategy room</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-ivory/55">Your brand question</p>
           <h2 id="footer-booking-title" className="mt-1 font-display text-2xl text-ivory sm:text-3xl">
-            Choose a time for a focused conversation.
+            Choose a time to examine it with Suman.
           </h2>
         </div>
         <button

@@ -32,7 +32,7 @@ export const pillars: Pillar[] = [
       "How is positioning different from messaging?",
       "When should a brand reposition?",
     ],
-    articleSlug: "what-brand-positioning-actually-decides",
+    articleSlug: "brand-positioning-strategy-service-businesses",
     terms: [
       {
         term: "Positioning",
@@ -42,7 +42,7 @@ export const pillars: Pillar[] = [
         expanded:
           "Positioning answers one question before any other: when a buyer thinks of the problem you solve, which single idea should surface with your name? Everything downstream, from identity to campaigns, either reinforces that idea or spends money confusing it. A brand that skips this decision asks its audience to make it instead, and audiences default to price.",
         practice:
-          "Every engagement here begins with this decision. The Dr. Haley Nutrition work started as a positioning question long before any visual appeared.",
+          "Suman uses this definition to decide the comparison, audience, and remembered difference before writing or design begins.",
       },
       {
         term: "Category design",
@@ -52,7 +52,7 @@ export const pillars: Pillar[] = [
         expanded:
           "The frame decides who you get compared against and what counts as expensive. A brand that accepts its default category inherits that category's price ceiling and its clichés together. A brand that names its own frame gets judged by rules it wrote.",
         practice:
-          "The Tatva Lab concept studies on the Work page exist partly to exercise this move: reframing a category is safer to rehearse in the open than to improvise on a live client.",
+          "The independent brand studies make reframing visible without presenting analysis as client work.",
       },
     ],
   },
@@ -64,7 +64,7 @@ export const pillars: Pillar[] = [
       "What are distinctive assets?",
       "How does consistency create memory?",
     ],
-    articleSlug: "why-visible-brands-stay-forgettable",
+    articleSlug: "why-beautiful-brand-identity-can-be-forgettable",
     terms: [
       {
         term: "Distinctive assets",
@@ -114,7 +114,7 @@ export const pillars: Pillar[] = [
       "How does language frame value?",
       "What belongs in a messaging framework?",
     ],
-    articleSlug: "verbal-identity-beyond-tone-of-voice",
+    articleSlug: "brand-voice-guidelines-writers-can-use",
     terms: [
       {
         term: "Verbal identity",
@@ -145,7 +145,7 @@ export const pillars: Pillar[] = [
       "What is a branded house?",
       "How do multiple offers relate?",
     ],
-    articleSlug: "brand-architecture-for-multiple-offers",
+    articleSlug: "brand-architecture-service-businesses",
     terms: [
       {
         term: "Brand architecture",
@@ -163,7 +163,7 @@ export const pillars: Pillar[] = [
     id: "psychology",
     name: "Psychology and branding",
     questions: ["How do attention, association, and memory shape brand decisions?"],
-    articleSlug: "how-psychology-informs-brand-strategy",
+    articleSlug: "brand-awareness-vs-brand-recall",
     terms: [
       {
         term: "Semiotics",
@@ -173,7 +173,7 @@ export const pillars: Pillar[] = [
         expanded:
           "Every color, typeface, and image carries meanings a culture already assigned; semiotics reads those meanings before the brand inherits them by accident. A serif says something before the words do. The question is never whether your visual choices communicate, only whether they communicate what you decided.",
         practice:
-          "Psychology and literature sit behind this practice for a reason: both are disciplines of reading what signs actually do to people.",
+          "Suman reads visual and verbal choices for the associations they carry before deciding which ones a brand should repeat.",
       },
     ],
   },

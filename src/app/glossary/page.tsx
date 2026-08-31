@@ -16,9 +16,9 @@ import { pillars } from "@/data/glossary";
 // throughout: reading content, zero interaction islands.
 
 export const metadata: Metadata = {
-  title: "Branding Glossary",
+  title: "Brand Strategy Terms for Founders",
   description:
-    "The Branding Tatva working vocabulary: positioning, distinctive assets, mental availability, verbal identity, and more, each defined in plain language.",
+    "Plain language definitions for the brand strategy terms founders meet when choosing a position, message, identity, or offer structure.",
   alternates: { canonical: "/glossary" },
 };
 
@@ -48,13 +48,13 @@ export default function GlossaryPage() {
               <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Glossary</p>
             </Reveal>
             <SplitReveal as="h1" className="mt-2 font-display text-display-md font-normal text-ivory">
-              The working vocabulary of brand strategy.
+              Brand strategy language, without the fog.
             </SplitReveal>
             <Reveal delay={0.1}>
               <span aria-hidden="true" className="mt-6 block h-px w-16 bg-sandstone/70" />
               <p className="mt-6 max-w-xl text-base leading-relaxed text-ivory/75">
-                Every term defined in plain language, connected to the questions it answers and the places this
-                practice applies it.
+                Use these definitions to name the decision in front of you,
+                question advice precisely, and brief the work with less guesswork.
               </p>
             </Reveal>
           </Container>

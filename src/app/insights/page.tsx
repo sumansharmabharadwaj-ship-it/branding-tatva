@@ -38,7 +38,7 @@ import "../insights-cinematic.css";
 export const metadata: Metadata = {
   title: "Insights on brand strategy, positioning, and messaging",
   description:
-    "Practical essays and frameworks on brand positioning, brand audits, messaging, customer experience, distinctiveness, recognition, and memory.",
+    "Essays for founders deciding how their business should be positioned, explained, experienced, recognised, and remembered.",
   keywords: [
     "brand strategy insights",
     "brand positioning",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Brand strategy insights | Branding Tatva",
     description:
-      "Practical essays and frameworks on positioning, messaging, customer experience, distinctiveness, recognition, and memory.",
+      "Essays for founders making decisions about positioning, messaging, customer experience, distinctiveness, recognition, and memory.",
     type: "website",
     url: `${site.url}/insights`,
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
@@ -70,36 +70,36 @@ function elementColor(elementSlug: string) {
 const INSIGHT_SCENES: InsightScene[] = [
   {
     id: "insights-foundation",
-    label: "Decision mirror",
-    shortLabel: "Mirror",
+    label: "Problem finder",
+    shortLabel: "Problems",
     theme: "light",
     accent: "#D77A51",
   },
   {
     id: "knowledge-atlas",
-    label: "Knowledge atlas",
-    shortLabel: "Atlas",
+    label: "Topic map",
+    shortLabel: "Topics",
     theme: "dark",
     accent: "#7FA4BA",
   },
   {
     id: "insights-library-scene",
-    label: "Insight library",
+    label: "Essay library",
     shortLabel: "Library",
     theme: "light",
     accent: "#A8B68F",
   },
   {
     id: "insights-audit-seam",
-    label: "Evidence ledger",
-    shortLabel: "Evidence",
+    label: "Audit worksheet",
+    shortLabel: "Worksheet",
     theme: "light",
     accent: "#D77A51",
   },
   {
     id: "insights-field-notes",
-    label: "Field notes",
-    shortLabel: "Field notes",
+    label: "Occasional letters",
+    shortLabel: "Letters",
     theme: "dark",
     accent: "#D7A84A",
   },
@@ -151,8 +151,8 @@ const EVIDENCE_LAYER_BLUEPRINTS: Array<
     topicSlug: "positioning",
     name: "Foundation",
     signal: "Different buyers place the business in different categories.",
-    evidence: "Buyer language · lost-deal reasons · offer comparisons",
-    move: "Compare buyer language, lost-deal reasons, and offer comparisons in one table.",
+    evidence: "Buyer language · reasons deals are lost · offer comparisons",
+    move: "Compare buyer language, reasons deals are lost, and offer comparisons in one table.",
   },
   {
     slug: "message",
@@ -160,7 +160,7 @@ const EVIDENCE_LAYER_BLUEPRINTS: Array<
     name: "Message",
     signal: "Calls explain the value faster than the website.",
     evidence: "Homepage hierarchy · proposal language · recurring objections",
-    move: "Place homepage claims beside sales-call phrasing and recurring objections.",
+    move: "Place homepage claims beside sales call phrasing and recurring objections.",
   },
   {
     slug: "identity",
@@ -175,7 +175,7 @@ const EVIDENCE_LAYER_BLUEPRINTS: Array<
     topicSlug: "customer-experience",
     name: "Experience",
     signal: "Confidence drops between enquiry and delivery.",
-    evidence: "Response gaps · handoffs · promise-to-experience alignment",
+    evidence: "Response gaps · handoffs · promise beside experience",
     move: "Trace confidence from enquiry through handoff and delivery.",
   },
   {
@@ -232,7 +232,7 @@ export default function InsightsPage() {
       firstQuestion:
         topic.diagnosticQuestions[blueprint.questionIndex] ??
         topic.diagnosticQuestions[0] ??
-        "Which decision would create the clearest next move?",
+        "Which decision would change the most downstream work?",
       article: {
         slug: article.slug,
         title: article.title,
@@ -386,32 +386,31 @@ export default function InsightsPage() {
             <div className="insights-hero__grid">
               <div>
                 <Reveal>
-                  <p className="insights-hero__eyebrow">The thinking field</p>
+                  <p className="insights-hero__eyebrow">For founders making brand decisions</p>
                 </Reveal>
                 <SplitReveal
                   as="h1"
                   className="insights-hero__title text-ivory"
                 >
-                  See the decision beneath the brand problem.
+                  Start with the sentence you keep repeating in meetings.
                 </SplitReveal>
                 <Reveal delay={0.1}>
                   <p className="insights-hero__summary">
-                    Essays, diagnostic questions, and connected reading paths
-                    for founders shaping positioning, experience,
-                    distinctiveness, language, and memory.
+                    Choose the problem that sounds familiar. The library connects it to the
+                    relevant question, evidence, essay, and service.
                   </p>
                   <Link href="#knowledge-atlas" className="insights-hero__link">
-                    Enter the knowledge atlas <span aria-hidden="true">↓</span>
+                    Find the closest business problem <span aria-hidden="true">↓</span>
                   </Link>
                 </Reveal>
               </div>
               <Reveal delay={0.16}>
                 <div className="insights-hero__ledger">
                   <div className="insights-hero__ledger-top">
-                    <p className="insights-hero__ledger-label">Living library</p>
+                    <p className="insights-hero__ledger-label">Published thinking</p>
                     <p className="insights-hero__ledger-count">
                       {sortedPosts.length}
-                      <small>field notes</small>
+                      <small>essays</small>
                     </p>
                   </div>
                   <div className="insights-hero__ledger-list">
@@ -456,16 +455,15 @@ export default function InsightsPage() {
             <div className="insights-foundation__header">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
-                  Decision mirror
+                  Problem finder
                 </p>
                 <h2 className="mt-3 font-display text-display-sm font-normal text-soil">
-                  Which tension feels most familiar?
+                  Which sentence have you said recently?
                 </h2>
               </div>
               <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
-                Five familiar symptoms lead to different strategic questions.
-                Begin with the sentence closest to the business today; the
-                mirror narrows the library to one useful first move.
+                Each sentence points to a different brand decision. Choose the one
+                closest to the business today and the relevant reading will move forward.
               </p>
             </div>
             <InsightsDecisionMirror quests={readerQuests} />
@@ -495,9 +493,9 @@ export default function InsightsPage() {
         >
           <Container className="insights-audit-scene__camera">
             <div className="insights-audit-scene__ledger" aria-hidden="true">
-              <span>Evidence ledger</span>
+              <span>Audit worksheet</span>
               <i />
-              <span>05 signals</span>
+              <span>05 checks</span>
             </div>
 
             <div className="insights-audit-scene__frame">
@@ -512,25 +510,24 @@ export default function InsightsPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-soil/20 to-transparent" />
                 <div className="insights-audit-scene__film-copy absolute inset-x-0 bottom-0 p-7 text-ivory sm:p-9">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">
-                    A practical next read
+                    Before the redesign
                   </p>
                   <p className="mt-3 max-w-md font-display text-3xl leading-tight">
-                    Find the seam before paying to redesign the surface.
+                    Find what is failing before paying to redesign it.
                   </p>
                 </div>
               </div>
               <div className="insights-audit-scene__copy flex flex-col justify-center p-7 sm:p-10 lg:p-14">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
-                  Brand audit checklist
+                  Audit worksheet
                 </p>
                 <h2 className="mt-4 max-w-xl font-display text-display-sm font-normal text-soil">
-                  Review the foundation, message, identity, experience, and
-                  memory in one sequence.
+                  Review position, message, identity, experience, and memory before
+                  choosing what to rebuild.
                 </h2>
                 <p className="mt-5 max-w-xl text-base leading-7 text-foreground-secondary">
-                  Evidence grows clearer when the weakest layers appear
-                  together. The ledger turns scattered concern into a focused
-                  first pass, then the checklist carries the review forward.
+                  Look at the five areas together. The weakest answer shows where to
+                  investigate first and which evidence to collect.
                 </p>
 
                 <InsightsEvidenceLedger layers={evidenceLayers} />

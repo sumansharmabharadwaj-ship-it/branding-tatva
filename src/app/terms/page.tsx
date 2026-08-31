@@ -42,45 +42,54 @@ export default function TermsPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/80 to-soil/20" />
           <Container className="relative max-w-2xl">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.18em] text-sandstone">Using this site</p>
+              <p className="text-sm font-medium uppercase tracking-[0.18em] text-sandstone">Website and enquiry terms</p>
             </Reveal>
             <SplitReveal as="h1" className="mt-2 text-display-md font-display font-normal text-ivory">
               Terms of Use
             </SplitReveal>
             <Reveal delay={0.08}>
-              <p className="mt-5 text-sm text-ivory/65">Last updated: draft, pending your review</p>
+              <p className="mt-5 text-sm text-ivory/65">Updated 31 August 2026 · Working draft for legal review</p>
             </Reveal>
           </Container>
         </section>
 
         <section className="bg-ivory py-16 sm:py-20">
           <Container className="max-w-2xl">
-            <div className="mt-8 space-y-6 text-foreground-secondary">
+            <div className="mt-8 space-y-10 text-foreground-secondary">
               <p>
                 This website is operated by {site.founder} under the name{" "}
                 {site.name}. By using this site, you agree to the following:
               </p>
-              <p>
+              <section>
+                <h2 className="font-display text-2xl font-normal text-soil">Using the content</h2>
+                <p className="mt-3">
                 All content on this site, including written copy, brand
                 strategy frameworks, and portfolio descriptions, is the
                 property of {site.founder} and may only be reproduced with
                 permission.
-              </p>
-              <p>
+                </p>
+              </section>
+              <section>
+                <h2 className="font-display text-2xl font-normal text-soil">Project records and outcomes</h2>
+                <p className="mt-3">
                 Case studies shown on this site describe work completed for
                 named clients with their permission. Results described are
                 specific to those projects alone; future work outcomes will
                 vary based on your specific situation.
-              </p>
-              <p>
+                </p>
+              </section>
+              <section>
+                <h2 className="font-display text-2xl font-normal text-soil">Enquiries and engagements</h2>
+                <p className="mt-3">
                 Enquiries submitted through the contact form become a client
                 engagement only once confirmed separately in writing.
-              </p>
+                </p>
+              </section>
             </div>
 
             <p className="mt-10 rounded-2xl border border-state-warning/40 bg-state-warning/10 p-4 text-sm text-soil">
-              This is placeholder legal text meant as a starting structure
-              only. Please have this reviewed by a lawyer before launch.
+              Legal status: this page is a working draft. Obtain independent
+              legal review before treating it as final terms.
             </p>
           </Container>
         </section>

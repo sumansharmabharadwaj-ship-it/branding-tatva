@@ -267,7 +267,7 @@ export default async function InsightTopicPage({ params }: Props) {
                   {topic.eyebrow}
                 </div>
                 <h1 className="mt-6 max-w-4xl font-display text-[clamp(3rem,7vw,6.4rem)] font-normal leading-[0.94] text-ivory">
-                  {topic.name}, read as a brand system.
+                  {topic.name}: decisions, evidence, application.
                 </h1>
               </Reveal>
 
@@ -277,8 +277,8 @@ export default async function InsightTopicPage({ params }: Props) {
                     {topic.promise}
                   </p>
                   <p className="mt-5 border-t border-ivory/15 pt-5 text-xs font-semibold uppercase tracking-[0.16em] text-sandstone">
-                    {posts.length} {posts.length === 1 ? "essay" : "essays"} in
-                    this path
+                    {posts.length} {posts.length === 1 ? "essay" : "essays"} for
+                    this decision
                   </p>
                 </div>
               </Reveal>
@@ -299,9 +299,9 @@ export default async function InsightTopicPage({ params }: Props) {
           posts={explorerPosts}
           topics={[]}
           sectionId={`${topic.slug}-reading-path`}
-          eyebrow={`${topic.name} reading path`}
-          heading={`Essays on ${topic.name.toLowerCase()}, held in one clear sequence.`}
-          description="Every guide opens with a direct answer, then carries the decision through a working framework, examples, source notes, and connected reading."
+          eyebrow={`${topic.name} decision path`}
+          heading="Start with the question closest to your situation."
+          description="Each guide gives you the decision first, then the framework, examples, evidence, and adjacent questions needed to use it."
           searchPlaceholder={`Search within ${topic.name.toLowerCase()}`}
           video="/videos/generated/insights-v2/page-topic-lens.mp4"
           poster="/images/generated/insights-v2/page-topic-lens.webp"
@@ -328,15 +328,15 @@ export default async function InsightTopicPage({ params }: Props) {
               <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">
-                    Across the system
+                    Adjacent decisions
                   </p>
                   <h2 className="mt-4 font-display text-display-md font-normal">
-                    Every element changes the others.
+                    What this choice changes elsewhere.
                   </h2>
                 </div>
                 <p className="max-w-2xl text-base leading-7 text-ivory/70 lg:justify-self-end">
-                  Continue into the neighbouring decisions that shape how this
-                  part of the brand is experienced and remembered.
+                  Move into the questions that affect the position, language,
+                  customer journey, or memory around this choice.
                 </p>
               </div>
             </Reveal>
@@ -365,15 +365,15 @@ export default async function InsightTopicPage({ params }: Props) {
                     <h3>{applicationProof.title}</h3>
                     <span>{application.proofFrame}</span>
                     <Link href={`/work/${applicationProof.slug}`}>
-                      See the decision trail <span aria-hidden="true">↗</span>
+                      Read the project record <span aria-hidden="true">↗</span>
                     </Link>
                   </div>
                   <div>
-                    <p>Strategy path</p>
+                    <p>Relevant scope</p>
                     <h3>{applicationPackage.name}</h3>
                     <span>{application.serviceFrame}</span>
                     <Link href={`/services#package-${applicationPackage.slug}`}>
-                      Explore the engagement <span aria-hidden="true">↗</span>
+                      See scope and fit <span aria-hidden="true">↗</span>
                     </Link>
                   </div>
                 </div>

@@ -10,6 +10,8 @@
     "check:discovery": "node scripts/discovery_source_gate.cjs",
     "check:links": "node scripts/internal_link_graph_gate.cjs",
     "check:media": "node scripts/media_search_gate.cjs",
+    "check:copy": "node scripts/copy_voice_quality_gate.cjs",
+    "check:copy:rendered": "node scripts/rendered_copy_quality_gate.cjs",
     "check:about": "node scripts/about_resolution_quality_gate.cjs && node scripts/about_journey_quality_gate.cjs",
     "check:about:rendered": "node scripts/about_resolution_rendered_gate.cjs",
     "check:contact": "node scripts/contact_contract_gate.cjs && node scripts/contact_delivery_gate.mjs && node scripts/contact_media_uniqueness_gate.cjs && node scripts/contact_cinematic_motion_gate.cjs && node scripts/contact_copy_voice_gate.cjs",

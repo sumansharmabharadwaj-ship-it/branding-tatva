@@ -25,44 +25,44 @@ const PATHS = [
   {
     number: "01",
     situation: "idea",
-    choice: "I am creating something new.",
+    choice: "I have a strong offer but no brand yet.",
     shortChoice: "New brand",
     title: "Build the foundation",
     eyebrow: "An idea becoming a business",
     body:
-      "Set the category, audience, belief, and position before identity begins, so every visible choice grows from one clear centre.",
-    route: "Frame / Position / System",
-    result: "A position and decision system the business can grow from.",
+      "Decide the category, priority buyer, promise, and proof before identity or launch work begins.",
+    route: "Category / Buyer / Position",
+    result: "A market position that makes later creative choices easier to judge.",
     tint: "#ad7336",
-    proof: "MyShopInEurope began with positioning around craft and origin before the platform sold a thing.",
+    proof: "MyShopInEurope chose craft and origin ahead of price before the platform entered the market.",
   },
   {
     number: "02",
     situation: "reposition",
-    choice: "The business has outgrown its brand.",
+    choice: "The business has outgrown what the brand says about it.",
     shortChoice: "Outgrown",
-    title: "Reposition the system",
+    title: "Reposition the business",
     eyebrow: "An established business in transition",
     body:
-      "Read the signals people already recognise, keep what still carries value, and align the brand with the business it has become.",
-    route: "Decode / Retain / Reframe",
-    result: "A clearer meaning that moves expectations forward.",
+      "Study what buyers still recognise, keep what earns trust, and replace the meaning that no longer fits the business.",
+    route: "Audit / Keep / Reposition",
+    result: "A brand that represents the business customers are buying today.",
     tint: "#667d63",
-    proof: "HerbalCart turned a scattered campaign into one modern supplement brand position.",
+    proof: "HerbalCart moved from an accidental herbal frame to a modern supplement position.",
   },
   {
     number: "03",
     situation: "ongoing",
-    choice: "The strategy needs to hold everywhere.",
+    choice: "Everything changes from channel to channel.",
     shortChoice: "Scale it",
-    title: "Make the system repeatable",
+    title: "Make the brand easier to use",
     eyebrow: "A brand moving across channels",
     body:
-      "Translate strategy into usable rules for language, content, campaigns, websites, and teams, so every release builds the same memory.",
-    route: "Codify / Apply / Compound",
-    result: "One recognisable logic the whole business can repeat.",
+      "Turn the brand choices into usable rules for language, content, campaigns, websites, and teams.",
+    route: "Write / Apply / Review",
+    result: "A brand the team can use without returning every choice to the founder.",
     tint: "#bd8a3f",
-    proof: "Dr. Haley Nutrition earned more response from fewer, more focused posts built around one decision system.",
+    proof: "Dr. Haley Nutrition posted 48% less and earned 104% more followers per post.",
   },
 ] as const satisfies ReadonlyArray<{
   number: string;
@@ -200,13 +200,13 @@ export function PathsCinematicChapter() {
 
         <div className="paths-film__story">
           <div className="paths-film__lead">
-            <p className="paths-film__eyebrow">Three brand moments</p>
+            <p className="paths-film__eyebrow">Three business situations</p>
             <h2 id="paths-film-title">
-              There is more than one way in. <em>Where is your brand now?</em>
+              Which sentence sounds most like <em>your business today?</em>
             </h2>
             <p className="paths-film__instruction">
-              Each starting point begins with a different brand tension and a
-              different first decision.
+              The right engagement depends on what the business has already
+              built and what buyers are currently misunderstanding.
             </p>
 
             <div className="paths-film__chooser">
@@ -284,11 +284,11 @@ export function PathsCinematicChapter() {
               <p className="paths-film__answer-body">{active.body}</p>
               <dl>
                 <div>
-                  <dt>The work</dt>
+                  <dt>What we decide</dt>
                   <dd>{active.route}</dd>
                 </div>
                 <div>
-                  <dt>The outcome</dt>
+                  <dt>What changes</dt>
                   <dd>{active.result}</dd>
                 </div>
               </dl>
@@ -300,7 +300,7 @@ export function PathsCinematicChapter() {
               >
                 <span className="paths-film__method-link-copy">
                   <small>Next chapter</small>
-                  Continue into the working method
+                  See how Suman makes the decision
                 </span>
                 <span className="paths-film__method-link-arrow" aria-hidden="true">
                   <ArrowDown size={16} strokeWidth={1.8} />

@@ -70,9 +70,9 @@ export function PackageComparisonDeck({ region }: { region: Region }) {
     >
       <div data-package-comparison-controls="true" className="mb-4 flex items-center justify-between gap-4 lg:hidden">
         <div aria-live="polite">
-          <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/45">Comparison path</p>
+          <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/45">Engagement in view</p>
           <p className="mt-1 font-display text-lg font-normal text-ivory">
-            {String(activeIndex + 1).padStart(2, "0")} / {String(packages.length).padStart(2, "0")} · {packages[activeIndex].name}
+            {String(activeIndex + 1).padStart(2, "0")} / {String(packages.length).padStart(2, "0")}: {packages[activeIndex].name}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -122,7 +122,7 @@ export function PackageComparisonDeck({ region }: { region: Region }) {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[0.56rem] font-medium uppercase tracking-[0.18em] text-sandstone/75">
-                  Package {String(index + 1).padStart(2, "0")}
+                  Engagement {String(index + 1).padStart(2, "0")}
                 </p>
                 <h3 className="mt-2 font-display text-xl font-normal text-ivory">{pkg.name}</h3>
               </div>

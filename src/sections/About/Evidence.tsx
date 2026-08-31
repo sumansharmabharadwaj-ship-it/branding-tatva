@@ -12,9 +12,9 @@ import { projects } from "@/data/projects";
 import styles from "./Evidence.module.css";
 
 const CASES = [
-  { slug: "dr-haley-nutrition", evidenceType: "Measured performance", basis: "Measured · Dec 2025–Jan 2026", ambiguity: "More posts kept going out while fewer people stayed.", decision: "Publish less. Make relevance carry the account.", record: "104%", recordLabel: "more followers earned per post", trace: "1,350% more comments per post · engagement rate 0.71% → 2.81%", icon: BarChart3, accent: "#a7b68b" },
-  { slug: "myshopineurope", evidenceType: "Documented strategic output", basis: "Delivered · foundation and year-long system", ambiguity: "A marketplace risked becoming another route to cheap supply.", decision: "Lead with craft heritage and origin buyers can pass on.", record: "Brand foundation", recordLabel: "plus a year-long content operating system", trace: "Channel playbooks · quarter-by-quarter rollout", icon: FileCheck2, accent: "#d69066" },
-  { slug: "herbalcart", evidenceType: "Implementation-ready system", basis: "Delivered · five formats and complete scripts", ambiguity: "A modern supplement range was being read as a herbal remedy brand.", decision: "Reset the category around supplement-first wellness.", record: "5 formats", recordLabel: "ready to shoot with complete Hinglish scripts", trace: "Repositioned campaign system · native content direction", icon: ScanLine, accent: "#d0a954" },
+  { slug: "dr-haley-nutrition", evidenceType: "Measured performance", basis: "Measured · December 2025 to January 2026", ambiguity: "More posts kept going out while fewer people stayed.", decision: "Publish less. Make relevance carry the account.", record: "104%", recordLabel: "more followers earned per post", trace: "1,350% more comments per post · engagement rate rose from 0.71% to 2.81%", icon: BarChart3, accent: "#a7b68b" },
+  { slug: "myshopineurope", evidenceType: "Documented strategic output", basis: "Delivered · foundation and twelve month plan", ambiguity: "A marketplace risked becoming another route to cheap supply.", decision: "Lead with craft heritage and origin buyers can pass on.", record: "Brand foundation", recordLabel: "plus a twelve month content plan", trace: "Channel playbooks · rollout by quarter", icon: FileCheck2, accent: "#d69066" },
+  { slug: "herbalcart", evidenceType: "Work ready for implementation", basis: "Delivered · five formats and complete scripts", ambiguity: "A modern supplement range was being read as a herbal remedy brand.", decision: "Reset the category around wellness led by supplements.", record: "5 formats", recordLabel: "ready to shoot with complete Hinglish scripts", trace: "Repositioned campaign · native content direction", icon: ScanLine, accent: "#d0a954" },
 ] as const;
 
 const PROJECTS_BY_SLUG = new Map(projects.map((project) => [project.slug, project]));
@@ -77,8 +77,8 @@ export function Evidence() {
       <Container className={styles.sticky}>
         <div className={styles.root}>
           <header className={styles.header}>
-            <div><p className={styles.eyebrow}>Evidence · the reasoning leaves a trace</p><h2 id="evidence-title">Follow the decision. <em>Then inspect what remained.</em></h2></div>
-            <p className={styles.intro}>Three engagements, three evidence classes. Each separates the business ambiguity, the strategic decision, and the record another person can inspect.</p>
+            <div><p className={styles.eyebrow}>Client evidence</p><h2 id="evidence-title">Follow the business problem, <em>the choice, and the record.</em></h2></div>
+            <p className={styles.intro}>Each case separates what the business faced, what was decided, and what can honestly be shown afterward.</p>
           </header>
 
           <motion.div className={styles.camera} style={prefersReducedMotion ? undefined : { y: cameraY, scale: cameraScale }}>

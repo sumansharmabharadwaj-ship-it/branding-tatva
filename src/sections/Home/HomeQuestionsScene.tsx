@@ -42,21 +42,21 @@ const QUESTIONS = [
     id: "new-brand",
     label: "New",
     question: "Can you help a brand new business?",
-    signalLabel: "A useful starting point",
-    signal: "A real offer needs its position before identity and launch decisions begin.",
+    signalLabel: "What comes first",
+    signal: "Decide the category, buyer, and reason to choose before identity or launch work begins.",
   },
   {
     id: "existing-brand",
     label: "Existing",
     question: "Can you help an existing brand that already has an identity?",
-    signalLabel: "A useful starting point",
-    signal: "The business has evolved beyond the story or system people currently meet.",
+    signalLabel: "What usually changed",
+    signal: "The business evolved, but buyers still meet the category, story, or identity it used to need.",
   },
   {
     id: "implementation",
     label: "Delivery",
     question: "Can you actually implement, or just strategise?",
-    signalLabel: "What can carry through",
+    signalLabel: "What implementation can include",
     signal: "Messaging, visual direction, website structure, content, and campaigns.",
   },
   {
@@ -64,7 +64,7 @@ const QUESTIONS = [
     label: "Timing",
     question: "How long does a project take?",
     signalLabel: "How timing is set",
-    signal: "Scope, dependencies, and decision speed determine the honest schedule.",
+    signal: "Scope, dependencies, and the speed of feedback determine the schedule.",
   },
   {
     id: "remote",
@@ -286,9 +286,9 @@ export function HomeQuestionsScene() {
               {carriedSituation ? ` · ${SITUATION_LABEL[carriedSituation]}` : ""}
               {carriedLens ? ` · ${carriedLens.name} lens` : ""}
             </p>
-            <h2 id="home-questions-title">The questions that come next.<br /><em>Answered plainly.</em></h2>
+            <h2 id="home-questions-title">Questions founders usually ask.<br /><em>Answers without a sales script.</em></h2>
           </div>
-          <p className="questions-editorial__intro">Five practical answers, without a sales call or a maze of fine print.</p>
+          <p className="questions-editorial__intro">Scope, timing, delivery, and fit, stated before you book anything.</p>
         </header>
 
         <div className="questions-editorial__experience">
@@ -300,7 +300,7 @@ export function HomeQuestionsScene() {
               if (event.pointerType === "mouse") setPreviewIndex(null);
             }}
           >
-            <p className="questions-editorial__instruction">Five common questions</p>
+            <p className="questions-editorial__instruction">Choose what you need to know</p>
             {decisions.map((decision, index) => {
               const displayed = index === activeIndex;
               const committed = index === committedIndex;
@@ -407,7 +407,7 @@ export function HomeQuestionsScene() {
                 href="#invitation"
                 onClick={carryQuestionForward}
               >
-                Carry this question into the conversation
+                Bring this question to Suman
                 <ArrowDown size={16} strokeWidth={1.8} aria-hidden="true" />
               </Link>
             </motion.article>

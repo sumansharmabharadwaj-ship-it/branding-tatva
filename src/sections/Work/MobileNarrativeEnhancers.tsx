@@ -119,10 +119,10 @@ function CaseStudyDeck() {
 
     const articles = Array.from(story.querySelectorAll<HTMLElement>("[data-chapter-index]"));
     const originalButtons = Array.from(
-      story.querySelectorAll<HTMLButtonElement>('ol[aria-label="Case-study chapters"] button'),
+      story.querySelectorAll<HTMLButtonElement>('ol[aria-label="Case study chapters"] button'),
     );
     const originalNarrative = articles[0]?.parentElement;
-    const originalNav = story.querySelector<HTMLElement>('ol[aria-label="Case-study chapters"]');
+    const originalNav = story.querySelector<HTMLElement>('ol[aria-label="Case study chapters"]');
     const visualColumn = originalNav?.parentElement;
 
     if (!articles.length || !originalNarrative || !originalNav || !visualColumn) return;
@@ -167,7 +167,7 @@ function CaseStudyDeck() {
 
   return createPortal(
     <div className="mt-5 lg:hidden" data-mobile-case-study-deck="true">
-      <div className="grid grid-cols-4 gap-2" role="group" aria-label="Choose a case-study chapter">
+      <div className="grid grid-cols-4 gap-2" role="group" aria-label="Choose a case study chapter">
         {model.chapters.map((item, index) => {
           const selected = active === index;
           return (
@@ -301,7 +301,7 @@ function SignatureDeck() {
         )}
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2" role="group" aria-label="Choose a performance case-study beat">
+      <div className="mt-4 grid grid-cols-3 gap-2" role="group" aria-label="Choose a performance case study chapter">
         {model.beats.map((item, index) => {
           const selected = active === index;
           return (

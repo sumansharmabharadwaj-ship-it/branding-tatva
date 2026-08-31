@@ -14,13 +14,13 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   if (!body) {
-    return jsonNoStore({ error: "Invalid submission." }, { status: 400 });
+    return jsonNoStore({ error: "The server could not read this request." }, { status: 400 });
   }
 
   const parsed = newsletterSchema.safeParse(body);
   if (!parsed.success) {
     return jsonNoStore(
-      { error: "That looks like it might have a typo, mind checking it?" },
+      { error: "Check the email address. One character may be out of place." },
       { status: 422 },
     );
   }
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     parsed.data.consent !== true
   ) {
     return jsonNoStore(
-      { error: "Please confirm the consent box first." },
+      { error: "Tick the consent box before requesting the resource." },
       { status: 422 },
     );
   }
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     console.error(`[newsletter:${requestId}] Mailchimp delivery is not configured.`);
     return jsonNoStore(
       {
-        error: "Email delivery is temporarily unavailable. Please try again later.",
+        error: "The letter signup cannot send confirmation emails right now. Return later.",
         requestId,
       },
       { status: 503 },
@@ -92,13 +92,13 @@ export async function POST(request: NextRequest) {
 
     console.error(`[newsletter:${requestId}] Mailchimp failed:`, data);
     return jsonNoStore(
-      { error: "Something went wrong. Please try again.", requestId },
+      { error: "The letter request did not reach the mailing list. Send it once more.", requestId },
       { status: 502 },
     );
   } catch (error) {
     console.error(`[newsletter:${requestId}] Signup error:`, error);
     return jsonNoStore(
-      { error: "Something went wrong. Please try again.", requestId },
+      { error: "The mailing list server did not answer. Send the request once more.", requestId },
       { status: 500 },
     );
   }

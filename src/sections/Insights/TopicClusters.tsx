@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { pillars } from "@/data/glossary";
-import { blogPosts } from "@/data/blog";
 
 // Insights rebuild, per the governing bible: the five content pillars
 // as a topic explorer, each opening into its real supporting
@@ -36,7 +35,6 @@ export function TopicClusters() {
       <div className="mt-10">
         {pillars.map((pillar) => {
           const isOpen = open === pillar.id;
-          const article = pillar.articleSlug ? blogPosts.find((p) => p.slug === pillar.articleSlug) : undefined;
           return (
             <div key={pillar.id} className="border-t border-ivory/15">
               <button
@@ -75,12 +73,12 @@ export function TopicClusters() {
                           </li>
                         ))}
                       </ul>
-                      {article && (
+                      {pillar.articleSlug && (
                         <Link
-                          href={`/insights/${article.slug}`}
+                          href={`/insights/${pillar.articleSlug}`}
                           className="link-underline mt-4 inline-flex items-center gap-2 text-sm text-sandstone transition-colors duration-300 hover:text-ivory"
                         >
-                          Read: {article.title} <span aria-hidden="true">→</span>
+                          Read Suman&apos;s guide for this decision <span aria-hidden="true">→</span>
                         </Link>
                       )}
                     </div>

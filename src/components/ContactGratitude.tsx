@@ -33,7 +33,7 @@ type GratitudeNote = {
 const NOTES: GratitudeNote[] = [
   {
     label: "your time",
-    response: "Your time was felt here, never counted.",
+    response: "Thank you for giving the question your time.",
     position: "xl:left-[5%] xl:top-[20%]",
     x: [-58, 0, 0, 28],
     y: [22, 0, 0, -16],
@@ -41,7 +41,7 @@ const NOTES: GratitudeNote[] = [
   },
   {
     label: "your curiosity",
-    response: "Curiosity is already a beginning.",
+    response: "Curiosity usually appears before the right brief does.",
     position: "xl:right-[5%] xl:top-[24%]",
     x: [54, 0, 0, -24],
     y: [30, 0, 0, -12],
@@ -49,7 +49,7 @@ const NOTES: GratitudeNote[] = [
   },
   {
     label: "your honesty",
-    response: "Honesty gives the work somewhere true to begin.",
+    response: "An honest description gives us something useful to examine.",
     position: "xl:bottom-[15%] xl:left-[11%]",
     x: [-42, 0, 0, 20],
     y: [-18, 0, 0, 14],
@@ -57,7 +57,7 @@ const NOTES: GratitudeNote[] = [
   },
   {
     label: "your unfinished thought",
-    response: "An unfinished thought is welcome exactly as it arrives.",
+    response: "The thought does not need to be polished before you send it.",
     position: "xl:bottom-[12%] xl:right-[9%]",
     x: [48, 0, 0, -26],
     y: [-24, 0, 0, 18],
@@ -147,8 +147,8 @@ function GratitudeNote({
   );
 }
 
-const DEFAULT_RESPONSE = "Take the clarity with you. The rest can arrive in its own time.";
-const COMPLETE_RESPONSE = "Every part of what you brought belongs here.";
+const DEFAULT_RESPONSE = "Leave with the sentence you came here to find. The rest can wait.";
+const COMPLETE_RESPONSE = "You have named enough for a useful first conversation.";
 const RESPONSES = [DEFAULT_RESPONSE, ...NOTES.map((note) => note.response), COMPLETE_RESPONSE];
 const ALL_NOTES_VISITED = (1 << NOTES.length) - 1;
 
@@ -277,7 +277,7 @@ export function ContactGratitude() {
       <Container className="relative z-10 w-full">
         <div className="mx-auto flex max-w-[52rem] flex-col items-center text-center">
           <p className="text-[0.68rem] font-medium uppercase tracking-[0.26em] text-sandstone">
-            A small return
+            Before you leave
           </p>
 
           <h2
@@ -323,7 +323,7 @@ export function ContactGratitude() {
             style={reducedMotion ? undefined : { clipPath: copyClip, willChange: "clip-path" }}
           >
             <p className="text-sm leading-relaxed text-ivory/76 sm:text-base">
-              Whether we work together or this visit simply helped you name what matters, I am glad you found your way here.
+              Whether we work together or this page only helped you frame the question, I am glad you spent the time.
             </p>
             <div
               id="contact-gratitude-response"
@@ -423,7 +423,7 @@ export function ContactGratitude() {
                 data-cursor-label="Open field notes"
                 className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-sandstone/35 bg-soil/28 px-5 py-2.5 text-[0.65rem] font-medium uppercase tracking-[0.16em] text-ivory backdrop-blur-lg transition-[background-color,border-color] duration-300 hover:border-sandstone/55 hover:bg-ivory/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
               >
-                Carry a question into the field notes
+                Read the essays behind the work
                 <ArrowRight
                   aria-hidden="true"
                   className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"

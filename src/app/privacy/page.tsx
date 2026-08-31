@@ -13,13 +13,13 @@ const pageJsonLd = pageSchema({
   path: "/privacy",
   name: "Privacy Policy | Branding Tatva",
   description:
-    "How Branding Tatva collects, uses, and protects your information.",
+    "What Branding Tatva collects through enquiries and measurement, why it is used, and how to request deletion.",
   trail: [{ name: "Privacy Policy", path: "/privacy" }],
 });
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: `How ${site.name} collects, uses, and protects your information.`,
+  description: `What ${site.name} collects through enquiries and measurement, why it is used, and how to request deletion.`,
   alternates: { canonical: "/privacy" },
 };
 
@@ -42,64 +42,52 @@ export default function PrivacyPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/80 to-soil/20" />
           <Container className="relative max-w-2xl">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.18em] text-sandstone">Your information</p>
+              <p className="text-sm font-medium uppercase tracking-[0.18em] text-sandstone">What is collected and why</p>
             </Reveal>
             <SplitReveal as="h1" className="mt-2 text-display-md font-display font-normal text-ivory">
               Privacy Policy
             </SplitReveal>
             <Reveal delay={0.08}>
-              <p className="mt-5 text-sm text-ivory/65">Last updated: draft, pending your review</p>
+              <p className="mt-5 text-sm text-ivory/65">Updated 31 August 2026 · Working draft for legal review</p>
             </Reveal>
           </Container>
         </section>
 
         <section className="bg-ivory py-16 sm:py-20">
           <Container className="prose-content max-w-2xl">
-            <div className="mt-8 space-y-6 text-foreground-secondary">
-              <p>
-                {site.name} ({site.founder}) collects only the information you
-                choose to share through the contact form on this site: your
-                name, email, and any project details you provide. This
-                information is used solely to respond to your enquiry, kept
-                private, and never sold or shared with third parties.
-              </p>
-              <p>
-                If you submit the contact form, your message is sent to{" "}
-                {site.email} via a third party email delivery service. No
-                marketing emails are sent without your separate, explicit
-                consent.
-              </p>
-              <p>
-                Measurement stays off until you allow it. On a first visit the
-                banner offers three equal doors: allow everything, keep only
-                what the site needs to work, or open the categories and decide
-                one at a time.
-              </p>
-              <p>
-                Analytics, once you allow it, counts which pages hold
-                attention through Vercel Analytics. It records page views
-                rather than personal profiles, and it reaches no advertiser.
-              </p>
-              <p>
-                Advertising and audience trackers run nowhere on this site
-                today. That category stays in the panel so it remains your
-                choice rather than an assumption.
-              </p>
-              <p>
-                Your decision lives in this browser alone and travels to no
-                server. Change it whenever you like through Measurement
-                preferences, in the footer of every page.
-              </p>
-              <p>
-                To request that your information be deleted, email{" "}
-                {site.email}.
-              </p>
+            <div className="mt-8 space-y-10 text-foreground-secondary">
+              <section>
+                <h2 className="font-display text-2xl font-normal text-soil">Information you choose to share</h2>
+                <p className="mt-3">
+                  {site.name} ({site.founder}) collects the name, email address, and project details you enter in the contact form. That information is used to answer your enquiry and manage the conversation you requested. It is never sold.
+                </p>
+              </section>
+              <section>
+                <h2 className="font-display text-2xl font-normal text-soil">Email delivery</h2>
+                <p className="mt-3">
+                  Contact form messages are delivered to {site.email} through an email delivery provider. Marketing emails require separate, explicit consent.
+                </p>
+              </section>
+              <section>
+                <h2 className="font-display text-2xl font-normal text-soil">Measurement choices</h2>
+                <p className="mt-3">
+                  Optional measurement stays off until you allow it. If enabled, Vercel Analytics counts page views and site usage. It does not create an advertising profile or send information to an advertiser.
+                </p>
+                <p className="mt-3">
+                  Advertising and audience trackers are not used on this site. Your preference is stored in this browser. Change it at any time through Measurement preferences in the footer.
+                </p>
+              </section>
+              <section>
+                <h2 className="font-display text-2xl font-normal text-soil">Deletion requests</h2>
+                <p className="mt-3">
+                  To ask for information connected with your enquiry to be deleted, email {site.email}.
+                </p>
+              </section>
             </div>
 
             <p className="mt-10 rounded-2xl border border-state-warning/40 bg-state-warning/10 p-4 text-sm text-soil">
-              This is placeholder legal text meant as a starting structure
-              only. Please have this reviewed by a lawyer before launch.
-              I&apos;ll flag this again in the launch checklist.
+              Legal status: this page is a working draft. Obtain independent
+              legal review before treating it as final policy.
             </p>
           </Container>
         </section>

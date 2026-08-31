@@ -46,38 +46,38 @@ const PROOF_TO_SITUATION: Partial<Record<string, ServicesSituationId>> = {
 const DECISION: Record<string, { big: string; label: string }> = {
   myshopineurope: {
     big: "Craft over price",
-    label: "the positioning refusal that reframed the platform",
+    label: "the positioning choice that moved the platform beyond cheap supply",
   },
   "executive-springboard": {
-    big: "One clear action",
+    big: "One next action",
     label: "every platform sequence designed toward webinar registration",
   },
   herbalcart: {
     big: "Perception reset",
-    label: "a modern supplement-first campaign system replacing the accidental herbal frame",
+    label: "a modern supplement position replacing the accidental herbal frame",
   },
 };
 
 const EVIDENCE_META: Record<string, { type: string; period: string; source: string }> = {
   "dr-haley-nutrition": {
     type: "Measured performance",
-    period: "December 2025 → January 2026",
-    source: "Instagram account comparison: 111 followers from 23 posts versus 126 from 12 posts. The homepage shows the raw per-post values instead of an unexplained percentage.",
+    period: "December 2025 to January 2026",
+    source: "Instagram account comparison: 111 followers from 23 posts versus 126 from 12 posts. The homepage shows the raw values per post instead of an unexplained percentage.",
   },
   myshopineurope: {
     type: "Delivered system",
     period: "Completed project output",
-    source: "Brand foundation, channel playbooks and a quarter-by-quarter content operating plan.",
+    source: "Brand foundation, channel playbooks, and a content operating plan for four quarters.",
   },
   "executive-springboard": {
-    type: "Documented decision + delivered system",
+    type: "Documented decision and delivered work",
     period: "Completed project output",
-    source: "Competitive audit, eight content pillars and platform-specific playbooks structured around webinar registration.",
+    source: "Competitive audit, eight content pillars, and channel playbooks structured around webinar registration.",
   },
   herbalcart: {
     type: "Delivered campaign reset",
     period: "Completed project output",
-    source: "Repositioned content themes, five production-ready formats and complete video scripts.",
+    source: "Repositioned content themes, five formats ready for production, and complete video scripts.",
   },
 };
 
@@ -90,17 +90,17 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
   myshopineurope: {
     signal: "A new marketplace risked reading as generic access and cheap supply.",
     decision: "Position Indian craft, origin, and wellness heritage ahead of price.",
-    proof: "A complete brand foundation and year-long content operating system.",
+    proof: "A complete brand foundation and content operating plan for twelve months.",
   },
   "executive-springboard": {
     signal: "Social content was building awareness without a clear destination.",
     decision: "Sequence each platform toward webinar registration and mentor action.",
-    proof: "An eight-pillar, platform-specific content system built around conversion.",
+    proof: "Eight content pillars and channel plans built around webinar registration.",
   },
   herbalcart: {
     signal: "The product range was being read through an accidental herbal and Ayurvedic frame.",
     decision: "Reposition the campaign around practical, modern supplementation for active lifestyles.",
-    proof: "Five shoot-ready content formats and complete scripts built around one clearer category signal.",
+    proof: "Five content formats ready to shoot, with complete scripts built around the modern supplement category.",
   },
 };
 
@@ -133,7 +133,7 @@ function metricFor(project: Project) {
   const stat = project.stats?.[0];
   const fallback = DECISION[project.slug];
   return {
-    big: stat?.value ?? fallback?.big ?? "A clearer system",
+    big: stat?.value ?? fallback?.big ?? "A stronger brand choice",
     label: stat?.label ?? fallback?.label ?? project.hook ?? project.outcome,
   };
 }
@@ -307,7 +307,7 @@ export function EvidenceWall() {
         <header className="evidence-cinematic__header">
           <div>
             <p className="evidence-cinematic__eyebrow">04 · Selected work</p>
-            <h2 id="evidence-wall-title">Proof should <em>show its working.</em></h2>
+            <h2 id="evidence-wall-title">Client work should reveal <em>the thinking behind it.</em></h2>
           </div>
           <div className="evidence-cinematic__intro">
             <span>{String(activeIndex + 1).padStart(2, "0")} / {String(visibleProjects.length).padStart(2, "0")}</span>
@@ -318,7 +318,7 @@ export function EvidenceWall() {
                   : `Matched proof · ${SITUATION_LABEL[carriedSituation!]}`}
               </small>
             )}
-            <p>One real signal. One strategic decision. One outcome you can inspect.</p>
+            <p>Each project shows what was happening, what changed, and what the available evidence can honestly support.</p>
           </div>
         </header>
 
@@ -340,11 +340,11 @@ export function EvidenceWall() {
               <p>{activeProject.title} · {activeProject.industry}</p>
               <strong>{activeMetric.big}</strong>
               <span>{activeMetric.label}</span>
-              <ol className="evidence-cinematic__proof-line" aria-label="Decision trail">
+              <ol className="evidence-cinematic__proof-line" aria-label="Project reasoning">
                 {[
-                  ["Signal", activeTrail.signal],
-                  ["Decision", activeTrail.decision],
-                  ["Proof", activeTrail.proof],
+                  ["What was happening", activeTrail.signal],
+                  ["What changed", activeTrail.decision],
+                  ["What we can show", activeTrail.proof],
                 ].map(([label, value], index) => (
                   <motion.li
                     key={label}
@@ -368,8 +368,8 @@ export function EvidenceWall() {
               </ol>
 
               {activeEvidence && (
-                <aside className="evidence-cinematic__source" aria-label="Evidence note">
-                  <p>Evidence note</p>
+                <aside className="evidence-cinematic__source" aria-label="Evidence source">
+                  <p>Evidence source</p>
                   <div>
                     <strong>{activeEvidence.type} · {activeEvidence.period}</strong>
                     <span>{activeEvidence.source}</span>
@@ -384,12 +384,12 @@ export function EvidenceWall() {
                   onPointerEnter={prepareProjectFile}
                   onFocus={prepareProjectFile}
                 >
-                  Inspect the project file <span aria-hidden="true">↗</span>
+                  Open the project record <span aria-hidden="true">↗</span>
                 </button>
                 <Link href="#paths" onClick={continueIntoPath}>
                   {activeSituation
                     ? `Continue with the ${SITUATION_LABEL[activeSituation].toLowerCase()} path`
-                    : "Choose the right path"}
+                    : "See which engagement fits"}
                   <span aria-hidden="true">→</span>
                 </Link>
               </div>
@@ -399,8 +399,8 @@ export function EvidenceWall() {
 
         <div className="evidence-cinematic__index-area">
           <p className="evidence-cinematic__index-guide">
-            <span>Choose a case</span>
-            <span>Select to inspect the reasoning</span>
+            <span>Choose a project</span>
+            <span>Open the reasoning and evidence</span>
           </p>
           <div
             className="evidence-cinematic__index"

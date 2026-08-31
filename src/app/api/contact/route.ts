@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     });
     return jsonNoStore(
       {
-        error: "Please check the highlighted fields.",
+        error: "One or more answers need attention.",
         issues: parsed.error.flatten(),
       },
       { status: 422 },
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     return jsonNoStore(
       {
         error:
-          "The enquiry form is temporarily unavailable. Please email suman@brandingtatva.com directly.",
+          "This form cannot send email right now. Write to suman@brandingtatva.com instead.",
         requestId,
       },
       { status: 503 },
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       });
       return jsonNoStore(
         {
-          error: "The delivery provider did not accept the note. Try once more or email Suman directly.",
+          error: "The delivery provider did not accept the note. Send it once more or email Suman directly.",
           requestId,
         },
         { status: 502 },
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
     });
     return jsonNoStore(
       {
-        error: "The delivery service returned no confirmation. Try once more or email Suman directly.",
+        error: "The delivery service returned no confirmation. Send the note once more or email Suman directly.",
         requestId,
       },
       { status: 500 },

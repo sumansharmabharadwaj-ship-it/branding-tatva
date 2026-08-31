@@ -43,11 +43,11 @@ const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 // diagram literally grows as the layers assemble. Teaching lines,
 // zero invented client facts.
 const SKIPPED: Record<string, string> = {
-  earth: "Skipped: every campaign has to reintroduce the brand from zero.",
-  water: "Skipped: attention arrives and leaks straight out of the journey.",
-  fire: "Skipped: the message is right and nobody stops for it.",
-  air: "Skipped: five channels, five personalities, zero memory.",
-  space: "Skipped: the work performs once and leaves nothing behind.",
+  earth: "Without this: every campaign has to explain the business from the beginning.",
+  water: "Without this: attention arrives, but the experience gives buyers no reason to stay.",
+  fire: "Without this: the message may be right, yet nothing earns a second look.",
+  air: "Without this: five channels sound like five different businesses.",
+  space: "Without this: each campaign works alone and leaves little memory behind.",
 };
 
 const LAYERS: AuthorityLayer[] = elements.map((el) => ({
@@ -61,7 +61,7 @@ const LAYERS: AuthorityLayer[] = elements.map((el) => ({
 const AUTHORITY_ROUTE_ACTION: Record<ServicesSituationId, string> = {
   idea: "Build the foundation first",
   reposition: "Rebuild every layer",
-  ongoing: "Keep every layer coherent",
+  ongoing: "Keep every layer recognisable",
 };
 
 // The amplified signal: one path whose oscillation widens left to
@@ -235,12 +235,12 @@ export function PinnedBrandBuild() {
             className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20"
           >
             <div data-authority-copy="true">
-              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>
+              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Before promotion</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
-                Marketing amplifies whatever is already there.
+                Marketing cannot correct what the brand has not decided.
               </h2>
               <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
-                Skip one layer, and marketing amplifies the gap instead of the position.
+                When category, experience, expression, voice, or presence is weak, every campaign has to compensate.
               </p>
               {/* The insight produces an action (manual p11): the
                   package that builds every layer, one step away. */}
@@ -259,7 +259,7 @@ export function PinnedBrandBuild() {
                   rows below, which carry the full text alternative. */}
               <div data-authority-wave="true" aria-hidden="true" className="mb-6 border-b border-ivory/10 pb-4">
                 <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
-                  What marketing has to work with
+                  What must exist before promotion
                 </p>
                 <svg viewBox="0 0 400 80" className="mt-2 h-14 w-full max-w-lg" fill="none">
                   <g ref={waveRef} style={{ transformOrigin: "50% 50%" }}>

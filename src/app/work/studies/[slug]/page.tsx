@@ -107,8 +107,7 @@ export default async function BrandStudyPage({ params }: Props) {
                 {study.premise}
               </p>
               <p className="mt-6 max-w-2xl text-sm leading-relaxed text-ivory/60">
-                An independent dissection of the public record, written as teaching. {study.brand} has no
-                relationship with this practice, and every fact below is documented public history.
+                Independent analysis of the public record. No client relationship or affiliation exists between {study.brand} and Branding Tatva. Each factual example below comes from documented public history.
               </p>
             </Reveal>
           </Container>
@@ -144,9 +143,9 @@ export default async function BrandStudyPage({ params }: Props) {
           <MediaSlot fill={study.media?.applications} scrim={0.86} />
           <Container className="relative max-w-4xl">
             <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">At founder scale</p>
+              <p className="text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">What a founder can borrow</p>
               <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
-                The same mechanism, sized for a brand still earning its memory.
+                Apply the principle with a smaller team and budget.
               </h2>
               <ul className="mt-8 max-w-2xl space-y-5">
                 {study.applications.map((item) => (
@@ -169,17 +168,15 @@ export default async function BrandStudyPage({ params }: Props) {
           <Container className="relative max-w-4xl">
             <Reveal>
               <h2 className="max-w-xl text-display-sm font-display font-normal text-ivory">
-                Your brand runs on the same mechanics.
+                Which memory is your brand teaching people?
               </h2>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-ivory/90">
-                The Services journey walks through every mechanism in these studies and shows where your brand
-                stands today. The practice works with founders across the United States, the United Kingdom,
-                Canada and beyond, directly and remotely.
+                If buyers understand your work in conversation but cannot repeat its difference later, the problem is probably structural. Find the relevant scope or bring the question directly to Suman.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <LinkButton href="/services">Walk the journey</LinkButton>
+                <LinkButton href="/services">Find the relevant scope</LinkButton>
                 <LinkButton href="/contact" variant="secondary">
-                  Book a strategy call
+                  Bring your question
                 </LinkButton>
               </div>
             </Reveal>

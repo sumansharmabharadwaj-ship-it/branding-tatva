@@ -39,7 +39,7 @@ const STAGES = [
     title: "Choose the frame that deserves to lead.",
     note: "Category, audience priority, and available evidence resolve as one connected strategic choice.",
     recordLabel: "Chosen frame",
-    record: "A position with rationale, priorities, and clear boundaries.",
+    record: "A position with rationale, priorities, and defined boundaries.",
     output: "Position · rationale · boundaries",
     fragments: ["Category choice", "Audience priority", "Reason to believe"],
     icon: ScanSearch,
@@ -50,19 +50,19 @@ const STAGES = [
     title: "Give the strategic choice words people can carry.",
     note: "The chosen position becomes a message hierarchy, narrative direction, and verbal character people can recognise and repeat.",
     recordLabel: "Language to carry",
-    record: "A message system built around one clear strategic signal.",
+    record: "A message hierarchy built around the chosen position.",
     output: "Message hierarchy · verbal rules",
     fragments: ["Core message", "Narrative order", "Verbal character"],
     icon: MessageSquareQuote,
   },
   {
-    label: "System",
-    verb: "Carry",
-    title: "Turn the signal into rules for everyday use.",
-    note: "Position and language become practical formats, playbooks, and decision tools that keep future expression coherent.",
-    recordLabel: "System to use",
-    record: "A reusable operating system for campaigns, content, and brand decisions.",
-    output: "Playbooks · formats · next actions",
+    label: "Application",
+    verb: "Apply",
+    title: "Turn the position into rules for everyday use.",
+    note: "Position and language become practical formats, playbooks, and decision tools that keep future work recognisable.",
+    recordLabel: "Rules to use",
+    record: "A reusable set of rules for campaigns, content, and brand decisions.",
+    output: "Playbooks · formats · decisions",
     fragments: ["Channel rules", "Repeatable formats", "Decision tools"],
     icon: Layers3,
   },
@@ -136,12 +136,12 @@ export function WorkingDirectly() {
         <div className={styles.root}>
           <header className={styles.header}>
             <div>
-              <p className={styles.eyebrow}>Working directly · one continuous strategic thread</p>
-              <h2 id="direct-title">One mind keeps the context <em>alive through every decision.</em></h2>
+              <p className={styles.eyebrow}>Working directly with Suman</p>
+              <h2 id="direct-title">The thinking does not pass <em>between departments.</em></h2>
             </div>
             <div className={styles.headerAside}>
-              <p>Each conclusion becomes the starting material for what follows, so the original business tension survives all the way into the usable system.</p>
-              <div><span>One strategic lead</span><i aria-hidden="true" /><span>One decision trail</span></div>
+              <p>The person who hears the first business question also writes the position, directs the language, and reviews how the brand is applied.</p>
+              <div><span>Direct strategist access</span><i aria-hidden="true" /><span>Context kept throughout</span></div>
             </div>
           </header>
 
@@ -152,11 +152,11 @@ export function WorkingDirectly() {
             <article className={styles.sheet} aria-labelledby="direct-title">
               <div className={styles.paperLight} aria-hidden="true" />
               <header className={styles.sheetHeader}>
-                <div><span>Branding Tatva</span><strong>Living strategy record</strong></div>
+                <div><span>Branding Tatva</span><strong>Working strategy record</strong></div>
                 <p>Context retained <strong>{String(sequence.activeIndex + 1).padStart(2, "0")} / 04</strong></p>
               </header>
 
-              <div className={styles.stageRail} role="tablist" aria-label="Follow the founder-led decision trail">
+              <div className={styles.stageRail} role="tablist" aria-label="Follow the strategy decision trail">
                 <span className={styles.railLine} aria-hidden="true"><b /></span>
                 {STAGES.map((stage, index) => {
                   const Icon = stage.icon;
@@ -258,7 +258,7 @@ export function WorkingDirectly() {
           </motion.div>
 
           <div className={styles.staticExperience}>
-            <p>One record carries every decision forward · full strategic thread retained.</p>
+            <p>The same record carries every decision from the first question to everyday use.</p>
             <ol>
               {STAGES.map((stage) => {
                 const Icon = stage.icon;

@@ -160,7 +160,7 @@ export default async function InsightArticlePage({ params }: Props) {
     ...post.sections.map((section, index) => ({
       id: section.id,
       label: section.heading,
-      eyebrow: `Field chapter · ${String(index + 1).padStart(
+      eyebrow: `Decision · ${String(index + 1).padStart(
         2,
         "0"
       )} of ${String(post.sections.length).padStart(2, "0")}`,
@@ -181,7 +181,7 @@ export default async function InsightArticlePage({ params }: Props) {
       : []),
     {
       id: "reading-next-step",
-      label: "Choose the next move",
+      label: "Choose what to decide next",
       eyebrow: "Decision path",
     },
   ];
@@ -343,7 +343,7 @@ export default async function InsightArticlePage({ params }: Props) {
                       href="#working-framework"
                       className="insight-article-hero__framework-link"
                     >
-                      <span>Use the framework</span>
+                      <span>Work through the decision</span>
                       <strong>
                         {post.framework.steps.length} decisions · {post.framework.title}
                       </strong>
@@ -371,13 +371,13 @@ export default async function InsightArticlePage({ params }: Props) {
                       className="scroll-mt-32 rounded-[1.5rem] border border-soil/10 bg-background-elevated p-6 shadow-elevation-sm sm:p-8"
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
-                        Key takeaways
+                        Five conclusions
                       </p>
                       <h2
                         id="takeaways-heading"
                         className="mt-3 font-display text-3xl font-normal text-soil"
                       >
-                        The argument in five lines.
+                        The argument, compressed.
                       </h2>
                       <ul className="mt-6 grid gap-4">
                         {post.keyTakeaways.map((takeaway) => (
@@ -414,7 +414,7 @@ export default async function InsightArticlePage({ params }: Props) {
                             aria-hidden="true"
                           >
                             <span>{String(sectionIndex + 1).padStart(2, "0")}</span>
-                            Field chapter
+                            Decision
                           </p>
                           <h2 className="font-display text-[clamp(2rem,4vw,3.2rem)] font-normal leading-tight text-soil">
                             {section.heading}
@@ -463,16 +463,16 @@ export default async function InsightArticlePage({ params }: Props) {
                               aria-label="Decision connection"
                             >
                               <p className="insight-decision-bridge__label">
-                                Decision bridge
+                                What this changes next
                               </p>
                               <div className="insight-decision-bridge__map">
                                 <div className="insight-decision-bridge__node">
-                                  <span>Current layer</span>
+                                  <span>Current decision</span>
                                   <p>{section.heading}</p>
                                 </div>
                                 <div className="insight-decision-bridge__line" aria-hidden="true" />
                                 <div className="insight-decision-bridge__node">
-                                  <span>Connected layer</span>
+                                  <span>Next decision</span>
                                   <p>
                                     {post.sections[sectionIndex + 1]?.heading ??
                                       post.framework.title}
@@ -480,8 +480,9 @@ export default async function InsightArticlePage({ params }: Props) {
                                 </div>
                               </div>
                               <p className="insight-decision-bridge__note">
-                                A useful brand system carries one decision into
-                                the next, preserving meaning as the context changes.
+                                Carry this decision forward so the position,
+                                language, and customer experience do not begin
+                                telling different stories.
                               </p>
                             </aside>
                           )}
@@ -497,13 +498,13 @@ export default async function InsightArticlePage({ params }: Props) {
                       className="scroll-mt-32 pt-20"
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
-                        Frequent questions
+                        Before you use it
                       </p>
                       <h2
                         id="faq-heading"
                         className="mt-4 font-display text-display-sm font-normal text-soil"
                       >
-                        The questions that usually follow.
+                        Questions that can change the recommendation.
                       </h2>
                       <div className="mt-8 divide-y divide-border border-y border-border">
                         {post.faq.map((item) => (
@@ -535,19 +536,19 @@ export default async function InsightArticlePage({ params }: Props) {
                         className="scroll-mt-32 pt-20"
                       >
                         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
-                          Research sources
+                          Research record
                         </p>
                         <h2
                           id="research-sources-heading"
                           className="mt-4 font-display text-display-sm font-normal text-soil"
                         >
-                          The evidence beneath the method.
+                          What this guide draws from.
                         </h2>
                         <p className="mt-5 max-w-2xl text-base leading-8 text-foreground-secondary">
                           These sources establish the research principles used
                           in this guide. Branding Tatva&apos;s framework is the
                           practical application of that evidence to service
-                          businesses and founder-led brands.
+                          businesses and founders leading their own brands.
                         </p>
                         <ol className="mt-8 grid gap-4">
                           {sources.map((source, index) => (
@@ -608,16 +609,15 @@ export default async function InsightArticlePage({ params }: Props) {
                           Written by {site.founder}
                         </p>
                         <p className="mt-3 text-sm leading-7 text-foreground-secondary">
-                          Suman studies how attention, language, perception,
-                          and memory shape the way people understand a
-                          business, then turns those observations into brand
-                          decisions a founder can use.
+                          Suman works directly with founders to identify the
+                          market decision their current language, identity, or
+                          customer journey is obscuring.
                         </p>
                         <Link
                           href="/about"
                           className="link-underline mt-4 inline-block text-sm font-medium text-soil"
                         >
-                          Read the background <span aria-hidden="true">→</span>
+                          Why Suman works this way <span aria-hidden="true">→</span>
                         </Link>
                       </div>
                     </aside>
@@ -656,7 +656,7 @@ export default async function InsightArticlePage({ params }: Props) {
                     </div>
                     {application && applicationProof && applicationPackage && (
                       <div className="insight-application-card">
-                        <p>From reading to application</p>
+                        <p>See it applied</p>
                         <Link href={`/work/${applicationProof.slug}`}>
                           <small>Published project record</small>
                           <strong>{applicationProof.title}</strong>
@@ -699,16 +699,15 @@ export default async function InsightArticlePage({ params }: Props) {
                 <div className="grid gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
-                      Continue the thread
+                      Adjacent decision
                     </p>
                     <h2 className="mt-4 font-display text-display-md font-normal text-soil">
-                      The next useful questions.
+                      Read the question this one creates.
                     </h2>
                   </div>
                   <p className="max-w-2xl text-base leading-7 text-foreground-secondary lg:justify-self-end">
-                    Brand decisions rarely live alone. These essays connect the
-                    current question with the foundation, language, experience,
-                    or memory around it.
+                    Choose based on what the current decision affects next: the
+                    position, language, customer journey, or memory structure.
                   </p>
                 </div>
               </Reveal>
@@ -750,17 +749,17 @@ export default async function InsightArticlePage({ params }: Props) {
           <Container>
             <Reveal>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">
-                Apply the thinking
+                Bring the unresolved decision
               </p>
               <h2 className="mx-auto mt-4 max-w-3xl font-display text-display-md font-normal text-ivory">
-                A clear diagnosis makes the next brand decision smaller.
+                Stop circling the same brand question.
               </h2>
               <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-ivory/75">
-                Bring the question, the current materials, and the part that
-                keeps refusing to hold together.
+                Bring the current materials and the choice your team cannot
+                settle. Suman will identify what needs deciding first.
               </p>
               <div className="mt-8">
-                <LinkButton href="/contact">Start a brand conversation</LinkButton>
+                <LinkButton href="/contact">Bring the question to Suman</LinkButton>
               </div>
             </Reveal>
           </Container>

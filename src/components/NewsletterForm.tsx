@@ -27,20 +27,20 @@ function getConfirmationCopy(
 
   if (status === "already") {
     return {
-      eyebrow: "Field notes already active",
-      title: "This inbox already receives Field Notes.",
+      eyebrow: "Already subscribed",
+      title: "This inbox already receives Branding Tatva letters.",
       detail: label
-        ? `${label} can keep guiding what you read here; the emails remain broad, occasional, and editorial.`
-        : "The emails remain broad, occasional, and editorial.",
+        ? `${label} remains selected on this page. The emails are occasional and written for the whole list.`
+        : "The emails are occasional and written for the whole list.",
     };
   }
 
   return {
     eyebrow: "Confirmation sent",
-    title: "One last step: open your inbox.",
+    title: "Confirm the request in your inbox.",
     detail: label
-      ? `${label} stays active on this page while you confirm your place for the next field note.`
-      : "Confirm your place for the next field note from the email that just arrived.",
+      ? `${label} stays selected on this page while you confirm the request.`
+      : "Use the email that just arrived to confirm the request.",
   };
 }
 
@@ -85,7 +85,7 @@ export function NewsletterForm({
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setServerError(data.error ?? "The inbox gate stayed closed. Please try once more.");
+        setServerError(data.error ?? "The letter request did not reach the mailing list. Send it once more.");
         setStatus("error");
         return;
       }
@@ -116,12 +116,12 @@ export function NewsletterForm({
     : undefined;
   const isEvidenceThread = readerOrigin === "evidence-ledger";
   const formPrompt = isEvidenceThread
-    ? "Receive the next useful field note"
-    : "Where should the next field note land?";
+    ? "Receive future letters on this topic"
+    : "Receive occasional letters from Branding Tatva";
   const submitLabel =
     status === "submitting"
       ? "Sending…"
-      : "Request field notes";
+      : "Request the letters";
   const returnCopy = confirmedThread.pathName
     ? `Return to ${confirmedThread.pathName} essays`
     : "Return to the essay library";
@@ -168,7 +168,7 @@ export function NewsletterForm({
                 </li>
                 <li data-state="pending">
                   <span>03</span>
-                  <strong>Next field note</strong>
+                  <strong>Future letters</strong>
                 </li>
               </ol>
             ) : null}
@@ -254,9 +254,7 @@ export function NewsletterForm({
               </Magnetic>
             </form>
             <p className="mt-3 text-xs leading-5 text-ivory/55">
-              {isEvidenceThread
-                ? "Double opt-in. Occasional and editorial—not a personalised drip sequence. Leave in one click."
-                : "Double opt-in. Leave whenever the notes stop being useful."}
+              You will receive a confirmation email. Leave whenever the letters stop being useful.
             </p>
           </motion.div>
         )}

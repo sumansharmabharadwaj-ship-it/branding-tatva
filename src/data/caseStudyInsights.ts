@@ -3,7 +3,7 @@ import type { InsightPost } from "@/data/insights";
 export const caseStudyInsightPosts: InsightPost[] = [
   {
     slug: "case-study-structure-service-businesses",
-    title: "Case study structure for service businesses: show the decision, not just the result",
+    title: "Case study structure for service businesses: show the decision behind the result",
     seoTitle: "Case study structure for service businesses",
     excerpt:
       "A practical structure for turning client work into credible buying evidence by showing context, constraints, decisions, execution, and verified outcomes.",
@@ -36,7 +36,7 @@ export const caseStudyInsightPosts: InsightPost[] = [
       "Build one detailed source case study, then derive shorter sales, social, and proposal versions from it.",
     ],
     framework: {
-      title: "The decision-proof case study",
+      title: "The decision proof case study",
       introduction:
         "Seven layers turn finished work into evidence a prospective buyer can evaluate.",
       steps: [

@@ -3,7 +3,7 @@ import { z } from "zod";
 export const newsletterSchema = z.object({
   email: z
     .string()
-    .email("That looks like it might have a typo, mind checking it?")
+    .email("Check the email address. One character may be out of place.")
     .max(254),
   company_website: z.string().max(200).optional(),
   firstName: z.string().max(80).optional(),

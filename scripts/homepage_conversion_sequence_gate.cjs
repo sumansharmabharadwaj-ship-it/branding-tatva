@@ -94,7 +94,7 @@ assert(
   "Opening no longer gives the interactive diagnosis a clear first-screen entry.",
 );
 assert(
-  openingSource.includes('href="#evidence"') && openingSource.includes("Inspect verified client evidence"),
+  openingSource.includes('href="#evidence"') && openingSource.includes("Inspect the client evidence"),
   "Opening no longer keeps verified evidence one action away.",
 );
 

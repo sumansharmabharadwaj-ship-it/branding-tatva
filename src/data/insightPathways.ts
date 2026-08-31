@@ -22,26 +22,26 @@ export const insightPathways: Record<string, InsightPathway> = {
   "positioning": {
     service: {
       href: "/services#offerings",
-      label: "Explore brand positioning and identity work",
-      description: "See how positioning, category, verbal identity and visual direction become one working system.",
+      label: "See positioning and identity scopes",
+      description: "See how positioning, category, verbal identity, and visual direction are handled in one engagement.",
     },
     proof: {
       href: "/work/myshopineurope",
       label: "See the MyShopInEurope positioning decisions",
-      description: "A recorded brand foundation built around craft and origin rather than price-led marketplace language.",
+      description: "A recorded brand foundation built around craft and origin rather than marketplace language led by price.",
     },
     conversation: {
       href: "/contact",
       label: "Bring a positioning question to Suman",
-      description: "Use a 30-minute conversation to identify the decision that deserves attention first.",
+      description: "Use a 30 minute conversation to identify the decision that deserves attention first.",
     },
     adjacentTopicSlugs: ["brand-messaging", "distinctive-brand"],
   },
   "customer-experience": {
     service: {
       href: "/services#desire",
-      label: "Compare the available engagement paths",
-      description: "Match the current customer-journey problem with a defined project scope and working format.",
+      label: "Compare service scopes",
+      description: "Match the customer journey problem with a defined project scope and working format.",
     },
     proof: {
       href: "/work/executive-springboard",
@@ -59,30 +59,30 @@ export const insightPathways: Record<string, InsightPathway> = {
     service: {
       href: "/services#authority",
       label: "See how recognition becomes a brand system",
-      description: "Follow the connected decisions that turn difference into cues people can recognise and reuse.",
+      description: "See how a strategic difference becomes cues people can recognise and reuse.",
     },
     proof: {
       href: "/work/herbalcart",
       label: "See the HerbalCart perception reset",
-      description: "A recorded shift from an inherited herbal frame toward a modern supplement-first position.",
+      description: "A recorded shift from an inherited herbal frame toward a modern supplement position.",
     },
     conversation: {
       href: "/contact",
-      label: "Discuss the cue your audience should remember",
-      description: "Use the conversation to separate strategic difference from surface-level decoration.",
+      label: "Bring the cue your audience should remember",
+      description: "Separate a strategic difference from decoration that changes the look alone.",
     },
     adjacentTopicSlugs: ["brand-memory", "positioning"],
   },
   "brand-messaging": {
     service: {
       href: "/services#offerings",
-      label: "Explore messaging, voice and content systems",
+      label: "See messaging, voice, and content scopes",
       description: "See where verbal identity, content strategy and website structure sit inside the practice.",
     },
     proof: {
       href: "/work/plaxonic-content-portfolio",
-      label: "See the Plaxonic content authority system",
-      description: "Sixteen recorded pieces arranged across research, opinion, education and fast-consumption formats.",
+      label: "Read the Plaxonic content record",
+      description: "Sixteen recorded pieces arranged across research, opinion, education, and shorter reads.",
     },
     conversation: {
       href: "/contact",
@@ -100,7 +100,7 @@ export const insightPathways: Record<string, InsightPathway> = {
     proof: {
       href: "/work/dr-haley-nutrition",
       label: "See measured recognition signals in Dr. Haley Nutrition",
-      description: "A recorded two-month engagement comparing content volume with followers and engagement earned per post.",
+      description: "A recorded two month engagement comparing content volume with followers and engagement earned per post.",
     },
     conversation: {
       href: "/contact",
