@@ -22,7 +22,22 @@ html[data-site-menu="open"] [data-auto-journey-control] {
   display: none !important;
 }
 
-@media (max-width: 899px), (pointer: coarse) {
+/* Keep width and input-mode queries separate. The production CSS optimizer
+   can discard a comma-separated query when one branch is unavailable in the
+   target browser, which left the Services chapter control underneath the
+   consent notice on narrow phones. */
+@media (max-width: 899px) {
+  html[data-consent-banner="visible"] [data-section-jump-nav-mobile="true"],
+  html[data-consent-banner="visible"] [data-contact-chapter-rail],
+  html[data-consent-banner="visible"] [data-about-mobile-chapter-controls],
+  html[data-consent-banner="visible"] [data-insights-scene-compass],
+  html[data-consent-banner="visible"] [data-chapter-ladder-mobile],
+  html[data-consent-banner="visible"] [data-auto-journey-control] {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+@media (pointer: coarse) {
   html[data-consent-banner="visible"] [data-section-jump-nav-mobile="true"],
   html[data-consent-banner="visible"] [data-contact-chapter-rail],
   html[data-consent-banner="visible"] [data-about-mobile-chapter-controls],
