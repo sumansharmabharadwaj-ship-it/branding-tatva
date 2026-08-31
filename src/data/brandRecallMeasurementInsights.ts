@@ -32,7 +32,7 @@ export const brandRecallMeasurementInsightPosts: SourcedInsightPost[] = [
       "brand awareness research for small business",
     ],
     searchIntent:
-      "Learn how to run and interpret a credible brand recall study without a large research budget.",
+      "Plan and interpret a credible brand recall study without a large research budget.",
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "14 min read",

@@ -20,7 +20,7 @@ export const differentiationInsightPosts: InsightPost[] = [
       "brand positioning differentiation",
     ],
     searchIntent:
-      "Learn how to identify and validate a commercially useful differentiator for a service business.",
+      "Identify a differentiator that qualified buyers can notice, believe, and use when choosing a service business.",
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",

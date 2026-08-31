@@ -334,7 +334,7 @@ export function ClarityCTA() {
                 <span className="block h-full w-1/2" style={{ backgroundColor: GOLD }} />
               </div>
               <div className="rounded-2xl border border-ivory/10 bg-black/10 px-4 py-4">
-                <p className="text-[0.62rem] uppercase tracking-[0.2em] text-ivory/35">What it unlocks</p>
+                <p className="text-[0.62rem] uppercase tracking-[0.2em] text-ivory/35">What this resolves</p>
                 <p className="mt-2 font-display text-lg font-normal text-ivory/90">{active.result}</p>
               </div>
             </div>

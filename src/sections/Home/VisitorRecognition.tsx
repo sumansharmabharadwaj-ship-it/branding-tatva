@@ -102,7 +102,7 @@ export function VisitorRecognition() {
             </div>
             <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
               <Link href={`/work/${active.proof.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory">See the decisions behind the result <span aria-hidden="true">→</span></Link>
-              <Link href="/services" className="inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory">Explore the right service path <span aria-hidden="true">→</span></Link>
+              <Link href="/services" className="inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory">See which engagement fits <span aria-hidden="true">→</span></Link>
             </div>
           </motion.div>
         </AnimatePresence>

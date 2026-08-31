@@ -11,7 +11,7 @@ export const brandVoiceInsightPosts: InsightPost[] = [
     topicSlug: "brand-messaging",
     primaryKeyword: "brand voice guidelines",
     secondaryKeywords: ["brand tone of voice guidelines", "verbal identity guidelines", "brand voice examples", "tone of voice framework", "brand writing guidelines"],
-    searchIntent: "Learn how to create practical brand voice and tone guidelines that writers can apply consistently across channels.",
+    searchIntent: "Create voice and tone rules that writers can apply consistently across channels.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",

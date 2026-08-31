@@ -17,7 +17,7 @@ const CAPABILITY_EVIDENCE = [
 export function WorkProofStrip({ projects }: { projects: Project[] }) {
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const shouldAnimate = hydrated && !prefersReducedMotion;
-  const items = [`${projects.length} engagements on record`, ...CAPABILITY_EVIDENCE, "Founder-led direction"];
+  const items = [`${projects.length} engagements on record`, ...CAPABILITY_EVIDENCE, "Founder led direction"];
 
   return (
     <section

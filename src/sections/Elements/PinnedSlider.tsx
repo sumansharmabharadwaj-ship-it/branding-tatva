@@ -158,7 +158,7 @@ export function PinnedSlider({ elements }: { elements: Element[] }) {
       <div className="pointer-events-none absolute inset-x-5 top-6 z-30 flex items-center justify-between gap-4 sm:inset-x-10 sm:top-9 lg:inset-x-16">
         <div>
           <p className="text-[0.58rem] font-medium uppercase tracking-[0.2em] text-ivory/45">
-            The five-element chapter
+            The five element chapter
           </p>
           <p className="mt-1 font-display text-xl text-ivory sm:text-2xl">
             {active?.name}

@@ -20,7 +20,7 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
       "service business website copy",
     ],
     searchIntent:
-      "Learn how to structure and write a service page that helps qualified buyers understand fit, value, proof, and the next step.",
+      "Write a service page that helps qualified buyers judge fit, value, proof, and what happens next.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",

@@ -84,17 +84,17 @@ export function TatvaSystemLab() {
               <div><span>{String(activeIndex + 1).padStart(2, "0")}</span><strong>{active.name}</strong><small>{active.role}</small></div>
               <h3>{active.title}</h3>
               <p>{active.text}</p>
-              <Link href="/services">Explore the complete system <span aria-hidden="true">↗</span></Link>
+              <Link href="/services">See how the five forces work together <span aria-hidden="true">↗</span></Link>
             </motion.article>
           </AnimatePresence>
         </div>
 
         <div className="tatva-film__selector">
           <div className="tatva-film__selector-label">
-            <span>Explore the five forces</span>
+            <span>Choose a force</span>
             <span>{String(activeIndex + 1).padStart(2, "0")} / {String(FORCES.length).padStart(2, "0")}</span>
           </div>
-          <div className="tatva-film__forces" role="tablist" aria-label="Explore the five Tatvas">
+          <div className="tatva-film__forces" role="tablist" aria-label="Choose one of the five Tatvas">
             {FORCES.map((force, index) => {
               const selected = index === activeIndex;
               return (

@@ -20,7 +20,7 @@ const FOUNDATION_LAYERS = [
 ] as const;
 
 const FLOW_POINTS = [96, 178, 260, 342, 424] as const;
-const FLOW_LABELS = ["DISCOVER", "ENTER", "CHOOSE", "RECEIVE", "RETURN"] as const;
+const FLOW_LABELS = ["NOTICE", "ENTER", "CHOOSE", "RECEIVE", "RETURN"] as const;
 const FLOW_POSITIONS = [194, 216, 202, 194, 192] as const;
 const DISTINCTION_RAYS = Array.from({ length: 12 }, (_, index) => index * 30);
 const VOICE_WAVES = [

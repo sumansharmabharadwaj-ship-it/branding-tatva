@@ -140,7 +140,7 @@ export function SignatureProject({ project }: { project: Project }) {
             </div>
             <p className="mt-3 text-xs leading-relaxed" style={{ color: WORK.sage }}>
               {reduceMotion
-                ? "The complete evidence diagram remains visible without autoplay or scroll-controlled grading."
+                ? "The complete evidence diagram remains visible without autoplay or scroll controlled grading."
                 : "The diagram holds its colour back until the story earns it: ambiguity first, verified result last."}
             </p>
             <ol className="mt-6 flex gap-2" aria-hidden="true">

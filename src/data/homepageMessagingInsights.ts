@@ -20,7 +20,7 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
       "homepage value proposition",
     ],
     searchIntent:
-      "Learn how to structure homepage messaging for a service business so visitors understand the offer and move toward enquiry.",
+      "Structure a service business homepage around buyer questions, proof, fit, and enquiry.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",

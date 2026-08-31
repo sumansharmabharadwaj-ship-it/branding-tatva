@@ -20,7 +20,7 @@ export const consultingPositioningInsightPosts: InsightPost[] = [
       "consulting value proposition",
     ],
     searchIntent:
-      "Learn how to create a clear position for a consulting business without making the offer unnecessarily narrow.",
+      "Position a consulting business clearly without making the offer narrower than the delivery can support.",
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",

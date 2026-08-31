@@ -20,7 +20,7 @@ export const distinctiveAssetInsightPosts: InsightPost[] = [
       "how to build brand recognition",
     ],
     searchIntent:
-      "Learn how to identify, choose, and audit distinctive brand assets.",
+      "Identify, choose, and audit the cues buyers can recognise without the logo.",
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",

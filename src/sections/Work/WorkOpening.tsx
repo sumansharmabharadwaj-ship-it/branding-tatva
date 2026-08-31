@@ -168,7 +168,7 @@ export function WorkOpening() {
                 className="group inline-flex items-center gap-3 rounded-full px-5 py-2.5 text-sm font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-6 sm:py-3"
                 style={{ backgroundColor: WORK.forest, outlineColor: WORK.moss }}
               >
-                Explore the evidence
+                Inspect the evidence
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-y-0.5">
                   ↓
                 </span>
@@ -184,7 +184,7 @@ export function WorkOpening() {
             </div>
 
             <p className="mt-8 hidden text-xs uppercase tracking-[0.15em] sm:block" style={{ color: WORK.stone }}>
-              Founder-led strategy, writing, direction, and delivery
+              Founder led strategy, writing, direction, and delivery
             </p>
           </div>
 
@@ -312,7 +312,7 @@ export function WorkOpening() {
                 data-work-preview-toggle="true"
                 aria-label={
                   prefersReducedMotion
-                    ? "Project preview is static in reduced-motion mode"
+                    ? "Project preview is static in reduced motion mode"
                     : manualPaused
                       ? "Resume automatic project preview"
                       : "Pause automatic project preview"

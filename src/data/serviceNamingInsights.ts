@@ -20,7 +20,7 @@ export const serviceNamingInsightPosts: InsightPost[] = [
       "programme naming strategy",
     ],
     searchIntent:
-      "Learn how to name services, packages, and programmes clearly without creating unnecessary sub-brands.",
+      "Name services, packages, and programmes so buyers can understand, compare, request, and remember them.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",

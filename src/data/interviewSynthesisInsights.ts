@@ -20,7 +20,7 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
       "positioning research",
     ],
     searchIntent:
-      "Learn how to analyse customer interviews and turn qualitative evidence into a usable brand positioning brief.",
+      "Turn customer interview evidence into a positioning brief that preserves language, patterns, tensions, and exceptions.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",

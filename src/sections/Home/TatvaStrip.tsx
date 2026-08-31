@@ -214,7 +214,7 @@ export function TatvaStrip() {
               className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em]"
               style={{ color: "#D4B99A" }}
             >
-              Enter the five-element chapter <span aria-hidden="true">→</span>
+              Enter the five element chapter <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
 

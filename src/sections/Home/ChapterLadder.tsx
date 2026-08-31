@@ -59,7 +59,7 @@ const CHAPTERS: ChapterDefinition[] = [
   {
     id: "elements",
     label: "Five elements",
-    detail: "Explore each Tatva in depth.",
+    detail: "Open each Tatva in depth.",
     elementId: "elements",
   },
   {
@@ -245,7 +245,7 @@ export function ChapterLadder() {
   return (
     <>
       <nav
-        aria-label="Explore the homepage"
+        aria-label="Homepage chapter navigation"
         data-chapter-ladder
         className="pointer-events-none fixed right-3 top-1/2 z-[45] hidden -translate-y-1/2 md:block lg:right-5"
       >
@@ -342,7 +342,7 @@ export function ChapterLadder() {
             >
               <div className="flex items-center justify-between px-2 pb-2 pt-1">
                 <div>
-                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.22em] text-ivory/45">Explore the page</p>
+                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.22em] text-ivory/45">Choose a chapter</p>
                   <p className="mt-1 font-display text-lg text-ivory">{displayChapter.label}</p>
                 </div>
                 <span className="text-[0.62rem] tracking-[0.18em] text-sandstone/75">
@@ -404,7 +404,7 @@ export function ChapterLadder() {
               />
             ))}
           </span>
-          <span className="text-[0.62rem] font-medium uppercase tracking-[0.18em]">Explore</span>
+          <span className="text-[0.62rem] font-medium uppercase tracking-[0.18em]">Chapters</span>
           <span className="text-[0.62rem] tracking-[0.15em] text-sandstone/80">
             {String(activeIndex + 1).padStart(2, "0")}/{String(chapters.length).padStart(2, "0")}
           </span>

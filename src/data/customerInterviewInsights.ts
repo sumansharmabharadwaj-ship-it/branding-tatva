@@ -32,7 +32,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
       "customer interview guide",
     ],
     searchIntent:
-      "Learn how to plan, conduct, and analyse customer interviews that produce useful evidence for positioning, messaging, and brand strategy.",
+      "Plan customer interviews that produce usable evidence for positioning, messaging, and brand strategy.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",

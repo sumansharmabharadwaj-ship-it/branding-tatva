@@ -91,7 +91,7 @@ export function BrandStudies() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-3 sm:gap-4 md:grid-cols-2 lg:mt-12 lg:grid-cols-12" aria-label="Independent brand-study mechanisms">
+        <div className="mt-10 grid gap-3 sm:gap-4 md:grid-cols-2 lg:mt-12 lg:grid-cols-12" aria-label="Independent brand study mechanisms">
           {brandStudies.map((study, index) => {
             const isOpen = open === index;
             const panelId = `study-panel-${study.slug}`;

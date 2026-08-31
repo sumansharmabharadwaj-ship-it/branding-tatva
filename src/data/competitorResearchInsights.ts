@@ -11,7 +11,7 @@ export const competitorResearchInsightPosts: InsightPost[] = [
     topicSlug: "positioning",
     primaryKeyword: "competitor research for brand strategy",
     secondaryKeywords: ["brand competitor analysis", "competitive brand research", "brand positioning competitor analysis", "competitive positioning framework", "brand strategy research"],
-    searchIntent: "Learn how to analyse competitors for positioning and differentiation without copying their branding or messaging.",
+    searchIntent: "Analyse competitors for positioning and differentiation without borrowing their language or identity cues.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",

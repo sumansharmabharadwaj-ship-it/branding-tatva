@@ -109,6 +109,9 @@ const STOCK_PATTERNS = [
   /\bbook a call\b/i,
   /\blet['’]s talk\b/i,
   /\bdrive(?:s|n|ing)? (?:real )?(?:growth|results|impact)\b/i,
+  /^\s*learn how\b/i,
+  /^\s*explore\b/i,
+  /\bwhat it unlocks\b/i,
 ];
 
 const LONG_FORM_SURFACE_KEYS = new Set([
@@ -129,6 +132,7 @@ const LONG_FORM_SURFACE_KEYS = new Set([
   "answer",
   "label",
   "pullQuote",
+  "searchIntent",
 ]);
 
 function walk(directory) {
@@ -141,6 +145,8 @@ function walk(directory) {
 
 function isAuditedSurfaceFile(relativeFile) {
   const normalized = relativeFile.split(path.sep).join("/");
+  if (/^src\/app\/.+\/(?:page|layout|error|not-found)\.tsx$/.test(normalized)) return true;
+  if (/^src\/(?:components|layouts|sections)\/.+\.tsx$/.test(normalized)) return true;
   if (/^src\/app\/(?:page|about\/page|services\/page|insights\/page|contact\/page)\.tsx$/.test(normalized)) return true;
   if (/^src\/app\/(?:error|not-found)\.tsx$/.test(normalized)) return true;
   if (/^src\/app\/api\/(?:contact|newsletter)\/route\.ts$/.test(normalized)) return true;
@@ -184,6 +190,8 @@ function shouldInspect(node, text) {
   if (/^(?:https?:\/\/|mailto:|tel:|\/|#)/i.test(clean)) return false;
   if (/^[\w.+-]+@[\w.-]+\.[a-z]{2,}$/i.test(clean)) return false;
   if (/^(?:linear|radial)-gradient\(|^rgba?\(|^@(?:media|keyframes)|^\[data-|^\.[\w-]/i.test(clean)) return false;
+  if (/^(?:cubic-bezier|drop-shadow|translate|scale|rotate)\(/i.test(clean)) return false;
+  if (/\b\d+(?:\.\d+)?ms\b/i.test(clean)) return false;
   if (/\b(?:uniform|varying|gl_FragColor|stroke-dashoffset)\b|[{};]/.test(clean)) return false;
   if (/^\(?\s*(?:min|max|prefers)-width:|^\(prefers-reduced-motion:/i.test(clean)) return false;
   if (/^[Mm]\s*-?\d/.test(clean) || /^M-?\d/.test(clean)) return false;
@@ -204,7 +212,7 @@ function shouldInspect(node, text) {
   }
 
   const variable = nearestVariableName(node);
-  if (/class|style|token|key|event|path|regex|selector|storage|manifest|gradient|overlay|media|query|intent.*language/i.test(variable)) {
+  if (/class|style|token|key|event|path|regex|selector|storage|manifest|gradient|overlay|media|query|intent.*language|transition|motion|animation|ease/i.test(variable)) {
     return false;
   }
 
@@ -215,15 +223,22 @@ function shouldInspect(node, text) {
   if (tokens.length >= 3 && utilityTokens.length / tokens.length > 0.45) return false;
   const technicalTokens = tokens.filter((token) => /[-:/\[\]]/.test(token));
   if (
-    /^[a-z]/.test(clean) &&
+    /^-?[a-z]/.test(clean) &&
     technicalTokens.length / tokens.length >= 0.5 &&
     !/[.!?]$/.test(clean)
   ) {
     return false;
   }
 
+  if (
+    clean.toLowerCase() === "unlock" &&
+    (ts.isCallExpression(node.parent) || ts.isBinaryExpression(node.parent))
+  ) {
+    return false;
+  }
+
   if (/\s/.test(clean)) return true;
-  return /[—–]/.test(clean);
+  return /[—–]/.test(clean) || STOCK_PATTERNS.some((pattern) => pattern.test(clean));
 }
 
 function issueFor(text, allowCompoundHyphens = false) {

@@ -121,7 +121,7 @@ export function StudioDesk() {
                 Open anything on the desk.
               </h2>
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/75">
-                Six objects, each holding something real from the practice. Explore in any order.
+                Six objects, each holding something real from the practice. Open them in any order.
               </p>
             </div>
           </Reveal>

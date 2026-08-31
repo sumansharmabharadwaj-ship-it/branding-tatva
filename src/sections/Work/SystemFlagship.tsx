@@ -194,11 +194,11 @@ export function SystemFlagship({ project }: { project: Project }) {
             <span className="text-[0.6rem] font-medium uppercase tracking-[0.16em]" style={{ color: WORK.sand }}>
               From
             </span>
-            <span className="text-white/72">Generic access-only marketplace</span>
+            <span className="text-white/72">Generic marketplace built around access alone</span>
             <span className="text-[0.6rem] font-medium uppercase tracking-[0.16em]" style={{ color: WORK.sand }}>
               To
             </span>
-            <span className="text-white/90">An origin-led brand and content operating system</span>
+            <span className="text-white/90">A brand and content operating system led by origin</span>
           </div>
         </div>
 
@@ -276,7 +276,7 @@ export function SystemFlagship({ project }: { project: Project }) {
               </div>
             </div>
 
-            <ol className="mt-5 grid grid-cols-3 gap-2" aria-label="Case-study progress">
+            <ol className="mt-5 grid grid-cols-3 gap-2" aria-label="Case study progress">
               {steps.map((step, index) => (
                 <li key={step.label}>
                   <button

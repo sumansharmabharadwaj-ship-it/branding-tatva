@@ -20,7 +20,7 @@ export const caseStudyInsightPosts: InsightPost[] = [
       "agency case study format",
     ],
     searchIntent:
-      "Learn how to structure a credible service-business case study that supports sales, positioning, and trust.",
+      "Structure a service business case study around the problem, decision, delivery, and recorded result.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",

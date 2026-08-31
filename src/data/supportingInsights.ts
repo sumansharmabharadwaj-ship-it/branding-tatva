@@ -20,7 +20,7 @@ export const supportingInsightPosts: InsightPost[] = [
       "brand messaging for websites",
     ],
     searchIntent:
-      "Learn how to organise homepage and service-page messaging for a service business.",
+      "Organise homepage and service page messages around buyer questions, proof, and the next decision.",
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",

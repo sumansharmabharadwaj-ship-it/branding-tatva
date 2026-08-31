@@ -20,7 +20,7 @@ export const customerJourneyInsightPosts: InsightPost[] = [
       "brand touchpoint mapping",
     ],
     searchIntent:
-      "Learn how to create and use a customer journey map for a service business.",
+      "Map discovery, enquiry, decision, onboarding, delivery, and follow up for a service business.",
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
