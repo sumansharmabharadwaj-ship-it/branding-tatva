@@ -42,20 +42,30 @@ export function VideoWarden() {
       // compete for attention or decoding capacity.
       const governed = all;
 
+      const candidates = governed
+        .filter(onScreen)
+        // A full bleed background filling the screen matters more than a
+        // small inline clip that happens to sit nearer the middle. Ranking
+        // by nearness alone left backgrounds frozen behind the copy, so
+        // coverage decides first and nearness only breaks ties.
+        .sort((a, b) => {
+          const coverA = viewportCoverage(a);
+          const coverB = viewportCoverage(b);
+          if (Math.abs(coverA - coverB) > 0.08) return coverB - coverA;
+          return distanceFromViewportCentre(a) - distanceFromViewportCentre(b);
+        });
+
+      const primary = candidates[0];
+      const primaryGroup = primary?.dataset.videoWardenGroup;
+      // Some heroes compose a full bleed film and a smaller foreground film
+      // into one visible scene. A shared group lets that scene play together
+      // without opening the playback budget to unrelated page media.
       const allowed = new Set(
-        governed
-          .filter(onScreen)
-          // A full bleed background filling the screen matters more than a
-          // small inline clip that happens to sit nearer the middle. Ranking
-          // by nearness alone left backgrounds frozen behind the copy, so
-          // coverage decides first and nearness only breaks ties.
-          .sort((a, b) => {
-            const coverA = viewportCoverage(a);
-            const coverB = viewportCoverage(b);
-            if (Math.abs(coverA - coverB) > 0.08) return coverB - coverA;
-            return distanceFromViewportCentre(a) - distanceFromViewportCentre(b);
-          })
-          .slice(0, 1),
+        primaryGroup
+          ? candidates.filter((video) => video.dataset.videoWardenGroup === primaryGroup)
+          : primary
+            ? [primary]
+            : [],
       );
 
       governed.forEach((video) => {

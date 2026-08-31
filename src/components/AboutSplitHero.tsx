@@ -11,6 +11,8 @@ import { TiltCard } from "@/components/TiltCard";
 import { Fireflies } from "@/components/Fireflies";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 
+const ABOUT_HERO_VIDEO_GROUP = "about-hero";
+
 // Full-bleed nature backdrop with a single framed photo/video card
 // floating centered on it, the headline carried directly on the card
 // rather than in a second separate box. Earlier rounds stacked a
@@ -86,6 +88,7 @@ export function AboutSplitHero({
             loop
             playsInline
             aria-hidden="true"
+            data-video-warden-group={ABOUT_HERO_VIDEO_GROUP}
           />
         </motion.div>
       )}
@@ -151,6 +154,7 @@ export function AboutSplitHero({
                       loop
                       playsInline
                       aria-hidden="true"
+                      data-video-warden-group={ABOUT_HERO_VIDEO_GROUP}
                     />
                   )}
                   <div

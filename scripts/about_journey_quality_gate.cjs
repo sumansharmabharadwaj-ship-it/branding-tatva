@@ -103,6 +103,12 @@ assert(
   "Adjacent About films can briefly decode together instead of handing playback over atomically.",
 );
 assert(
+  (splitHero.match(/data-video-warden-group=\{ABOUT_HERO_VIDEO_GROUP\}/g) || []).length === 2 &&
+    videoWarden.includes("const primaryGroup = primary?.dataset.videoWardenGroup;") &&
+    videoWarden.includes("video.dataset.videoWardenGroup === primaryGroup"),
+  "The About hero background and foreground films can no longer share their composed playback scene.",
+);
+assert(
   runtime.includes("const mobileNavigatorActive = navigatorActive;") &&
     runtime.includes("disabled={activeChapter === CHAPTERS.length - 1}") &&
     runtime.includes("disabled={activeChapter === 0}"),
