@@ -238,6 +238,7 @@ export function InsightsExplorer({
   const topicButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const folioTrackRef = useRef<HTMLDivElement>(null);
   const folioCardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const restoredMobileCardIndexRef = useRef<number | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   const libraryVisuals = useMemo(
@@ -283,6 +284,12 @@ export function InsightsExplorer({
       setQuery(restoredLibrary.query);
       setTopicSlug(restoredLibrary.topicSlug);
       setFolio({ index: restoredLibrary.folio, direction: -1 });
+      const restoredMobileCardIndex = Math.min(
+        POSTS_PER_FOLIO - 1,
+        Math.max(0, restoredLibrary.mobileCardIndex ?? 0),
+      );
+      restoredMobileCardIndexRef.current = restoredMobileCardIndex;
+      setMobileCardIndex(restoredMobileCardIndex);
 
       if (initialIntent?.origin === "insights-library") {
         setCarriedIntent(initialIntent);
@@ -405,19 +412,42 @@ export function InsightsExplorer({
       query,
       topicSlug,
       folio: activeFolio,
+      mobileCardIndex,
     });
-  }, [activeFolio, hasRestoredLibraryState, query, topicSlug]);
+  }, [
+    activeFolio,
+    hasRestoredLibraryState,
+    mobileCardIndex,
+    query,
+    topicSlug,
+  ]);
 
   useEffect(() => {
-    setMobileCardIndex(0);
+    if (!hasRestoredLibraryState || query !== deferredQuery) return;
+
     folioCardRefs.current.length = visiblePosts.length;
+    const nextMobileCardIndex = Math.min(
+      Math.max(0, visiblePosts.length - 1),
+      restoredMobileCardIndexRef.current ?? 0,
+    );
+    const card = folioCardRefs.current[nextMobileCardIndex];
+    restoredMobileCardIndexRef.current = null;
+    setMobileCardIndex(nextMobileCardIndex);
+
+    const centeredPosition = card
+      ? card.offsetLeft -
+        ((folioTrackRef.current?.clientWidth ?? 0) - card.clientWidth) / 2
+      : 0;
     folioTrackRef.current?.scrollTo({
-      left: 0,
+      left: Math.max(0, centeredPosition),
       behavior: prefersReducedMotion ? "auto" : "smooth",
     });
   }, [
     activeFolio,
+    deferredQuery,
+    hasRestoredLibraryState,
     prefersReducedMotion,
+    query,
     topicSlug,
     visibleFolioKey,
     visiblePosts.length,

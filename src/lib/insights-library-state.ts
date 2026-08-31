@@ -5,6 +5,7 @@ export type InsightsLibraryState = {
   query: string;
   topicSlug: string;
   folio: number;
+  mobileCardIndex?: number;
 };
 
 type StoredInsightsLibraryState = {
@@ -27,7 +28,12 @@ function isInsightsLibraryState(
     typeof state.folio === "number" &&
     Number.isInteger(state.folio) &&
     state.folio >= 0 &&
-    state.folio <= 99
+    state.folio <= 99 &&
+    (state.mobileCardIndex === undefined ||
+      (typeof state.mobileCardIndex === "number" &&
+        Number.isInteger(state.mobileCardIndex) &&
+        state.mobileCardIndex >= 0 &&
+        state.mobileCardIndex <= 2))
   );
 }
 
