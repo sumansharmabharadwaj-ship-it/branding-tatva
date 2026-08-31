@@ -131,6 +131,11 @@ export function RecognitionAudit() {
       }
       track("lead_magnet_requested");
       setStatus("done");
+      const fullScore = CHECKS.reduce(
+        (score, _check, checkIndex) => score + (markedChecks.has(checkIndex) ? 1 : 0),
+        0,
+      );
+      publishServicesRecognitionAudit(fullScore, CHECKS.length);
       // The reward is the content, not a thank-you cul-de-sac. On a
       // phone, return directly to the checks chapter so six through ten
       // replace the form inside the same frame.
@@ -298,13 +303,23 @@ export function RecognitionAudit() {
                   </p>
                   <p className="mt-1 text-sm leading-relaxed text-ivory/68">{scoreGuidance}</p>
                 </div>
-                <p
-                  className="shrink-0 font-display text-2xl text-ivory"
-                  aria-label={`${markedCount} of ${shown.length} checks marked`}
+                <a
+                  href="#book"
+                  data-recognition-audit-handoff="true"
+                  onClick={() => publishServicesRecognitionAudit(markedCount, shown.length)}
+                  className="group inline-flex min-h-11 shrink-0 items-center justify-between gap-4 rounded-full border border-sandstone/38 bg-sandstone/[0.06] px-4 py-2 text-left transition-colors hover:border-sandstone hover:bg-sandstone/12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                  aria-label={`Bring your ${markedCount} of ${shown.length} recognition score to the Strategy Room`}
                 >
-                  {markedCount}
-                  <span className="text-base text-ivory/45"> / {shown.length}</span>
-                </p>
+                  <span className="font-display text-2xl text-ivory">
+                    {markedCount}
+                    <span className="text-base text-ivory/45"> / {shown.length}</span>
+                  </span>
+                  <span className="text-[0.62rem] font-medium uppercase leading-[1.35] tracking-[0.12em] text-sandstone">
+                    Bring to the
+                    <br />
+                    Strategy Room <span aria-hidden="true">→</span>
+                  </span>
+                </a>
               </div>
             )}
           </section>
