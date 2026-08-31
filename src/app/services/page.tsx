@@ -542,7 +542,7 @@ export default async function ServicesPage() {
           video="/videos/generated/bt-services-strategy-room.mp4"
           videoMobile="/videos/generated/bt-services-strategy-room-mobile.mp4"
           overlayGradient="linear-gradient(180deg, rgba(10,15,16,0.26) 0%, rgba(14,18,18,0.34) 52%, rgba(20,17,14,0.54) 100%)"
-          className="flex min-h-[100svh] scroll-mt-24 flex-col justify-center pb-16 pt-24 sm:pb-20 sm:pt-32"
+          className="flex min-h-[100svh] flex-col justify-center pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
           <StrategyRoomCTA />
         </TexturedDark>
