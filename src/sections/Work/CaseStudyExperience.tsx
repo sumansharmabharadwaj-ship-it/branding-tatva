@@ -375,24 +375,24 @@ function AuthorityVisual({
   accent: string;
 }) {
   return (
-    <div className="grid h-full min-h-0 grid-cols-2 grid-rows-2 gap-2 p-3 sm:gap-5 sm:p-7">
+    <div className="grid h-full min-h-0 grid-cols-2 grid-rows-2 gap-1.5 p-2 sm:gap-5 sm:p-7">
       {artifacts.map((artifact, index) => {
         const visible = index <= Math.max(0, active - 1);
         return (
           <motion.div
             key={artifact.label}
-            className="min-h-0 overflow-hidden rounded-xl border p-3 sm:rounded-2xl sm:p-5"
-            animate={{ opacity: visible ? 1 : 0.34, y: visible ? 0 : 8 }}
+            className="min-h-0 overflow-hidden rounded-lg border p-2 sm:rounded-2xl sm:p-5"
+            animate={{ opacity: visible ? 1 : 0.34, y: 0 }}
             transition={{ duration: 0.55, ease: EASE }}
             style={{
               borderColor: visible ? `${accent}77` : "rgba(255,255,255,0.14)",
               backgroundColor: visible ? `${accent}18` : "rgba(0,0,0,0.16)",
             }}
           >
-            <p className="text-[0.58rem] font-medium uppercase tracking-[0.14em]" style={{ color: visible ? accent : "rgba(255,255,255,0.42)" }}>
+            <p className="text-[0.48rem] font-medium uppercase tracking-[0.12em] sm:text-[0.58rem] sm:tracking-[0.14em]" style={{ color: visible ? accent : "rgba(255,255,255,0.42)" }}>
               {String(index + 1).padStart(2, "0")}
             </p>
-            <p className="mt-1 line-clamp-2 font-display text-base leading-tight text-white sm:mt-2 sm:text-2xl">{artifact.label}</p>
+            <p className="mt-0.5 line-clamp-2 font-display text-[0.78rem] leading-[0.95] text-white sm:mt-2 sm:text-2xl sm:leading-tight">{artifact.label}</p>
             <p className="mt-2 hidden line-clamp-3 text-xs leading-relaxed text-white/60 sm:block">{artifact.detail}</p>
           </motion.div>
         );
