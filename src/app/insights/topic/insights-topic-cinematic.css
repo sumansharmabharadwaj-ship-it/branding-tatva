@@ -224,6 +224,7 @@
 
 .topic-diagnostic__answer-foot a {
   display: inline-flex;
+  min-height: 2.75rem;
   align-items: center;
   gap: 0.45rem;
   color: var(--topic-accent);
@@ -281,6 +282,8 @@
 
 .topic-application a {
   display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
   gap: 0.4rem;
   margin-top: 0.9rem;
   color: #e9c48b;
@@ -288,6 +291,12 @@
   font-weight: 650;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.insights-topic-hero__content nav a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
 }
 
 @media (min-width: 900px) {
