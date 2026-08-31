@@ -145,9 +145,10 @@ assert(
 );
 assert(
   (splitHero.match(/data-video-warden-group=\{ABOUT_HERO_VIDEO_GROUP\}/g) || []).length === 2 &&
+    (splitHero.match(/useVideoFadeIn\([^;]+, true\);/g) || []).length === 2 &&
     videoWarden.includes("const primaryGroup = primary?.dataset.videoWardenGroup;") &&
     videoWarden.includes("video.dataset.videoWardenGroup === primaryGroup"),
-  "The About hero background and foreground films can no longer share their composed playback scene.",
+  "The About hero films can lose their shared playback director or start competing viewport observers.",
 );
 assert(
   heroPortraitVideoPrefix.indexOf(Buffer.from("moov")) >= 0 &&

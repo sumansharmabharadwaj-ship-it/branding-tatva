@@ -61,8 +61,11 @@ export function AboutSplitHero({
   // ViewTimeline cache, which strongly retains unmounted target elements.
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0%", "end 0%"] });
 
-  useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion);
-  useVideoFadeIn(portraitVideoRef, !prefersReducedMotion);
+  // VideoWarden owns both films as one composed scene. The fade hook still
+  // reveals decoded frames, but it must not add two more playback observers
+  // that can race the page-level budget during the opening handoff.
+  useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion, true);
+  useVideoFadeIn(portraitVideoRef, !prefersReducedMotion, true);
 
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const cardY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
