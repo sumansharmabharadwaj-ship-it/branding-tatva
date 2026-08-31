@@ -569,7 +569,7 @@ export default async function InsightArticlePage({ params }: Props) {
                                     href={source.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="link-underline font-medium text-soil"
+                                    className="link-underline inline-flex min-h-11 items-center font-medium text-soil"
                                   >
                                     {source.title}
                                     <span aria-hidden="true"> ↗</span>
