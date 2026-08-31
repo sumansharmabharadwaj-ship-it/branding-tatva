@@ -165,7 +165,7 @@ const JUMP_ITEMS = [
   { href: "#book", label: "Book a diagnosis" },
 ];
 
-// The fixed chapter rail can carry the complete nine-part journey once the
+// The fixed chapter rail carries the complete nine-part journey once the
 // visitor is moving. The opening needs a quicker read: four commercial acts
 // that explain the page before asking someone to process its full contents.
 const HERO_ACTS = [
