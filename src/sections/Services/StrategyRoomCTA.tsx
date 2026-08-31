@@ -345,7 +345,7 @@ export function StrategyRoomCTA() {
                       ))}
                     </div>
                   )}
-                  <CalendlyEmbed url={site.calendlyUrl} />
+                  <CalendlyEmbed url={`${site.calendlyUrl}/30min`} />
                 </motion.div>
               </motion.div>
             ) : null}
