@@ -809,12 +809,32 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #education [data-perception-system-result="true"] {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem;
     margin-top: 0.5rem !important;
     padding-top: 0.45rem !important;
   }
 
+  #education [data-perception-system-result="true"] > p:first-child {
+    display: none;
+  }
+
   #education [data-perception-system-result="true"] > p:last-child {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
     font-size: 0.94rem;
+    line-height: 1.08;
+    text-align: right;
+  }
+
+  #education [data-perception-mobile-action="true"] {
+    grid-column: 1;
+    grid-row: 1;
+    padding-inline: 0.8rem;
+    font-size: 0.72rem;
   }
 
   #proof [data-verified-outcome-phase] {

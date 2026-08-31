@@ -317,16 +317,16 @@ export function PerceptionLadder() {
               <div data-perception-system-result="true" className="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-ivory/12 pt-4">
                 <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/50">System to build</p>
                 <p className="font-display text-xl font-normal text-[#C6CCB8]">{activeRung.system}</p>
+                <a
+                  href="#audit"
+                  aria-label="Test which brand signals already hold"
+                  data-perception-mobile-action="true"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#A0A690]/45 bg-[rgba(198,204,184,0.12)] px-4 text-sm font-medium text-ivory transition-[border-color,background-color] hover:border-[#C6CCB8]/75 hover:bg-[rgba(198,204,184,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A0A690] sm:hidden"
+                >
+                  Test signals
+                  <span aria-hidden="true">↓</span>
+                </a>
               </div>
-
-              <a
-                href="#audit"
-                data-perception-mobile-action="true"
-                className="mt-4 inline-flex min-h-11 w-full items-center justify-between rounded-full border border-[#A0A690]/45 bg-[rgba(198,204,184,0.12)] px-4 text-sm font-medium text-ivory transition-[border-color,background-color] hover:border-[#C6CCB8]/75 hover:bg-[rgba(198,204,184,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A0A690] sm:hidden"
-              >
-                Test which signals already hold
-                <span aria-hidden="true">↓</span>
-              </a>
             </motion.div>
           </AnimatePresence>
         </div>
