@@ -973,19 +973,19 @@
   .insight-article-section > div > p,
   .insight-article-section > ul > li,
   .insight-article-section__kicker span {
-    transition-duration: 0.01ms;
-    transform: none;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
   }
 
   .insight-article-section > div > p,
   .insight-article-section > ul > li,
   .insight-article-section > blockquote,
   .insight-article-section > aside {
-    opacity: 1;
+    opacity: 1 !important;
   }
 
   .insight-framework__rings span {
-    animation: none;
+    animation: none !important;
   }
 
   .insight-framework__steps button,
@@ -1017,19 +1017,19 @@
 :root[data-motion="reduced"] .insight-article-section > div > p,
 :root[data-motion="reduced"] .insight-article-section > ul > li,
 :root[data-motion="reduced"] .insight-article-section__kicker span {
-  transition-duration: 0.01ms;
-  transform: none;
+  transition-duration: 0.01ms !important;
+  transform: none !important;
 }
 
 :root[data-motion="reduced"] .insight-article-section > div > p,
 :root[data-motion="reduced"] .insight-article-section > ul > li,
 :root[data-motion="reduced"] .insight-article-section > blockquote,
 :root[data-motion="reduced"] .insight-article-section > aside {
-  opacity: 1;
+  opacity: 1 !important;
 }
 
 :root[data-motion="reduced"] .insight-framework__rings span {
-  animation: none;
+  animation: none !important;
 }
 
 :root[data-motion="reduced"] .insight-framework__steps button,
