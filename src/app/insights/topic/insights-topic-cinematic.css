@@ -296,6 +296,7 @@
 /* Keep the compact breadcrumb styling while giving each route a full tap row. */
 .insights-topic-hero__content nav a {
   display: inline-flex;
+  min-width: 2.75rem;
   min-height: 2.75rem;
   align-items: center;
 }

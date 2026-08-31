@@ -290,7 +290,7 @@ export default async function InsightArticlePage({ params }: Props) {
                 aria-label="Breadcrumb"
                 className="mb-8 flex flex-wrap items-center gap-2 text-xs text-ivory/65"
               >
-                <Link href="/" className="inline-flex min-h-11 items-center transition hover:text-ivory">
+                <Link href="/" className="inline-flex min-h-11 min-w-11 items-center transition hover:text-ivory">
                   Home
                 </Link>
                 <span aria-hidden="true">/</span>
