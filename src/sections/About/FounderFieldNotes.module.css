@@ -1,6 +1,7 @@
 .scrollStory {
   --origin-pointer-x: 0;
   --origin-pointer-y: 0;
+  --origin-navigation-gutter: clamp(4.75rem, 8vw, 7rem);
   position: relative;
   min-height: 100svh;
   color: #2a2a25;
@@ -14,6 +15,7 @@
   min-height: 100svh;
   margin-inline: auto;
   padding: clamp(5.55rem, 8.4svh, 6.8rem) 0 clamp(1.3rem, 2.6svh, 2.1rem);
+  padding-right: var(--origin-navigation-gutter);
   grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
@@ -45,7 +47,7 @@
 
 .header h2 em { color: #65715c; font-weight: 400; }
 .headerAside { display: grid; gap: 0.8rem; }
-.headerAside > p:first-child { max-width: 42ch; margin: 0; color: rgba(42, 42, 37, 0.68); font-size: 0.76rem; line-height: 1.58; }
+.headerAside > p:first-child { max-width: 42ch; margin: 0; color: rgba(42, 42, 37, 0.78); font-size: 0.8rem; line-height: 1.58; }
 
 .stageReadout {
   display: flex;
@@ -66,7 +68,7 @@
   position: relative;
   display: grid;
   min-height: 0;
-  padding-block: clamp(0.9rem, 2.2svh, 1.7rem);
+  padding-block: clamp(0.55rem, 1.25svh, 1rem);
   grid-template-columns: minmax(10.5rem, 0.42fr) minmax(19rem, 0.82fr) minmax(23rem, 1fr);
   align-items: center;
   gap: clamp(1.4rem, 3.2vw, 3.2rem);
@@ -86,7 +88,7 @@
   align-items: center;
   gap: 0.08rem 0.55rem;
   background: transparent;
-  color: rgba(42, 42, 37, 0.42);
+  color: rgba(42, 42, 37, 0.58);
   text-align: left;
   transition: color 280ms ease, border-color 280ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -98,7 +100,7 @@
 .fieldRail button[data-gathered="true"] > span { background: #965b43; color: #f7f1e7; }
 .fieldRail button small { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .fieldRail button strong { font-family: var(--font-display), Georgia, serif; font-size: 1.02rem; font-weight: 400; line-height: 1; }
-.fieldRail button em { color: rgba(42, 42, 37, 0.46); font-size: 0.55rem; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
+.fieldRail button em { color: rgba(42, 42, 37, 0.58); font-size: 0.58rem; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
 .fieldRail button i { position: absolute; right: 0; bottom: -1px; left: 0; height: 1px; overflow: hidden; background: rgba(42, 42, 37, 0.08); }
 .fieldRail button b { display: block; width: 100%; height: 100%; background: #965b43; transform: scaleX(0); transform-origin: left; transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1); }
 .fieldRail button[data-gathered="true"] b { transform: scaleX(1); }
@@ -138,7 +140,7 @@
 .scrollStory[data-origin-stage="4"] .portraitImage { object-position: 52% 50%; transform: scale(1); filter: grayscale(1) contrast(1.03) brightness(1) sepia(0.1); }
 .portrait figcaption { position: absolute; right: 0.9rem; bottom: 0.85rem; left: 0.9rem; z-index: 4; display: flex; align-items: flex-end; justify-content: space-between; gap: 0.7rem; color: #f5efe6; }
 .portrait figcaption span { font-family: var(--font-display), Georgia, serif; font-size: 1.05rem; }
-.portrait figcaption strong { max-width: 8rem; color: rgba(245, 239, 230, 0.68); font-size: 0.55rem; font-weight: 650; letter-spacing: 0.12em; line-height: 1.45; text-align: right; text-transform: uppercase; }
+.portrait figcaption strong { max-width: 8rem; color: rgba(245, 239, 230, 0.84); font-size: 0.58rem; font-weight: 650; letter-spacing: 0.12em; line-height: 1.45; text-align: right; text-shadow: 0 2px 12px rgba(9, 14, 11, 0.48); text-transform: uppercase; }
 
 .aperture { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-columns: repeat(3, 1fr); pointer-events: none; }
 .aperture span { border-right: 1px solid rgba(245, 239, 230, 0.15); background: rgba(22, 31, 26, 0.42); transform: scaleX(0); transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1), background-color 520ms ease; }
@@ -168,22 +170,22 @@
 .synthesisSeal strong { font-family: var(--font-display), Georgia, serif; font-size: 0.95rem; font-weight: 400; line-height: 1.08; }
 
 .recordSlot { min-height: clamp(21rem, 46svh, 27rem); perspective: 80rem; }
-.recordCard { position: relative; display: flex; min-height: inherit; padding: clamp(1.25rem, 2.1vw, 1.8rem); overflow: hidden; border: 1px solid rgba(42, 42, 37, 0.14); border-radius: 1.35rem; flex-direction: column; background: rgba(247, 241, 231, 0.87); box-shadow: 0 24px 66px rgba(73, 59, 44, 0.11); backdrop-filter: blur(18px); transform-origin: right center; }
+.recordCard { position: relative; display: flex; min-height: inherit; padding: clamp(1.15rem, 1.65vw, 1.45rem); overflow: hidden; border: 1px solid rgba(42, 42, 37, 0.2); border-radius: 1.35rem; flex-direction: column; background: rgba(247, 241, 231, 0.94); box-shadow: 0 24px 66px rgba(73, 59, 44, 0.15); backdrop-filter: blur(18px); transform-origin: right center; }
 .recordCard::after { position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(circle at calc(50% + var(--origin-pointer-x) * 18%) calc(44% + var(--origin-pointer-y) * 12%), rgba(184, 117, 78, 0.1), transparent 38%); content: ""; pointer-events: none; }
 .recordCard > * { position: relative; z-index: 1; }
 .cardTopline { display: flex; align-items: center; gap: 0.72rem; color: #965b43; }
 .cardTopline > span { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border: 1px solid rgba(150, 91, 67, 0.25); border-radius: 999px; }
 .cardTopline small,
 .credential > span,
-.application > span { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+.application > span { color: #965b43; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
 .recordCard h3 { max-width: 14ch; margin: 0.9rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.9rem, min(2.9vw, 4.35svh), 3.15rem); font-weight: 400; letter-spacing: -0.035em; line-height: 0.98; }
-.credential { margin-top: 1rem; padding-block: 0.85rem; border-block: 1px solid rgba(42, 42, 37, 0.11); }
+.credential { margin-top: 0.72rem; padding-block: 0.62rem; border-block: 1px solid rgba(42, 42, 37, 0.14); }
 .credential strong { display: block; margin-top: 0.42rem; font-family: var(--font-display), Georgia, serif; font-size: 1.05rem; font-weight: 400; line-height: 1.08; }
-.credential p { margin: 0.2rem 0 0; color: rgba(42, 42, 37, 0.64); font-size: 0.65rem; line-height: 1.42; }
-.credential small { display: block; margin-top: 0.55rem; color: #65715c; font-size: 0.55rem; font-weight: 650; line-height: 1.42; }
-.application { margin-top: auto; padding-top: 1rem; }
-.application p { max-width: 50ch; margin: 0.42rem 0 0; color: rgba(42, 42, 37, 0.72); font-size: 0.72rem; line-height: 1.52; }
-.recordCard footer { display: flex; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(42, 42, 37, 0.1); align-items: center; gap: 0.65rem; color: rgba(42, 42, 37, 0.48); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.credential p { margin: 0.2rem 0 0; color: rgba(42, 42, 37, 0.72); font-size: 0.7rem; line-height: 1.42; }
+.credential small { display: block; margin-top: 0.42rem; color: #65715c; font-size: 0.6rem; font-weight: 650; line-height: 1.42; }
+.application { margin-top: auto; padding-top: 0.72rem; }
+.application p { max-width: 50ch; margin: 0.36rem 0 0; color: rgba(42, 42, 37, 0.82); font-size: 0.78rem; line-height: 1.48; }
+.recordCard footer { display: flex; margin-top: 0.72rem; padding-top: 0.58rem; border-top: 1px solid rgba(42, 42, 37, 0.13); align-items: center; gap: 0.65rem; color: rgba(42, 42, 37, 0.58); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .recordCard footer i { height: 1px; flex: 1; background: rgba(150, 91, 67, 0.3); }
 .recordCard footer strong { color: #80503c; }
 
@@ -232,10 +234,23 @@
   .recordCard footer { margin-top: 0.65rem; padding-top: 0.55rem; }
 }
 
+@media (min-width: 901px) and (max-width: 1180px) {
+  .scrollStory { --origin-navigation-gutter: 3.75rem; }
+  .sticky { width: min(calc(100% - 1.5rem), 88rem); }
+  .header { grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.48fr); gap: 2rem; }
+  .desktopComposition {
+    grid-template-columns: minmax(8.6rem, 0.36fr) minmax(14.5rem, 0.66fr) minmax(18rem, 1fr);
+    gap: 1rem;
+  }
+  .portraitStage { min-height: clamp(19rem, 44svh, 24rem); }
+  .portraitCamera { width: min(78%, 15rem); }
+  .fieldRail button { min-height: 4.05rem; }
+}
+
 @media (max-width: 900px) {
   .scrollStory,
   .sticky { position: relative; top: auto; height: auto; min-height: auto; }
-  .sticky { width: min(calc(100% - 1.5rem), 88rem); padding-block: 6.5rem 4rem; grid-template-rows: auto auto; }
+  .sticky { width: min(calc(100% - 1.5rem), 88rem); padding-block: 6.5rem 4rem; padding-right: 0; grid-template-rows: auto auto; }
   .header { grid-template-columns: 1fr; gap: 1rem; }
   .headerAside { max-width: 38rem; }
   .stageReadout { display: none; }
@@ -253,7 +268,7 @@
 @media (prefers-reduced-motion: reduce) {
   .scrollStory,
   .sticky { position: relative; top: auto; height: auto; min-height: auto; }
-  .sticky { width: min(calc(100% - 2rem), 88rem); padding-block: 6.5rem 4rem; grid-template-rows: auto auto; }
+  .sticky { width: min(calc(100% - 2rem), 88rem); padding-block: 6.5rem 4rem; padding-right: 0; grid-template-rows: auto auto; }
   .header { grid-template-columns: 1fr; gap: 1rem; }
   .stageReadout,
   .desktopComposition,
@@ -264,7 +279,7 @@
 
 :global(html[data-motion="reduced"]) .scrollStory,
 :global(html[data-motion="reduced"]) .sticky { position: relative; top: auto; height: auto; min-height: auto; }
-:global(html[data-motion="reduced"]) .sticky { width: min(calc(100% - 2rem), 88rem); padding-block: 6.5rem 4rem; grid-template-rows: auto auto; }
+:global(html[data-motion="reduced"]) .sticky { width: min(calc(100% - 2rem), 88rem); padding-block: 6.5rem 4rem; padding-right: 0; grid-template-rows: auto auto; }
 :global(html[data-motion="reduced"]) .header { grid-template-columns: 1fr; gap: 1rem; }
 :global(html[data-motion="reduced"]) .stageReadout,
 :global(html[data-motion="reduced"]) .desktopComposition,

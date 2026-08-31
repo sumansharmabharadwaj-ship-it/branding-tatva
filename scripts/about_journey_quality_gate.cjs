@@ -46,6 +46,11 @@ assert(
   "The complete About chapter set no longer loads its anchor-alignment contract.",
 );
 assert(
+  aboutPage.includes("data-reading-scene") &&
+    /\[data-about-film-scene\]\[data-reading-scene\] \[data-about-film-plane\]\s*\{[^}]*opacity:\s*calc\(0\.93 \+ var\(--scene-focus\) \* 0\.07\);/.test(globalStyles),
+  "The copy dense origin chapter can fade below its protected reading exposure.",
+);
+assert(
   /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
     /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
   "About chapter hashes can settle beneath the fixed header in a responsive state.",
@@ -228,12 +233,16 @@ for (const [selector, minimum] of protectedNavigatorType) {
 }
 
 const protectedOriginType = [
+  [".headerAside > p:first-child", 0.8],
   [".fieldRail button small", 0.55],
-  [".fieldRail button em", 0.55],
-  [".portrait figcaption strong", 0.55],
+  [".fieldRail button em", 0.58],
+  [".portrait figcaption strong", 0.58],
   [".synthesisSeal span", 0.55],
-  [".cardTopline small,\n.credential > span,\n.application > span", 0.55],
-  [".recordCard footer", 0.55],
+  [".cardTopline small,\n.credential > span,\n.application > span", 0.58],
+  [".credential p", 0.7],
+  [".credential small", 0.6],
+  [".application p", 0.78],
+  [".recordCard footer", 0.58],
   [".progressRail", 0.55],
   [".staticExperience small", 0.55],
 ];
@@ -242,6 +251,12 @@ for (const [selector, minimum] of protectedOriginType) {
   const size = fontSizeRem(originStyles, selector);
   assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
 }
+assert(
+  originStyles.includes("--origin-navigation-gutter:") &&
+    originStyles.includes("padding-right: var(--origin-navigation-gutter);") &&
+    /@media \(max-width: 900px\)[\s\S]*?padding-right:\s*0;/.test(originStyles),
+  "The desktop About chapter navigator can overlap the origin reading frame or leave a mobile gutter behind.",
+);
 
 const protectedPointOfViewType = [
   [".stageRail small", 0.55],

@@ -1023,6 +1023,13 @@ html[data-about-film-snap="true"]:not([data-motion="reduced"]) {
   will-change: transform, opacity;
 }
 
+/* Copy dense chapters keep a firmer exposure floor while retaining the
+   shared camera movement. The origin record was visually washing into its
+   pale film still whenever the scene sat just outside perfect focus. */
+[data-about-film-scene][data-reading-scene] [data-about-film-plane] {
+  opacity: calc(0.93 + var(--scene-focus) * 0.07);
+}
+
 [data-about-film-scene] [data-about-film-background] {
   transform:
     translate3d(calc(var(--scene-direction) * var(--scene-velocity) * -10vw), calc((var(--scene-progress) - 0.5) * -3svh), 0)

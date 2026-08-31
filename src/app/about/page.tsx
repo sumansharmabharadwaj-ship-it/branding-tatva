@@ -72,6 +72,7 @@ export default function AboutPage() {
           className="relative overflow-clip bg-[#e8dfd0]"
           data-about-chapter="origin"
           data-about-film-scene
+          data-reading-scene
           data-scene-tone="light"
         >
           <div className="absolute inset-0" data-about-film-background>
