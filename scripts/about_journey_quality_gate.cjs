@@ -403,7 +403,9 @@ for (const [selector, minimum] of protectedStandardsType) {
 }
 assert(
   standardsStyles.includes(':global(html[data-consent-banner="visible"]) .root') &&
-    standardsStyles.includes("padding-bottom: calc(clamp(4.75rem, 8svh, 5.75rem) + env(safe-area-inset-bottom, 0px));"),
+    standardsStyles.includes("padding-bottom: calc(clamp(4.75rem, 8svh, 5.75rem) + env(safe-area-inset-bottom, 0px));") &&
+    standardsStyles.includes(':global(html[data-consent-banner="visible"]) .instrumentFooter') &&
+    standardsStyles.includes("padding-right: clamp(13rem, 18vw, 15.5rem);"),
   "The Working Standards evidence-policy action can settle beneath the consent notice.",
 );
 

@@ -365,3 +365,9 @@
 :global(html[data-consent-banner="visible"]) .root {
   padding-bottom: calc(clamp(4.75rem, 8svh, 5.75rem) + env(safe-area-inset-bottom, 0px));
 }
+
+@media (min-width: 901px) {
+  :global(html[data-consent-banner="visible"]) .instrumentFooter {
+    padding-right: clamp(13rem, 18vw, 15.5rem);
+  }
+}
