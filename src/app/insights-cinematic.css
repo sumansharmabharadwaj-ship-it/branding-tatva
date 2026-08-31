@@ -1477,7 +1477,7 @@
 
 .insight-card:is(:hover, :focus-visible) .insight-card-media::before,
 .insight-card-media--playing::before {
-  opacity: 0.82;
+  opacity: 0.8;
 }
 
 .insight-card:is(:hover, :focus-visible) .insight-card-media::after,
