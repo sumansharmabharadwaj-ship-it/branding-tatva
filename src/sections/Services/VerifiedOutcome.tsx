@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { LinkButton } from "@/components/Button";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { track } from "@/lib/analytics";
 import { projects } from "@/data/projects";
 import { packages } from "@/data/services";
 import {
@@ -22,6 +23,7 @@ import {
 
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const EASE = [0.22, 1, 0.36, 1] as const;
+const MANUAL_HOLD_MS = 14000;
 
 // Each route receives the closest documented project record. The large proof
 // value is always taken from copy already present in that project's source
@@ -91,6 +93,7 @@ type ServicesProgressDetail = {
 export function VerifiedOutcome() {
   const [activeBeat, setActiveBeat] = useState(0);
   const [situation, setSituation] = useState<ServicesSituationId | null>(null);
+  const manualHoldUntilRef = useRef(0);
   const prefersReducedMotion = useHydratedReducedMotion();
   const proofRoute = situation ? PROOF_ROUTES[situation] : DEFAULT_PROOF_ROUTE;
   const proof = projects.find((project) => project.slug === proofRoute.slug);
@@ -133,6 +136,7 @@ export function VerifiedOutcome() {
     function onProgress(event: Event) {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
       if (detail?.id !== "verified-outcome" || typeof detail.progress !== "number") return;
+      if (Date.now() < manualHoldUntilRef.current) return;
       const storyProgress = detail.storyProgress ?? detail.progress;
       const next = storyProgress < 0.43 ? 0 : storyProgress < 0.7 ? 1 : 2;
       setActiveBeat((current) => (current === next ? current : next));
@@ -144,6 +148,7 @@ export function VerifiedOutcome() {
 
   if (!proof) return null;
 
+  const proofSlug = proof.slug;
   const lead = proofRoute.lead;
   const beats = [
     {
@@ -159,6 +164,16 @@ export function VerifiedOutcome() {
       text: lead.statement,
     },
   ];
+
+  function chooseBeat(index: number) {
+    manualHoldUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+    setActiveBeat(index);
+    track("verified_proof_beat_selected", {
+      beat: index + 1,
+      route: situation ?? "unselected",
+      project: proofSlug,
+    });
+  }
 
   return (
     <Container className="max-w-6xl">
@@ -219,14 +234,17 @@ export function VerifiedOutcome() {
               const completed = index < activeBeat;
               return (
                 <li key={beat.label} className="relative border-b border-ivory/10 last:border-b-0">
-                  <motion.div
+                  <motion.button
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => chooseBeat(index)}
                     animate={
                       prefersReducedMotion
                         ? { opacity: 1, x: 0 }
                         : { opacity: active ? 1 : completed ? 0.9 : 0.82, x: active ? 7 : 0 }
                     }
                     transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
-                    className="grid grid-cols-[2.5rem_1fr] gap-4 py-5 sm:py-6"
+                    className="grid w-full grid-cols-[2.5rem_1fr] gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone sm:py-6"
                   >
                     <span
                       className={`font-display text-sm transition-colors duration-300 ${
@@ -244,7 +262,7 @@ export function VerifiedOutcome() {
                         {beat.text}
                       </p>
                     </div>
-                  </motion.div>
+                  </motion.button>
                   {active && !prefersReducedMotion && (
                     <motion.span
                       layoutId="verified-proof-active-line"
