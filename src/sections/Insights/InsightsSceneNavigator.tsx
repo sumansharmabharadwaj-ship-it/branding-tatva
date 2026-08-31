@@ -570,6 +570,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
   return (
     <nav
       className="insights-scene-compass"
+      data-insights-scene-compass
       aria-label="Insights chapters"
       data-visible={activeScene ? "true" : "false"}
       data-theme={activeScene?.theme ?? "light"}

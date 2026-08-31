@@ -2694,6 +2694,8 @@
 
   .insights-scene-compass ol {
     display: flex;
+    max-width: 100%;
+    align-items: center;
     justify-content: center;
     gap: 0.18rem;
   }
@@ -2704,6 +2706,7 @@
 
   .insights-scene-compass a {
     width: 2.75rem;
+    min-width: 2.75rem;
     min-height: 2.75rem;
     box-shadow: none;
     grid-template-columns: 2.75rem minmax(0, 0fr);
@@ -2711,7 +2714,7 @@
 
   .insights-scene-compass a:is(:hover, :focus-visible),
   .insights-scene-compass a[aria-current="location"] {
-    width: 6.3rem;
+    width: min(6.3rem, 28vw);
     grid-template-columns: 2.75rem minmax(0, 1fr);
   }
 
@@ -2992,6 +2995,34 @@
 
   .insights-atlas__panel-wrap {
     transform: none;
+  }
+}
+
+@media (max-width: 899px) and (hover: none) {
+  /* Touch browsers can retain :hover after a tap. Only the current chapter
+     should stay expanded; a stale hover must not widen two controls and push
+     the dock beyond a narrow viewport. */
+  .insights-scene-compass a:hover:not([aria-current="location"]) {
+    width: 2.75rem;
+    border-color: rgb(39 34 30 / 13%);
+    background: rgb(244 239 230 / 84%);
+    box-shadow: 0 0.6rem 1.8rem rgb(39 34 30 / 8%);
+    color: rgb(39 34 30 / 50%);
+    grid-template-columns: 2.75rem minmax(0, 0fr);
+  }
+
+  .insights-scene-compass[data-theme="dark"]
+    a:hover:not([aria-current="location"]) {
+    border-color: rgb(244 239 230 / 14%);
+    background: rgb(17 25 26 / 74%);
+    box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 16%);
+    color: rgb(244 239 230 / 54%);
+  }
+
+  .insights-scene-compass a:hover:not([aria-current="location"])
+    .insights-scene-compass__label {
+    opacity: 0;
+    transform: translate3d(0.35rem, 0, 0);
   }
 }
 

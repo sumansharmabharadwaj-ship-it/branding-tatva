@@ -606,6 +606,7 @@ export function AboutCinematicRuntime() {
       <nav
         ref={mobileControlsRef}
         className={styles.mobileChapterControls}
+        data-about-mobile-chapter-controls
         aria-label="Move through About page chapters"
         aria-hidden={!mobileNavigatorActive}
         data-active={mobileNavigatorActive}

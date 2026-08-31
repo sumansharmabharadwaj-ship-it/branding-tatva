@@ -9,6 +9,30 @@
   overflow-wrap: anywhere;
 }
 
+/* Route-specific chapter controls all compete for the same lower edge on a
+   phone. Keep them behind the primary menu, and lift them as one system when
+   the privacy choice is present instead of allowing each route to guess the
+   banner's height independently. */
+html[data-site-menu="open"] [data-section-jump-nav-mobile="true"],
+html[data-site-menu="open"] [data-contact-chapter-rail],
+html[data-site-menu="open"] [data-about-mobile-chapter-controls],
+html[data-site-menu="open"] [data-insights-scene-compass],
+html[data-site-menu="open"] [data-chapter-ladder-mobile],
+html[data-site-menu="open"] [data-auto-journey-control] {
+  display: none !important;
+}
+
+@media (max-width: 899px), (pointer: coarse) {
+  html[data-consent-banner="visible"] [data-section-jump-nav-mobile="true"],
+  html[data-consent-banner="visible"] [data-contact-chapter-rail],
+  html[data-consent-banner="visible"] [data-about-mobile-chapter-controls],
+  html[data-consent-banner="visible"] [data-insights-scene-compass],
+  html[data-consent-banner="visible"] [data-chapter-ladder-mobile],
+  html[data-consent-banner="visible"] [data-auto-journey-control] {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
 @media (max-width: 430px) {
   /* The global page-entry scale makes this wrapper a containing block for
      fixed descendants while it runs. On long mobile pages that can pull the
@@ -162,6 +186,15 @@
 
   html[data-consent-banner="visible"] body {
     padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-consent-banner="visible"] [data-section-jump-nav-mobile="true"],
+  html[data-consent-banner="visible"] [data-contact-chapter-rail],
+  html[data-consent-banner="visible"] [data-about-mobile-chapter-controls],
+  html[data-consent-banner="visible"] [data-insights-scene-compass],
+  html[data-consent-banner="visible"] [data-chapter-ladder-mobile],
+  html[data-consent-banner="visible"] [data-auto-journey-control] {
+    bottom: calc(3.85rem + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
