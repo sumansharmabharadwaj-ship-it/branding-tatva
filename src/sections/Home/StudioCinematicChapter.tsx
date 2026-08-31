@@ -359,6 +359,7 @@ export function StudioCinematicChapter() {
                 </Link>
                 <Link
                   href="#decision"
+                  data-section-jump-yield="true"
                   onClick={() => publishHomeStudioLens({
                     name: active.name,
                     question: active.questionFrame,

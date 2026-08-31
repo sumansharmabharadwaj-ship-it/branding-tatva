@@ -392,6 +392,7 @@ export function EvidenceWall() {
                 <Link
                   className="evidence-cinematic__path-link"
                   href="#paths"
+                  data-section-jump-yield="true"
                   onClick={continueIntoPath}
                 >
                   <span className="evidence-cinematic__path-link-copy">

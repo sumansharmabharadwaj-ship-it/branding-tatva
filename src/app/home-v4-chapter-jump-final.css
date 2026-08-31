@@ -1,0 +1,24 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 compact chapter arrival                                        */
+/* -------------------------------------------------------------------------- */
+
+/* The compact chapter guide remains active through the final pixel before the
+   desktop rail takes over at 1024px. Earlier clearance stopped at 820px, so
+   tablet and landscape-phone anchor arrivals could sit beneath the live
+   header. Every real guide destination now owns the same header-safe landing
+   position, including Paths whose public anchor sits inside its chapter shell. */
+@media (max-width: 1023px) {
+  html body .home-v4 :is(
+    #opening,
+    #brand-diagnostic,
+    #cost,
+    #evidence,
+    #paths,
+    #process,
+    #studio,
+    #decision,
+    #invitation
+  ) {
+    scroll-margin-top: calc(4.75rem + env(safe-area-inset-top, 0px)) !important;
+  }
+}

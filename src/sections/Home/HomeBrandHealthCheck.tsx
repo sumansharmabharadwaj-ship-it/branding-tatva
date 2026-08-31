@@ -387,7 +387,11 @@ export function HomeBrandHealthCheck() {
               <div className="brand-orbit__result-action">
                 <span>The strategic centre</span>
                 <strong>{result.signal}</strong>
-                <Link href="#evidence" className="brand-orbit__result-primary">
+                <Link
+                  href="#evidence"
+                  className="brand-orbit__result-primary"
+                  data-section-jump-yield="true"
+                >
                   {result.nextAction} <i aria-hidden="true">→</i>
                 </Link>
                 <Link

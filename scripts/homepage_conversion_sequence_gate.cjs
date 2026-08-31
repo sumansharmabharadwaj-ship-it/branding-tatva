@@ -19,6 +19,7 @@ const mountedChapterSources = [
   "src/sections/Home/HomeQuestionsScene.tsx",
   "src/sections/Home/FinalInvitation.tsx",
 ].map((file) => fs.readFileSync(path.join(root, file), "utf8"));
+const mountedChapterSource = mountedChapterSources.join("\n");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -64,13 +65,14 @@ for (const marker of [
   "hideOnLast",
   'desktopMode="rail"',
   'tone="light"',
+  "guidedMobile",
   'home-v4-experience-upgrade.css',
 ]) {
   assert(pageSource.includes(marker), `Homepage wayfinding is missing ${marker}.`);
 }
 
 assert(
-  mountedChapterSources.join("\n").includes("3 choices · about 30 seconds · instant direction"),
+  mountedChapterSource.includes("3 choices · about 30 seconds · instant direction"),
   "Homepage diagnostic does not explain its effort and immediate value.",
 );
 
@@ -84,10 +86,25 @@ for (const marker of [
   "dismissFromKeyboard",
   "dismissFromOutside",
   "data-section-jump-tone",
+  "data-section-jump-progress",
+  "data-section-jump-yielding",
+  "data-section-jump-desktop-yielding",
+  "mobileYielding",
+  "IntersectionObserver",
+  "document.activeElement",
+  "focusMobileChapter",
+  "focusDesktopChapter",
+  "Continue to chapter",
+  "scrollIntoView",
   "showActiveLabel",
 ]) {
   assert(jumpNavSource.includes(marker), `Homepage wayfinding interaction is missing ${marker}.`);
 }
+
+assert(
+  (mountedChapterSource.match(/data-section-jump-yield="true"/g) || []).length === 7,
+  "Every intermediate homepage chapter must expose one primary action that can dismiss the mobile guide.",
+);
 
 assert(
   openingSource.includes('href="#brand-diagnostic"') && openingSource.includes("Diagnose my brand"),

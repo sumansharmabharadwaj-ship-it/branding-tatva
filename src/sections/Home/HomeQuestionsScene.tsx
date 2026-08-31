@@ -405,6 +405,7 @@ export function HomeQuestionsScene() {
 
               <Link
                 href="#invitation"
+                data-section-jump-yield="true"
                 onClick={carryQuestionForward}
               >
                 Bring this question to Suman

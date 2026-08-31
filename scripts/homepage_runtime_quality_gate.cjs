@@ -44,6 +44,8 @@ const experienceUpgrade = read("src/app/home-v4-experience-upgrade.css");
 const mediaContinuity = read("src/app/home-v4-media-continuity.css");
 const decisionStyles = read("src/app/home-v4-decision-depth.css");
 const questionsStyles = read("src/app/home-v4-questions-editorial-final.css");
+const chapterJumpStyles = read("src/app/home-v4-chapter-jump-final.css");
+const homePage = read("src/app/page.tsx");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -201,6 +203,12 @@ assert(decisionStyles.includes(".home-v4-chapter--decision + .home-v4-handoff--m
 assert(!decisionStyles.includes(".home-v4-chapter--decision + .home-v4-handoff--light"), "Closing chapter seam still targets the retired light handoff.");
 assert(questionsStyles.includes("rgba(216,209,193,.96)"), "Practical answers no longer resolve into the invitation's silver exposure.");
 assert(experience.includes("rgba(217,201,170,0.34) 0%"), "Closing film no longer carries the practical-answer warmth across the cut.");
+assert(homePage.includes('import "./home-v4-chapter-jump-final.css"'), "The final compact chapter-arrival layer is not mounted.");
+assert(chapterJumpStyles.includes("@media (max-width: 1023px)"), "Chapter arrival clearance ends before the compact guide switches to its desktop rail.");
+for (const target of ["#opening", "#brand-diagnostic", "#cost", "#evidence", "#paths", "#process", "#studio", "#decision", "#invitation"]) {
+  assert(chapterJumpStyles.includes(target), `Compact chapter arrival is missing ${target}.`);
+}
+assert(chapterJumpStyles.includes("env(safe-area-inset-top, 0px)"), "Compact chapter arrival ignores device cut-outs.");
 assert(!homeInterface.includes("GuidedView") && !homeInterface.includes("LivingCursor"), "Removed homepage-only controls remain bundled beside the active seam primitive.");
 assert(!v4Scenes.includes("V4RecognitionScene") && !v4Scenes.includes("RECOGNITION_STATES"), "The retired recognition chapter remains bundled beside the active opening and cost scenes.");
 assert(!homeInterface.includes("useMotionValue") && !homeInterface.includes("useLenis"), "Dormant homepage control runtimes still pull client-side motion or scroll ownership into chapter seams.");

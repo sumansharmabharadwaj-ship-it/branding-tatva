@@ -387,6 +387,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             </span>
             <Link
               href="#studio"
+              data-section-jump-yield="true"
               onClick={() => chooseStage(active, true)}
               aria-label={`Carry Decision ${active + 1}, ${stage.stage}, into the thinking behind the work`}
             >

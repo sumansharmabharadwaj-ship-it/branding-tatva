@@ -329,6 +329,7 @@ export function PathsCinematicChapter() {
               <Link
                 className="paths-film__method-link"
                 href="#process"
+                data-section-jump-yield="true"
                 onClick={() => choose(activeIndex)}
               >
                 <span className="paths-film__method-link-copy">

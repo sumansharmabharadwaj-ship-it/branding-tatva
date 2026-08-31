@@ -424,7 +424,12 @@ export function V4HiddenCostScene() {
               <span>The alternative</span>
               Keep the position stable and every campaign can deepen what buyers already know.
             </p>
-            <Link href="#evidence" data-magnetic data-cursor-label="proof">
+            <Link
+              href="#evidence"
+              data-magnetic
+              data-cursor-label="proof"
+              data-section-jump-yield="true"
+            >
               See what this changed for clients <ArrowDownRight size={15} />
             </Link>
           </div>

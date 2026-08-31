@@ -1,7 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowDownRight, List, X } from "lucide-react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from "react";
 import { usePathname } from "next/navigation";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 // Long-page wayfinding uses different densities according to the route.
 // Most pages retain the quiet technical index along the bottom edge. A
@@ -36,6 +44,9 @@ type SectionJumpNavProps = {
   // Dense editorial frames can keep the rail as a quiet progress marker and
   // reveal chapter names only when a visitor asks through hover or focus.
   showActiveLabel?: boolean;
+  // A long conversion journey can turn the compact mobile control into a
+  // progress cue and keep the active destination visible when the list opens.
+  guidedMobile?: boolean;
 };
 
 const SERVICES_CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
@@ -60,16 +71,21 @@ export function SectionJumpNav({
   desktopMode,
   tone = "dark",
   showActiveLabel = true,
+  guidedMobile = false,
 }: SectionJumpNavProps) {
   const pathname = usePathname();
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const isServicesRoute = pathname === "/services";
   const resolvedDesktopMode = desktopMode ?? (isServicesRoute ? "rail" : "bar");
   const [servicesItems, setServicesItems] = useState<JumpItem[] | null>(null);
   const navigationItems = isServicesRoute && servicesItems?.length ? servicesItems : items;
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileYielding, setMobileYielding] = useState(false);
   const mobileNavRef = useRef<HTMLElement>(null);
   const mobileTriggerRef = useRef<HTMLButtonElement>(null);
+  const mobileItemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const desktopItemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
   const lightTone = tone === "light";
 
   // Services contains more directed scenes than the page's short editorial
@@ -186,6 +202,7 @@ export function SectionJumpNav({
 
   const activeIndex = Math.max(0, navigationItems.findIndex((item) => item.href === activeHref));
   const activeItem = navigationItems[activeIndex] ?? navigationItems[0];
+  const nextItem = navigationItems[activeIndex + 1] ?? null;
   const firstHref = navigationItems[0]?.href;
   const finalHref = navigationItems[navigationItems.length - 1]?.href;
   const hiddenForFirstScene = hideOnFirst && Boolean(firstHref) && activeHref === firstHref;
@@ -193,8 +210,82 @@ export function SectionJumpNav({
   const progress = navigationItems.length > 0 ? ((activeIndex + 1) / navigationItems.length) * 100 : 0;
 
   useEffect(() => {
-    if (hiddenForFirstScene || hiddenForFinalScene) setMobileOpen(false);
-  }, [hiddenForFirstScene, hiddenForFinalScene]);
+    if (hiddenForFirstScene || hiddenForFinalScene || mobileYielding) setMobileOpen(false);
+  }, [hiddenForFirstScene, hiddenForFinalScene, mobileYielding]);
+
+  useEffect(() => {
+    if (!guidedMobile) return;
+    const main = document.getElementById("main-content");
+    if (!main) return;
+    const mainRoot: HTMLElement = main;
+
+    const observed = new Set<HTMLElement>();
+    const intersecting = new Set<HTMLElement>();
+
+    function syncYielding() {
+      const yielding = intersecting.size > 0;
+
+      if (yielding && mobileNavRef.current?.contains(document.activeElement)) {
+        intersecting.values().next().value?.focus({ preventScroll: true });
+      }
+
+      setMobileYielding((current) => (current === yielding ? current : yielding));
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target as HTMLElement;
+          if (entry.isIntersecting && entry.intersectionRatio > 0) intersecting.add(target);
+          else intersecting.delete(target);
+        });
+        syncYielding();
+      },
+      { rootMargin: "-62% 0px 0px 0px", threshold: [0, 0.01, 0.4] },
+    );
+
+    function registerActions() {
+      mainRoot.querySelectorAll<HTMLElement>('[data-section-jump-yield="true"]').forEach((action) => {
+        if (observed.has(action)) return;
+        observed.add(action);
+        observer.observe(action);
+      });
+
+      observed.forEach((action) => {
+        if (mainRoot.contains(action)) return;
+        observer.unobserve(action);
+        observed.delete(action);
+        intersecting.delete(action);
+      });
+      syncYielding();
+    }
+
+    registerActions();
+    const mutationObserver = new MutationObserver(registerActions);
+    mutationObserver.observe(mainRoot, { childList: true, subtree: true });
+
+    return () => {
+      mutationObserver.disconnect();
+      observer.disconnect();
+      observed.clear();
+      intersecting.clear();
+    };
+  }, [guidedMobile]);
+
+  useEffect(() => {
+    if (!guidedMobile || !mobileOpen) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const activeLink = mobileItemRefs.current[activeIndex];
+      activeLink?.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
+
+      if (mobileTriggerRef.current?.matches(":focus-visible")) {
+        activeLink?.focus({ preventScroll: true });
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeIndex, guidedMobile, mobileOpen]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -223,6 +314,53 @@ export function SectionJumpNav({
     setMobileOpen(false);
   }
 
+  function focusMobileChapter(
+    event: ReactKeyboardEvent<HTMLAnchorElement>,
+    index: number,
+  ) {
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowRight") {
+      nextIndex = Math.min(index + 1, navigationItems.length - 1);
+    }
+    if (event.key === "ArrowLeft") nextIndex = Math.max(index - 1, 0);
+    if (event.key === "ArrowDown") {
+      nextIndex = Math.min(index + 2, navigationItems.length - 1);
+    }
+    if (event.key === "ArrowUp") nextIndex = Math.max(index - 2, 0);
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = navigationItems.length - 1;
+
+    if (nextIndex === null) return;
+    event.preventDefault();
+    if (nextIndex === index) return;
+    mobileItemRefs.current[nextIndex]?.focus({ preventScroll: true });
+    mobileItemRefs.current[nextIndex]?.scrollIntoView({
+      behavior: "auto",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }
+
+  function focusDesktopChapter(
+    event: ReactKeyboardEvent<HTMLAnchorElement>,
+    index: number,
+  ) {
+    let nextIndex: number | null = null;
+
+    if (event.key === "ArrowDown") {
+      nextIndex = Math.min(index + 1, navigationItems.length - 1);
+    }
+    if (event.key === "ArrowUp") nextIndex = Math.max(index - 1, 0);
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = navigationItems.length - 1;
+
+    if (nextIndex === null) return;
+    event.preventDefault();
+    if (nextIndex === index) return;
+    desktopItemRefs.current[nextIndex]?.focus({ preventScroll: true });
+  }
+
   // The opening and final sections keep their full cinematic frame. Returning
   // null also removes every hidden link from keyboard order instead of leaving
   // an invisible fixed layer above either composition.
@@ -239,7 +377,17 @@ export function SectionJumpNav({
         aria-label="Jump to section"
         data-section-jump-nav-mobile="true"
         data-section-jump-tone={tone}
-        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 ${mobileBreakpoint}`}
+        data-section-jump-guided={guidedMobile ? "true" : undefined}
+        data-section-jump-yielding={mobileYielding ? "true" : "false"}
+        aria-hidden={mobileYielding || undefined}
+        inert={mobileYielding || undefined}
+        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 transition-[opacity,transform] ${
+          prefersReducedMotion ? "duration-0" : "duration-300"
+        } ${
+          mobileYielding
+            ? "pointer-events-none translate-y-[calc(100%+1.5rem)] opacity-0"
+            : "translate-y-0 opacity-100"
+        } ${mobileBreakpoint}`}
       >
         <button
           ref={mobileTriggerRef}
@@ -248,6 +396,7 @@ export function SectionJumpNav({
           aria-expanded={mobileOpen}
           aria-controls={mobileOpen ? "section-jump-mobile-menu" : undefined}
           aria-label={`${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${navigationItems.length}: ${activeItem?.label ?? "Sections"}`}
+          tabIndex={mobileYielding ? -1 : undefined}
           onClick={() => setMobileOpen((open) => !open)}
           className={`relative flex h-14 max-w-[min(18rem,calc(100vw-1.5rem))] items-center justify-center gap-2.5 rounded-full border px-3.5 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
             lightTone
@@ -255,6 +404,24 @@ export function SectionJumpNav({
               : "border-ivory/16 bg-soil/92 hover:bg-soil"
           }`}
         >
+          {guidedMobile && (
+            <span
+              aria-hidden="true"
+              data-section-jump-progress="true"
+              className={`absolute bottom-1 left-4 right-4 h-px overflow-hidden rounded-full ${lightTone ? "bg-soil/12" : "bg-ivory/14"}`}
+            >
+              <motion.span
+                className="block h-full origin-left bg-terracotta"
+                initial={false}
+                animate={{ scaleX: progress / 100 }}
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0 }
+                    : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }
+                }
+              />
+            </span>
+          )}
           <span className="flex min-w-0 items-center gap-2 leading-none" aria-hidden="true">
             <span className="font-display text-base text-terracotta">
               {String(activeIndex + 1).padStart(2, "0")}
@@ -270,50 +437,103 @@ export function SectionJumpNav({
               / {String(navigationItems.length).padStart(2, "0")}
             </span>
           </span>
-          <span
-            aria-hidden="true"
-            className={`ml-0.5 text-sm leading-none text-terracotta transition-transform duration-300 ${mobileOpen ? "rotate-45" : ""}`}
-          >
-            +
+          <span aria-hidden="true" className="ml-0.5 flex h-4 w-4 items-center justify-center text-terracotta">
+            {mobileOpen ? <X size={15} strokeWidth={1.8} /> : <List size={15} strokeWidth={1.8} />}
           </span>
         </button>
 
         {mobileOpen && (
-          <div
-            id="section-jump-mobile-menu"
-            className={`absolute bottom-[calc(100%+0.5rem)] right-0 grid max-h-[calc(100dvh-6.5rem-env(safe-area-inset-top,0px))] w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 overflow-y-auto overscroll-contain rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
-              lightTone ? "border-soil/12 bg-ivory/95" : "border-ivory/12 bg-soil/95"
-            }`}
-          >
-            {navigationItems.map((item, index) => {
-              const active = activeHref === item.href;
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "location" : undefined}
-                  onClick={() => choose(item.href)}
-                  className={`flex min-h-11 items-center justify-between rounded-xl px-3 py-2 text-[0.6875rem] font-medium uppercase leading-tight tracking-[0.1em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-terracotta ${
-                    active
-                      ? lightTone
-                        ? "bg-soil/[0.08] text-terracotta"
-                        : "bg-ivory/10 text-terracotta"
-                      : lightTone
-                        ? "text-soil/70 hover:bg-soil/[0.06] hover:text-soil"
-                        : "text-ivory/68 hover:bg-ivory/[0.06] hover:text-ivory"
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  <span
-                    className={`font-display text-xs ${lightTone ? "text-soil/45" : "text-ivory/42"}`}
-                    aria-hidden="true"
+          <motion.div
+              id="section-jump-mobile-menu"
+              initial={
+                prefersReducedMotion || !guidedMobile
+                  ? false
+                  : { opacity: 0, y: 10, scale: 0.975 }
+              }
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={
+                prefersReducedMotion || !guidedMobile
+                  ? { duration: 0 }
+                  : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }
+              }
+              className={`absolute bottom-[calc(100%+0.5rem)] right-0 grid max-h-[calc(100dvh-6.5rem-env(safe-area-inset-top,0px))] w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 overflow-y-auto overscroll-contain rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+                lightTone ? "border-soil/12 bg-ivory/95" : "border-ivory/12 bg-soil/95"
+              }`}
+            >
+              {guidedMobile && (
+                <div className="col-span-2 flex min-h-14 items-end justify-between gap-3 rounded-xl px-3 pb-2 pt-1.5">
+                  <div className="min-w-0">
+                    <p
+                      className={`text-[0.55rem] font-semibold uppercase tracking-[0.13em] ${
+                        lightTone ? "text-soil/46" : "text-ivory/45"
+                      }`}
+                    >
+                      Current chapter
+                    </p>
+                    <p
+                      className={`mt-1 truncate font-display text-lg leading-none ${
+                        lightTone ? "text-soil" : "text-ivory"
+                      }`}
+                    >
+                      {activeItem?.label}
+                    </p>
+                  </div>
+                  {nextItem && (
+                    <a
+                      href={nextItem.href}
+                      onClick={() => choose(nextItem.href)}
+                      aria-label={`Continue to chapter ${activeIndex + 2}: ${nextItem.label}`}
+                      className={`group flex min-h-11 max-w-[9.5rem] items-center justify-end gap-1.5 rounded-lg px-1.5 text-right text-[0.56rem] font-medium uppercase leading-relaxed tracking-[0.1em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
+                        lightTone ? "text-soil/52" : "text-ivory/50"
+                      }`}
+                    >
+                      <span>
+                        Next chapter<br />
+                        <span className="text-terracotta">{nextItem.label}</span>
+                      </span>
+                      <ArrowDownRight
+                        size={14}
+                        strokeWidth={1.8}
+                        aria-hidden="true"
+                        className="shrink-0 text-terracotta transition-transform duration-300 group-hover:translate-x-0.5 group-hover:translate-y-0.5 motion-reduce:transition-none"
+                      />
+                    </a>
+                  )}
+                </div>
+              )}
+              {navigationItems.map((item, index) => {
+                const active = activeHref === item.href;
+                return (
+                  <a
+                    key={item.href}
+                    ref={(node) => {
+                      mobileItemRefs.current[index] = node;
+                    }}
+                    href={item.href}
+                    aria-current={active ? "location" : undefined}
+                    onClick={() => choose(item.href)}
+                    onKeyDown={(event) => focusMobileChapter(event, index)}
+                    className={`flex min-h-11 items-center justify-between rounded-xl px-3 py-2 text-[0.6875rem] font-medium uppercase leading-tight tracking-[0.1em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-terracotta ${
+                      active
+                        ? lightTone
+                          ? "bg-soil/[0.08] text-terracotta"
+                          : "bg-ivory/10 text-terracotta"
+                        : lightTone
+                          ? "text-soil/70 hover:bg-soil/[0.06] hover:text-soil"
+                          : "text-ivory/68 hover:bg-ivory/[0.06] hover:text-ivory"
+                    }`}
                   >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </a>
-              );
-            })}
-          </div>
+                    <span>{item.label}</span>
+                    <span
+                      className={`font-display text-xs ${lightTone ? "text-soil/45" : "text-ivory/42"}`}
+                      aria-hidden="true"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </a>
+                );
+              })}
+          </motion.div>
         )}
       </nav>
 
@@ -322,6 +542,7 @@ export function SectionJumpNav({
           aria-label="Jump to section"
           data-section-jump-nav-desktop-mode="rail"
           data-section-jump-tone={tone}
+          data-section-jump-desktop-yielding={guidedMobile && mobileYielding ? "true" : "false"}
           className="fixed right-[calc(0.75rem+env(safe-area-inset-right))] top-1/2 z-30 hidden -translate-y-1/2 lg:block"
         >
           <div
@@ -355,15 +576,19 @@ export function SectionJumpNav({
                   return (
                     <li key={item.href}>
                       <a
+                        ref={(node) => {
+                          desktopItemRefs.current[index] = node;
+                        }}
                         href={item.href}
                         aria-current={active ? "location" : undefined}
                         aria-label={`Chapter ${index + 1}: ${item.label}`}
                         onClick={() => choose(item.href)}
+                        onKeyDown={(event) => focusDesktopChapter(event, index)}
                         className={`group relative flex h-7 w-7 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${lightTone ? "focus-visible:outline-terracotta" : "focus-visible:outline-sandstone"}`}
                       >
                         <span
                           className={`absolute right-[calc(100%+0.55rem)] whitespace-nowrap rounded-full border px-3 py-1.5 text-[0.58rem] font-medium uppercase tracking-[0.14em] shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-200 ${
-                            active && showActiveLabel
+                            active && showActiveLabel && !(guidedMobile && mobileYielding)
                               ? lightTone
                                 ? "border-terracotta/30 bg-ivory/96 text-terracotta opacity-100"
                                 : "border-sandstone/35 bg-soil/96 text-sandstone opacity-100"
