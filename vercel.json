@@ -3,12 +3,12 @@
   "alias": [
     "branding-tatva-git-august-8-isolated-suman22.vercel.app"
   ],
-  "ignoreCommand": "git diff --quiet \"${VERCEL_GIT_PREVIOUS_SHA:-HEAD^}\" HEAD -- src public package.json pnpm-lock.yaml next.config.ts postcss.config.mjs tsconfig.json vercel.json .github",
+  "ignoreCommand": "node scripts/vercel_preview_deploy_gate.cjs",
   "git": {
     "deploymentEnabled": true
   },
   "github": {
-    "autoJobCancelation": false
+    "autoJobCancelation": true
   },
   "crons": [
     {
