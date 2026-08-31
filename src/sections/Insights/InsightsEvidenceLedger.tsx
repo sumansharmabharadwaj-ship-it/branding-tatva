@@ -12,6 +12,7 @@ import { ArrowUpRight, Check, Plus } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement } from "@/data/insights";
+import { useCenteredRailSelection } from "@/hooks/useCenteredRailSelection";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import {
   clearInsightsIntent,
@@ -57,11 +58,19 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const priorReaderIntentRef = useRef<InsightsIntentDetail | undefined>(
     undefined,
   );
+  const layerRailRef = useRef<HTMLOListElement>(null);
   const layerButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
   const focusedLayer = layers[focusedIndex];
   const markedCount = markedSlugs.length;
   const markedLayers = layers.filter((layer) => markedSlugs.includes(layer.slug));
+
+  useCenteredRailSelection(
+    layerRailRef,
+    layerButtonRefs,
+    focusedIndex,
+    prefersReducedMotion,
+  );
 
   useEffect(() => {
     function carryReaderIntent(event: Event) {
@@ -304,6 +313,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         </div>
 
         <ol
+          ref={layerRailRef}
           className="insights-evidence-ledger__layers"
           aria-label="Evidence layers to review"
           onBlur={(event) => {

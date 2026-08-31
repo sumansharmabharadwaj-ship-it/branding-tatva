@@ -14,7 +14,9 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
+import { useCenteredRailSelection } from "@/hooks/useCenteredRailSelection";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   INSIGHTS_INTENT_CLEARED_EVENT,
   INSIGHTS_INTENT_EVENT,
@@ -75,11 +77,13 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     useState<InsightsIntentDetail>();
   const [paused, setPaused] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const pathRailRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const transitionDirectionRef = useRef(1);
   const selectionLockRef = useRef<AtlasSelectionLock | null>(null);
   const inView = useInView(sectionRef, { amount: 0.42 });
   const prefersReducedMotion = useHydratedReducedMotion();
+  const usesHorizontalRail = useMediaQuery("(max-width: 899px)");
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start 92%", "end 8%"],
@@ -88,6 +92,13 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   const carriedPath = carriedIntent
     ? paths.find((path) => path.slug === carriedIntent.topicSlug)
     : undefined;
+
+  useCenteredRailSelection(
+    pathRailRef,
+    tabRefs,
+    activeIndex,
+    prefersReducedMotion,
+  );
 
   useEffect(() => {
     function syncPathFromHash() {
@@ -383,10 +394,11 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
 
         <div className="insights-atlas__stage">
           <div
+            ref={pathRailRef}
             className="insights-atlas__paths"
             role="tablist"
             aria-label="Brand decision paths"
-            aria-orientation="vertical"
+            aria-orientation={usesHorizontalRail ? "horizontal" : "vertical"}
             onPointerEnter={(event) => {
               if (event.pointerType !== "touch") setPaused(true);
             }}

@@ -12,7 +12,9 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { TrackedLink } from "@/components/TrackedLink";
+import { useCenteredRailSelection } from "@/hooks/useCenteredRailSelection";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { publishInsightsIntent } from "@/lib/insights-intent";
 import type { InsightElement } from "@/data/insights";
 
@@ -46,11 +48,20 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [committedSlug, setCommittedSlug] = useState<string>();
+  const questRailRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const directionRef = useRef(1);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const usesHorizontalRail = useMediaQuery("(max-width: 899px)");
   const lenis = useLenis();
   const activeQuest = quests[activeIndex];
+
+  useCenteredRailSelection(
+    questRailRef,
+    tabRefs,
+    activeIndex,
+    prefersReducedMotion,
+  );
 
   function selectQuest(index: number, focus = false) {
     setActiveIndex((current) => {
@@ -137,9 +148,11 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
       style={{ "--mirror-accent": accent } as CSSProperties}
     >
       <div
+        ref={questRailRef}
         className="insights-decision-mirror__quests"
         role="tablist"
         aria-label="Brand tensions"
+        aria-orientation={usesHorizontalRail ? "horizontal" : "vertical"}
       >
         {quests.map((quest, index) => {
           const selected = index === activeIndex;
