@@ -589,3 +589,331 @@
     transition: none !important;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Decision-detail choreography                                                */
+/* -------------------------------------------------------------------------- */
+
+/* The previous pass brought each composition into the frame. This layer lets
+   the information inside its decision controls resolve in a second, shorter
+   beat. Only labels move, so the buttons themselves never drift away from the
+   visitor's pointer or thumb. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-v4 [data-home-scene-observed="true"] :is(
+    .brand-orbit__choice-number,
+    .brand-orbit__choices button > strong,
+    .brand-orbit__choice-action,
+    .cost-film__rail button > span,
+    .cost-film__rail-copy,
+    .evidence-cinematic__index-number,
+    .evidence-cinematic__index-copy,
+    .paths-film__choice-number,
+    .paths-film__choices button > strong,
+    .paths-film__choice-cue,
+    .decision-flow__rail button > span,
+    .decision-flow__rail button > strong,
+    .decision-flow__rail-cue,
+    .studio-film__chapters button > span,
+    .studio-film__chapters button > strong,
+    .studio-film__chapters button > small,
+    .questions-editorial__choices button > span,
+    .questions-editorial__choices button > strong,
+    .questions-editorial__choices button > svg,
+    .final-invitation__promise li button > span,
+    .final-invitation__promise li button > strong
+  ) {
+    transition:
+      opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 360ms ease;
+  }
+
+  /* Diagnosis: the number descends while the decision rises to meet it. */
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choice-number {
+    opacity: 0;
+    transform: translate3d(0, -0.7rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choices button > strong {
+    opacity: 0;
+    transform: translate3d(0, 0.85rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choice-action {
+    opacity: 0;
+    transform: translate3d(-0.65rem, 0, 0);
+  }
+
+  /* Cost: each moment assembles around its numbered marker. */
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__rail button > span {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__rail-copy {
+    opacity: 0;
+    transform: translate3d(0, 0.65rem, 0);
+  }
+
+  /* Evidence: project names read like files being drawn from an index. */
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-number {
+    opacity: 0;
+    transform: translate3d(0, -0.55rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-copy {
+    opacity: 0;
+    transform: translate3d(0.75rem, 0, 0);
+  }
+
+  /* Paths: the three situation labels converge from opposite banks. */
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__choice-number {
+    opacity: 0;
+    transform: translate3d(-0.55rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    :is(.paths-film__choices button > strong, .paths-film__choice-cue) {
+    opacity: 0;
+    transform: translate3d(0.7rem, 0, 0);
+  }
+
+  /* Method: the stage marker lands before its explanation. */
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__rail button > span {
+    opacity: 0;
+    transform: translate3d(0, -0.55rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    :is(.decision-flow__rail button > strong, .decision-flow__rail-cue) {
+    opacity: 0;
+    transform: translate3d(0, 0.65rem, 0);
+  }
+
+  /* Studio: discipline, name and outcome resolve as three editorial lines. */
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > span {
+    opacity: 0;
+    transform: translate3d(-0.55rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > strong {
+    opacity: 0;
+    transform: translate3d(0, 0.6rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > small {
+    opacity: 0;
+    transform: translate3d(0.55rem, 0, 0);
+  }
+
+  /* Questions: number and question close toward the centre line. */
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__choices button > span {
+    opacity: 0;
+    transform: translate3d(-0.55rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    :is(
+      .questions-editorial__choices button > strong,
+      .questions-editorial__choices button > svg
+    ) {
+    opacity: 0;
+    transform: translate3d(0.6rem, 0, 0);
+  }
+
+  /* Invitation: each part of the conversation joins the living thread. */
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise li button > span {
+    opacity: 0;
+    transform: scale(0.68);
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise li button > strong {
+    opacity: 0;
+    transform: translate3d(0.65rem, 0, 0);
+  }
+
+  /* All labels resolve to their authored resting state. */
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choice-number,
+    .brand-orbit__choices button > strong,
+    .brand-orbit__choice-action,
+    .cost-film__rail button > span,
+    .cost-film__rail-copy,
+    .evidence-cinematic__index-number,
+    .evidence-cinematic__index-copy,
+    .paths-film__choice-number,
+    .paths-film__choices button > strong,
+    .paths-film__choice-cue,
+    .decision-flow__rail button > span,
+    .decision-flow__rail button > strong,
+    .decision-flow__rail-cue,
+    .studio-film__chapters button > span,
+    .studio-film__chapters button > strong,
+    .studio-film__chapters button > small,
+    .questions-editorial__choices button > span,
+    .questions-editorial__choices button > strong,
+    .questions-editorial__choices button > svg,
+    .final-invitation__promise li button > span,
+    .final-invitation__promise li button > strong
+  ) {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* A compact cascade creates anticipation without turning the controls into
+     an autoplaying carousel. Each group remains immediately clickable. */
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(1) > * {
+    transition-delay: 110ms;
+  }
+
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(2) > * {
+    transition-delay: 160ms;
+  }
+
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(3) > * {
+    transition-delay: 210ms;
+  }
+
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .decision-flow__rail,
+    .questions-editorial__choices
+  ) > :nth-child(n + 4) > * {
+    transition-delay: 260ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(1) button > * {
+    transition-delay: 110ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(2) button > * {
+    transition-delay: 160ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(3) button > * {
+    transition-delay: 210ms;
+  }
+}
+
+/* Once a chapter has arrived, the label nearest the pointer takes one small
+   step forward. Keyboard focus receives the exact same response. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .home-v4 [data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) button:is(:hover, :focus-visible) strong {
+    transform: translate3d(0.18rem, 0, 0);
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ):has(button:hover) button:not(:hover):not(.is-active):not([aria-selected="true"]) {
+    opacity: 0.72;
+  }
+}
+
+/* Touch feedback stays on the label rather than shrinking the full target,
+   preventing a visible jump at the moment of selection. */
+@media (hover: none) and (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .home-v4 :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) button:active strong {
+    transform: scale(0.975);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 :is(
+    .brand-orbit__choice-number,
+    .brand-orbit__choices button > strong,
+    .brand-orbit__choice-action,
+    .cost-film__rail button > span,
+    .cost-film__rail-copy,
+    .evidence-cinematic__index-number,
+    .evidence-cinematic__index-copy,
+    .paths-film__choice-number,
+    .paths-film__choices button > strong,
+    .paths-film__choice-cue,
+    .decision-flow__rail button > span,
+    .decision-flow__rail button > strong,
+    .decision-flow__rail-cue,
+    .studio-film__chapters button > span,
+    .studio-film__chapters button > strong,
+    .studio-film__chapters button > small,
+    .questions-editorial__choices button > span,
+    .questions-editorial__choices button > strong,
+    .questions-editorial__choices button > svg,
+    .final-invitation__promise li button > span,
+    .final-invitation__promise li button > strong
+  ) {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
