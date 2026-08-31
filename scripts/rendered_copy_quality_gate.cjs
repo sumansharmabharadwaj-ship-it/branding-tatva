@@ -91,6 +91,8 @@ function walkHtml(directory) {
   });
 }
 
+// Discover the generated routes instead of maintaining a partial route list.
+// Copy added to a secondary public page must pass the same rendered review.
 function discoverRoutes() {
   return walkHtml(BUILT_APP_ROOT)
     .map((file) => {
