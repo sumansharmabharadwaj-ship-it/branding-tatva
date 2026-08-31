@@ -339,6 +339,7 @@
   .brand-orbit__choices { display:grid; gap:0; margin:0; padding:0; }
   .brand-orbit__choices button,.brand-orbit__choices button:nth-child(n) { position:relative; inset:auto; transform:none; width:100%; }
   .brand-orbit__result { grid-template-columns:1fr; padding:2rem 0; gap:1.3rem; }
+  .brand-orbit__result-action button { min-height:2.75rem; display:inline-flex; align-items:center; }
   .brand-orbit__shell { padding:clamp(5.6rem, 10svh, 6.5rem) 0 1rem; }
   .brand-orbit__question { min-height:calc(100svh - clamp(6.8rem, 13svh, 8.3rem)); padding:.75rem 0 .35rem; }
   .brand-orbit__prompt p { margin-bottom:.35rem; }
