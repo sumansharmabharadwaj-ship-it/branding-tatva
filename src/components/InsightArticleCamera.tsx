@@ -39,6 +39,7 @@ export function InsightArticleCamera() {
       function settleChapters() {
         articleRoot.style.setProperty("--article-hero-progress", "0");
         articleRoot.style.setProperty("--article-scroll-progress", "0");
+        articleRoot.style.removeProperty("--article-reading-progress");
         readChapters().forEach((chapter) => {
           chapter.style.setProperty("--chapter-shift", "0px");
           chapter.style.setProperty("--chapter-focus", "1");
@@ -55,6 +56,7 @@ export function InsightArticleCamera() {
         reducedMotionObserver.disconnect();
         articleRoot.style.removeProperty("--article-hero-progress");
         articleRoot.style.removeProperty("--article-scroll-progress");
+        articleRoot.style.removeProperty("--article-reading-progress");
         observedChapters.forEach(clearChapterMotion);
       };
     }
@@ -77,6 +79,22 @@ export function InsightArticleCamera() {
       const heroProgress = hero
         ? clamp(-hero.getBoundingClientRect().top / Math.max(1, hero.offsetHeight))
         : 0;
+      const chapters = readChapters();
+      const firstChapter = chapters[0];
+      const lastChapter = chapters.at(-1);
+      const readingStart = firstChapter
+        ? currentY + firstChapter.getBoundingClientRect().top
+        : 0;
+      const readingEnd = lastChapter
+        ? currentY + lastChapter.getBoundingClientRect().bottom
+        : readingStart + 1;
+      const readingTravel = Math.max(
+        1,
+        readingEnd - readingStart - viewportHeight * 0.58,
+      );
+      const readingProgress = clamp(
+        (currentY + viewportHeight * 0.42 - readingStart) / readingTravel,
+      );
 
       articleRoot.dataset.readingDirection = direction;
       articleRoot.style.setProperty("--reading-velocity", velocity.toFixed(3));
@@ -88,9 +106,13 @@ export function InsightArticleCamera() {
         "--article-hero-progress",
         heroProgress.toFixed(4),
       );
+      articleRoot.style.setProperty(
+        "--article-reading-progress",
+        `${(readingProgress * 100).toFixed(2)}%`,
+      );
       previousY = currentY;
 
-      readChapters().forEach((chapter) => {
+      chapters.forEach((chapter) => {
         const rect = chapter.getBoundingClientRect();
         const center = rect.top + rect.height * 0.42;
         const distance = Math.abs(center - viewportHeight * 0.5);
@@ -162,6 +184,7 @@ export function InsightArticleCamera() {
       articleRoot.style.removeProperty("--reading-velocity");
       articleRoot.style.removeProperty("--article-scroll-progress");
       articleRoot.style.removeProperty("--article-hero-progress");
+      articleRoot.style.removeProperty("--article-reading-progress");
       observedChapters.forEach(clearChapterMotion);
     };
   }, [prefersReducedMotion]);

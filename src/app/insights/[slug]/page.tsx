@@ -495,7 +495,7 @@ export default async function InsightArticlePage({ params }: Props) {
                     <section
                       id="frequent-questions"
                       aria-labelledby="faq-heading"
-                      className="insight-reading-chapter scroll-mt-32 pt-20"
+                      className="insight-reading-chapter insight-article-faq scroll-mt-32 pt-20"
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
                         Before you use it
@@ -533,7 +533,7 @@ export default async function InsightArticlePage({ params }: Props) {
                       <section
                         id="research-sources"
                         aria-labelledby="research-sources-heading"
-                        className="insight-reading-chapter scroll-mt-32 pt-20"
+                        className="insight-reading-chapter insight-article-sources scroll-mt-32 pt-20"
                       >
                         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
                           Research record
@@ -592,7 +592,7 @@ export default async function InsightArticlePage({ params }: Props) {
                   )}
 
                   <Reveal>
-                    <aside className="insight-reading-chapter mt-16 grid gap-6 rounded-[1.5rem] border border-soil/10 bg-background-alt p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">
+                    <aside className="insight-reading-chapter insight-article-author mt-16 grid gap-6 rounded-[1.5rem] border border-soil/10 bg-background-alt p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8">
                       <div
                         className="flex h-16 w-16 items-center justify-center rounded-full"
                         style={{ backgroundColor: `${color}16` }}
@@ -627,7 +627,7 @@ export default async function InsightArticlePage({ params }: Props) {
                     <InsightDecisionPath
                       pathway={pathway}
                       id="reading-next-step"
-                      className="insight-reading-chapter mt-16 scroll-mt-32"
+                      className="insight-reading-chapter insight-article-next-step mt-16 scroll-mt-32"
                     />
                   </Reveal>
                 </div>

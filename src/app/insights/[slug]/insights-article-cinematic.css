@@ -158,11 +158,11 @@
 
 .insight-reading-rail__progress {
   display: block;
-  width: var(--reading-progress);
+  width: var(--article-reading-progress, var(--reading-progress));
   height: 2px;
   background: var(--reading-accent);
   box-shadow: 0 0 0.65rem var(--reading-accent);
-  transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: width 120ms linear;
 }
 
 .insight-reading-index-shell {
@@ -207,10 +207,12 @@
   background:
     linear-gradient(
       90deg,
-      var(--reading-accent) 0 var(--reading-progress),
-      rgb(39 34 30 / 9%) var(--reading-progress) 100%
+      var(--reading-accent) 0
+        var(--article-reading-progress, var(--reading-progress)),
+      rgb(39 34 30 / 9%)
+        var(--article-reading-progress, var(--reading-progress)) 100%
     );
-  transition: background 320ms ease;
+  transition: background 120ms linear;
 }
 
 .insight-reading-index__current {
@@ -390,6 +392,54 @@
 .insight-reading-chapter:not(.insight-article-section)[data-active="true"] {
   box-shadow: 0 1.4rem 4rem
     color-mix(in srgb, var(--article-accent) 7%, transparent);
+}
+
+.insight-article-summary li,
+.insight-article-faq details,
+.insight-article-sources li,
+.insight-article-author > *,
+.insight-article-next-step > div > * {
+  opacity: 0.72;
+  transform: translate3d(0, var(--chapter-shift), 0);
+  transition:
+    opacity 520ms ease,
+    transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insight-article-summary[data-active="true"] li,
+.insight-article-summary:focus-within li,
+.insight-article-faq[data-active="true"] details,
+.insight-article-faq:focus-within details,
+.insight-article-sources[data-active="true"] li,
+.insight-article-sources:focus-within li,
+.insight-article-author[data-active="true"] > *,
+.insight-article-author:focus-within > *,
+.insight-article-next-step[data-active="true"] > div > *,
+.insight-article-next-step:focus-within > div > * {
+  opacity: 1;
+  transform: none;
+}
+
+.insight-article-summary li:nth-child(2),
+.insight-article-faq details:nth-child(2),
+.insight-article-sources li:nth-child(2),
+.insight-article-author > :nth-child(2),
+.insight-article-next-step > div > :nth-child(2) {
+  transition-delay: 60ms;
+}
+
+.insight-article-summary li:nth-child(3),
+.insight-article-faq details:nth-child(3),
+.insight-article-sources li:nth-child(3),
+.insight-article-next-step li:nth-child(2) {
+  transition-delay: 110ms;
+}
+
+.insight-article-summary li:nth-child(n + 4),
+.insight-article-faq details:nth-child(n + 4),
+.insight-article-sources li:nth-child(n + 4),
+.insight-article-next-step li:nth-child(3) {
+  transition-delay: 160ms;
 }
 
 .insight-article-section {
@@ -1012,7 +1062,12 @@
   .insight-article-section > aside,
   .insight-article-section > div > p,
   .insight-article-section > ul > li,
-  .insight-article-section__kicker span {
+  .insight-article-section__kicker span,
+  .insight-article-summary li,
+  .insight-article-faq details,
+  .insight-article-sources li,
+  .insight-article-author > *,
+  .insight-article-next-step > div > * {
     transition-duration: 0.01ms !important;
     transform: none !important;
   }
@@ -1026,7 +1081,12 @@
   .insight-article-section > div > p,
   .insight-article-section > ul > li,
   .insight-article-section > blockquote,
-  .insight-article-section > aside {
+  .insight-article-section > aside,
+  .insight-article-summary li,
+  .insight-article-faq details,
+  .insight-article-sources li,
+  .insight-article-author > *,
+  .insight-article-next-step > div > * {
     opacity: 1 !important;
   }
 
@@ -1062,7 +1122,12 @@
 :root[data-motion="reduced"] .insight-article-section > aside,
 :root[data-motion="reduced"] .insight-article-section > div > p,
 :root[data-motion="reduced"] .insight-article-section > ul > li,
-:root[data-motion="reduced"] .insight-article-section__kicker span {
+:root[data-motion="reduced"] .insight-article-section__kicker span,
+:root[data-motion="reduced"] .insight-article-summary li,
+:root[data-motion="reduced"] .insight-article-faq details,
+:root[data-motion="reduced"] .insight-article-sources li,
+:root[data-motion="reduced"] .insight-article-author > *,
+:root[data-motion="reduced"] .insight-article-next-step > div > * {
   transition-duration: 0.01ms !important;
   transform: none !important;
 }
@@ -1070,7 +1135,12 @@
 :root[data-motion="reduced"] .insight-article-section > div > p,
 :root[data-motion="reduced"] .insight-article-section > ul > li,
 :root[data-motion="reduced"] .insight-article-section > blockquote,
-:root[data-motion="reduced"] .insight-article-section > aside {
+:root[data-motion="reduced"] .insight-article-section > aside,
+:root[data-motion="reduced"] .insight-article-summary li,
+:root[data-motion="reduced"] .insight-article-faq details,
+:root[data-motion="reduced"] .insight-article-sources li,
+:root[data-motion="reduced"] .insight-article-author > *,
+:root[data-motion="reduced"] .insight-article-next-step > div > * {
   opacity: 1 !important;
 }
 
