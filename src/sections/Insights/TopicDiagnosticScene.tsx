@@ -70,8 +70,8 @@ export function TopicDiagnosticScene({
       }}
     >
       <BackgroundVideo
-        video="/videos/generated/bt-insights-topic-system-beneath.mp4"
-        poster="/images/generated/bt-insights-topic-system-beneath-poster.jpg"
+        video="/videos/generated/insights-v2/page-knowledge-atlas.mp4"
+        poster="/images/generated/insights-v2/page-knowledge-atlas.webp"
         parallax
         playbackRate={0.9}
       />

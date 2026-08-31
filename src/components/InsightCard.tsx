@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { InsightCardMedia } from "@/components/InsightCardMedia";
 import { TiltCard } from "@/components/TiltCard";
 import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement, InsightPost } from "@/data/insights";
@@ -15,6 +15,7 @@ export type InsightCardPost = Pick<
   | "updatedAt"
   | "readingTime"
   | "heroImage"
+  | "heroVideo"
   | "heroImageAlt"
   | "keyTakeaways"
   | "primaryKeyword"
@@ -107,16 +108,13 @@ export function InsightCard({
             featured ? "min-h-[18rem] lg:min-h-[25rem]" : "aspect-[16/9]"
           }`}
         >
-          <Image
-            src={imageOverride?.src ?? post.heroImage}
+          <InsightCardMedia
+            image={imageOverride?.src ?? post.heroImage}
             alt={imageOverride?.alt ?? post.heroImageAlt}
-            fill
-            sizes={
-              featured
-                ? "(min-width: 1024px) 58vw, 100vw"
-                : "(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw"
-            }
-            className="object-cover transition duration-700 ease-earth group-hover:scale-[1.03]"
+            video={post.heroVideo}
+            sizes={featured
+              ? "(min-width: 1024px) 58vw, 100vw"
+              : "(min-width: 1024px) 32vw, (min-width: 640px) 50vw, 100vw"}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-soil/75 via-soil/5 to-transparent" />
           {readingCue ? (

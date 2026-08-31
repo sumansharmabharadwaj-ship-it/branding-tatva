@@ -222,8 +222,8 @@ export function InsightsExplorer({
   heading = "Find the article closest to the tension.",
   description = "Search in the language of the problem: price pressure, hesitation, sameness, unclear value, or faint recall. The library ranks the strongest clues first, while the five paths keep wider exploration open.",
   searchPlaceholder = "Try “price pressure” or “hard to explain”",
-  video = "/videos/generated/bt-insights-library-leafcurrent.mp4",
-  poster = "/images/generated/bt-insights-library-leafcurrent-poster.jpg",
+  video = "/videos/generated/insights-v2/page-insight-library.mp4",
+  poster = "/images/generated/insights-v2/page-insight-library.webp",
 }: InsightsExplorerProps) {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);

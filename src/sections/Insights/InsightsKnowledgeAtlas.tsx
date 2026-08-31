@@ -340,8 +340,8 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       }}
     >
       <BackgroundVideo
-        video="/videos/generated/bt-insights-reading-currents.mp4"
-        poster="/images/generated/bt-insights-reading-currents-poster.jpg"
+        video="/videos/generated/insights-v2/page-reading-currents.mp4"
+        poster="/images/generated/insights-v2/page-reading-currents.webp"
         playbackRate={0.96}
         posterPriority={false}
       />

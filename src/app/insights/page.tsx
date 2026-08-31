@@ -202,6 +202,7 @@ export default function InsightsPage() {
     updatedAt: post.updatedAt,
     readingTime: post.readingTime,
     heroImage: post.heroImage,
+    heroVideo: post.heroVideo,
     heroImageAlt: post.heroImageAlt,
     keyTakeaways: post.keyTakeaways,
     frameworkTitle: post.framework.title,
@@ -444,8 +445,8 @@ export default function InsightsPage() {
         >
           <div className="insights-foundation__film" aria-hidden="true">
             <BackgroundVideo
-              video="/videos/generated/bt-insights-foundation-folio.mp4"
-              poster="/images/generated/bt-insights-foundation-folio-poster.jpg"
+              video="/videos/generated/insights-v2/page-foundation-folio.mp4"
+              poster="/images/generated/insights-v2/page-foundation-folio.webp"
               playbackRate={0.86}
               posterPriority={false}
             />
@@ -502,8 +503,8 @@ export default function InsightsPage() {
             <div className="insights-audit-scene__frame">
               <div className="insights-audit-scene__film relative min-h-80 bg-soil">
                 <BackgroundVideo
-                  video="/videos/generated/bt-insights-audit-seam.mp4"
-                  poster="/images/generated/bt-insights-audit-seam-poster.jpg"
+                  video="/videos/generated/insights-v2/page-evidence-audit.mp4"
+                  poster="/images/generated/insights-v2/page-evidence-audit.webp"
                   imagePosition="center"
                   playbackRate={0.86}
                   posterPriority={false}

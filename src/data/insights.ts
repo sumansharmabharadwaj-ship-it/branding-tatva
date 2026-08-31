@@ -32,6 +32,7 @@ import {
 } from "@/data/pillarInsights";
 import { supportingInsightPosts } from "@/data/supportingInsights";
 import { valuePropositionInsightPosts } from "@/data/valuePropositionInsights";
+import { getInsightOriginalMedia } from "@/data/insightOriginalMedia";
 
 export { insightTopics };
 export type { InsightElement, InsightFaq, InsightFramework, InsightPost, InsightSection, InsightTopic };
@@ -64,9 +65,22 @@ const combinedPosts = [
   ...testimonialEvidenceInsightPosts,
 ];
 
-export const insightPosts: InsightPost[] = combinedPosts.filter(
+const uniquePosts = combinedPosts.filter(
   (post, index) => combinedPosts.findIndex((candidate) => candidate.slug === post.slug) === index
 );
+
+export const insightPosts: InsightPost[] = uniquePosts.map((post) => {
+  const originalMedia = getInsightOriginalMedia(post.slug);
+
+  if (!originalMedia) return post;
+
+  return {
+    ...post,
+    heroImage: originalMedia.poster,
+    heroVideo: originalMedia.video,
+    heroImageAlt: originalMedia.alt,
+  };
+});
 
 const relatedRegistrations = [
   { supportingSlug: "website-messaging-hierarchy-service-businesses", pillarSlugs: ["brand-messaging-framework", "brand-positioning-strategy-service-businesses"] },

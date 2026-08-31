@@ -303,8 +303,8 @@ export default async function InsightTopicPage({ params }: Props) {
           heading={`Essays on ${topic.name.toLowerCase()}, held in one clear sequence.`}
           description="Every guide opens with a direct answer, then carries the decision through a working framework, examples, source notes, and connected reading."
           searchPlaceholder={`Search within ${topic.name.toLowerCase()}`}
-          video="/videos/generated/bt-insights-topic-reading-current.mp4"
-          poster="/images/generated/bt-insights-topic-reading-current-poster.jpg"
+          video="/videos/generated/insights-v2/page-topic-lens.mp4"
+          poster="/images/generated/insights-v2/page-topic-lens.webp"
         />
 
         <section className="bg-background-alt pb-20 sm:pb-28">
@@ -317,8 +317,8 @@ export default async function InsightTopicPage({ params }: Props) {
 
         <section className="relative overflow-hidden bg-soil py-20 text-ivory sm:py-28">
           <BackgroundVideo
-            video="/videos/generated/bt-insights-topic-across-system.mp4"
-            poster="/images/generated/bt-insights-topic-across-system-poster.jpg"
+            video="/videos/generated/insights-v2/page-across-system.mp4"
+            poster="/images/generated/insights-v2/page-across-system.webp"
             parallax
             playbackRate={0.84}
           />

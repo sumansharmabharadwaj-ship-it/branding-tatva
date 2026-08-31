@@ -7,6 +7,7 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { InsightDecisionPath } from "@/components/InsightDecisionPath";
+import { InsightArticleCamera } from "@/components/InsightArticleCamera";
 import { InsightCard } from "@/components/InsightCard";
 import { InsightsLibraryReturnLink } from "@/components/InsightsLibraryReturnLink";
 import { LinkButton } from "@/components/Button";
@@ -267,6 +268,7 @@ export default async function InsightArticlePage({ params }: Props) {
         className="insight-article-page"
         style={{ "--article-accent": color } as CSSProperties}
       >
+        <InsightArticleCamera />
         <article>
           <header className="insight-article-hero relative flex items-end overflow-hidden bg-soil pb-14 pt-36 sm:pb-20 sm:pt-44">
             {post.heroVideo ? (
@@ -281,8 +283,7 @@ export default async function InsightArticlePage({ params }: Props) {
                 className="object-cover"
               />
             )}
-            <div className="absolute inset-0 bg-soil/45" />
-            <div className="absolute inset-0 bg-gradient-to-t from-soil via-soil/35 to-soil/10" />
+            <div className="insight-article-hero__veil absolute inset-0" />
 
             <Container className="relative">
               <nav
@@ -685,8 +686,8 @@ export default async function InsightArticlePage({ params }: Props) {
         {related.length > 0 && (
           <section className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
             <BackgroundVideo
-              video="/videos/generated/bt-insights-related-tributaries.mp4"
-              poster="/images/generated/bt-insights-related-tributaries-poster.jpg"
+              video="/videos/generated/insights-v2/page-related-reading.mp4"
+              poster="/images/generated/insights-v2/page-related-reading.webp"
               imagePosition="center"
               parallax
               playbackRate={0.9}
@@ -742,8 +743,8 @@ export default async function InsightArticlePage({ params }: Props) {
         )}
 
         <TexturedDark
-          image="/images/generated/bt-insights-topic-across-system-poster.jpg"
-          video="/videos/generated/bt-insights-topic-across-system.mp4"
+          image="/images/generated/insights-v2/page-across-system.webp"
+          video="/videos/generated/insights-v2/page-across-system.mp4"
           className="py-24 text-center sm:py-28"
         >
           <Container>
