@@ -34,18 +34,31 @@ export function InsightCardMedia({
     const touchFirst = window.matchMedia("(hover: none), (pointer: coarse)");
 
     function playFilm() {
+      // The sitewide VideoWarden gives an explicitly explored foreground film
+      // priority over ambient section media. Add that intent before play so
+      // its synchronous arbitration keeps this card alive.
+      activeFilm.dataset.videoPriority = "foreground";
       window.dispatchEvent(
         new CustomEvent(CARD_FILM_REQUEST_EVENT, { detail: activeFilm }),
       );
 
       activeFilm
         .play()
-        .then(() => setIsPlaying(true))
+        .then(() => setIsPlaying(!activeFilm.paused))
         .catch(() => setIsPlaying(false));
     }
 
     function pauseFilm() {
+      delete activeFilm.dataset.videoPriority;
       activeFilm.pause();
+      setIsPlaying(false);
+    }
+
+    function handlePlaying() {
+      setIsPlaying(true);
+    }
+
+    function handlePause() {
       setIsPlaying(false);
     }
 
@@ -83,6 +96,8 @@ export function InsightCardMedia({
     }
     card.addEventListener("focus", playFilm);
     card.addEventListener("blur", pauseFilm);
+    activeFilm.addEventListener("playing", handlePlaying);
+    activeFilm.addEventListener("pause", handlePause);
     window.addEventListener(CARD_FILM_REQUEST_EVENT, handleFilmRequest);
 
     return () => {
@@ -91,7 +106,10 @@ export function InsightCardMedia({
       card.removeEventListener("pointerleave", pauseFilm);
       card.removeEventListener("focus", playFilm);
       card.removeEventListener("blur", pauseFilm);
+      activeFilm.removeEventListener("playing", handlePlaying);
+      activeFilm.removeEventListener("pause", handlePause);
       window.removeEventListener(CARD_FILM_REQUEST_EVENT, handleFilmRequest);
+      delete activeFilm.dataset.videoPriority;
       activeFilm.pause();
     };
   }, [prefersReducedMotion, video]);
