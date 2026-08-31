@@ -6,6 +6,8 @@ export const metadata: Metadata = {
 };
 
 const PRESETS = {
+  desktop: { label: "Desktop wide", width: 1440, height: 900 },
+  laptop: { label: "Short laptop", width: 1280, height: 720 },
   tablet: { label: "Tablet portrait", width: 768, height: 820 },
   mobile: { label: "Mobile portrait", width: 390, height: 844 },
   narrow: { label: "Narrow phone", width: 320, height: 720 },
