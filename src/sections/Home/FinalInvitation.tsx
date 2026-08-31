@@ -2,15 +2,21 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { LinkButton } from "@/components/Button";
 import { TrackedLink } from "@/components/TrackedLink";
-import { consultation } from "@/data/site";
+import { consultation, site } from "@/data/site";
+import {
+  HOME_QUESTION_CHOICE_EVENT,
+  type HomeQuestionChoice,
+  type HomeQuestionChoiceDetail,
+} from "@/lib/homeQuestionJourney";
 import {
   SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
+  calendlyHrefForServicesPackage,
   isServicesSituation,
   readCompletedHomeDiagnosis,
   servicesContactHrefForSituation,
@@ -76,6 +82,7 @@ function readSituation(): Situation {
 export function FinalInvitation() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [situation, setSituation] = useState<Situation>("default");
+  const [questionChoice, setQuestionChoice] = useState<HomeQuestionChoice | null>(null);
   const inView = useInView(rootRef, { amount: 0.28 });
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
 
@@ -101,22 +108,31 @@ export function FinalInvitation() {
         isServicesSituation(detail.situation)
       ) {
         setSituation(detail.situation);
+        setQuestionChoice(null);
       }
     }
 
     function onSituationCleared() {
       setSituation("default");
+      setQuestionChoice(null);
+    }
+
+    function onQuestionChoice(event: Event) {
+      const detail = (event as CustomEvent<HomeQuestionChoiceDetail>).detail;
+      setQuestionChoice(detail?.choice ?? null);
     }
 
     window.addEventListener("storage", sync);
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
     window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+    window.addEventListener(HOME_QUESTION_CHOICE_EVENT, onQuestionChoice as EventListener);
     window.addEventListener("bt:situation", sync as EventListener);
     window.addEventListener("bt:home-chapter", onChapter as EventListener);
     return () => {
       window.removeEventListener("storage", sync);
       window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
       window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
+      window.removeEventListener(HOME_QUESTION_CHOICE_EVENT, onQuestionChoice as EventListener);
       window.removeEventListener("bt:situation", sync as EventListener);
       window.removeEventListener("bt:home-chapter", onChapter as EventListener);
     };
@@ -125,7 +141,7 @@ export function FinalInvitation() {
   const invitation = INVITATIONS[situation];
   const selectedSituation = situation === "default" ? null : situation;
   const selectedPackage = selectedSituation ? SITUATION_TO_PACKAGE[selectedSituation] : null;
-  const contactHref = servicesContactHrefForSituation(selectedSituation, "call");
+  const bookingHref = calendlyHrefForServicesPackage(`${site.calendlyUrl}/30min`, selectedPackage);
   const writeHref = servicesContactHrefForSituation(selectedSituation, "write");
 
   return (
@@ -153,21 +169,33 @@ export function FinalInvitation() {
             <h2 className="final-invitation__headline">{invitation.headline}</h2>
             <p className="final-invitation__body">{invitation.body}</p>
 
+            {questionChoice ? (
+              <div className="final-invitation__carried-question">
+                <span>The question you chose</span>
+                <strong>{questionChoice.question}</strong>
+              </div>
+            ) : null}
+
             <div className="final-invitation__actions">
-              <LinkButton
-                href={contactHref}
-                trackEvent="hero_booking_click"
-                trackProps={{
-                  page: "home",
-                  position: "final_invitation",
+              <TrackedLink
+                href={bookingHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                event="calendar_opened"
+                eventProps={{
+                  source: "home_final_invitation",
                   situation,
                   ...(selectedPackage ? { package: selectedPackage } : {}),
                 }}
+                className="final-invitation__primary"
+                data-cursor-label="Book the diagnosis"
+                aria-label={`Open Calendly in your timezone to book a ${consultation.minutes} minute diagnosis with ${site.founder}`}
               >
                 {consultation.actionLabel}
-              </LinkButton>
+                <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.5} />
+              </TrackedLink>
               <div className="final-invitation__action-note">
-                <span>{consultation.minutes} minutes · honest feedback · no pitch deck</span>
+                <span>{consultation.minutes} minutes · your timezone · {consultation.preparation}</span>
                 <TrackedLink
                   href={writeHref}
                   event="contact_route_selected"

@@ -532,14 +532,15 @@
   backdrop-filter: blur(15px);
 }
 
-.home-v4-chapter--decision + .home-v4-handoff--light {
-  background: linear-gradient(180deg, #11171a 0%, #111417 100%);
+.home-v4-chapter--decision + .home-v4-handoff--mist {
+  background: linear-gradient(180deg, #d9c9aa 0%, #d8d1c1 100%);
 }
 
-.home-v4-chapter--decision + .home-v4-handoff--light .home-v4-handoff__veil {
+.home-v4-chapter--decision + .home-v4-handoff--mist .home-v4-handoff__veil {
   background:
-    radial-gradient(ellipse at 22% 50%, rgba(212, 185, 154, 0.14), transparent 42%),
-    radial-gradient(ellipse at 78% 42%, rgba(125, 154, 168, 0.13), transparent 45%);
+    radial-gradient(ellipse at 22% 50%, rgba(158, 103, 43, 0.18), transparent 42%),
+    radial-gradient(ellipse at 78% 42%, rgba(126, 151, 146, 0.17), transparent 45%),
+    linear-gradient(180deg, rgba(217, 201, 170, 0.34), rgba(216, 209, 193, 0.42));
 }
 
 @media (max-width: 1100px) {

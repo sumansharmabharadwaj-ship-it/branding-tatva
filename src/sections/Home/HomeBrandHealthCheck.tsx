@@ -341,7 +341,7 @@ export function HomeBrandHealthCheck() {
         <header className="brand-orbit__header">
           <h2 id="brand-orbit-title">
             02 · Brand diagnostic
-            <span>About 30 seconds</span>
+            <span>3 choices · about 30 seconds · instant direction</span>
           </h2>
           <div
             className="brand-orbit__progress"
@@ -417,7 +417,7 @@ export function HomeBrandHealthCheck() {
 
               <div className="brand-orbit__decision">
                 <div className="brand-orbit__choice-cue" id={`brand-orbit-cue-${step}`}>
-                  <p>
+                  <p aria-live="polite" aria-atomic="true">
                     <span>{selected === null ? "Choose one" : "This points toward"}</span>
                     <b>
                       {selected === null

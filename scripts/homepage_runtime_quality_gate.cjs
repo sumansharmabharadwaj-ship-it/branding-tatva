@@ -36,9 +36,13 @@ const backgroundVideo = read("src/components/BackgroundVideo.tsx");
 const videoBreak = read("src/components/VideoBreak.tsx");
 const videoFadeIn = read("src/hooks/useVideoFadeIn.ts");
 const questions = read("src/sections/Home/HomeQuestionsScene.tsx");
+const finalInvitation = read("src/sections/Home/FinalInvitation.tsx");
 const experience = read("src/sections/HomeV4/HomeV4Experience.tsx");
 const v4Scenes = read("src/sections/HomeV4/HomeV4Scenes.tsx");
 const experienceUpgrade = read("src/app/home-v4-experience-upgrade.css");
+const mediaContinuity = read("src/app/home-v4-media-continuity.css");
+const decisionStyles = read("src/app/home-v4-decision-depth.css");
+const questionsStyles = read("src/app/home-v4-questions-editorial-final.css");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -54,6 +58,25 @@ assert(analytics.includes("export function trackRuntimeIssue"), "Runtime issue t
 assert(analytics.includes("RUNTIME_SCENES.has"), "Runtime scenes are not allowlisted.");
 assert(analytics.includes("RUNTIME_MEDIA.get"), "Runtime media is not allowlisted.");
 assert(analytics.includes("runtimeIssueKeys.has"), "Runtime issues are not deduplicated.");
+assert(mediaDirector.includes('trackRuntimeIssue("media_playback_failed"'), "Homepage media playback failures are silent.");
+assert(mediaDirector.includes('error.name === "AbortError"'), "Expected playback interruptions are reported as failures.");
+assert(mediaDirector.includes("playbackAttempts.delete(video)"), "Successful playback does not reset the bounded failure attempt.");
+assert(mediaDirector.includes("attempt > 1"), "Failed homepage media can enter an unbounded retry loop.");
+assert(mediaDirector.includes("constrainedConnection"), "Media recovery ignores visitor data constraints.");
+assert(mediaDirector.includes("recoveryTimers.forEach"), "Media recovery timers survive the homepage lifecycle.");
+assert(mediaDirector.includes("function scheduleSync"), "Homepage media updates are not coalesced to the display frame.");
+assert(mediaDirector.includes("viewportProfileDirty ||="), "Resize bursts repeat homepage media layout reads.");
+assert(mediaDirector.includes("if (document.hidden)"), "Hidden tabs can retain homepage media until animation frames resume.");
+assert(mediaDirector.includes("cancelAnimationFrame(syncFrame)"), "Scheduled homepage media work survives teardown.");
+assert(mediaContinuity.includes('data-home-media-state="playing"'), "Ready homepage films have no visual arrival state.");
+assert(mediaContinuity.includes('data-home-media-state="failed"'), "Failed homepage films have no calm visual fallback.");
+assert(mediaContinuity.includes("prefers-reduced-motion: reduce"), "Homepage film continuity ignores reduced motion.");
+assert(mediaDirector.includes("const mediaToPause"), "Homepage media arbitration lacks an explicit outgoing phase.");
+assert(mediaDirector.includes("const mediaToPlay"), "Homepage media arbitration lacks an explicit incoming phase.");
+assert(
+  mediaDirector.indexOf("mediaToPause.forEach") < mediaDirector.indexOf("mediaToPlay.forEach"),
+  "Homepage media can start an incoming film before releasing the outgoing film.",
+);
 assert(pacing.includes('querySelectorAll<HTMLElement>("[data-home-reading-plane]")'), "Pacing health accepts decorative content as readable.");
 assert(pacing.includes("changedActiveSections.forEach"), "Active panel replacements do not trigger a visibility recheck.");
 assert(pacing.includes("}, 400);"), "Readable content is not checked within the 400 millisecond contract.");
@@ -72,6 +95,7 @@ assert(diagnostic.includes('trackRuntimeIssue("diagnostic_transition_failed"'), 
 assert(diagnostic.includes('aria-valuetext={done ? "Complete"'), "Diagnostic progress lacks an explicit spoken completion state.");
 assert(diagnostic.includes('aria-labelledby="brand-orbit-result-title"'), "Diagnostic result focus target lacks an accessible label.");
 assert(diagnostic.includes('id="brand-orbit-result-title"'), "Diagnostic result label is missing.");
+assert(diagnostic.includes('<p aria-live="polite" aria-atomic="true">'), "Diagnostic selection implications are not announced.");
 assert(diagnostic.includes("event.currentTarget.closest('[role=\"radiogroup\"]')"), "Diagnostic arrow-key focus is not scoped to the active radio group.");
 assert(diagnostic.includes("options?.[nextIndex]?.focus({ preventScroll: true })"), "Diagnostic selected radio does not receive focus before the selection render.");
 assert(diagnostic.includes('event.pointerType !== "mouse"'), "Diagnostic hover preview can consume touch gestures.");
@@ -81,6 +105,8 @@ assert(diagnostic.includes("active.choices[selected].centre"), "Diagnostic choic
 assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused diagnostic result has no visible treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action a:focus-visible"), "Diagnostic result links have no explicit focus treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action button:focus-visible"), "Diagnostic result buttons have no explicit focus treatment.");
+assert(diagnosticStyles.includes("white-space:normal"), "Diagnostic effort promise cannot wrap on narrow screens.");
+assert(diagnosticStyles.includes("button.is-selected::after"), "Touch selections lose their strongest diagnostic commitment cue.");
 assert(!diagnosticStyles.includes("infinite"), "Diagnostic scenery restored a perpetual CSS motion loop.");
 assert(!studio.includes("useScroll") && !studio.includes("useMotionValueEvent"), "Studio restored an unbounded global scroll timeline.");
 assert(studio.includes('window.addEventListener("scroll", scheduleScrollStage'), "Studio disciplines no longer respond to desktop page travel.");
@@ -95,12 +121,20 @@ assert(process.includes("selectorEngaged ||"), "Working method does not yield wh
 assert(process.includes('event.pointerType !== "mouse"'), "Working method hover preview can consume touch gestures.");
 assert(process.includes('data-method-motion={ambientMotion ? "ambient" : "held"}'), "Working method does not expose its motion state.");
 assert(process.includes('aria-live={selectorEngaged ? "polite" : "off"}'), "Ambient method changes can interrupt assistive reading.");
+assert(process.includes("const displayed = active === index"), "Working-method preview has no separate visual state.");
+assert(process.includes("const committed = committedStage === index"), "Working-method previews replace the committed tab state.");
+assert(process.includes("aria-selected={committed}"), "Working-method hover changes assistive selection state.");
+assert(process.includes("tabIndex={committed ? 0 : -1}"), "Working-method hover moves the keyboard tab stop.");
+assert(process.includes("setActive(committedStage)"), "Working-method hover does not restore the visitor's committed decision.");
 assert(!process.includes("void video.play()") && !process.includes("video.pause()"), "Working method bypasses the shared one-film playback budget.");
 assert(process.includes('preload="none"') && process.includes('data-home-playback-rate="0.72"'), "Working-method film does not yield loading and pace to the homepage media director.");
 assert(processStyles.includes("@keyframes decisionFlowBeat"), "Working method has no bounded stage pulse.");
 assert(processStyles.includes("scaleY(var(--decision-progress))"), "Working method rail does not show decision progress.");
 assert(evidence.includes('event.pointerType === "mouse"'), "Selected-work hover can consume touch gestures.");
 assert(evidence.includes("onFocus={() => choose(index)}"), "Selected-work cases do not preview from keyboard focus.");
+assert(evidence.includes("const committed = index === committedIndex"), "Selected-work previews replace the committed tab state.");
+assert(evidence.includes("aria-selected={committed}"), "Selected-work hover changes assistive selection state.");
+assert(evidence.includes("tabIndex={committed ? 0 : -1}"), "Selected-work hover moves the keyboard tab stop.");
 assert(evidence.includes("EVIDENCE_META[project.slug]?.type"), "Selected-work index does not distinguish measured performance from delivered systems.");
 assert(evidence.includes('dynamic(\n  () => loadProjectFile()') && evidence.includes("projectFileRequested ?"), "The project-file overlay is bundled before a visitor expresses intent to inspect it.");
 assert(evidence.includes("onPointerEnter={prepareProjectFile}") && evidence.includes("onFocus={prepareProjectFile}"), "The deferred project file is not prepared for pointer and keyboard intent.");
@@ -109,6 +143,8 @@ assert(evidenceStyles.includes("var(--project-accent)"), "Selected-work cases ha
 assert(cost.includes("ambientCompleteRef.current = true"), "Hidden cost no longer resolves its ambient story after one pass.");
 assert(cost.includes('document.addEventListener("visibilitychange", syncVisibility)'), "Hidden cost can advance while its tab is hidden.");
 assert(cost.includes('data-cost-motion={ambientSequencing ? "sequencing" : "held"}'), "Hidden cost does not expose whether its sequence is active or held.");
+assert(cost.includes('amount: 0.55, margin: "0px"'), "Hidden-cost sequencing begins before the scene is readable.");
+assert(cost.includes('if (event.pointerType === "mouse") setInteractionHeld(true)'), "Hidden-cost consequences keep changing while visitors examine them.");
 assert(cost.includes('if (event.pointerType !== "mouse") return;'), "Hidden-cost hover preview can consume touch gestures.");
 assert(cost.includes("onFocus={() => choose(index)}"), "Hidden-cost stages do not commit from keyboard focus.");
 assert(costStyles.includes("scaleX(var(--cost-progress))"), "Hidden cost has lost its accumulating memory trace.");
@@ -124,6 +160,9 @@ assert(/function mediaBudget\(\)\s*\{\s*return 1;\s*\}/.test(mediaDirector), "Ho
 assert(mediaDirector.includes("const MIN_PLAYBACK_RATE = 0.65") && mediaDirector.includes("Math.max(MIN_PLAYBACK_RATE, requested)"), "Homepage media director overrides intentionally slow cinematic footage.");
 assert(backgroundVideo.includes("data-home-playback-rate={safePlaybackRate}"), "Background films do not publish their authored pace to the homepage media director.");
 assert(paths.includes('data-home-playback-rate="0.82"'), "Service-path film has lost its calm authored pace.");
+assert(paths.includes("const displayed = index === activeIndex"), "Service-path preview has no separate visual state.");
+assert(paths.includes("aria-selected={committed}"), "Service-path hover replaces the committed recommendation.");
+assert(paths.includes("tabIndex={committed ? 0 : -1}"), "Service-path hover moves the keyboard tab stop.");
 assert(videoFadeIn.includes("playbackManagedExternally = false") && videoFadeIn.includes("if (!playbackManagedExternally)"), "Reusable video fade-in cannot yield playback without losing cleanup ownership.");
 assert(
   backgroundVideo.includes("!prefersReducedMotion, managedByHomepage") &&
@@ -132,8 +171,21 @@ assert(
   "Homepage FAQ film or offscreen chapters still issue competing playback or preload commands.",
 );
 assert(questions.includes("managedByHomepage"), "Homepage FAQ does not opt into shared playback ownership.");
+assert(questions.includes("const displayed = index === activeIndex"), "Practical-answer preview has no separate visual state.");
+assert(questions.includes("const committed = index === committedIndex"), "Practical-answer previews replace the committed tab state.");
+assert(questions.includes("aria-selected={committed}"), "Practical-answer hover changes assistive selection state.");
+assert(questions.includes("tabIndex={committed ? 0 : -1}"), "Practical-answer hover moves the keyboard tab stop.");
+assert(finalInvitation.includes('calendlyHrefForServicesPackage(`${site.calendlyUrl}/30min`, selectedPackage)'), "Closing invitation adds an avoidable page or calendar choice before the exact session.");
+assert(finalInvitation.includes('event="calendar_opened"'), "Direct homepage booking intent is not measured as a calendar open.");
+assert(finalInvitation.includes('target="_blank"') && finalInvitation.includes('rel="noopener noreferrer"'), "Closing invitation does not disclose a safe external calendar handoff.");
+assert(finalInvitation.includes("servicesContactHrefForSituation(selectedSituation, \"write\")"), "Closing invitation has lost its lower-pressure writing route.");
+assert(finalInvitation.includes("consultation.preparation"), "Closing invitation does not reduce preparation anxiety before booking.");
 assert(videoBreak.includes("managedByHomepage = false") && videoBreak.includes('managedByHomepage ? "none"'), "Closing film cannot yield playback to the homepage controller.");
 assert(experience.includes("managedByHomepage") && experience.includes("homePlaybackRate={0.84}"), "Closing invitation film does not use the shared calm playback contract.");
+assert(decisionStyles.includes(".home-v4-chapter--decision + .home-v4-handoff--mist"), "Closing chapter seam no longer matches the rendered mist handoff.");
+assert(!decisionStyles.includes(".home-v4-chapter--decision + .home-v4-handoff--light"), "Closing chapter seam still targets the retired light handoff.");
+assert(questionsStyles.includes("rgba(216,209,193,.96)"), "Practical answers no longer resolve into the invitation's silver exposure.");
+assert(experience.includes("rgba(217,201,170,0.34) 0%"), "Closing film no longer carries the practical-answer warmth across the cut.");
 assert(!homeInterface.includes("GuidedView") && !homeInterface.includes("LivingCursor"), "Removed homepage-only controls remain bundled beside the active seam primitive.");
 assert(!v4Scenes.includes("V4RecognitionScene") && !v4Scenes.includes("RECOGNITION_STATES"), "The retired recognition chapter remains bundled beside the active opening and cost scenes.");
 assert(!homeInterface.includes("useMotionValue") && !homeInterface.includes("useLenis"), "Dormant homepage control runtimes still pull client-side motion or scroll ownership into chapter seams.");

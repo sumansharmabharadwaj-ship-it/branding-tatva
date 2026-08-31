@@ -120,7 +120,7 @@ export function HomeV4Experience() {
           cameraPush
           managedByHomepage
           homePlaybackRate={0.84}
-          overlayGradient="linear-gradient(102deg, rgba(244,238,224,0.92) 0%, rgba(244,238,224,0.72) 42%, rgba(238,224,198,0.60) 70%, rgba(238,224,198,0.88) 100%)"
+          overlayGradient="linear-gradient(180deg, rgba(217,201,170,0.34) 0%, rgba(216,209,193,0.12) 18%, transparent 34%), linear-gradient(102deg, rgba(244,238,224,0.92) 0%, rgba(244,238,224,0.72) 42%, rgba(238,224,198,0.60) 70%, rgba(238,224,198,0.88) 100%)"
         >
           <FinalInvitation />
         </VideoBreak>

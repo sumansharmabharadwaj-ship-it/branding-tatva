@@ -411,18 +411,19 @@ export function EvidenceWall() {
             }}
           >
             {visibleProjects.map((project, index) => {
-              const selected = index === activeIndex;
+              const displayed = index === activeIndex;
+              const committed = index === committedIndex;
               return (
                 <button
                   key={project.slug}
                   type="button"
                   role="tab"
                   id={`evidence-tab-${index}`}
-                  aria-selected={selected}
+                  aria-selected={committed}
                   aria-controls="evidence-active-file"
-                  tabIndex={selected ? 0 : -1}
+                  tabIndex={committed ? 0 : -1}
                   ref={(node) => { indexButtonRefs.current[index] = node; }}
-                  className={selected ? "is-active" : undefined}
+                  className={displayed ? "is-active" : undefined}
                   style={{ "--project-accent": project.accent } as CSSProperties}
                   onClick={() => choose(index)}
                   onFocus={() => choose(index)}
@@ -439,7 +440,7 @@ export function EvidenceWall() {
                     </em>
                   </span>
                   <span className="evidence-cinematic__index-state" aria-hidden="true">
-                    {selected ? (isPreviewing ? "Preview" : "Viewing") : ""}
+                    {displayed ? (isPreviewing ? "Preview" : "Viewing") : ""}
                   </span>
                   <i aria-hidden="true" />
                 </button>

@@ -34,6 +34,7 @@ import "./home-v4-process-living-final.css";
 import "./home-v4-studio-synthesis-final.css";
 import "./home-v4-zoom-reflow-final.css";
 import "./home-v4-experience-upgrade.css";
+import "./home-v4-media-continuity.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
@@ -88,7 +89,6 @@ export default function Home() {
         hideOnLast
         desktopMode="rail"
         tone="light"
-        showActiveLabel={false}
       />
       <Footer />
       <script

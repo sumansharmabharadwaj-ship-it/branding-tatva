@@ -228,7 +228,7 @@ export function PathsCinematicChapter() {
                 }}
               >
                 {PATHS.map((path, index) => {
-                  const selected = index === activeIndex;
+                  const displayed = index === activeIndex;
                   const committed = index === committedIndex;
                   return (
                     <button
@@ -236,16 +236,16 @@ export function PathsCinematicChapter() {
                       id={`path-film-tab-${path.number}`}
                       type="button"
                       role="tab"
-                      aria-selected={selected}
+                      aria-selected={committed}
                       aria-controls="path-active-panel"
-                      tabIndex={selected ? 0 : -1}
+                      tabIndex={committed ? 0 : -1}
                       onClick={() => choose(index)}
                       onFocus={() => choose(index, false)}
                       onKeyDown={(event) => onChoiceKeyDown(event, index)}
                       onPointerEnter={(event) => {
                         if (event.pointerType === "mouse") choose(index, false);
                       }}
-                      className={selected ? "is-active" : undefined}
+                      className={displayed ? "is-active" : undefined}
                       data-committed={committed ? "true" : undefined}
                       style={{ "--path-choice-accent": path.tint } as CSSProperties}
                     >
@@ -255,7 +255,7 @@ export function PathsCinematicChapter() {
                         {path.shortChoice}
                       </span>
                       <span className="paths-film__choice-cue">
-                        {selected && isPreviewing ? "Preview" : committed ? "Chosen" : ""}
+                        {displayed && isPreviewing ? "Preview" : committed ? "Chosen" : ""}
                       </span>
                     </button>
                   );

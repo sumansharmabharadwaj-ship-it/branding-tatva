@@ -1,6 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { trackRuntimeIssue } from "@/lib/analytics";
 import { useEffect } from "react";
 
 // The motion bible keeps ambient footage perceptibly alive while preserving calm.
@@ -57,12 +58,16 @@ export function HomeV4MediaDirector() {
     const visibleRatios = new Map<HTMLVideoElement, number>();
     const nearbyMedia = new Map<HTMLVideoElement, boolean>();
     const cleanups = new Map<HTMLVideoElement, () => void>();
+    const playbackAttempts = new WeakMap<HTMLVideoElement, number>();
+    const recoveryTimers = new Map<HTMLVideoElement, number>();
     const navigatorHints = navigator as NavigatorWithHints;
     const constrainedConnection =
       Boolean(navigatorHints.connection?.saveData) ||
       navigatorHints.connection?.effectiveType === "2g" ||
       navigatorHints.connection?.effectiveType === "slow-2g";
     let formInteraction = false;
+    let syncFrame: number | null = null;
+    let viewportProfileDirty = false;
     function mediaBudget() {
       return 1;
     }
@@ -72,6 +77,38 @@ export function HomeV4MediaDirector() {
       // must not freeze ambient film or the page looks broken. Reduced motion,
       // a hidden document, and active form input still pause media as expected.
       return prefersReducedMotion || document.hidden || formInteraction;
+    }
+
+    function reportPlaybackFailure(video: HTMLVideoElement) {
+      const attempt = (playbackAttempts.get(video) ?? 0) + 1;
+      playbackAttempts.set(video, attempt);
+      const scene = video.closest<HTMLElement>("[data-home-v4-chapter]")?.dataset.homeV4Chapter;
+      const media = video.dataset.mediaId ?? video.closest<HTMLElement>("[data-media-id]")?.dataset.mediaId;
+      trackRuntimeIssue("media_playback_failed", { scene, media, attempt });
+      return attempt;
+    }
+
+    function retryVisibleMedia(video: HTMLVideoElement, attempt: number) {
+      if (
+        attempt > 1 ||
+        globallyPaused() ||
+        constrainedConnection ||
+        viewportRatio(video) <= 0 ||
+        recoveryTimers.has(video)
+      ) {
+        return false;
+      }
+
+      video.dataset.homeMediaState = "poster";
+      const timer = window.setTimeout(() => {
+        recoveryTimers.delete(video);
+        if (!video.isConnected || globallyPaused() || viewportRatio(video) <= 0) return;
+        video.load();
+        visibleRatios.set(video, viewportRatio(video));
+        scheduleSync();
+      }, 900);
+      recoveryTimers.set(video, timer);
+      return true;
     }
 
     function syncAll() {
@@ -106,6 +143,9 @@ export function HomeV4MediaDirector() {
           if (readinessA !== readinessB) return readinessA - readinessB;
           return distanceFromViewportCentre(videoA) - distanceFromViewportCentre(videoB);
         })[0]?.[0];
+      const playbackPaused = globallyPaused();
+      const mediaToPause: HTMLVideoElement[] = [];
+      const mediaToPlay: HTMLVideoElement[] = [];
 
       tracked.forEach((video) => {
         applyPlaybackRate(video);
@@ -114,7 +154,7 @@ export function HomeV4MediaDirector() {
         const warming = video === warmCandidate;
 
         video.dataset.homeMediaAdmission = admitted
-          ? globallyPaused()
+          ? playbackPaused
             ? "held"
             : "playing"
           : warming
@@ -127,17 +167,42 @@ export function HomeV4MediaDirector() {
             : "none";
         }
 
-        if (!globallyPaused() && admitted) {
-          if (video.paused) {
-            void video.play().catch(() => {
-              if (video.dataset.homeMediaState !== "failed") {
-                video.dataset.homeMediaState = "poster";
-              }
-            });
+        if (!playbackPaused && admitted) mediaToPlay.push(video);
+        else if (!video.paused) mediaToPause.push(video);
+      });
+
+      // Release the outgoing decoder before admitting the next chapter. This
+      // keeps fast scrolls from producing a brief two-film overlap.
+      mediaToPause.forEach((video) => video.pause());
+      mediaToPlay.forEach((video) => {
+        if (!video.paused) return;
+        void video.play().catch((error: unknown) => {
+          if (error instanceof DOMException && error.name === "AbortError") return;
+          if (video.dataset.homeMediaState !== "failed") {
+            video.dataset.homeMediaState = "poster";
           }
-        } else if (!video.paused) {
-          video.pause();
+          reportPlaybackFailure(video);
+        });
+      });
+    }
+
+    function scheduleSync(refreshViewportProfile = false) {
+      viewportProfileDirty ||= refreshViewportProfile;
+      if (syncFrame !== null) return;
+      syncFrame = window.requestAnimationFrame(() => {
+        syncFrame = null;
+        if (viewportProfileDirty) {
+          viewportProfileDirty = false;
+          tracked.forEach((video) => {
+            const bounds = video.getBoundingClientRect();
+            visibleRatios.set(video, viewportRatio(video));
+            nearbyMedia.set(
+              video,
+              bounds.bottom >= -window.innerHeight * 0.55 && bounds.top <= window.innerHeight * 1.55,
+            );
+          });
         }
+        syncAll();
       });
     }
 
@@ -147,7 +212,7 @@ export function HomeV4MediaDirector() {
           const video = entry.target as HTMLVideoElement;
           visibleRatios.set(video, entry.isIntersecting ? entry.intersectionRatio : 0);
         });
-        syncAll();
+        scheduleSync();
       },
       {
         rootMargin: "0px",
@@ -160,7 +225,7 @@ export function HomeV4MediaDirector() {
         entries.forEach((entry) => {
           nearbyMedia.set(entry.target as HTMLVideoElement, entry.isIntersecting);
         });
-        syncAll();
+        scheduleSync();
       },
       { rootMargin: "55% 0px", threshold: 0 },
     );
@@ -189,14 +254,18 @@ export function HomeV4MediaDirector() {
       // and immediately arbitrates the decoding budget again.
       const refreshMediaState = () => {
         applyPlaybackRate(video);
-        queueMicrotask(syncAll);
+        scheduleSync();
       };
       const markReady = () => {
         video.dataset.homeMediaState = "ready";
-        queueMicrotask(syncAll);
+        scheduleSync();
       };
       const markPlaying = () => {
         video.dataset.homeMediaState = "playing";
+        playbackAttempts.delete(video);
+        const recoveryTimer = recoveryTimers.get(video);
+        if (recoveryTimer) window.clearTimeout(recoveryTimer);
+        recoveryTimers.delete(video);
       };
       const markWaiting = () => {
         if (video.dataset.homeMediaState !== "failed") {
@@ -204,9 +273,11 @@ export function HomeV4MediaDirector() {
         }
       };
       const markFailed = () => {
+        const attempt = reportPlaybackFailure(video);
+        if (retryVisibleMedia(video, attempt)) return;
         video.dataset.homeMediaState = "failed";
         visibleRatios.set(video, 0);
-        queueMicrotask(syncAll);
+        scheduleSync();
       };
       video.addEventListener("loadedmetadata", refreshMediaState);
       video.addEventListener("play", refreshMediaState);
@@ -223,6 +294,9 @@ export function HomeV4MediaDirector() {
       prewarmObserver.observe(video);
 
       cleanups.set(video, () => {
+        const recoveryTimer = recoveryTimers.get(video);
+        if (recoveryTimer) window.clearTimeout(recoveryTimer);
+        recoveryTimers.delete(video);
         video.removeEventListener("loadedmetadata", refreshMediaState);
         video.removeEventListener("play", refreshMediaState);
         video.removeEventListener("loadeddata", markReady);
@@ -265,24 +339,24 @@ export function HomeV4MediaDirector() {
           node.querySelectorAll<HTMLVideoElement>("video").forEach(track);
         });
       });
-      syncAll();
+      scheduleSync();
     });
     mutationObserver.observe(homeRoot, { childList: true, subtree: true });
 
     function onVisibilityChange() {
-      syncAll();
+      // Animation frames may be suspended in a hidden tab, so release media
+      // synchronously on hide and resume through the normal frame budget.
+      if (document.hidden) {
+        if (syncFrame !== null) window.cancelAnimationFrame(syncFrame);
+        syncFrame = null;
+        syncAll();
+      } else {
+        scheduleSync(true);
+      }
     }
 
     function onViewportProfileChange() {
-      tracked.forEach((video) => {
-        const bounds = video.getBoundingClientRect();
-        visibleRatios.set(video, viewportRatio(video));
-        nearbyMedia.set(
-          video,
-          bounds.bottom >= -window.innerHeight * 0.55 && bounds.top <= window.innerHeight * 1.55,
-        );
-      });
-      syncAll();
+      scheduleSync(true);
     }
 
     function onFocusIn(event: FocusEvent) {
@@ -324,6 +398,10 @@ export function HomeV4MediaDirector() {
       tracked.clear();
       visibleRatios.clear();
       nearbyMedia.clear();
+      recoveryTimers.forEach((timer) => window.clearTimeout(timer));
+      recoveryTimers.clear();
+      if (syncFrame !== null) window.cancelAnimationFrame(syncFrame);
+      syncFrame = null;
     };
   }, [prefersReducedMotion]);
 

@@ -179,7 +179,7 @@ export function V4HiddenCostScene() {
   const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const ambientCompleteRef = useRef(false);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.18, margin: "8% 0px -10% 0px" });
+  const inView = useInView(sectionRef, { amount: 0.55, margin: "0px" });
   const [activeIndex, setActiveIndex] = useState(0);
   const [committedIndex, setCommittedIndex] = useState(0);
   const [interactionHeld, setInteractionHeld] = useState(false);
@@ -322,6 +322,13 @@ export function V4HiddenCostScene() {
             role="tabpanel"
             aria-labelledby={`cost-film-tab-${activeIndex}`}
             data-home-reading-plane
+            onPointerEnter={(event) => {
+              if (event.pointerType === "mouse") setInteractionHeld(true);
+            }}
+            onPointerLeave={(event) => {
+              if (event.pointerType === "mouse") setInteractionHeld(false);
+            }}
+            onPointerDown={() => setInteractionHeld(true)}
             initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: EASE }}

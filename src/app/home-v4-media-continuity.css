@@ -1,0 +1,26 @@
+/* The media director owns playback state; this last layer turns that state
+   into a quiet visual handoff without changing any chapter's colour grade. */
+
+.home-v4 [data-home-v4-chapter] video[data-home-media-state] {
+  opacity: 0.94;
+  transition: opacity 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-v4 [data-home-v4-chapter] video[data-home-media-state="ready"],
+.home-v4 [data-home-v4-chapter] video[data-home-media-state="playing"] {
+  opacity: 1;
+}
+
+.home-v4 [data-home-v4-chapter] video[data-home-media-state="buffering"] {
+  opacity: 0.97;
+}
+
+.home-v4 [data-home-v4-chapter] video[data-home-media-state="failed"] {
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 [data-home-v4-chapter] video[data-home-media-state] {
+    transition: none;
+  }
+}

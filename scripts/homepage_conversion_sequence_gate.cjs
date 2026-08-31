@@ -64,11 +64,20 @@ for (const marker of [
   "hideOnLast",
   'desktopMode="rail"',
   'tone="light"',
-  'showActiveLabel={false}',
   'home-v4-experience-upgrade.css',
 ]) {
   assert(pageSource.includes(marker), `Homepage wayfinding is missing ${marker}.`);
 }
+
+assert(
+  mountedChapterSources.join("\n").includes("3 choices · about 30 seconds · instant direction"),
+  "Homepage diagnostic does not explain its effort and immediate value.",
+);
+
+assert(
+  !pageSource.includes('showActiveLabel={false}'),
+  "Homepage hides the current chapter name from its desktop rail.",
+);
 
 for (const marker of [
   "activeItem?.label",

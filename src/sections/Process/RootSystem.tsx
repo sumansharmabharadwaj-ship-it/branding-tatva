@@ -104,6 +104,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -10% 0px" });
   const [active, setActive] = useState(0);
+  const [committedStage, setCommittedStage] = useState(0);
   const [finePointer, setFinePointer] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const [selectorEngaged, setSelectorEngaged] = useState(false);
@@ -114,8 +115,10 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   useEffect(() => {
     function applySituation(value: string | null) {
       if (!isServicesSituation(value)) return;
+      const situationStage = SITUATION_TO_STAGE[value];
       setCarriedSituation(value);
-      setActive(SITUATION_TO_STAGE[value]);
+      setActive(situationStage);
+      setCommittedStage(situationStage);
       firstBeatRef.current = true;
     }
 
@@ -133,6 +136,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     function onSituationCleared() {
       setCarriedSituation(null);
       setActive(0);
+      setCommittedStage(0);
       firstBeatRef.current = true;
     }
 
@@ -215,12 +219,14 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     !selectorEngaged &&
     manualHoldUntil === 0;
 
-  function chooseStage(index: number, manual = false) {
-    if (manual) {
+  function chooseStage(index: number, commit = false) {
+    const next = ((index % stages.length) + stages.length) % stages.length;
+    if (commit) {
       firstBeatRef.current = true;
       setManualHoldUntil(Date.now() + MANUAL_HOLD_MS);
+      setCommittedStage(next);
     }
-    setActive(((index % stages.length) + stages.length) % stages.length);
+    setActive(next);
   }
 
   function onStageKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -349,37 +355,44 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               if (event.pointerType === "mouse") setSelectorEngaged(true);
             }}
             onPointerLeave={(event) => {
-              if (event.pointerType === "mouse") setSelectorEngaged(false);
+              if (event.pointerType !== "mouse") return;
+              setActive(committedStage);
+              setSelectorEngaged(false);
             }}
             onFocusCapture={() => setSelectorEngaged(true)}
             onBlurCapture={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget)) setSelectorEngaged(false);
             }}
           >
-            {stages.map((item, index) => (
-              <button
-                key={item.stage}
-                id={`decision-flow-tab-${index}`}
-                type="button"
-                role="tab"
-                aria-selected={active === index}
-                aria-controls="decision-flow-panel"
-                tabIndex={active === index ? 0 : -1}
-                className={active === index ? "is-active" : undefined}
-                onClick={() => chooseStage(index, true)}
-                onPointerEnter={(event) => {
-                  if (event.pointerType !== "mouse") return;
-                  firstBeatRef.current = true;
-                  chooseStage(index);
-                }}
-                onFocus={() => chooseStage(index, true)}
-                onKeyDown={(event) => onStageKeyDown(event, index)}
-              >
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <strong>{item.stage}</strong>
-                <i aria-hidden="true" />
-              </button>
-            ))}
+            {stages.map((item, index) => {
+              const displayed = active === index;
+              const committed = committedStage === index;
+              return (
+                <button
+                  key={item.stage}
+                  id={`decision-flow-tab-${index}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={committed}
+                  aria-controls="decision-flow-panel"
+                  tabIndex={committed ? 0 : -1}
+                  className={displayed ? "is-active" : undefined}
+                  data-committed={committed ? "true" : undefined}
+                  onClick={() => chooseStage(index, true)}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType !== "mouse") return;
+                    firstBeatRef.current = true;
+                    chooseStage(index);
+                  }}
+                  onFocus={() => chooseStage(index, true)}
+                  onKeyDown={(event) => onStageKeyDown(event, index)}
+                >
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>{item.stage}</strong>
+                  <i aria-hidden="true" />
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

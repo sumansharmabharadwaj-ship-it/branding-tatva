@@ -14,6 +14,7 @@ import {
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
+import { publishHomeQuestionChoice } from "@/lib/homeQuestionJourney";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useMemo, useState, type CSSProperties, type KeyboardEvent } from "react";
@@ -94,6 +95,7 @@ export function HomeQuestionsScene() {
       setCarriedSituation(value);
       setCommittedIndex(SITUATION_TO_QUESTION[value]);
       setPreviewIndex(null);
+      publishHomeQuestionChoice(null);
     }
 
     try {
@@ -111,6 +113,7 @@ export function HomeQuestionsScene() {
       setCarriedSituation(null);
       setCommittedIndex(0);
       setPreviewIndex(null);
+      publishHomeQuestionChoice(null);
     }
 
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
@@ -137,6 +140,7 @@ export function HomeQuestionsScene() {
     }
     setCommittedIndex(index);
     setPreviewIndex(null);
+    publishHomeQuestionChoice(decisions[index] ?? decisions[0]);
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -190,18 +194,20 @@ export function HomeQuestionsScene() {
           >
             <p className="questions-editorial__instruction">Five common questions</p>
             {decisions.map((decision, index) => {
-              const selected = index === activeIndex;
+              const displayed = index === activeIndex;
+              const committed = index === committedIndex;
               return (
                 <button
                   key={decision.id}
                   id={`decision-question-${index}`}
                   type="button"
                   role="tab"
-                  aria-selected={selected}
+                  aria-selected={committed}
                   aria-controls="decision-answer"
                   aria-label={`${decision.label}: ${decision.question}`}
-                  tabIndex={selected ? 0 : -1}
-                  className={selected ? "is-active" : undefined}
+                  tabIndex={committed ? 0 : -1}
+                  className={displayed ? "is-active" : undefined}
+                  data-committed={committed ? "true" : undefined}
                   onClick={() => choose(index, true, true)}
                   onPointerEnter={(event) => {
                     if (event.pointerType === "mouse") choose(index, false);
@@ -245,7 +251,12 @@ export function HomeQuestionsScene() {
                 </span>
                 <strong>{active.signal}</strong>
               </div>
-              <Link href="#invitation">A conversation about this <span aria-hidden="true">↓</span></Link>
+              <Link
+                href="#invitation"
+                onClick={() => publishHomeQuestionChoice(decisions[committedIndex] ?? decisions[0])}
+              >
+                A conversation about this <span aria-hidden="true">↓</span>
+              </Link>
             </motion.article>
           </AnimatePresence>
         </div>

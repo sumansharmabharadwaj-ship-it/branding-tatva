@@ -13,6 +13,7 @@ const faqs = read("src/data/faqs.ts");
 const experience = read("src/sections/HomeV4/HomeV4Experience.tsx");
 const invitationCss = read("src/app/home-v4-invitation-cinematic-final.css");
 const invitationLivingCss = read("src/app/home-v4-invitation-living-final.css");
+const questionsCss = read("src/app/home-v4-questions-editorial-final.css");
 const paths = read("src/sections/Home/PathsCinematicChapter.tsx");
 const process = read("src/sections/Process/RootSystem.tsx");
 const diagnostic = read("src/sections/Home/HomeBrandHealthCheck.tsx");
@@ -26,7 +27,7 @@ function assert(condition, message) {
 
 assert(!/M\.A\. Clinical Psychology|B\.A\.(?: Hons)? English Literature/.test(studio), "Pending exact degree wording returned to Home.");
 assert(studio.includes('credential: "Applied psychology"') && studio.includes('credential: "Applied literature"'), "Claim-safe applied disciplines are missing.");
-assert(invitation.includes('import { consultation } from "@/data/site"'), "Final invitation duplicates the consultation contract.");
+assert(invitation.includes('import { consultation, site } from "@/data/site"'), "Final invitation duplicates the consultation contract.");
 assert(invitation.includes("consultation.actionLabel") && invitation.includes("consultation.minutes"), "Final invitation hardcodes duration or action copy.");
 assert(!/three decisions|Commit the position|Build the first system|We will/i.test(invitation), "Final invitation promises completed strategy work on the first call.");
 assert(invitation.includes("SERVICES_SITUATION_STORAGE_KEY") && invitation.includes("window.localStorage.getItem"), "The closing invitation forgets a deliberately chosen service path.");
@@ -73,10 +74,13 @@ assert(evidence.includes('href="#paths"'), "Client proof no longer hands the vis
 assert(evidence.includes('publishServicesSituation(activeSituation, "home_paths")'), "Client proof selection no longer carries its matching path into the next chapter.");
 assert(evidence.includes("setPreviewIndex(null)") && evidence.includes("Previewing project"), "Client-proof hover can replace a committed case instead of remaining a reversible preview.");
 assert(questions.includes("setPreviewIndex(null)") && questions.includes('isPreviewing ? "Preview"'), "Practical-answer hover can replace a committed question instead of remaining a reversible preview.");
-assert(invitation.includes('servicesContactHrefForSituation(selectedSituation, "call")'), "The closing contact handoff drops the visitor's selected service package.");
+assert(invitation.includes('calendlyHrefForServicesPackage(`${site.calendlyUrl}/30min`, selectedPackage)'), "The closing calendar handoff drops the visitor's selected service package or exact session route.");
+assert(!invitation.includes('servicesContactHrefForSituation(selectedSituation, "call")'), "The closing booking action adds an avoidable contact-page step before the calendar.");
 assert(invitation.includes('servicesContactHrefForSituation(selectedSituation, "write")'), "The closing invitation gives call-hesitant visitors no package-aware writing route.");
 assert(invitation.includes('{ package: selectedPackage }'), "The closing booking event drops its selected-package context.");
 assert(invitation.includes('event="contact_route_selected"') && invitation.includes('route: "write_first"'), "The closing writing route is not measurable as a distinct visitor choice.");
+assert(questions.includes("publishHomeQuestionChoice(decisions[committedIndex]"), "The chosen practical question disappears before the final invitation.");
+assert(invitation.includes("HOME_QUESTION_CHOICE_EVENT") && invitation.includes("questionChoice.question"), "The final invitation does not receive the visitor's chosen practical question.");
 assert(servicesJourney.includes('`/contact?package=${encodeURIComponent(packageSlug)}${hash}`'), "Package-aware contact links no longer preserve their requested chapter anchor.");
 assert(paths.includes('href="#process"'), "The chosen service path no longer continues into the working method.");
 assert(paths.includes('publishServicesSituation(PATHS[index].situation, "home_paths")'), "The service-path handoff loses the visitor's chosen situation.");
@@ -86,6 +90,10 @@ assert(process.includes("SITUATION_TO_STAGE") && process.includes("SERVICES_SITU
 assert(experience.includes("rgba(238,224,198,0.88) 100%"), "Final invitation loses its reading surface over the dark film edge.");
 assert(/final-invitation__promise > p:first-child\s*\{[^}]*font-size: 0\.75rem/.test(invitationCss), "Final invitation utility text has returned below its readable size.");
 assert(invitationLivingCss.includes("var(--invitation-accent)"), "Final invitation no longer carries the selected path into its visual language.");
+assert(invitationLivingCss.includes("grid-template-columns: repeat(3, minmax(0, 1fr));"), "Final invitation stacks its complete promise beyond the mobile reading frame.");
+assert(invitationLivingCss.includes("env(safe-area-inset-bottom, 0px)"), "Final invitation can collide with mobile browser or device chrome.");
+assert(questionsCss.includes("min-height: 3.5rem"), "Practical-answer mobile choices have fallen below the authored touch target.");
+assert(questionsCss.includes("justify-content: space-between"), "Practical-answer continuation is difficult to recognise on mobile.");
 assert(methodCss.includes("background: rgba(28, 47, 37, .68);"), "Method selector has lost its stable contrast surface.");
 assert(methodCss.includes("font-size: clamp(.875rem, 1vw, 1rem);"), "Method supporting copy has returned below its desktop reading size.");
 
