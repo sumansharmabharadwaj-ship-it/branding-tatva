@@ -16,7 +16,6 @@ import {
   SITUATION_TO_PROOF_SLUG,
   isServicesSituation,
   readCompletedHomeDiagnosis,
-  servicesContactHref,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
@@ -262,9 +261,15 @@ export function VerifiedOutcome() {
           <Reveal delay={0.08}>
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton
-                href={selectedPackageSlug ? servicesContactHref(selectedPackageSlug) : "/contact"}
+                href="#book"
+                trackEvent="contextual_cta_clicked"
+                trackProps={{
+                  source: "verified_outcome",
+                  route: situation ?? "unselected",
+                  package: selectedPackageSlug ?? "unselected",
+                }}
               >
-                {selectedPackage ? `Start with ${selectedPackage.name}` : "Book a strategy session"}
+                {selectedPackage ? `Bring ${selectedPackage.name} to the Strategy Room` : "Open the Strategy Room"}
               </LinkButton>
               <LinkButton
                 href={`/work/${proof.slug}`}
