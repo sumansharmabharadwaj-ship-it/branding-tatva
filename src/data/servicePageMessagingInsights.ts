@@ -24,10 +24,10 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/pixabay-golden-reeds-wind-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-reeds-wind.mp4",
+    heroImage: "/images/generated/insights/service-page-confident-choice.webp",
+    heroVideo: "/videos/generated/insights/service-page-confident-choice.mp4",
     heroImageAlt:
-      "Golden reeds moving through one channel of wind, representing a service page guiding a buyer toward one clear choice",
+      "An indigo path leading to a chosen terracotta vessel supported by three concrete proof objects",
     keyTakeaways: [
       "A service page should qualify as much as it persuades.",
       "Lead with the customer situation and desired change before detailed deliverables.",

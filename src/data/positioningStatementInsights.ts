@@ -36,10 +36,10 @@ export const positioningStatementInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",
-    heroImage: "/images/higgsfield-himalayan-valley-poster.jpg",
-    heroVideo: "/videos/higgsfield-himalayan-valley.mp4",
+    heroImage: "/images/generated/insights/positioning-specificity.webp",
+    heroVideo: "/videos/generated/insights/positioning-specificity.mp4",
     heroImageAlt:
-      "A clear mountain route through a wide valley, representing a specific positioning choice among many possible directions",
+      "A terracotta route tile pinned over translucent maps, showing one precise path chosen from many possible directions",
     keyTakeaways: [
       "A positioning statement records strategic choices; it cannot manufacture those choices through elegant wording.",
       "Generic statements use threshold qualities that every credible competitor must also claim.",

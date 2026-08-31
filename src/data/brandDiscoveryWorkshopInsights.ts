@@ -17,9 +17,9 @@ export const brandDiscoveryWorkshopInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/higgsfield-himalayan-valley-poster.jpg",
-    heroVideo: "/videos/higgsfield-himalayan-valley.mp4",
-    heroImageAlt: "A wide landscape representing a workshop moving from scattered inputs toward one strategic direction",
+    heroImage: "/images/generated/insights/discovery-workshop-decision-table.webp",
+    heroVideo: "/videos/generated/insights/discovery-workshop-decision-table.mp4",
+    heroImageAlt: "Five workshop objects connected by brass paths to one central terracotta decision tile",
     keyTakeaways: [
       "Discovery should reduce uncertainty rather than collect adjectives.",
       "Ask for examples, decisions, and evidence before asking for aspirations.",

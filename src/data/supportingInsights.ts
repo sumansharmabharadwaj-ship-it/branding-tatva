@@ -24,10 +24,10 @@ export const supportingInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",
-    heroImage: "/images/pixabay-golden-reeds-wind-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-reeds-wind.mp4",
+    heroImage: "/images/generated/insights/website-message-hierarchy.webp",
+    heroVideo: "/videos/generated/insights/website-message-hierarchy.mp4",
     heroImageAlt:
-      "Golden reeds moving in layers, representing a clear hierarchy of website messages",
+      "Blank message blocks descending in scale along a brass alignment rail on handmade paper",
     keyTakeaways: [
       "The first screen should establish category, relevance, and direction before introducing every capability.",
       "Message order should follow the visitor's questions rather than the company's internal structure.",

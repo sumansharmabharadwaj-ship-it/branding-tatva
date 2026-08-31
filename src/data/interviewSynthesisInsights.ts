@@ -24,10 +24,10 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",
-    heroImage: "/images/pixabay-stream-mist-rays-poster.jpg",
-    heroVideo: "/videos/pixabay-stream-mist-rays.mp4",
+    heroImage: "/images/generated/insights/interview-synthesis-weave.webp",
+    heroVideo: "/videos/generated/insights/interview-synthesis-weave.mp4",
     heroImageAlt:
-      "Light revealing layers in a forest stream, representing patterns becoming visible during research synthesis",
+      "Five loose interview strands entering a loom and emerging as one focused positioning brief",
     keyTakeaways: [
       "Interview quotes are evidence fragments; strategy begins when patterns are compared and choices are made.",
       "Separate observation, interpretation, implication, and decision so attractive language does not outrun the evidence.",

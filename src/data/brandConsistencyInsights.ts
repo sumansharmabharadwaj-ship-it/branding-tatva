@@ -24,10 +24,10 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/pixabay-stream-mist-rays-poster.jpg",
-    heroVideo: "/videos/pixabay-stream-mist-rays.mp4",
+    heroImage: "/images/generated/insights/brand-consistency-thread.webp",
+    heroVideo: "/videos/generated/insights/brand-consistency-thread.mp4",
     heroImageAlt:
-      "A continuous stream moving through light and mist, representing a consistent brand experience",
+      "Five different touchpoint objects joined by one indigo thread through matching terracotta eyelets",
     keyTakeaways: [
       "Consistency protects meaning across touchpoints rather than forcing visual sameness.",
       "The most damaging breaks usually appear during transitions between website, sales, onboarding, and delivery.",

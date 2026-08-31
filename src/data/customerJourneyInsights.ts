@@ -24,10 +24,10 @@ export const customerJourneyInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/pixabay-stream-mist-rays-poster.jpg",
-    heroVideo: "/videos/pixabay-stream-mist-rays.mp4",
+    heroImage: "/images/generated/insights/customer-journey-thresholds.webp",
+    heroVideo: "/videos/generated/insights/customer-journey-thresholds.mp4",
     heroImageAlt:
-      "A forest stream moving through light and mist, representing a connected customer journey",
+      "An indigo cord passing through five material thresholds with a brass connector securing a fragile handoff",
     keyTakeaways: [
       "Map the customer goal and expectation at each stage before listing internal processes.",
       "The most damaging friction often appears between touchpoints rather than inside one touchpoint.",

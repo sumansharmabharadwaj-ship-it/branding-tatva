@@ -36,10 +36,10 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",
-    heroImage: "/images/pixabay-stream-mist-rays-poster.jpg",
-    heroVideo: "/videos/pixabay-stream-mist-rays.mp4",
+    heroImage: "/images/generated/insights/customer-interviews-listening-table.webp",
+    heroVideo: "/videos/generated/insights/customer-interviews-listening-table.mp4",
     heroImageAlt:
-      "A stream emerging through mist and light, representing customer research that reveals the path behind a buying decision",
+      "Two ceramic listening cups held under tension with a rough terracotta truth pulled forward from smooth polite tokens",
     keyTakeaways: [
       "Ask about real past behaviour before asking for opinions about the brand.",
       "Neutral, open questions reveal more useful language than questions that contain the preferred answer.",

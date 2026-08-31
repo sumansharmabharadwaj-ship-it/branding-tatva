@@ -24,10 +24,10 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "11 min read",
-    heroImage: "/images/pixabay-golden-reeds-wind-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-reeds-wind.mp4",
+    heroImage: "/images/generated/insights/testimonial-evidence-listening.webp",
+    heroVideo: "/videos/generated/insights/testimonial-evidence-listening.mp4",
     heroImageAlt:
-      "Golden reeds moving together, representing customer language becoming a coherent body of evidence",
+      "A brass listening horn leading from smooth praise stones to a specific measured evidence chamber",
     keyTakeaways: [
       "Generic praise reassures weakly because it contains little decision information.",
       "Ask customers to reconstruct the before, hesitation, choice, experience, and after rather than asking for compliments.",

@@ -24,10 +24,10 @@ export const distinctiveAssetInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/pixabay-golden-forest-glow-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-forest-glow.mp4",
+    heroImage: "/images/generated/insights/distinctive-assets-audit-kit.webp",
+    heroVideo: "/videos/generated/insights/distinctive-assets-audit-kit.mp4",
     heroImageAlt:
-      "Golden light forming a recognisable path through a forest, representing distinctive brand cues",
+      "An archivist tray of five distinctive material cues with a brass frame selecting the strongest pair",
     keyTakeaways: [
       "A distinctive asset helps people identify the source before they process every word.",
       "Familiarity alone is insufficient; the cue must also separate the brand from plausible competitors.",

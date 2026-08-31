@@ -15,9 +15,9 @@ export const competitorResearchInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/higgsfield-himalayan-valley-poster.jpg",
-    heroVideo: "/videos/higgsfield-himalayan-valley.mp4",
-    heroImageAlt: "A broad mountain landscape representing a competitive field viewed from enough distance to see patterns clearly",
+    heroImage: "/images/generated/insights/competitor-research-observation.webp",
+    heroVideo: "/videos/generated/insights/competitor-research-observation.mp4",
+    heroImageAlt: "Four similar clay forms observed through a brass lens beside untouched terracotta ready for an original answer",
     keyTakeaways: [
       "Study the customer's real alternative set, including internal solutions and doing nothing, rather than only obvious competitors.",
       "Separate category conventions that aid comprehension from habits that merely make every brand look alike.",

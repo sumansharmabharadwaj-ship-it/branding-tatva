@@ -24,10 +24,10 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",
-    heroImage: "/images/pixabay-golden-reeds-wind-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-reeds-wind.mp4",
+    heroImage: "/images/generated/insights/homepage-first-screen.webp",
+    heroVideo: "/videos/generated/insights/homepage-first-screen.mp4",
     heroImageAlt:
-      "Reeds moving together in wind, representing a homepage message hierarchy carrying one clear direction",
+      "An illuminated entrance displaying three blank message blocks while an indigo path leads through the first threshold",
     keyTakeaways: [
       "The first screen should orient before it persuades.",
       "A homepage works as a sequence of customer questions rather than a stack of company facts.",

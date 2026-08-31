@@ -24,10 +24,10 @@ export const forgettableIdentityInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",
-    heroImage: "/images/pixabay-golden-forest-glow-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-forest-glow.mp4",
+    heroImage: "/images/generated/insights/forgettable-identity-memory-cue.webp",
+    heroVideo: "/videos/generated/insights/forgettable-identity-memory-cue.mp4",
     heroImageAlt:
-      "Golden light moving through a forest, representing attention that needs recognisable form",
+      "Five beautiful pale porcelain vessels fading together behind one simple repeated terracotta spiral cue",
     keyTakeaways: [
       "Aesthetic quality and memorability solve different problems.",
       "Recognition depends on cues that people can attribute to one source.",

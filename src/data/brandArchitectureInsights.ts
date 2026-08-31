@@ -37,10 +37,10 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
-    heroImage: "/images/higgsfield-himalayan-valley-poster.jpg",
-    heroVideo: "/videos/higgsfield-himalayan-valley.mp4",
+    heroImage: "/images/generated/insights/brand-architecture-service-system.webp",
+    heroVideo: "/videos/generated/insights/brand-architecture-service-system.mp4",
     heroImageAlt:
-      "Mountain ridgelines joining one landscape, representing a brand architecture that makes several offers understandable as one system",
+      "A dark walnut root block feeding three indigo glazed service vessels through branching brass channels",
     keyTakeaways: [
       "Brand architecture is a customer-navigation system before it is a naming exercise.",
       "Most service businesses gain more from one strong master brand than from several lightly funded sub-brands.",

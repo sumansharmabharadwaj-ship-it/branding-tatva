@@ -24,10 +24,10 @@ export const serviceNamingInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/pixabay-golden-reeds-wind-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-reeds-wind.mp4",
+    heroImage: "/images/generated/insights/service-line-naming-cabinet.webp",
+    heroVideo: "/videos/generated/insights/service-line-naming-cabinet.mp4",
     heroImageAlt:
-      "Golden reeds moving in one direction, representing a naming system that keeps multiple offers connected to one brand",
+      "Five service drawers with shared terracotta pulls held inside one walnut cabinet",
     keyTakeaways: [
       "A service name is primarily a navigation and memory tool, rather than a request for a new visual identity.",
       "Use descriptive names when category clarity matters more than novelty and distinctive names when an offer genuinely needs recall of its own.",

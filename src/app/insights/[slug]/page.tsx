@@ -28,6 +28,7 @@ import { packages } from "@/data/services";
 import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 import { Header } from "@/layouts/Header";
+import { selectRelatedInsights } from "@/lib/related-insights";
 import { searchRobotsMetadata } from "@/lib/searchVisibility";
 import { Footer } from "@/sections/Footer";
 import { InsightFrameworkVisualizer } from "@/sections/Insights/InsightFrameworkVisualizer";
@@ -137,10 +138,7 @@ export default async function InsightArticlePage({ params }: Props) {
   const applicationPackage = packages.find(
     (pkg) => pkg.slug === application?.packageSlug
   );
-  const related = post.relatedSlugs
-    .map((relatedSlug) => getInsightBySlug(relatedSlug))
-    .filter((item): item is InsightPost => Boolean(item))
-    .slice(0, 3);
+  const related = selectRelatedInsights(post, insightPosts);
   const editorialVisuals = buildInsightEditorialVisuals(
     [...insightPosts].sort(
       (a, b) =>

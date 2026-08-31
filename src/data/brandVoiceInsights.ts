@@ -15,9 +15,9 @@ export const brandVoiceInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/pixabay-golden-reeds-wind-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-reeds-wind.mp4",
-    heroImageAlt: "Reeds moving together in the wind, representing a consistent voice that adapts without losing character",
+    heroImage: "/images/generated/insights/brand-voice-resonators.webp",
+    heroVideo: "/videos/generated/insights/brand-voice-resonators.mp4",
+    heroImageAlt: "Three indigo ceramic resonators calibrated by brass tuning forks on one shared tone bar",
     keyTakeaways: [
       "Voice traits become useful only when they change an editing decision.",
       "Define the reader relationship before choosing adjectives such as warm, bold, or expert.",

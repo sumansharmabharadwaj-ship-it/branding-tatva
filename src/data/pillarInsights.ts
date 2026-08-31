@@ -183,10 +183,10 @@ export const insightPosts: InsightPost[] = [
     updatedAt: "2026-08-06",
     readingTime: "13 min read",
     featured: true,
-    heroImage: "/images/higgsfield-himalayan-valley-poster.jpg",
-    heroVideo: "/videos/higgsfield-himalayan-valley.mp4",
+    heroImage: "/images/generated/insights/positioning-strategy-spine.webp",
+    heroVideo: "/videos/generated/insights/positioning-strategy-spine.mp4",
     heroImageAlt:
-      "A wide Himalayan valley representing the foundation and direction of brand positioning",
+      "Five interlocking material pieces forming one complete positioning spine on a strategy table",
     keyTakeaways: [
       "Positioning is a decision system, rather than a sentence kept inside a deck.",
       "A useful position connects category, customer tension, distinctive choice, proof, and a memorable message.",
@@ -403,10 +403,10 @@ export const insightPosts: InsightPost[] = [
     publishedAt: "2026-07-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/pixabay-stream-mist-rays-poster.jpg",
-    heroVideo: "/videos/pixabay-stream-mist-rays.mp4",
+    heroImage: "/images/generated/insights/brand-audit-five-layers.webp",
+    heroVideo: "/videos/generated/insights/brand-audit-five-layers.mp4",
     heroImageAlt:
-      "A stream moving through mist and light representing a connected customer journey",
+      "Five material layers of earth, indigo cloth, terracotta, vellum, and mineral plaster examined through a brass loupe",
     keyTakeaways: [
       "An audit begins with the business decision that triggered the review.",
       "The strongest findings identify a specific break rather than a vague feeling.",
@@ -615,10 +615,10 @@ export const insightPosts: InsightPost[] = [
     publishedAt: "2026-07-13",
     updatedAt: "2026-08-06",
     readingTime: "10 min read",
-    heroImage: "/images/pixabay-golden-forest-glow-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-forest-glow.mp4",
+    heroImage: "/images/generated/insights/awareness-recall-archive.webp",
+    heroVideo: "/videos/generated/insights/awareness-recall-archive.mp4",
     heroImageAlt:
-      "Golden light moving through a forest representing attention and memory",
+      "Archive drawers of natural specimens with a terracotta spiral repeated in separate compartments as a memory cue",
     keyTakeaways: [
       "Awareness and recall describe different levels of memory access.",
       "Frequent exposure can create familiarity while leaving the central idea unclear.",
@@ -806,10 +806,10 @@ export const insightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/pixabay-golden-reeds-wind-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-reeds-wind.mp4",
+    heroImage: "/images/generated/insights/messaging-framework-letterpress.webp",
+    heroVideo: "/videos/generated/insights/messaging-framework-letterpress.mp4",
     heroImageAlt:
-      "Golden reeds moving in the wind representing a consistent brand voice",
+      "Blank message blocks arranged in a working hierarchy and aligned by one repeated brass cue",
     keyTakeaways: [
       "Messaging translates positioning into language for real touchpoints.",
       "A framework gives every channel a shared centre while allowing contextual variation.",
@@ -1008,10 +1008,10 @@ export const insightPosts: InsightPost[] = [
     publishedAt: "2026-07-20",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",
-    heroImage: "/images/pixabay-sea-of-fog-sunrise-poster.jpg",
-    heroVideo: "/videos/pixabay-sea-of-fog-sunrise.mp4",
+    heroImage: "/images/generated/insights/five-element-strategy-instrument.webp",
+    heroVideo: "/videos/generated/insights/five-element-strategy-instrument.mp4",
     heroImageAlt:
-      "Sunrise above a sea of fog representing the space where brand memory forms",
+      "Five elemental material discs joined in brass around one open center",
     keyTakeaways: [
       "Brand problems become easier to diagnose when the system is separated into distinct jobs.",
       "Earth sets the position, Water shapes the experience, Fire earns attention, Air carries meaning, and Space builds memory.",

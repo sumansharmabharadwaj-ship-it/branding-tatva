@@ -36,10 +36,10 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
-    heroImage: "/images/higgsfield-element-water.jpg",
-    heroVideo: "/videos/higgsfield-element-water.mp4",
+    heroImage: "/images/generated/insights/client-proof-balance.webp",
+    heroVideo: "/videos/generated/insights/client-proof-balance.mp4",
     heroImageAlt:
-      "Light moving across water and revealing a clear path, representing evidence that makes an invisible service easier to trust",
+      "A brass balance weighing blank claim papers against fitted evidence, a calibrated weight, and a growth ring sample",
     keyTakeaways: [
       "Proof should answer a buyer's doubt about the position, not merely show that someone liked the service.",
       "Choose cases for strategic relevance and diagnostic detail rather than client fame alone.",

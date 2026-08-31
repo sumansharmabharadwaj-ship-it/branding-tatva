@@ -24,10 +24,10 @@ export const caseStudyInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/pixabay-stream-mist-rays-poster.jpg",
-    heroVideo: "/videos/pixabay-stream-mist-rays.mp4",
+    heroImage: "/images/generated/insights/case-study-decision-record.webp",
+    heroVideo: "/videos/generated/insights/case-study-decision-record.mp4",
     heroImageAlt:
-      "A stream moving through light and shadow, representing the sequence of decisions inside a client engagement",
+      "A reconstructed blue ceramic vessel beside its fragments and templates, revealing the decisions behind the finished result",
     keyTakeaways: [
       "A case study is decision evidence, rather than a gallery caption stretched into a page.",
       "Context and constraints make outcomes believable because readers can judge whether the work resembles their situation.",

@@ -36,10 +36,10 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
-    heroImage: "/images/own-jagged-peaks.jpg",
-    heroVideo: "/videos/own-jagged-peaks.mp4",
+    heroImage: "/images/generated/insights/refresh-rebrand-conservation.webp",
+    heroVideo: "/videos/generated/insights/refresh-rebrand-conservation.mp4",
     heroImageAlt:
-      "Layered mountain peaks showing several possible depths of brand change rather than one dramatic leap",
+      "An indigo textile repaired in place on one side and unwoven for reconstruction on the other",
     keyTakeaways: [
       "A refresh updates expression; a rebrand changes market meaning and the system required to support it.",
       "The correct scope is the smallest level of change that resolves the diagnosed business problem.",

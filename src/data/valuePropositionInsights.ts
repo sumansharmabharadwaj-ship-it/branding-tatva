@@ -24,10 +24,10 @@ export const valuePropositionInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",
-    heroImage: "/images/pixabay-golden-reeds-wind-poster.jpg",
-    heroVideo: "/videos/pixabay-golden-reeds-wind.mp4",
+    heroImage: "/images/generated/insights/positioning-value-tagline-three-jobs.webp",
+    heroVideo: "/videos/generated/insights/positioning-value-tagline-three-jobs.mp4",
     heroImageAlt:
-      "Golden reeds moving in one direction, representing a clear hierarchy of brand language",
+      "A walnut frame, terracotta bridge, and brass seal connected as three distinct strategic tools",
     keyTakeaways: [
       "Positioning is the strategic decision beneath the language.",
       "A value proposition explains why a particular offer matters to a particular buyer.",
