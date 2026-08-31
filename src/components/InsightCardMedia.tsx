@@ -31,21 +31,22 @@ export function InsightCardMedia({
 
     if (!stage || !film || !card || prefersReducedMotion) return;
     const activeFilm = film;
+    const activeCard = card;
     const touchFirst = window.matchMedia("(hover: none), (pointer: coarse)");
     let pointerFrame = 0;
 
-    card.dataset.cardMotion = "ready";
-    card.dataset.cardRevealed = "false";
+    activeCard.dataset.cardMotion = "ready";
+    activeCard.dataset.cardRevealed = "false";
 
     function renderPointer(event: PointerEvent) {
-      const rect = card.getBoundingClientRect();
+      const rect = activeCard.getBoundingClientRect();
       const x = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
       const y = Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height));
 
-      card.style.setProperty("--card-lens-x", `${(x * 100).toFixed(2)}%`);
-      card.style.setProperty("--card-lens-y", `${(y * 100).toFixed(2)}%`);
-      card.style.setProperty("--card-image-x", `${((x - 0.5) * -8).toFixed(2)}px`);
-      card.style.setProperty("--card-image-y", `${((y - 0.5) * -6).toFixed(2)}px`);
+      activeCard.style.setProperty("--card-lens-x", `${(x * 100).toFixed(2)}%`);
+      activeCard.style.setProperty("--card-lens-y", `${(y * 100).toFixed(2)}%`);
+      activeCard.style.setProperty("--card-image-x", `${((x - 0.5) * -8).toFixed(2)}px`);
+      activeCard.style.setProperty("--card-image-y", `${((y - 0.5) * -6).toFixed(2)}px`);
       pointerFrame = 0;
     }
 
@@ -57,10 +58,10 @@ export function InsightCardMedia({
     function resetPointer() {
       if (pointerFrame) cancelAnimationFrame(pointerFrame);
       pointerFrame = 0;
-      card.style.setProperty("--card-lens-x", "50%");
-      card.style.setProperty("--card-lens-y", "38%");
-      card.style.setProperty("--card-image-x", "0px");
-      card.style.setProperty("--card-image-y", "0px");
+      activeCard.style.setProperty("--card-lens-x", "50%");
+      activeCard.style.setProperty("--card-lens-y", "38%");
+      activeCard.style.setProperty("--card-image-x", "0px");
+      activeCard.style.setProperty("--card-image-y", "0px");
     }
 
     function playFilm() {
@@ -126,23 +127,23 @@ export function InsightCardMedia({
     const revealObserver = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return;
-        card.dataset.cardRevealed = "true";
+        activeCard.dataset.cardRevealed = "true";
         revealObserver.disconnect();
       },
       { rootMargin: "0px 0px -8%", threshold: 0.14 },
     );
 
-    revealObserver.observe(card);
+    revealObserver.observe(activeCard);
 
     if (observer) {
       observer.observe(stage);
     } else {
-      card.addEventListener("pointerenter", playFilm);
-      card.addEventListener("pointermove", handlePointerMove);
-      card.addEventListener("pointerleave", handlePointerLeave);
+      activeCard.addEventListener("pointerenter", playFilm);
+      activeCard.addEventListener("pointermove", handlePointerMove);
+      activeCard.addEventListener("pointerleave", handlePointerLeave);
     }
-    card.addEventListener("focus", playFilm);
-    card.addEventListener("blur", pauseFilm);
+    activeCard.addEventListener("focus", playFilm);
+    activeCard.addEventListener("blur", pauseFilm);
     activeFilm.addEventListener("playing", handlePlaying);
     activeFilm.addEventListener("pause", handlePause);
     window.addEventListener(CARD_FILM_REQUEST_EVENT, handleFilmRequest);
@@ -150,21 +151,21 @@ export function InsightCardMedia({
     return () => {
       observer?.disconnect();
       revealObserver.disconnect();
-      card.removeEventListener("pointerenter", playFilm);
-      card.removeEventListener("pointermove", handlePointerMove);
-      card.removeEventListener("pointerleave", handlePointerLeave);
-      card.removeEventListener("focus", playFilm);
-      card.removeEventListener("blur", pauseFilm);
+      activeCard.removeEventListener("pointerenter", playFilm);
+      activeCard.removeEventListener("pointermove", handlePointerMove);
+      activeCard.removeEventListener("pointerleave", handlePointerLeave);
+      activeCard.removeEventListener("focus", playFilm);
+      activeCard.removeEventListener("blur", pauseFilm);
       activeFilm.removeEventListener("playing", handlePlaying);
       activeFilm.removeEventListener("pause", handlePause);
       window.removeEventListener(CARD_FILM_REQUEST_EVENT, handleFilmRequest);
       if (pointerFrame) cancelAnimationFrame(pointerFrame);
-      delete card.dataset.cardMotion;
-      delete card.dataset.cardRevealed;
-      card.style.removeProperty("--card-lens-x");
-      card.style.removeProperty("--card-lens-y");
-      card.style.removeProperty("--card-image-x");
-      card.style.removeProperty("--card-image-y");
+      delete activeCard.dataset.cardMotion;
+      delete activeCard.dataset.cardRevealed;
+      activeCard.style.removeProperty("--card-lens-x");
+      activeCard.style.removeProperty("--card-lens-y");
+      activeCard.style.removeProperty("--card-image-x");
+      activeCard.style.removeProperty("--card-image-y");
       delete activeFilm.dataset.videoPriority;
       activeFilm.pause();
     };
