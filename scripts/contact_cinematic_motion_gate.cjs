@@ -64,7 +64,11 @@ requireText(gratitude, "data-contact-gratitude-bloom", "gratitude bloom is missi
 requireText(gratitude, "data-contact-gratitude-complete", "gratitude completion state is missing");
 requireText(callSequence, "data-contact-call-step", "call sequence no longer exposes its active step");
 requireText(form, "data-contact-form-completion", "written enquiry no longer exposes completion progress");
+requireText(form, "activeRequiredField", "written enquiry no longer follows the active required field");
+requireText(form, "data-contact-required-field", "required fields no longer expose their writing sequence");
 requireText(rail, "data-active-index", "chapter rail no longer exposes its film index");
+requireText(rail, "--contact-chapter-progress", "chapter rail no longer follows continuous journey progress");
+requireText(rail, 'data-contact-chapter-progress="continuous"', "continuous chapter progress is no longer inspectable");
 requireText(page, 'className="contact-footer-afterglow"', "gratitude no longer hands light into the footer");
 
 const cssContracts = [

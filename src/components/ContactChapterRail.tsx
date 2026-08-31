@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 
 const CHAPTERS = [
@@ -12,6 +12,7 @@ const CHAPTERS = [
 
 export function ContactChapterRail() {
   const [activeIndex, setActiveIndex] = useState(-1);
+  const railRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const chapters = CHAPTERS.map(({ id }) => document.getElementById(id)).filter(
@@ -35,6 +36,25 @@ export function ContactChapterRail() {
       if (!isInsideJourney) {
         setActiveIndex((current) => (current === -1 ? current : -1));
         return;
+      }
+
+      const firstCenter = firstRect.top + firstRect.height / 2;
+      const lastCenter = lastRect.top + lastRect.height / 2;
+      const journeyDistance = Math.max(1, lastCenter - firstCenter);
+      const journeyProgress = Math.min(
+        1,
+        Math.max(0, (viewportCenter - firstCenter) / journeyDistance),
+      );
+      const reduceContinuousMotion =
+        document.documentElement.dataset.motion === "reduced" ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceContinuousMotion) {
+        railRef.current?.style.removeProperty("--contact-chapter-progress");
+      } else {
+        railRef.current?.style.setProperty(
+          "--contact-chapter-progress",
+          journeyProgress.toFixed(4),
+        );
       }
 
       let nearestIndex = 0;
@@ -86,7 +106,9 @@ export function ContactChapterRail() {
           : ""}
       </span>
       <nav
+        ref={railRef}
         data-contact-chapter-rail
+        data-contact-chapter-progress="continuous"
         data-visible={visible ? "true" : "false"}
         data-tone={activeChapter.tone}
         data-active-index={visible ? activeIndex : undefined}

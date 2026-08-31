@@ -658,7 +658,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   opacity: 0.62;
   transform: scaleX(var(--contact-chapter-progress));
   transform-origin: 0 50%;
-  transition: transform 460ms cubic-bezier(0.22, 1, 0.36, 1), background-color 320ms ease;
+  transition: transform 90ms linear, background-color 320ms ease;
 }
 
 [data-contact-chapter-rail][data-visible="false"] {
@@ -1567,8 +1567,13 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude] * {
 html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card]::before,
 html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card]::after,
 html[data-motion="reduced"] [data-contact-film] [data-contact-form-completion]::before,
-html[data-motion="reduced"] [data-contact-film] [data-contact-form-progress] {
+html[data-motion="reduced"] [data-contact-film] [data-contact-form-progress],
+html[data-motion="reduced"] [data-contact-film] [data-contact-required-field] {
   transition: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-required-field] {
+  transform: none !important;
 }
 
 html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail] {
@@ -1619,8 +1624,13 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   [data-contact-film] [data-contact-booking-card]::before,
   [data-contact-film] [data-contact-booking-card]::after,
   [data-contact-film] [data-contact-form-completion]::before,
-  [data-contact-film] [data-contact-form-progress] {
+  [data-contact-film] [data-contact-form-progress],
+  [data-contact-film] [data-contact-required-field] {
     transition: none !important;
+  }
+
+  [data-contact-film] [data-contact-required-field] {
+    transform: none !important;
   }
 
   [data-contact-film] [data-contact-chapter-rail] {

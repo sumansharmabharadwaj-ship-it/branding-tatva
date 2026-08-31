@@ -8,6 +8,7 @@ import {
   useId,
   useRef,
   useState,
+  type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
   type ReactElement,
@@ -199,7 +200,10 @@ const FORM_FIELD_ORDER: ReadonlyArray<{
   { name: "referral", label: "how you found us" },
 ];
 
-const REQUIRED_FIELD_NAMES = new Set<Path<ContactFormValues>>(["name", "email", "description"]);
+type RequiredContactField = "name" | "email" | "description";
+
+const REQUIRED_FIELD_SEQUENCE: RequiredContactField[] = ["name", "email", "description"];
+const REQUIRED_FIELD_NAMES = new Set<Path<ContactFormValues>>(REQUIRED_FIELD_SEQUENCE);
 
 // The submit button is the single most consequential click on the site,
 // yet it was the only primary CTA with none of LinkButton's signature
@@ -236,6 +240,7 @@ export function ContactForm() {
   // seven optional ones stay one click away rather than gone, so a
   // visitor who wants to say more still can.
   const [showMore, setShowMore] = useState(false);
+  const [activeRequiredField, setActiveRequiredField] = useState<RequiredContactField | null>(null);
   const hasDraft = draftStatus !== "empty";
   const draftStatusCopy =
     draftStatus === "restored"
@@ -278,6 +283,25 @@ export function ContactForm() {
     if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
     event.preventDefault();
     setFocus(nextField);
+  }
+
+  function handleRequiredFieldFocus(event: FocusEvent<HTMLFormElement>) {
+    const target = event.target;
+    const fieldName =
+      target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement
+        ? target.name
+        : "";
+    setActiveRequiredField(
+      REQUIRED_FIELD_SEQUENCE.includes(fieldName as RequiredContactField)
+        ? (fieldName as RequiredContactField)
+        : null,
+    );
+  }
+
+  function handleRequiredFieldBlur(event: FocusEvent<HTMLFormElement>) {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      setActiveRequiredField(null);
+    }
   }
 
   const requiredDetails = watch(["name", "email", "description"]);
@@ -785,21 +809,30 @@ export function ContactForm() {
           />
         </div>
         <div className="mt-2 grid grid-cols-3 gap-2" aria-hidden="true">
-          {["Name", "Email", "Question"].map((label, index) => (
-            <span
-              key={label}
-              className={`flex items-center gap-1.5 text-[0.58rem] font-medium uppercase tracking-[0.12em] transition-colors duration-300 ${
-                requiredDetailChecks[index] ? "text-clay" : "text-soil/34"
-              }`}
-            >
-              <span
-                className={`h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-300 ${
-                  requiredDetailChecks[index] ? "bg-clay" : "bg-soil/15"
+          {["Name", "Email", "Question"].map((label, index) => {
+            const fieldName = REQUIRED_FIELD_SEQUENCE[index];
+            const active = activeRequiredField === fieldName;
+            return (
+              <motion.span
+                key={label}
+                data-active={active ? "true" : undefined}
+                className={`flex items-center gap-1.5 text-[0.58rem] font-medium uppercase tracking-[0.12em] transition-colors duration-300 ${
+                  requiredDetailChecks[index] ? "text-clay" : active ? "text-soil/70" : "text-soil/34"
                 }`}
-              />
-              {label}
-            </span>
-          ))}
+                animate={prefersReducedMotion ? undefined : { x: active ? 3 : 0 }}
+                transition={{ duration: 0.34, ease: EASE_AIR }}
+              >
+                <motion.span
+                  className={`h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-300 ${
+                    requiredDetailChecks[index] ? "bg-clay" : active ? "bg-soil/45" : "bg-soil/15"
+                  }`}
+                  animate={prefersReducedMotion ? undefined : { scale: active ? 1.55 : 1 }}
+                  transition={{ duration: 0.34, ease: EASE_AIR }}
+                />
+                {label}
+              </motion.span>
+            );
+          })}
         </div>
       </div>
 
@@ -820,6 +853,8 @@ export function ContactForm() {
         data-contact-form-body
         data-service-package={servicePackage ?? undefined}
         onSubmit={handleSubmit(onSubmit, onInvalid)}
+        onFocusCapture={handleRequiredFieldFocus}
+        onBlurCapture={handleRequiredFieldBlur}
         noValidate
         aria-busy={status === "submitting"}
         className="mt-6 space-y-5"
@@ -835,41 +870,73 @@ export function ContactForm() {
         {...register("company_website")}
       />
       <div data-contact-required-grid className="grid grid-cols-2 gap-4 sm:gap-5">
-        <Field label="01 Your name" error={errors.name?.message}>
-          <input
-            required
-            aria-required="true"
-            autoComplete="name"
-            autoCapitalize="words"
-            enterKeyHint="next"
-            maxLength={CONTACT_DRAFT_LIMITS.name}
-            data-contact-mobile-next="email"
-            onKeyDown={(event) => moveToNextRequiredField(event, "email")}
-            className={inputClass}
-            {...register("name")}
-          />
-        </Field>
-        <Field label="02 Your email" error={errors.email?.message}>
-          <input
-            required
-            aria-required="true"
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            autoCapitalize="none"
-            autoCorrect="off"
-            enterKeyHint="next"
-            spellCheck={false}
-            maxLength={CONTACT_DRAFT_LIMITS.email}
-            data-contact-mobile-next="description"
-            onKeyDown={(event) => moveToNextRequiredField(event, "description")}
-            className={inputClass}
-            {...register("email")}
-          />
-        </Field>
+        <div
+          data-contact-required-field="name"
+          data-active={activeRequiredField === "name" ? "true" : undefined}
+          data-complete={requiredDetailChecks[0] ? "true" : undefined}
+          className={cn(
+            "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow,transform] duration-500 ease-earth",
+            activeRequiredField === "name" &&
+              "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)] sm:-translate-y-0.5",
+          )}
+        >
+          <Field label="01 Your name" error={errors.name?.message}>
+            <input
+              required
+              aria-required="true"
+              autoComplete="name"
+              autoCapitalize="words"
+              enterKeyHint="next"
+              maxLength={CONTACT_DRAFT_LIMITS.name}
+              data-contact-mobile-next="email"
+              onKeyDown={(event) => moveToNextRequiredField(event, "email")}
+              className={inputClass}
+              {...register("name")}
+            />
+          </Field>
+        </div>
+        <div
+          data-contact-required-field="email"
+          data-active={activeRequiredField === "email" ? "true" : undefined}
+          data-complete={requiredDetailChecks[1] ? "true" : undefined}
+          className={cn(
+            "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow,transform] duration-500 ease-earth",
+            activeRequiredField === "email" &&
+              "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)] sm:-translate-y-0.5",
+          )}
+        >
+          <Field label="02 Your email" error={errors.email?.message}>
+            <input
+              required
+              aria-required="true"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              enterKeyHint="next"
+              spellCheck={false}
+              maxLength={CONTACT_DRAFT_LIMITS.email}
+              data-contact-mobile-next="description"
+              onKeyDown={(event) => moveToNextRequiredField(event, "description")}
+              className={inputClass}
+              {...register("email")}
+            />
+          </Field>
+        </div>
       </div>
 
-      <div data-contact-form-question>
+      <div
+        data-contact-form-question
+        data-contact-required-field="description"
+        data-active={activeRequiredField === "description" ? "true" : undefined}
+        data-complete={requiredDetailChecks[2] ? "true" : undefined}
+        className={cn(
+          "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow,transform] duration-500 ease-earth",
+          activeRequiredField === "description" &&
+            "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)] sm:-translate-y-0.5",
+        )}
+      >
         <Field
           label="03 Which brand decision cannot move forward?"
           hint="Positioning, voice, identity, offer structure, recognition, or something harder to name. A few lines are enough."
