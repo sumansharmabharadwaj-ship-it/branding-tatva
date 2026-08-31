@@ -50,8 +50,8 @@
 
 .headerAside > p {
   margin: 0;
-  color: rgba(244, 239, 230, .68);
-  font-size: .72rem;
+  color: rgba(244, 239, 230, .78);
+  font-size: .76rem;
   line-height: 1.58;
 }
 
@@ -60,8 +60,8 @@
   margin-top: .8rem;
   align-items: center;
   gap: .55rem;
-  color: rgba(244, 239, 230, .46);
-  font-size: .58rem;
+  color: rgba(244, 239, 230, .64);
+  font-size: .6rem;
   font-weight: 700;
   letter-spacing: .11em;
   text-transform: uppercase;
@@ -150,13 +150,13 @@
 
 .sheetHeader span,
 .sheetHeader p {
-  font-size: .56rem;
+  font-size: .6rem;
   font-weight: 700;
   letter-spacing: .14em;
   text-transform: uppercase;
 }
 
-.sheetHeader span { color: rgba(51, 41, 31, .48); }
+.sheetHeader span { color: rgba(51, 41, 31, .62); font-size: .6rem; }
 
 .sheetHeader > div strong {
   font-family: var(--font-display), Georgia, serif;
@@ -165,7 +165,7 @@
   letter-spacing: -.02em;
 }
 
-.sheetHeader p { display: grid; margin: 0; justify-items: end; color: rgba(51, 41, 31, .46); }
+.sheetHeader p { display: grid; margin: 0; justify-items: end; color: rgba(51, 41, 31, .6); }
 .sheetHeader p strong { margin-top: .12rem; color: #6e4f35; font-size: .7rem; }
 
 .stageRail {
@@ -208,7 +208,7 @@
   justify-items: center;
   gap: .18rem;
   background: transparent;
-  color: rgba(51, 41, 31, .34);
+  color: rgba(51, 41, 31, .56);
   cursor: pointer;
   text-align: center;
   transition: color 280ms ease;
@@ -225,7 +225,7 @@
   transition: background-color 280ms ease, transform 420ms cubic-bezier(.22, 1, .36, 1);
 }
 
-.stageRail button small { color: #795637; font-size: .56rem; font-weight: 700; letter-spacing: .1em; }
+.stageRail button small { color: #795637; font-size: .6rem; font-weight: 700; letter-spacing: .1em; }
 .stageRail button strong { font-family: var(--font-display), Georgia, serif; font-size: .92rem; font-weight: 400; }
 .stageRail button[data-reached="true"] { color: #6e4f35; }
 .stageRail button[data-active="true"] { color: #2d231a; }
@@ -302,7 +302,7 @@
 .decision { padding-inline: clamp(1.25rem, 2.2vw, 2rem); border-inline: 1px solid rgba(61, 46, 33, .24); }
 .decision h3 { max-width: 19ch; margin: .62rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.75rem, 2.45vw, 2.7rem); font-weight: 400; letter-spacing: -.04em; line-height: .98; }
 .decision > strong { display: block; max-width: 34ch; margin-top: .82rem; color: #68472f; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.02rem, 1.35vw, 1.28rem); font-weight: 400; line-height: 1.28; }
-.decision p { max-width: 58ch; margin: .7rem 0 0; color: rgba(51, 41, 31, .74); font-size: .75rem; line-height: 1.55; }
+.decision p { max-width: 58ch; margin: .7rem 0 0; color: rgba(51, 41, 31, .8); font-size: .78rem; line-height: 1.55; }
 
 .recordedOutput { display: grid; min-height: 9.4rem; padding: 1.1rem; border: 1px solid rgba(110, 79, 53, .38); border-radius: .3rem 1rem .3rem .78rem; align-content: center; gap: .55rem; color: #795637; background: rgba(255, 250, 236, .62); box-shadow: 0 12px 28px rgba(76, 55, 39, .08); }
 .recordedOutput svg { width: 1.9rem; height: 1.9rem; padding: .42rem; border: 1px solid rgba(110, 79, 53, .34); border-radius: 50%; }
@@ -317,7 +317,7 @@
 }
 
 .sheetFooter > div { display: flex; align-items: center; gap: .38rem; }
-.sheetFooter > div span { padding: .32rem .55rem; border: 1px solid rgba(110, 79, 53, .18); border-radius: 999px; color: rgba(51, 41, 31, .46); font-size: .56rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; transition: color 280ms ease, background-color 280ms ease; }
+.sheetFooter > div span { padding: .32rem .55rem; border: 1px solid rgba(110, 79, 53, .18); border-radius: 999px; color: rgba(51, 41, 31, .6); font-size: .58rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; transition: color 280ms ease, background-color 280ms ease; }
 .sheetFooter > div span[data-visible="true"] { color: #6e4f35; background: rgba(139, 101, 68, .08); }
 .continuityVerdict {
   display: inline-flex;
@@ -327,9 +327,9 @@
   gap: .34rem;
   border: 1px solid rgba(110, 79, 53, .2);
   border-radius: 999px;
-  color: rgba(51, 41, 31, .48);
+  color: rgba(51, 41, 31, .62);
   background: rgba(255, 250, 236, .2);
-  font-size: .56rem;
+  font-size: .58rem;
   font-weight: 700;
   letter-spacing: .08em;
   line-height: 1;
@@ -342,7 +342,7 @@
   color: #6e4f35;
   background: rgba(139, 101, 68, .1);
 }
-.sheetFooter > a { display: inline-flex; min-height: 2.75rem; padding-inline: .25rem; align-items: center; gap: .35rem; color: #68472f; font-size: .55rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.sheetFooter > a { display: inline-flex; min-height: 2.75rem; padding-inline: .25rem; align-items: center; gap: .35rem; color: #68472f; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .sheetFooter > a:focus-visible { outline: 2px solid #8b6544; outline-offset: 4px; }
 
 .staticExperience { display: none; }
@@ -359,6 +359,12 @@
 @media (min-width: 821px) and (prefers-reduced-motion: no-preference) {
   .scrollStory { height: 132svh; }
   .sticky { position: sticky; top: 0; height: 100svh; }
+}
+
+@media (min-width: 901px) {
+  :global(html[data-consent-banner="visible"]) .sheetFooter {
+    padding-right: clamp(13rem, 18vw, 15.5rem);
+  }
 }
 
 @media (min-width: 821px) and (max-height: 760px) {

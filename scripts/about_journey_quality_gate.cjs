@@ -63,6 +63,10 @@ assert(
   "The copy dense working-standards chapter can fade below the protected reading exposure.",
 );
 assert(
+  /id="about-founder-led"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense founder-led chapter can fade below the protected reading exposure.",
+);
+assert(
   /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
     /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
   "About chapter hashes can settle beneath the fixed header in a responsive state.",
@@ -410,16 +414,25 @@ assert(
 );
 
 const protectedWorkingDirectlyType = [
-  [".headerAside > div", 0.56],
-  [".stageRail button small", 0.55],
-  [".sheetFooter > div span", 0.55],
-  [".continuityVerdict", 0.55],
+  [".headerAside > p", 0.76],
+  [".headerAside > div", 0.6],
+  [".sheetHeader span", 0.6],
+  [".stageRail button small", 0.6],
+  [".decision p", 0.78],
+  [".sheetFooter > div span", 0.58],
+  [".continuityVerdict", 0.58],
+  [".sheetFooter > a", 0.6],
 ];
 
 for (const [selector, minimum] of protectedWorkingDirectlyType) {
   const size = fontSizeRem(workingDirectlyStyles, selector);
   assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
 }
+assert(
+  workingDirectlyStyles.includes(':global(html[data-consent-banner="visible"]) .sheetFooter') &&
+    workingDirectlyStyles.includes("padding-right: clamp(13rem, 18vw, 15.5rem);"),
+  "The founder-led engagement action can settle beneath the consent notice.",
+);
 
 console.log(
   "About journey quality gate passed: persistent chapter orientation, destination relationships, and readable evidence labels verified.",
