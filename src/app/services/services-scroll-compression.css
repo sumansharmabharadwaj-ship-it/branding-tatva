@@ -440,6 +440,10 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
     transform: translate3d(0, var(--services-instrument-y, 0px), 0)
       scale(var(--services-instrument-scale, 1));
   }
+
+  [data-authority-copy="true"] > a {
+    min-height: 2.75rem;
+  }
 }
 
 /* The section index lands with a deliberate header offset. Medium-height
