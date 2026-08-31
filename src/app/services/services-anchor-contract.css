@@ -8,6 +8,13 @@
   scroll-margin-top: clamp(4.75rem, 9vh, 6.5rem);
 }
 
+/* The closing film already keeps its content beneath the fixed header with
+   section padding. Let the section itself meet the viewport edge so a direct
+   #book arrival cannot leave a strip of the Recognition Audit above it. */
+#book[data-services-scroll-scene] {
+  scroll-margin-top: 0;
+}
+
 /* The server rail starts from the page's short editorial index, while the
    client runtime discovers the complete cinematic chapter map. Keep that
    provisional guide quiet until the runtime can publish a truthful active
@@ -28,5 +35,9 @@ html[data-services-experience="active"]
 @media (max-width: 767px) {
   [data-services-scroll-scene] {
     scroll-margin-top: max(4.25rem, env(safe-area-inset-top));
+  }
+
+  #book[data-services-scroll-scene] {
+    scroll-margin-top: 0;
   }
 }
