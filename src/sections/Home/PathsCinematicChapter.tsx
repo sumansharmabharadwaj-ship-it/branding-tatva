@@ -290,9 +290,9 @@ export function PathsCinematicChapter() {
               aria-labelledby={`path-film-tab-${active.number}`}
               data-path-state={isPreviewing ? "preview" : "chosen"}
               data-home-reading-plane
-              initial={false}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, x: 18, y: 6, filter: "blur(4px)" }}
+              animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(3px)" }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
             >
               <p className="paths-film__answer-eyebrow">{active.eyebrow}</p>
@@ -313,7 +313,7 @@ export function PathsCinematicChapter() {
                   key={`${active.number}-${carriedFrom ?? "direct"}-${isPreviewing ? "preview" : "chosen"}`}
                   className="paths-film__proof"
                   data-proof-origin={carriedFrom === "evidence" && !isPreviewing ? "evidence" : "case"}
-                  initial={false}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 5, filter: "blur(3px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   exit={prefersReducedMotion ? undefined : { opacity: 0, y: -4, filter: "blur(2px)" }}
                   transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}

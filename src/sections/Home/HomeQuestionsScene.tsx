@@ -339,9 +339,9 @@ export function HomeQuestionsScene() {
               aria-labelledby={`decision-question-${activeIndex}`}
               className="questions-editorial__answer"
               data-home-reading-plane
-              initial={false}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={reducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(4px)" }}
+              initial={reducedMotion ? false : { opacity: 0, x: 16, y: 5, filter: "blur(5px)" }}
+              animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+              exit={reducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(4px)" }}
               transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}
               aria-live="polite"
             >
@@ -386,7 +386,7 @@ export function HomeQuestionsScene() {
                   <motion.div
                     key={carriedLens ? `${carriedLens.name}-${active.id}` : `open-${active.id}`}
                     className="questions-editorial__lens-reading"
-                    initial={false}
+                    initial={reducedMotion ? false : { opacity: 0, y: 6, filter: "blur(3px)" }}
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     exit={reducedMotion ? undefined : { opacity: 0, y: -5, filter: "blur(3px)" }}
                     transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE }}

@@ -334,9 +334,9 @@ export function EvidenceWall() {
               className="evidence-cinematic__summary"
               data-home-reading-plane
               aria-live="polite"
-              initial={false}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, filter: "blur(3px)" }}
+              initial={prefersReducedMotion ? false : { opacity: 0, x: 16, y: 4, filter: "blur(4px)" }}
+              animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(3px)" }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
             >
               <p>{activeProject.title} · {activeProject.industry}</p>

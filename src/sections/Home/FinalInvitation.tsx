@@ -359,7 +359,7 @@ export function FinalInvitation() {
                   role="tabpanel"
                   aria-labelledby={`final-invitation-step-${activeCallStep}`}
                   className="final-invitation__step-detail"
-                  initial={false}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 7, filter: "blur(3px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   exit={prefersReducedMotion ? undefined : { opacity: 0, y: -5, filter: "blur(3px)" }}
                   transition={{

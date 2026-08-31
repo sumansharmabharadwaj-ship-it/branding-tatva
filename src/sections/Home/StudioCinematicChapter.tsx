@@ -309,9 +309,9 @@ export function StudioCinematicChapter() {
               aria-labelledby={`studio-film-tab-${activeIndex}`}
               className="studio-film__reading"
               data-home-reading-plane
-              initial={false}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reducedMotion ? undefined : { opacity: 0, y: -6 }}
+              initial={reducedMotion ? false : { opacity: 0, x: 14, y: 5, filter: "blur(4px)" }}
+              animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
+              exit={reducedMotion ? undefined : { opacity: 0, x: -7, y: -5, filter: "blur(3px)" }}
               transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
               aria-live={manualModeRef.current === "focus" ? "polite" : "off"}
             >

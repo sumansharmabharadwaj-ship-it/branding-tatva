@@ -352,9 +352,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               aria-labelledby={`decision-flow-tab-${active}`}
               aria-live={selectorEngaged ? "polite" : "off"}
               data-home-reading-plane
-              initial={false}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12, filter: "blur(3px)" }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: EASE }}
             >
               <div className="decision-flow__topline">
