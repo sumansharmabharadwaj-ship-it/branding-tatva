@@ -28,6 +28,7 @@ export type AnalyticsEvent =
   | "visitor_situation_selected"
   | "package_viewed"
   | "packages_compared"
+  | "verified_proof_beat_selected"
   | "health_check_started"
   | "health_check_completed"
   | "lead_magnet_requested"
