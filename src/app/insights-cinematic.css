@@ -1373,6 +1373,10 @@
   transform-origin: center;
 }
 
+.insights-library__mobile-reader {
+  display: none;
+}
+
 .insights-library__folio {
   min-width: 0;
   opacity: var(--scene-content-opacity);
@@ -2722,6 +2726,96 @@
     scrollbar-width: none;
   }
 
+  .insights-library__mobile-reader {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.85rem 1rem;
+    align-items: center;
+    margin-top: 0.2rem;
+    padding: 0.65rem 0.2rem 0.5rem;
+  }
+
+  .insights-library__mobile-reader-copy {
+    display: grid;
+    min-width: 0;
+    gap: 0.16rem;
+  }
+
+  .insights-library__mobile-reader-copy span {
+    color: rgb(39 34 30 / 45%);
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .insights-library__mobile-reader-copy strong {
+    overflow: hidden;
+    color: #27221e;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .insights-library__mobile-reader-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .insights-library__mobile-reader-actions button {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid rgb(39 34 30 / 16%);
+    border-radius: 50%;
+    background: rgb(255 253 248 / 78%);
+    color: #27221e;
+    place-items: center;
+    transition:
+      border-color 220ms ease,
+      background-color 220ms ease,
+      opacity 220ms ease,
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .insights-library__mobile-reader-actions button:is(:hover, :focus-visible) {
+    border-color: var(--library-thread, #b85a34);
+    background: #fffdf8;
+    transform: translateY(-2px);
+  }
+
+  .insights-library__mobile-reader-actions button:focus-visible {
+    outline: 2px solid var(--library-thread, #b85a34);
+    outline-offset: 2px;
+  }
+
+  .insights-library__mobile-reader-actions button:disabled {
+    cursor: default;
+    opacity: 0.28;
+    transform: none;
+  }
+
+  .insights-library__mobile-reader > i {
+    position: relative;
+    grid-column: 1 / -1;
+    height: 1px;
+    overflow: hidden;
+    background: rgb(39 34 30 / 10%);
+  }
+
+  .insights-library__mobile-reader > i::after {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--mobile-card-progress, 33.333%);
+    background: var(--library-thread, #b85a34);
+    content: "";
+    transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
   .insights-library__folios::-webkit-scrollbar {
     display: none;
   }
@@ -3284,7 +3378,9 @@
   }
 
   .insights-library .insight-card--decision-brief,
-  .insights-library .insight-card__open span {
+  .insights-library .insight-card__open span,
+  .insights-library__mobile-reader-actions button,
+  .insights-library__mobile-reader > i::after {
     transition-duration: 0.01ms;
   }
 

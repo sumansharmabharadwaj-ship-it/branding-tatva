@@ -4,8 +4,10 @@ import {
   useDeferredValue,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
+  type UIEvent,
 } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ArrowLeft, ArrowRight, Search } from "lucide-react";
@@ -191,6 +193,11 @@ export function InsightsExplorer({
   const [carriedIntent, setCarriedIntent] =
     useState<InsightsIntentDetail>();
   const [folio, setFolio] = useState({ index: 0, direction: 1 });
+  const [mobileCardIndex, setMobileCardIndex] = useState(0);
+  const topicRailRef = useRef<HTMLDivElement>(null);
+  const topicButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const folioTrackRef = useRef<HTMLDivElement>(null);
+  const folioCardRefs = useRef<Array<HTMLDivElement | null>>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   const libraryVisuals = useMemo(
@@ -253,6 +260,8 @@ export function InsightsExplorer({
     firstPostIndex,
     firstPostIndex + POSTS_PER_FOLIO,
   );
+  const visibleFolioKey =
+    visiblePosts.map((post) => post.slug).join("|") || "empty";
   const settledQuery = deferredQuery.trim();
   const selectedTopic =
     topicSlug === "all"
@@ -320,6 +329,39 @@ export function InsightsExplorer({
           : "Showing 0"
       } ${filteredPosts.length === 1 ? "essay" : "essays"}`;
 
+  useEffect(() => {
+    setMobileCardIndex(0);
+    folioCardRefs.current.length = visiblePosts.length;
+    folioTrackRef.current?.scrollTo({
+      left: 0,
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  }, [
+    activeFolio,
+    prefersReducedMotion,
+    topicSlug,
+    visibleFolioKey,
+    visiblePosts.length,
+  ]);
+
+  useEffect(() => {
+    const rail = topicRailRef.current;
+    const selectedIndex =
+      topicSlug === "all"
+        ? 0
+        : topics.findIndex((topic) => topic.slug === topicSlug) + 1;
+    const button = topicButtonRefs.current[Math.max(0, selectedIndex)];
+
+    if (!rail || !button || rail.scrollWidth <= rail.clientWidth + 2) return;
+
+    const centeredPosition =
+      button.offsetLeft - (rail.clientWidth - button.clientWidth) / 2;
+    rail.scrollTo({
+      left: Math.max(0, centeredPosition),
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  }, [prefersReducedMotion, topicSlug, topics]);
+
   function resetFolio() {
     setFolio({ index: 0, direction: -1 });
   }
@@ -355,6 +397,44 @@ export function InsightsExplorer({
       index: clampedIndex,
       direction: clampedIndex >= current.index ? 1 : -1,
     }));
+  }
+
+  function goToMobileCard(nextIndex: number) {
+    const clampedIndex = Math.min(
+      visiblePosts.length - 1,
+      Math.max(0, nextIndex),
+    );
+    const track = folioTrackRef.current;
+    const card = folioCardRefs.current[clampedIndex];
+
+    setMobileCardIndex(clampedIndex);
+    if (!track || !card) return;
+
+    const centeredPosition =
+      card.offsetLeft - (track.clientWidth - card.clientWidth) / 2;
+    track.scrollTo({
+      left: Math.max(0, centeredPosition),
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  }
+
+  function handleMobileCardScroll(event: UIEvent<HTMLDivElement>) {
+    const track = event.currentTarget;
+    const trackCenter = track.scrollLeft + track.clientWidth / 2;
+    let closestIndex = mobileCardIndex;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    folioCardRefs.current.forEach((card, index) => {
+      if (!card) return;
+      const cardCenter = card.offsetLeft + card.clientWidth / 2;
+      const distance = Math.abs(cardCenter - trackCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    if (closestIndex !== mobileCardIndex) setMobileCardIndex(closestIndex);
   }
 
   // The archive film stays intentionally low-contrast beneath the
@@ -491,10 +571,14 @@ export function InsightsExplorer({
 
           {topics.length > 0 && (
             <div
+              ref={topicRailRef}
               className="insights-library__topics mt-4 flex flex-wrap gap-2"
               aria-label="Filter articles by topic"
             >
               <button
+                ref={(node) => {
+                  topicButtonRefs.current[0] = node;
+                }}
                 type="button"
                 onClick={() => {
                   releaseCarriedIntent();
@@ -515,13 +599,16 @@ export function InsightsExplorer({
               >
                 All themes
               </button>
-              {topics.map((topic) => {
+              {topics.map((topic, index) => {
                 const active = topicSlug === topic.slug;
                 const color = ELEMENT_COLORS[topic.element];
 
                 return (
                   <button
                     key={topic.slug}
+                    ref={(node) => {
+                      topicButtonRefs.current[index + 1] = node;
+                    }}
                     type="button"
                     onClick={() => chooseTopic(topic)}
                     aria-pressed={active}
@@ -565,11 +652,60 @@ export function InsightsExplorer({
 
         {filteredPosts.length > 0 ? (
           <>
+            {visiblePosts.length > 1 ? (
+              <div
+                className="insights-library__mobile-reader"
+                style={
+                  {
+                    "--mobile-card-progress": `${
+                      ((mobileCardIndex + 1) / visiblePosts.length) * 100
+                    }%`,
+                  } as CSSProperties
+                }
+              >
+                <div
+                  className="insights-library__mobile-reader-copy"
+                  aria-live="polite"
+                >
+                  <span>Reading shelf</span>
+                  <strong>
+                    {String(mobileCardIndex + 1).padStart(2, "0")} /{" "}
+                    {String(visiblePosts.length).padStart(2, "0")} ·{" "}
+                    {visiblePosts[mobileCardIndex]?.title}
+                  </strong>
+                </div>
+                <div
+                  className="insights-library__mobile-reader-actions"
+                  role="group"
+                  aria-label="Move through visible essays"
+                >
+                  <button
+                    type="button"
+                    aria-label="Previous essay"
+                    disabled={mobileCardIndex === 0}
+                    onClick={() => goToMobileCard(mobileCardIndex - 1)}
+                  >
+                    <ArrowLeft aria-hidden="true" className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next essay"
+                    disabled={mobileCardIndex === visiblePosts.length - 1}
+                    onClick={() => goToMobileCard(mobileCardIndex + 1)}
+                  >
+                    <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                  </button>
+                </div>
+                <i aria-hidden="true" />
+              </div>
+            ) : null}
             <AnimatePresence mode="wait" initial={false} custom={folio.direction}>
               <motion.div
-                key={`${topicSlug}-${activeFolio}`}
+                key={`${topicSlug}-${activeFolio}-${visibleFolioKey}`}
+                ref={folioTrackRef}
                 custom={folio.direction}
                 className="insights-library__folios grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+                onScroll={handleMobileCardScroll}
                 variants={FOLIO_TURN_VARIANTS}
                 initial={prefersReducedMotion ? false : "enter"}
                 animate="settled"
@@ -583,6 +719,9 @@ export function InsightsExplorer({
                 {visiblePosts.map((post, index) => (
                   <div
                     key={post.slug}
+                    ref={(node) => {
+                      folioCardRefs.current[index] = node;
+                    }}
                     className="insights-library__folio"
                     style={{
                       "--folio-delay": `${index * 38}ms`,
