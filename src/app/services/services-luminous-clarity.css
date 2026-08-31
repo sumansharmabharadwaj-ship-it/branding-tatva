@@ -340,6 +340,144 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     margin-top: 0.65rem;
   }
 
+  /* Perception is a diagnostic, so its answer needs to enter with the chapter.
+     The former two-row selector spent the mobile frame on navigation and left
+     the actual market state behind the fixed controls. Keep all four choices,
+     then compress the surrounding rhythm into one complete reading surface. */
+  #education {
+    padding-top: 2rem !important;
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  #education [data-perception-system="true"] {
+    gap: 0.75rem;
+  }
+
+  #education [data-services-chapter-copy="true"] {
+    padding: 0.8rem;
+  }
+
+  #education [data-services-chapter-copy="true"] h2 {
+    margin-top: 0.3rem;
+    font-size: clamp(1.5rem, 7.1vw, 1.8rem);
+    line-height: 1.04;
+  }
+
+  #education [data-services-chapter-copy="true"] > p:nth-of-type(2) {
+    margin-top: 0.65rem;
+    font-size: 0.75rem;
+    line-height: 1.42;
+  }
+
+  #education [data-services-chapter-copy="true"] > div[aria-hidden="true"] {
+    margin-top: 0.7rem;
+  }
+
+  #education [data-services-chapter-copy="true"] > a {
+    margin-top: 0.55rem;
+    min-height: 2.25rem;
+    font-size: 0.75rem;
+  }
+
+  #education [data-perception-route="true"] {
+    margin-top: 0.65rem;
+    padding: 0.6rem 0.7rem;
+  }
+
+  #education [data-perception-route="true"] > p:last-child {
+    margin-top: 0.2rem;
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  #education [data-services-chapter-instrument="true"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.2rem;
+    padding: 0.25rem;
+  }
+
+  #education [data-services-chapter-instrument="true"] > button {
+    display: flex;
+    min-height: 3.25rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.35rem 0.15rem;
+    text-align: center;
+  }
+
+  #education [data-services-chapter-instrument="true"] > button > span:first-of-type {
+    font-size: 0.68rem;
+  }
+
+  #education [data-services-chapter-instrument="true"] > button > span:nth-of-type(2) {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.69rem;
+    line-height: 1.1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #education [data-services-chapter-instrument="true"] > button > span:last-of-type {
+    position: absolute;
+    top: 0.45rem;
+    right: 0.45rem;
+    width: 0.4rem;
+    height: 0.4rem;
+  }
+
+  #education [data-perception-panel="true"] {
+    min-height: 0;
+    padding: 1rem;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  #education [data-perception-panel="true"] h3 {
+    margin-top: 0.45rem;
+    font-size: 2rem;
+  }
+
+  #education [data-perception-panel="true"] h3 + p {
+    margin-top: 0.55rem;
+    font-size: 1.05rem;
+    line-height: 1.2;
+  }
+
+  #education [data-perception-panel="true"] h3 + p + p {
+    margin-top: 0.65rem;
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+
+  #education [data-perception-evidence-grid="true"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.7rem;
+  }
+
+  #education [data-perception-evidence-grid="true"] > div:last-child {
+    border-left: 1px solid rgba(244, 239, 230, 0.12);
+    padding-left: 0.75rem;
+  }
+
+  #education [data-perception-evidence-grid="true"] p:last-child {
+    margin-top: 0.35rem;
+    font-size: 0.7rem;
+    line-height: 1.4;
+  }
+
+  #education [data-perception-evidence-grid="true"] + div {
+    margin-top: 0.7rem;
+    padding-top: 0.6rem;
+  }
+
+  #education [data-perception-evidence-grid="true"] + div > p:last-child {
+    font-size: 1rem;
+  }
+
   #proof [data-verified-outcome-phase] {
     border-radius: 1.5rem;
     padding: 1.15rem;

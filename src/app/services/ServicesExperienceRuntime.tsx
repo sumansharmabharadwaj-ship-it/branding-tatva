@@ -87,6 +87,7 @@ export function ServicesExperienceRuntime() {
     let activeIndex = 0;
     let pendingAnchorIndex: number | null = null;
     let frame = 0;
+    let scrollSettleTimer = 0;
     let pointerFrame = 0;
     let pointerX = 0;
     let pointerY = 0;
@@ -512,6 +513,19 @@ export function ServicesExperienceRuntime() {
       frame = window.requestAnimationFrame(updateSceneProgress);
     }
 
+    function scheduleSettledProgress() {
+      window.clearTimeout(scrollSettleTimer);
+      scrollSettleTimer = window.setTimeout(scheduleProgress, 160);
+    }
+
+    function onScroll() {
+      scheduleProgress();
+      // Smooth anchor travel can finish between the browser's last scroll
+      // event and its final painted position. Re-read that settled geometry so
+      // a chapter never keeps an intermediate story state after arrival.
+      scheduleSettledProgress();
+    }
+
     function publishPointer() {
       pointerFrame = 0;
       servicesRoot.style.setProperty("--services-pointer-x", pointerX.toFixed(4));
@@ -541,7 +555,7 @@ export function ServicesExperienceRuntime() {
       publishChapter(0);
     }
     updateSceneProgress();
-    window.addEventListener("scroll", scheduleProgress, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", scheduleProgress, { passive: true });
     window.addEventListener("pageshow", scheduleProgress);
     window.addEventListener("hashchange", publishAnchorChapter);
@@ -551,7 +565,8 @@ export function ServicesExperienceRuntime() {
     return () => {
       window.cancelAnimationFrame(frame);
       window.cancelAnimationFrame(pointerFrame);
-      window.removeEventListener("scroll", scheduleProgress);
+      window.clearTimeout(scrollSettleTimer);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
       window.removeEventListener("hashchange", publishAnchorChapter);
