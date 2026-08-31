@@ -343,6 +343,7 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
      then spend the rest of the screen on the selected price, scope and action
      instead of repeating three full audience cards above the recommendation. */
   #desire {
+    justify-content: flex-start !important;
     padding-top: 1.25rem !important;
     padding-bottom: calc(7.75rem + env(safe-area-inset-bottom, 0px)) !important;
   }
