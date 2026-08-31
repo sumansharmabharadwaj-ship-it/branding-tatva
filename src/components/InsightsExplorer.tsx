@@ -28,6 +28,10 @@ import {
   readInsightsIntent,
   type InsightsIntentDetail,
 } from "@/lib/insights-intent";
+import {
+  readInsightsLibraryState,
+  writeInsightsLibraryState,
+} from "@/lib/insights-library-state";
 import { track } from "@/lib/analytics";
 
 type ExplorerTopic = {
@@ -228,6 +232,8 @@ export function InsightsExplorer({
     useState<InsightsIntentDetail>();
   const [folio, setFolio] = useState({ index: 0, direction: 1 });
   const [mobileCardIndex, setMobileCardIndex] = useState(0);
+  const [hasRestoredLibraryState, setHasRestoredLibraryState] =
+    useState(false);
   const topicRailRef = useRef<HTMLDivElement>(null);
   const topicButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const folioTrackRef = useRef<HTMLDivElement>(null);
@@ -242,13 +248,14 @@ export function InsightsExplorer({
   useEffect(() => {
     function applyIntent(detail: InsightsIntentDetail | undefined) {
       if (!detail || !topics.some((topic) => topic.slug === detail.topicSlug)) {
-        return;
+        return false;
       }
 
       setCarriedIntent(detail);
       setQuery(detail.query);
       setTopicSlug(detail.topicSlug);
       setFolio({ index: 0, direction: -1 });
+      return true;
     }
 
     function carryIntent(event: Event) {
@@ -262,7 +269,29 @@ export function InsightsExplorer({
 
     window.addEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
     window.addEventListener(INSIGHTS_INTENT_CLEARED_EVENT, releaseIntent);
-    applyIntent(readInsightsIntent());
+    const initialIntent = readInsightsIntent();
+    const restoredLibrary = readInsightsLibraryState();
+    const hasValidLibraryTopic =
+      restoredLibrary?.topicSlug === "all" ||
+      topics.some((topic) => topic.slug === restoredLibrary?.topicSlug);
+    const libraryMatchesInternalIntent =
+      !initialIntent ||
+      (initialIntent.origin === "insights-library" &&
+        initialIntent.topicSlug === restoredLibrary?.topicSlug);
+
+    if (restoredLibrary && hasValidLibraryTopic && libraryMatchesInternalIntent) {
+      setQuery(restoredLibrary.query);
+      setTopicSlug(restoredLibrary.topicSlug);
+      setFolio({ index: restoredLibrary.folio, direction: -1 });
+
+      if (initialIntent?.origin === "insights-library") {
+        setCarriedIntent(initialIntent);
+      }
+    } else {
+      applyIntent(initialIntent);
+    }
+
+    setHasRestoredLibraryState(true);
     return () => {
       window.removeEventListener(INSIGHTS_INTENT_EVENT, carryIntent);
       window.removeEventListener(INSIGHTS_INTENT_CLEARED_EVENT, releaseIntent);
@@ -368,6 +397,16 @@ export function InsightsExplorer({
           ? `Showing ${firstPostIndex + 1}–${firstPostIndex + visiblePosts.length} of ${filteredPosts.length}`
           : "Showing 0"
       } ${filteredPosts.length === 1 ? "essay" : "essays"}`;
+
+  useEffect(() => {
+    if (!hasRestoredLibraryState) return;
+
+    writeInsightsLibraryState({
+      query,
+      topicSlug,
+      folio: activeFolio,
+    });
+  }, [activeFolio, hasRestoredLibraryState, query, topicSlug]);
 
   useEffect(() => {
     setMobileCardIndex(0);
