@@ -117,12 +117,19 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   }, [hydrated, pathname, prefersReducedMotion]);
 
   useEffect(() => {
-    const usesNativeSceneScroll = pathname === "/" || pathname === "/contact";
+    const usesNativeSceneScroll =
+      pathname === "/" ||
+      pathname === "/about" ||
+      pathname === "/services" ||
+      pathname === "/contact" ||
+      pathname === "/insights" ||
+      pathname.startsWith("/insights/");
 
-    // Home and Contact already compose native scroll into full-height camera
-    // scenes. Keeping input at a true 1:1 response prevents Lenis momentum
-    // from competing with their own forgiving scene settling. Other routes
-    // retain the existing soft scroll.
+    // The five primary journeys all translate scroll into their own camera,
+    // chapter, rail, or reading motion. Keep input at a true 1:1 response on
+    // every one of them so moving between pages never changes the physical
+    // feel of the wheel, trackpad, touch gesture, or scrolling keys. Utility
+    // and legacy editorial routes retain the existing soft scroll.
     if (!hydrated || prefersReducedMotion || usesNativeSceneScroll) return;
 
     const instance = new Lenis({

@@ -152,3 +152,25 @@
     transform: none !important;
   }
 }
+
+/* Mirror the operating-system fallback when Reduced is chosen in the site
+   footer. The local control is part of the same accessibility contract. */
+:root[data-motion="reduced"] [data-services-discipline-journey="true"] {
+  height: auto !important;
+}
+
+:root[data-motion="reduced"] [data-services-discipline-journey="true"] > div {
+  position: relative !important;
+  top: auto !important;
+  min-height: auto !important;
+}
+
+:root[data-motion="reduced"] .services-discipline-rail-viewport {
+  scroll-behavior: auto;
+}
+
+:root[data-motion="reduced"] .services-discipline-rail > button {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}

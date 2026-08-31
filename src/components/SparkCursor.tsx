@@ -12,7 +12,7 @@ export function SparkCursor() {
   const labelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const finePointer = window.matchMedia("(pointer: fine)");
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
     const osReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sun = sunRef.current;
     const label = labelRef.current;
@@ -21,9 +21,14 @@ export function SparkCursor() {
     const cursorSun: HTMLDivElement = sun;
     const cursorLabel: HTMLDivElement = label;
     let active = false;
+    let keyboardMode = false;
 
     function sync() {
-      active = finePointer.matches && !osReduced.matches && pref !== "reduced";
+      active =
+        finePointer.matches &&
+        !osReduced.matches &&
+        pref !== "reduced" &&
+        !keyboardMode;
       document.documentElement.classList.toggle("sun-cursor-active", active);
       if (!active) {
         cursorSun.style.opacity = "0";
@@ -35,12 +40,22 @@ export function SparkCursor() {
     }
 
     function move(event: PointerEvent) {
+      if (event.pointerType === "mouse" && keyboardMode) {
+        keyboardMode = false;
+        sync();
+      }
       if (!active) return;
       cursorSun.style.opacity = "1";
       cursorSun.style.transform =
         `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
       cursorLabel.style.transform =
         `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, 24px)`;
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Tab") return;
+      keyboardMode = true;
+      sync();
     }
 
     function over(event: PointerEvent) {
@@ -66,6 +81,7 @@ export function SparkCursor() {
     finePointer.addEventListener("change", sync);
     osReduced.addEventListener("change", sync);
     window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("keydown", onKeyDown);
     document.addEventListener("pointerover", over, { passive: true });
     document.addEventListener("pointerout", out, { passive: true });
 
@@ -73,6 +89,7 @@ export function SparkCursor() {
       finePointer.removeEventListener("change", sync);
       osReduced.removeEventListener("change", sync);
       window.removeEventListener("pointermove", move);
+      window.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerover", over);
       document.removeEventListener("pointerout", out);
       document.documentElement.classList.remove("sun-cursor-active");

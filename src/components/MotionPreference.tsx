@@ -70,7 +70,6 @@ export function MotionToggle() {
             key={option}
             type="button"
             aria-pressed={pref === option}
-            onPointerDown={() => setPref(option)}
             onClick={() => setPref(option)}
             className={`min-w-11 px-3 py-1 capitalize transition-colors duration-300 ${
               pref === option ? "bg-ivory/15 text-ivory" : "text-ivory/70 hover:text-ivory"

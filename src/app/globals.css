@@ -157,6 +157,17 @@
     box-shadow: 0 0 0 4px rgba(252, 250, 246, 0.6);
   }
 
+  /* Shared input contract. Page choreography may change, but controls should
+     answer a finger and a keyboard with the same immediacy everywhere. */
+  :where(a, button, summary, input, textarea, select, [role="button"]) {
+    touch-action: manipulation;
+  }
+
+  :where(button, [role="button"]):disabled,
+  :where(button, [role="button"])[aria-disabled="true"] {
+    cursor: default;
+  }
+
   /* Respect reduced-motion preference site-wide */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {

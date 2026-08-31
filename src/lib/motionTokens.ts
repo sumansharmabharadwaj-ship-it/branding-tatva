@@ -1,9 +1,12 @@
+import { EASE_AIR, EASE_EARTH } from "@/lib/motion";
+
 // Sitewide motion vocabulary, consolidated from the Branding Tatva Motion Bible.
 // Meaning-carrying motion leads; supporting movement settles into a readable state.
 export const motionTokens = {
-  easeOrganic: [0.2, 0.8, 0.2, 1] as const,
+  easeOrganic: EASE_AIR,
   easeSoft: [0.33, 1, 0.68, 1] as const,
-  easeEditorial: [0.16, 1, 0.3, 1] as const,
+  easeEditorial: EASE_AIR,
+  easeDirect: EASE_EARTH,
   easeExit: [0.7, 0, 0.84, 0] as const,
 
   durationInstant: 0.16,
