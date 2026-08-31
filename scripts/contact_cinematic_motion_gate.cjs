@@ -74,9 +74,12 @@ const cssContracts = [
   ["contact-footer-afterglow", "closing afterglow is missing"],
   ['html[data-motion="reduced"]', "explicit reduced-motion styling is missing"],
   ["@media (prefers-reduced-motion: reduce)", "system reduced-motion styling is missing"],
+  ["@media (max-width: 359px)", "ultra-narrow phone protection is missing"],
   ["@media (max-width: 639px) and (max-height: 820px)", "short-phone fit protection is missing"],
   ["[data-contact-film] .contact-hero-film", "short-phone hero frame protection is missing"],
   ["[data-contact-film] [data-contact-hero-intro]", "short-phone hero copy protection is missing"],
+  ["[data-contact-film] [data-contact-hero-direct] > span", "ultra-narrow direct routes no longer shed their redundant prompt"],
+  ["width: calc(100vw - 1rem)", "ultra-narrow chapter dock fit protection is missing"],
   ["grid-template-columns: repeat(2, minmax(0, 1fr))", "short-phone hero choices no longer share one row"],
 ];
 

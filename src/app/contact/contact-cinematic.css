@@ -1217,6 +1217,59 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 }
 
+/* Ultra narrow phones keep the hero's two primary decisions side by side
+   without asking the headline, signal map, and direct routes to compete for
+   the same horizontal measure. The direct routes remain present as compact
+   text actions on tall screens and stay deferred on short screens below. */
+@media (max-width: 359px) {
+  [data-contact-film] [data-contact-hero] h1 {
+    max-width: 18rem;
+    font-size: clamp(2rem, 11.8vw, 2.65rem);
+  }
+
+  [data-contact-film] [data-contact-hero-signal] {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-hero-actions] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-hero-actions] > a {
+    min-height: 2.75rem;
+    padding: 0.6rem 0.7rem;
+    font-size: 0.72rem;
+    line-height: 1.15;
+  }
+
+  [data-contact-film] [data-contact-hero-trust] {
+    font-size: 0.54rem;
+    letter-spacing: 0.1em;
+  }
+
+  [data-contact-film] [data-contact-hero-direct] {
+    gap: 1rem;
+  }
+
+  [data-contact-film] [data-contact-hero-direct] > span {
+    display: none;
+  }
+
+  [data-contact-chapter-rail] {
+    bottom: max(0.5rem, env(safe-area-inset-bottom));
+    width: calc(100vw - 1rem);
+    padding: 0.25rem;
+  }
+
+  [data-contact-chapter-rail] a {
+    gap: 0.2rem;
+    font-size: 0.6rem;
+  }
+}
+
 @media (max-width: 639px) and (max-height: 740px) {
   [data-contact-film] [data-contact-call-intro],
   [data-contact-film] [data-contact-booking-description] {
