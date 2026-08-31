@@ -258,6 +258,64 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     padding: 1rem;
   }
 
+  /* The final chapter is a decision surface. Give the visitor the complete
+     invitation, both routes, and the no-pressure note before the fixed
+     chapter controls enter the frame. */
+  #book {
+    padding-top: 1.75rem !important;
+    padding-bottom: calc(7.75rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  #book [data-services-chapter-copy="true"] h2 {
+    margin-top: 0.35rem;
+    font-size: clamp(1.8rem, 8.6vw, 2.2rem);
+  }
+
+  #book [data-services-chapter-copy="true"] > p:nth-of-type(2) {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  #book [data-services-chapter-copy="true"] > p:nth-of-type(3) {
+    margin-top: 0.45rem;
+    font-size: 0.75rem;
+    line-height: 1.45;
+  }
+
+  #book [data-services-chapter-resolution="true"] {
+    min-height: 0;
+    margin-top: 1rem;
+  }
+
+  #book [data-strategy-room-shell="true"] {
+    border-radius: 1.35rem;
+    padding: 1.1rem;
+  }
+
+  #book [data-strategy-room-shell="true"] > p:first-of-type {
+    font-size: 1.35rem;
+  }
+
+  #book [data-strategy-room-shell="true"] > p:nth-of-type(2) {
+    margin-top: 0.55rem;
+    line-height: 1.45;
+  }
+
+  #book [data-strategy-room-actions="true"] {
+    margin-top: 1rem;
+    gap: 0.6rem;
+  }
+
+  #book [data-strategy-room-actions="true"] > button {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+
+  #book [data-strategy-room-note="true"] {
+    margin-top: 0.7rem;
+  }
+
   /* Authority is a complete explanation, not a teaser. On a phone the
      decorative wave previously pushed the first layer below the chapter and
      consent controls, so direct chapter links arrived before the answer was

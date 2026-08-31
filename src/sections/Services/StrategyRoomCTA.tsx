@@ -286,66 +286,70 @@ export function StrategyRoomCTA() {
   );
 
   const calendarDialog =
-    calendarOpen && typeof document !== "undefined"
+    typeof document !== "undefined"
       ? createPortal(
-          <motion.div
-            key="strategy-calendar-dialog"
-            className="fixed inset-0 z-[1200] flex items-center justify-center bg-black/75 p-3 backdrop-blur-md sm:p-6"
-            initial={prefersReducedMotion ? undefined : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.24 }}
-            onMouseDown={(event) => {
-              if (event.target === event.currentTarget) setCalendarOpen(false);
-            }}
-          >
-            <motion.div
-              ref={dialogRef}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="strategy-calendar-title"
-              aria-describedby="strategy-calendar-description"
-              className="relative max-h-[calc(100svh-1.5rem)] w-full max-w-4xl overflow-y-auto rounded-[1.75rem] border border-sandstone/35 bg-[#171D19] p-4 shadow-[0_35px_120px_rgba(0,0,0,0.55)] sm:p-6"
-              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.99 }}
-              transition={transition}
-            >
-              <div className="flex items-start justify-between gap-6 px-1">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">30-minute strategy call</p>
-                  <h3 id="strategy-calendar-title" className="mt-2 font-display text-3xl font-normal text-ivory sm:text-4xl">
-                    Choose a time that feels unhurried.
-                  </h3>
-                  <p id="strategy-calendar-description" className="mt-2 max-w-2xl text-sm leading-relaxed text-ivory/72">
-                    The calendar opens here without changing your place in the Brand Strategy journey.
-                  </p>
-                </div>
-                <button
-                  ref={closeButtonRef}
-                  type="button"
-                  onClick={() => setCalendarOpen(false)}
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ivory/20 text-xl text-ivory/75 transition-colors hover:border-sandstone/55 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
-                  aria-label="Close scheduling calendar"
+          <AnimatePresence>
+            {calendarOpen ? (
+              <motion.div
+                key="strategy-calendar-dialog"
+                className="fixed inset-0 z-[1200] flex items-center justify-center bg-black/75 p-3 backdrop-blur-md sm:p-6"
+                initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.24 }}
+                onMouseDown={(event) => {
+                  if (event.target === event.currentTarget) setCalendarOpen(false);
+                }}
+              >
+                <motion.div
+                  ref={dialogRef}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="strategy-calendar-title"
+                  aria-describedby="strategy-calendar-description"
+                  className="relative max-h-[calc(100svh-1.5rem)] w-full max-w-4xl overflow-y-auto rounded-[1.75rem] border border-sandstone/35 bg-[#171D19] p-4 shadow-[0_35px_120px_rgba(0,0,0,0.55)] sm:p-6"
+                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18, scale: 0.985 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.99 }}
+                  transition={transition}
                 >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              {answers.length > 0 && (
-                <div className="mt-5 flex flex-wrap gap-2 px-1" aria-label="Your Strategy Room brief">
-                  {answers.map((answer) => (
-                    <span
-                      key={answer}
-                      className="rounded-full border border-sandstone/25 bg-sandstone/[0.07] px-3 py-1.5 text-xs text-ivory/78"
+                  <div className="flex items-start justify-between gap-6 px-1">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">30-minute strategy call</p>
+                      <h3 id="strategy-calendar-title" className="mt-2 font-display text-3xl font-normal text-ivory sm:text-4xl">
+                        Choose a time that feels unhurried.
+                      </h3>
+                      <p id="strategy-calendar-description" className="mt-2 max-w-2xl text-sm leading-relaxed text-ivory/72">
+                        The calendar opens here without changing your place in the Brand Strategy journey.
+                      </p>
+                    </div>
+                    <button
+                      ref={closeButtonRef}
+                      type="button"
+                      onClick={() => setCalendarOpen(false)}
+                      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ivory/20 text-xl text-ivory/75 transition-colors hover:border-sandstone/55 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                      aria-label="Close scheduling calendar"
                     >
-                      {answer}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <CalendlyEmbed url={site.calendlyUrl} />
-            </motion.div>
-          </motion.div>,
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
+                  {answers.length > 0 && (
+                    <div className="mt-5 flex flex-wrap gap-2 px-1" aria-label="Your Strategy Room brief">
+                      {answers.map((answer) => (
+                        <span
+                          key={answer}
+                          className="rounded-full border border-sandstone/25 bg-sandstone/[0.07] px-3 py-1.5 text-xs text-ivory/78"
+                        >
+                          {answer}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <CalendlyEmbed url={site.calendlyUrl} />
+                </motion.div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>,
           document.body,
         )
       : null;
@@ -416,7 +420,7 @@ export function StrategyRoomCTA() {
                   Choose a time now, or add a short two-question brief so the conversation can begin closer to the real
                   decision.
                 </p>
-                <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <div data-strategy-room-actions="true" className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
                   <button
                     type="button"
                     data-strategy-control="true"
@@ -430,7 +434,7 @@ export function StrategyRoomCTA() {
                     Add a 60-second brief
                   </button>
                 </div>
-                <p className="mt-5 text-xs leading-relaxed text-ivory/48">The brief is optional and never blocks the calendar.</p>
+                <p data-strategy-room-note="true" className="mt-5 text-xs leading-relaxed text-ivory/48">The brief is optional and never blocks the calendar.</p>
               </motion.div>
             ) : (
               <motion.div
@@ -556,7 +560,7 @@ export function StrategyRoomCTA() {
         </div>
       </Container>
 
-      <AnimatePresence>{calendarDialog}</AnimatePresence>
+      {calendarDialog}
     </>
   );
 }
