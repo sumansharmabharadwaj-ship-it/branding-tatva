@@ -12,7 +12,7 @@ The Contact page uses eight newly sourced Pexels clips under the Pexels License.
 
 | Contact placement | Pexels video | Creator | Final desktop film |
 | --- | --- | --- | --- |
-| Hero | https://www.pexels.com/video/sunlight-and-fog-in-forest-10978948/ | Matthias Groeneveld | `bt-contact-original-hero.mp4` |
+| Hero | https://www.pexels.com/video/person-looking-at-some-pictures-7010227/ | George Milton | `bt-contact-original-hero.mp4` |
 | Pathways | https://www.pexels.com/video/stones-under-shallow-water-14095594/ | Gabriel Anliker | `bt-contact-original-pathways.mp4` |
 | Book card | https://www.pexels.com/video/turning-pages-of-a-book-5739808/ | Leeloo The First | `bt-contact-original-book.mp4` |
 | Speak card | https://www.pexels.com/video/close-up-of-tea-set-on-a-wooden-table-6540554/ | Tima Miroshnichenko | `bt-contact-original-speak.mp4` |
@@ -24,6 +24,8 @@ The Contact page uses eight newly sourced Pexels clips under the Pexels License.
 ## Web treatment
 
 Each source was cut independently to an eight-second scene, converted to silent H.264/MP4 with fast-start metadata, and given a placement-specific grade. Posters are unique mid-scene frames. The five full-bleed scenes also receive dedicated portrait derivatives; the three pathway-card films retain their landscape aperture.
+
+The Hero now opens on a person actively selecting and arranging visual references. The retired misty road was cinematic but relied on a generic journey metaphor; the new overhead edit makes framing, attention, and creative decision-making visible before the visitor chooses a contact route. The portrait derivative keeps the hands and working set legible on narrow screens.
 
 The Call scene was replaced after an editorial relevance review. Its retired empty exterior gave no evidence of the founder-led conversation described by the chapter. The current film shows two people examining printed creative work together, with a separate portrait crop that preserves both participants on narrow screens.
 

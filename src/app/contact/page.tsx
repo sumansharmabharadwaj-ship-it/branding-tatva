@@ -17,7 +17,6 @@ import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { NatureAccent } from "@/components/NatureAccent";
-import { Fireflies } from "@/components/Fireflies";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ArrowUpRight, CalendarDays, MessageCircle, Phone } from "lucide-react";
 import { consultation, site } from "@/data/site";
@@ -53,9 +52,9 @@ export default function ContactPage() {
       <main id="main-content" data-contact-film>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         {/* Contact opens as an immersive 88svh film rather than a utility-page
-            banner. This newly sourced dawn scene is exclusive to the hero; a
-            dedicated portrait derivative protects mobile playback and the
-            restrained pace gives the copy time to breathe. */}
+            banner. The hero now shows a real visual-editing process rather
+            than a generic journey metaphor; a dedicated portrait derivative
+            keeps the hands and reference material legible on mobile. */}
         {/* Redesigned from the same centered pill-badge-plus-headline
             template Work/Services/Blog's heroes used to share into the
             asymmetric masthead already proven on this site's case-study
@@ -79,14 +78,6 @@ export default function ContactPage() {
           className="contact-hero-film"
           overlayGradient="linear-gradient(180deg, rgba(25,27,22,0.18) 0%, rgba(28,29,23,0.32) 48%, rgba(29,27,23,0.76) 100%), linear-gradient(90deg, rgba(25,25,21,0.7) 0%, rgba(26,27,22,0.42) 46%, rgba(24,26,21,0.06) 78%)"
         >
-          {/* Every other atmospheric hero on the site (About's forest
-              backdrop) carries a small ambient layer on top of the
-              video; this one was the plain video-plus-gradient every
-              other page's hero already is, missing the one touch that
-              gives About's hero its "considered, not just footage"
-              feel. Same forest register as this hero's own clip, not a
-              new visual idea introduced just for this page. */}
-          <Fireflies />
           <div data-contact-hero-frame aria-hidden="true">
             <span />
             <span />

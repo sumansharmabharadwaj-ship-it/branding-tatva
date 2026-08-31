@@ -208,9 +208,8 @@
 }
 
 /* Contact opens like a composed film frame rather than a generic full-bleed
-   banner. The footage travels slowly across the horizon, the inset rails hold
-   the picture, and the three-beat signal gives the opening one quiet piece of
-   editorial motion before any decision is requested. */
+   banner. The measured overhead camera movement follows a live visual edit,
+   while the inset rails and three-beat signal keep the opening restrained. */
 .contact-hero-film > video {
   transform-origin: 62% 54%;
   animation: contact-hero-camera 26s cubic-bezier(0.45, 0, 0.35, 1) infinite alternate;
