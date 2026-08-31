@@ -576,6 +576,8 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       style={
         {
           "--compass-accent": activeScene?.accent ?? "#D77A51",
+          "--compass-progress-scale":
+            activeIndex >= 0 ? (activeIndex + 1) / scenes.length : 0,
         } as CSSProperties
       }
     >
