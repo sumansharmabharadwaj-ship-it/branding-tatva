@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       });
       return jsonNoStore(
         {
-          error: "Delivery failed. Please try again shortly or email Suman directly.",
+          error: "The delivery provider did not accept the note. Try once more or email Suman directly.",
           requestId,
         },
         { status: 502 },
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
     });
     return jsonNoStore(
       {
-        error: "Something went wrong. Please try again or email Suman directly.",
+        error: "The delivery service returned no confirmation. Try once more or email Suman directly.",
         requestId,
       },
       { status: 500 },

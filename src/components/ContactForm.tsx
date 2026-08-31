@@ -408,7 +408,7 @@ export function ContactForm() {
         const message =
           data && typeof data === "object" && "error" in data && typeof data.error === "string"
             ? data.error
-            : "Something went wrong. Please try again.";
+            : "The server returned no delivery confirmation. Try once more.";
         track("contact_form_delivery_failed", {
           source: "contact_form",
           reason: "server",
@@ -447,8 +447,8 @@ export function ContactForm() {
       });
       setServerError(
         timedOut
-          ? "Sending took longer than expected. Please try again or email Suman directly."
-          : "The server was unreachable. Check your connection and try again.",
+          ? "No delivery confirmation arrived within fifteen seconds. Try once more or email Suman directly."
+          : "No delivery confirmation came back. Check your connection, then try once more.",
       );
       setServerRequestId(null);
       setStatus("error");

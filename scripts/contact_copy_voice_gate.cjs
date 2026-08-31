@@ -10,6 +10,7 @@ const surfaces = [
   "src/components/ContactForm.tsx",
   "src/components/ContactPathways.tsx",
   "src/components/ContactServicesHandoff.tsx",
+  "src/app/api/contact/route.ts",
 ];
 const source = surfaces
   .map((file) => fs.readFileSync(path.join(root, file), "utf8"))
@@ -22,6 +23,10 @@ const genericPhrases = [
   "start where the conversation feels natural",
   "what are you building?",
   "what feels unclear right now?",
+  "something went wrong",
+  "delivery failed",
+  "longer than expected",
+  "server was unreachable",
 ];
 
 for (const phrase of genericPhrases) {
