@@ -71,7 +71,7 @@ export default async function HomepageResponsiveQa({
       <div
         style={{
           width: `${preset.width}px`,
-          maxWidth: "100%",
+          maxWidth: preset.width <= 768 ? "100%" : "none",
           height: `${preset.height}px`,
           overflow: "hidden",
           border: "1px solid rgba(244,239,230,.45)",
