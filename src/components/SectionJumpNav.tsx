@@ -1,12 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDownRight, List, X } from "lucide-react";
 import {
   useEffect,
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
 } from "react";
 import { usePathname } from "next/navigation";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -82,6 +83,8 @@ export function SectionJumpNav({
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileYielding, setMobileYielding] = useState(false);
+  const [mobileTargetHref, setMobileTargetHref] = useState<string | null>(null);
+  const [mobileStatus, setMobileStatus] = useState("");
   const mobileNavRef = useRef<HTMLElement>(null);
   const mobileTriggerRef = useRef<HTMLButtonElement>(null);
   const mobileItemRefs = useRef<Array<HTMLAnchorElement | null>>([]);
@@ -203,11 +206,59 @@ export function SectionJumpNav({
   const activeIndex = Math.max(0, navigationItems.findIndex((item) => item.href === activeHref));
   const activeItem = navigationItems[activeIndex] ?? navigationItems[0];
   const nextItem = navigationItems[activeIndex + 1] ?? null;
+  const mobileTargetIndex = mobileTargetHref
+    ? navigationItems.findIndex((item) => item.href === mobileTargetHref)
+    : -1;
+  const mobileDisplayIndex = mobileTargetIndex >= 0 ? mobileTargetIndex : activeIndex;
+  const mobileDisplayItem = navigationItems[mobileDisplayIndex] ?? activeItem;
   const firstHref = navigationItems[0]?.href;
   const finalHref = navigationItems[navigationItems.length - 1]?.href;
   const hiddenForFirstScene = hideOnFirst && Boolean(firstHref) && activeHref === firstHref;
   const hiddenForFinalScene = hideOnLast && Boolean(finalHref) && activeHref === finalHref;
   const progress = navigationItems.length > 0 ? ((activeIndex + 1) / navigationItems.length) * 100 : 0;
+  const mobileDisplayProgress = navigationItems.length > 0
+    ? ((mobileDisplayIndex + 1) / navigationItems.length) * 100
+    : 0;
+
+  useEffect(() => {
+    if (!guidedMobile || !mobileTargetHref) return;
+
+    const targetItem = navigationItems.find((item) => item.href === mobileTargetHref);
+    const arrived = activeHref === mobileTargetHref;
+    const delay = arrived ? (prefersReducedMotion ? 0 : 220) : 1800;
+    const timer = window.setTimeout(() => {
+      if (arrived && targetItem) setMobileStatus(`${targetItem.label} ready`);
+      else setMobileStatus("");
+      setMobileTargetHref(null);
+    }, delay);
+
+    return () => window.clearTimeout(timer);
+  }, [activeHref, guidedMobile, mobileTargetHref, navigationItems, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (!guidedMobile || !mobileTargetHref) return;
+
+    const release = () => {
+      setMobileTargetHref(null);
+      setMobileStatus("");
+    };
+    const releaseFromKeyboard = (event: KeyboardEvent) => {
+      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) {
+        release();
+      }
+    };
+
+    window.addEventListener("wheel", release, { passive: true });
+    window.addEventListener("touchstart", release, { passive: true });
+    window.addEventListener("pointerdown", release, { passive: true });
+    window.addEventListener("keydown", releaseFromKeyboard);
+    return () => {
+      window.removeEventListener("wheel", release);
+      window.removeEventListener("touchstart", release);
+      window.removeEventListener("pointerdown", release);
+      window.removeEventListener("keydown", releaseFromKeyboard);
+    };
+  }, [guidedMobile, mobileTargetHref]);
 
   useEffect(() => {
     if (hiddenForFirstScene || hiddenForFinalScene || mobileYielding) setMobileOpen(false);
@@ -232,6 +283,12 @@ export function SectionJumpNav({
       setMobileYielding((current) => (current === yielding ? current : yielding));
     }
 
+    // Short phones need the guide to leave earlier because one primary action
+    // occupies a larger share of the visible frame. The wider action zone
+    // protects conversion controls without changing the normal page rhythm.
+    const shortCompactViewport = window.matchMedia(
+      "(max-width: 1023px) and (max-height: 620px)",
+    ).matches;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -241,7 +298,10 @@ export function SectionJumpNav({
         });
         syncYielding();
       },
-      { rootMargin: "-62% 0px 0px 0px", threshold: [0, 0.01, 0.4] },
+      {
+        rootMargin: `${shortCompactViewport ? "-45%" : "-62%"} 0px 0px 0px`,
+        threshold: [0, 0.01, 0.4],
+      },
     );
 
     function registerActions() {
@@ -314,6 +374,61 @@ export function SectionJumpNav({
     setMobileOpen(false);
   }
 
+  function focusMobileDestination(target: HTMLElement) {
+    const existingTabIndex = target.getAttribute("tabindex");
+    if (existingTabIndex === null) target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
+
+    if (existingTabIndex === null) {
+      target.addEventListener(
+        "blur",
+        () => target.removeAttribute("tabindex"),
+        { once: true },
+      );
+    }
+  }
+
+  function chooseMobile(event: ReactMouseEvent<HTMLAnchorElement>, item: JumpItem) {
+    // Keyboard and assistive-technology activation keep the browser's native
+    // destination focus while pointer taps get a short, interruptible native
+    // transition and a visible destination confirmation.
+    if (!guidedMobile) {
+      choose(item.href);
+      return;
+    }
+
+    const target = document.getElementById(item.href.slice(1));
+    if (!target) {
+      choose(item.href);
+      return;
+    }
+
+    event.preventDefault();
+
+    if (event.detail === 0) {
+      choose(item.href);
+      setMobileStatus(`${item.label} ready`);
+      if (window.location.hash !== item.href) {
+        window.history.pushState(null, "", item.href);
+      }
+      target.scrollIntoView({ behavior: "auto", block: "start" });
+      focusMobileDestination(target);
+      return;
+    }
+
+    setMobileTargetHref(item.href);
+    setMobileStatus(`Moving to ${item.label}`);
+    setMobileOpen(false);
+
+    if (window.location.hash !== item.href) {
+      window.history.pushState(null, "", item.href);
+    }
+    target.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+  }
+
   function focusMobileChapter(
     event: ReactKeyboardEvent<HTMLAnchorElement>,
     index: number,
@@ -379,6 +494,7 @@ export function SectionJumpNav({
         data-section-jump-tone={tone}
         data-section-jump-guided={guidedMobile ? "true" : undefined}
         data-section-jump-yielding={mobileYielding ? "true" : "false"}
+        data-section-jump-moving={mobileTargetHref ? "true" : "false"}
         aria-hidden={mobileYielding || undefined}
         inert={mobileYielding || undefined}
         className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 transition-[opacity,transform] ${
@@ -395,15 +511,38 @@ export function SectionJumpNav({
           data-section-jump-nav-trigger="true"
           aria-expanded={mobileOpen}
           aria-controls={mobileOpen ? "section-jump-mobile-menu" : undefined}
-          aria-label={`${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${navigationItems.length}: ${activeItem?.label ?? "Sections"}`}
+          aria-label={
+            mobileTargetHref
+              ? `Moving to chapter ${mobileDisplayIndex + 1} of ${navigationItems.length}: ${mobileDisplayItem?.label ?? "Sections"}`
+              : `${mobileOpen ? "Close" : "Open"} section navigation. Current chapter ${activeIndex + 1} of ${navigationItems.length}: ${activeItem?.label ?? "Sections"}`
+          }
           tabIndex={mobileYielding ? -1 : undefined}
           onClick={() => setMobileOpen((open) => !open)}
           className={`relative flex h-14 max-w-[min(18rem,calc(100vw-1.5rem))] items-center justify-center gap-2.5 rounded-full border px-3.5 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
             lightTone
               ? "border-soil/14 bg-ivory/92 hover:bg-ivory"
               : "border-ivory/16 bg-soil/92 hover:bg-soil"
-          }`}
+          } ${guidedMobile ? "touch-manipulation active:scale-[0.97]" : ""}`}
         >
+          {guidedMobile && (
+            <motion.span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-[-1px] rounded-full border border-terracotta/55"
+              initial={false}
+              animate={
+                prefersReducedMotion
+                  ? { opacity: mobileTargetHref ? 0.46 : 0, scale: 1 }
+                  : mobileTargetHref
+                    ? { opacity: [0.18, 0.62, 0.18], scale: [0.985, 1.035, 1.005] }
+                    : { opacity: 0, scale: 1 }
+              }
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { duration: 0.82, ease: "easeInOut", repeat: mobileTargetHref ? Infinity : 0 }
+              }
+            />
+          )}
           {guidedMobile && (
             <span
               aria-hidden="true"
@@ -413,7 +552,7 @@ export function SectionJumpNav({
               <motion.span
                 className="block h-full origin-left bg-terracotta"
                 initial={false}
-                animate={{ scaleX: progress / 100 }}
+                animate={{ scaleX: mobileDisplayProgress / 100 }}
                 transition={
                   prefersReducedMotion
                     ? { duration: 0 }
@@ -422,46 +561,74 @@ export function SectionJumpNav({
               />
             </span>
           )}
-          <span className="flex min-w-0 items-center gap-2 leading-none" aria-hidden="true">
+          <motion.span
+            key={mobileDisplayItem?.href ?? "sections"}
+            className="flex min-w-0 items-center gap-2 leading-none"
+            aria-hidden="true"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 3 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          >
             <span className="font-display text-base text-terracotta">
-              {String(activeIndex + 1).padStart(2, "0")}
+              {String(mobileDisplayIndex + 1).padStart(2, "0")}
             </span>
             <span
               className={`max-w-[10rem] truncate text-[0.625rem] font-semibold uppercase tracking-[0.1em] ${
                 lightTone ? "text-soil/72" : "text-ivory/72"
               }`}
             >
-              {activeItem?.label ?? "Sections"}
+              {mobileDisplayItem?.label ?? "Sections"}
             </span>
             <span className={`text-[0.55rem] font-medium tracking-[0.06em] ${lightTone ? "text-soil/48" : "text-ivory/52"}`}>
               / {String(navigationItems.length).padStart(2, "0")}
             </span>
-          </span>
+          </motion.span>
           <span aria-hidden="true" className="ml-0.5 flex h-4 w-4 items-center justify-center text-terracotta">
-            {mobileOpen ? <X size={15} strokeWidth={1.8} /> : <List size={15} strokeWidth={1.8} />}
+            {mobileTargetHref ? (
+              <ArrowDownRight size={15} strokeWidth={1.8} />
+            ) : mobileOpen ? (
+              <X size={15} strokeWidth={1.8} />
+            ) : (
+              <List size={15} strokeWidth={1.8} />
+            )}
           </span>
         </button>
 
-        {mobileOpen && (
-          <motion.div
+        <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {mobileStatus}
+        </span>
+
+        <AnimatePresence initial={false}>
+          {mobileOpen && (
+            <motion.div
               id="section-jump-mobile-menu"
+              key="section-jump-mobile-menu"
+              data-section-jump-mobile-menu="true"
               initial={
                 prefersReducedMotion || !guidedMobile
                   ? false
                   : { opacity: 0, y: 10, scale: 0.975 }
               }
               animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={
+                prefersReducedMotion || !guidedMobile
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: 8, scale: 0.985, pointerEvents: "none" }
+              }
               transition={
                 prefersReducedMotion || !guidedMobile
                   ? { duration: 0 }
-                  : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }
+                  : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }
               }
-              className={`absolute bottom-[calc(100%+0.5rem)] right-0 grid max-h-[calc(100dvh-6.5rem-env(safe-area-inset-top,0px))] w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 overflow-y-auto overscroll-contain rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+              className={`absolute bottom-[calc(100%+0.5rem)] right-0 grid max-h-[calc(100dvh-6.5rem-env(safe-area-inset-top,0px))] w-[min(19rem,calc(100vw-1.5rem))] origin-bottom-right grid-cols-2 gap-1.5 overflow-y-auto overscroll-contain rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
                 lightTone ? "border-soil/12 bg-ivory/95" : "border-ivory/12 bg-soil/95"
               }`}
             >
               {guidedMobile && (
-                <div className="col-span-2 flex min-h-14 items-end justify-between gap-3 rounded-xl px-3 pb-2 pt-1.5">
+                <div
+                  data-section-jump-menu-summary="true"
+                  className="col-span-2 flex min-h-14 items-end justify-between gap-3 rounded-xl px-3 pb-2 pt-1.5"
+                >
                   <div className="min-w-0">
                     <p
                       className={`text-[0.55rem] font-semibold uppercase tracking-[0.13em] ${
@@ -481,9 +648,9 @@ export function SectionJumpNav({
                   {nextItem && (
                     <a
                       href={nextItem.href}
-                      onClick={() => choose(nextItem.href)}
+                      onClick={(event) => chooseMobile(event, nextItem)}
                       aria-label={`Continue to chapter ${activeIndex + 2}: ${nextItem.label}`}
-                      className={`group flex min-h-11 max-w-[9.5rem] items-center justify-end gap-1.5 rounded-lg px-1.5 text-right text-[0.56rem] font-medium uppercase leading-relaxed tracking-[0.1em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
+                      className={`group flex min-h-11 max-w-[9.5rem] touch-manipulation items-center justify-end gap-1.5 rounded-lg px-1.5 text-right text-[0.56rem] font-medium uppercase leading-relaxed tracking-[0.1em] transition-[color,transform] active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
                         lightTone ? "text-soil/52" : "text-ivory/50"
                       }`}
                     >
@@ -511,9 +678,9 @@ export function SectionJumpNav({
                     }}
                     href={item.href}
                     aria-current={active ? "location" : undefined}
-                    onClick={() => choose(item.href)}
+                    onClick={(event) => chooseMobile(event, item)}
                     onKeyDown={(event) => focusMobileChapter(event, index)}
-                    className={`flex min-h-11 items-center justify-between rounded-xl px-3 py-2 text-[0.6875rem] font-medium uppercase leading-tight tracking-[0.1em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-terracotta ${
+                    className={`flex min-h-11 touch-manipulation items-center justify-between rounded-xl px-3 py-2 text-[0.6875rem] font-medium uppercase leading-tight tracking-[0.1em] transition-[color,background-color,transform] active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-terracotta ${
                       active
                         ? lightTone
                           ? "bg-soil/[0.08] text-terracotta"
@@ -533,8 +700,9 @@ export function SectionJumpNav({
                   </a>
                 );
               })}
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {resolvedDesktopMode === "rail" ? (

@@ -209,6 +209,10 @@ for (const target of ["#opening", "#brand-diagnostic", "#cost", "#evidence", "#p
   assert(chapterJumpStyles.includes(target), `Compact chapter arrival is missing ${target}.`);
 }
 assert(chapterJumpStyles.includes("env(safe-area-inset-top, 0px)"), "Compact chapter arrival ignores device cut-outs.");
+assert(chapterJumpStyles.includes("@media (max-width: 359px)"), "Narrow phones no longer receive a fitted chapter guide.");
+assert(chapterJumpStyles.includes("max-height: 560px"), "Short phones no longer receive a compact chapter sheet.");
+assert(chapterJumpStyles.includes("max-height: 420px"), "Very short phones retain a summary that crowds out chapter choices.");
+assert(chapterJumpStyles.includes("min-height: 2.75rem"), "Compact chapter choices have fallen below the 44px touch target.");
 assert(!homeInterface.includes("GuidedView") && !homeInterface.includes("LivingCursor"), "Removed homepage-only controls remain bundled beside the active seam primitive.");
 assert(!v4Scenes.includes("V4RecognitionScene") && !v4Scenes.includes("RECOGNITION_STATES"), "The retired recognition chapter remains bundled beside the active opening and cost scenes.");
 assert(!homeInterface.includes("useMotionValue") && !homeInterface.includes("useLenis"), "Dormant homepage control runtimes still pull client-side motion or scroll ownership into chapter seams.");
