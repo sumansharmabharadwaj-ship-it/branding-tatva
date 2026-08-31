@@ -434,3 +434,7 @@
     padding-bottom: calc(11.75rem + env(safe-area-inset-bottom));
   }
 }
+
+@media (max-width: 760px) {
+  .staticPaths a { min-height: 2.75rem; }
+}

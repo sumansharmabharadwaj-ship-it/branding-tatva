@@ -357,3 +357,7 @@
   :global(html[data-motion="reduced"]) .staticExperience li:nth-child(2) { border-top: 1px solid rgba(61, 47, 34, .22); }
   :global(html[data-motion="reduced"]) .staticExperience li:nth-last-child(2) { border-bottom: 1px solid rgba(61, 47, 34, .22); }
 }
+
+@media (max-width: 900px) {
+  .staticExperience > a { min-height: 2.75rem; }
+}

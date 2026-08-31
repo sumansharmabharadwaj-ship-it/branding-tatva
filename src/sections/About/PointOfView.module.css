@@ -395,3 +395,7 @@
 @media (max-width: 980px) {
   :global(html[data-motion="reduced"]) .staticExperience { overflow-x: auto; }
 }
+
+@media (max-width: 980px) {
+  .staticProof > a { min-height: 2.75rem; }
+}
