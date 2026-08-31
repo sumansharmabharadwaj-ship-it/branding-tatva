@@ -343,7 +343,7 @@ function PerceptionVisual({
   secondary: string;
 }) {
   return (
-    <div className="grid h-full min-h-0 grid-cols-2 grid-rows-2 gap-2 p-3 sm:gap-5 sm:p-7">
+    <div className="grid h-full grid-cols-2 gap-3 p-4 sm:gap-5 sm:p-7">
       <motion.div
         className="flex flex-col justify-between rounded-2xl border border-white/15 bg-black/20 p-4 sm:p-5"
         animate={{ opacity: 1 - progress * 0.55, scale: 1 - progress * 0.03 }}
@@ -375,7 +375,7 @@ function AuthorityVisual({
   accent: string;
 }) {
   return (
-    <div className="grid h-full grid-cols-2 gap-3 p-4 sm:gap-5 sm:p-7">
+    <div className="grid h-full min-h-0 grid-cols-2 grid-rows-2 gap-2 p-3 sm:gap-5 sm:p-7">
       {artifacts.map((artifact, index) => {
         const visible = index <= Math.max(0, active - 1);
         return (
