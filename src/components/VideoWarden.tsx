@@ -5,45 +5,59 @@ import { useEffect } from "react";
 const MARGIN = "18% 0px";
 const FLAG = "wardenPaused";
 
-
-function distanceFromViewportCentre(video: HTMLVideoElement) {
+function measureVideo(video: HTMLVideoElement) {
   const rect = video.getBoundingClientRect();
-  return Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
-}
-
-// How much of the screen this video occupies, 0 to 1.
-function viewportCoverage(video: HTMLVideoElement) {
-  const rect = video.getBoundingClientRect();
+  const viewportHeight = Math.max(window.innerHeight, 1);
+  const margin = viewportHeight * 0.18;
   const visibleHeight =
-    Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
-  return visibleHeight / window.innerHeight;
+    Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+  return {
+    video,
+    onScreen:
+      rect.width > 0 &&
+      rect.height > 0 &&
+      rect.bottom > -margin &&
+      rect.top < viewportHeight + margin,
+    coverage: visibleHeight / viewportHeight,
+    distance: Math.abs(rect.top + rect.height / 2 - viewportHeight / 2),
+  };
 }
 
 export function VideoWarden() {
   useEffect(() => {
     let frame = 0;
 
-    function onScreen(video: HTMLVideoElement) {
-      const rect = video.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return false;
-      const margin = window.innerHeight * 0.18;
-      return rect.bottom > -margin && rect.top < window.innerHeight + margin;
-    }
-
     function arbitrate() {
       frame = 0;
-      // Every video in the document, rather than only the ones the observer
-      // has reported. An earlier version trusted the observer alone, and any
-      // video it had yet to report kept playing outside the budget entirely.
-      const all = [...document.querySelectorAll<HTMLVideoElement>("video")];
+      // The watched set is kept complete by the initial scan and mutation
+      // observer. Reusing it avoids a full-document selector on every scroll
+      // frame while retaining videos that have not crossed an intersection
+      // threshold yet.
+      const all = [...watched];
 
       // One cinematic owner at a time. Page-level directors may request play,
       // but the warden remains the final arbiter so adjacent scenes never
       // compete for attention or decoding capacity.
       const governed = all;
 
+      // Background tabs should own no decoder. Pausing here also means the
+      // visibilitychange handoff cannot briefly restart a film before the
+      // next intersection update arrives.
+      if (document.hidden) {
+        governed.forEach((video) => {
+          if (video.paused) return;
+          video.dataset[FLAG] = "1";
+          video.pause();
+        });
+        return;
+      }
+
       const candidates = governed
-        .filter(onScreen)
+        // Geometry is deliberately sampled once per video. The previous
+        // ranking path called getBoundingClientRect for visibility, coverage,
+        // and distance independently, multiplying layout reads during scroll.
+        .map(measureVideo)
+        .filter((candidate) => candidate.onScreen)
         // A full bleed background filling the screen matters more than a
         // small inline clip that happens to sit nearer the middle. Ranking
         // by nearness alone left backgrounds frozen behind the copy, so
@@ -52,23 +66,23 @@ export function VideoWarden() {
         // route card the visitor is actively exploring. Grouped hero films
         // still travel together once either member becomes the primary.
         .sort((a, b) => {
-          const priorityA = a.dataset.videoPriority === "foreground" ? 1 : 0;
-          const priorityB = b.dataset.videoPriority === "foreground" ? 1 : 0;
+          const priorityA = a.video.dataset.videoPriority === "foreground" ? 1 : 0;
+          const priorityB = b.video.dataset.videoPriority === "foreground" ? 1 : 0;
           if (priorityA !== priorityB) return priorityB - priorityA;
-          const coverA = viewportCoverage(a);
-          const coverB = viewportCoverage(b);
-          if (Math.abs(coverA - coverB) > 0.08) return coverB - coverA;
-          return distanceFromViewportCentre(a) - distanceFromViewportCentre(b);
+          if (Math.abs(a.coverage - b.coverage) > 0.08) return b.coverage - a.coverage;
+          return a.distance - b.distance;
         });
 
-      const primary = candidates[0];
+      const primary = candidates[0]?.video;
       const primaryGroup = primary?.dataset.videoWardenGroup;
       // Some heroes compose a full bleed film and a smaller foreground film
       // into one visible scene. A shared group lets that scene play together
       // without opening the playback budget to unrelated page media.
       const allowed = new Set(
         primaryGroup
-          ? candidates.filter((video) => video.dataset.videoWardenGroup === primaryGroup)
+          ? candidates
+              .map((candidate) => candidate.video)
+              .filter((video) => video.dataset.videoWardenGroup === primaryGroup)
           : primary
             ? [primary]
             : [],

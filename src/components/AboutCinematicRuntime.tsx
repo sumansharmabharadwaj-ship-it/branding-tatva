@@ -51,11 +51,11 @@ export function AboutCinematicRuntime() {
     const updateNavigator = () => {
       frame = 0;
       const viewportHeight = Math.max(window.innerHeight, 1);
+      const sceneRects = scenes.map((scene) => scene.getBoundingClientRect());
       let strongestFocus = -1;
       let nextActive = 0;
 
-      scenes.forEach((scene, index) => {
-        const rect = scene.getBoundingClientRect();
+      sceneRects.forEach((rect, index) => {
         const centerDelta = Math.abs(rect.top + rect.height * 0.5 - viewportHeight * 0.5);
         const focus = clamp(1 - centerDelta / Math.max(viewportHeight * 0.78, rect.height * 0.58));
         if (focus > strongestFocus) {
@@ -64,8 +64,8 @@ export function AboutCinematicRuntime() {
         }
       });
 
-      const firstRect = scenes[0].getBoundingClientRect();
-      const finalRect = scenes[scenes.length - 1].getBoundingClientRect();
+      const firstRect = sceneRects[0];
+      const finalRect = sceneRects[sceneRects.length - 1];
       const firstTop = window.scrollY + firstRect.top;
       const finalBottom = window.scrollY + finalRect.bottom;
       const runway = Math.max(finalBottom - viewportHeight - firstTop, 1);
@@ -397,15 +397,17 @@ export function AboutCinematicRuntime() {
 
       if (layoutDirty || scrollChanged) {
         layoutDirty = false;
-        if (currentScrollY >= scenes[0].offsetTop - 2) {
+        const sceneRects = scenes.map((scene) => scene.getBoundingClientRect());
+        const firstSceneTop = currentScrollY + sceneRects[0].top;
+        if (currentScrollY >= firstSceneTop - 2) {
           document.documentElement.dataset.aboutFilmSnap = "true";
         } else {
           delete document.documentElement.dataset.aboutFilmSnap;
         }
 
         let strongestFocus = -1;
-        scenes.forEach((scene, index) => {
-          const rect = scene.getBoundingClientRect();
+        sceneRects.forEach((rect, index) => {
+          const scene = scenes[index];
           const totalTravel = viewportHeight + rect.height;
           const progress = clamp((viewportHeight - rect.top) / totalTravel);
           const centerDelta = Math.abs(rect.top + rect.height * 0.5 - viewportHeight * 0.5);
@@ -440,9 +442,7 @@ export function AboutCinematicRuntime() {
           previousActiveScene = activeScene;
         }
 
-        const firstSceneTop = scenes[0].offsetTop;
-        const finalScene = scenes[scenes.length - 1];
-        const finalSceneBottom = finalScene.offsetTop + finalScene.offsetHeight;
+        const finalSceneBottom = currentScrollY + sceneRects[sceneRects.length - 1].bottom;
         const narrativeRunway = Math.max(finalSceneBottom - viewportHeight - firstSceneTop, 1);
         filmProgress = clamp((currentScrollY - firstSceneTop) / narrativeRunway);
         narrativeActive = currentScrollY >= firstSceneTop - viewportHeight * 0.12

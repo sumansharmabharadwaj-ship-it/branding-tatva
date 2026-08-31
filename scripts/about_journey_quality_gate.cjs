@@ -3,6 +3,16 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
+const readPrefix = (relative, length = 64 * 1024) => {
+  const descriptor = fs.openSync(path.join(root, relative), "r");
+  try {
+    const prefix = Buffer.alloc(length);
+    const bytesRead = fs.readSync(descriptor, prefix, 0, length, 0);
+    return prefix.subarray(0, bytesRead);
+  } finally {
+    fs.closeSync(descriptor);
+  }
+};
 const runtime = read("src/components/AboutCinematicRuntime.tsx");
 const videoWarden = read("src/components/VideoWarden.tsx");
 const splitHero = read("src/components/AboutSplitHero.tsx");
@@ -28,6 +38,8 @@ const convergenceStyles = read("src/sections/About/Convergence.module.css");
 const evidenceStyles = read("src/sections/About/Evidence.module.css");
 const standardsStyles = read("src/sections/About/Behaviours.module.css");
 const workingDirectlyStyles = read("src/sections/About/WorkingDirectly.module.css");
+const heroPortraitVideoPrefix = readPrefix("public/videos/own-companions-split.mp4");
+const heroPortraitVideoBytes = fs.statSync(path.join(root, "public/videos/own-companions-split.mp4")).size;
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -138,6 +150,21 @@ assert(
   "The About hero background and foreground films can no longer share their composed playback scene.",
 );
 assert(
+  heroPortraitVideoPrefix.indexOf(Buffer.from("moov")) >= 0 &&
+    heroPortraitVideoPrefix.indexOf(Buffer.from("moov")) < heroPortraitVideoPrefix.indexOf(Buffer.from("mdat")) &&
+    heroPortraitVideoBytes < 5 * 1024 * 1024,
+  "The About portrait film can require a complete or oversized download before playback begins.",
+);
+assert(
+  videoWarden.includes(".map(measureVideo)") &&
+    videoWarden.includes("const all = [...watched];") &&
+    videoWarden.includes("if (document.hidden)") &&
+    videoWarden.includes("video.dataset[FLAG] = \"1\";") &&
+    !videoWarden.includes("function viewportCoverage") &&
+    !videoWarden.includes("function distanceFromViewportCentre"),
+  "The shared film budget can multiply layout reads or leave a hidden-tab decoder running.",
+);
+assert(
   runtime.includes("const mobileNavigatorActive = navigatorActive;") &&
     runtime.includes("disabled={activeChapter === CHAPTERS.length - 1}") &&
     runtime.includes("disabled={activeChapter === 0}"),
@@ -174,6 +201,14 @@ assert(
     runtime.includes("pointerXValue !== previousPointerXValue") &&
     runtime.includes("if ((Math.abs(smoothedVelocity) > 0.0002 || pointerSettling) && !document.hidden)"),
   "The living About thread can monopolise every display frame while the visitor is reading.",
+);
+assert(
+  (runtime.match(/const sceneRects = scenes\.map\(\(scene\) => scene\.getBoundingClientRect\(\)\);/g) || []).length === 2 &&
+    runtime.includes("const firstSceneTop = currentScrollY + sceneRects[0].top;") &&
+    runtime.includes("const finalSceneBottom = currentScrollY + sceneRects[sceneRects.length - 1].bottom;") &&
+    !runtime.includes(".offsetTop") &&
+    !runtime.includes(".offsetHeight"),
+  "The About navigator and living thread can repeat layout reads inside one scroll frame.",
 );
 assert(
   runtime.includes('root.dataset.aboutFilm = "true"') &&
