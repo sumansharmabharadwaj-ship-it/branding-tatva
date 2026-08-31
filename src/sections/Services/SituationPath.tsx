@@ -263,7 +263,6 @@ export function SituationPath() {
           {OPTIONS.map((option, index) => {
             const isActive = displayed === option.id;
             const isCommitted = selected === option.id;
-            const pkg = packages.find((entry) => entry.slug === SITUATION_TO_PACKAGE[option.id]);
             return (
               <div key={option.id} className="relative">
                 <div className="h-px bg-ivory/12" aria-hidden="true" />
@@ -300,41 +299,38 @@ export function SituationPath() {
                     +
                   </span>
                 </motion.button>
-                <AnimatePresence initial={false}>
-                  {isActive && pkg && (
-                    <motion.div
-                      initial={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={prefersReducedMotion ? undefined : { height: 0, opacity: 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
-                      className="overflow-hidden"
-                    >
-                      <div
-                        data-situation-detail="true"
-                        className="mb-7 rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
-                        style={{ borderTopColor: pkg.color, backgroundColor: "rgba(244,239,230,0.05)" }}
-                      >
-                        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                          <p className="font-display text-xl font-normal text-ivory">{pkg.name}</p>
-                          <p className="text-sm text-ivory/70">{pkg.forWho}</p>
-                        </div>
-                        {!isCommitted && (
-                          <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
-                            What comes first
-                          </p>
-                        )}
-                        <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{option.reason}</p>
-                        <div className="mt-5 flex flex-wrap gap-3">
-                          <LinkButton href="#desire">See the matching engagement</LinkButton>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             );
           })}
           <div className="h-px bg-ivory/12" aria-hidden="true" />
+          <AnimatePresence mode="wait" initial={false}>
+            {displayedPackage ? (
+              <motion.div
+                key={displayed}
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
+                data-situation-detail="true"
+                className="mt-5 rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
+                style={{ borderTopColor: displayedPackage.color, backgroundColor: "rgba(244,239,230,0.05)" }}
+              >
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                  <p className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
+                  <p className="text-sm text-ivory/70">{displayedPackage.forWho}</p>
+                </div>
+                {!selected ? (
+                  <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
+                    Route currently in view
+                  </p>
+                ) : null}
+                <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{displayedOption.reason}</p>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <LinkButton href="#desire">See the matching engagement</LinkButton>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </div>
       </div>
     </Container>
