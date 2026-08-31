@@ -8,7 +8,7 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
     excerpt:
       "A practical homepage messaging framework for helping the right buyer understand the category, recognise their situation, believe the difference, and know what to do next.",
     directAnswer:
-      "A service-business homepage should first orient the visitor, then help the right buyer recognise their situation, explain the service's distinctive choice, place proof beside important claims, and make the next action obvious. The first screen should answer what the business is, who it is relevant for, and why the visitor should keep reading without forcing the whole positioning strategy into one headline.",
+      "A service business homepage should first orient the visitor, then help the right buyer recognise their situation, explain the service's distinctive choice, place proof beside important claims, and make the next action obvious. The first screen should answer what the business is, who it is relevant for, and why the visitor should keep reading without forcing the whole positioning strategy into one headline.",
     element: "air",
     topicSlug: "brand-messaging",
     primaryKeyword: "homepage messaging for service businesses",
@@ -41,7 +41,7 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
         "Five messaging jobs move a visitor from orientation to a useful next step.",
       steps: [
         { title: "Orient", description: "Establish the category, relevance, and central promise quickly enough for the right visitor to keep reading." },
-        { title: "Recognise", description: "Describe the customer situation in language that feels specific enough to create self-recognition." },
+        { title: "Recognise", description: "Describe the customer situation in language that feels specific enough to create self recognition." },
         { title: "Differentiate", description: "Explain the choice, method, or point of view that changes how the service works." },
         { title: "Believe", description: "Place work, process, outcomes, credentials, and customer evidence beside the claims they support." },
         { title: "Act", description: "Give the visitor a next step appropriate to their level of readiness and the complexity of the sale." },
@@ -52,7 +52,7 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
         id: "homepage-is-decision-interface",
         heading: "Treat the homepage as a decision interface",
         paragraphs: [
-          "A service-business homepage rarely closes the entire sale. Its more useful job is to help the right visitor decide whether this business deserves further attention and which path to take next.",
+          "A service business homepage rarely closes the entire sale. Its more useful job is to help the right visitor decide whether this business deserves further attention and which path to take next.",
           "That makes messaging order as important as messaging quality. A brilliant case study placed before the visitor understands the category can feel impressive yet disconnected. A detailed service grid placed before relevance is established can ask for effort too early.",
           "Design the page around the questions a buyer naturally asks: What is this? Is it relevant to my situation? Why this approach? Can I trust it? Which service fits? What happens next?",
         ],
@@ -63,7 +63,7 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
         paragraphs: [
           "The hero needs enough category clarity for a visitor to understand the kind of help being offered, enough relevance to signal who should care, and enough tension or promise to create momentum.",
           "Avoid making the headline carry every strategic detail. A headline can hold the memorable idea while the supporting line names the category, customer situation, or concrete service more plainly.",
-          "The first action should match buying readiness. A high-consideration service often benefits from an exploratory route such as viewing work, understanding the method, or opening a strategy conversation rather than an abrupt purchase command.",
+          "The first action should match buying readiness. A high consideration service often benefits from an exploratory route such as viewing work, understanding the method, or opening a strategy conversation rather than an abrupt purchase command.",
         ],
         callout: {
           label: "Hero test",
@@ -74,8 +74,8 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
         id: "recognition-section",
         heading: "Create recognition before explaining the entire solution",
         paragraphs: [
-          "The next messaging job is helping the right visitor see their present situation accurately. This is where customer research becomes useful. Describe observable realities, tensions, or transition moments instead of generic pain-point theatre.",
-          "A founder may have grown beyond referral-led explanations. A consulting firm may offer excellent work while every service sounds interchangeable. An established business may have several competent touchpoints that no longer feel like one brand.",
+          "The next messaging job is helping the right visitor see their present situation accurately. This is where customer research becomes useful. Describe observable realities, tensions, or transition moments instead of generic pain point theatre.",
+          "A founder may have grown beyond referral led explanations. A consulting firm may offer excellent work while every service sounds interchangeable. An established business may have several competent touchpoints that no longer feel like one brand.",
           "Specific recognition reduces the amount of persuasion required later because the visitor already feels the page understands the problem they are trying to solve.",
         ],
       },
@@ -111,7 +111,7 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
         heading: "Use the About section to explain why this business sees the problem differently",
         paragraphs: [
           "A homepage About section earns space when biography increases confidence or explains the point of view behind the work. It should connect background, experience, or perspective with the customer's decision.",
-          "Founder-led service businesses often gain trust by making senior involvement concrete. Explain who does the thinking, who remains involved during delivery, and which preparation or experience matters to the engagement.",
+          "Founder led service businesses often gain trust by making senior involvement concrete. Explain who does the thinking, who remains involved during delivery, and which preparation or experience matters to the engagement.",
           "Move the complete chronology to the About page. The homepage needs the piece of the story that helps the visitor believe the promise.",
         ],
       },
@@ -121,7 +121,7 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
         paragraphs: [
           "By the final section, the visitor should understand the situation, approach, proof, and likely service path. The call to action can therefore become more specific than the hero action.",
           "Explain what happens after the click. A short description of the call, diagnostic, enquiry, or next step reduces uncertainty for buyers who are interested but still managing risk.",
-          "Keep a secondary route for visitors who need more evidence, such as case studies or a relevant insight guide. High-consideration services benefit from giving serious visitors a productive way to remain inside the decision journey.",
+          "Keep a secondary route for visitors who need more evidence, such as case studies or a relevant insight guide. High consideration services benefit from giving serious visitors a productive way to remain inside the decision journey.",
         ],
       },
       {
@@ -143,7 +143,7 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
       },
     ],
     faq: [
-      { question: "What should a service-business homepage say first?", answer: "Start by establishing the category, who the offer is relevant for, and the central value or tension. The visitor should understand why the page may matter before receiving detailed capabilities or company history." },
+      { question: "What should a service business homepage say first?", answer: "Start by establishing the category, who the offer is relevant for, and the central value or tension. The visitor should understand why the page may matter before receiving detailed capabilities or company history." },
       { question: "How long should homepage copy be?", answer: "The useful length depends on sales complexity and how much explanation and proof the buyer needs. Prioritise decision clarity over an arbitrary word count, using sections and hierarchy to keep longer pages easy to scan." },
       { question: "Should the homepage list every service?", answer: "Usually the homepage should show the most important service paths and help visitors choose between them. Detailed scope can live on dedicated service pages." },
       { question: "Where should testimonials go on a homepage?", answer: "Place customer evidence close to the claims it supports. A testimonial about strategic clarity belongs near the strategy argument, while an outcome quote belongs near the relevant case or result." },

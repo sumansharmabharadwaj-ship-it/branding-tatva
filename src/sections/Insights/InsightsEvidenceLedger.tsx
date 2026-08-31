@@ -168,7 +168,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     ? "Marked for review"
     : focusedIsCarried
       ? "Carried from your reading path"
-      : "Open to review";
+      : "Ready for review";
   const showsWorkingHypothesis = showsSynthesis || focusedIsCarried;
   const markedRoute =
     markedCount === 2
@@ -401,7 +401,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 >
                   <span>0{index + 1}</span>
                   <strong>{layer.name}</strong>
-                  <small>{marked ? "Marked" : carried ? "Carried" : "Open"}</small>
+                  <small>{marked ? "Marked" : carried ? "Carried" : "Review"}</small>
                   <i aria-hidden="true">
                     {marked ? (
                       <Check className="h-3.5 w-3.5" />

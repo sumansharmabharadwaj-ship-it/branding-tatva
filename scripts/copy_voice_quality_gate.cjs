@@ -112,6 +112,7 @@ const STOCK_PATTERNS = [
   /^\s*learn how\b/i,
   /^\s*explore\b/i,
   /\bwhat it unlocks\b/i,
+  /\bhelps? you\b/i,
 ];
 
 const LONG_FORM_SURFACE_KEYS = new Set([
@@ -153,6 +154,7 @@ function isAuditedSurfaceFile(relativeFile) {
   if (/^src\/app\/(?:editorial-policy|privacy|terms|glossary|glossary\/\[term\]|insights\/\[slug\]|insights\/topic\/\[topic\]|work\/\[slug\]|work\/studies\/\[slug\])\/page\.tsx$/.test(normalized)) return true;
   if (/^src\/data\/(?:about|faqs|process|services|site)\.ts$/.test(normalized)) return true;
   if (/^src\/data\/(?:brandStudies|caseStudyPresentation|glossary|insightApplications|insightPathways|projects|workTaxonomy|.+Insights)\.ts$/.test(normalized)) return true;
+  if (/^src\/data\/repositioning\/repositioningSections[A-C]\.ts$/.test(normalized)) return true;
   if (/^src\/lib\/(?:api-protection|contact-schema|newsletter-schema|servicesJourney)\.ts$/.test(normalized)) return true;
   if (normalized === "src/layouts/Header/index.tsx") return true;
   if (/^src\/components\/(?:CalendlyEmbed|ConsentManager|Contact.+|NewsletterForm|InsightsExplorer|SeasonalCalendarPanel)\.tsx$/.test(normalized)) return true;
@@ -241,10 +243,21 @@ function shouldInspect(node, text) {
   return /[—–]/.test(clean) || STOCK_PATTERNS.some((pattern) => pattern.test(clean));
 }
 
-function issueFor(text, allowCompoundHyphens = false) {
+const NECESSARY_HYPHEN_COPY = new Set([
+  "Wipro: Building a Global B-2-B Brand",
+  "How a High-Tech Company Created a Searchable Customer Reference Database that Tripled References and Closed Sales",
+]);
+const NECESSARY_HYPHEN_TERMS = ["Ehrenberg-Bass"];
+
+function issueFor(text, { checkStockPhrases = true } = {}) {
   const clean = text.replace(/\s+/g, " ").trim();
+  const authoredCopy = NECESSARY_HYPHEN_TERMS.reduce(
+    (value, term) => value.replaceAll(term, term.replaceAll("-", " ")),
+    clean,
+  );
   if (/[—–]/.test(clean)) return "dash punctuation";
-  if (!allowCompoundHyphens && /[A-Za-z0-9]-[A-Za-z0-9]/.test(clean)) return "hyphenated copy";
+  if (!NECESSARY_HYPHEN_COPY.has(clean) && /[A-Za-z0-9]-[A-Za-z0-9]/.test(authoredCopy)) return "hyphenated copy";
+  if (!checkStockPhrases) return null;
   const stock = STOCK_PATTERNS.find((pattern) => pattern.test(clean));
   return stock ? `stock phrase ${stock}` : null;
 }
@@ -266,7 +279,7 @@ for (const sourceRoot of SOURCE_ROOTS) {
     );
     const longFormData =
       relativeFile.startsWith(`src${path.sep}data${path.sep}`) &&
-      /(?:Insights|blog|glossary|supportingInsights|pillarInsights)/.test(relativeFile);
+      /(?:Insights|blog|glossary|supportingInsights|pillarInsights|repositioningSections)/.test(relativeFile);
 
     function visit(node) {
       const isTextNode =
@@ -275,10 +288,11 @@ for (const sourceRoot of SOURCE_ROOTS) {
         ts.isJsxText(node);
       if (
         isTextNode &&
-        (!longFormData || isLongFormSurfaceNode(node)) &&
         shouldInspect(node, node.text)
       ) {
-        const issue = issueFor(node.text, longFormData);
+        const issue = issueFor(node.text, {
+          checkStockPhrases: !longFormData || isLongFormSurfaceNode(node),
+        });
         if (issue) {
           const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
           issues.push({

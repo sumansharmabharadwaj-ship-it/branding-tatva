@@ -136,7 +136,7 @@ export function InsightFrameworkVisualizer({
                     onClick={() => setActiveIndex(previousIndex)}
                     aria-label={`Show previous decision: ${previousStep.title}`}
                   >
-                    <span>Previous</span>
+                    <span>Previous chapter</span>
                     <strong>{previousStep.title}</strong>
                   </button>
                   <button
@@ -145,7 +145,7 @@ export function InsightFrameworkVisualizer({
                     aria-label={`Show next decision: ${nextStep.title}`}
                   >
                     <span>
-                      {activeIndex === framework.steps.length - 1 ? "Return" : "Next"}
+                      {activeIndex === framework.steps.length - 1 ? "Review first decision" : "Next decision"}
                     </span>
                     <strong>{nextStep.title}</strong>
                   </button>

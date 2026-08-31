@@ -415,7 +415,7 @@ export const insightPosts: InsightPost[] = [
       "A rebrand brief should emerge from evidence collected during the audit.",
     ],
     framework: {
-      title: "The five layer brand audit",
+      title: "The brand audit in five layers",
       introduction:
         "The audit follows the brand from internal intention to customer memory, revealing where the signal weakens.",
       steps: [

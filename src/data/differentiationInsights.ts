@@ -86,7 +86,7 @@ export const differentiationInsightPosts: InsightPost[] = [
         id: "why-crowded-markets-sound-the-same",
         heading: "Why crowded service markets sound the same",
         paragraphs: [
-          "Service businesses often compete through reassuring claims: experienced, tailored, strategic, collaborative, results-driven, and customer-first. These qualities matter, yet they rarely create separation because credible competitors need them too.",
+          "Service businesses often compete through reassuring claims: experienced, tailored, strategic, collaborative, results driven, and customer first. These qualities matter, yet they rarely create separation because credible competitors need them too.",
           "Sameness also grows from copying category language. Businesses study the leading firms, borrow their vocabulary, then adjust the tone. The words become polished while the comparison frame stays unchanged.",
           "The market feels crowded partly because many businesses describe the category rather than the choice they make inside it.",
         ],
@@ -148,7 +148,7 @@ export const differentiationInsightPosts: InsightPost[] = [
         id: "build-proof-with-the-difference",
         heading: "Build proof around the differentiator",
         paragraphs: [
-          "A difference becomes believable when evidence demonstrates the mechanism and consequence. Proof can include case-study decisions, process artefacts, work samples, customer language, verified results, repeat engagements, or specialised knowledge.",
+          "A difference becomes believable when evidence demonstrates the mechanism and consequence. Proof can include case study decisions, process artefacts, work samples, customer language, verified results, repeat engagements, or specialised knowledge.",
           "The proof should match the claim. A promise about diagnostic depth needs evidence of diagnosis. A promise about founder access needs visible involvement. A promise about consistency needs connected touchpoints rather than one polished output.",
           "Place evidence beside the difference in the website, proposal, and sales process. Separation without credibility creates intrigue. Separation with proof creates choice.",
         ],

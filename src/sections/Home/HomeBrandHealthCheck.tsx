@@ -435,7 +435,7 @@ export function HomeBrandHealthCheck() {
                     onClick={continueDiagnostic}
                     disabled={selected === null}
                   >
-                    {step === QUESTIONS.length - 1 ? "See my result" : "Continue"}
+                    {step === QUESTIONS.length - 1 ? "See my result" : "Next question"}
                     <span aria-hidden="true">→</span>
                   </button>
                 </div>

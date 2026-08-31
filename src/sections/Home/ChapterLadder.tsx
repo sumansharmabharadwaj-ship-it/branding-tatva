@@ -59,7 +59,7 @@ const CHAPTERS: ChapterDefinition[] = [
   {
     id: "elements",
     label: "Five elements",
-    detail: "Open each Tatva in depth.",
+    detail: "Inspect each Tatva in depth.",
     elementId: "elements",
   },
   {

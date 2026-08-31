@@ -21,7 +21,7 @@ export const repositioningSectionsA: InsightSection[] = [
     paragraphs: [
       "A new business has little memory to lose. An established business may already own a name, colour, founder association, phrase, referral shorthand, service ritual, or reputation that helps customers recognise and trust it.",
       "Those assets can feel ordinary inside the company because the team sees them every day. Customers encounter them far less often. What feels tired internally may still be the cue that lets a buyer locate the brand in a crowded comparison.",
-      "Research on service rebranding has found that customer evaluation can fall after a brand-name change, with the relationship between the new brand and the service influencing the size of the decline. The lesson is not to avoid change entirely. The lesson is to understand what the customer must relearn.",
+      "Research on service rebranding has found that customer evaluation can fall after a brand name change, with the relationship between the new brand and the service influencing the size of the decline. The lesson is not to avoid change entirely. The lesson is to understand what the customer must relearn.",
     ],
     callout: {
       label: "Recognition cost",
@@ -34,7 +34,7 @@ export const repositioningSectionsA: InsightSection[] = [
     heading: "Confirm that repositioning is the real need",
     paragraphs: [
       "Some businesses call for repositioning when the underlying problem is weak execution. The position may already be relevant, yet the website buries it, the proof is thin, the service menu has expanded without hierarchy, or the customer experience contradicts the promise.",
-      "Other businesses have a genuine strategic problem. The market associates them with an old category, lower-value work, one legacy service, one founder, one geography, or one customer stage. Growth requires a different comparison or buying situation.",
+      "Other businesses have a genuine strategic problem. The market associates them with an old category, lower value work, one legacy service, one founder, one geography, or one customer stage. Growth requires a different comparison or buying situation.",
       "Separate meaning problems from expression problems before commissioning a new identity.",
     ],
     bullets: [
@@ -51,7 +51,7 @@ export const repositioningSectionsA: InsightSection[] = [
     paragraphs: [
       "Before changing anything, record what the market currently retrieves. Ask customers, recent prospects, lost opportunities, partners, and internal teams what comes to mind first, how they describe the business, when they would recommend it, and which cues help them recognise it.",
       "Separate awareness from association. A person may recognise the name while attaching it to the wrong service or an outdated level of value. Another may understand the expertise but fail to recognise the visual identity without the name.",
-      "Use a mixed evidence set: interviews, unaided recall questions, website-search terms, branded search, direct traffic, referral language, proposal feedback, win-loss notes, customer-service transcripts, and distinctive-asset testing where practical.",
+      "Use a mixed evidence set: interviews, unaided recall questions, website search terms, branded search, direct traffic, referral language, proposal feedback, win loss notes, customer service transcripts, and distinctive asset testing where practical.",
     ],
     bullets: [
       "Which name or shorthand do customers naturally use?",
@@ -66,7 +66,7 @@ export const repositioningSectionsA: InsightSection[] = [
     id: "define-core-shift",
     heading: "Define the core shift in one sentence",
     paragraphs: [
-      "Write the movement as an old-to-new decision. For example: from a generalist creative supplier to the brand systems partner for established service businesses entering a more complex growth stage.",
+      "Write the movement as an old to new decision. For example: from a generalist creative supplier to the brand systems partner for established service businesses entering a more complex growth stage.",
       "The sentence should identify the customer situation, the new comparison, the distinctive choice, and the evidence that makes the move believable. Avoid describing the shift only through tone, aesthetics, or ambition.",
       "A strong core shift preserves truth from the existing business while changing the emphasis. It should feel like a sharpened interpretation of accumulated capability, not a costume placed over the same offer.",
     ],

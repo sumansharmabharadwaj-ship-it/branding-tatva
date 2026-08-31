@@ -140,7 +140,7 @@ export const forgettableIdentityInsightPosts: InsightPost[] = [
         heading: "The identity changes before familiarity can form",
         paragraphs: [
           "Internal teams see their identity far more often than the market does. Familiarity inside the business can feel like fatigue while customers are only beginning to learn the system.",
-          "Frequent redesigns, seasonal overhauls, and campaign-specific reinvention can interrupt the repetition required for recognition. The brand keeps presenting new evidence before the previous evidence has accumulated.",
+          "Frequent redesigns, seasonal overhauls, and campaign specific reinvention can interrupt the repetition required for recognition. The brand keeps presenting new evidence before the previous evidence has accumulated.",
           "Refresh expression when the system needs range. Replace foundational assets when research shows they create confusion, poor attribution, technical failure, or strategic mismatch.",
         ],
       },
@@ -157,7 +157,7 @@ export const forgettableIdentityInsightPosts: InsightPost[] = [
         id: "audit-a-forgettable-identity",
         heading: "How to audit a forgettable identity",
         paragraphs: [
-          "Collect recent customer-facing work and remove the brand name and logo where possible. Ask whether the remaining pieces feel attributable to one source. Then place the materials beside close competitors.",
+          "Collect recent customer facing work and remove the brand name and logo where possible. Ask whether the remaining pieces feel attributable to one source. Then place the materials beside close competitors.",
           "Test recognition separately from preference. A participant may prefer one design while attributing another more accurately. Both findings matter, but they answer different questions.",
           "Finally, ask what people believe the brand offers or stands for after seeing the materials. This reveals whether the identity carries meaning as well as source recognition.",
         ],
@@ -174,7 +174,7 @@ export const forgettableIdentityInsightPosts: InsightPost[] = [
         heading: "Strengthen recognition without redesigning everything",
         paragraphs: [
           "A complete redesign may be unnecessary. Begin by identifying existing assets with some familiarity, meaning, or operational value. Strengthen their usage before replacing them.",
-          "Choose one or two underused cues and make them more visible across high-frequency touchpoints. Connect them with a stable message territory. Reduce visual decisions that compete with those cues.",
+          "Choose one or two underused cues and make them more visible across high frequency touchpoints. Connect them with a stable message territory. Reduce visual decisions that compete with those cues.",
           "Measure attribution and recall after sustained use. Recognition is built through the pattern the market receives, rather than the number of options contained in the identity guide.",
         ],
       },

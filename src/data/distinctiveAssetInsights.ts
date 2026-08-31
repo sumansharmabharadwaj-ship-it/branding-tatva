@@ -113,14 +113,14 @@ export const distinctiveAssetInsightPosts: InsightPost[] = [
         paragraphs: [
           "An asset has to survive the conditions in which people encounter it. A fine symbol may look elegant in a brand presentation and vanish inside a mobile profile image. A subtle colour difference may collapse under compression or bright daylight.",
           "Test every candidate at real sizes, speeds, and distances. Review social thumbnails, browser tabs, email headers, presentation covers, mobile screens, silent video, and monochrome reproduction where relevant.",
-          "Perception is the entrance to recognition. A cue that requires careful inspection cannot carry much memory work in fast-moving environments.",
+          "Perception is the entrance to recognition. A cue that requires careful inspection cannot carry much memory work in fast moving environments.",
         ],
       },
       {
         id: "test-category-difference",
         heading: "3. Compare the cue with the category",
         paragraphs: [
-          "Place the candidate assets beside those used by direct and adjacent competitors. Look for category defaults: the same blue gradient, geometric sans serif, rounded card system, stock-photography mood, or familiar promise language.",
+          "Place the candidate assets beside those used by direct and adjacent competitors. Look for category defaults: the same blue gradient, geometric sans serif, rounded card system, stock photography mood, or familiar promise language.",
           "Category conventions can aid understanding, so the goal is rarely to reject everything familiar. Choose which conventions help orientation and which cues should create recognition.",
           "A useful asset creates enough contrast to be attributable without making the brand feel unrelated to the category it needs customers to understand.",
         ],

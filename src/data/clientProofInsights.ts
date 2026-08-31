@@ -15,7 +15,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
   {
     slug: "turn-client-proof-into-positioning-advantage",
     title: "How to turn client proof into a positioning advantage",
-    seoTitle: "Client proof strategy for service-business positioning",
+    seoTitle: "Client proof strategy for service business positioning",
     excerpt:
       "Build case studies, testimonials, metrics, and demonstrations around the position you want buyers to believe, rather than storing client praise in a decorative carousel.",
     directAnswer:
@@ -103,7 +103,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
           "This prevents a common imbalance: abundant evidence for minor qualities and almost none for the promise carrying the price.",
         ],
         bullets: [
-          "Claim: founder-led depth. Doubt: will senior attention continue after the sale?",
+          "Claim: founder led depth. Doubt: will senior attention continue after the sale?",
           "Claim: practical strategy. Doubt: did previous recommendations reach implementation?",
           "Claim: category expertise. Doubt: does the team understand this buying environment or only its vocabulary?",
           "Claim: measurable improvement. Doubt: what changed, compared with what baseline, and over what period?",
@@ -114,11 +114,11 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         id: "build-proof-hierarchy",
         heading: "Build a hierarchy of proof rather than relying on testimonials",
         paragraphs: [
-          "Different evidence answers different questions. A testimonial can reveal the customer's experience. A case study can explain context and mechanism. An artefact can demonstrate quality. A metric can show scale or change. A credential can reduce capability risk. A reference call can resolve high-stakes doubt.",
+          "Different evidence answers different questions. A testimonial can reveal the customer's experience. A case study can explain context and mechanism. An artefact can demonstrate quality. A metric can show scale or change. A credential can reduce capability risk. A reference call can resolve high stakes doubt.",
           "No single format carries the entire argument. Combine evidence so the buyer can move from recognition to understanding and then to confidence.",
         ],
         bullets: [
-          "Demonstration: a visible example, prototype, framework, or before-and-after artefact.",
+          "Demonstration: a visible example, prototype, framework, or before and after artefact.",
           "Case: a structured account of situation, decision, mechanism, evidence, and relevance.",
           "Metric: a documented change with baseline, period, scope, and limitations.",
           "Testimonial: the customer's own perspective, preserved accurately and used with permission.",
@@ -131,18 +131,18 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         heading: "Choose cases for strategic fit, not client fame",
         paragraphs: [
           "A famous client logo can attract attention while proving little about the service the business wants to sell next. Select cases that resemble the desired customer's situation and expose the distinctive method clearly.",
-          "Score potential cases for audience relevance, problem relevance, mechanism visibility, evidence quality, permission, recency, and commercial priority. A smaller client with a well-documented journey may be a stronger positioning asset than a prestigious engagement that can only be described vaguely.",
+          "Score potential cases for audience relevance, problem relevance, mechanism visibility, evidence quality, permission, recency, and commercial priority. A smaller client with a well documented journey may be a stronger positioning asset than a prestigious engagement that can only be described vaguely.",
           "The portfolio should also show range without dissolving the position. Choose variation around the same central capability: different sectors, scales, constraints, or applications that demonstrate transfer rather than unrelated competence.",
         ],
         callout: {
           label: "Selection test",
           text:
-            "Choose the case that helps the next best-fit buyer recognise their decision, not the case most likely to impress an unrelated audience.",
+            "Choose the case that helps the next best fit buyer recognise their decision, not the case most likely to impress an unrelated audience.",
         },
       },
       {
         id: "case-study-anatomy",
-        heading: "Use a case-study structure that preserves causality and context",
+        heading: "Use a case study structure that preserves causality and context",
         paragraphs: [
           "Begin before the project. Describe the business situation, the customer goal, what had already been tried, what was constrained, and which alternative the customer was considering. Without the starting condition, the outcome floats without meaning.",
           "Explain the decision, not every meeting. Show what the service provider noticed, prioritised, sequenced, or refused differently. Then reveal the mechanism through selected artefacts, process moments, and implementation facts.",
@@ -218,7 +218,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         heading: "Make anonymised proof concrete",
         paragraphs: [
           "Confidentiality does not require emptiness. An anonymised case can still specify the sector, scale, customer stage, operating constraint, decision, method, evidence type, and result range without exposing the organisation.",
-          "Explain why the identity is withheld and replace the missing logo with diagnostic detail. A statement such as global professional-services firm is weak alone. Add the relevant market, team structure, buying situation, legacy constraint, and implementation environment.",
+          "Explain why the identity is withheld and replace the missing logo with diagnostic detail. A statement such as global professional services firm is weak alone. Add the relevant market, team structure, buying situation, legacy constraint, and implementation environment.",
           "Where a numerical result cannot be published, show approved artefacts, process milestones, behavioural changes, or a bounded qualitative outcome. The goal is to preserve verifiability without breaching trust.",
         ],
       },
@@ -226,9 +226,9 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         id: "proof-placement",
         heading: "Place proof beside the doubt it resolves",
         paragraphs: [
-          "A separate case-study archive is useful for exploration, but proof should also appear where the buyer encounters the relevant claim. Place a short evidence unit beside the homepage promise, service mechanism, package decision, pricing concern, or implementation risk it supports.",
-          "Change the level of detail by stage. Early-stage visitors need fast recognition and relevance. Mid-stage buyers need mechanism and comparability. Late-stage buyers need detailed cases, references, implementation evidence, and risk reduction.",
-          "A B2B brand-positioning case from INSEAD highlights the role of positioning in deciding which communication touchpoints to activate. The same principle applies inside the proof system: evidence earns more value when it appears in the decision context it was built to support.",
+          "A separate case study archive is useful for exploration, but proof should also appear where the buyer encounters the relevant claim. Place a short evidence unit beside the homepage promise, service mechanism, package decision, pricing concern, or implementation risk it supports.",
+          "Change the level of detail by stage. Early stage visitors need fast recognition and relevance. Mid stage buyers need mechanism and comparability. Late stage buyers need detailed cases, references, implementation evidence, and risk reduction.",
+          "A B2B brand positioning case from INSEAD highlights the role of positioning in deciding which communication touchpoints to activate. The same principle applies inside the proof system: evidence earns more value when it appears in the decision context it was built to support.",
         ],
         bullets: [
           "Homepage: one proof line tied to the central position.",
@@ -244,30 +244,30 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         heading: "Build a searchable proof matrix",
         paragraphs: [
           "Create one record for every approved case, testimonial, metric, artefact, credential, and reference. Tag it by audience, sector, business stage, problem, alternative, service, mechanism, outcome, geography, permission level, and freshness.",
-          "A searchable customer-reference database helped one technology company reduce retrieval time from days to seconds and increased the number of usable references. The broader lesson is operational: evidence becomes a sales asset when people can find the right proof without asking the founder to remember where it lives.",
+          "A searchable customer reference database helped one technology company reduce retrieval time from days to seconds and increased the number of usable references. The broader lesson is operational: evidence becomes a sales asset when people can find the right proof without asking the founder to remember where it lives.",
           "Assign an owner and review date. Proof expires when the offer changes, the customer withdraws permission, the metric loses context, or the position moves elsewhere.",
         ],
       },
       {
         id: "proof-sprint",
-        heading: "A 30-day client-proof sprint",
+        heading: "A client proof sprint over thirty days",
         paragraphs: [
           "During week one, map the positioning claims and buyer doubts, then inventory every existing logo, quote, case, metric, artefact, review, credential, and reference. During week two, score the evidence for relevance, strength, permission, specificity, and freshness.",
-          "During week three, interview three to five strategically relevant clients, document baselines and mechanisms, verify outcomes, and collect approved language. During week four, publish one full case, three short proof units, a searchable internal matrix, and a permission-and-refresh process.",
+          "During week three, interview three to five strategically relevant clients, document baselines and mechanisms, verify outcomes, and collect approved language. During week four, publish one full case, three short proof units, a searchable internal matrix, and a permission and refresh process.",
           "The objective is not a larger gallery. It is a tighter chain between what the brand claims, what the service does, what customers experienced, and what the next buyer needs to believe.",
         ],
       },
     ],
     faq: [
       {
-        question: "What makes a strong service-business case study?",
+        question: "What makes a strong service business case study?",
         answer:
           "A strong case explains the customer's starting situation, the relevant constraint or alternative, the strategic decision, the mechanism of the work, documented evidence, and why the example matters to a similar buyer.",
       },
       {
         question: "How many case studies does a service business need?",
         answer:
-          "Begin with enough cases to prove the central position across the most important customer situations and objections. Three strategically distinct, well-documented cases are often more useful than a large archive of repetitive summaries.",
+          "Begin with enough cases to prove the central position across the most important customer situations and objections. Three strategically distinct, well documented cases are often more useful than a large archive of repetitive summaries.",
       },
       {
         question: "Are testimonials enough to prove a result?",
@@ -282,7 +282,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
       {
         question: "Where should case studies appear on a website?",
         answer:
-          "Keep a complete Work or case-study archive, then reuse relevant proof beside claims on the homepage, service pages, package decisions, proposals, and conversion points. Place the evidence where the corresponding doubt appears.",
+          "Keep a complete Work or case study archive, then reuse relevant proof beside claims on the homepage, service pages, package decisions, proposals, and conversion points. Place the evidence where the corresponding doubt appears.",
       },
       {
         question: "How often should client proof be updated?",
@@ -308,7 +308,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         publisher: "Federal Trade Commission",
         url: "https://www.ftc.gov/news-events/topics/truth-advertising/advertisement-endorsements",
         note:
-          "Official guidance that endorsements should be truthful, non-misleading, representative or appropriately qualified, and transparent about material connections.",
+          "Official guidance that endorsements should be truthful, non misleading, representative or appropriately qualified, and transparent about material connections.",
       },
       {
         title: "Testimonials and endorsements",

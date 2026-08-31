@@ -38,7 +38,7 @@ const DEFAULT_RESOLUTION: FieldNotesResolution = {
   description:
     "Each email examines a specific founder problem, shows the evidence or framework, and ends with a decision to test. Sent only when there is something worth reading.",
   evidenceHeadline:
-    "You marked a brand problem. Future letters can help you investigate it.",
+    "You marked a brand problem. Future letters will return to that question.",
   evidenceDescription:
     "Your selected area stays attached to the signup so the reading can continue from the question you just marked.",
   cadence: [
@@ -57,7 +57,7 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
     evidenceHeadline:
       "You marked positioning as the comparison worth testing.",
     evidenceDescription:
-      "Future letters can help compare buyer language, category choice, and the position the business can prove.",
+      "Future letters will compare buyer language, category choice, and the position the business can prove.",
     cadence: [
       "A comparison worth testing",
       "Buyer language and choice",
@@ -72,7 +72,7 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
     evidenceHeadline:
       "You marked experience as the place confidence may break.",
     evidenceDescription:
-      "Future letters can help compare the promise buyers hear with the experience they actually receive.",
+      "Future letters will compare the promise buyers hear with the experience they actually receive.",
     cadence: [
       "A confidence gap to trace",
       "Promise beside experience",
@@ -87,7 +87,7 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
     evidenceHeadline:
       "You marked identity as the place recognition may fail.",
     evidenceDescription:
-      "Future letters can help identify the colours, shapes, language, or behaviours worth repeating.",
+      "Future letters will identify the colours, shapes, language, or behaviours worth repeating.",
     cadence: [
       "A recognition gap to see",
       "Cues before the logo",
@@ -102,7 +102,7 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
     evidenceHeadline:
       "You marked messaging as the claim worth testing.",
     evidenceDescription:
-      "Future letters can help compare buyer language, recurring objections, and the strongest reason to choose.",
+      "Future letters will compare buyer language, recurring objections, and the strongest reason to choose.",
     cadence: [
       "A reason to choose",
       "Sales language and objections",
@@ -117,7 +117,7 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
     evidenceHeadline:
       "You marked memory as the cue worth reinforcing.",
     evidenceDescription:
-      "Future letters can help compare reach, repetition, and the cues buyers recall without prompting.",
+      "Future letters will compare reach, repetition, and the cues buyers recall without prompting.",
     cadence: [
       "A recall gap to inspect",
       "Repeated cues and reach",

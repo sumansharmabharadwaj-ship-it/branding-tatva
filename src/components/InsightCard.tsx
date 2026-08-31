@@ -166,7 +166,7 @@ export function InsightCard({
             {showReadingOutcome && post.keyTakeaways[0] ? (
               <>
                 <span className="insight-card__decision-label mr-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-clay">
-                  Helps you decide
+                  Decision at stake
                 </span>
                 {post.keyTakeaways[0]}
               </>
@@ -202,7 +202,7 @@ export function InsightCard({
                 <strong>{post.frameworkTitle}</strong>
               </span>
               <span className="insight-card__open" style={{ color }}>
-                Open <span aria-hidden="true">→</span>
+                Read the framework <span aria-hidden="true">→</span>
               </span>
             </span>
           ) : (

@@ -35,7 +35,7 @@ export const repositioningInsightPosts: SourcedInsightPost[] = [
       "reposition an established brand",
     ],
     searchIntent:
-      "Plan a service-business repositioning that changes market perception without discarding valuable recognition and customer trust.",
+      "Plan a service business repositioning that changes market perception without discarding valuable recognition and customer trust.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
@@ -48,7 +48,7 @@ export const repositioningInsightPosts: SourcedInsightPost[] = [
       "Recognition is an asset to audit before the design process, not a constraint to discover after launch.",
       "Preserve familiar cues that are unique, known, and still compatible with the new direction.",
       "A transition message should connect the business customers knew with the reason it is changing now.",
-      "Measure recognition, understanding, lead quality, and buying-situation association separately after launch.",
+      "Measure recognition, understanding, lead quality, and buying situation association separately after launch.",
     ],
     framework: {
       title: "The recognition bridge",
@@ -101,7 +101,7 @@ export const repositioningInsightPosts: SourcedInsightPost[] = [
       {
         question: "How do you rebrand without losing recognition?",
         answer:
-          "Measure current recognition, preserve familiar and unique assets that still fit the future, evolve rather than replace useful cues, explain the transition, phase the rollout, and track both recognition and new-position understanding after launch.",
+          "Measure current recognition, preserve familiar and unique assets that still fit the future, evolve rather than replace useful cues, explain the transition, phase the rollout, and track both recognition and new position understanding after launch.",
       },
       {
         question: "Should an established service business change its name?",
@@ -137,7 +137,7 @@ export const repositioningInsightPosts: SourcedInsightPost[] = [
         publisher: "Ehrenberg-Bass Institute for Marketing Science",
         url: "https://marketingscience.info/news-and-insights/brands-of-distinction",
         note:
-          "Explains fame and uniqueness as distinctive-asset qualities, recommends measuring what buyers have stored in memory, and warns against discarding useful identity assets without evidence.",
+          "Explains fame and uniqueness as distinctive asset qualities, recommends measuring what buyers have stored in memory, and warns against discarding useful identity assets without evidence.",
       },
       {
         title: "The Four Commandments: future proofing a brand's identity",

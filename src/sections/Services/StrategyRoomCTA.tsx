@@ -503,7 +503,7 @@ export function StrategyRoomCTA() {
                       </div>
                       <button type="button" data-strategy-control="true" onClick={goBack} className={`${QUIET_ACTION_CLASS} mt-5`}>
                         <span aria-hidden="true">←</span>
-                        <span className="ml-2">Back</span>
+                        <span className="ml-2">Previous question</span>
                       </button>
                     </motion.div>
                   )}

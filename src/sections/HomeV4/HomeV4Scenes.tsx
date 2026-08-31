@@ -197,7 +197,7 @@ export function V4HiddenCostScene() {
   const sequenceAction = sequenceComplete
     ? "Replay sequence"
     : sequencePaused
-      ? "Continue sequence"
+      ? "Resume sequence"
       : "Pause sequence";
   const SequenceIcon = sequenceComplete ? RotateCcw : sequencePaused ? Play : Pause;
 

@@ -43,7 +43,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
     keyTakeaways: [
       "Ask about real past behaviour before asking for opinions about the brand.",
       "Neutral, open questions reveal more useful language than questions that contain the preferred answer.",
-      "Interview customers from different decision states instead of collecting only happy-client testimony.",
+      "Interview customers from different decision states instead of collecting only happy client testimony.",
       "Analyse situations, alternatives, triggers, doubts, proof, and remembered language as separate evidence categories.",
       "A small qualitative sample can reveal patterns and hypotheses, while prevalence still requires broader measurement.",
     ],
@@ -86,7 +86,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "Questions such as What do you think of our brand? and What values matter to you? invite abstraction. Customers can usually produce a reasonable answer, yet the response may have little relationship with the decision that brought them to the business.",
           "Brand strategy needs behavioural context. The useful material sits in the sequence: what changed, why the problem became urgent, which alternatives entered the frame, what created doubt, which evidence mattered, and what language the customer used before the company supplied its own terminology.",
-          "Harvard Business Review has recommended interviews over lightweight survey questions when deeper customer reasoning matters, with open-ended questions about how people made decisions. That distinction is central here: the interview is a reconstruction of choice rather than a request for compliments.",
+          "Harvard Business Review has recommended interviews over lightweight survey questions when deeper customer reasoning matters, with open ended questions about how people made decisions. That distinction is central here: the interview is a reconstruction of choice rather than a request for compliments.",
         ],
         callout: {
           label: "Interview rule",
@@ -121,9 +121,9 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
       },
       {
         id: "neutral-guide",
-        heading: "Build a semi-structured guide with neutral questions",
+        heading: "Build a semi structured guide with neutral questions",
         paragraphs: [
-          "A semi-structured guide provides consistency across interviews while leaving room to follow unexpected evidence. Government qualitative-research guidance recommends open-ended discussion guided by a plan, with the freedom to reorder questions and probe relevant details.",
+          "A semi structured guide provides consistency across interviews while leaving room to follow unexpected evidence. Government qualitative research guidance recommends open ended discussion guided by a plan, with the freedom to reorder questions and probe relevant details.",
           "Remove leading language during review. How important was our strategic approach? already tells the participant which feature deserves importance. What made you take the conversation seriously? leaves the evidence open.",
           "Use familiar language and short prompts. Long questions often smuggle several assumptions into one sentence and make it difficult to know which part the participant answered.",
         ],
@@ -156,7 +156,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         id: "map-alternatives",
         heading: "Ask about the full alternative set",
         paragraphs: [
-          "Competitors are only part of the decision. A service buyer may compare an agency with a freelancer, an internal hire, software, a course, a lower-scope engagement, or simply waiting another quarter.",
+          "Competitors are only part of the decision. A service buyer may compare an agency with a freelancer, an internal hire, software, a course, a lower scope engagement, or simply waiting another quarter.",
           "Ask which options entered the conversation, which one initially seemed safest, what each option appeared to offer, and why some were removed from consideration. The language reveals the customer's actual category frame.",
           "This matters because positioning against the wrong competitive set produces elegant irrelevance. The market may be comparing the business with a completely different solution than the company monitors in competitor decks.",
         ],
@@ -226,12 +226,12 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "Qualitative research reveals mechanisms, meanings, language, and patterns. It does not automatically tell the business how common each pattern is in the wider market.",
           "Use interview findings to create strategic hypotheses: a buying situation that may deserve priority, an alternative customers compare, a proof gap, a message customers already repeat, or a segment with a different decision process.",
-          "Then validate high-consequence hypotheses with other evidence where available: CRM patterns, win-loss data, search behaviour, sales-call notes, analytics, surveys, proposal progression, and observed customer behaviour. Strategy becomes stronger when different evidence sources converge.",
+          "Then validate high consequence hypotheses with other evidence where available: CRM patterns, win loss data, search behaviour, sales call notes, analytics, surveys, proposal progression, and observed customer behaviour. Strategy becomes stronger when different evidence sources converge.",
         ],
       },
       {
         id: "interview-sprint",
-        heading: "A practical two-week customer interview sprint",
+        heading: "A practical customer interview sprint over two weeks",
         paragraphs: [
           "During days one and two, define the research decision, participant mix, recruitment criteria, consent process, and topic guide. Pilot the guide with one conversation and remove questions that produce abstractions or repeated answers.",
           "During days three through eight, conduct interviews and summarise each one immediately. Keep the guide stable enough for comparison while allowing useful probes to evolve.",
@@ -263,7 +263,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
       {
         question: "Should customer interviews be recorded?",
         answer:
-          "Recording can improve accuracy when participants give informed permission and the business has an appropriate privacy and storage process. If recording is unsuitable, use a dedicated note-taker or detailed immediate write-up.",
+          "Recording can improve accuracy when participants give informed permission and the business has an appropriate privacy and storage process. If recording is unsuitable, use a dedicated note taker or detailed immediate write up.",
       },
       {
         question: "How do you avoid leading questions in customer interviews?",
@@ -287,7 +287,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         publisher: "Harvard Business Review",
         url: "https://hbr.org/tip/2019/05/dont-survey-your-customers-interview-them",
         note:
-          "Open-ended interview questions and decision-focused conversations for deeper customer insight.",
+          "Open ended interview questions and decision focused conversations for deeper customer insight.",
       },
       {
         title: "Jobs to Be Done: A Toolbox",
@@ -301,7 +301,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         publisher: "GOV.UK",
         url: "https://www.gov.uk/guidance/interview-study-qualitative-studies",
         note:
-          "Semi-structured interviews, open-ended discussion, depth, sample limitations, and topic-guide practice.",
+          "Semi structured interviews, open ended discussion, depth, sample limitations, and topic guide practice.",
       },
       {
         title: "What makes a good interview?",
@@ -315,7 +315,7 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
         publisher: "UK Statistics Authority",
         url: "https://uksa.statisticsauthority.gov.uk/publication/ethical-considerations-associated-with-qualitative-research-methods/pages/3/",
         note:
-          "Leading-question bias, neutral probing, topic-guide review, and researcher reflexivity.",
+          "Leading question bias, neutral probing, topic guide review, and researcher reflexivity.",
       },
     ],
   },

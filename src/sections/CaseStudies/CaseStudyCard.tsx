@@ -49,7 +49,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
       >
         <Link
           href={`/work/${project.slug}`}
-          data-cursor-label="View case study"
+          data-cursor-label="Read case study"
           className="spotlight-card relative flex h-full flex-col justify-end overflow-hidden rounded-2xl p-6 shadow-elevation-sm"
           style={{ ["--card-color" as string]: project.accent }}
         >
@@ -101,7 +101,7 @@ export function CaseStudyCard({ project }: { project: Project }) {
               ))}
             </div>
             <p className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-ivory transition-transform duration-300 group-hover:translate-x-1">
-              View case study <span aria-hidden="true">&rarr;</span>
+              Read case study <span aria-hidden="true">&rarr;</span>
             </p>
           </div>
         </Link>

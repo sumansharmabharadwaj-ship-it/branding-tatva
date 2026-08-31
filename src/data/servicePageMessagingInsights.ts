@@ -3,10 +3,10 @@ import type { InsightPost } from "@/data/insights";
 export const servicePageMessagingInsightPosts: InsightPost[] = [
   {
     slug: "service-page-messaging-strategy",
-    title: "Service-page messaging strategy: turn interest into a confident choice",
-    seoTitle: "Service-page messaging strategy for service businesses",
+    title: "Service page messaging strategy: turn interest into a confident choice",
+    seoTitle: "Service page messaging strategy for service businesses",
     excerpt:
-      "A practical framework for structuring service-page messaging around customer situation, outcome, method, scope, proof, fit, and next action.",
+      "A practical framework for structuring service page messaging around customer situation, outcome, method, scope, proof, fit, and next action.",
     directAnswer:
       "A strong service page helps a qualified buyer decide whether a specific offer fits their situation. It should identify the buying context, describe the desired change, explain the distinctive method, clarify scope and process, place relevant proof near the claims it supports, state who the service fits and who it does not, and make the next step concrete. The page should reduce uncertainty rather than simply repeat the homepage at greater length.",
     element: "air",
@@ -32,11 +32,11 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
       "A service page should qualify as much as it persuades.",
       "Lead with the customer situation and desired change before detailed deliverables.",
       "Explain why the method is structured this way so scope feels purposeful rather than arbitrary.",
-      "Use proof that matches the exact promise of the service instead of generic company-wide credibility.",
+      "Use proof that matches the exact promise of the service instead of generic company wide credibility.",
       "Make fit, exclusions, process, and next steps explicit so uncertainty decreases before the sales conversation.",
     ],
     framework: {
-      title: "The service-page confidence stack",
+      title: "The service page confidence stack",
       introduction:
         "Seven messaging jobs help a buyer move from relevance to a confident next step.",
       steps: [
@@ -101,7 +101,7 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
       },
       {
         id: "proof-specific",
-        heading: "Use service-specific proof",
+        heading: "Use service specific proof",
         paragraphs: [
           "A broad company testimonial can establish general trust while leaving the buyer unsure whether this exact service works. Prioritise case studies, excerpts, outcomes, process evidence, and client language connected to the offer being considered.",
           "Show the starting situation before the result so the visitor can judge relevance. A dramatic outcome from a completely different customer context can be less persuasive than a modest result from a highly similar one.",
@@ -121,7 +121,7 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
         id: "handle-objections",
         heading: "Answer important objections before the CTA",
         paragraphs: [
-          "Use the FAQ or pre-CTA section for questions that commonly slow the decision: timeline, collaboration, ownership, revisions, implementation, internal stakeholders, preparation, or what happens when the scope changes.",
+          "Use the FAQ or pre CTA section for questions that commonly slow the decision: timeline, collaboration, ownership, revisions, implementation, internal stakeholders, preparation, or what happens when the scope changes.",
           "Prioritise questions that reveal buying friction rather than filling the section with easy answers designed only for search coverage.",
           "The goal is to make the sales conversation more substantive by resolving basic uncertainty before it begins.",
         ],
@@ -131,7 +131,7 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
         heading: "Explain the next step as clearly as the service itself",
         paragraphs: [
           "A visitor who reaches the end should understand what happens after the CTA. Explain whether they will complete a short form, book a call, receive a diagnostic, discuss scope, or receive a proposal.",
-          "Match the action to the sales model. High-consideration services benefit from a low-friction exploratory step, while tightly scoped offers may support a more direct purchase or booking path.",
+          "Match the action to the sales model. High consideration services benefit from a low friction exploratory step, while tightly scoped offers may support a more direct purchase or booking path.",
           "Use a secondary action for visitors who need more evidence, such as reading a relevant case study or the guide that explains the underlying decision.",
         ],
       },
@@ -140,7 +140,7 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
         heading: "Audit the page for unanswered buying questions",
         paragraphs: [
           "Read the page as a qualified prospect with no internal knowledge. Mark every moment where the visitor would need to infer the category, result, process, difference, scope, proof, fit, or next step.",
-          "Then compare the page with actual sales-call questions. Repeated questions often show which information belongs earlier in the digital journey.",
+          "Then compare the page with actual sales call questions. Repeated questions often show which information belongs earlier in the digital journey.",
           "A strong service page reduces confusion without trying to eliminate the usefulness of a human conversation.",
         ],
         bullets: [

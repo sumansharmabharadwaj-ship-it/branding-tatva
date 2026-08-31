@@ -36,7 +36,7 @@ export const supportingInsightPosts: InsightPost[] = [
       "A strong hierarchy reduces cognitive effort while preserving strategic depth.",
     ],
     framework: {
-      title: "The five-layer website message stack",
+      title: "The five layer website message stack",
       introduction:
         "Each layer answers the next question forming in the visitor's mind, turning a long page into a guided decision rather than a catalogue.",
       steps: [
@@ -84,7 +84,7 @@ export const supportingInsightPosts: InsightPost[] = [
       },
       {
         id: "why-service-websites-feel-crowded",
-        heading: "Why service-business websites become crowded",
+        heading: "Why service business websites become crowded",
         paragraphs: [
           "Many service websites inherit the structure of the company rather than the decision process of the customer. Departments become navigation items, capabilities become sections, and internal terminology becomes headings. The visitor receives a map of the organisation before understanding the value.",
           "Another source of crowding is fear. Teams worry that leaving one capability below the fold will make it invisible, so every service competes for the opening screen. The result distributes attention so evenly that nothing feels important.",
@@ -100,7 +100,7 @@ export const supportingInsightPosts: InsightPost[] = [
           "Avoid beginning with an abstract ambition that could belong to several industries. A phrase about unlocking potential may sound expansive while leaving the visitor unsure whether the business provides consulting, software, coaching, or design.",
         ],
         bullets: [
-          "Can a first-time visitor name the category after one screen?",
+          "Can a visitor arriving for the first time name the category after one screen?",
           "Does the opening describe a recognisable customer situation?",
           "Is the promised movement understandable without reading the services list?",
           "Does the first action match the visitor's current level of confidence?",
@@ -133,14 +133,14 @@ export const supportingInsightPosts: InsightPost[] = [
         id: "layer-four-belief",
         heading: "4. Build belief beside the claim",
         paragraphs: [
-          "Proof should appear where doubt forms. A claim about strategic depth can be followed by a diagnostic framework or case-study decision. A claim about consistency can be followed by connected touchpoints. A claim about commercial effect can be followed by a verified outcome with context.",
+          "Proof should appear where doubt forms. A claim about strategic depth can be followed by a diagnostic framework or case study decision. A claim about consistency can be followed by connected touchpoints. A claim about commercial effect can be followed by a verified outcome with context.",
           "One large testimonial section near the bottom forces the reader to remember several earlier promises and decide which quotation supports which one. Distributed proof reduces that mental work.",
           "Use several proof forms because they answer different doubts. Work samples demonstrate quality. Case studies demonstrate judgement. Process evidence demonstrates repeatability. Customer language demonstrates experienced value.",
         ],
         bullets: [
-          "Place proof immediately after high-stakes claims.",
+          "Place proof immediately after high stakes claims.",
           "Name the context behind every result.",
-          "Use case-study decisions rather than outcome numbers alone.",
+          "Use case study decisions rather than outcome numbers alone.",
           "Show enough of the method to make expertise visible.",
           "Keep testimonials specific to the value they support.",
         ],
@@ -158,7 +158,7 @@ export const supportingInsightPosts: InsightPost[] = [
         id: "homepage-and-service-page-roles",
         heading: "Give the homepage and service pages different jobs",
         paragraphs: [
-          "The homepage explains the brand-level position and helps the visitor choose a path. It should establish category, customer situation, central promise, distinctive point of view, proof, and the main service routes.",
+          "The homepage explains the brand level position and helps the visitor choose a path. It should establish category, customer situation, central promise, distinctive point of view, proof, and the main service routes.",
           "A service page goes deeper into one buying situation. It can name the specific tension, explain the scope, reveal the method, answer objections, show relevant evidence, and clarify what happens next.",
           "Repeating the same generic opening across every page wastes the opportunity created by search intent. Each service page should begin where that reader's question begins while remaining recognisably connected to the master message.",
         ],

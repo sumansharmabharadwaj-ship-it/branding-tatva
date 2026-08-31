@@ -8,7 +8,7 @@ export const caseStudyInsightPosts: InsightPost[] = [
     excerpt:
       "A practical structure for turning client work into credible buying evidence by showing context, constraints, decisions, execution, and verified outcomes.",
     directAnswer:
-      "A strong service-business case study should explain the client's situation, the decision that needed to change, the constraints shaping the work, the strategic choices made, the evidence behind those choices, what was delivered, and what changed afterward. The most persuasive case studies help a prospective client judge how you think and whether that thinking fits their situation, rather than presenting a polished before-and-after with the difficult middle removed.",
+      "A strong service business case study should explain the client's situation, the decision that needed to change, the constraints shaping the work, the strategic choices made, the evidence behind those choices, what was delivered, and what changed afterward. The most persuasive case studies help a prospective client judge how you think and whether that thinking fits their situation, rather than presenting a polished before and after with the difficult middle removed.",
     element: "water",
     topicSlug: "customer-experience",
     primaryKeyword: "case study structure for service businesses",
@@ -86,7 +86,7 @@ export const caseStudyInsightPosts: InsightPost[] = [
           "This is where expertise becomes legible. The reader sees how the team moved from symptom to cause.",
         ],
         callout: {
-          label: "Case-study rule",
+          label: "Case study rule",
           text: "The most valuable sentence in a case study is often the one that explains why the original brief was incomplete.",
         },
       },
@@ -104,7 +104,7 @@ export const caseStudyInsightPosts: InsightPost[] = [
         heading: "5. Connect deliverables to the decision system",
         paragraphs: [
           "Avoid a deliverables dump. A list of logo, website, guidelines, social templates, and campaign assets tells the reader what was made without explaining what each part solved.",
-          "Group execution by strategic role. Positioning may reshape the offer page. A message hierarchy may determine homepage order. Distinctive assets may create consistency across social and proposals. Journey principles may change onboarding and follow-up.",
+          "Group execution by strategic role. Positioning may reshape the offer page. A message hierarchy may determine homepage order. Distinctive assets may create consistency across social and proposals. Journey principles may change onboarding and follow up.",
           "Use annotated visuals where they reveal the connection between decision and execution. Screenshots become more useful when the reader understands what they are meant to notice.",
         ],
       },
@@ -112,7 +112,7 @@ export const caseStudyInsightPosts: InsightPost[] = [
         id: "report-outcomes",
         heading: "6. Report outcomes with evidence boundaries",
         paragraphs: [
-          "Separate verified metrics, observed behavioural changes, client-reported outcomes, and qualitative signals. Each type of evidence is useful when labelled accurately.",
+          "Separate verified metrics, observed behavioural changes, client reported outcomes, and qualitative signals. Each type of evidence is useful when labelled accurately.",
           "For quantitative claims, include the baseline, timeframe, metric definition, and source where possible. For qualitative outcomes, describe the observation precisely: sales calls became shorter because prospects arrived with clearer category understanding; internal teams stopped rewriting the value proposition for each proposal; referrals began using the new service language.",
           "Avoid implying that brand work caused every business result that followed. Credibility compounds when attribution limits are visible.",
         ],
@@ -146,7 +146,7 @@ export const caseStudyInsightPosts: InsightPost[] = [
     faq: [
       { question: "What sections should a service business case study include?", answer: "Include the client situation, constraints, diagnosis, strategic choices, execution, verified outcomes, and a transferable lesson. Add evidence and visuals where they help the reader understand the decision process." },
       { question: "How long should a case study be?", answer: "Use the length required to make the decision logic credible. A complex transformation may need a detailed page, while a focused engagement can be shorter. Clarity and evidence matter more than a target word count." },
-      { question: "Can a case study work without strong numerical results?", answer: "Yes. Use precise qualitative evidence such as behavioural changes, improved decision consistency, client-reported outcomes, reduced confusion, or clearer sales conversations. Label the evidence accurately." },
+      { question: "Can a case study work without strong numerical results?", answer: "Yes. Use precise qualitative evidence such as behavioural changes, improved decision consistency, client reported outcomes, reduced confusion, or clearer sales conversations. Label the evidence accurately." },
       { question: "Should case studies name the client?", answer: "Named clients increase verifiability when permission exists. Anonymous cases can still be useful when confidentiality requires them, but provide enough context and evidence for the reader to judge relevance." },
       { question: "How many case studies does a service business need?", answer: "Prioritise coverage of the main buying situations, service types, and strategic problems rather than chasing a fixed number. A few deep, relevant cases can be more useful than a large gallery of shallow examples." },
       { question: "Where should case studies link on the website?", answer: "Link them near the claims and services they support, from relevant Insights articles, inside proposals, and from the Work archive. Proof works best when it appears close to the decision it helps a buyer make." },

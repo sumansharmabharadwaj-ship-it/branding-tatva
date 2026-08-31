@@ -19,7 +19,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
     excerpt:
       "A practical framework for deciding whether services, divisions, programmes, and acquisitions should share one brand, use endorsed names, or become separate brands.",
     directAnswer:
-      "Brand architecture is the system that defines how a company name, service names, sub-brands, programmes, and acquired brands relate to one another. For most service businesses, the strongest default is one clear master brand with descriptive offer names. Add a sub-brand only when the audience, promise, buying process, risk, or operating model is different enough to justify the extra recognition and marketing cost.",
+      "Brand architecture is the system that defines how a company name, service names, sub brands, programmes, and acquired brands relate to one another. For most service businesses, the strongest default is one clear master brand with descriptive offer names. Add a sub brand only when the audience, promise, buying process, risk, or operating model is different enough to justify the extra recognition and marketing cost.",
     element: "earth",
     topicSlug: "positioning",
     primaryKeyword: "brand architecture for service businesses",
@@ -33,7 +33,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
       "how to name service offerings",
     ],
     searchIntent:
-      "Decide how a growing service business should structure its company brand, service names, sub-brands, programmes, and acquired brands without creating unnecessary confusion or marketing cost.",
+      "Decide how a growing service business should structure its company brand, service names, sub brands, programmes, and acquired brands without creating unnecessary confusion or marketing cost.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
@@ -42,8 +42,8 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
     heroImageAlt:
       "A dark walnut root block feeding three indigo glazed service vessels through branching brass channels",
     keyTakeaways: [
-      "Brand architecture is a customer-navigation system before it is a naming exercise.",
-      "Most service businesses gain more from one strong master brand than from several lightly funded sub-brands.",
+      "Brand architecture is a customer navigation system before it is a naming exercise.",
+      "Most service businesses gain more from one strong master brand than from several lightly funded sub brands.",
       "A separate brand earns its existence when audience, promise, risk, channel, or operating model genuinely diverges.",
       "Descriptive service names often create more clarity than invented names that require a second marketing budget.",
       "Architecture should reduce overlap, protect recognition, and make future growth easier to understand.",
@@ -85,7 +85,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         id: "what-brand-architecture-means",
         heading: "What brand architecture means in a service business",
         paragraphs: [
-          "Brand architecture defines the roles and relationships among the names a business asks customers to understand. That can include the company, service lines, programmes, methods, products, acquired businesses, geographic practices, and internal initiatives that later become customer-facing.",
+          "Brand architecture defines the roles and relationships among the names a business asks customers to understand. That can include the company, service lines, programmes, methods, products, acquired businesses, geographic practices, and internal initiatives that later become customer facing.",
           "The practical question is simple: when someone meets one part of the business, how much should they understand about the rest? A coherent architecture answers that through names, hierarchy, visual relationships, messaging, and navigation.",
           "For a service business, architecture is especially important because the offer is already intangible. Every additional brand name creates another concept the buyer has to place, remember, compare, and trust before the work itself becomes visible.",
         ],
@@ -117,7 +117,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         bullets: [
           "Branded house: one dominant name, descriptive or lightly differentiated offers.",
           "Endorsed system: stronger offer identities with a visible parent relationship.",
-          "House of brands: largely independent brands with limited customer-facing parent presence.",
+          "House of brands: largely independent brands with limited customer facing parent presence.",
           "Hybrid architecture: different relationships across different parts of the portfolio.",
         ],
       },
@@ -136,7 +136,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         heading: "1. Test whether the audience truly changes",
         paragraphs: [
           "A new offer aimed at the same decision maker usually belongs close to the existing brand. The company may solve a different problem while drawing on the same relationship, credibility, and buying context.",
-          "Separation becomes more reasonable when the decision maker, user, procurement route, price expectation, and category comparison all change together. A B2B advisory firm launching a mass-market consumer product faces a different architecture problem from the same firm adding an executive workshop.",
+          "Separation becomes more reasonable when the decision maker, user, procurement route, price expectation, and category comparison all change together. A B2B advisory firm launching a mass market consumer product faces a different architecture problem from the same firm adding an executive workshop.",
           "Avoid using industry labels alone. Two sectors can still share one buyer psychology and one brand promise. Conversely, two offers inside one industry may have radically different buying situations and reputational requirements.",
         ],
         bullets: [
@@ -151,8 +151,8 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         id: "promise-test",
         heading: "2. Test the promise the new offer needs to own",
         paragraphs: [
-          "Architecture becomes strained when two offers need contradictory meanings. A premium strategic advisory brand may struggle to lend the same name to a high-volume commodity service if buyers rely on exclusivity, senior access, or bespoke depth as evidence of value.",
-          "The opposite also happens. Teams create separate brands even though every offer reinforces the same promise. In that case the separation throws away the very equity that could make cross-selling and referrals easier.",
+          "Architecture becomes strained when two offers need contradictory meanings. A premium strategic advisory brand may struggle to lend the same name to a high volume commodity service if buyers rely on exclusivity, senior access, or bespoke depth as evidence of value.",
+          "The opposite also happens. Teams create separate brands even though every offer reinforces the same promise. In that case the separation throws away the very equity that could make cross selling and referrals easier.",
           "Write the position of the master brand and the proposed offer side by side. Compare category, customer tension, promise, point of view, proof, personality, and price logic. The more those dimensions overlap, the weaker the case for independence.",
         ],
       },
@@ -162,7 +162,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "A separate offer can share the brand while using a different page, funnel, sales sequence, onboarding process, and delivery system. Operational difference alone does not automatically require brand separation.",
           "Greater independence becomes useful when discovery channels, buyer expectations, purchasing mechanics, service environment, and ongoing relationship all diverge. The architecture can then help signal that the customer is entering a different kind of experience.",
-          "Map the journey before naming the solution. If the proposed sub-brand still sends people back to the same website, same founder, same proof, same sales call, and same delivery team, the customer may experience the separate identity as theatre rather than useful navigation.",
+          "Map the journey before naming the solution. If the proposed sub brand still sends people back to the same website, same founder, same proof, same sales call, and same delivery team, the customer may experience the separate identity as theatre rather than useful navigation.",
         ],
       },
       {
@@ -170,7 +170,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         heading: "4. Test reputation and risk transfer",
         paragraphs: [
           "A master brand shares reputation in both directions. Success in one service can strengthen another. Failure, controversy, regulatory exposure, or a mismatch in quality can also travel through the same name.",
-          "This matters in acquisitions, experimental offers, regulated services, and business models with very different quality-control environments. An endorsed or more independent structure can create useful distance while still preserving selected credibility.",
+          "This matters in acquisitions, experimental offers, regulated services, and business models with very different quality control environments. An endorsed or more independent structure can create useful distance while still preserving selected credibility.",
           "Risk separation needs substance behind the identity. Customers increasingly see ownership relationships, leadership links, reviews, and corporate information. A separate logo provides little protection when the parent connection is obvious and the operations remain intertwined.",
         ],
       },
@@ -179,7 +179,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         heading: "5. Test whether the business can fund another memory system",
         paragraphs: [
           "Every independent brand needs more than a name. It needs a position, search presence, proof, distinctive assets, content, sales material, governance, customer experience, measurement, and enough repeated exposure to become familiar.",
-          "Harvard Business School's work on brand portfolio strategy frames architecture as a way to coordinate meaning-based assets while improving market coverage and reducing overlap. That economic lens matters for smaller businesses: each additional brand competes for scarce attention and investment.",
+          "Harvard Business School's work on brand portfolio strategy frames architecture as a way to coordinate meaning based assets while improving market coverage and reducing overlap. That economic lens matters for smaller businesses: each additional brand competes for scarce attention and investment.",
           "Estimate the real maintenance cost before approving separation. If the organisation will continue funnelling almost all marketing activity through the parent brand, an independent identity may create complexity without receiving enough support to build equity.",
         ],
         callout: {
@@ -190,10 +190,10 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
       },
       {
         id: "name-services-clearly",
-        heading: "How to name services without creating accidental sub-brands",
+        heading: "How to name services without creating accidental sub brands",
         paragraphs: [
-          "Use architecture language deliberately. A service name helps a customer navigate. A method name helps explain how the work happens. A package name helps compare levels of engagement. A sub-brand asks the customer to understand a distinct market identity.",
-          "Many service businesses jump from service to sub-brand without crossing those intermediate layers. A descriptive name can provide enough distinction while preserving the parent brand's accumulated recognition.",
+          "Use architecture language deliberately. A service name helps a customer navigate. A method name helps explain how the work happens. A package name helps compare levels of engagement. A sub brand asks the customer to understand a distinct market identity.",
+          "Many service businesses jump from service to sub brand without crossing those intermediate layers. A descriptive name can provide enough distinction while preserving the parent brand's accumulated recognition.",
           "Create a naming grammar before inventing individual names. Decide whether services use functional descriptors, outcome language, duration, audience, or a consistent modifier. The grammar creates family resemblance while leaving room for different propositions.",
         ],
         bullets: [
@@ -219,15 +219,15 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         heading: "Architecture after an acquisition or merger",
         paragraphs: [
           "Acquisitions create a harder decision because the acquired name may already hold trust, search demand, referral equity, specialist meaning, and customer relationships. Immediate absorption can destroy value that the acquisition was meant to capture.",
-          "Evaluate the equity of both names among the audiences that matter, the similarity of their positions, the switching cost, and the future portfolio strategy. McKinsey's work on post-merger branding describes several viable outcomes: independence, combination, umbrella endorsement, selection of one legacy brand, or creation of a new brand.",
-          "Use a transition architecture when the long-term destination differs from what the market can absorb today. Endorsement, dual naming, migration language, and phased visual convergence can transfer trust before the acquired name disappears.",
+          "Evaluate the equity of both names among the audiences that matter, the similarity of their positions, the switching cost, and the future portfolio strategy. McKinsey's work on post merger branding describes several viable outcomes: independence, combination, umbrella endorsement, selection of one legacy brand, or creation of a new brand.",
+          "Use a transition architecture when the long term destination differs from what the market can absorb today. Endorsement, dual naming, migration language, and phased visual convergence can transfer trust before the acquired name disappears.",
         ],
       },
       {
         id: "architecture-audit",
         heading: "A practical brand architecture audit",
         paragraphs: [
-          "List every customer-facing name in the business: company, divisions, services, programmes, products, methods, frameworks, communities, events, newsletters, and acquired brands. Record who each serves, what it promises, where it appears, how much demand it has, and which other names it overlaps.",
+          "List every customer facing name in the business: company, divisions, services, programmes, products, methods, frameworks, communities, events, newsletters, and acquired brands. Record who each serves, what it promises, where it appears, how much demand it has, and which other names it overlaps.",
           "Then score each name for customer usefulness, strategic distinction, recognition, proof, investment, and governance. Names with low customer usefulness and low equity are candidates for simplification. Names with strong independent equity deserve protection even when the internal organisation wants tidiness.",
           "Finish with an architecture map that shows role, relationship, naming rule, visual relationship, website location, and migration plan. The map should be simple enough for a salesperson, designer, writer, and new employee to apply without interpretation meetings.",
         ],
@@ -259,7 +259,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
       {
         question: "What is brand architecture?",
         answer:
-          "Brand architecture is the system that defines how a company's master brand, service lines, sub-brands, products, programmes, and acquired brands relate to one another and appear to customers.",
+          "Brand architecture is the system that defines how a company's master brand, service lines, sub brands, products, programmes, and acquired brands relate to one another and appear to customers.",
       },
       {
         question: "What are the main types of brand architecture?",
@@ -272,9 +272,9 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
           "Usually no. Most service businesses gain more clarity and recognition from one master brand with descriptive service or package names. A separate brand becomes useful when the audience, promise, journey, risk, or operating model is meaningfully different.",
       },
       {
-        question: "What is the difference between a service name and a sub-brand?",
+        question: "What is the difference between a service name and a sub brand?",
         answer:
-          "A service name helps customers navigate an offer inside the parent brand. A sub-brand carries a stronger independent identity, positioning, recognition system, and marketing responsibility while retaining some relationship with the parent.",
+          "A service name helps customers navigate an offer inside the parent brand. A sub brand carries a stronger independent identity, positioning, recognition system, and marketing responsibility while retaining some relationship with the parent.",
       },
       {
         question: "When should a business use an endorsed brand?",
@@ -305,21 +305,21 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         publisher: "McKinsey & Company",
         url: "https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/the-brand-behind-the-brands",
         note:
-          "Why simple branded-house and house-of-brands binaries can be insufficient in modern portfolios.",
+          "Why simple branded house and house of brands binaries can be insufficient in modern portfolios.",
       },
       {
         title: "Making brand portfolios work",
         publisher: "McKinsey & Company",
         url: "https://www.mckinsey.com/capabilities/growth-marketing-and-sales/our-insights/making-brand-portfolios-work",
         note:
-          "Customer-needs-first portfolio decisions, overlap, pruning, umbrella brands, and portfolio complexity.",
+          "Customer needs first portfolio decisions, overlap, pruning, umbrella brands, and portfolio complexity.",
       },
       {
         title: "Integrating marketing and brand in M&A: The way to superior growth",
         publisher: "McKinsey & Company",
         url: "https://www.mckinsey.com/capabilities/m-and-a/our-insights/integrating-marketing-and-brand-in-ma-the-way-to-superior-growth",
         note:
-          "Post-merger brand options, equity evaluation, switching cost, and transition choices.",
+          "Post merger brand options, equity evaluation, switching cost, and transition choices.",
       },
       {
         title: "Brand Relationship Spectrum: The Key to the Brand Architecture Challenge",

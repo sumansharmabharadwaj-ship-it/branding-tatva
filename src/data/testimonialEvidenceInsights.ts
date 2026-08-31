@@ -20,7 +20,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
       "service business testimonials",
     ],
     searchIntent:
-      "Find testimonial questions that generate credible, specific proof for service-business sales and marketing.",
+      "Find testimonial questions that generate credible, specific proof for service business sales and marketing.",
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "11 min read",
@@ -36,7 +36,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
       "Maintain permission, source, date, context, and approved wording so testimonial evidence stays trustworthy over time.",
     ],
     framework: {
-      title: "The decision-evidence testimonial",
+      title: "The decision evidence testimonial",
       introduction:
         "Five stages produce proof that helps another buyer evaluate a similar decision.",
       steps: [
@@ -94,7 +94,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
         paragraphs: [
           "Instead of asking how was the experience, ask for moments. What surprised you? Which part made the work feel clearer? When did you realise the process was different from what you expected? Which decision became easier?",
           "Specific moments make service quality visible. They can show care, rigour, challenge, responsiveness, strategic depth, or ease without relying on empty adjectives.",
-          "For longer engagements, collect evidence at several stages rather than depending entirely on end-of-project memory.",
+          "For longer engagements, collect evidence at several stages rather than depending entirely on end of project memory.",
         ],
       },
       {
@@ -110,7 +110,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
         id: "interview-not-form",
         heading: "Use short interviews when the relationship allows it",
         paragraphs: [
-          "A ten-minute conversation often produces better evidence than a written form because the interviewer can ask for examples, clarify vague answers, and follow an unexpected thread.",
+          "A conversation lasting ten minutes often produces better evidence than a written form because the interviewer can ask for examples, clarify vague answers, and follow an unexpected thread.",
           "Record only with explicit permission. Transcribe the conversation, select candidate excerpts, lightly edit for clarity where needed, and return the final wording for approval.",
           "Written forms still work when scale or client preference requires them. Use one question at a time and explain the purpose so the client knows useful detail matters more than polished prose.",
         ],
@@ -142,7 +142,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
       },
       {
         id: "testimonial-system",
-        heading: "Build a testimonial evidence system, not a one-time request",
+        heading: "Build a testimonial evidence system, not a one time request",
         paragraphs: [
           "Create collection moments around meaningful milestones: shortly after a decision breakthrough, at delivery, after implementation, and when measurable results become available.",
           "Tag evidence by service, buying situation, objection, claim, outcome type, and permission level. This makes proof reusable across website pages, proposals, case studies, sales material, and content.",
@@ -154,7 +154,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
       { question: "What are the best questions to ask for a client testimonial?", answer: "Ask what was happening before the engagement, what created urgency, what alternatives or hesitations existed, why the client chose you, which moments stood out during the work, and what changed afterward." },
       { question: "Should testimonials be edited?", answer: "Light editing for clarity and length is reasonable when meaning remains intact and the client approves the final wording. Keep the original response and avoid strengthening claims beyond what the client actually said." },
       { question: "Are video testimonials better than written testimonials?", answer: "Video can increase richness and authenticity, while written quotes are easier to place beside specific claims. The quality and relevance of the evidence matter more than the format." },
-      { question: "Where should testimonials appear on a service website?", answer: "Place them near the claims, objections, process descriptions, pricing context, and service decisions they support. Keep service-specific evidence close to the relevant service page." },
+      { question: "Where should testimonials appear on a service website?", answer: "Place them near the claims, objections, process descriptions, pricing context, and service decisions they support. Keep service specific evidence close to the relevant service page." },
       { question: "How many testimonials should a website use?", answer: "Use enough relevant evidence to support the main claims and buying situations without overwhelming the page. Relevance, specificity, and placement matter more than the total count." },
       { question: "Can anonymous testimonials be useful?", answer: "Yes, especially where confidentiality matters, but named attribution usually increases verifiability. If anonymity is required, provide truthful context such as role, industry, or business stage where permission allows." },
     ],

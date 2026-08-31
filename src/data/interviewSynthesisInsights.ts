@@ -36,7 +36,7 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
       "A useful positioning brief records confidence and unanswered questions alongside the final decisions.",
     ],
     framework: {
-      title: "The evidence-to-decision ladder",
+      title: "The evidence to decision ladder",
       introduction:
         "Five layers prevent qualitative research from becoming a collage of favourite quotes.",
       steps: [
@@ -84,8 +84,8 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
         heading: "Build a pattern matrix before writing conclusions",
         paragraphs: [
           "Create a matrix with candidate patterns on one axis and participants or segments on the other. Mark where the pattern appears, how specific the evidence is, and whether the participant's behaviour supports the stated opinion.",
-          "Frequency matters, but it is not the only signal. A pattern mentioned by fewer customers may still be strategically important if it describes the highest-value buying situation or exposes a distinctive capability competitors rarely provide.",
-          "Look for co-occurrence. A trigger may repeatedly appear with one alternative and one proof requirement. Those combinations often reveal a stronger positioning opportunity than isolated themes such as trust or quality.",
+          "Frequency matters, but it is not the only signal. A pattern mentioned by fewer customers may still be strategically important if it describes the highest value buying situation or exposes a distinctive capability competitors rarely provide.",
+          "Look for co occurrence. A trigger may repeatedly appear with one alternative and one proof requirement. Those combinations often reveal a stronger positioning opportunity than isolated themes such as trust or quality.",
         ],
         bullets: [
           "Recurrence: how often does the pattern appear?",
@@ -140,8 +140,8 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
       },
     ],
     faq: [
-      { question: "How many customer interviews are needed for positioning research?", answer: "There is no universal number. A focused service-business study can begin with a small purposive sample and continue until additional relevant interviews stop materially changing the important patterns. Diversity of buying situations and evidence quality matter more than chasing an arbitrary count." },
-      { question: "How do you analyse qualitative customer interviews?", answer: "Code evidence around decision-relevant themes, compare patterns across participants and segments, preserve contradictions, distinguish observation from interpretation, and connect conclusions back to specific evidence." },
+      { question: "How many customer interviews are needed for positioning research?", answer: "There is no universal number. A focused service business study can begin with a small purposive sample and continue until additional relevant interviews stop materially changing the important patterns. Diversity of buying situations and evidence quality matter more than chasing an arbitrary count." },
+      { question: "How do you analyse qualitative customer interviews?", answer: "Code evidence around decision relevant themes, compare patterns across participants and segments, preserve contradictions, distinguish observation from interpretation, and connect conclusions back to specific evidence." },
       { question: "Should customer language become the brand message word for word?", answer: "Customer language is valuable evidence for relevance and comprehension, but the final message still needs strategic judgement, differentiation, accuracy, and a recognisable brand voice." },
       { question: "What belongs in a positioning brief?", answer: "A useful brief includes the priority audience and buying situation, category frame, customer tension, distinctive choice, proof, message direction, evidence references, confidence levels, tradeoffs, and unresolved questions." },
       { question: "What if customer interviews contradict the founder's view?", answer: "Investigate the source of the disagreement. The interviews may reveal a market reality, a different customer segment, or a gap between current perception and future ambition. The strategy should state which reality it is responding to and which change the business intends to create." },

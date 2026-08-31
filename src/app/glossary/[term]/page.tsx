@@ -131,7 +131,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             <Reveal>
               <div className="mt-12 border-t border-border pt-8">
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
-                  Decisions it helps you make
+                  Questions this term clarifies
                 </p>
                 <ul className="mt-3 space-y-2">
                   {entry.pillar.questions.map((q) => (

@@ -56,7 +56,7 @@ export function FeaturedWorkHero({
     <a
       ref={tiltRef}
       href={href}
-      data-cursor-label="View case study"
+      data-cursor-label="Read case study"
       className="group relative flex min-h-[75svh] items-end overflow-hidden bg-soil"
       style={{ perspective: 1000 }}
     >

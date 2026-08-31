@@ -103,7 +103,7 @@ const pathways: Pathway[] = [
     title: "Describe the gap between what you mean and what people perceive.",
     description:
       "Name the brand, the decision, and the part that keeps refusing to resolve.",
-    bestWhen: "Writing helps you separate the real issue from the surrounding noise.",
+    bestWhen: "Choose this when the issue is tangled and naming each part will reveal the real decision.",
     detail: "Three details · read personally · reply by email",
     Icon: PenLine,
     film: {

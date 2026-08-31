@@ -6,9 +6,9 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
     title: "Brand consistency checklist for service businesses",
     seoTitle: "Brand consistency checklist for service businesses",
     excerpt:
-      "A practical audit for checking whether the website, sales process, onboarding, delivery, and follow-up reinforce one recognisable brand promise.",
+      "A practical audit for checking whether the website, sales process, onboarding, delivery, and follow up reinforce one recognisable brand promise.",
     directAnswer:
-      "A brand consistency checklist should compare the category, customer promise, proof, visual cues, tone, expectations, and next steps across the website, sales process, onboarding, delivery, and follow-up. Consistency means the same central meaning survives each stage, rather than every touchpoint looking identical.",
+      "A brand consistency checklist should compare the category, customer promise, proof, visual cues, tone, expectations, and next steps across the website, sales process, onboarding, delivery, and follow up. Consistency means the same central meaning survives each stage, rather than every touchpoint looking identical.",
     element: "water",
     topicSlug: "customer-experience",
     primaryKeyword: "brand consistency checklist",
@@ -95,7 +95,7 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
         id: "prepare-the-audit",
         heading: "Prepare the consistency audit",
         paragraphs: [
-          "Collect the real materials a customer encounters, rather than relying on the brand guide alone. Capture the homepage, main service page, enquiry response, discovery call structure, proposal, contract introduction, welcome email, onboarding form, project updates, delivery documents, invoice language, and follow-up communication.",
+          "Collect the real materials a customer encounters, rather than relying on the brand guide alone. Capture the homepage, main service page, enquiry response, discovery call structure, proposal, contract introduction, welcome email, onboarding form, project updates, delivery documents, invoice language, and follow up communication.",
           "Place the touchpoints in journey order. This turns a collection of assets into an experience sequence and makes contradictions easier to see.",
           "Record the intended position and promise beside the sequence. The audit needs a clear standard against which the materials can be compared.",
         ],
@@ -127,7 +127,7 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
         id: "sales-consistency-checklist",
         heading: "Sales consistency checklist",
         paragraphs: [
-          "Sales should deepen the website promise rather than replace it. Discovery calls, proposals, and follow-up emails need to preserve the same category and value while adapting the explanation to the prospect's context.",
+          "Sales should deepen the website promise rather than replace it. Discovery calls, proposals, and follow up emails need to preserve the same category and value while adapting the explanation to the prospect's context.",
           "A common break appears when the website sells strategic transformation and the proposal leads with deliverable volume. The buyer begins comparing quantity instead of the judgement and system promised earlier.",
           "Review the language used to describe scope, collaboration, access, timelines, and outcomes. These details create expectations that delivery will later need to honour.",
         ],
@@ -171,11 +171,11 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
       },
       {
         id: "follow-up-consistency-checklist",
-        heading: "Follow-up and retention consistency checklist",
+        heading: "Follow up and retention consistency checklist",
         paragraphs: [
           "The relationship after delivery affects memory, referrals, and repeat work. A thoughtful engagement can end abruptly if the final invoice becomes the last meaningful contact.",
-          "Follow-up should reinforce the value created, remind the customer how to use the work, invite relevant feedback, and identify the next natural decision without forcing an immediate sale.",
-          "Review testimonial requests, case-study conversations, check-ins, newsletters, and future-offer communication. The same respect and clarity promised at the beginning should remain after revenue has been recognised.",
+          "Follow up should reinforce the value created, remind the customer how to use the work, invite relevant feedback, and identify the next natural decision without forcing an immediate sale.",
+          "Review testimonial requests, case study conversations, check ins, newsletters, and future offer communication. The same respect and clarity promised at the beginning should remain after revenue has been recognised.",
         ],
       },
       {
@@ -203,10 +203,10 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
           "Review the journey regularly, especially after new offers, team changes, software migrations, or rapid growth. Consistency is maintained through operating habits rather than one finished design project.",
         ],
         bullets: [
-          "One positioning and message reference for every customer-facing owner.",
-          "Approved templates for high-frequency touchpoints.",
+          "One positioning and message reference for every customer facing owner.",
+          "Approved templates for high frequency touchpoints.",
           "Experience principles translated into visible behaviours.",
-          "Named owners for website, sales, onboarding, delivery, and follow-up.",
+          "Named owners for website, sales, onboarding, delivery, and follow up.",
           "A recurring audit after major business or journey changes.",
         ],
       },
@@ -235,7 +235,7 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
       {
         question: "What should be fixed first in a consistency audit?",
         answer:
-          "Fix the breaks that change customer understanding, trust, expectations, or delivery first. Cosmetic differences can follow after the high-consequence journey problems are resolved.",
+          "Fix the breaks that change customer understanding, trust, expectations, or delivery first. Cosmetic differences can follow after the high consequence journey problems are resolved.",
       },
     ],
     relatedSlugs: [

@@ -155,7 +155,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                       </div>
                       <p className="mt-3 text-sm leading-relaxed text-white/78">{decisiveLine(current)}</p>
                       <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white">
-                        {currentRecord.tier === "flagship" ? "Open the case study" : "Open the project story"}
+                        {currentRecord.tier === "flagship" ? "Read the case study" : "Read the project record"}
                         <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                       </span>
                     </div>
@@ -274,7 +274,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                         className="flex items-center gap-2 self-center text-sm transition-transform duration-300 group-hover:translate-x-1"
                         style={{ color: isActive ? WORK.forest : WORK.moss }}
                       >
-                        {record.tier === "flagship" ? "View case study" : "View project story"} <span aria-hidden="true">→</span>
+                        {record.tier === "flagship" ? "Read case study" : "Read project record"} <span aria-hidden="true">→</span>
                       </span>
                     </Link>
                   </motion.div>

@@ -44,7 +44,7 @@ export const brandDiscoveryWorkshopInsightPosts: InsightPost[] = [
         heading: "Use discovery to make the brief smaller",
         paragraphs: [
           "A brand discovery workshop earns its time when the team leaves with fewer plausible directions. If the session produces dozens of adjectives, values, mood references, and audience ideas without deciding among them, the workshop has documented complexity rather than reduced it.",
-          "Begin by defining which decisions the session must support. A positioning workshop has different questions from a naming workshop or customer-experience review. The agenda should follow the decisions rather than a generic template.",
+          "Begin by defining which decisions the session must support. A positioning workshop has different questions from a naming workshop or customer experience review. The agenda should follow the decisions rather than a generic template.",
           "Create four evidence labels throughout the room: known, observed, believed, and unknown. This prevents confident internal opinions from acquiring the same status as customer behaviour or commercial data.",
         ],
       },
@@ -107,7 +107,7 @@ export const brandDiscoveryWorkshopInsightPosts: InsightPost[] = [
         heading: "6. Questions about message and expression",
         paragraphs: [
           "Only after the strategy questions should the workshop move toward language and expression. Ask which idea customers should be able to repeat, which vocabulary already belongs to the audience, and which tones create trust at different moments of the journey.",
-          "For visual direction, ask which cues support the strategic meaning and which category cues deserve preservation for comprehension. Avoid turning mood-board preference into a proxy for positioning.",
+          "For visual direction, ask which cues support the strategic meaning and which category cues deserve preservation for comprehension. Avoid turning mood board preference into a proxy for positioning.",
         ],
       },
       {
@@ -121,7 +121,7 @@ export const brandDiscoveryWorkshopInsightPosts: InsightPost[] = [
       },
     ],
     faq: [
-      { question: "How long should a brand discovery workshop be?", answer: "A focused small-business session can often fit into two to four hours. Complex organisations may need several sessions separated by research or stakeholder work." },
+      { question: "How long should a brand discovery workshop be?", answer: "A focused small business session can often fit into two to four hours. Complex organisations may need several sessions separated by research or stakeholder work." },
       { question: "Who should attend a brand discovery workshop?", answer: "Include the people who hold relevant customer, commercial, delivery, and leadership knowledge and who can make or influence the decisions the workshop is designed to resolve." },
       { question: "What should come out of a brand discovery workshop?", answer: "The output should include decisions, evidence, assumptions, tradeoffs, unresolved questions, owners, and a concise strategic brief rather than only notes or inspiration boards." },
       { question: "Should customers attend the workshop?", answer: "Customer evidence should inform the workshop. Direct customer participation can be useful in some formats, but research interviews are often better conducted separately so participants are less influenced by internal discussion." },

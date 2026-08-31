@@ -102,7 +102,7 @@ export function ProjectStoryWall({ projects }: { projects: Project[] }) {
                         </p>
                         <h3 className="mt-1 font-display text-3xl font-normal text-white sm:text-4xl">{project.title}</h3>
                         <span className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-white">
-                          Open the story <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                          Read the project story <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                         </span>
                       </div>
                     </div>

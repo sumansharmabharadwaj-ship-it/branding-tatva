@@ -38,7 +38,7 @@ export const valuePropositionInsightPosts: InsightPost[] = [
     framework: {
       title: "The meaning ladder",
       introduction:
-        "Three layers move from internal strategic choice to customer-facing value and, finally, to memorable expression.",
+        "Three layers move from internal strategic choice to customer facing value and, finally, to memorable expression.",
       steps: [
         {
           title: "Position",
@@ -146,9 +146,9 @@ export const valuePropositionInsightPosts: InsightPost[] = [
       },
       {
         id: "example-for-a-service-business",
-        heading: "A service-business example",
+        heading: "A service business example",
         paragraphs: [
-          "Imagine a consultancy that helps established service businesses whose reputation is stronger than their market explanation. Its position may focus on turning founder-held knowledge into a clear brand system for the next stage of growth.",
+          "Imagine a consultancy that helps established service businesses whose reputation is stronger than their market explanation. Its position may focus on turning founder held knowledge into a clear brand system for the next stage of growth.",
           "The value proposition for a positioning engagement could explain that the client receives a category frame, audience decision, differentiation, evidence map, and message spine so the business becomes easier to understand and sell.",
           "A tagline might then compress the wider belief into a short expression about becoming easier to recognise or remember. The tagline works because the position and offer already give it a body.",
         ],
@@ -159,7 +159,7 @@ export const valuePropositionInsightPosts: InsightPost[] = [
         paragraphs: [
           "The first mistake is using a tagline as the homepage's only explanation. New visitors still need orientation, relevance, proof, and a next step.",
           "The second is writing one broad value proposition for every service. Different offers solve different parts of the customer situation and deserve distinct reasons for choice.",
-          "The third is treating positioning as a creative-writing prompt. Strong positioning may sound plain because its first job is precision.",
+          "The third is treating positioning as a creative writing prompt. Strong positioning may sound plain because its first job is precision.",
           "The fourth is changing the tagline whenever the campaign changes. A stable brand line needs time and consistent experience to accumulate recognition.",
         ],
       },

@@ -27,7 +27,7 @@ export function FeaturedSecondaryCard({ project }: { project: Project }) {
     <a
       ref={ref}
       href={`/work/${project.slug}`}
-      data-cursor-label="View case study"
+      data-cursor-label="Read case study"
       className="group relative block h-full"
       style={{ perspective: 1000 }}
       onMouseEnter={() => setIsHovered(true)}

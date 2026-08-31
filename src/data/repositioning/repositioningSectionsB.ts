@@ -22,7 +22,7 @@ export const repositioningSectionsB: InsightSection[] = [
     heading: "Preserve familiarity without preserving the old limitation",
     paragraphs: [
       "Continuity does not require freezing the identity. It requires choosing which familiar anchors will help customers identify the business while the meaning changes.",
-      "A name can remain while the category descriptor changes. A colour can remain while the visual system gains more range. A founder association can remain as proof while the service model becomes less founder-dependent. A legacy phrase can become a transition cue before a new memory line takes over.",
+      "A name can remain while the category descriptor changes. A colour can remain while the visual system gains more range. A founder association can remain as proof while the service model becomes less founder dependent. A legacy phrase can become a transition cue before a new memory line takes over.",
       "Logo research suggests that familiarity and perceived appropriateness influence response to change. This supports an evolutionary principle: the new identity should feel recognisably related to the brand and suitable for the position it is being asked to carry.",
     ],
     callout: {
@@ -52,14 +52,14 @@ export const repositioningSectionsB: InsightSection[] = [
     heading: "Align the offer and service experience before launch",
     paragraphs: [
       "A repositioning becomes credible when the offer, sales process, onboarding, delivery, and proof already behave like the new position. Launching the language first creates a gap that customers will discover during the next interaction.",
-      "Review the service menu, package names, pricing logic, proposal structure, discovery questions, handoffs, reporting, and customer-success rhythm. Remove elements that drag the business back into the old comparison.",
+      "Review the service menu, package names, pricing logic, proposal structure, discovery questions, handoffs, reporting, and customer success rhythm. Remove elements that drag the business back into the old comparison.",
       "Create proof for the movement. Reframe existing case studies around the new customer situation, publish the method behind the change, and show how recent work already supports the position.",
     ],
     bullets: [
       "Which service should lead after the repositioning?",
       "Which legacy offer should be reduced, renamed, or retired?",
       "What new evidence is required before the claim can lead?",
-      "Which customer-experience moments must visibly express the new choice?",
+      "Which customer experience moments must visibly express the new choice?",
       "Which internal behaviours could quietly return the business to its old position?",
     ],
   },
@@ -67,7 +67,7 @@ export const repositioningSectionsB: InsightSection[] = [
     id: "phase-rollout",
     heading: "Phase the rollout rather than changing every cue overnight",
     paragraphs: [
-      "A phased rollout gives the market repeated opportunities to connect old and new. Begin with high-context touchpoints where the shift can be explained: customer conversations, proposals, the website, email, presentations, and owned content.",
+      "A phased rollout gives the market repeated opportunities to connect old and new. Begin with touchpoints rich in context where the shift can be explained: customer conversations, proposals, the website, email, presentations, and owned content.",
       "Use dual cues during the bridge period. A familiar name, colour, symbol, founder signature, or phrase can anchor a new descriptor and message. Over time, the new association receives more prominence while temporary explanation recedes.",
       "Coordinate the sequence so customers do not encounter several contradictory versions. Prepare redirects, profiles, directories, sales collateral, email signatures, contracts, invoices, social channels, referral partners, and search listings before the public announcement.",
     ],

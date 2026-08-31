@@ -9,7 +9,7 @@ for (const post of [
   ...customerJourneyInsightPosts,
 ]) {
   if (post.slug === "customer-journey-mapping-service-businesses") {
-    post.framework.title = "The five-stage service journey";
+    post.framework.title = "The service journey in five stages";
   }
 
   if (!insightPosts.some((existingPost) => existingPost.slug === post.slug)) {

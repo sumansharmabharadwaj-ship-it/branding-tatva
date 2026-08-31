@@ -227,13 +227,13 @@ export function InsightReadingIndex({
       <div className="insight-reading-index__moves">
         {previousItem && (
           <a href={`#${previousItem.id}`}>
-            <span>Previous</span>
+            <span>Previous chapter</span>
             <strong>{previousItem.label}</strong>
           </a>
         )}
         {nextItem && (
           <a href={`#${nextItem.id}`}>
-            <span>Next</span>
+            <span>Next chapter</span>
             <strong>{nextItem.label}</strong>
           </a>
         )}

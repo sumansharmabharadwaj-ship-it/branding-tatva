@@ -96,7 +96,7 @@ export const consultingPositioningInsightPosts: InsightPost[] = [
         heading: "1. Choose the customer situation",
         paragraphs: [
           "Industry is one way to narrow a consultancy, but it is not the only one. A customer situation can create sharper relevance across several industries.",
-          "A consultancy may become relevant when a founder-led business is preparing to scale, when a professional-services firm has outgrown referral-only growth, when a new leadership team needs alignment, or when several offers have accumulated without a clear market story.",
+          "A consultancy may become relevant when a founder led business is preparing to scale, when a professional services firm has outgrown referral only growth, when a new leadership team needs alignment, or when several offers have accumulated without a clear market story.",
           "The situation should be observable and commercially meaningful. It needs to describe a moment when the cost of remaining unchanged becomes visible enough to support a buying decision.",
         ],
         bullets: [
@@ -161,7 +161,7 @@ export const consultingPositioningInsightPosts: InsightPost[] = [
         paragraphs: [
           "Begin with an internal statement containing the customer situation, category, point of view, consequence, and proof. Keep it useful for decisions before trying to make it elegant.",
           "One working structure is: We help this kind of client during this situation by providing this category of help. Unlike common alternatives, we begin with or believe this, because it changes this important outcome.",
-          "The customer-facing version can become shorter. The internal version should remain detailed enough to guide offers, website hierarchy, case-study selection, and content.",
+          "The customer facing version can become shorter. The internal version should remain detailed enough to guide offers, website hierarchy, case study selection, and content.",
         ],
       },
       {

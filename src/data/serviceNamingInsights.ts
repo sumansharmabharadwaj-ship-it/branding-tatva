@@ -3,12 +3,12 @@ import type { InsightPost } from "@/data/insights";
 export const serviceNamingInsightPosts: InsightPost[] = [
   {
     slug: "service-line-naming-strategy",
-    title: "Service-line naming strategy without creating five miniature brands",
-    seoTitle: "Service-line naming strategy for service businesses",
+    title: "Service line naming strategy without creating five miniature brands",
+    seoTitle: "Service line naming strategy for service businesses",
     excerpt:
-      "A practical naming system for offers, packages, programmes, and service lines that improves navigation and memory without fragmenting one business into unnecessary sub-brands.",
+      "A practical naming system for offers, packages, programmes, and service lines that improves navigation and memory without fragmenting one business into unnecessary sub brands.",
     directAnswer:
-      "Name service lines by giving each offer only as much identity as customers need to understand, compare, request, and remember it. Start with the parent brand and customer navigation, define a consistent naming grammar, separate descriptive service labels from genuinely ownable programme names, and create a sub-brand only when the offer has a meaning, audience, journey, risk profile, and investment system that must operate independently. Most service businesses gain more from one recognisable parent brand with clear offer names than from a portfolio of miniature brands.",
+      "Name service lines by giving each offer only as much identity as customers need to understand, compare, request, and remember it. Start with the parent brand and customer navigation, define a consistent naming grammar, separate descriptive service labels from genuinely ownable programme names, and create a sub brand only when the offer has a meaning, audience, journey, risk profile, and investment system that must operate independently. Most service businesses gain more from one recognisable parent brand with clear offer names than from a portfolio of miniature brands.",
     element: "air",
     topicSlug: "brand-messaging",
     primaryKeyword: "service line naming strategy",
@@ -32,7 +32,7 @@ export const serviceNamingInsightPosts: InsightPost[] = [
       "A service name is primarily a navigation and memory tool, rather than a request for a new visual identity.",
       "Use descriptive names when category clarity matters more than novelty and distinctive names when an offer genuinely needs recall of its own.",
       "One naming grammar helps customers understand relationships between services before reading every description.",
-      "Sub-branding creates ongoing costs in explanation, search, design, governance, and memory, so independence should earn its complexity.",
+      "Sub branding creates ongoing costs in explanation, search, design, governance, and memory, so independence should earn its complexity.",
       "Test names in menus, sales conversations, referrals, proposals, and search results before investing in a full identity around them.",
     ],
     framework: {
@@ -68,8 +68,8 @@ export const serviceNamingInsightPosts: InsightPost[] = [
         bullets: [
           "Descriptive: Brand Strategy Intensive",
           "Endorsed: Tatva Brand Strategy Intensive",
-          "Method-led: The Five Element Brand Audit",
-          "Programme-led: a distinctive name followed by a plain-language descriptor",
+          "Method led: The Five Element Brand Audit",
+          "Programme led: a distinctive name followed by a plain language descriptor",
         ],
       },
       {
@@ -141,9 +141,9 @@ export const serviceNamingInsightPosts: InsightPost[] = [
     faq: [
       { question: "Should every service have a unique name?", answer: "No. Many services benefit from clear descriptive names. A distinctive name is useful when the offer has enough strategic importance, repetition, and difference to justify independent memory." },
       { question: "Should service packages have their own logos?", answer: "Usually no. Most packages can use the parent brand identity with a clear name and descriptor. A separate logo creates additional recognition and governance work that the offer should earn strategically." },
-      { question: "Are creative service names bad for SEO?", answer: "They can make category understanding harder when used alone. Pair distinctive names with plain-language descriptors in titles, headings, navigation, and metadata so search intent remains visible." },
+      { question: "Are creative service names bad for SEO?", answer: "They can make category understanding harder when used alone. Pair distinctive names with plain language descriptors in titles, headings, navigation, and metadata so search intent remains visible." },
       { question: "How do you name different service tiers?", answer: "Use a consistent rule tied to meaningful differences such as scope, customer stage, access, duration, or outcome. Avoid arbitrary prestige labels when the buyer cannot tell what changes between tiers." },
-      { question: "When should a service become a sub-brand?", answer: "Consider greater independence when the offer has a meaning, audience, journey, risk profile, and investment system that need to operate separately from the parent brand, and when the business can support the additional complexity." },
+      { question: "When should a service become a sub brand?", answer: "Consider greater independence when the offer has a meaning, audience, journey, risk profile, and investment system that need to operate separately from the parent brand, and when the business can support the additional complexity." },
       { question: "How often should service names change?", answer: "Change a name when it creates real confusion, the offer has materially changed, the portfolio architecture has changed, or legal and market constraints require it. Familiarity itself is an asset, so avoid cosmetic renaming cycles." },
     ],
     relatedSlugs: [

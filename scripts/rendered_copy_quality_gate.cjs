@@ -42,6 +42,13 @@ const STOCK_PATTERNS = [
   /\bbook a call\b/i,
   /\blet['’]s talk\b/i,
   /\bdrive(?:s|n|ing)? (?:real )?(?:growth|results|impact)\b/i,
+  /\bhelps? you\b/i,
+];
+
+const NECESSARY_HYPHEN_COPY = [
+  "Ehrenberg-Bass",
+  "Wipro: Building a Global B-2-B Brand",
+  "How a High-Tech Company Created a Searchable Customer Reference Database that Tripled References and Closed Sales",
 ];
 
 function wait(milliseconds) {
@@ -106,12 +113,19 @@ function discoverRoutes() {
 
 function policyFor(route) {
   if (/^\/insights\/[^/]+$/.test(route)) {
-    return { checkCompoundHyphens: false, checkStockPhrases: false };
+    return { checkCompoundHyphens: true, checkStockPhrases: false };
   }
   if (/^\/insights\/topic\//.test(route) || /^\/glossary\//.test(route)) {
-    return { checkCompoundHyphens: false, checkStockPhrases: true };
+    return { checkCompoundHyphens: true, checkStockPhrases: true };
   }
   return { checkCompoundHyphens: true, checkStockPhrases: true };
+}
+
+function maskNecessaryHyphens(text) {
+  return NECESSARY_HYPHEN_COPY.reduce(
+    (value, phrase) => value.replaceAll(phrase, phrase.replaceAll("-", " ")),
+    text,
+  );
 }
 
 async function waitForServer() {
@@ -143,11 +157,12 @@ async function main() {
         continue;
       }
       const text = visibleText(await response.text());
+      const punctuationText = maskNecessaryHyphens(text);
       const policy = policyFor(route);
       const dash = policy.checkCompoundHyphens
         ? /[—–]|[A-Za-z0-9]-[A-Za-z0-9]/g
         : /[—–]/g;
-      for (const match of text.matchAll(dash)) {
+      for (const match of punctuationText.matchAll(dash)) {
         findings.push({ route, issue: "dash or hyphen", copy: context(text, match.index, match[0].length) });
       }
       if (policy.checkStockPhrases) {

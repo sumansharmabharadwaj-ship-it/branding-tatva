@@ -382,7 +382,7 @@ export default async function InsightTopicPage({ params }: Props) {
               </Reveal>
             )}
             <Reveal delay={0.12} className="mt-10 text-center">
-              <LinkButton href="/insights">Open the full library</LinkButton>
+              <LinkButton href="/insights">Read every field note</LinkButton>
             </Reveal>
           </Container>
         </section>

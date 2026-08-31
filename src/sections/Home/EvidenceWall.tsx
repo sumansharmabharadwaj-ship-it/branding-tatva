@@ -413,7 +413,7 @@ export function EvidenceWall() {
         <div className="evidence-cinematic__index-area">
           <p className="evidence-cinematic__index-guide">
             <span>Choose a project</span>
-            <span>Open the reasoning and evidence</span>
+            <span>Inspect the reasoning and evidence</span>
           </p>
           <div
             className="evidence-cinematic__index"

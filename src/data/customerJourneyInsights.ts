@@ -6,9 +6,9 @@ export const customerJourneyInsightPosts: InsightPost[] = [
     title: "Customer journey mapping for service businesses",
     seoTitle: "Customer journey mapping for service businesses",
     excerpt:
-      "A practical method for mapping discovery, enquiry, decision, onboarding, delivery, and follow-up as one connected brand experience.",
+      "A practical method for mapping discovery, enquiry, decision, onboarding, delivery, and follow up as one connected brand experience.",
     directAnswer:
-      "Customer journey mapping for a service business documents what a customer is trying to achieve, what they see and do, what they expect, and where confidence rises or falls across discovery, enquiry, decision, onboarding, delivery, and follow-up. The map helps teams repair the seams between touchpoints before redesigning individual screens or documents.",
+      "Customer journey mapping for a service business documents what a customer is trying to achieve, what they see and do, what they expect, and where confidence rises or falls across discovery, enquiry, decision, onboarding, delivery, and follow up. The map helps teams repair the seams between touchpoints before redesigning individual screens or documents.",
     element: "water",
     topicSlug: "customer-experience",
     primaryKeyword: "customer journey mapping for service businesses",
@@ -36,7 +36,7 @@ export const customerJourneyInsightPosts: InsightPost[] = [
       "Prioritise journey repairs by customer consequence, business risk, and dependency.",
     ],
     framework: {
-      title: "The six-stage service journey",
+      title: "The six stage service journey",
       introduction:
         "The journey follows the customer from first recognition of a need through the experience that determines whether the relationship continues.",
       steps: [
@@ -73,7 +73,7 @@ export const customerJourneyInsightPosts: InsightPost[] = [
         heading: "What customer journey mapping means",
         paragraphs: [
           "A customer journey map is a shared view of the customer's experience across time. It records the stages they move through, the goal they hold at each stage, the touchpoints they encounter, the questions they ask, and the moments that increase or reduce confidence.",
-          "For a service business, the journey is especially important because the customer often buys before the final result exists. They judge the business through signals: the website, response time, consultation, proposal, onboarding, communication rhythm, working documents, delivery, and follow-up.",
+          "For a service business, the journey is especially important because the customer often buys before the final result exists. They judge the business through signals: the website, response time, consultation, proposal, onboarding, communication rhythm, working documents, delivery, and follow up.",
           "The map connects those signals. Its purpose is to reveal where the relationship feels coherent and where the customer has to bridge a gap the business should have designed.",
         ],
         callout: {
@@ -120,7 +120,7 @@ export const customerJourneyInsightPosts: InsightPost[] = [
         id: "inventory-touchpoints",
         heading: "3. Inventory the visible and invisible touchpoints",
         paragraphs: [
-          "List every customer-facing touchpoint: search result, social post, referral message, homepage, service page, form, calendar, call, proposal, contract, payment request, welcome email, project space, meeting, deliverable, support message, and follow-up.",
+          "List every customer facing touchpoint: search result, social post, referral message, homepage, service page, form, calendar, call, proposal, contract, payment request, welcome email, project space, meeting, deliverable, support message, and follow up.",
           "Then list the invisible systems that shape those moments. Ownership, response rules, templates, data transfer, tool limitations, approval steps, and team incentives often explain why the visible experience behaves as it does.",
           "Capture the actual materials rather than relying on memory. Screenshots and real documents make contradictions visible and keep the exercise grounded in the current journey.",
         ],
@@ -143,7 +143,7 @@ export const customerJourneyInsightPosts: InsightPost[] = [
         id: "inspect-the-seams",
         heading: "5. Inspect the seams between stages",
         paragraphs: [
-          "Read the final message of one stage beside the first message of the next. The transition from website to enquiry, enquiry to call, call to proposal, proposal to onboarding, and delivery to follow-up should preserve context and direction.",
+          "Read the final message of one stage beside the first message of the next. The transition from website to enquiry, enquiry to call, call to proposal, proposal to onboarding, and delivery to follow up should preserve context and direction.",
           "A strong seam tells the customer what changed, what remains true, who owns the next step, and what they need to do. A weak seam resets the relationship and forces the customer to reconstruct certainty.",
           "Assign each transition an owner. Shared responsibility without explicit ownership often means the customer experiences silence while each internal team assumes another stage has begun.",
         ],
@@ -170,7 +170,7 @@ export const customerJourneyInsightPosts: InsightPost[] = [
         paragraphs: [
           "Group findings by their effect on understanding, trust, effort, continuity, and outcome. Then score each finding by customer consequence, frequency, business risk, and dependency.",
           "Fix root causes before polishing symptoms. A beautifully rewritten onboarding email will have limited effect when the project ownership remains unclear. A new proposal template will struggle when the offer structure is unresolved.",
-          "Choose a small set of repairs that create visible continuity. Define the owner, required system change, customer-facing change, and evidence that will show improvement.",
+          "Choose a small set of repairs that create visible continuity. Define the owner, required system change, customer facing change, and evidence that will show improvement.",
         ],
         bullets: [
           "High consequence and high frequency issues come first.",
@@ -199,12 +199,12 @@ export const customerJourneyInsightPosts: InsightPost[] = [
       {
         question: "How is a customer journey map different from a sales funnel?",
         answer:
-          "A sales funnel measures movement through business-defined conversion stages. A journey map examines the customer's goals and experience before, during, and after the sale.",
+          "A sales funnel measures movement through business defined conversion stages. A journey map examines the customer's goals and experience before, during, and after the sale.",
       },
       {
         question: "How many stages should a service journey have?",
         answer:
-          "Use enough stages to reveal meaningful changes in customer goals and ownership. Discovery, enquiry, decision, onboarding, delivery, and follow-up provide a useful starting structure.",
+          "Use enough stages to reveal meaningful changes in customer goals and ownership. Discovery, enquiry, decision, onboarding, delivery, and follow up provide a useful starting structure.",
       },
       {
         question: "Who should participate in journey mapping?",

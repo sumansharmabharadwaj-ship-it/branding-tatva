@@ -41,7 +41,7 @@ const DRAWERS: Drawer[] = [
       "The answers become the positioning sentence everything downstream inherits. Design waits until that sentence exists.",
     ],
     href: "/services#study",
-    linkLabel: "Open the deliverables I hand over",
+    linkLabel: "Inspect the deliverables I hand over",
   },
   {
     id: "degrees",
