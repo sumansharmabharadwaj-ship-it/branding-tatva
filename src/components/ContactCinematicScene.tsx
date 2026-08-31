@@ -11,6 +11,7 @@ import {
 import {
   motion,
   useMotionValue,
+  useMotionValueEvent,
   useInView,
   useScroll,
   useSpring,
@@ -43,6 +44,17 @@ const SCENE_HANDOFF: Record<ContactSceneVariant, string> = {
   paper: "linear-gradient(180deg, rgba(39,34,30,0) 0%, rgba(39,34,30,0.9) 100%)",
   horizon: "linear-gradient(180deg, rgba(39,34,30,0) 0%, rgba(39,34,30,0.96) 100%)",
   afterglow: "linear-gradient(180deg, rgba(39,34,30,0) 0%, rgba(39,34,30,0.98) 100%)",
+};
+
+const SCENE_EXPOSURE: Record<ContactSceneVariant, string> = {
+  branch:
+    "radial-gradient(circle at 18% 28%, rgba(255,239,204,0.88) 0%, rgba(241,224,192,0.34) 24%, transparent 54%), linear-gradient(118deg, rgba(255,255,255,0.24) 0%, transparent 42%)",
+  paper:
+    "radial-gradient(circle at 78% 22%, rgba(255,235,205,0.78) 0%, rgba(235,217,188,0.26) 26%, transparent 57%), linear-gradient(236deg, rgba(255,255,255,0.2) 0%, transparent 44%)",
+  horizon:
+    "radial-gradient(ellipse at 52% 88%, rgba(238,198,145,0.86) 0%, rgba(210,168,119,0.3) 25%, transparent 58%), linear-gradient(180deg, transparent 30%, rgba(246,220,183,0.16) 100%)",
+  afterglow:
+    "radial-gradient(circle at 62% 72%, rgba(248,205,142,0.92) 0%, rgba(224,177,112,0.3) 24%, transparent 56%), linear-gradient(150deg, rgba(255,237,204,0.12) 0%, transparent 46%)",
 };
 
 const SCENE_MOTION: Record<ContactSceneVariant, SceneMotion> = {
@@ -137,6 +149,7 @@ export function ContactCinematicScene({
   className?: string;
 }) {
   const sceneRef = useRef<HTMLElement>(null);
+  const sceneFilmRef = useRef<HTMLVideoElement | null>(null);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const [hasReadingFocus, setHasReadingFocus] = useState(false);
@@ -158,8 +171,10 @@ export function ContactCinematicScene({
   const scrollVelocity = useVelocity(scrollY);
   const velocityDriftRaw = useTransform(scrollVelocity, [-2400, 0, 2400], [-12, 0, 12]);
   const velocityTiltRaw = useTransform(scrollVelocity, [-2400, 0, 2400], [0.9, 0, -0.9]);
+  const playbackLiftRaw = useTransform(scrollVelocity, [-2200, 0, 2200], [0.08, 0, 0.08]);
   const velocityDrift = useSpring(velocityDriftRaw, { stiffness: 145, damping: 27, mass: 0.28 });
   const velocityTilt = useSpring(velocityTiltRaw, { stiffness: 155, damping: 28, mass: 0.26 });
+  const playbackLift = useSpring(playbackLiftRaw, { stiffness: 92, damping: 24, mass: 0.38 });
   const pointerXSmooth = useSpring(pointerX, { stiffness: 105, damping: 22, mass: 0.32 });
   const pointerYSmooth = useSpring(pointerY, { stiffness: 105, damping: 22, mass: 0.32 });
 
@@ -176,10 +191,37 @@ export function ContactCinematicScene({
   const touchCameraScale = useTransform(progress, [0, 0.48, 1], [1.055, 1.025, 1.04]);
   const touchContentY = useTransform(progress, [0, 0.48, 1], [10, 0, -7]);
   const touchContentScale = useTransform(progress, [0, 0.48, 1], [0.992, 1, 0.996]);
+  // The readable plane begins fractionally soft, resolves at the scene's
+  // reading point, then eases out of focus as the next chapter approaches.
+  // Keep this desktop-only: coarse pointers receive the lighter transform
+  // grammar and focused controls always remain optically still.
+  const contentFocus = useTransform(
+    progress,
+    [0, 0.14, 0.34, 0.78, 0.94, 1],
+    [
+      "blur(2.8px)",
+      "blur(1.1px)",
+      "blur(0px)",
+      "blur(0px)",
+      "blur(0.9px)",
+      "blur(2.2px)",
+    ],
+  );
+  const contentFocusOpacity = useTransform(
+    progress,
+    [0, 0.16, 0.34, 0.8, 0.96, 1],
+    [0.84, 0.94, 1, 1, 0.92, 0.86],
+  );
   const seamProgress = useTransform(progress, [0.08, 0.86], [0, 1]);
   const seamY = useTransform(progress, [0.08, 0.86], ["0%", "100%"]);
   const seamOpacity = useTransform(progress, [0, 0.12, 0.5, 0.88, 1], [0, 0.45, 0.72, 0.38, 0]);
   const handoffOpacity = useTransform(progress, [0.68, 0.88, 1], [0, 0.38, 1]);
+  const exposureOpacity = useTransform(
+    progress,
+    [0, 0.12, 0.38, 0.7, 0.88, 1],
+    [0.5, 0.28, 0.08, 0.05, 0.22, 0.48],
+  );
+  const exposureScale = useTransform(progress, [0, 0.48, 1], [1.08, 1, 1.045]);
 
   const cameraTranslateX = useTransform(
     [cameraX, pointerXSmooth],
@@ -199,20 +241,63 @@ export function ContactCinematicScene({
   );
 
   useEffect(() => {
-    const video = sceneRef.current?.querySelector("video");
-    if (!video || prefersReducedMotion) return;
+    sceneFilmRef.current =
+      sceneRef.current?.querySelector<HTMLVideoElement>("[data-background-video-stage] video") ??
+      null;
+
+    return () => {
+      sceneFilmRef.current = null;
+    };
+  }, [prefersReducedMotion]);
+
+  useMotionValueEvent(playbackLift, "change", (lift) => {
+    const film = sceneFilmRef.current;
+    if (!film) return;
+
+    const authoredRate = film.defaultPlaybackRate;
+    const canRespond = motionEnabled && !simplifiedCamera && !hasReadingFocus && !film.paused;
+    const nextRate = canRespond
+      ? Math.min(0.98, authoredRate + Math.max(0, lift))
+      : authoredRate;
+
+    if (Math.abs(film.playbackRate - nextRate) > 0.004) {
+      film.playbackRate = nextRate;
+    }
+  });
+
+  useEffect(() => {
+    const film = sceneFilmRef.current;
+    if (!film || (motionEnabled && !simplifiedCamera && !hasReadingFocus)) return;
+    film.playbackRate = film.defaultPlaybackRate;
+  }, [hasReadingFocus, motionEnabled, simplifiedCamera]);
+
+  useEffect(() => {
+    const videos = Array.from(
+      sceneRef.current?.querySelectorAll<HTMLVideoElement>("video") ?? [],
+    );
+    if (!videos.length || prefersReducedMotion) return;
 
     if (hasReadingFocus) {
-      const keepPaused = () => video.pause();
-      video.addEventListener("play", keepPaused);
-      video.pause();
-      return () => video.removeEventListener("play", keepPaused);
+      const keepPaused = (event: Event) => {
+        if (event.currentTarget instanceof HTMLVideoElement) {
+          event.currentTarget.pause();
+        }
+      };
+      videos.forEach((video) => {
+        video.addEventListener("play", keepPaused);
+        video.pause();
+      });
+      return () => {
+        videos.forEach((video) => video.removeEventListener("play", keepPaused));
+      };
     }
 
-    const rect = video.getBoundingClientRect();
-    const margin = window.innerHeight * 0.25;
-    const nearViewport = rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
-    if (nearViewport && !document.hidden) video.play().catch(() => undefined);
+    videos.forEach((video) => {
+      const rect = video.getBoundingClientRect();
+      const margin = window.innerHeight * 0.25;
+      const nearViewport = rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
+      if (nearViewport && !document.hidden) video.play().catch(() => undefined);
+    });
   }, [hasReadingFocus, prefersReducedMotion]);
 
   function handlePointerMove(event: PointerEvent<HTMLElement>) {
@@ -255,6 +340,7 @@ export function ContactCinematicScene({
       aria-labelledby={labelledBy}
       data-contact-scene={variant}
       data-contact-camera={simplifiedCamera ? "touch" : "full"}
+      data-contact-playback={simplifiedCamera ? "authored" : "scroll-responsive"}
       data-contact-reading-focus={hasReadingFocus ? "true" : undefined}
       onFocusCapture={handleFocusCapture}
       onBlurCapture={handleBlurCapture}
@@ -297,6 +383,21 @@ export function ContactCinematicScene({
         {media}
       </motion.div>
 
+      {/* Scroll behaves like an exposure pull: each shot opens through its
+          own practical light source, settles for reading, then blooms again
+          into the match cut. The layer is compositor-only and never loops. */}
+      <motion.div
+        aria-hidden="true"
+        data-contact-scene-exposure="true"
+        className="pointer-events-none absolute inset-0 z-[4] mix-blend-screen"
+        style={{
+          backgroundImage: SCENE_EXPOSURE[variant],
+          opacity: motionEnabled ? exposureOpacity : 0.1,
+          scale: motionEnabled ? exposureScale : 1,
+          willChange: motionEnabled ? "transform, opacity" : undefined,
+        }}
+      />
+
       {/* The three chapters share a match cut: the outgoing landscape
           develops the ground colour of the next scene before the boundary
           arrives. It lives behind the readable plane, so the transition
@@ -312,6 +413,7 @@ export function ContactCinematicScene({
 
       <motion.div
         data-contact-scene-plane="true"
+        data-contact-focus-pull={!simplifiedCamera && motionEnabled ? "active" : "rest"}
         className="relative z-10 flex min-h-[100svh] w-full items-center"
         style={
           !motionEnabled
@@ -329,9 +431,11 @@ export function ContactCinematicScene({
                 scale: contentScale,
                 rotateX: contentRotateX,
                 rotateY: contentRotateY,
+                filter: hasReadingFocus ? "blur(0px)" : contentFocus,
+                opacity: hasReadingFocus ? 1 : contentFocusOpacity,
                 transformPerspective: 1600,
                 transformOrigin: "50% 50%",
-                willChange: "transform",
+                willChange: "transform, filter, opacity",
               }
         }
       >

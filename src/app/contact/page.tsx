@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { preload } from "react-dom";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
@@ -38,34 +37,25 @@ const pageJsonLd = pageSchema({
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Schedule a 30-minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
+  description: "Schedule thirty minutes with Suman Sharma for a brand strategy consultation, call or WhatsApp directly, or send a written enquiry.",
   alternates: { canonical: "/contact" },
   openGraph: {
     title: `Contact | ${site.name}`,
-    description: "Schedule a 30-minute brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
+    description: "Schedule thirty minutes with Suman Sharma for a brand strategy consultation, call or WhatsApp directly, or send a written enquiry.",
     type: "website",
   },
 };
 
 export default function ContactPage() {
-  // The hero poster is this page's LCP element — a high priority
-  // preload so first paint stops waiting behind the video request.
-  preload("/images/pexels-fog-sunrise-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
       <main id="main-content" data-contact-film>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
-        {/* Every other page on the site opens on a real video/photo
-            hero; this page used to open directly on a flat color
-            section instead, the one structural outlier in an otherwise
-            consistent pattern. Tier 3 (70vh), the same as Services/
-            Work — matches PhotoHero's own documented height-tier
-            table. higgsfield-forest-light.mp4 (trees opening onto a
-            clear valley view) was picked specifically because it
-            echoes this page's own existing VideoBreak quote below: "A
-            brand conversation is just the first clear view through the
-            noise." */}
+        {/* Contact opens as an immersive 88svh film rather than a utility-page
+            banner. This newly sourced dawn scene is exclusive to the hero; a
+            dedicated portrait derivative protects mobile playback and the
+            restrained pace gives the copy time to breathe. */}
         {/* Redesigned from the same centered pill-badge-plus-headline
             template Work/Services/Blog's heroes used to share into the
             asymmetric masthead already proven on this site's case-study
@@ -80,10 +70,14 @@ export default function ContactPage() {
             same two-jobs-one-fact pattern a masthead and a byline
             already play on any real publication. */}
         <PhotoHero
-          video="/videos/pexels-fog-sunrise.mp4"
-          poster="/images/pexels-fog-sunrise-poster.jpg"
-          minHeight="70vh"
-          overlayGradient="linear-gradient(180deg, rgba(31,29,25,0.34) 0%, rgba(31,29,25,0.44) 58%, rgba(31,29,25,0.68) 100%), linear-gradient(90deg, rgba(31,29,25,0.44) 0%, rgba(31,29,25,0.08) 72%)"
+          video="/videos/generated/bt-contact-original-hero.mp4"
+          videoMobile="/videos/generated/bt-contact-original-hero-mobile.mp4"
+          poster="/images/generated/bt-contact-original-hero-poster.jpg"
+          minHeight="88vh"
+          imagePosition="center 56%"
+          playbackRate={0.84}
+          className="contact-hero-film"
+          overlayGradient="linear-gradient(180deg, rgba(25,27,22,0.18) 0%, rgba(28,29,23,0.32) 48%, rgba(29,27,23,0.76) 100%), linear-gradient(90deg, rgba(25,25,21,0.7) 0%, rgba(26,27,22,0.42) 46%, rgba(24,26,21,0.06) 78%)"
         >
           {/* Every other atmospheric hero on the site (About's forest
               backdrop) carries a small ambient layer on top of the
@@ -93,6 +87,15 @@ export default function ContactPage() {
               feel. Same forest register as this hero's own clip, not a
               new visual idea introduced just for this page. */}
           <Fireflies />
+          <div data-contact-hero-frame aria-hidden="true">
+            <span />
+            <span />
+          </div>
+          <div data-contact-hero-aperture aria-hidden="true">
+            <span data-contact-hero-matte="top" />
+            <span data-contact-hero-matte="bottom" />
+            <span data-contact-hero-light-open />
+          </div>
           <Container data-contact-hero className="relative py-16 sm:py-24">
             <div data-contact-hero-grid className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal className="relative">
@@ -107,11 +110,23 @@ export default function ContactPage() {
                   as="h1"
                   className="mt-6 max-w-2xl font-display text-[clamp(2.4rem,6.5vw,4.5rem)] font-normal leading-[1.05] text-ivory"
                 >
-                  Tell me what your brand is becoming.
+                  Tell me what your brand needs people to understand.
                 </SplitReveal>
                 <p className="mt-4 max-w-lg text-ivory/80">
-                  Bring the question that keeps circling. A clear next move can begin with one honest conversation.
+                  Bring the gap between what the business means and what people currently understand. Positioning, voice, identity, or something harder to name.
                 </p>
+                <div
+                  data-contact-hero-signal
+                  role="img"
+                  aria-label="The conversation moves from reading the signal, to naming the tension, to shaping the decision."
+                  className="mt-5 grid max-w-xl grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2 text-[0.56rem] font-medium uppercase tracking-[0.16em] text-ivory/62 sm:gap-3 sm:text-[0.62rem] sm:tracking-[0.2em]"
+                >
+                  <span>Read the signal</span>
+                  <span aria-hidden="true" className="contact-hero-signal-line h-px overflow-hidden bg-ivory/18"><span className="block h-full origin-left bg-sandstone/80" /></span>
+                  <span>Name the tension</span>
+                  <span aria-hidden="true" className="contact-hero-signal-line h-px overflow-hidden bg-ivory/18"><span className="block h-full origin-left bg-sandstone/80" /></span>
+                  <span>Shape the decision</span>
+                </div>
                 <div data-contact-hero-actions className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <ContactHeroBookingLink />
                   <TrackedLink
@@ -125,14 +140,14 @@ export default function ContactPage() {
                   </TrackedLink>
                 </div>
                 <p data-contact-hero-trust className="mt-4 text-[0.64rem] font-medium uppercase tracking-[0.18em] text-ivory/62">
-                  {site.consultationMinutes} minutes · founder led · your timezone
+                  {site.consultationMinutes} minutes · with Suman · your timezone
                 </p>
                 <div
                   data-contact-hero-direct
                   className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ivory/72"
                   aria-label="Direct contact options"
                 >
-                  <span className="text-ivory/52">Prefer direct?</span>
+                  <span className="text-ivory/52">Need the shortest route?</span>
                   <TrackedLink
                     href={`tel:${site.phone.tel}`}
                     event="contact_route_selected"
@@ -176,10 +191,11 @@ export default function ContactPage() {
           media={
             <>
               <BackgroundVideo
-                video="/videos/generated/bt-contact-three-paths-waterpaper.mp4"
-                videoMobile="/videos/generated/bt-contact-three-paths-waterpaper-mobile.mp4"
-                poster="/images/generated/bt-contact-three-paths-waterpaper-poster.jpg"
-                playbackRate={0.82}
+                video="/videos/generated/bt-contact-original-pathways.mp4"
+                videoMobile="/videos/generated/bt-contact-original-pathways-mobile.mp4"
+                poster="/images/generated/bt-contact-original-pathways-poster.jpg"
+                playbackRate={0.86}
+                push
                 posterPriority={false}
               />
               <div
@@ -214,10 +230,10 @@ export default function ContactPage() {
           media={
             <>
               <BackgroundVideo
-                video="/videos/generated/bt-contact-moss-stream.mp4"
-                videoMobile="/videos/generated/bt-contact-moss-stream-mobile.mp4"
-                poster="/images/pexels-moss-stream-poster.jpg"
-                playbackRate={0.78}
+                video="/videos/generated/bt-contact-original-write-scene.mp4"
+                videoMobile="/videos/generated/bt-contact-original-write-scene-mobile.mp4"
+                poster="/images/generated/bt-contact-original-write-scene-poster.jpg"
+                playbackRate={0.8}
                 posterPriority={false}
               />
               <div
@@ -233,23 +249,23 @@ export default function ContactPage() {
         >
           <Container className="contact-write-layout relative grid w-full gap-10 py-12 sm:py-14 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-16">
             <div data-contact-write-copy>
-              <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/60">Write in your own time</p>
+              <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/60">Put the decision into words</p>
               <ContactKineticHeading
                 id="contact-write-heading"
                 data-contact-write-heading
-                lines={["A short note", "can reveal", "the real question."]}
+                lines={["Name the gap", "behind the", "visible problem."]}
                 resolveClassName="text-clay"
                 className="mt-4 max-w-lg font-display text-[clamp(2.5rem,5vw,4.8rem)] font-normal leading-[0.98] text-soil"
               />
               <p className="mt-6 max-w-md text-sm leading-relaxed text-soil/72 sm:text-base">
-                Bring the uncertainty, the unfinished thought, or the decision that keeps circling. I will read every word personally.
+                Tell me what people need to understand, what they understand today, and which decision is waiting on that difference.
               </p>
 
               <div data-contact-write-note className="mt-8 max-w-md rounded-2xl border border-white/45 bg-white/28 p-5 backdrop-blur-xl">
                 <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-soil/48">Where your note goes</p>
-                <p className="mt-3 font-display text-2xl font-normal text-soil">Straight to Suman.</p>
+                <p className="mt-3 font-display text-2xl font-normal text-soil">To Suman, not a sales desk.</p>
                 <p className="mt-2 text-sm leading-relaxed text-soil/65">
-                  Every enquiry is read by the person who would shape the work with you.
+                  The same person who reads the note would lead the work.
                 </p>
               </div>
 
@@ -313,10 +329,11 @@ export default function ContactPage() {
           media={
             <>
               <BackgroundVideo
-                video="/videos/pexels-valley-first-light.mp4"
-                videoMobile="/videos/generated/bt-contact-valley-first-light-mobile.mp4"
-                poster="/images/pexels-valley-first-light-poster.jpg"
-                playbackRate={0.8}
+                video="/videos/generated/bt-contact-original-call.mp4"
+                videoMobile="/videos/generated/bt-contact-original-call-mobile.mp4"
+                poster="/images/generated/bt-contact-original-call-poster.jpg"
+                playbackRate={0.83}
+                push
                 posterPriority={false}
               />
               <div
@@ -330,16 +347,16 @@ export default function ContactPage() {
           <Container className="contact-call-layout relative grid w-full gap-12 py-12 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
             <div data-contact-call-copy>
               <div>
-                <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-sandstone">The first conversation</p>
+                <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-sandstone">Thirty minutes with Suman</p>
                 <ContactKineticHeading
                   id="contact-call-heading"
                   data-contact-call-heading
-                  lines={["One question", "is enough", "for the first call."]}
+                  lines={["Bring one", "brand decision.", "Find its frame."]}
                   resolveClassName="text-sandstone"
                   className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-ivory"
                 />
                 <p data-contact-call-intro className="mt-6 max-w-md text-sm leading-relaxed text-ivory/75 sm:text-base">
-                  Bring the decision taking up the most room in your head. I will listen, ask what matters, and share the clearest next move I can see.
+                  We examine what the audience sees, what the business means, and where the two have drifted apart.
                 </p>
               </div>
 
@@ -359,11 +376,11 @@ export default function ContactPage() {
                 </div>
 
                 <p data-contact-booking-description className="mt-7 max-w-md text-sm leading-relaxed text-soil/68 sm:text-base">
-                  Choose a time that suits you. The calendar adjusts to your timezone. {consultation.preparation}
+                  The calendar converts every available time to your timezone. {consultation.preparation}
                 </p>
 
                 <p className="mt-4 border-l border-clay/25 pl-4 text-sm leading-relaxed text-soil/62">
-                  You will speak with Suman throughout. Bring one question and leave with a clear next move.
+                  Suman leads the conversation herself. Bring the decision that cannot afford another vague answer.
                 </p>
 
                 {/* The direct Calendly route keeps the handoff immediate and
@@ -426,11 +443,11 @@ export default function ContactPage() {
           media={
             <>
               <BackgroundVideo
-                video="/videos/pexels-aspen-sunburst.mp4"
-                videoWebm="/videos/pexels-aspen-sunburst.webm"
-                poster="/images/pexels-aspen-sunburst-poster.jpg"
+                video="/videos/generated/bt-contact-original-gratitude.mp4"
+                videoMobile="/videos/generated/bt-contact-original-gratitude-mobile.mp4"
+                poster="/images/generated/bt-contact-original-gratitude-poster.jpg"
                 imagePosition="center 42%"
-                playbackRate={0.8}
+                playbackRate={0.78}
                 posterPriority={false}
                 push
               />
@@ -448,7 +465,7 @@ export default function ContactPage() {
           <ContactGratitude />
         </ContactCinematicScene>
       </main>
-      <Footer compact />
+      <Footer compact className="contact-footer-afterglow" />
     </>
   );
 }

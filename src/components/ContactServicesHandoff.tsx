@@ -45,7 +45,7 @@ export function ContactHeroContextCard() {
         </span>
         <div aria-live="polite">
           <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/55">
-            {selectedPackage ? "Carried from Brand Strategy" : "A personal reply"}
+            {selectedPackage ? "Carried from Brand Strategy" : "Read by the founder"}
           </p>
           <p className="mt-1 font-display text-lg text-ivory">
             {selectedPackage?.name ?? site.founder}
@@ -55,7 +55,7 @@ export function ContactHeroContextCard() {
       <p className="mt-4 border-t border-white/10 pt-3 text-sm leading-relaxed text-ivory/72">
         {selectedPackage
           ? "Your selected package stays attached whether you book a session or write a note."
-          : "Read by Suman from the first note to the final reply."}
+          : "Suman reads the note, considers the brand problem, and replies herself."}
       </p>
     </div>
   );

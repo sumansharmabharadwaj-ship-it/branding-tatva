@@ -627,10 +627,10 @@ export function ContactForm() {
               Your note has arrived
             </p>
             <h3 id="contact-success-heading" className="mt-3 font-display text-3xl font-normal leading-tight text-soil sm:text-4xl">
-              The conversation has begun.
+              Your words are with Suman.
             </h3>
             <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-foreground-secondary sm:text-base">
-              Suman reads every enquiry personally and replies by email. Your question now has a clear place to land.
+              The note arrived exactly as written. Suman will read the brand problem herself and reply by email.
             </p>
             {receiptEmail ? (
               <div
@@ -707,6 +707,7 @@ export function ContactForm() {
     <div
       ref={cardRef}
       data-contact-form-card
+      data-contact-form-completion={completedDetails}
       data-contact-form-expanded={showMore ? "true" : undefined}
       className="rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-7 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-3xl sm:px-10 sm:py-9"
     >
@@ -715,10 +716,10 @@ export function ContactForm() {
           so the two paths on this page read as siblings rather than
           a styled card next to a bare form. */}
       <div data-contact-form-intro className="text-center">
-        <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">A note, in your own words</p>
-        <p className="mt-3 font-display text-3xl font-normal leading-tight text-soil sm:text-4xl">What are you building?</p>
+        <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">The brand problem, in your words</p>
+        <p className="mt-3 font-display text-3xl font-normal leading-tight text-soil sm:text-4xl">What needs to change in perception?</p>
         <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-foreground-secondary">
-          Three details begin the conversation. Add more only when it helps you explain the picture.
+          Name the decision, who needs to believe it, and what currently refuses to resolve. Only three details are required.
         </p>
         {selectedPackage ? (
           <div
@@ -850,8 +851,8 @@ export function ContactForm() {
 
       <div data-contact-form-question>
         <Field
-          label="03 What feels unclear right now?"
-          hint="Share the decision, uncertainty, or change taking up the most room. A few lines are enough."
+          label="03 Which brand decision cannot move forward?"
+          hint="Positioning, voice, identity, offer structure, recognition, or something harder to name. A few lines are enough."
           error={errors.description?.message}
         >
           <textarea
@@ -875,7 +876,7 @@ export function ContactForm() {
           data-cursor-label={showMore ? "Close details" : "Add details"}
           className="link-underline inline-flex min-h-11 items-center gap-2 py-2 text-sm font-medium text-clay transition-colors duration-300 hover:text-soil"
         >
-          {showMore ? "Fewer details" : "Add more detail"}
+          {showMore ? "Fewer details" : "Add useful context"}
           <span aria-hidden="true" className={`text-base transition-transform duration-300 ${showMore ? "rotate-45" : ""}`}>
             +
           </span>

@@ -47,8 +47,14 @@ export function VideoWarden() {
         // A full bleed background filling the screen matters more than a
         // small inline clip that happens to sit nearer the middle. Ranking
         // by nearness alone left backgrounds frozen behind the copy, so
-        // coverage decides first and nearness only breaks ties.
+        // coverage decides first and nearness only breaks ties. A selected
+        // foreground film can opt into priority: Contact uses that for the
+        // route card the visitor is actively exploring. Grouped hero films
+        // still travel together once either member becomes the primary.
         .sort((a, b) => {
+          const priorityA = a.dataset.videoPriority === "foreground" ? 1 : 0;
+          const priorityB = b.dataset.videoPriority === "foreground" ? 1 : 0;
+          if (priorityA !== priorityB) return priorityB - priorityA;
           const coverA = viewportCoverage(a);
           const coverB = viewportCoverage(b);
           if (Math.abs(coverA - coverB) > 0.08) return coverB - coverA;

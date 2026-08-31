@@ -79,3 +79,21 @@ Implementation rules
 - procedural films remain reproducible through scripts/generate_services_procedural_media.py, scripts/generate_services_situation_film.py, and scripts/generate_services_authority_film.py
 
 Installed on the homepage-cinematic-recovery branch after duration, audio-state, responsive-encoding, source-reference, and reduced-motion validation.
+
+CONTACT PAGE CINEMATIC MEDIA
+
+The Contact page owns eight distinct, newly sourced and independently treated films:
+- bt-contact-original-hero.mp4
+- bt-contact-original-pathways.mp4
+- bt-contact-original-book.mp4
+- bt-contact-original-speak.mp4
+- bt-contact-original-write-card.mp4
+- bt-contact-original-write-scene.mp4
+- bt-contact-original-call.mp4
+- bt-contact-original-gratitude.mp4
+
+The hero, pathways, write scene, call scene, and gratitude scene also have
+dedicated portrait mobile derivatives. Every placement has a unique poster in
+/images/generated. No legacy Contact footage is referenced and no desktop film
+is assigned to more than one placement. Source and license details live in
+/docs/contact-media-provenance.md.

@@ -6,7 +6,13 @@ import {
   type KeyboardEvent,
   type PointerEvent,
 } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useSpring,
+  type Variants,
+} from "framer-motion";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -18,6 +24,10 @@ import {
 } from "lucide-react";
 import { Container } from "@/components/Container";
 import { ContactKineticHeading } from "@/components/ContactKineticHeading";
+import {
+  ContactPathwayFilm,
+  type ContactPathwayFilmProps,
+} from "@/components/ContactPathwayFilm";
 import { useContactSceneStage } from "@/hooks/useContactSceneStage";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
@@ -39,6 +49,7 @@ type Pathway = {
   bestWhen: string;
   detail: string;
   Icon: LucideIcon;
+  film: ContactPathwayFilmProps;
 };
 
 const pathways: Pathway[] = [
@@ -47,42 +58,97 @@ const pathways: Pathway[] = [
     index: "01",
     tempo: "Scheduled",
     label: "Book a conversation",
-    title: "Choose a calm half hour for the brand question taking up space.",
+    title: "Reserve half an hour to examine one brand decision with Suman.",
     description:
-      "The conversation begins with where the brand stands today and ends with a clear next move.",
-    bestWhen: "You want a focused decision and prefer a time already held for it.",
+      "Trace the decision back to positioning, audience perception, and the recognition the brand needs to own.",
+    bestWhen: "A live exchange will reveal more than another round of internal debate.",
     detail: `${site.consultationMinutes} minutes · your timezone · direct with Suman`,
     Icon: CalendarDays,
+    film: {
+      video: "/videos/generated/bt-contact-original-book.mp4",
+      poster: "/images/generated/bt-contact-original-book-poster.jpg",
+      caption: "Morning folio · a time held",
+      playbackRate: 0.78,
+      camera: "folio",
+      hoverBoost: 0.04,
+      imagePosition: "center",
+    },
   },
   {
     id: "speak",
     index: "02",
     tempo: "Immediate",
     label: "Speak directly",
-    title: "Reach Suman while the thought is still fresh.",
+    title: "Call while the decision is still live.",
     description:
-      "A call or WhatsApp message works when a long brief would slow the conversation down.",
-    bestWhen: "You have one immediate question and a call or message feels easiest.",
+      "Use phone or WhatsApp for a direct question that does not need a polished brief.",
+    bestWhen: "You know the point you want to test and want the shortest route to Suman.",
     detail: site.phone.display,
     Icon: MessageCircle,
+    film: {
+      video: "/videos/generated/bt-contact-original-speak.mp4",
+      poster: "/images/generated/bt-contact-original-speak-poster.jpg",
+      caption: "Two cups · speak directly",
+      playbackRate: 0.82,
+      camera: "conversation",
+      hoverBoost: 0.1,
+      imagePosition: "center 52%",
+    },
   },
   {
     id: "write",
     index: "03",
     tempo: "Unhurried",
     label: "Write a short note",
-    title: "Put the uncertainty into your own words.",
+    title: "Describe the gap between what you mean and what people perceive.",
     description:
-      "A few lines about what you are building and what feels unclear are enough to begin.",
-    bestWhen: "You need room to describe the context before choosing a conversation.",
+      "Name the brand, the decision, and the part that keeps refusing to resolve.",
+    bestWhen: "Writing helps you separate the real issue from the surrounding noise.",
     detail: "Three details · read personally · reply by email",
     Icon: PenLine,
+    film: {
+      video: "/videos/generated/bt-contact-original-write-card.mp4",
+      poster: "/images/generated/bt-contact-original-write-card-poster.jpg",
+      caption: "Open window · write slowly",
+      playbackRate: 0.76,
+      camera: "letter",
+      hoverBoost: 0.05,
+      imagePosition: "center",
+    },
   },
 ];
 
 const SWIPE_DISTANCE_PX = 46;
 const SWIPE_AXIS_DOMINANCE = 1.3;
 const TOUCH_DRAG_LIMIT_PX = 12;
+
+const PATHWAY_SHOT_VARIANTS: Variants = {
+  enter: (direction: number) => ({
+    opacity: 0.42,
+    x: direction * 18,
+    scale: 0.992,
+    clipPath:
+      direction > 0
+        ? "inset(0 16% 0 0 round 1.25rem)"
+        : "inset(0 0 0 16% round 1.25rem)",
+  }),
+  centre: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    clipPath: "inset(0 0% 0 0 round 0rem)",
+  },
+  exit: (direction: number) => ({
+    opacity: 0,
+    x: direction * -12,
+    scale: 0.996,
+    clipPath:
+      direction > 0
+        ? "inset(0 0 0 12% round 1.1rem)"
+        : "inset(0 12% 0 0 round 1.1rem)",
+    transition: { duration: 0.22, ease: EASE_AIR },
+  }),
+};
 
 const primaryActionClass =
   "group inline-flex min-h-11 items-center justify-center rounded-full bg-soil px-3 py-2 text-center text-[0.72rem] font-medium leading-tight text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:px-5 sm:py-3 sm:text-sm";
@@ -108,7 +174,7 @@ function PathwayHandoff({
       <div
         role="img"
         className="grid grid-cols-[auto_minmax(1rem,1fr)_auto_minmax(1rem,1fr)_auto] items-center gap-2 sm:gap-3"
-        aria-label={`${pathway.label} carries your question toward a clearer next move.`}
+        aria-label={`${pathway.label} carries the issue you bring toward the decision you need.`}
       >
         <span aria-hidden="true" className="text-[0.56rem] font-medium uppercase tracking-[0.15em] text-soil/42 sm:text-[0.62rem]">
           Your question
@@ -292,19 +358,19 @@ export function ContactPathways() {
     <div ref={sceneRef} className="w-full">
       <Container className="contact-pathways-layout relative flex min-h-[100svh] items-center py-7 sm:py-14">
         <div data-contact-pathways-grid className="grid w-full gap-5 sm:gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-14">
-          <div className="max-w-md">
+          <div data-contact-pathways-intro className="max-w-md">
             <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/65">
-              Three ways to begin
+              Choose how to reach Suman
             </p>
             <ContactKineticHeading
               id="contact-pathways-heading"
               data-contact-pathways-heading
-              lines={["Start where", "the conversation", "feels natural."]}
+              lines={["Match the route", "to the decision", "in front of you."]}
               resolveClassName="text-clay"
               className="mt-3 font-display text-[clamp(2rem,8.7vw,2.55rem)] font-normal leading-[0.98] text-soil sm:mt-4 sm:text-[clamp(2.35rem,4.7vw,4.5rem)]"
             />
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-soil/70 sm:mt-5 sm:text-base">
-              The route can be immediate, considered, or somewhere between. Every enquiry reaches Suman directly.
+              Reserve time, speak now, or write first. Every route reaches the person who would lead the work.
             </p>
           </div>
 
@@ -313,6 +379,7 @@ export function ContactPathways() {
               <div
                 role="tablist"
                 aria-label="Ways to contact Branding Tatva"
+                data-contact-pathway-tabs
                 className="grid grid-cols-3 gap-1.5 border-b border-soil/10 p-2.5 sm:gap-2 sm:p-3 lg:flex lg:flex-col lg:border-b-0 lg:border-r lg:p-4"
               >
                 {pathways.map((pathway, index) => {
@@ -348,6 +415,7 @@ export function ContactPathways() {
                         />
                       ) : null}
                       <span
+                        data-contact-pathway-tab-icon
                         className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 lg:h-9 lg:w-9 ${
                           selected ? "border-ivory/20 bg-ivory/10" : "border-soil/15 bg-white/35"
                         }`}
@@ -378,69 +446,60 @@ export function ContactPathways() {
                 onPointerUp={handlePanelPointerUp}
                 onPointerCancel={cancelPanelGesture}
                 onLostPointerCapture={cancelPanelGesture}
-                className="relative min-h-[20rem] touch-pan-y p-4 sm:min-h-[25rem] sm:p-9 lg:min-h-[28rem] lg:p-10"
+                className="relative min-h-[24rem] touch-pan-y p-4 sm:min-h-[27rem] sm:p-9 lg:min-h-[28rem] lg:p-10"
                 style={prefersReducedMotion ? undefined : { x: touchDragXSmooth }}
               >
-                <motion.div
-                  key={active.id}
-                  initial={
-                    prefersReducedMotion
-                      ? undefined
-                      : {
-                          opacity: 0.64,
-                          x: direction * 18,
-                          scale: 0.992,
-                          clipPath:
-                            direction > 0
-                              ? "inset(0 16% 0 0 round 1.25rem)"
-                              : "inset(0 0 0 16% round 1.25rem)",
-                        }
-                  }
-                  animate={{
-                    opacity: 1,
-                    x: 0,
-                    scale: 1,
-                    clipPath: "inset(0 0 0 0 round 0rem)",
-                  }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE_AIR }}
-                  style={{ transformOrigin: "50% 50%" }}
-                  className="absolute inset-4 flex flex-col sm:inset-9 lg:inset-10"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-clay">
-                      {active.label}
-                    </span>
-                    <span className="font-display text-2xl text-soil/25" aria-hidden="true">
-                      {active.index}
-                    </span>
-                  </div>
+                <AnimatePresence initial={false} custom={direction} mode="sync">
+                  <motion.div
+                    key={active.id}
+                    data-contact-pathway-shot
+                    custom={direction}
+                    variants={PATHWAY_SHOT_VARIANTS}
+                    initial={prefersReducedMotion ? false : "enter"}
+                    animate="centre"
+                    exit={prefersReducedMotion ? undefined : "exit"}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE_AIR }}
+                    style={{ transformOrigin: "50% 50%" }}
+                    className="absolute inset-4 flex flex-col sm:inset-9 lg:inset-10"
+                  >
+                  <ContactPathwayFilm key={active.id} {...active.film} />
 
-                  <p className="mt-4 max-w-xl font-display text-[clamp(1.65rem,7.2vw,2.2rem)] font-normal leading-[1.02] text-soil sm:mt-8 sm:text-[clamp(2rem,3.6vw,3.35rem)]">
-                    {active.title}
-                  </p>
-                  <p className="mt-3 max-w-lg text-[0.78rem] leading-relaxed text-soil/68 sm:mt-5 sm:text-base">
-                    {active.description}
-                  </p>
-                  <p className="mt-3 max-w-lg border-l border-clay/25 pl-3 text-[0.72rem] leading-relaxed text-soil/58 sm:text-sm">
-                    <span className="font-medium text-clay">Best when:</span>{" "}
-                    {active.bestWhen}
-                  </p>
-                  {active.id === "book" && selectedPackage ? (
-                    <p
-                      data-contact-pathway-package
-                      className="mt-3 w-fit max-w-full rounded-full border border-clay/18 bg-clay/[0.06] px-3 py-1.5 text-[0.64rem] font-medium leading-relaxed text-clay sm:text-xs"
-                    >
-                      Carrying your {selectedPackage.name} choice
+                  <div className="relative z-10 flex min-h-full flex-col pt-[6.75rem] sm:pr-[39%] sm:pt-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-clay">
+                        {active.label}
+                      </span>
+                      <span className="font-display text-2xl text-soil/25 sm:hidden" aria-hidden="true">
+                        {active.index}
+                      </span>
+                    </div>
+
+                    <p data-contact-pathway-title className="mt-4 max-w-xl font-display text-[clamp(1.65rem,7.2vw,2.2rem)] font-normal leading-[1.02] text-soil sm:mt-7 sm:text-[clamp(1.85rem,3.2vw,2.75rem)]">
+                      {active.title}
                     </p>
-                  ) : null}
-                  <PathwayHandoff
-                    pathway={active}
-                    detail={activeDetail}
-                    reducedMotion={prefersReducedMotion}
-                  />
+                    <p data-contact-pathway-description className="mt-3 max-w-lg text-[0.78rem] leading-relaxed text-soil/68 sm:mt-4 sm:text-sm lg:text-base">
+                      {active.description}
+                    </p>
+                    <p data-contact-pathway-best className="mt-3 max-w-lg border-l border-clay/25 pl-3 text-[0.72rem] leading-relaxed text-soil/58 sm:text-xs lg:text-sm">
+                      <span className="font-medium text-clay">Best when:</span>{" "}
+                      {active.bestWhen}
+                    </p>
+                    {active.id === "book" && selectedPackage ? (
+                      <p
+                        data-contact-pathway-package
+                        className="mt-3 w-fit max-w-full rounded-full border border-clay/18 bg-clay/[0.06] px-3 py-1.5 text-[0.64rem] font-medium leading-relaxed text-clay sm:text-xs"
+                      >
+                        Carrying your {selectedPackage.name} choice
+                      </p>
+                    ) : null}
+                    <PathwayHandoff
+                      pathway={active}
+                      detail={activeDetail}
+                      reducedMotion={prefersReducedMotion}
+                    />
 
-                  <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
-                    {active.id === "book" && (
+                    <div data-contact-pathway-actions className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
+                      {active.id === "book" && (
                       <>
                         <a
                           href={bookingHref}
@@ -475,7 +534,7 @@ export function ContactPathways() {
                       </>
                     )}
 
-                    {active.id === "speak" && (
+                      {active.id === "speak" && (
                       <>
                         <a
                           href={`tel:${site.phone.tel}`}
@@ -511,7 +570,7 @@ export function ContactPathways() {
                       </>
                     )}
 
-                    {active.id === "write" && (
+                      {active.id === "write" && (
                       <>
                         <a
                           href="#write"
@@ -543,8 +602,10 @@ export function ContactPathways() {
                         </a>
                       </>
                     )}
+                    </div>
                   </div>
-                </motion.div>
+                  </motion.div>
+                </AnimatePresence>
               </motion.div>
             </div>
           </div>
