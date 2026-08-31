@@ -273,7 +273,7 @@ export default async function ServicesPage() {
                   <Magnetic>
                     <a
                       href="#situation"
-                      className="group inline-flex items-baseline gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
+                      className="group inline-flex min-h-11 items-center gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
                     >
                       <span className="link-underline">Find where the work begins</span>
                       <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-y-0.5">
