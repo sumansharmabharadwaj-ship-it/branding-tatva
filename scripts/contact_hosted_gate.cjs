@@ -94,6 +94,12 @@ async function auditViewport(browser, viewport) {
     assert(response && response.ok(), `${viewport.name}: /contact returned ${response?.status()}`);
     await waitForPrelude(page, viewport.name);
 
+    const initialChapterRailState = await page.locator("[data-contact-chapter-rail]").getAttribute("data-visible");
+    assert(
+      initialChapterRailState === "false",
+      `${viewport.name}: chapter navigation competes with the opening Contact decision surface`,
+    );
+
     let reducedMotionState = null;
     if (viewport.reducedMotion === "reduce") {
       reducedMotionState = await page.evaluate(() => ({
@@ -303,6 +309,38 @@ async function auditViewport(browser, viewport) {
       }
     }
 
+    let desktopSideRailState = null;
+    if (viewport.width >= 1360) {
+      desktopSideRailState = await page.evaluate(() => {
+        const measure = (selector) => {
+          const node = document.querySelector(selector);
+          if (!node) return null;
+          const rect = node.getBoundingClientRect();
+          const style = getComputedStyle(node);
+          return {
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height,
+            right: rect.right,
+            bottom: rect.bottom,
+            opacity: Number(style.opacity),
+            pointerEvents: style.pointerEvents,
+          };
+        };
+        return {
+          formCard: measure("[data-contact-form-card]"),
+          rail: measure("[data-contact-chapter-rail]"),
+        };
+      });
+      assert(
+        desktopSideRailState.formCard &&
+          desktopSideRailState.rail &&
+          desktopSideRailState.rail.x >= desktopSideRailState.formCard.right,
+        `${viewport.name}: desktop chapter rail intrudes into the Contact form card ${JSON.stringify(desktopSideRailState)}`,
+      );
+    }
+
     const keyActions = [telLinks.first(), whatsappLinks.first(), submit];
     for (const control of keyActions) {
       if (!(await visible(control))) continue;
@@ -328,6 +366,7 @@ async function auditViewport(browser, viewport) {
       schedulingTargets: await schedulingTargets.count(),
       formPresent: true,
       invalidEmailRejected: true,
+      desktopSideRailState,
       mobileFormChromeState,
       reducedMotionState,
       shortViewportState,
@@ -688,8 +727,13 @@ async function auditStatefulExperience(browser) {
       "stateful flow: starting another note did not return focus to the first field",
     );
     assert(
+      !(await consentNotice.isVisible()),
+      "stateful flow: measurement notice obscures the newly focused note",
+    );
+    await page.locator("[data-contact-write-heading]").click();
+    assert(
       await consentNotice.isVisible(),
-      "stateful flow: deferred measurement notice did not return after starting another note",
+      "stateful flow: deferred measurement notice did not return after leaving the form",
     );
 
     await name.fill("Temporary draft to clear");
@@ -721,6 +765,7 @@ async function auditStatefulExperience(browser) {
       providerFailureRecovered: true,
       recoveryNoteCopied: true,
       recoveryEmailPreservedNote: true,
+      measurementNoticeDeferredDuringFormInteraction: true,
       measurementNoticeDeferredDuringResolution: true,
       measurementNoticeRestoredAfterResolution: true,
       mobileRecoveryUnobscured: true,
@@ -919,6 +964,7 @@ async function auditApiRejectionPaths() {
   try {
     const viewports = [
       { name: "contact-desktop-1440x900", width: 1440, height: 900, touch: false },
+      { name: "contact-desktop-rail-1363x936", width: 1363, height: 936, touch: false },
       { name: "contact-mobile-390x844", width: 390, height: 844, touch: true },
       { name: "contact-mobile-short-390x520", width: 390, height: 520, touch: true, shortViewport: true },
       { name: "contact-mobile-reduced-390x844", width: 390, height: 844, touch: true, reducedMotion: "reduce" },

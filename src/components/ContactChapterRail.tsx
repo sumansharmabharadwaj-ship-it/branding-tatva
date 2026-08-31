@@ -27,7 +27,10 @@ export function ContactChapterRail() {
       const viewportCenter = viewportHeight / 2;
       const firstRect = chapters[0].getBoundingClientRect();
       const lastRect = chapters[chapters.length - 1].getBoundingClientRect();
-      const isInsideJourney = firstRect.top <= viewportHeight * 0.76 && lastRect.bottom >= viewportHeight * 0.24;
+      // Wait until the first chapter meaningfully enters the frame. The old
+      // 76% threshold exposed the rail while the opening hero was still the
+      // visitor's primary decision surface on medium desktop viewports.
+      const isInsideJourney = firstRect.top <= viewportHeight * 0.6 && lastRect.bottom >= viewportHeight * 0.24;
 
       if (!isInsideJourney) {
         setActiveIndex((current) => (current === -1 ? current : -1));
