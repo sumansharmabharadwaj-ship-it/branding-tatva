@@ -780,23 +780,10 @@ export function InsightsExplorer({
                   <ArrowLeft aria-hidden="true" className="h-4 w-4" />
                   Previous
                 </button>
-                <span aria-live="polite">
-                  Folio {activeFolio + 1} / {folioCount}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => turnFolio(activeFolio + 1)}
-                  disabled={activeFolio === folioCount - 1}
-                >
-                  Next
-                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                </button>
                 <label className="insights-library__folio-depth">
-                  <span>Archive depth</span>
-                  <output>
-                    Essays {firstPostIndex + 1}–
-                    {firstPostIndex + visiblePosts.length}
-                  </output>
+                  <span aria-live="polite">
+                    Folio {activeFolio + 1} / {folioCount}
+                  </span>
                   <input
                     type="range"
                     min="1"
@@ -810,6 +797,14 @@ export function InsightsExplorer({
                     aria-valuetext={`Folio ${activeFolio + 1} of ${folioCount}, essays ${firstPostIndex + 1} to ${firstPostIndex + visiblePosts.length}`}
                   />
                 </label>
+                <button
+                  type="button"
+                  onClick={() => turnFolio(activeFolio + 1)}
+                  disabled={activeFolio === folioCount - 1}
+                >
+                  Next
+                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                </button>
               </div>
             ) : null}
           </>

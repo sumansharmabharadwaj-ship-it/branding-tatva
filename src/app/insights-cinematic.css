@@ -1566,41 +1566,34 @@
   opacity: 0.34;
 }
 
-.insights-library__pager > span {
+.insights-library__folio-depth {
+  display: grid;
+  width: clamp(3.9rem, 7vw, 5.4rem);
+  min-width: 0;
+  gap: 0.12rem;
+  align-items: center;
+  align-self: stretch;
+  color: rgb(39 34 30 / 48%);
+  cursor: pointer;
+}
+
+.insights-library__folio-depth span {
+  align-self: end;
   color: rgb(39 34 30 / 58%);
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
+  font-size: 0.64rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.09em;
+  text-align: center;
   white-space: nowrap;
   text-transform: uppercase;
 }
 
-.insights-library__folio-depth {
-  display: grid;
-  min-width: 0;
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.15rem 1rem;
-  align-items: center;
-  color: rgb(39 34 30 / 48%);
-  cursor: pointer;
-  font-size: 0.55rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.insights-library__folio-depth output {
-  color: rgb(39 34 30 / 62%);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.08em;
-}
-
 .insights-library__folio-depth input {
   width: 100%;
-  height: 2.25rem;
+  height: 1.15rem;
   appearance: none;
-  grid-column: 1 / -1;
-  margin: -0.45rem 0 -0.7rem;
+  align-self: start;
+  margin: 0;
   background: transparent;
   cursor: ew-resize;
 }
@@ -1654,7 +1647,7 @@
 
 .insights-library__folio-depth input:focus-visible {
   outline: 2px solid var(--library-thread, #b85a34);
-  outline-offset: -0.2rem;
+  outline-offset: 0.1rem;
   border-radius: 999px;
 }
 
