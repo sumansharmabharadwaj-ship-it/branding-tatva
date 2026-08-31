@@ -41,7 +41,7 @@ for (const marker of [
   "Direct with the founder",
   "site.consultationMinutes",
   "consultation.preparation",
-  "share the clearest next move I can see",
+  "Suman leads the conversation herself",
 ]) {
   const index = contact.indexOf(marker);
   assert(index >= 0 && index < bookingAction, `Contact booking fact must precede the scheduling action: ${marker}`);
@@ -88,6 +88,7 @@ assert(paths.includes('publishServicesSituation(PATHS[index].situation, "home_pa
 assert(paths.includes("setPreviewIndex(null)") && paths.includes("Previewing another starting point"), "Service-path hover can replace a committed choice instead of remaining a reversible preview.");
 assert(paths.includes('detail?.origin === "home_diagnostic"'), "The service-path label can misrepresent an intentional manual choice as a completed diagnosis.");
 assert(process.includes("SITUATION_TO_STAGE") && process.includes("SERVICES_SITUATION_EVENT"), "The working method no longer opens at the decision relevant to the chosen path.");
+assert(process.includes("SITUATION_PATH_REASON") && process.includes("Path carried forward") && process.includes("Your path begins at"), "The working method no longer explains or preserves the visitor's path entry.");
 assert(experience.includes("rgba(238,224,198,0.88) 100%"), "Final invitation loses its reading surface over the dark film edge.");
 assert(/final-invitation__promise > p:first-child\s*\{[^}]*font-size: 0\.75rem/.test(invitationCss), "Final invitation utility text has returned below its readable size.");
 assert(invitationLivingCss.includes("var(--invitation-accent)"), "Final invitation no longer carries the selected path into its visual language.");

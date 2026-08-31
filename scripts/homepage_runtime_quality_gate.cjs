@@ -131,6 +131,7 @@ assert(process.includes("const committed = committedStage === index"), "Working-
 assert(process.includes("aria-selected={committed}"), "Working-method hover changes assistive selection state.");
 assert(process.includes("tabIndex={committed ? 0 : -1}"), "Working-method hover moves the keyboard tab stop.");
 assert(process.includes("setActive(committedStage)"), "Working-method hover does not restore the visitor's committed decision.");
+assert(process.includes("data-path-entry-stage=") && process.includes("data-path-entry={pathEntry"), "Working method no longer distinguishes the visitor's original path entry from later exploration.");
 assert(!process.includes("void video.play()") && !process.includes("video.pause()"), "Working method bypasses the shared one-film playback budget.");
 assert(process.includes('preload="none"') && process.includes('data-home-playback-rate="0.72"'), "Working-method film does not yield loading and pace to the homepage media director.");
 assert(processStyles.includes("@keyframes decisionFlowBeat"), "Working method has no bounded stage pulse.");

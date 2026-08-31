@@ -25,7 +25,7 @@ const STAGE_META: StageMeta[] = [
   {
     becomes: "A truth worth building on.",
     explanation:
-      "We find what the business genuinely believes, who it is for, and where its current language contradicts its ambition.",
+      "The business truth, intended audience, and contradictions in the current language come into view before expression begins.",
     output: "Strategic diagnosis + founder truth map",
     prevents: "A polished brand built on borrowed assumptions.",
   },
@@ -48,7 +48,7 @@ const STAGE_META: StageMeta[] = [
     explanation:
       "Voice, identity, and messaging take the shape the strategy demands, while staying recognisably part of one system.",
     output: "Verbal identity + design direction + message system",
-    prevents: "A beautiful identity nobody can recognise twice.",
+    prevents: "An identity nobody can recognise twice.",
   },
   {
     becomes: "A brand people can encounter.",
@@ -87,7 +87,12 @@ const SITUATION_TO_STAGE: Record<ServicesSituationId, number> = {
 const SITUATION_LABEL: Record<ServicesSituationId, string> = {
   idea: "New brand",
   reposition: "Repositioning",
-  ongoing: "Brand growth",
+  ongoing: "Repeatable system",
+};
+const SITUATION_PATH_REASON: Record<ServicesSituationId, string> = {
+  idea: "A new brand begins by naming the truth every later expression must carry.",
+  reposition: "Repositioning begins by decoding the signals the market already reads.",
+  ongoing: "A repeatable system begins where strategy enters real channels and selling moments.",
 };
 
 function fallbackMeta(): StageMeta {
@@ -119,6 +124,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       setCarriedSituation(value);
       setActive(situationStage);
       setCommittedStage(situationStage);
+      setManualHoldUntil(Date.now() + MANUAL_HOLD_MS);
       firstBeatRef.current = true;
     }
 
@@ -137,6 +143,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       setCarriedSituation(null);
       setActive(0);
       setCommittedStage(0);
+      setManualHoldUntil(0);
       firstBeatRef.current = true;
     }
 
@@ -206,6 +213,8 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const stage = stages[active] ?? stages[0];
   const meta = STAGE_META[active] ?? fallbackMeta();
   const accent = ELEMENT_COLORS[stage.element] ?? "#9b7457";
+  const pathEntryIndex = carriedSituation === null ? null : SITUATION_TO_STAGE[carriedSituation];
+  const pathEntryStage = pathEntryIndex === null ? null : stages[pathEntryIndex] ?? stages[0];
   const sectionStyle = {
     "--decision-accent": accent,
     "--decision-beat": `${firstBeatRef.current ? FIRST_BEAT_MS : AMBIENT_BEAT_MS}ms`,
@@ -269,6 +278,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       data-scroll-story="process"
       data-method-motion={ambientMotion ? "ambient" : "held"}
       data-method-stage={active + 1}
+      data-path-entry-stage={pathEntryIndex === null ? undefined : pathEntryIndex + 1}
       className={`decision-flow ${inView ? "is-awake" : "is-resting"}`}
       style={sectionStyle}
       aria-labelledby="decision-flow-title"
@@ -296,15 +306,32 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           <div>
             <p>
               06 · The method
-              {carriedSituation ? ` · ${SITUATION_LABEL[carriedSituation]}` : ""}
+              {carriedSituation ? ` · ${SITUATION_LABEL[carriedSituation]} path` : ""}
             </p>
             <h2 id="decision-flow-title">
               Six decisions. <em>One recognisable system.</em>
             </h2>
           </div>
-          <p>
-            Each choice gives the next one somewhere solid to begin. Nothing is decorated before the decision beneath it is clear.
-          </p>
+          {carriedSituation && pathEntryIndex !== null && pathEntryStage ? (
+            <aside className="decision-flow__path-brief">
+              <span>Path carried forward</span>
+              <strong>
+                {SITUATION_LABEL[carriedSituation]} begins at Decision {String(pathEntryIndex + 1).padStart(2, "0")}
+              </strong>
+              <p>{SITUATION_PATH_REASON[carriedSituation]}</p>
+              {active === pathEntryIndex ? (
+                <small>Starting here</small>
+              ) : (
+                <button type="button" onClick={() => chooseStage(pathEntryIndex, true)}>
+                  Return to {pathEntryStage.stage}
+                </button>
+              )}
+            </aside>
+          ) : (
+            <p>
+              Each choice gives the next one somewhere solid to begin. Expression waits until the decision beneath it is clear.
+            </p>
+          )}
         </header>
 
         <div className="decision-flow__stage">
@@ -344,7 +371,11 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
 
         <div className="decision-flow__selector">
           <div className="decision-flow__selector-label">
-            <span>The six decisions</span>
+            <span>
+              {carriedSituation && pathEntryStage
+                ? `Your path begins at ${pathEntryStage.stage}`
+                : "The six decisions"}
+            </span>
             <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>
           </div>
           <div
@@ -367,6 +398,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             {stages.map((item, index) => {
               const displayed = active === index;
               const committed = committedStage === index;
+              const pathEntry = pathEntryIndex === index;
               return (
                 <button
                   key={item.stage}
@@ -378,6 +410,8 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                   tabIndex={committed ? 0 : -1}
                   className={displayed ? "is-active" : undefined}
                   data-committed={committed ? "true" : undefined}
+                  data-path-entry={pathEntry ? "true" : undefined}
+                  aria-label={`${item.stage}${pathEntry && carriedSituation ? `, ${SITUATION_LABEL[carriedSituation]} path entry` : ""}`}
                   onClick={() => chooseStage(index, true)}
                   onPointerEnter={(event) => {
                     if (event.pointerType !== "mouse") return;
@@ -389,6 +423,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 >
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <strong>{item.stage}</strong>
+                  <small className="decision-flow__rail-cue">
+                    {pathEntry ? "Entry" : committed ? "Chosen" : ""}
+                  </small>
                   <i aria-hidden="true" />
                 </button>
               );
