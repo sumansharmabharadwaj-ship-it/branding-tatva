@@ -8,6 +8,7 @@ import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { InsightDecisionPath } from "@/components/InsightDecisionPath";
 import { InsightCard } from "@/components/InsightCard";
+import { InsightsLibraryReturnLink } from "@/components/InsightsLibraryReturnLink";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { ScrollProgress } from "@/components/ScrollProgress";
@@ -293,9 +294,7 @@ export default async function InsightArticlePage({ params }: Props) {
                   Home
                 </Link>
                 <span aria-hidden="true">/</span>
-                <Link href="/insights" className="transition hover:text-ivory">
-                  Insights
-                </Link>
+                <InsightsLibraryReturnLink className="transition hover:text-ivory" />
                 <span aria-hidden="true">/</span>
                 <Link
                   href={`/insights/topic/${post.topicSlug}`}
