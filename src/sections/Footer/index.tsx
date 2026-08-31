@@ -168,7 +168,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
               to the consent panel sits on every page. */}
           <ConsentPreferencesLink />
           {footerLinks.map((item) => (
-            <Link key={item.href} href={item.href} className="text-xs text-ivory/70 hover:text-ivory">
+            <Link key={item.href} href={item.href} className="inline-flex min-w-11 items-center justify-center text-xs text-ivory/70 hover:text-ivory">
               {item.label}
             </Link>
           ))}
