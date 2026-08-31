@@ -10,6 +10,7 @@ import { InsightDecisionPath } from "@/components/InsightDecisionPath";
 import { InsightCard } from "@/components/InsightCard";
 import { InsightsLibraryReturnLink } from "@/components/InsightsLibraryReturnLink";
 import { LinkButton } from "@/components/Button";
+import { RelatedInsightIntent } from "@/components/RelatedInsightIntent";
 import { Reveal } from "@/components/Reveal";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { TexturedDark } from "@/components/TexturedDark";
@@ -715,18 +716,26 @@ export default async function InsightArticlePage({ params }: Props) {
               <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 {related.map((relatedPost, index) => (
                   <Reveal key={relatedPost.slug} delay={index * 0.05}>
-                    <InsightCard
-                      post={relatedPost}
-                      imageOverride={editorialVisuals.get(relatedPost.slug)}
-                      tracking={{
-                        source: "related_insights",
-                        context: {
-                          from_article: post.slug,
-                          position: index + 1,
-                          mode: "continue_thread",
-                        },
-                      }}
-                    />
+                    <RelatedInsightIntent
+                      topicSlug={relatedPost.topicSlug}
+                      topicName={
+                        getInsightTopic(relatedPost.topicSlug)?.name ??
+                        relatedPost.element
+                      }
+                    >
+                      <InsightCard
+                        post={relatedPost}
+                        imageOverride={editorialVisuals.get(relatedPost.slug)}
+                        tracking={{
+                          source: "related_insights",
+                          context: {
+                            from_article: post.slug,
+                            position: index + 1,
+                            mode: "continue_thread",
+                          },
+                        }}
+                      />
+                    </RelatedInsightIntent>
                   </Reveal>
                 ))}
               </div>
