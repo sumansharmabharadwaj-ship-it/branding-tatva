@@ -30,7 +30,8 @@ function isInsightsIntentDetail(
     detail.label.length <= 160 &&
     (detail.origin === "decision-mirror" ||
       detail.origin === "knowledge-atlas" ||
-      detail.origin === "insights-library")
+      detail.origin === "insights-library" ||
+      detail.origin === "insights-article")
   );
 }
 

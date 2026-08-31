@@ -277,6 +277,7 @@ export function InsightsExplorer({
       topics.some((topic) => topic.slug === restoredLibrary?.topicSlug);
     const libraryMatchesInternalIntent =
       !initialIntent ||
+      initialIntent.origin === "insights-article" ||
       (initialIntent.origin === "insights-library" &&
         initialIntent.topicSlug === restoredLibrary?.topicSlug);
 
@@ -291,7 +292,10 @@ export function InsightsExplorer({
       restoredMobileCardIndexRef.current = restoredMobileCardIndex;
       setMobileCardIndex(restoredMobileCardIndex);
 
-      if (initialIntent?.origin === "insights-library") {
+      if (
+        initialIntent?.origin === "insights-library" ||
+        initialIntent?.origin === "insights-article"
+      ) {
         setCarriedIntent(initialIntent);
       }
     } else {
@@ -346,9 +350,13 @@ export function InsightsExplorer({
   const inferredTopic = settledQuery
     ? topics.find((topic) => topic.slug === filteredPosts[0]?.topicSlug)
     : selectedTopic;
+  const carriedTopic = carriedIntent
+    ? topics.find((topic) => topic.slug === carriedIntent.topicSlug)
+    : undefined;
+  const signalTopic = inferredTopic ?? carriedTopic;
   const signalKey = settledQuery
     ? inferredTopic?.slug ?? "unresolved"
-    : selectedTopic?.slug ?? "open";
+    : selectedTopic?.slug ?? carriedTopic?.slug ?? "open";
   const signalLabel = carriedIntent
     ? carriedIntent.origin === "decision-mirror"
       ? "Carried from your mirror"
@@ -356,7 +364,9 @@ export function InsightsExplorer({
         ? "Carried from your atlas"
         : carriedIntent.origin === "evidence-ledger"
           ? "Confirmed in your ledger"
-        : "Chosen in this library"
+          : carriedIntent.origin === "insights-article"
+            ? "Carried from your last read"
+            : "Chosen in this library"
     : settledQuery
       ? inferredTopic
         ? "Strongest current"
@@ -364,15 +374,17 @@ export function InsightsExplorer({
       : selectedTopic
         ? "Path in focus"
         : "Search lens";
-  const signalTitle = inferredTopic
-    ? inferredTopic.name
+  const signalTitle = signalTopic
+    ? signalTopic.name
     : settledQuery
       ? "A wider phrase will open more paths"
       : "Five strategic paths remain open";
   const signalDetail = carriedIntent
     ? carriedIntent.origin === "decision-mirror" && carriedIntent.query
       ? `“${carriedIntent.query}” stays in view. ${filteredPosts.length} ${filteredPosts.length === 1 ? "essay matches" : "essays match"} this route.`
-      : `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay now follows" : "essays now follow"} the ${carriedIntent.label.toLowerCase()} route you chose.`
+      : carriedIntent.origin === "insights-article"
+        ? `${carriedIntent.label} stays connected to the evidence and field-note path below.`
+        : `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay now follows" : "essays now follow"} the ${carriedIntent.label.toLowerCase()} route you chose.`
     : settledQuery
       ? inferredTopic
         ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay gathers" : "essays gather"} around this path.`
@@ -380,12 +392,9 @@ export function InsightsExplorer({
       : selectedTopic
         ? `${filteredPosts.length} ${filteredPosts.length === 1 ? "essay remains" : "essays remain"} in this path.`
         : "Write the symptom in the language already used in the room.";
-  const signalColor = inferredTopic
-    ? ELEMENT_COLORS[inferredTopic.element]
+  const signalColor = signalTopic
+    ? ELEMENT_COLORS[signalTopic.element]
     : "#B85A34";
-  const carriedTopic = carriedIntent
-    ? topics.find((topic) => topic.slug === carriedIntent.topicSlug)
-    : undefined;
   const threadColor = carriedTopic
     ? THREAD_COLORS[carriedTopic.element]
     : signalColor;
@@ -491,6 +500,29 @@ export function InsightsExplorer({
       source: "insights_library",
       path: topic.slug,
     });
+  }
+
+  function carryArticleIntent(post: InsightCardPost, cardIndex: number) {
+    const articleTopic = topics.find((topic) => topic.slug === post.topicSlug);
+
+    writeInsightsLibraryState({
+      query,
+      topicSlug,
+      folio: activeFolio,
+      mobileCardIndex: cardIndex,
+    });
+
+    if (!articleTopic) return;
+
+    publishInsightsIntent(
+      {
+        topicSlug: articleTopic.slug,
+        query: settledQuery,
+        label: articleTopic.name,
+        origin: "insights-article",
+      },
+      { broadcast: false },
+    );
   }
 
   function recoverWithQuery(nextQuery: string) {
@@ -838,6 +870,9 @@ export function InsightsExplorer({
                   >
                     <InsightCard
                       post={post}
+                      onOpen={(openedPost) =>
+                        carryArticleIntent(openedPost, index)
+                      }
                       imageOverride={libraryVisuals.get(post.slug)}
                       showReadingOutcome
                       readingCue={

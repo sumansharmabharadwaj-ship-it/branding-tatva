@@ -37,6 +37,7 @@ type InsightCardProps = {
     source: "insights_library" | "insights_topic" | "related_insights";
     context?: Record<string, string | number | boolean>;
   };
+  onOpen?: (post: InsightCardPost) => void;
 };
 
 const ELEMENT_COLORS: Record<InsightElement, string> = {
@@ -71,6 +72,7 @@ export function InsightCard({
   readingCue,
   imageOverride,
   tracking,
+  onOpen,
 }: InsightCardProps) {
   const color = ELEMENT_COLORS[post.element];
   const topicName = TOPIC_NAMES[post.topicSlug] ?? post.element;
@@ -98,6 +100,7 @@ export function InsightCard({
           article: post.slug,
           path: post.topicSlug,
         }}
+        onClick={onOpen ? () => onOpen(post) : undefined}
       >
         <div
           className={`insight-card__image relative overflow-hidden bg-soil ${

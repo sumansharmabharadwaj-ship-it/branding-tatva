@@ -8,6 +8,7 @@ export type InsightsIntentOrigin =
   | "decision-mirror"
   | "knowledge-atlas"
   | "insights-library"
+  | "insights-article"
   | "evidence-ledger";
 
 export type InsightsIntentDetail = {
@@ -34,6 +35,7 @@ function isInsightsIntentDetail(value: unknown): value is InsightsIntentDetail {
     (detail.origin === "decision-mirror" ||
       detail.origin === "knowledge-atlas" ||
       detail.origin === "insights-library" ||
+      detail.origin === "insights-article" ||
       detail.origin === "evidence-ledger")
   );
 }
@@ -77,7 +79,10 @@ export function readInsightsIntent() {
   }
 }
 
-export function publishInsightsIntent(detail: InsightsIntentDetail) {
+export function publishInsightsIntent(
+  detail: InsightsIntentDetail,
+  options?: { broadcast?: boolean },
+) {
   if (typeof window === "undefined") return;
 
   try {
@@ -94,7 +99,9 @@ export function publishInsightsIntent(detail: InsightsIntentDetail) {
     // A storage failure should never block the current-page interaction.
   }
 
-  window.dispatchEvent(
-    new CustomEvent<InsightsIntentDetail>(INSIGHTS_INTENT_EVENT, { detail }),
-  );
+  if (options?.broadcast !== false) {
+    window.dispatchEvent(
+      new CustomEvent<InsightsIntentDetail>(INSIGHTS_INTENT_EVENT, { detail }),
+    );
+  }
 }
