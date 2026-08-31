@@ -260,13 +260,13 @@ export function SectionJumpNav({
               {String(activeIndex + 1).padStart(2, "0")}
             </span>
             <span
-              className={`max-w-[10rem] truncate text-[0.55rem] font-semibold uppercase tracking-[0.13em] ${
+              className={`max-w-[10rem] truncate text-[0.625rem] font-semibold uppercase tracking-[0.1em] ${
                 lightTone ? "text-soil/72" : "text-ivory/72"
               }`}
             >
               {activeItem?.label ?? "Sections"}
             </span>
-            <span className={`text-[0.48rem] font-medium tracking-[0.08em] ${lightTone ? "text-soil/45" : "text-ivory/48"}`}>
+            <span className={`text-[0.55rem] font-medium tracking-[0.06em] ${lightTone ? "text-soil/48" : "text-ivory/52"}`}>
               / {String(navigationItems.length).padStart(2, "0")}
             </span>
           </span>
@@ -281,7 +281,7 @@ export function SectionJumpNav({
         {mobileOpen && (
           <div
             id="section-jump-mobile-menu"
-            className={`absolute bottom-[calc(100%+0.5rem)] right-0 grid w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md ${
+            className={`absolute bottom-[calc(100%+0.5rem)] right-0 grid max-h-[calc(100dvh-6.5rem-env(safe-area-inset-top,0px))] w-[min(19rem,calc(100vw-1.5rem))] grid-cols-2 gap-1.5 overflow-y-auto overscroll-contain rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
               lightTone ? "border-soil/12 bg-ivory/95" : "border-ivory/12 bg-soil/95"
             }`}
           >
@@ -293,7 +293,7 @@ export function SectionJumpNav({
                   href={item.href}
                   aria-current={active ? "location" : undefined}
                   onClick={() => choose(item.href)}
-                  className={`flex min-h-11 items-center justify-between rounded-xl px-3 py-2 text-[0.62rem] font-medium uppercase tracking-[0.14em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-terracotta ${
+                  className={`flex min-h-11 items-center justify-between rounded-xl px-3 py-2 text-[0.6875rem] font-medium uppercase leading-tight tracking-[0.1em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-terracotta ${
                     active
                       ? lightTone
                         ? "bg-soil/[0.08] text-terracotta"

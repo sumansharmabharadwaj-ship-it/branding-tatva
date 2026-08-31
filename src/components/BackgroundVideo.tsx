@@ -134,7 +134,7 @@ export function BackgroundVideo({
       // The viewport observer calls play() 25% before an offscreen scene
       // arrives. Lower chapters and homepage-directed scenes avoid even
       // metadata requests; explicit first-frame heroes keep metadata warm.
-      preload={posterPriority && !managedByHomepage ? "metadata" : "none"}
+      preload={managedByHomepage ? "none" : posterPriority ? "metadata" : "none"}
     >
       {videoMobile && (
         <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />

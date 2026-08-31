@@ -125,7 +125,12 @@ assert(mediaDirector.includes("const MIN_PLAYBACK_RATE = 0.65") && mediaDirector
 assert(backgroundVideo.includes("data-home-playback-rate={safePlaybackRate}"), "Background films do not publish their authored pace to the homepage media director.");
 assert(paths.includes('data-home-playback-rate="0.82"'), "Service-path film has lost its calm authored pace.");
 assert(videoFadeIn.includes("playbackManagedExternally = false") && videoFadeIn.includes("if (!playbackManagedExternally)"), "Reusable video fade-in cannot yield playback without losing cleanup ownership.");
-assert(backgroundVideo.includes("!prefersReducedMotion, managedByHomepage") && backgroundVideo.includes('managedByHomepage ? "none" : "metadata"'), "Homepage FAQ film still issues competing playback or preload commands.");
+assert(
+  backgroundVideo.includes("!prefersReducedMotion, managedByHomepage") &&
+    backgroundVideo.includes('managedByHomepage ? "none"') &&
+    backgroundVideo.includes('posterPriority ? "metadata" : "none"'),
+  "Homepage FAQ film or offscreen chapters still issue competing playback or preload commands.",
+);
 assert(questions.includes("managedByHomepage"), "Homepage FAQ does not opt into shared playback ownership.");
 assert(videoBreak.includes("managedByHomepage = false") && videoBreak.includes('managedByHomepage ? "none"'), "Closing film cannot yield playback to the homepage controller.");
 assert(experience.includes("managedByHomepage") && experience.includes("homePlaybackRate={0.84}"), "Closing invitation film does not use the shared calm playback contract.");
