@@ -8,6 +8,7 @@ import {
   useId,
   useRef,
   useState,
+  type KeyboardEvent,
   type MouseEvent,
   type ReactElement,
 } from "react";
@@ -269,6 +270,15 @@ export function ContactForm() {
   } = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
   });
+
+  function moveToNextRequiredField(
+    event: KeyboardEvent<HTMLInputElement>,
+    nextField: "email" | "description",
+  ) {
+    if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+    event.preventDefault();
+    setFocus(nextField);
+  }
 
   const requiredDetails = watch(["name", "email", "description"]);
   const requiredDetailChecks = [
@@ -830,7 +840,11 @@ export function ContactForm() {
             required
             aria-required="true"
             autoComplete="name"
+            autoCapitalize="words"
+            enterKeyHint="next"
             maxLength={CONTACT_DRAFT_LIMITS.name}
+            data-contact-mobile-next="email"
+            onKeyDown={(event) => moveToNextRequiredField(event, "email")}
             className={inputClass}
             {...register("name")}
           />
@@ -842,7 +856,13 @@ export function ContactForm() {
             type="email"
             inputMode="email"
             autoComplete="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            enterKeyHint="next"
+            spellCheck={false}
             maxLength={CONTACT_DRAFT_LIMITS.email}
+            data-contact-mobile-next="description"
+            onKeyDown={(event) => moveToNextRequiredField(event, "description")}
             className={inputClass}
             {...register("email")}
           />
@@ -859,6 +879,8 @@ export function ContactForm() {
             required
             aria-required="true"
             rows={4}
+            autoCapitalize="sentences"
+            spellCheck
             maxLength={CONTACT_DRAFT_LIMITS.description}
             className={inputClass}
             {...register("description")}

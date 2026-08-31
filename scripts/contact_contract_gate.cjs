@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
 const SRC = path.join(ROOT, "src");
-const CONTRACT_VERSION = 13;
+const CONTRACT_VERSION = 14;
 const EXPECTED_PHONE_E164 = "+918447725381";
 const EXPECTED_PHONE_DISPLAY = "+91 84477 25381";
 const EXPECTED_DURATION = 30;
@@ -250,6 +250,18 @@ if (
 }
 if (!contactForm.includes("data-contact-draft-announcement")) {
   fail("Restored Contact drafts must retain a focused assistive announcement.");
+}
+if (!contactForm.includes("moveToNextRequiredField")) {
+  fail("Contact's primary fields must retain their mobile keyboard progression.");
+}
+if (!contactForm.includes('data-contact-mobile-next="email"')) {
+  fail("The Contact name field must advance mobile keyboards to email without submitting early.");
+}
+if (!contactForm.includes('data-contact-mobile-next="description"')) {
+  fail("The Contact email field must advance mobile keyboards to the enquiry without submitting early.");
+}
+if (!contactForm.includes('event.nativeEvent.isComposing')) {
+  fail("Contact keyboard progression must preserve in-progress input method composition.");
 }
 if (/data-contact-draft-status[\s\S]{0,180}aria-live=/.test(contactForm)) {
   fail("Routine Contact draft saving must not repeatedly interrupt assistive technology.");
