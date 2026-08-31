@@ -67,6 +67,10 @@ assert(
   "The copy dense founder-led chapter can fade below the protected reading exposure.",
 );
 assert(
+  /id="about-evidence"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense evidence chapter can fade below the protected reading exposure.",
+);
+assert(
   /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
     /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
   "About chapter hashes can settle beneath the fixed header in a responsive state.",
@@ -376,11 +380,11 @@ assert(
 );
 
 const protectedEvidenceType = [
-  [".caseIdentity small, .caseIdentity em", 0.55],
+  [".caseIdentity small, .caseIdentity em", 0.6],
   [".recordBasis strong", 0.78],
   [".pathStep > span", 0.6],
-  [".outcome small", 0.58],
-  [".caseControls button em", 0.55],
+  [".outcome small", 0.64],
+  [".caseControls button em", 0.6],
   [".caseLink", 0.6],
   [".staticTrace", 0.7],
   [".staticResolution span", 0.58],
@@ -390,6 +394,12 @@ for (const [selector, minimum] of protectedEvidenceType) {
   const size = fontSizeRem(evidenceStyles, selector);
   assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
 }
+assert(
+  evidenceStyles.includes('html[data-consent-banner="visible"]') &&
+    evidenceStyles.includes(".caseLink { right: clamp(14rem, 18vw, 16rem);") &&
+    evidenceStyles.includes(".proofResolution { display: none;"),
+  "The evidence case action can settle beneath the consent notice.",
+);
 
 const protectedStandardsType = [
   [".instrumentTopline", 0.6],

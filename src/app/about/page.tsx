@@ -155,7 +155,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section id="about-evidence" className="relative overflow-clip bg-soil" data-about-chapter="evidence" data-about-film-scene data-scene-tone="dark">
+        <section id="about-evidence" className="relative overflow-clip bg-soil" data-about-chapter="evidence" data-about-film-scene data-reading-scene data-scene-tone="dark">
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/pixabay-forest-sunbeams.mp4"
