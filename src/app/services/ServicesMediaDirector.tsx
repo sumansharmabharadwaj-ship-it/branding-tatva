@@ -38,6 +38,7 @@ export function ServicesMediaDirector() {
     let formInteraction = false;
     let fieldInteraction = false;
     let modalInteraction = false;
+    const activeModalInteractions = new Set<string>();
     let syncing = false;
 
     function mediaBudget() {
@@ -147,8 +148,11 @@ export function ServicesMediaDirector() {
     }
 
     function onModalInteraction(event: Event) {
-      const detail = (event as CustomEvent<{ active?: boolean }>).detail;
-      modalInteraction = Boolean(detail?.active);
+      const detail = (event as CustomEvent<{ active?: boolean; source?: string }>).detail;
+      const source = detail?.source || "modal";
+      if (detail?.active) activeModalInteractions.add(source);
+      else activeModalInteractions.delete(source);
+      modalInteraction = activeModalInteractions.size > 0;
       publishFormInteraction();
       syncVideos();
     }
@@ -174,6 +178,7 @@ export function ServicesMediaDirector() {
       cleanups.clear();
       ratios.clear();
       videos.clear();
+      activeModalInteractions.clear();
       delete document.documentElement.dataset.servicesFormInteraction;
     };
   }, [prefersReducedMotion]);

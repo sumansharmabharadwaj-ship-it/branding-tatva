@@ -149,7 +149,9 @@ export function StrategyRoomCTA() {
     returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    window.dispatchEvent(new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: true } }));
+    window.dispatchEvent(
+      new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: true, source: "calendar" } }),
+    );
 
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -189,10 +191,25 @@ export function StrategyRoomCTA() {
       window.cancelAnimationFrame(focusFrame);
       window.removeEventListener("keydown", closeOnEscape);
       document.body.style.overflow = previousOverflow;
-      window.dispatchEvent(new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: false } }));
+      window.dispatchEvent(
+        new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: false, source: "calendar" } }),
+      );
       window.requestAnimationFrame(() => returnFocusRef.current?.focus());
     };
   }, [calendarOpen]);
+
+  useEffect(() => {
+    if (!briefStarted) return;
+    window.dispatchEvent(
+      new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: true, source: "brief" } }),
+    );
+
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: false, source: "brief" } }),
+      );
+    };
+  }, [briefStarted]);
 
   function focusBriefHeading() {
     window.requestAnimationFrame(() => briefHeadingRef.current?.focus());
