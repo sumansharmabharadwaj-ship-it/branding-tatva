@@ -81,6 +81,7 @@ const ELEMENT_COLORS: Record<string, string> = {
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+type SelectionDirection = "forward" | "backward";
 const FINE_POINTER_QUERY = "(min-width: 901px) and (hover: hover) and (pointer: fine)";
 const FIRST_BEAT_MS = 4400;
 const AMBIENT_BEAT_MS = 6200;
@@ -122,11 +123,25 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const [manualHoldUntil, setManualHoldUntil] = useState(0);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const firstBeatRef = useRef(true);
+  const selectionDirectionRef = useRef<SelectionDirection>("forward");
+  const displayedStageRef = useRef(0);
+  displayedStageRef.current = active;
+
+  function rememberSelectionDirection(
+    next: number,
+    direction?: SelectionDirection,
+  ) {
+    const current = displayedStageRef.current;
+    if (next === current) return;
+    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
+    displayedStageRef.current = next;
+  }
 
   useEffect(() => {
     function applySituation(value: string | null) {
       if (!isServicesSituation(value)) return;
       const situationStage = SITUATION_TO_STAGE[value];
+      rememberSelectionDirection(situationStage);
       setCarriedSituation(value);
       setActive(situationStage);
       setCommittedStage(situationStage);
@@ -147,6 +162,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     }
 
     function onSituationCleared() {
+      rememberSelectionDirection(0);
       setCarriedSituation(null);
       setActive(0);
       setCommittedStage(0);
@@ -210,7 +226,11 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     const delay = firstBeatRef.current ? FIRST_BEAT_MS : AMBIENT_BEAT_MS;
     const beatTimer = window.setTimeout(() => {
       firstBeatRef.current = false;
-      setActive((current) => (current + 1) % stages.length);
+      setActive((current) => {
+        const next = (current + 1) % stages.length;
+        rememberSelectionDirection(next, "forward");
+        return next;
+      });
     }, delay);
 
     return () => window.clearTimeout(beatTimer);
@@ -236,8 +256,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     !selectorEngaged &&
     manualHoldUntil === 0;
 
-  function chooseStage(index: number, commit = false) {
+  function chooseStage(
+    index: number,
+    commit = false,
+    direction?: SelectionDirection,
+  ) {
     const next = ((index % stages.length) + stages.length) % stages.length;
+    rememberSelectionDirection(next, direction);
     if (commit) {
       firstBeatRef.current = true;
       setManualHoldUntil(Date.now() + MANUAL_HOLD_MS);
@@ -256,7 +281,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     else return;
 
     event.preventDefault();
-    chooseStage(next, true);
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
+      ? "forward"
+      : event.key === "ArrowLeft" || event.key === "ArrowUp"
+        ? "backward"
+        : undefined;
+    chooseStage(next, true, direction);
     document.getElementById(`decision-flow-tab-${next}`)?.focus();
   }
 
@@ -352,7 +382,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               aria-labelledby={`decision-flow-tab-${active}`}
               aria-live={selectorEngaged ? "polite" : "off"}
               data-home-reading-plane
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(4px)" }}
+              data-home-selection-direction={selectionDirectionRef.current}
+              initial={prefersReducedMotion ? false : {
+                opacity: 0,
+                y: selectionDirectionRef.current === "forward" ? 14 : -14,
+                filter: "blur(4px)",
+              }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12, filter: "blur(3px)" }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: EASE }}
@@ -404,6 +439,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             }}
             onPointerLeave={(event) => {
               if (event.pointerType !== "mouse") return;
+              rememberSelectionDirection(committedStage);
               setActive(committedStage);
               setSelectorEngaged(false);
             }}

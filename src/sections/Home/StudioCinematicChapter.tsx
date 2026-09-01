@@ -111,22 +111,37 @@ const METHOD_TO_LENS: Record<HomeMethodStage, { index: number; bridge: string }>
 };
 
 type ManualMode = "none" | "pointer" | "focus";
+type SelectionDirection = "forward" | "backward";
 
 export function StudioCinematicChapter() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const manualModeRef = useRef<ManualMode>("none");
   const methodLensIndexRef = useRef(0);
+  const selectionDirectionRef = useRef<SelectionDirection>("forward");
+  const displayedIndexRef = useRef(0);
+  const scrollOffsetRef = useRef(0);
   const syncStageRef = useRef<() => void>(() => {});
   const [activeIndex, setActiveIndex] = useState(0);
   const [committedIndex, setCommittedIndex] = useState(0);
   const [carriedMethodDecision, setCarriedMethodDecision] = useState<HomeMethodDecision | null>(null);
+  displayedIndexRef.current = activeIndex;
   const active = DISCIPLINES[activeIndex];
   const methodMatch = carriedMethodDecision
     ? METHOD_TO_LENS[carriedMethodDecision.stage]
     : null;
   const matchedLensIndex = methodMatch?.index ?? null;
   const activeMatchesMethod = matchedLensIndex === activeIndex;
+
+  function rememberSelectionDirection(
+    next: number,
+    direction?: SelectionDirection,
+  ) {
+    const current = displayedIndexRef.current;
+    if (next === current) return;
+    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
+    displayedIndexRef.current = next;
+  }
 
   useEffect(() => {
     function applyDecision(decision: HomeMethodDecision | null) {
@@ -136,6 +151,7 @@ export function StudioCinematicChapter() {
         return;
       }
       const next = METHOD_TO_LENS[decision.stage].index;
+      rememberSelectionDirection(next);
       methodLensIndexRef.current = next;
       manualModeRef.current = "none";
       setCommittedIndex(next);
@@ -174,6 +190,14 @@ export function StudioCinematicChapter() {
       const progress = Math.min(1, Math.max(0, -bounds.top / travel));
       const offset = Math.min(DISCIPLINES.length - 1, Math.floor(progress * DISCIPLINES.length));
       const next = (methodLensIndexRef.current + offset) % DISCIPLINES.length;
+      const previousOffset = scrollOffsetRef.current;
+      const direction = offset > previousOffset
+        ? "forward"
+        : offset < previousOffset
+          ? "backward"
+          : undefined;
+      scrollOffsetRef.current = offset;
+      rememberSelectionDirection(next, direction);
       setCommittedIndex((current) => current === next ? current : next);
       setActiveIndex((current) => current === next ? current : next);
     }
@@ -198,7 +222,8 @@ export function StudioCinematicChapter() {
     };
   }, [reducedMotion]);
 
-  function choose(index: number) {
+  function choose(index: number, direction?: SelectionDirection) {
+    rememberSelectionDirection(index, direction);
     manualModeRef.current = "none";
     setCommittedIndex(index);
     setActiveIndex(index);
@@ -206,17 +231,20 @@ export function StudioCinematicChapter() {
 
   function previewFromPointer(event: ReactPointerEvent<HTMLButtonElement>, index: number) {
     if (event.pointerType !== "mouse" || document.activeElement === event.currentTarget) return;
+    rememberSelectionDirection(index);
     manualModeRef.current = "pointer";
     setActiveIndex(index);
   }
 
   function releasePointerPreview(event: ReactPointerEvent<HTMLButtonElement>) {
     if (manualModeRef.current !== "pointer" || document.activeElement === event.currentTarget) return;
+    rememberSelectionDirection(committedIndex);
     manualModeRef.current = "none";
     setActiveIndex(committedIndex);
   }
 
   function previewFromFocus(index: number) {
+    rememberSelectionDirection(index);
     manualModeRef.current = "focus";
     setCommittedIndex(index);
     setActiveIndex(index);
@@ -236,6 +264,12 @@ export function StudioCinematicChapter() {
     else if (event.key === "End") next = DISCIPLINES.length - 1;
     else return;
     event.preventDefault();
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
+      ? "forward"
+      : event.key === "ArrowLeft" || event.key === "ArrowUp"
+        ? "backward"
+        : undefined;
+    rememberSelectionDirection(next, direction);
     manualModeRef.current = "focus";
     setCommittedIndex(next);
     setActiveIndex(next);
@@ -290,7 +324,11 @@ export function StudioCinematicChapter() {
                 <motion.span
                   key={active.name}
                   className="is-active"
-                  initial={reducedMotion ? false : { opacity: 0, y: 10, filter: "blur(4px)" }}
+                  initial={reducedMotion ? false : {
+                    opacity: 0,
+                    y: selectionDirectionRef.current === "forward" ? 10 : -10,
+                    filter: "blur(4px)",
+                  }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   exit={reducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(3px)" }}
                   transition={{ duration: reducedMotion ? 0 : 0.42, ease: EASE }}
@@ -309,7 +347,13 @@ export function StudioCinematicChapter() {
               aria-labelledby={`studio-film-tab-${activeIndex}`}
               className="studio-film__reading"
               data-home-reading-plane
-              initial={reducedMotion ? false : { opacity: 0, x: 14, y: 5, filter: "blur(4px)" }}
+              data-home-selection-direction={selectionDirectionRef.current}
+              initial={reducedMotion ? false : {
+                opacity: 0,
+                x: selectionDirectionRef.current === "forward" ? 14 : -14,
+                y: 5,
+                filter: "blur(4px)",
+              }}
               animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
               exit={reducedMotion ? undefined : { opacity: 0, x: -7, y: -5, filter: "blur(3px)" }}
               transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}

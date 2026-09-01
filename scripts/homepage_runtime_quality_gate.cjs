@@ -120,6 +120,8 @@ assert(studio.includes("const [committedIndex, setCommittedIndex]"), "Studio pre
 assert(studio.includes("methodLensIndexRef.current + offset") && studio.includes("data-method-match={matched"), "Studio scroll no longer begins from or preserves the lens matched to the working method.");
 assert(studio.includes("aria-selected={committed}") && studio.includes("tabIndex={committed ? 0 : -1}"), "Studio hover changes the selected tab or keyboard stop.");
 assert(studio.includes('aria-live={manualModeRef.current === "focus" ? "polite" : "off"}'), "Studio scroll or pointer previews can interrupt assistive reading.");
+assert(studio.includes('data-home-selection-direction={selectionDirectionRef.current}'), "Studio reading motion still inherits unrelated page-scroll direction.");
+assert(studio.includes("const scrollOffsetRef = useRef(0)"), "Studio cannot distinguish forward and backward runway travel across wrapped lens indices.");
 assert(studioSynthesisStyles.includes('button[data-studio-state="committed"]'), "Studio previews erase the visitor's committed visual anchor.");
 assert(/height:\s*148svh\s*!important/.test(studioStyles), "Studio has no bounded three-stage scroll runway.");
 assert(/#studio > \.studio-film\s*\{[^}]*position:\s*sticky\s*!important/s.test(studioStyles), "Studio film does not hold its one-screen composition while disciplines change.");
@@ -134,6 +136,8 @@ assert(process.includes("const committed = committedStage === index"), "Working-
 assert(process.includes("aria-selected={committed}"), "Working-method hover changes assistive selection state.");
 assert(process.includes("tabIndex={committed ? 0 : -1}"), "Working-method hover moves the keyboard tab stop.");
 assert(process.includes("setActive(committedStage)"), "Working-method hover does not restore the visitor's committed decision.");
+assert(process.includes('rememberSelectionDirection(next, "forward")'), "Working-method ambient wrap can read as a backward visitor choice.");
+assert(process.includes('data-home-selection-direction={selectionDirectionRef.current}'), "Working-method reading motion still inherits unrelated page-scroll direction.");
 assert(process.includes("data-path-entry-stage=") && process.includes("data-path-entry={pathEntry"), "Working method no longer distinguishes the visitor's original path entry from later exploration.");
 assert(process.includes('href="#studio"') && process.includes("chooseStage(active, true)"), "Working method can leave without committing the decision the visitor is currently reading.");
 assert(!process.includes("void video.play()") && !process.includes("video.pause()"), "Working method bypasses the shared one-film playback budget.");
