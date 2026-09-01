@@ -107,6 +107,7 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+type SelectionDirection = "forward" | "backward";
 
 const loadProjectFile = () => import("@/sections/Home/ProjectFile");
 const ProjectFile = dynamic(
@@ -154,6 +155,8 @@ function projectsForSituation(situation: ServicesSituationId | null) {
 
 export function EvidenceWall() {
   const indexButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const selectionDirectionRef = useRef<SelectionDirection>("forward");
+  const displayedIndexRef = useRef(0);
   const [committedIndex, setCommittedIndex] = useState(0);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
@@ -165,6 +168,7 @@ export function EvidenceWall() {
     [carriedSituation],
   );
   const activeIndex = previewIndex ?? committedIndex;
+  displayedIndexRef.current = activeIndex;
   const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const activeProject = visibleProjects[activeIndex] ?? visibleProjects[0];
   const activeTrail = trailFor(activeProject);
@@ -172,14 +176,34 @@ export function EvidenceWall() {
   const activeEvidence = EVIDENCE_META[activeProject.slug];
   const activeSituation = PROOF_TO_SITUATION[activeProject.slug];
 
-  function choose(index: number, persist = true) {
+  function rememberSelectionDirection(
+    next: number,
+    direction?: SelectionDirection,
+  ) {
+    const current = displayedIndexRef.current;
+    if (next === current) return;
+    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
+    displayedIndexRef.current = next;
+  }
+
+  function choose(
+    index: number,
+    persist = true,
+    direction?: SelectionDirection,
+  ) {
     const count = visibleProjects.length;
     const next = count > 0 ? ((index % count) + count) % count : 0;
+    rememberSelectionDirection(next, direction);
     if (!persist) {
       setPreviewIndex(next);
       return;
     }
     setCommittedIndex(next);
+    setPreviewIndex(null);
+  }
+
+  function clearPreview() {
+    rememberSelectionDirection(committedIndex);
     setPreviewIndex(null);
   }
 
@@ -235,7 +259,12 @@ export function EvidenceWall() {
       : event.key === "End"
         ? visibleProjects.length - 1
         : (index + direction + visibleProjects.length) % visibleProjects.length;
-    choose(nextIndex);
+    const selectionDirection = direction > 0
+      ? "forward"
+      : direction < 0
+        ? "backward"
+        : undefined;
+    choose(nextIndex, true, selectionDirection);
     indexButtonRefs.current[nextIndex]?.focus();
   }
 
@@ -333,8 +362,14 @@ export function EvidenceWall() {
               aria-labelledby={`evidence-tab-${activeIndex}`}
               className="evidence-cinematic__summary"
               data-home-reading-plane
+              data-home-selection-direction={selectionDirectionRef.current}
               aria-live="polite"
-              initial={prefersReducedMotion ? false : { opacity: 0, x: 16, y: 4, filter: "blur(4px)" }}
+              initial={prefersReducedMotion ? false : {
+                opacity: 0,
+                x: selectionDirectionRef.current === "forward" ? 16 : -16,
+                y: 4,
+                filter: "blur(4px)",
+              }}
               animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(3px)" }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
@@ -420,7 +455,7 @@ export function EvidenceWall() {
             role="tablist"
             aria-label="Choose a project case"
             onPointerLeave={(event) => {
-              if (event.pointerType === "mouse") setPreviewIndex(null);
+              if (event.pointerType === "mouse") clearPreview();
             }}
           >
             {visibleProjects.map((project, index) => {

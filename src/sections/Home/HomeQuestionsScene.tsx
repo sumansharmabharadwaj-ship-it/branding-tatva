@@ -35,7 +35,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const QUESTIONS = [
   {
@@ -74,6 +74,8 @@ const QUESTIONS = [
     signal: "Remote collaboration across every client project shown on this site.",
   },
 ] as const;
+
+type SelectionDirection = "forward" | "backward";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SITUATION_TO_QUESTION: Record<ServicesSituationId, number> = {
@@ -126,6 +128,8 @@ function toQuestionChoice(
 
 export function HomeQuestionsScene() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
+  const selectionDirectionRef = useRef<SelectionDirection>("forward");
+  const displayedIndexRef = useRef(0);
   const [committedIndex, setCommittedIndex] = useState(0);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
@@ -138,6 +142,7 @@ export function HomeQuestionsScene() {
     [],
   );
   const activeIndex = previewIndex ?? committedIndex;
+  displayedIndexRef.current = activeIndex;
   const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const active = decisions[activeIndex] ?? decisions[0];
   const matchedToSituation = carriedSituation !== null && SITUATION_TO_QUESTION[carriedSituation] === activeIndex;
@@ -216,7 +221,23 @@ export function HomeQuestionsScene() {
     };
   }, []);
 
-  function choose(index: number, persist = true, measure = false) {
+  function rememberSelectionDirection(
+    next: number,
+    direction?: SelectionDirection,
+  ) {
+    const current = displayedIndexRef.current;
+    if (next === current) return;
+    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
+    displayedIndexRef.current = next;
+  }
+
+  function choose(
+    index: number,
+    persist = true,
+    measure = false,
+    direction?: SelectionDirection,
+  ) {
+    rememberSelectionDirection(index, direction);
     if (!persist) {
       setPreviewIndex(index);
       return;
@@ -232,6 +253,11 @@ export function HomeQuestionsScene() {
     publishHomeQuestionChoice(
       toQuestionChoice(decisions[index] ?? decisions[0], carriedLens),
     );
+  }
+
+  function clearPreview() {
+    rememberSelectionDirection(committedIndex);
+    setPreviewIndex(null);
   }
 
   function chooseLens(lens: HomeStudioLens) {
@@ -257,7 +283,12 @@ export function HomeQuestionsScene() {
     else if (event.key === "End") next = decisions.length - 1;
     else return;
     event.preventDefault();
-    choose(next, true, true);
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
+      ? "forward"
+      : event.key === "ArrowLeft" || event.key === "ArrowUp"
+        ? "backward"
+        : undefined;
+    choose(next, true, true, direction);
     document.getElementById(`decision-question-${next}`)?.focus();
   }
 
@@ -297,7 +328,7 @@ export function HomeQuestionsScene() {
             role="tablist"
             aria-label="Choose a practical question"
             onPointerLeave={(event) => {
-              if (event.pointerType === "mouse") setPreviewIndex(null);
+              if (event.pointerType === "mouse") clearPreview();
             }}
           >
             <p className="questions-editorial__instruction">Choose what you need to know</p>
@@ -339,7 +370,13 @@ export function HomeQuestionsScene() {
               aria-labelledby={`decision-question-${activeIndex}`}
               className="questions-editorial__answer"
               data-home-reading-plane
-              initial={reducedMotion ? false : { opacity: 0, x: 16, y: 5, filter: "blur(5px)" }}
+              data-home-selection-direction={selectionDirectionRef.current}
+              initial={reducedMotion ? false : {
+                opacity: 0,
+                x: selectionDirectionRef.current === "forward" ? 16 : -16,
+                y: 5,
+                filter: "blur(5px)",
+              }}
               animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
               exit={reducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(4px)" }}
               transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}

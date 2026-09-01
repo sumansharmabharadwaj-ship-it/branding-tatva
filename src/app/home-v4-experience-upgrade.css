@@ -1228,6 +1228,14 @@
     --home-reading-line-animation: home-v4-reading-line-backward;
   }
 
+  .home-v4 [data-home-selection-direction="forward"] {
+    --home-reading-line-animation: home-v4-reading-line-forward;
+  }
+
+  .home-v4 [data-home-selection-direction="backward"] {
+    --home-reading-line-animation: home-v4-reading-line-backward;
+  }
+
   .home-v4 [data-home-scene-state="active"] :is(
     .evidence-cinematic__summary > p:first-child,
     .paths-film__answer > .paths-film__answer-eyebrow,

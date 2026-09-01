@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import {
   useEffect,
+  useRef,
   useState,
   type CSSProperties,
   type KeyboardEvent,
@@ -86,6 +87,7 @@ const PATHS = [
 }>;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+type SelectionDirection = "forward" | "backward";
 type CarriedPathSource = "diagnostic" | "evidence" | null;
 const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
   idea: 0,
@@ -95,10 +97,13 @@ const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
 
 export function PathsCinematicChapter() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const selectionDirectionRef = useRef<SelectionDirection>("forward");
+  const displayedIndexRef = useRef(0);
   const [committedIndex, setCommittedIndex] = useState(0);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [carriedFrom, setCarriedFrom] = useState<CarriedPathSource>(null);
   const activeIndex = previewIndex ?? committedIndex;
+  displayedIndexRef.current = activeIndex;
   const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const active = PATHS[activeIndex];
 
@@ -143,7 +148,22 @@ export function PathsCinematicChapter() {
     };
   }, []);
 
-  function choose(index: number, persist = true) {
+  function rememberSelectionDirection(
+    next: number,
+    direction?: SelectionDirection,
+  ) {
+    const current = displayedIndexRef.current;
+    if (next === current) return;
+    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
+    displayedIndexRef.current = next;
+  }
+
+  function choose(
+    index: number,
+    persist = true,
+    direction?: SelectionDirection,
+  ) {
+    rememberSelectionDirection(index, direction);
     if (!persist) {
       setPreviewIndex(index);
       return;
@@ -152,6 +172,11 @@ export function PathsCinematicChapter() {
     setPreviewIndex(null);
     setCarriedFrom(null);
     publishServicesSituation(PATHS[index].situation, "home_paths");
+  }
+
+  function clearPreview() {
+    rememberSelectionDirection(committedIndex);
+    setPreviewIndex(null);
   }
 
   function onChoiceKeyDown(
@@ -172,7 +197,12 @@ export function PathsCinematicChapter() {
     }
 
     event.preventDefault();
-    choose(next);
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
+      ? "forward"
+      : event.key === "ArrowLeft" || event.key === "ArrowUp"
+        ? "backward"
+        : undefined;
+    choose(next, true, direction);
     document.getElementById(`path-film-tab-${PATHS[next].number}`)?.focus();
   }
 
@@ -241,7 +271,7 @@ export function PathsCinematicChapter() {
                 role="tablist"
                 aria-label="Choose the service starting point that matches your brand"
                 onPointerLeave={(event) => {
-                  if (event.pointerType === "mouse") setPreviewIndex(null);
+                  if (event.pointerType === "mouse") clearPreview();
                 }}
               >
                 {PATHS.map((path, index) => {
@@ -290,7 +320,13 @@ export function PathsCinematicChapter() {
               aria-labelledby={`path-film-tab-${active.number}`}
               data-path-state={isPreviewing ? "preview" : "chosen"}
               data-home-reading-plane
-              initial={prefersReducedMotion ? false : { opacity: 0, x: 18, y: 6, filter: "blur(4px)" }}
+              data-home-selection-direction={selectionDirectionRef.current}
+              initial={prefersReducedMotion ? false : {
+                opacity: 0,
+                x: selectionDirectionRef.current === "forward" ? 18 : -18,
+                y: 6,
+                filter: "blur(4px)",
+              }}
               animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(3px)" }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
