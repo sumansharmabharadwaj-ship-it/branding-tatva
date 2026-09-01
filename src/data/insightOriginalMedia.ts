@@ -6,11 +6,21 @@ type InsightOriginalMedia = {
 
 const MEDIA_ROOT = "/images/generated/insights-v2";
 const VIDEO_ROOT = "/videos/generated/insights-v2";
+const TOPIC_MEDIA_ROOT = "/images/generated/insights-v3";
+const TOPIC_VIDEO_ROOT = "/videos/generated/insights-v3";
 
 function media(slug: string, alt: string): InsightOriginalMedia {
   return {
     poster: `${MEDIA_ROOT}/${slug}.webp`,
     video: `${VIDEO_ROOT}/${slug}.mp4`,
+    alt,
+  };
+}
+
+function topicMedia(slug: string, alt: string): InsightOriginalMedia {
+  return {
+    poster: `${TOPIC_MEDIA_ROOT}/${slug}.webp`,
+    video: `${TOPIC_VIDEO_ROOT}/${slug}.mp4`,
     alt,
   };
 }
@@ -56,9 +66,9 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "recall-measurement-tabletop-test",
     "A modest memory test with covered objects and a simple wooden tally",
   ),
-  "value-proposition-vs-positioning-vs-tagline": media(
-    "positioning-value-tagline-three-jobs",
-    "A stone territory clear offer vessel and small brass signal nested together",
+  "value-proposition-vs-positioning-vs-tagline": topicMedia(
+    "positioning-value-tagline-hierarchy",
+    "A walnut positioning foundation supporting a terracotta value proposition and concise brass tagline plate",
   ),
   "brand-consistency-checklist-service-businesses": media(
     "brand-consistency-thread",
@@ -96,9 +106,9 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "customer-interviews-listening-table",
     "Two chairs and an analogue recorder arranged for an open conversation",
   ),
-  "turn-customer-interviews-into-positioning-brief": media(
-    "interview-synthesis-weave",
-    "Many loose fibres entering a loom and leaving as one strong woven band",
+  "turn-customer-interviews-into-positioning-brief": topicMedia(
+    "interview-evidence-to-positioning-brief",
+    "Customer interview evidence cards connected into one structured positioning brief",
   ),
   "service-line-naming-strategy": media(
     "service-line-naming-cabinet",
@@ -128,9 +138,9 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "case-study-decision-record",
     "An open project record tracing evidence from first fragment to final proof",
   ),
-  "testimonial-questions-buying-evidence": media(
-    "testimonial-evidence-listening",
-    "An analogue recorder beside tangible evidence resting on a brass balance",
+  "testimonial-questions-buying-evidence": topicMedia(
+    "testimonial-questions-to-proof",
+    "Five testimonial interview stages feeding into an organized dossier of buying evidence",
   ),
 };
 

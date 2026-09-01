@@ -24,10 +24,10 @@ export const interviewSynthesisInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",
-    heroImage: "/images/generated/insights/interview-synthesis-weave.webp",
-    heroVideo: "/videos/generated/insights/interview-synthesis-weave.mp4",
+    heroImage: "/images/generated/insights-v3/interview-evidence-to-positioning-brief.webp",
+    heroVideo: "/videos/generated/insights-v3/interview-evidence-to-positioning-brief.mp4",
     heroImageAlt:
-      "Five loose interview strands entering a loom and emerging as one focused positioning brief",
+      "Customer interview evidence cards connected into one structured positioning brief",
     keyTakeaways: [
       "Interview quotes are evidence fragments; strategy begins when patterns are compared and choices are made.",
       "Separate observation, interpretation, implication, and decision so attractive language does not outrun the evidence.",

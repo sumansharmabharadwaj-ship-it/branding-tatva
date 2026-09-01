@@ -24,10 +24,10 @@ export const valuePropositionInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",
-    heroImage: "/images/generated/insights/positioning-value-tagline-three-jobs.webp",
-    heroVideo: "/videos/generated/insights/positioning-value-tagline-three-jobs.mp4",
+    heroImage: "/images/generated/insights-v3/positioning-value-tagline-hierarchy.webp",
+    heroVideo: "/videos/generated/insights-v3/positioning-value-tagline-hierarchy.mp4",
     heroImageAlt:
-      "A walnut frame, terracotta bridge, and brass seal connected as three distinct strategic tools",
+      "A walnut positioning foundation supporting a terracotta value proposition and concise brass tagline plate",
     keyTakeaways: [
       "Positioning is the strategic decision beneath the language.",
       "A value proposition explains why a particular offer matters to a particular buyer.",
