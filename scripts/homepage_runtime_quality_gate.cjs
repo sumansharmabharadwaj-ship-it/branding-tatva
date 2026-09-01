@@ -213,7 +213,9 @@ assert(finalInvitation.includes('event.pointerType !== "mouse" || prefersReduced
 assert(finalInvitation.includes('"--invitation-cta-x"') && finalInvitation.includes('"--invitation-cta-y"'), "Closing booking response has lost its bounded pointer position.");
 assert(finalInvitation.includes("onPointerCancel") && finalInvitation.includes("onFocus"), "Closing booking response can remain stranded or displace keyboard focus.");
 assert(invitationStyles.includes("var(--invitation-cta-x, 0px)") && invitationStyles.includes("calc(var(--invitation-cta-y, 0px) - 2px)"), "Closing booking response is no longer coupled to the CTA transform.");
-assert(finalInvitation.includes("onCallStepKeyDown") && finalInvitation.includes('aria-selected={activeCallStep === index}') && finalInvitation.includes('tabIndex={activeCallStep === index ? 0 : -1}'), "Closing invitation conversation steps have lost their keyboard selection contract.");
+assert(finalInvitation.includes("const activeCallStep = previewCallStep ?? committedCallStep"), "Closing invitation conversation steps have lost their reversible preview state.");
+assert(finalInvitation.includes('event.pointerType === "mouse"') && finalInvitation.includes("chooseCallStep(index, false)"), "Closing invitation conversation preview can consume touch gestures.");
+assert(finalInvitation.includes("onCallStepKeyDown") && finalInvitation.includes('aria-selected={committedCallStep === index}') && finalInvitation.includes('tabIndex={committedCallStep === index ? 0 : -1}'), "Closing invitation conversation steps have lost their keyboard selection contract.");
 assert(finalInvitation.includes("duration: prefersReducedMotion ? 0 : 0.36"), "Closing invitation conversation detail ignores reduced motion.");
 assert(videoBreak.includes("managedByHomepage = false") && videoBreak.includes('managedByHomepage ? "none"'), "Closing film cannot yield playback to the homepage controller.");
 assert(experience.includes("managedByHomepage") && experience.includes("homePlaybackRate={0.84}"), "Closing invitation film does not use the shared calm playback contract.");

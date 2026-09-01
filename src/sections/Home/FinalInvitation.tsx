@@ -110,9 +110,11 @@ export function FinalInvitation() {
   const [situation, setSituation] = useState<Situation>("default");
   const [questionChoice, setQuestionChoice] = useState<HomeQuestionChoice | null>(null);
   const [studioLens, setStudioLens] = useState<HomeStudioLens | null>(null);
-  const [activeCallStep, setActiveCallStep] = useState(0);
+  const [committedCallStep, setCommittedCallStep] = useState(0);
+  const [previewCallStep, setPreviewCallStep] = useState<number | null>(null);
   const inView = useInView(rootRef, { amount: 0.28 });
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const activeCallStep = previewCallStep ?? committedCallStep;
 
   useEffect(() => {
     if (!inView) return;
@@ -198,6 +200,15 @@ export function FinalInvitation() {
     invitation.callClose,
   ] as const;
 
+  function chooseCallStep(index: number, persist = true) {
+    if (!persist) {
+      setPreviewCallStep(index);
+      return;
+    }
+    setCommittedCallStep(index);
+    setPreviewCallStep(null);
+  }
+
   function onCallStepKeyDown(
     event: KeyboardEvent<HTMLButtonElement>,
     index: number,
@@ -215,7 +226,7 @@ export function FinalInvitation() {
       return;
     }
     event.preventDefault();
-    setActiveCallStep(next);
+    chooseCallStep(next);
     document.getElementById(`final-invitation-step-${next}`)?.focus();
   }
 
@@ -377,7 +388,13 @@ export function FinalInvitation() {
                   ease: [0.22, 1, 0.36, 1],
                 }}
               />
-              <ol role="tablist" aria-label="Choose a stage of the diagnosis conversation">
+              <ol
+                role="tablist"
+                aria-label="Choose a stage of the diagnosis conversation"
+                onPointerLeave={(event) => {
+                  if (event.pointerType === "mouse") setPreviewCallStep(null);
+                }}
+              >
                 {consultation.steps.map((step, index) => (
                   <motion.li
                     key={step}
@@ -395,11 +412,14 @@ export function FinalInvitation() {
                       id={`final-invitation-step-${index}`}
                       type="button"
                       role="tab"
-                      aria-selected={activeCallStep === index}
+                      aria-selected={committedCallStep === index}
                       aria-controls="final-invitation-step-detail"
-                      tabIndex={activeCallStep === index ? 0 : -1}
-                      onClick={() => setActiveCallStep(index)}
-                      onFocus={() => setActiveCallStep(index)}
+                      tabIndex={committedCallStep === index ? 0 : -1}
+                      onClick={() => chooseCallStep(index)}
+                      onPointerEnter={(event) => {
+                        if (event.pointerType === "mouse") chooseCallStep(index, false);
+                      }}
+                      onFocus={() => chooseCallStep(index)}
                       onKeyDown={(event) => onCallStepKeyDown(event, index)}
                     >
                       <span>{String(index + 1).padStart(2, "0")}</span>
