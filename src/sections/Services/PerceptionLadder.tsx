@@ -1,6 +1,6 @@
 "use client";
 
-import type { KeyboardEvent, PointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent, PointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
@@ -164,8 +164,15 @@ export function PerceptionLadder() {
       <div
         data-perception-system="true"
         data-perception-stage={activeIndex + 1}
+        style={{ "--perception-progress": `${(activeIndex / (RUNGS.length - 1)) * 100}%` } as CSSProperties}
         className="grid gap-8 lg:grid-cols-[minmax(15rem,0.62fr)_minmax(16rem,0.72fr)_minmax(21rem,1.05fr)] lg:items-center lg:gap-10 xl:gap-16"
       >
+        <div data-perception-trace="true" aria-hidden="true">
+          <span data-perception-trace="line" />
+          {RUNGS.map((rung, index) => (
+            <span key={rung.label} data-perception-trace-node={index + 1} />
+          ))}
+        </div>
         <div data-services-chapter-copy="true">
           <p className="text-sm font-medium uppercase tracking-wide text-[#C6CCB8]">How buyers remember</p>
           <h2 className="mt-2 max-w-lg text-display-sm font-display font-normal text-ivory">
@@ -288,9 +295,17 @@ export function PerceptionLadder() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={activeRung.label}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
+              initial={
+                prefersReducedMotion
+                  ? false
+                  : { opacity: 0.24, clipPath: "inset(7% 0 7% 0 round 1.5rem)", filter: "blur(5px)" }
+              }
+              animate={{ opacity: 1, clipPath: "inset(0% 0 0% 0 round 0rem)", filter: "blur(0px)" }}
+              exit={
+                prefersReducedMotion
+                  ? undefined
+                  : { opacity: 0.18, clipPath: "inset(0 0 68% 0 round 1.5rem)", filter: "blur(4px)" }
+              }
               transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
             >
               <h3 className="mt-5 font-display text-[clamp(2.8rem,5vw,4.8rem)] font-normal leading-none text-ivory">

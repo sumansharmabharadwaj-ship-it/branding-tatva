@@ -159,6 +159,329 @@
     inset 0 1px 0 rgba(244, 239, 230, 0.035);
 }
 
+/* The closing chapter keeps the same invitation and booking logic, but the
+   composition now resolves as one decision surface instead of a heading,
+   agenda and glass card stacked into three separate endings. */
+#book {
+  isolation: isolate;
+}
+
+#book [data-strategy-room-stage="true"] {
+  min-height: min(42rem, calc(100svh - 11rem));
+}
+
+#book [data-strategy-room-copy="true"] {
+  position: relative;
+  z-index: 2;
+  padding: clamp(1rem, 2vw, 1.6rem);
+  border-left: 1px solid rgba(212, 185, 154, 0.28);
+  transform:
+    translate3d(var(--services-copy-x, 0), var(--services-copy-y, 0), 0);
+  opacity: var(--services-copy-opacity, 1);
+}
+
+#book [data-strategy-room-copy="true"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -1px;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, #d4b99a, rgba(212, 185, 154, 0));
+  box-shadow: 0 0 22px rgba(212, 185, 154, 0.34);
+  transform: scaleY(max(0.24, var(--services-resolution, 1)));
+  transform-origin: top;
+}
+
+#book [data-strategy-room-orbit="true"] {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 22%;
+  width: clamp(20rem, 37vw, 34rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: calc(0.2 + var(--services-discovery, 0) * 0.46);
+  transform:
+    translate3d(-50%, -50%, 0)
+    scale(calc(0.88 + var(--services-resolution, 0) * 0.12));
+  transition: opacity 500ms ease;
+}
+
+#book [data-strategy-orbit-ring] {
+  position: absolute;
+  border: 1px solid rgba(212, 185, 154, 0.2);
+  border-radius: 50%;
+}
+
+#book [data-strategy-orbit-ring="outer"] {
+  inset: 0;
+  border-style: dashed;
+  animation: services-strategy-orbit 28s linear infinite;
+}
+
+#book [data-strategy-orbit-ring="inner"] {
+  inset: 20%;
+  border-color: rgba(244, 239, 230, 0.16);
+  animation: services-strategy-orbit 19s linear infinite reverse;
+}
+
+#book [data-strategy-orbit-ring]::before,
+#book [data-strategy-orbit-ring]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0.42rem;
+  height: 0.42rem;
+  margin-top: -0.21rem;
+  border-radius: 50%;
+  background: #d4b99a;
+  box-shadow: 0 0 18px rgba(212, 185, 154, 0.7);
+}
+
+#book [data-strategy-orbit-ring]::before {
+  left: -0.21rem;
+}
+
+#book [data-strategy-orbit-ring]::after {
+  right: -0.21rem;
+}
+
+#book [data-strategy-orbit-signal="true"] {
+  position: absolute;
+  top: 50%;
+  left: 4%;
+  width: 92%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 185, 154, 0.6), transparent);
+  transform: rotate(-18deg);
+  transform-origin: center;
+}
+
+#book [data-strategy-orbit-core="true"] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  place-items: center;
+  border: 1px solid rgba(244, 239, 230, 0.24);
+  border-radius: 50%;
+  background: rgba(20, 25, 22, 0.28);
+  color: rgba(244, 239, 230, 0.52);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(8px);
+}
+
+#book [data-strategy-agenda-step="true"] {
+  overflow: hidden;
+  transition:
+    border-color 300ms ease,
+    background-color 300ms ease,
+    transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#book [data-strategy-agenda-step="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, #d4b99a, transparent 72%);
+  transform: scaleX(var(--services-discovery, 0));
+  transform-origin: left;
+}
+
+#book [data-strategy-agenda-step="true"]:hover {
+  border-color: rgba(212, 185, 154, 0.36);
+  background: rgba(26, 33, 29, 0.64);
+  transform: translateX(0.3rem);
+}
+
+#book [data-services-chapter-resolution="true"] {
+  z-index: 3;
+  align-self: center;
+  transform:
+    translate3d(var(--services-instrument-x, 0), var(--services-instrument-y, 0), 0)
+    scale(var(--services-instrument-scale, 1));
+  opacity: var(--services-instrument-opacity, 1);
+}
+
+#book [data-strategy-room-shell="true"] {
+  position: relative;
+  max-width: none;
+  overflow: hidden;
+  border-color: rgba(244, 239, 230, 0.2);
+  background:
+    radial-gradient(circle at 82% 4%, rgba(212, 185, 154, 0.13), transparent 30%),
+    linear-gradient(145deg, rgba(20, 29, 24, 0.86), rgba(13, 21, 18, 0.72));
+  box-shadow:
+    0 34px 110px rgba(5, 9, 7, 0.32),
+    inset 0 1px rgba(244, 239, 230, 0.065);
+}
+
+#book [data-strategy-room-shell="true"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  width: 88%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4b99a, transparent);
+  box-shadow: 0 0 18px rgba(212, 185, 154, 0.42);
+  transform: scaleX(max(0.18, var(--services-resolution, 0)));
+  transform-origin: left;
+}
+
+#book [data-strategy-control="true"] {
+  position: relative;
+}
+
+#book [data-strategy-control="true"]:hover {
+  box-shadow: 0 12px 32px rgba(6, 10, 8, 0.2);
+}
+
+@keyframes services-strategy-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A live signal turns the existing checklist into immediate feedback. The
+   email route and all ten checks stay unchanged; the visual only makes each
+   marked truth feel consequential. */
+#audit [data-recognition-audit-meter="true"] {
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(244, 239, 230, 0.16);
+  border-radius: 1.25rem;
+  background: linear-gradient(120deg, rgba(24, 34, 28, 0.72), rgba(16, 25, 21, 0.5));
+  box-shadow: 0 20px 60px rgba(5, 10, 8, 0.2);
+  backdrop-filter: blur(18px);
+}
+
+#audit [data-recognition-audit-dial="true"] {
+  position: relative;
+  display: grid;
+  width: 5.25rem;
+  aspect-ratio: 1;
+  place-content: center;
+  border-radius: 50%;
+  background: conic-gradient(#d4b99a var(--audit-progress), rgba(244, 239, 230, 0.11) 0);
+  text-align: center;
+  transition: background 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#audit [data-recognition-audit-dial="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0.35rem;
+  border-radius: inherit;
+  background: rgba(18, 26, 22, 0.96);
+  box-shadow: inset 0 0 26px rgba(212, 185, 154, 0.08);
+}
+
+#audit [data-recognition-audit-dial="true"] > * {
+  position: relative;
+}
+
+#audit [data-recognition-audit-dial="true"] > span {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  line-height: 0.9;
+  color: #f4efe6;
+}
+
+#audit [data-recognition-audit-dial="true"] > small,
+#audit [data-recognition-audit-reading="true"] > small {
+  color: rgba(212, 185, 154, 0.76);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+#audit [data-recognition-audit-reading="true"] {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+#audit [data-recognition-audit-reading="true"] > strong {
+  color: rgba(244, 239, 230, 0.82);
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+#audit [data-audit-marked="true"] > button {
+  box-shadow: inset 2px 0 rgba(212, 185, 154, 0.72);
+}
+
+/* The four memory states retain their current controls and content. A single
+   trace behind them makes hover, keyboard selection and scroll playback read
+   as one changing model instead of four unrelated cards. */
+#education [data-perception-system="true"] {
+  position: relative;
+  isolation: isolate;
+}
+
+#education [data-perception-system="true"] > :not([data-perception-trace="true"]) {
+  position: relative;
+  z-index: 1;
+}
+
+#education [data-perception-trace="true"] {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 22%;
+  right: 4%;
+  height: 1px;
+  pointer-events: none;
+  transform: rotate(-3deg);
+}
+
+#education [data-perception-trace="line"] {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: rgba(198, 204, 184, 0.14);
+}
+
+#education [data-perception-trace="line"]::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--perception-progress);
+  background: linear-gradient(90deg, rgba(160, 166, 144, 0.34), #c6ccb8);
+  box-shadow: 0 0 20px rgba(198, 204, 184, 0.32);
+  transition: width 560ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#education [data-perception-trace-node] {
+  position: absolute;
+  top: 50%;
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 1px solid rgba(198, 204, 184, 0.36);
+  border-radius: 50%;
+  background: #18221f;
+  transform: translate(-50%, -50%);
+}
+
+#education [data-perception-trace-node="1"] { left: 0; }
+#education [data-perception-trace-node="2"] { left: 33.333%; }
+#education [data-perception-trace-node="3"] { left: 66.666%; }
+#education [data-perception-trace-node="4"] { left: 100%; }
+
 /* The fixed rail belongs to the film, while its active label stays readable
    over both luminous footage and deeper glass chapters. */
 html[data-services-experience="active"] nav[aria-label="Jump to section"]
@@ -240,6 +563,64 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   #education [data-perception-evidence-grid="true"] + div {
     margin-top: 0.8rem;
     padding-top: 0.7rem;
+  }
+
+  #book {
+    padding-block: 2.5rem !important;
+  }
+
+  #book [data-strategy-room-stage="true"] {
+    min-height: 0;
+  }
+
+  #book [data-strategy-room-copy="true"] {
+    padding-block: 0.7rem;
+  }
+
+  #book [data-strategy-room-copy="true"] h2 {
+    font-size: clamp(2.4rem, 6svh, 3.4rem);
+  }
+
+  #book [data-strategy-room-copy="true"] > p:nth-of-type(2) {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  #book [data-strategy-room-copy="true"] > p:nth-of-type(3) {
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+  }
+
+  #book [data-strategy-room-agenda="true"] {
+    margin-top: 0.85rem;
+  }
+
+  #book [data-strategy-agenda-step="true"] {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.55rem 0.75rem;
+  }
+
+  #book [data-strategy-agenda-step="true"] > p {
+    margin-top: 0;
+    font-size: 0.7rem;
+    line-height: 1.3;
+  }
+
+  #book [data-strategy-room-shell="true"] {
+    padding: 1.35rem;
+  }
+
+  #audit [data-recognition-audit-meter="true"] {
+    grid-template-columns: 4.35rem minmax(0, 1fr);
+    margin-bottom: 0.65rem;
+    padding: 0.65rem;
+  }
+
+  #audit [data-recognition-audit-dial="true"] {
+    width: 4.35rem;
   }
 }
 
@@ -686,6 +1067,42 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     padding-bottom: calc(7.75rem + env(safe-area-inset-bottom, 0px)) !important;
   }
 
+  #book [data-strategy-room-stage="true"] {
+    min-height: 0;
+  }
+
+  #book [data-strategy-room-copy="true"] {
+    padding: 0;
+    border-left: 0;
+  }
+
+  #book [data-strategy-room-copy="true"]::before {
+    display: none;
+  }
+
+  #book [data-strategy-room-orbit="true"] {
+    top: 13rem;
+    left: 50%;
+    width: min(84vw, 22rem);
+    opacity: 0.22;
+  }
+
+  #book [data-strategy-room-agenda="true"] > ol {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  #book [data-strategy-agenda-step="true"] {
+    padding: 0.6rem;
+    border-radius: 0.9rem;
+  }
+
+  #book [data-strategy-agenda-step="true"] > p {
+    margin-top: 0.35rem;
+    font-size: 0.64rem;
+    line-height: 1.28;
+  }
+
   #book [data-services-chapter-copy="true"] h2 {
     margin-top: 0.35rem;
     font-size: clamp(1.8rem, 8.6vw, 2.2rem);
@@ -829,6 +1246,19 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 
   #education [data-perception-system="true"] {
     gap: 0.75rem;
+  }
+
+  #education [data-perception-trace="true"] {
+    display: none;
+  }
+
+  #audit [data-recognition-audit-meter="true"] {
+    grid-template-columns: 4.35rem minmax(0, 1fr);
+    padding: 0.65rem;
+  }
+
+  #audit [data-recognition-audit-dial="true"] {
+    width: 4.35rem;
   }
 
   #education [data-services-chapter-copy="true"] {
@@ -1135,6 +1565,29 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   #services-opening > [data-living-image-stage="true"] {
     filter: brightness(1.08) saturate(0.78) contrast(0.98);
   }
+
+  #book [data-strategy-orbit-ring],
+  #book [data-strategy-room-orbit="true"] {
+    animation: none;
+    transition: none;
+  }
+
+  #book [data-strategy-room-copy="true"],
+  #book [data-services-chapter-resolution="true"],
+  #book [data-strategy-agenda-step="true"],
+  #education [data-perception-trace="line"]::after {
+    transform: none;
+    transition: none;
+  }
+
+  #book [data-strategy-room-copy="true"],
+  #book [data-services-chapter-resolution="true"] {
+    opacity: 1;
+  }
+
+  #audit [data-recognition-audit-dial="true"] {
+    transition: none;
+  }
 }
 
 :root[data-motion="reduced"] #main-content [data-background-video-stage="true"],
@@ -1144,4 +1597,27 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 :root[data-motion="reduced"] #services-opening > video,
 :root[data-motion="reduced"] #services-opening > [data-living-image-stage="true"] {
   filter: brightness(1.08) saturate(0.78) contrast(0.98);
+}
+
+:root[data-motion="reduced"] #book [data-strategy-orbit-ring],
+:root[data-motion="reduced"] #book [data-strategy-room-orbit="true"] {
+  animation: none;
+  transition: none;
+}
+
+:root[data-motion="reduced"] #book [data-strategy-room-copy="true"],
+:root[data-motion="reduced"] #book [data-services-chapter-resolution="true"],
+:root[data-motion="reduced"] #book [data-strategy-agenda-step="true"],
+:root[data-motion="reduced"] #education [data-perception-trace="line"]::after {
+  transform: none;
+  transition: none;
+}
+
+:root[data-motion="reduced"] #book [data-strategy-room-copy="true"],
+:root[data-motion="reduced"] #book [data-services-chapter-resolution="true"] {
+  opacity: 1;
+}
+
+:root[data-motion="reduced"] #audit [data-recognition-audit-dial="true"] {
+  transition: none;
 }

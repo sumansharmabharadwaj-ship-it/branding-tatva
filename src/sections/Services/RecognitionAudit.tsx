@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { track } from "@/lib/analytics";
@@ -216,6 +216,7 @@ export function RecognitionAudit() {
               {shown.map((check, i) => (
                 <motion.li
                   key={check}
+                  data-audit-marked={markedChecks.has(i) ? "true" : "false"}
                   initial={prefersReducedMotion || i < VISIBLE ? undefined : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : (i - VISIBLE) * 0.08 }}
@@ -340,6 +341,23 @@ export function RecognitionAudit() {
               <span aria-hidden="true">←</span>
               Back to the five open checks
             </button>
+
+            <div
+              data-recognition-audit-meter="true"
+              style={{ "--audit-progress": `${(markedCount / shown.length) * 100}%` } as CSSProperties}
+              role="status"
+              aria-live="polite"
+              aria-label={`${markedCount} of ${shown.length} recognition checks currently hold`}
+            >
+              <span data-recognition-audit-dial="true" aria-hidden="true">
+                <span>{markedCount}</span>
+                <small>of {shown.length}</small>
+              </span>
+              <span data-recognition-audit-reading="true">
+                <small>Recognition signal</small>
+                <strong>{scoreGuidance}</strong>
+              </span>
+            </div>
 
             <AnimatePresence mode="wait">
               {unlocked ? (

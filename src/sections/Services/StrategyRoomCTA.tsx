@@ -367,35 +367,41 @@ export function StrategyRoomCTA() {
 
   return (
     <>
-      <Container className="relative max-w-3xl text-center">
-        <motion.div
-          data-services-chapter-copy="true"
-          initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
-          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      <Container className="relative max-w-6xl">
+        <div data-strategy-room-orbit="true" aria-hidden="true">
+          <span data-strategy-orbit-ring="outer" />
+          <span data-strategy-orbit-ring="inner" />
+          <span data-strategy-orbit-signal="true" />
+          <span data-strategy-orbit-core="true">BT</span>
+        </div>
+
+        <div
+          data-strategy-room-stage="true"
+          className="relative grid items-center gap-7 lg:grid-cols-[minmax(19rem,0.82fr)_minmax(28rem,1.18fr)] lg:gap-12"
         >
+          <div data-strategy-room-copy="true" data-services-chapter-copy="true" className="text-center lg:text-left">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book a brand diagnosis</p>
           <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
             Bring the brand decision that keeps returning.
           </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ivory/90">
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ivory/90 lg:mx-0">
             Thirty minutes directly with Suman. Bring the decision, the disagreement, or the sentence nobody can finish.
             A polished brief is not required.
           </p>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-ivory/68">
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-ivory/68 lg:mx-0">
             Remote projects led directly by Suman are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
             {entityFacts.delivery.regions.at(-1)}.
           </p>
-          <div data-strategy-room-agenda="true" className="mx-auto mt-7 max-w-2xl">
+          <div data-strategy-room-agenda="true" className="mx-auto mt-7 max-w-2xl lg:mx-0">
             <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-sandstone/78">
               Inside the diagnosis
             </p>
-            <ol aria-label="What happens in the diagnosis" className="mt-3 grid gap-2.5 text-left sm:grid-cols-3">
+            <ol aria-label="What happens in the diagnosis" className="mt-3 grid gap-2.5 text-left sm:grid-cols-3 lg:grid-cols-1">
               {consultation.steps.map((item, index) => (
                 <li
                   key={item}
-                  className="rounded-2xl border border-ivory/15 bg-[rgba(18,24,21,0.48)] px-4 py-3.5 backdrop-blur-md"
+                  data-strategy-agenda-step="true"
+                  className="relative rounded-2xl border border-ivory/15 bg-[rgba(18,24,21,0.48)] px-4 py-3.5 backdrop-blur-md"
                 >
                   <span className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/75">
                     0{index + 1}
@@ -405,9 +411,9 @@ export function StrategyRoomCTA() {
               ))}
             </ol>
           </div>
-        </motion.div>
+          </div>
 
-        <div data-services-chapter-resolution="true" className="relative mt-8 min-h-[18rem]" aria-live="off">
+          <div data-services-chapter-resolution="true" className="relative min-h-[18rem]" aria-live="off">
           <AnimatePresence mode="wait" initial={false}>
             {!briefStarted ? (
               <motion.div
@@ -585,6 +591,7 @@ export function StrategyRoomCTA() {
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </div>
       </Container>
 
