@@ -69,6 +69,20 @@ if (
   fail("Terms no longer carries its own interactive agreement image.");
 }
 
+const caseStudyExperience = fs.readFileSync(
+  path.join(SRC, "sections", "Work", "CaseStudyExperience.tsx"),
+  "utf8",
+);
+for (const required of [
+  "const livingStill = usesLivingStill(src);",
+  'intensity="hero"',
+  'intensity="cinematic"',
+]) {
+  if (!caseStudyExperience.includes(required)) {
+    fail(`Case-study heroes can restore synthetic looping media: missing ${required}.`);
+  }
+}
+
 const dataSources = walk(path.join(SRC, "data"))
   .filter((file) => file.endsWith(".ts"))
   .map((file) => fs.readFileSync(file, "utf8"))

@@ -8,10 +8,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { AnimatedStat } from "@/components/AnimatedStat";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { LivingImage } from "@/components/LivingImage";
 import { Reveal } from "@/components/Reveal";
 import type { Project } from "@/data/projects";
 import type { CaseStudyPresentation } from "@/data/caseStudyPresentation";
 import { track } from "@/lib/analytics";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const STORY_AUTOPLAY_MS = 5600;
@@ -113,10 +115,11 @@ function ManagedVideo({
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
+  const livingStill = usesLivingStill(src);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!hydrated || !video || prefersReducedMotion) return;
+    if (!hydrated || !video || prefersReducedMotion || livingStill) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -135,7 +138,23 @@ function ManagedVideo({
       observer.disconnect();
       video.pause();
     };
-  }, [hydrated, prefersReducedMotion]);
+  }, [hydrated, livingStill, prefersReducedMotion]);
+
+  // The project heroes use very short synthetic clips whose reset is visible
+  // across a full-height opening frame. Keep their designed poster as the
+  // art direction, then let scroll and pointer movement supply the life. Real
+  // project footage still follows the native video path below.
+  if (hydrated && src && livingStill && !prefersReducedMotion && poster) {
+    return (
+      <LivingImage
+        src={poster}
+        alt={imageAlt}
+        sizes="100vw"
+        intensity="hero"
+        className={className}
+      />
+    );
+  }
 
   if (!hydrated || !src || prefersReducedMotion) {
     return poster ? (
@@ -626,12 +645,12 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
               style={{ borderColor: `${palette.accent}55`, backgroundColor: palette.surface }}
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-black/20">
-                <Image
+                <LivingImage
                   src={(project.heroPoster ?? project.cardImage)!}
                   alt={evidenceAlt}
-                  fill
                   sizes="100vw"
-                  className="object-cover"
+                  intensity="cinematic"
+                  className="absolute inset-0"
                 />
                 <div
                   aria-hidden="true"
