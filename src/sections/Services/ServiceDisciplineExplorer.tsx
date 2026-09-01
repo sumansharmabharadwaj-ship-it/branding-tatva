@@ -309,7 +309,7 @@ export function ServiceDisciplineExplorer() {
                 />
                 <div aria-hidden="true" className="absolute inset-x-6 top-0 h-px sm:inset-x-8" style={{ backgroundColor: active.color }} />
 
-                <AnimatePresence mode="wait" initial={false}>
+                <AnimatePresence mode="popLayout" initial={false}>
                   <motion.div
                     key={active.name}
                     id="service-discipline-panel"
@@ -318,15 +318,15 @@ export function ServiceDisciplineExplorer() {
                     initial={
                       prefersReducedMotion
                         ? { opacity: 1 }
-                        : { opacity: 0.18, clipPath: "inset(0 74% 0 0 round 1.25rem)", filter: "blur(5px)" }
+                        : { opacity: 0.72, clipPath: "inset(4% 24% 4% 0 round 1.25rem)", filter: "blur(2.5px)" }
                     }
                     animate={{ opacity: 1, clipPath: "inset(0 0% 0 0 round 0rem)", filter: "blur(0px)" }}
                     exit={
                       prefersReducedMotion
                         ? { opacity: 0 }
-                        : { opacity: 0.12, clipPath: "inset(0 0 0 76% round 1.25rem)", filter: "blur(4px)" }
+                        : { opacity: 0.55, clipPath: "inset(4% 0 4% 24% round 1.25rem)", filter: "blur(2.5px)" }
                     }
-                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.42, ease: EASE }}
+                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.36, ease: EASE }}
                     className="relative flex min-h-[18rem] flex-col justify-between lg:min-h-[20rem]"
                   >
                     <div data-discipline-panel-copy="true">
