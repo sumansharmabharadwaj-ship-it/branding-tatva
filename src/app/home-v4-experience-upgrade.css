@@ -1183,3 +1183,104 @@
     transition: none !important;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Reading-line choreography                                                   */
+/* -------------------------------------------------------------------------- */
+
+/* Selected answers are short editorial sequences rather than one flat swap.
+   Only non-interactive reading lines animate, keeping links, buttons and tab
+   targets anchored beneath the pointer or thumb. */
+@keyframes home-v4-reading-line-forward {
+  from {
+    opacity: 0.34;
+    filter: blur(2.4px);
+    transform: translate3d(0, 0.52rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes home-v4-reading-line-backward {
+  from {
+    opacity: 0.34;
+    filter: blur(2.4px);
+    transform: translate3d(0, -0.52rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-v4 {
+    --home-reading-line-animation: home-v4-reading-line-forward;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"] {
+    --home-reading-line-animation: home-v4-reading-line-backward;
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .evidence-cinematic__summary > p:first-child,
+    .paths-film__answer > .paths-film__answer-eyebrow,
+    .decision-flow__stage > article > .decision-flow__topline,
+    .studio-film__reading > .studio-film__reading-label,
+    .questions-editorial__answer > .questions-editorial__answer-index,
+    .evidence-cinematic__summary > strong,
+    .paths-film__answer > h3,
+    .decision-flow__stage > article > h3,
+    .studio-film__reading > h3,
+    .questions-editorial__answer > h3,
+    .evidence-cinematic__summary > span,
+    .paths-film__answer > .paths-film__answer-body,
+    .decision-flow__stage > article > .decision-flow__explanation,
+    .studio-film__reading > p,
+    .questions-editorial__answer > p,
+    .evidence-cinematic__summary > .evidence-cinematic__source,
+    .paths-film__answer > dl,
+    .decision-flow__stage > article > .decision-flow__result,
+    .studio-film__reading > .studio-film__outcome,
+    .questions-editorial__answer > .questions-editorial__fit
+  ) {
+    animation: var(--home-reading-line-animation) 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--home-reading-line-delay, 80ms);
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .evidence-cinematic__summary > strong,
+    .paths-film__answer > h3,
+    .decision-flow__stage > article > h3,
+    .studio-film__reading > h3,
+    .questions-editorial__answer > h3
+  ) {
+    --home-reading-line-delay: 130ms;
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .evidence-cinematic__summary > span,
+    .paths-film__answer > .paths-film__answer-body,
+    .decision-flow__stage > article > .decision-flow__explanation,
+    .studio-film__reading > p,
+    .questions-editorial__answer > p
+  ) {
+    --home-reading-line-delay: 180ms;
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .evidence-cinematic__summary > .evidence-cinematic__source,
+    .paths-film__answer > dl,
+    .decision-flow__stage > article > .decision-flow__result,
+    .studio-film__reading > .studio-film__outcome,
+    .questions-editorial__answer > .questions-editorial__fit
+  ) {
+    --home-reading-line-delay: 230ms;
+  }
+}
