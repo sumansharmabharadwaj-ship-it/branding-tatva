@@ -15,7 +15,7 @@ type ButtonProps = {
   children: ReactNode;
   variant?: "primary" | "secondary";
   className?: string;
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
   // Optional conversion event reported on click — serializable, so
   // server components can request measurement without a handler.
   trackEvent?: AnalyticsEvent;
@@ -51,7 +51,7 @@ export function LinkButton({ href, children, variant = "primary", className, onC
       setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 650);
     }
     if (trackEvent) track(trackEvent, trackProps);
-    onClick?.();
+    onClick?.(e);
   }
 
   const base =

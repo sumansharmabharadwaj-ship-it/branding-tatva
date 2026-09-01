@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
@@ -70,7 +70,15 @@ function publishSituation(id: ServicesSituationId) {
   window.dispatchEvent(new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }));
 }
 
-function settlePackageChapter() {
+function settlePackageChapter(event: MouseEvent<HTMLAnchorElement>) {
+  // Next's hash-only Link navigation can restore the top of the route after
+  // our scroll runtime has already aligned the package chapter. Keep this
+  // journey within the current document, update the shareable fragment, and
+  // let the shared Services runtime perform the authoritative alignment.
+  event.preventDefault();
+  if (window.location.hash !== "#desire") {
+    window.history.pushState(window.history.state, "", "#desire");
+  }
   window.dispatchEvent(new CustomEvent(ANCHOR_SETTLE_EVENT, { detail: { id: "desire" } }));
 }
 
