@@ -1288,3 +1288,143 @@ The Services opening retains the photographic root archive as its visual base an
 ## Final result
 
 passed
+
+---
+
+# Homepage readability-first motion QA · 2026-09-01
+
+## Comparison target
+
+- Source visual truth: the deployed August 8 homepage preview before this pass, captured at the `#cost` chapter during its arrival state.
+- Implementation: the local production build of the same nine-chapter homepage and the same `#cost` state after the readability-first motion pass.
+- Browser-rendered comparison: source and implementation were captured inline at the same `1363 × 936` viewport. The deployed source was still in `resting` with `opacity: 0.26` and `filter: blur(5px)` after `1.1s`; the implementation was fully legible with `opacity: 1` and `filter: none` at the same arrival point.
+- Responsive evidence: the internal `390 × 844` mobile QA frame was captured after the production rebuild.
+
+## Findings
+
+No actionable P0, P1 or P2 findings remain.
+
+The original motion system animated every chapter, but several reading planes remained heavily blurred and nearly transparent while chapter navigation or smooth scrolling was still settling. This made authored motion look like missing content. The revised arrival contract keeps each resting plane readable, removes blur from the reading layer, shortens the main transition to `340–560ms`, shortens nested decision details to `260–420ms`, and caps the cascade at `125ms`. Direction, scale and reversible forward/backward travel remain distinct by chapter.
+
+## Required fidelity surfaces
+
+- Opening: passed. Existing film, hierarchy, CTAs and proof remain intact; the heading now includes a semantic space between `buyers` and `understand`.
+- Brand diagnostic: passed. Lens-based entrance remains; the question and choice details are readable before activation.
+- Hidden cost: passed. Opposing editorial shutters remain; the paired comparison shows the reading plane no longer blurred or missing.
+- Evidence: passed. Proof-stage reveal and project index remain animated with readable resting content.
+- Paths: passed. Choice and answer still approach from opposite banks; controls remain visible and interactive.
+- Process: passed. Decision copy and method rail retain their separate rise and lateral resolve.
+- Studio: passed. Statement, reading and chapter rail keep their converging motion; the `138svh` desktop runway is unchanged.
+- Questions: passed. Choice rail and answer panel continue to open from opposite sides without a blurred empty state.
+- Invitation: passed. Copy, promise and diagnosis stages retain the final two-exposure arrival and short stagger.
+
+## Interaction and browser verification
+
+- Motion contract: passed. All eight post-opening chapters expose visible resting reading planes, no substantive blur, `340–560ms` parent transitions and `260–420ms` nested-detail transitions. The opening retains its existing Framer Motion entrance.
+- Mobile `390 × 844`: passed. The full hero promise, two CTAs, strategist proof and measurement control remain inside the portrait frame with no visible horizontal crop.
+- Reduced motion: passed by source and production contract. Operating-system reduced motion and the in-site Reduced setting still force `opacity: 1`, remove filters/transforms/transitions and collapse the studio runway to `100svh`.
+- Keyboard and semantics: passed. Native links, radio groups, tabs and buttons were not replaced or structurally changed; the hero region and `h1` expose the corrected accessible sentence.
+- Console: no site-originated application errors. The only logged error came from the cloud browser's `chrome-extension://` metadata bridge.
+- Production checks: `git diff --check`, the complete homepage gate and the `79`-route Next production build passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | Several chapters stayed at `18–28%` opacity with `4–6px` blur during arrival, so real content looked absent for up to roughly three seconds. | Raised resting reading planes to full readable opacity, removed substantive blur, and shortened transitions/staggers. Paired source and implementation frames confirm immediate legibility. |
+| 2 | P2 | Nested numbers, labels and cues started at `opacity: 0`, extending the impression that interactive rails were empty. | Nested details remain visible, resolve in `260–420ms`, and finish their cascade by `125ms`. |
+| 3 | — | Final desktop, mobile, semantic, console and production checks found no remaining actionable P0/P1/P2 issue. | Passed. |
+
+## Follow-up polish
+
+- P3: complete one physical-device pass for iOS dynamic browser chrome and real touch momentum; the verified responsive frame and reduced-motion contract are complete.
+
+## Final result
+
+passed
+
+---
+
+# Homepage reading-line motion QA · 2026-09-01
+
+## Comparison target
+
+- Source visual truth: the deployed August 8 homepage preview at the Evidence and Studio deep-link states, where the original nested reading lines entered at `34%` opacity with `2.4px` blur and delays up to `230ms`.
+- Implementation: the local production build of the same homepage after the nested choreography refinement.
+- Protected surfaces: section composition, real film assets, typography, navigation, interactive tabs, parent chapter entrances and reduced-motion behavior remain unchanged.
+
+## Findings and resolution
+
+No actionable P0, P1 or P2 findings remain.
+
+The remaining P1 issue was inside otherwise-correct chapter arrivals: Evidence, Paths, Process, Studio and Questions each replayed a second blurred text reveal after the containing scene had already arrived. On deep links and fast chapter navigation, that could make complete words appear clipped or missing for roughly the first second.
+
+The nested sequence now begins at `76%` opacity with no blur, travels only `0.28rem`, and resolves in `370ms`. Direction still follows forward/backward page travel and selection changes. The four reading beats now use compact delays of `18ms`, `42ms`, `68ms` and `94ms`, so every line is readable throughout the transition and the full sequence settles in under half a second.
+
+## Verification
+
+- CSS cascade: passed. The homepage experience layer now owns the quick reading-line keyframes directly while preserving the established selection-direction variables; the final reconstruction layer remains layout-only.
+- Forward/backward motion: passed by contract. Page scroll direction and interactive selection direction both map to their matching quick keyframes.
+- Reduced motion: passed. Operating-system reduced motion bypasses the new animation block, and the in-site Reduced setting is explicitly excluded.
+- Interaction safety: passed. Only non-interactive reading copy is animated; links, buttons, radio groups and tab targets remain anchored.
+- Production checks: `git diff --check`, the complete homepage quality gate and the `79`-route Next.js production build passed.
+- Browser console: no site-originated application error was found in the completed homepage browser pass; the cloud browser comparison session itself later reset while recapturing the paired frame.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix result |
+| --- | --- | --- | --- |
+| 1 | P1 | Nested reading copy blurred after its parent chapter had already arrived, producing briefly clipped-looking words. | Removed nested blur, raised the readable starting opacity to `76%`, and reduced travel to `0.28rem`. |
+| 2 | P2 | Four delayed reading beats stretched the sequence to nearly a second. | Reduced the complete stagger to `94ms` and duration to `370ms`; the final line now settles in under `470ms`. |
+| 3 | — | Production, direction, reduced-motion, interaction and cascade checks found no remaining actionable issue. | Passed. |
+
+## Final result
+
+passed
+
+---
+
+# Homepage direct-link arrival and contrast QA · 2026-09-01
+
+## Comparison target
+
+- Source visual truth: the deployed August 8 homepage preview at the Evidence and Invitation deep-link states.
+- Implementation: the local production homepage at the same chapter states after the direct-link readability and proof-contrast refinement.
+- Desktop comparison: paired browser captures at the same `1363 × 936` viewport, taken approximately `900ms` after navigation to `#evidence` and `#invitation`.
+- Responsive comparison: paired internal QA captures using the same `390 × 844` mobile portrait frame.
+
+## Findings and resolution
+
+No actionable P0, P1 or P2 findings remain.
+
+The final deep-link issue was timing-dependent: a chapter could be painted before the pacing observer marked it as observed, allowing the older low-opacity resting selectors to win for part of the arrival. Resting reading content is now fully opaque and unblurred regardless of observer attachment. The chapter plane still supplies the cinematic travel and clipping, while nested copy retains the compact `370ms` forward/backward reading-line motion.
+
+Evidence also needed firmer contrast over the brightest leaf-film frames. Proof copy now holds a dark `92%` ink value with a restrained light edge, and the evidence-source panel uses a `66%` paper surface with stronger border and label values. The selected-work film remains visible without allowing measurements or source text to wash out.
+
+## Required fidelity surfaces
+
+- Opening: passed. The full brand promise, CTA pair, strategist proof and film remain intact on desktop and mobile.
+- All nine chapters: passed. Opening, Diagnostic, Cost, Evidence, Paths, Process, Studio, Decision and Invitation are registered with the pacing director and expose active/resting state for reversible section animation.
+- Evidence at `900ms`: passed. Headline, measurement, three proof columns, source panel, project CTAs and project index are readable with no blurred or missing content.
+- Invitation at `900ms`: passed. Question, call promise, CTA, timing details and three-stage diagnosis card are crisp during arrival.
+- Mobile `390 × 844`: passed. The hero remains inside the portrait frame with no horizontal crop; navigation, promise, CTAs and proof remain readable.
+- Reduced motion: passed by contract. Both operating-system and in-site reduced-motion states keep content fully visible and remove the travel/transition layer.
+
+## Browser and production verification
+
+- Live cascade: passed. Browser-computed styles report `home-v4-reading-line-quick-forward`, `0.37s`, `filter: none` and final `opacity: 1` on Evidence reading copy.
+- Proof contrast: passed. Browser-computed styles report the Evidence source panel at `rgba(249, 245, 236, 0.66)` with `rgba(32, 50, 40, 0.82)` text.
+- Console: no site-originated application errors. Logged errors were limited to the cloud browser's `chrome-extension://` metadata bridge.
+- Production checks: `git diff --check`, the complete homepage gate and the `79`-route Next.js production build passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | Direct Evidence and Invitation links could briefly show heavily faded or blurred reading content before observer attachment. | Removed observer timing from the readability guarantee. Paired `900ms` captures show complete, crisp reading planes. |
+| 2 | P2 | Evidence measurements and source details became too pale when the brightest film highlights crossed the text. | Strengthened proof ink, source-panel paper, border and index values. The final Evidence capture remains layered but readable. |
+| 3 | — | Final desktop, mobile, console, motion-cascade and production checks found no remaining actionable issue. | Passed. |
+
+## Final result
+
+passed

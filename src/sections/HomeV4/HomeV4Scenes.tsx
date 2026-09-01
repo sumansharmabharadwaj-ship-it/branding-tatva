@@ -109,7 +109,7 @@ export function V4OpeningScene() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.12, ease: EASE }}
             >
-              Turn a growing business into a brand buyers
+              Turn a growing business into a brand buyers{" "}
             </motion.span>
             <motion.em
               initial={false}
