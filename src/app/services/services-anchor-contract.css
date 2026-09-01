@@ -1,11 +1,11 @@
 /* Services chapter anchors are partly server-authored and partly assigned by
-   ServicesExperienceRuntime after hydration. Treat them identically once the
-   runtime marks the scene, so direct links never tuck a heading beneath the
-   transparent site header. This affects native anchor alignment only; it does
-   not add snapping, scroll interception, or a custom scroll container. */
+   ServicesExperienceRuntime after hydration. Every chapter is a full viewport
+   composition with its own top clearance, so the frame itself should meet the
+   viewport edge. A header sized scroll margin exposed the previous chapter's
+   image and made direct links look like broken cinematic seams. */
 
 [data-services-scroll-scene] {
-  scroll-margin-top: clamp(4.75rem, 9vh, 6.5rem);
+  scroll-margin-top: 0;
 }
 
 /* The closing film already keeps its content beneath the fixed header with
@@ -34,7 +34,7 @@ html[data-services-experience="active"]
 
 @media (max-width: 767px) {
   [data-services-scroll-scene] {
-    scroll-margin-top: max(4.25rem, env(safe-area-inset-top));
+    scroll-margin-top: 0;
   }
 
   #book[data-services-scroll-scene] {
