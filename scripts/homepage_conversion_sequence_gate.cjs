@@ -45,6 +45,7 @@ for (const marker of sequence) {
 }
 
 assert(source.includes("<HomeV4SeamDirector />"), "Homepage chapter seams have lost their shared scroll owner.");
+assert(source.includes("<HomeV4SceneRhythm />"), "Homepage chapters have lost their shared arrival rhythm.");
 assert(source.includes('<SceneHandoff motif="mist" preservePrevious />'), "Opening boundary no longer remains visually untouched.");
 assert((source.match(/<SceneHandoff /g) ?? []).length === 8, "Homepage chapters no longer meet through one authored seam system.");
 for (const [motif, count] of [["mist", 4], ["river", 1], ["constellation", 1], ["light", 1], ["paper", 1]]) {
@@ -142,6 +143,9 @@ for (const retiredStylesheet of [
   "home-v4-health.css",
   "home-v4-decision-depth.css",
   "home-v4-invitation-depth.css",
+  "home-v4-screen-fit.css",
+  "home-v4-seamless-scenes.css",
+  "home-v4-continuous-fit.css",
 ]) {
   assert(
     !pageSource.includes(retiredStylesheet),

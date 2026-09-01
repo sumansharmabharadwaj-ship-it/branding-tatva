@@ -245,18 +245,20 @@ export function HomePacingDirector() {
         entries.forEach((entry) => {
           const section = entry.target as HTMLElement;
           const active = entry.isIntersecting && entry.intersectionRatio >= 0.1;
+          const wasActive = section.dataset.homeSceneState === "active";
           section.dataset.homeSceneState = active ? "active" : "resting";
 
           if (active) {
             scheduleVisibilityCheck(section);
-            window.dispatchEvent(
-              new CustomEvent("bt:home-scene-enter", {
-                detail: {
-                  id:
-                    sceneId(section),
-                },
-              }),
-            );
+            if (!wasActive) {
+              window.dispatchEvent(
+                new CustomEvent("bt:home-scene-enter", {
+                  detail: {
+                    id: sceneId(section),
+                  },
+                }),
+              );
+            }
           }
         });
       },

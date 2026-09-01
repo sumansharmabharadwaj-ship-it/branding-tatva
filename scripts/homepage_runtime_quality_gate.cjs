@@ -30,6 +30,7 @@ const paths = read("src/sections/Home/PathsCinematicChapter.tsx");
 const cost = read("src/sections/HomeV4/HomeV4Scenes.tsx");
 const costStyles = read("src/app/home-v4-cost-film-final.css");
 const seamDirector = read("src/sections/HomeV4/HomeV4SeamDirector.tsx");
+const sceneRhythmRuntime = read("src/sections/HomeV4/HomeV4SceneRhythm.tsx");
 const homeInterface = read("src/sections/HomeV4/HomeV4Interface.tsx");
 const sceneRhythm = read("src/app/home-v4-scene-rhythm.css");
 const mediaDirector = read("src/sections/HomeV4/HomeV4MediaDirector.tsx");
@@ -185,6 +186,10 @@ assert(costStyles.includes('button[data-cost-state="past"]'), "Hidden cost no lo
 assert(seamDirector.includes('window.addEventListener("scroll", schedule'), "Homepage seams no longer respond to visitor-controlled scroll.");
 assert(seamDirector.includes("ELIGIBLE_QUERY") && seamDirector.includes("prefersReducedMotion"), "Homepage seams ignore viewport, pointer, or motion boundaries.");
 assert(seamDirector.includes('data-home-handoff-preserve="true"'), "Homepage seam motion can spill into the preserved opening.");
+assert(sceneRhythmRuntime.includes('const ARRIVAL_EVENT = "bt:home-scene-enter"'), "Homepage chapter arrivals are no longer driven by the shared scene owner.");
+assert(!sceneRhythmRuntime.includes("scrollTo("), "Homepage chapter arrival rhythm can move the visitor's viewport.");
+assert(sceneRhythmRuntime.includes("eligible.addEventListener(\"change\", updateEligibility)"), "Homepage chapter arrivals can remain active after the viewport becomes ineligible.");
+assert(pacing.includes('const wasActive = section.dataset.homeSceneState === "active"') && pacing.includes("if (!wasActive)"), "Homepage scene-entry events can replay at every observer threshold.");
 assert(!seamDirector.includes('window.addEventListener("pointermove"'), "Homepage seams restored a competing pointer camera.");
 const handoffSource = homeInterface.slice(homeInterface.indexOf("export function SceneHandoff"));
 assert(!handoffSource.includes("repeat: Infinity"), "Hidden chapter seams still run perpetual animation loops.");

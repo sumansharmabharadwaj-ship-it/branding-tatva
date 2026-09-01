@@ -15,6 +15,7 @@ import { elementColor } from "@/lib/elementColor";
 import { SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
+import { HomeV4SceneRhythm } from "./HomeV4SceneRhythm";
 import { HomeV4SeamDirector } from "./HomeV4SeamDirector";
 import { V4HiddenCostScene, V4OpeningScene } from "./HomeV4Scenes";
 
@@ -29,6 +30,7 @@ export function HomeV4Experience() {
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
       <HomeV4SeamDirector />
+      <HomeV4SceneRhythm />
       <V4OpeningScene />
       <SceneHandoff motif="mist" preservePrevious />
 

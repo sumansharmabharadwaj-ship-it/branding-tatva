@@ -2,10 +2,10 @@
 /* Homepage V4 · visitor-led cinematic scene rhythm                            */
 /* -------------------------------------------------------------------------- */
 
-/* The page never explains the scroll gesture. On full desktop frames the
-   visitor scrolls normally; after the wheel settles, the nearest authored
-   chapter resolves to the top edge. A subtle exposure lift on the arriving
-   scene keeps the handoff cinematic without adding another spacer or layer. */
+/* The page never explains the scroll gesture or moves the viewport on the
+   visitor's behalf. On full desktop frames, the shared scene owner marks each
+   arriving chapter for one subtle exposure lift without adding another spacer
+   or competing camera layer. */
 @media (min-width: 1101px) and (min-height: 700px) and (pointer: fine) {
   .home-v4[data-scene-settling="true"]
     [data-home-v4-chapter][data-scene-target="true"]:not([data-home-v4-chapter="opening"])

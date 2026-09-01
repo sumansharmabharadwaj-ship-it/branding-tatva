@@ -26,6 +26,13 @@
   display: none !important;
 }
 
+/* The chapters already reveal progress through their numbered labels and the
+ * shared rail. Retire the earlier instruction pill without retaining its
+ * short-laptop runway stylesheet. */
+.home-v4 .bt-scroll-cue {
+  display: none !important;
+}
+
 .home-v4 [data-home-v4-chapter] {
   margin: 0 !important;
   isolation: isolate;
