@@ -9,8 +9,14 @@ const SYNTHETIC_MOTION_PREFIXES = [
 const REPEAT_PRONE_DOCUMENTARY_FILMS = [
   "/videos/pexels-studio-morning-light.mp4",
   "/videos/pexels-golden-fog-sea.mp4",
+  "/videos/pexels-river-dawn.mp4",
+  "/videos/pixabay-campfire-conversation.mp4",
+  "/videos/pixabay-cascade-rocks.mp4",
   "/videos/pixabay-forest-sunbeams.mp4",
+  "/videos/pixabay-golden-reeds-wind.mp4",
   "/videos/pixabay-golden-forest-glow.mp4",
+  "/videos/pixabay-sea-of-fog-sunrise.mp4",
+  "/videos/pixabay-stream-mist-rays.mp4",
 ] as const;
 
 /**

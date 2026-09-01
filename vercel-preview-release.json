@@ -1,5 +1,5 @@
 {
   "purpose": "Controls deliberate Vercel previews for august-8-isolated",
-  "release": 8,
+  "release": 11,
   "instructions": "Increment release in the same commit as [deploy] only when a preview is intentionally requested."
 }

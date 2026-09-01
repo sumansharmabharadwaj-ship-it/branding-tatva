@@ -59,8 +59,14 @@ for (const prefix of ['"/videos/generated/"', '"/videos/higgsfield-"']) {
 for (const film of [
   '"/videos/pexels-studio-morning-light.mp4"',
   '"/videos/pexels-golden-fog-sea.mp4"',
+  '"/videos/pexels-river-dawn.mp4"',
+  '"/videos/pixabay-campfire-conversation.mp4"',
+  '"/videos/pixabay-cascade-rocks.mp4"',
   '"/videos/pixabay-forest-sunbeams.mp4"',
+  '"/videos/pixabay-golden-reeds-wind.mp4"',
   '"/videos/pixabay-golden-forest-glow.mp4"',
+  '"/videos/pixabay-sea-of-fog-sunrise.mp4"',
+  '"/videos/pixabay-stream-mist-rays.mp4"',
 ]) {
   if (!mediaMode.includes(film)) {
     fail(`Repeat-prone documentary film can restore a boomerang loop: ${film}.`);
@@ -115,6 +121,16 @@ for (const relative of [
   const component = fs.readFileSync(path.join(SRC, relative), "utf8");
   if (!component.includes("usesLivingStill") || !component.includes("<LivingImage")) {
     fail(`${relative} can bypass the shared synthetic-media treatment.`);
+  }
+}
+
+for (const relative of [
+  "sections/HomeV4/HomeV4Scenes.tsx",
+  "sections/Process/RootSystem.tsx",
+]) {
+  const component = fs.readFileSync(path.join(SRC, relative), "utf8");
+  if (!component.includes("<LivingImage") || component.includes("pixabay-stream-mist-rays.mp4") || component.includes("pexels-river-dawn.mp4")) {
+    fail(`${relative} can restore a short repeating documentary loop.`);
   }
 }
 

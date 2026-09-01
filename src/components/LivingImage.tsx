@@ -33,7 +33,7 @@ export function LivingImage({
   alt = "",
   priority = false,
   sizes = "100vw",
-  imagePosition = "center",
+  imagePosition = "var(--living-image-position, center)",
   intensity = "subtle",
   className = "",
 }: {

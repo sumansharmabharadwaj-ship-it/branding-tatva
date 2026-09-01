@@ -361,18 +361,11 @@ export function V4HiddenCostScene() {
         transition={{ duration: prefersReducedMotion ? 0 : 1.1, ease: EASE }}
         aria-hidden="true"
       >
-        <video
-          data-home-playback-rate="0.92"
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-          preload="none"
-          poster="/images/pexels-river-dawn-poster.jpg"
-        >
-          <source src="/videos/pexels-river-dawn.webm" type="video/webm" />
-          <source src="/videos/pexels-river-dawn.mp4" type="video/mp4" />
-        </video>
+        <LivingImage
+          src="/images/pexels-river-dawn-poster.jpg"
+          intensity="cinematic"
+          className="cost-film__living"
+        />
       </motion.div>
       <div className="cost-film__veil" aria-hidden="true" />
 

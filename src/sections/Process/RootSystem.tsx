@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { LivingImage } from "@/components/LivingImage";
 import type { ProcessStage } from "@/data/process";
 import {
   clearHomeMethodDecision,
@@ -361,15 +362,10 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       onPointerCancel={resetLight}
     >
       <div className="decision-flow__media" aria-hidden="true" data-media-id="BT-HOME-METHOD-STREAM-LIGHT">
-        <video
-          src="/videos/pixabay-stream-mist-rays.mp4"
-          poster="/images/pixabay-stream-mist-rays-poster.jpg"
-          aria-hidden="true"
-          muted
-          loop
-          playsInline
-          preload="none"
-          data-home-playback-rate="0.72"
+        <LivingImage
+          src="/images/pixabay-stream-mist-rays-poster.jpg"
+          intensity="cinematic"
+          className="decision-flow__living"
         />
         <span className="decision-flow__veil" />
         <span className="decision-flow__light" />

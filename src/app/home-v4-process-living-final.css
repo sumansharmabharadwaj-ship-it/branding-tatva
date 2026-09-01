@@ -17,6 +17,11 @@ html body .home-v4 #process .decision-flow__media video {
   filter: saturate(.68) sepia(.08) contrast(.88) brightness(1.12);
 }
 
+html body .home-v4 #process .decision-flow__living {
+  --living-image-position: 64% 52%;
+  filter: saturate(.68) sepia(.08) contrast(.88) brightness(1.12);
+}
+
 html body .home-v4 #process .decision-flow__veil {
   background:
     linear-gradient(90deg, rgba(240, 233, 217, .98) 0%, rgba(240, 233, 217, .9) 34%, rgba(236, 229, 211, .53) 57%, rgba(34, 55, 43, .1) 100%),
