@@ -1699,3 +1699,48 @@ Evidence also needed firmer contrast over the brightest leaf-film frames. Proof 
 ## Final result
 
 passed
+
+# Design QA: Authority Assembly Reading Floor
+
+## Comparison target
+
+- source visual truth path: /workspace/scratch/services-audit-current/03-desktop-authority.jpg and /workspace/scratch/services-audit-current/8-mobile-authority.jpg
+- implementation screenshot path: /workspace/scratch/services-authority-motion-qa/desktop-authority-after.png, /workspace/scratch/services-authority-motion-qa/desktop-authority-assembly-start-after.png, /workspace/scratch/services-authority-motion-qa/desktop-authority-assembly-mid-after.png, /workspace/scratch/services-authority-motion-qa/mobile-authority-after.png, and /workspace/scratch/services-authority-motion-qa/mobile-authority-presence-after.png
+- combined comparison evidence: /workspace/scratch/services-authority-motion-qa/desktop-authority-comparison.jpg and /workspace/scratch/services-authority-motion-qa/mobile-authority-comparison.jpg
+- viewport and density: desktop 1365 × 936 CSS px at DPR 1; mobile 390 × 844 CSS px at DPR 1
+- source and implementation pixels: desktop 1365 × 936 for both; mobile 390 × 844 for both
+- density normalization: none required because source and implementation captures use the same CSS size and pixel density
+- state: direct Authority chapter entry with Foundation selected; explicit assembly start and mid-progress states; desktop Presence pressed; mobile Presence selected
+
+## Findings
+
+No actionable P0, P1, or P2 differences remain.
+
+- Fonts and typography: the display and body families, sizes, weights, line heights, wrapping, and hierarchy remain unchanged. Only the coloured layer numerals gain a stronger opacity floor so they stay optically present during assembly.
+- Spacing and layout rhythm: the two-column desktop composition, mobile stack, card bounds, row indentation, gaps, radii, and chapter-control clearance match the source. No overlap, clipping, or density drift was introduced.
+- Colors and visual tokens: the forest, ivory, sandstone, and five layer colours remain unchanged. The unfinished-row opacity floor is now 0.68, the activation signal floor is 0.34, the copy floor is 0.82, and the wave floor is 0.48; the completed state still resolves to 1.
+- Image quality and asset fidelity: the existing Authority film, poster, crop, overlays, glyphs, and material treatment are unchanged. No placeholder, CSS-drawn, or replacement asset was introduced.
+- Copy and content: all headings, consequences, labels, package direction, and mobile panel copy are unchanged.
+- Responsiveness and interaction: all five mobile tabs remain visible in a 390 × 844 viewport. Selecting Presence returns aria-selected=true and reveals the Presence panel. The desktop Presence row returns aria-pressed=true.
+- Accessibility and motion: every desktop row remains perceivable at assembly start while position, scale, colour, connector growth, and wave amplitude continue to communicate sequence. Reduced-motion behaviour remains the existing fully visible static state. Focus semantics and mobile touch targets are unchanged.
+- Console and runtime: no page errors or console errors were observed in either desktop or mobile browser runs.
+
+## Full-view comparison evidence
+
+The before/after composites show the same chapter framing, copy balance, image crop, diagram size, and mobile hierarchy. The change is intentionally restrained: unfinished rows and the signal system no longer sink into the moving film, while the fully assembled scene keeps its existing emphasis.
+
+## Focused region comparison evidence
+
+Focused assembly-start and mid-progress captures were required because the change affects transient motion states that a settled full-view screenshot cannot prove. At progress 0 every desktop row settles at opacity 0.68 with a 0.34 activation signal and 0.78 numeral opacity. At progress 0.34 the first three rows are fully resolved, Voice is 0.99, and Presence is 0.93. The completed state resolves every row and signal to 1.
+
+## Comparison history
+
+- Earlier P2 finding: unfinished Authority rows could fall to 0.30 opacity, coloured numerals carried a second 0.40 opacity, and the wave began at 0.28. Against detailed motion footage this made several labels and consequences look absent before assembly completed.
+- Fix made: raised the copy, row, activation-signal, wave, and numeral floors while preserving the existing easing, stagger, orbit, lift, rotation, scale, layer colours, and click behaviour.
+- Post-fix evidence: desktop assembly-start, mid-progress, and settled captures pass; desktop Presence press and mobile Presence selection pass; no console or page errors were recorded.
+
+## Follow-up polish
+
+No P3 follow-up is required for this scoped pass.
+
+final result: passed

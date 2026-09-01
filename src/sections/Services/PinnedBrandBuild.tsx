@@ -145,7 +145,7 @@ export function PinnedBrandBuild() {
       wrap.style.setProperty("--authority-camera-y", `${((0.5 - progress) * 28 + signedVelocity * 8).toFixed(2)}px`);
       wrap.style.setProperty("--authority-camera-scale", (1.035 - assembly * 0.025 + velocity * 0.012).toFixed(4));
       wrap.style.setProperty("--authority-copy-x", `${((1 - assembly) * -20 + signedVelocity * 6).toFixed(2)}px`);
-      wrap.style.setProperty("--authority-copy-opacity", (0.68 + assembly * 0.32).toFixed(4));
+      wrap.style.setProperty("--authority-copy-opacity", (0.82 + assembly * 0.18).toFixed(4));
 
       layerRefs.current.forEach((layer, i) => {
         if (!layer) return;
@@ -155,16 +155,18 @@ export function PinnedBrandBuild() {
         const orbit = (1 - eased) * (i % 2 === 0 ? -1 : 1) * (38 + i * 5);
         const lift = (1 - eased) * (24 + i * 3) + signedVelocity * (5 + i);
         const rotation = (1 - eased) * (i % 2 === 0 ? -1 : 1) * 1.2;
-        // The unfinished rows remain present enough to be understood as a
-        // system, instead of disappearing into detailed moving footage.
-        layer.style.opacity = String(0.3 + eased * 0.7);
+        // Keep every consequence readable while the system assembles. The
+        // unfinished rows still yield to the active layer through position,
+        // scale, colour and the activation signal rather than disappearing
+        // into the moving material beneath them.
+        layer.style.opacity = String(0.68 + eased * 0.32);
         layer.style.transform = `translate3d(${orbit.toFixed(1)}px, ${lift.toFixed(1)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${(0.965 + 0.035 * eased).toFixed(3)})`;
-        layer.style.setProperty("--act", eased.toFixed(3));
+        layer.style.setProperty("--act", (0.34 + eased * 0.66).toFixed(3));
       });
 
       if (waveRef.current) {
         waveRef.current.style.transform = `translate3d(${(signedVelocity * 7).toFixed(2)}px, 0, 0) scaleY(${(0.12 + 0.88 * assembly).toFixed(3)})`;
-        waveRef.current.style.opacity = (0.28 + 0.72 * assembly).toFixed(3);
+        waveRef.current.style.opacity = (0.48 + 0.52 * assembly).toFixed(3);
       }
     }
 
@@ -304,7 +306,7 @@ export function PinnedBrandBuild() {
                       style={{ backgroundColor: layer.color, opacity: "var(--act, 1)" }}
                     />
                     <span
-                      className="font-display text-3xl font-normal leading-none opacity-40 xl:text-4xl"
+                      className="font-display text-3xl font-normal leading-none opacity-[0.78] xl:text-4xl"
                       style={{ color: layer.color }}
                     >
                       {String(i + 1).padStart(2, "0")}
