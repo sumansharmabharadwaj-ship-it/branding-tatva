@@ -34,6 +34,7 @@ export type AnalyticsEvent =
   | "lead_magnet_requested"
   | "faq_opened"
   | "calendar_opened"
+  | "strategy_note_copied"
   | "booking_completed"
   | "contact_form_validation_failed"
   | "contact_form_delivery_failed"

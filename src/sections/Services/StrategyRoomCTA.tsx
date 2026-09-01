@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { Check, Copy } from "lucide-react";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { packages } from "@/data/services";
@@ -92,6 +93,8 @@ type StrategyDecisionNoteProps = {
   focus: FocusArea;
   carriedPackage: string | null;
   recognitionAudit: ServicesRecognitionAuditDetail | null;
+  copyStatus: "idle" | "copied" | "error";
+  onCopy: () => void;
   compact?: boolean;
 };
 
@@ -100,6 +103,8 @@ function StrategyDecisionNote({
   focus,
   carriedPackage,
   recognitionAudit,
+  copyStatus,
+  onCopy,
   compact = false,
 }: StrategyDecisionNoteProps) {
   return (
@@ -148,6 +153,29 @@ function StrategyDecisionNote({
           ) : null}
         </dl>
       ) : null}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-ivory/12 pt-4">
+        <p className="min-w-0 flex-1 text-xs leading-relaxed text-ivory/52" role="status" aria-live="polite">
+          {copyStatus === "copied"
+            ? "Decision note copied."
+            : copyStatus === "error"
+              ? "Copy unavailable. The note remains here to select."
+              : "Keep this note for the call or share it with your team."}
+        </p>
+        <button
+          type="button"
+          onClick={onCopy}
+          data-strategy-control="true"
+          data-cursor-label="Copy decision note"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-sandstone/28 px-4 py-2 text-xs font-medium text-ivory/78 transition-colors hover:border-sandstone/55 hover:bg-sandstone/[0.08] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+        >
+          {copyStatus === "copied" ? (
+            <Check aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
+          ) : (
+            <Copy aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
+          )}
+          {copyStatus === "copied" ? "Copied" : "Copy note"}
+        </button>
+      </div>
     </div>
   );
 }
@@ -161,6 +189,7 @@ export function StrategyRoomCTA() {
   const [carriedPackage, setCarriedPackage] = useState<string | null>(null);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const [recognitionAudit, setRecognitionAudit] = useState<ServicesRecognitionAuditDetail | null>(null);
+  const [decisionCopyStatus, setDecisionCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
@@ -200,6 +229,7 @@ export function StrategyRoomCTA() {
       setFocus(null);
       setStep(0);
       setBriefStarted(false);
+      setDecisionCopyStatus("idle");
     }
 
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
@@ -219,6 +249,7 @@ export function StrategyRoomCTA() {
         return;
       }
       setRecognitionAudit(detail.score > 0 ? detail : null);
+      setDecisionCopyStatus("idle");
     }
 
     window.addEventListener(SERVICES_RECOGNITION_AUDIT_EVENT, onRecognitionAudit as EventListener);
@@ -332,6 +363,7 @@ export function StrategyRoomCTA() {
   }
 
   function pickPriority(value: Priority) {
+    setDecisionCopyStatus("idle");
     setPriority(value);
     setFocus(null);
     setStep(1);
@@ -339,6 +371,7 @@ export function StrategyRoomCTA() {
   }
 
   function pickFocus(value: FocusArea) {
+    setDecisionCopyStatus("idle");
     setFocus(value);
     setStep(2);
     focusBriefHeading();
@@ -360,6 +393,7 @@ export function StrategyRoomCTA() {
   }
 
   function restart() {
+    setDecisionCopyStatus("idle");
     setPriority(null);
     setFocus(null);
     setStep(0);
@@ -368,6 +402,48 @@ export function StrategyRoomCTA() {
   function skipBriefAndOpenCalendar() {
     openCalendar();
     setBriefStarted(false);
+  }
+
+  async function copyDecisionNote() {
+    if (!priority || !focus) return;
+    const note = [
+      "Working decision note",
+      `Priority: ${priority}`,
+      `Conversation focus: ${focus}`,
+      "",
+      FOCUS_NOTES[focus],
+      PRIORITY_NOTES[priority],
+      carriedPackage ? `Likely engagement: ${carriedPackage}` : null,
+      recognitionAudit
+        ? `Recognition evidence: ${recognitionAudit.score} of ${recognitionAudit.total} answers hold`
+        : null,
+    ]
+      .filter((line): line is string => line !== null)
+      .join("\n");
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(note);
+      } else {
+        const fallback = document.createElement("textarea");
+        fallback.value = note;
+        fallback.setAttribute("readonly", "");
+        fallback.style.position = "fixed";
+        fallback.style.opacity = "0";
+        document.body.appendChild(fallback);
+        fallback.select();
+        const copied = document.execCommand("copy");
+        fallback.remove();
+        if (!copied) throw new Error("Copy command was unavailable");
+      }
+      setDecisionCopyStatus("copied");
+      track("strategy_note_copied", {
+        route: carriedSituation ?? "unselected",
+        audit: Boolean(recognitionAudit),
+      });
+    } catch {
+      setDecisionCopyStatus("error");
+    }
   }
 
   const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const };
@@ -454,6 +530,8 @@ export function StrategyRoomCTA() {
                       focus={focus}
                       carriedPackage={carriedPackage}
                       recognitionAudit={recognitionAudit}
+                      copyStatus={decisionCopyStatus}
+                      onCopy={copyDecisionNote}
                       compact
                     />
                   ) : answers.length > 0 ? (
@@ -659,6 +737,8 @@ export function StrategyRoomCTA() {
                           focus={focus}
                           carriedPackage={carriedPackage}
                           recognitionAudit={recognitionAudit}
+                          copyStatus={decisionCopyStatus}
+                          onCopy={copyDecisionNote}
                         />
                       ) : null}
                       <div className="mt-6 flex flex-col items-center justify-center gap-2 sm:flex-row">
