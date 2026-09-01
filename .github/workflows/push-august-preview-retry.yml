@@ -35,8 +35,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "sumansharmabharadwaj-ship-it"
+          git config user.email "sumansharma.bharadwaj@gmail.com"
 
           for attempt in 1 2 3; do
             git fetch origin august-8-isolated
