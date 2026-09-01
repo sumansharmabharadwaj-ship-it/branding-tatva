@@ -194,18 +194,35 @@ html[data-services-form-interaction="true"] [data-services-journey-thread="true"
 @media (max-width: 1023px) {
   html[data-services-experience="active"],
   html[data-services-thread-scene] {
-    --services-thread-x: 1.1rem;
+    /* Keep the living thread out of the mobile reading gutter. The opening,
+       audit, and Strategy Room all begin their useful content on the left;
+       placing the signal against the quiet right edge lets it remain part of
+       the journey without drawing a line through copy or 44px controls. */
+    --services-thread-x: calc(100vw - 1.1rem);
   }
 
-  [data-services-journey-thread="true"] {
+  /* Match the desktop active selector's specificity. The former one-attribute
+     rule lost the cascade to the active state above and rendered at full
+     opacity on phones. */
+  html[data-services-experience="active"] [data-services-journey-thread="true"] {
     z-index: 18;
-    opacity: 0.58;
+    opacity: 0.52;
   }
 
   [data-services-thread-focus="true"] {
     top: 30%;
-    width: 2.2rem;
+    width: 2rem;
     background: rgb(19 27 23 / 0.5);
+  }
+}
+
+@media (max-width: 479px) {
+  [data-services-journey-thread="true"] {
+    mask-image: linear-gradient(to bottom, transparent 7%, black 18%, black 84%, transparent 95%);
+  }
+
+  [data-services-thread-progress="true"] {
+    box-shadow: 0 0 10px rgb(var(--services-thread-color) / 0.18);
   }
 }
 
