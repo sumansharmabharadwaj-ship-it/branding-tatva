@@ -314,7 +314,7 @@ export function StudioCinematicChapter() {
       </div>
       <div className="studio-film__wash" aria-hidden="true" />
 
-      <div className="studio-film__frame">
+      <div className="studio-film__frame" data-home-frame>
         <header className="studio-film__topline">
           <span>07 · The thinking behind the work</span>
           <Link

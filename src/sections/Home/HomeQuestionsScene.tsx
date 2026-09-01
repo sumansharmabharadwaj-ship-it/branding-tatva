@@ -309,7 +309,7 @@ export function HomeQuestionsScene() {
       />
       <div className="questions-editorial__veil" aria-hidden="true" />
 
-      <Container className="questions-editorial__frame max-w-[104rem]">
+      <Container className="questions-editorial__frame max-w-[104rem]" data-home-frame>
         <header className="questions-editorial__header">
           <div>
             <p>

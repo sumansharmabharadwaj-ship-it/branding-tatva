@@ -334,7 +334,7 @@ export function EvidenceWall() {
 
       <div className="evidence-cinematic__veil" aria-hidden="true" />
 
-      <Container className="evidence-cinematic__shell max-w-[100rem]">
+      <Container className="evidence-cinematic__shell max-w-[100rem]" data-home-frame>
         <header className="evidence-cinematic__header">
           <div>
             <p className="evidence-cinematic__eyebrow">04 · Selected work</p>

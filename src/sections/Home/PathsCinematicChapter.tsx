@@ -231,7 +231,7 @@ export function PathsCinematicChapter() {
       </div>
       <div className="paths-film__veil" aria-hidden="true" />
 
-      <div className="paths-film__frame">
+      <div className="paths-film__frame" data-home-frame>
         <header className="paths-film__header">
           <div className="paths-film__chapter">
             <span>05</span>

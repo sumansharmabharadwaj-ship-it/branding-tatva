@@ -92,19 +92,32 @@
    disciplines. The runway is deliberately shorter than half a second screen
    per state: enough for a controlled reveal without returning to the old,
    exhausting multi-screen chapter. Pointer, keyboard and touch controls stay
-   available, and the film itself remains exactly one viewport. */
+  available, and the film itself remains exactly one viewport. */
 @media (min-width: 1101px) and (min-height: 700px) and (pointer: fine) {
   html body .home-v4 #studio.home-v4-chapter--studio {
-    height: 148svh !important;
-    min-height: 148svh !important;
+    height: 138svh !important;
+    min-height: 138svh !important;
     overflow: clip !important;
   }
 
   html body .home-v4 #studio > .studio-film {
     position: sticky !important;
-    top: 0;
+    top: 0 !important;
     height: 100svh !important;
     min-height: 100svh !important;
+    max-height: 100svh !important;
+    overflow: clip !important;
+  }
+
+  .home-v4 .studio-film__frame {
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    overflow: hidden;
+  }
+
+  .home-v4 .studio-film__body {
+    min-height: 0;
   }
 }
 

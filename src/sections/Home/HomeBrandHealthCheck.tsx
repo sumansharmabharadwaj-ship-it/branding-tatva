@@ -326,7 +326,7 @@ export function HomeBrandHealthCheck() {
       </div>
       <div className="brand-orbit__veil" aria-hidden="true" />
 
-      <div className="brand-orbit__shell">
+      <div className="brand-orbit__shell" data-home-frame>
         <header className="brand-orbit__header">
           <h2 id="brand-orbit-title">
             02 · Brand diagnostic

@@ -340,7 +340,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         <span className="decision-flow__light" />
       </div>
 
-      <div className="decision-flow__shell">
+      <div className="decision-flow__shell" data-home-frame>
         <header className="decision-flow__header">
           <div>
             <p>

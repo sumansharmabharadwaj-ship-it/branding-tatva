@@ -321,7 +321,7 @@ export function V4HiddenCostScene() {
       </motion.div>
       <div className="cost-film__veil" aria-hidden="true" />
 
-      <div className="cost-film__frame">
+      <div className="cost-film__frame" data-home-frame>
         <header className="cost-film__header">
           <div>
             <span>03</span>
