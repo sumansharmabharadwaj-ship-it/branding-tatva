@@ -1008,8 +1008,8 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     display: -webkit-box;
     margin-top: 0.5rem;
     overflow: hidden;
-    font-size: 0.7rem;
-    line-height: 1.38;
+    font-size: 0.76rem;
+    line-height: 1.36;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
@@ -1098,8 +1098,9 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   }
 
   #offerings [data-service-route-context="true"] {
-    font-size: 0.62rem;
-    line-height: 1.32;
+    color: rgba(244, 239, 230, 0.74);
+    font-size: 0.7rem;
+    line-height: 1.36;
   }
 
   #offerings [data-service-route-context="true"] > span:last-child {
@@ -1111,12 +1112,12 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 
   #offerings [data-discipline-next="true"] {
     min-height: 2.75rem;
-    max-width: 7.25rem;
+    max-width: 7.75rem;
     justify-content: flex-end;
     padding-inline: 0;
     text-align: right;
-    font-size: 0.68rem;
-    line-height: 1.2;
+    font-size: 0.73rem;
+    line-height: 1.22;
   }
 
   /* Packages is a decision frame on phones. Keep all three routes visible,
