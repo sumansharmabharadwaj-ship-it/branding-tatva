@@ -161,6 +161,8 @@ export function HomeQuestionsScene() {
   const selectionDirectionRef = useRef<SelectionDirection>("forward");
   const lensDirectionRef = useRef<SelectionDirection>("forward");
   const displayedIndexRef = useRef(0);
+  const questionKeyboardNavigationRef = useRef(false);
+  const lensKeyboardNavigationRef = useRef(false);
   const [committedIndex, setCommittedIndex] = useState(0);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
@@ -347,6 +349,7 @@ export function HomeQuestionsScene() {
     else if (event.key === "End") next = decisions.length - 1;
     else return;
     event.preventDefault();
+    questionKeyboardNavigationRef.current = true;
     const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
       ? "forward"
       : event.key === "ArrowLeft" || event.key === "ArrowUp"
@@ -364,6 +367,7 @@ export function HomeQuestionsScene() {
     else if (event.key === "End") next = HOME_STUDIO_LENSES.length - 1;
     else return;
     event.preventDefault();
+    lensKeyboardNavigationRef.current = true;
     const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
       ? "forward"
       : event.key === "ArrowLeft" || event.key === "ArrowUp"
@@ -411,7 +415,10 @@ export function HomeQuestionsScene() {
             role="tablist"
             aria-label="Choose a practical question"
             onPointerLeave={(event) => {
-              if (event.pointerType === "mouse") clearPreview();
+              if (event.pointerType === "mouse") {
+                questionKeyboardNavigationRef.current = false;
+                clearPreview();
+              }
             }}
           >
             <p className="questions-editorial__instruction">Choose what you need to know</p>
@@ -431,8 +438,23 @@ export function HomeQuestionsScene() {
                   className={displayed ? "is-active" : undefined}
                   data-committed={committed ? "true" : undefined}
                   onClick={() => choose(index, true, true)}
+                  onPointerDown={(event) => {
+                    if (event.pointerType === "mouse") questionKeyboardNavigationRef.current = false;
+                  }}
                   onPointerEnter={(event) => {
-                    if (event.pointerType === "mouse") choose(index, false);
+                    if (event.pointerType === "mouse" && !questionKeyboardNavigationRef.current) {
+                      choose(index, false);
+                    }
+                  }}
+                  onPointerMove={(event) => {
+                    if (
+                      event.pointerType === "mouse"
+                      && questionKeyboardNavigationRef.current
+                      && (event.movementX !== 0 || event.movementY !== 0)
+                    ) {
+                      questionKeyboardNavigationRef.current = false;
+                      choose(index, false);
+                    }
                   }}
                   onFocus={() => choose(index)}
                   onKeyDown={(event) => onKeyDown(event, index)}
@@ -445,27 +467,22 @@ export function HomeQuestionsScene() {
             })}
           </div>
 
-          <AnimatePresence
-            mode="sync"
-            initial={false}
+          <motion.article
+            key={active.id}
+            id="decision-answer"
+            role="tabpanel"
+            aria-labelledby={`decision-question-${activeIndex}`}
+            className="questions-editorial__answer"
+            data-home-reading-plane
+            data-home-atomic-reading-plane
+            data-home-selection-direction={selectionDirectionRef.current}
             custom={selectionDirectionRef.current}
+            variants={QUESTION_ANSWER_VARIANTS}
+            initial={reducedMotion ? false : "enter"}
+            animate="active"
+            transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}
+            aria-live={isPreviewing || isLensPreviewing ? "off" : "polite"}
           >
-            <motion.article
-              key={active.id}
-              id="decision-answer"
-              role="tabpanel"
-              aria-labelledby={`decision-question-${activeIndex}`}
-              className="questions-editorial__answer"
-              data-home-reading-plane
-              data-home-selection-direction={selectionDirectionRef.current}
-              custom={selectionDirectionRef.current}
-              variants={QUESTION_ANSWER_VARIANTS}
-              initial={reducedMotion ? false : "enter"}
-              animate="active"
-              exit={reducedMotion ? undefined : "exit"}
-              transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}
-              aria-live={isPreviewing || isLensPreviewing ? "off" : "polite"}
-            >
               <div className="questions-editorial__answer-index">
                 <span>{isPreviewing ? "Preview" : active.label}</span>
                 <strong>{String(activeIndex + 1).padStart(2, "0")} / 05</strong>
@@ -485,7 +502,10 @@ export function HomeQuestionsScene() {
                 className="questions-editorial__lens-reader"
                 data-lens-preview={isLensPreviewing ? activeLens?.name.toLowerCase() : undefined}
                 onPointerLeave={(event) => {
-                  if (event.pointerType === "mouse") clearLensPreview();
+                  if (event.pointerType === "mouse") {
+                    lensKeyboardNavigationRef.current = false;
+                    clearLensPreview();
+                  }
                 }}
               >
                 <div className="questions-editorial__lens-toolbar">
@@ -504,8 +524,23 @@ export function HomeQuestionsScene() {
                           data-lens-committed={committed ? "true" : undefined}
                           style={{ "--lens-choice-accent": lens.accent } as CSSProperties}
                           onClick={() => chooseLens(lens)}
+                          onPointerDown={(event) => {
+                            if (event.pointerType === "mouse") lensKeyboardNavigationRef.current = false;
+                          }}
                           onPointerEnter={(event) => {
-                            if (event.pointerType === "mouse") chooseLens(lens, false);
+                            if (event.pointerType === "mouse" && !lensKeyboardNavigationRef.current) {
+                              chooseLens(lens, false);
+                            }
+                          }}
+                          onPointerMove={(event) => {
+                            if (
+                              event.pointerType === "mouse"
+                              && lensKeyboardNavigationRef.current
+                              && (event.movementX !== 0 || event.movementY !== 0)
+                            ) {
+                              lensKeyboardNavigationRef.current = false;
+                              chooseLens(lens, false);
+                            }
                           }}
                           onKeyDown={(event) => onLensKeyDown(event, index)}
                         >
@@ -553,8 +588,7 @@ export function HomeQuestionsScene() {
                 Bring this {active.label.toLowerCase()} question to Suman
                 <ArrowDown size={16} strokeWidth={1.8} aria-hidden="true" />
               </Link>
-            </motion.article>
-          </AnimatePresence>
+          </motion.article>
         </div>
       </Container>
     </section>
