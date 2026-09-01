@@ -188,7 +188,11 @@ export function MobileAuthorityDeck({
         })}
       </div>
 
-      <div data-authority-mobile-controls="true" className="mt-4 flex items-center justify-between gap-3">
+      <div
+        data-authority-mobile-controls="true"
+        data-section-jump-yield="true"
+        className="mt-4 flex items-center justify-between gap-3"
+      >
         <button
           type="button"
           onClick={() => selectLayer(activeIndex - 1, false, "previous")}

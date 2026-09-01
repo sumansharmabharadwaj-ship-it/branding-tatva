@@ -547,7 +547,7 @@ export default async function ServicesPage() {
         </PricingProvider>
       </main>
       <Footer compact />
-      <SectionJumpNav items={JUMP_ITEMS} hideOnLast showActiveLabel={false} />
+      <SectionJumpNav items={JUMP_ITEMS} hideOnLast showActiveLabel={false} guidedMobile />
     </>
   );
 }
