@@ -134,9 +134,9 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "service-page-confidence-stack",
     "Seven service page messaging stages leading a qualified buyer toward one clear next step",
   ),
-  "case-study-structure-service-businesses": media(
-    "case-study-decision-record",
-    "An open project record tracing evidence from first fragment to final proof",
+  "case-study-structure-service-businesses": topicMedia(
+    "case-study-decision-proof-chain",
+    "A client situation moving through constraints, diagnosis, a strategic fork, execution and verified outcome before transferring its lesson forward",
   ),
   "testimonial-questions-buying-evidence": topicMedia(
     "testimonial-questions-to-proof",
