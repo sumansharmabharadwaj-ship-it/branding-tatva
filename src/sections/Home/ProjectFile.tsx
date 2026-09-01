@@ -6,8 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import { LivingImage } from "@/components/LivingImage";
 import type { Project } from "@/data/projects";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 // Suman's board: "Click — the whole homepage freezes. The card opens
 // full screen. The page becomes the project." The file opens as a
@@ -76,6 +78,7 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
 
   const video = project?.heroVideo ?? project?.cardVideo;
   const poster = project?.heroPoster ?? project?.cardImage;
+  const livingStill = usesLivingStill(video);
 
   return (
     <AnimatePresence onExitComplete={() => previousFocusRef.current?.focus()}>
@@ -94,7 +97,7 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
         >
           {/* The room: the project's own footage, accent tinted. */}
           <div className="pointer-events-none fixed inset-0" aria-hidden="true">
-            {video && !prefersReducedMotion ? (
+            {video && !prefersReducedMotion && !livingStill ? (
               <video
                 className="h-full w-full object-cover"
                 src={video}
@@ -107,11 +110,26 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
                 data-home-media-priority="10"
                 data-home-playback-rate="0.86"
               />
-            ) : (
-              poster && (
-                <Image src={poster} alt="" fill sizes="100vw" className="object-cover" />
+            ) : poster ? (
+              livingStill && !prefersReducedMotion ? (
+                <LivingImage
+                  src={poster}
+                  sizes="100vw"
+                  imagePosition={project.cardImagePosition ?? "center"}
+                  intensity="hero"
+                  className="absolute inset-0"
+                />
+              ) : (
+                <Image
+                  src={poster}
+                  alt=""
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
+                  style={{ objectPosition: project.cardImagePosition ?? "center" }}
+                />
               )
-            )}
+            ) : null}
             <div className="absolute inset-0" style={{ backgroundColor: `${project.accent}26` }} />
             <div
               className="absolute inset-0"

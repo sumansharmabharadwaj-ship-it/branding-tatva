@@ -90,11 +90,17 @@ for (const relative of [
   "sections/Hero/index.tsx",
   "sections/Process/JourneyStage.tsx",
   "sections/Threshold/ThresholdPanel.tsx",
+  "sections/Home/EvidenceWall.tsx",
+  "sections/Home/ProjectFile.tsx",
 ]) {
   const component = fs.readFileSync(path.join(SRC, relative), "utf8");
   if (!component.includes("usesLivingStill") || !component.includes("<LivingImage")) {
     fail(`${relative} can bypass the shared synthetic-media treatment.`);
   }
+}
+
+if (!fs.readFileSync(path.join(SRC, "lib/mediaMode.ts"), "utf8").includes('"/videos/card-"')) {
+  fail("Project-card loops are not classified as synthetic media.");
 }
 
 const dataSources = walk(path.join(SRC, "data"))

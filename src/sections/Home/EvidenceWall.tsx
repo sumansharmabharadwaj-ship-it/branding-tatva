@@ -16,7 +16,9 @@ import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/Container";
+import { LivingImage } from "@/components/LivingImage";
 import { projects, type Project } from "@/data/projects";
+import { usesLivingStill } from "@/lib/mediaMode";
 import {
   SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
@@ -183,6 +185,7 @@ export function EvidenceWall() {
   displayedIndexRef.current = activeIndex;
   const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const activeProject = visibleProjects[activeIndex] ?? visibleProjects[0];
+  const activeLivingStill = usesLivingStill(activeProject.cardVideo);
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
   const activeEvidence = EVIDENCE_META[activeProject.slug];
@@ -327,7 +330,16 @@ export function EvidenceWall() {
             scale: { duration: 11, ease: "linear" },
           }}
         >
-          {activeProject.cardImage && (
+          {activeProject.cardImage && (activeLivingStill && !prefersReducedMotion ? (
+            <LivingImage
+              src={activeProject.cardImage}
+              priority={activeIndex === 0}
+              sizes="100vw"
+              imagePosition={activeProject.cardImagePosition ?? "center"}
+              intensity="hero"
+              className="evidence-cinematic__backdrop-image"
+            />
+          ) : (
             <Image
               src={activeProject.cardImage}
               alt=""
@@ -337,8 +349,8 @@ export function EvidenceWall() {
               className="evidence-cinematic__backdrop-image"
               style={{ objectPosition: activeProject.cardImagePosition ?? "center" }}
             />
-          )}
-          {!prefersReducedMotion && activeProject.cardVideo && (
+          ))}
+          {!prefersReducedMotion && activeProject.cardVideo && !activeLivingStill && (
             <video
               className="evidence-cinematic__backdrop-video"
               src={activeProject.cardVideo}
