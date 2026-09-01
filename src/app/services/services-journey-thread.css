@@ -67,7 +67,9 @@ html[data-services-experience="active"] [data-services-journey-thread="true"] {
 
 [data-services-thread-focus="true"] {
   position: absolute;
-  top: 34%;
+  /* The focus belongs to the same journey as the illuminated rail. Let it
+     travel with page progress instead of hovering at one arbitrary point. */
+  top: clamp(16%, var(--services-journey-progress), 86%);
   left: var(--services-thread-x);
   width: clamp(2.75rem, 4.2vw, 4.5rem);
   aspect-ratio: 1;
@@ -80,6 +82,7 @@ html[data-services-experience="active"] [data-services-journey-thread="true"] {
   transform: translate(-50%, -50%) scale(var(--services-thread-glyph-scale));
   backdrop-filter: blur(10px);
   transition:
+    top 110ms linear,
     left 720ms cubic-bezier(0.22, 1, 0.36, 1),
     transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 520ms ease,
@@ -210,7 +213,7 @@ html[data-services-form-interaction="true"] [data-services-journey-thread="true"
   }
 
   [data-services-thread-focus="true"] {
-    top: 30%;
+    top: clamp(18%, var(--services-journey-progress), 80%);
     width: 2rem;
     background: rgb(19 27 23 / 0.5);
   }
