@@ -876,6 +876,71 @@
     transform: translate3d(0.65rem, 0, 0);
   }
 
+  /* The smaller decision details now rewind with their parent composition.
+     Their hit areas never move; only the text retraces the incoming axis. */
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choice-number,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-number,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__rail button > span {
+    transform: translate3d(0, 0.6rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choices button > strong,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__rail-copy,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    :is(.decision-flow__rail button > strong, .decision-flow__rail-cue),
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > strong {
+    transform: translate3d(0, -0.7rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choice-action,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__choice-number,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > span,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__choices button > span {
+    transform: translate3d(0.6rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-copy,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    :is(.paths-film__choices button > strong, .paths-film__choice-cue),
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > small,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    :is(
+      .questions-editorial__choices button > strong,
+      .questions-editorial__choices button > svg
+    ),
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise li button > strong {
+    transform: translate3d(-0.65rem, 0, 0);
+  }
+
   /* All labels resolve to their authored resting state. */
   .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
     .brand-orbit__choice-number,
@@ -966,6 +1031,78 @@
 
   .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
     .final-invitation__promise li:nth-child(3) button > * {
+    transition-delay: 210ms;
+  }
+
+  /* Reverse exploration also reverses the cascade, so the nearest lower
+     decision resolves first as the visitor returns to an earlier chapter. */
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-scene-state="active"] :is(
+      .brand-orbit__choices,
+      .cost-film__rail,
+      .evidence-cinematic__index,
+      .paths-film__choices,
+      .decision-flow__rail,
+      .studio-film__chapters,
+      .questions-editorial__choices,
+      .final-invitation__promise ol
+    ) > :nth-last-child(1) > * {
+    transition-delay: 110ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-scene-state="active"] :is(
+      .brand-orbit__choices,
+      .cost-film__rail,
+      .evidence-cinematic__index,
+      .paths-film__choices,
+      .decision-flow__rail,
+      .studio-film__chapters,
+      .questions-editorial__choices,
+      .final-invitation__promise ol
+    ) > :nth-last-child(2) > * {
+    transition-delay: 160ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-scene-state="active"] :is(
+      .brand-orbit__choices,
+      .cost-film__rail,
+      .evidence-cinematic__index,
+      .paths-film__choices,
+      .decision-flow__rail,
+      .studio-film__chapters,
+      .questions-editorial__choices,
+      .final-invitation__promise ol
+    ) > :nth-last-child(3) > * {
+    transition-delay: 210ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-scene-state="active"] :is(
+      .cost-film__rail,
+      .evidence-cinematic__index,
+      .decision-flow__rail,
+      .questions-editorial__choices
+    ) > :nth-last-child(n + 4) > * {
+    transition-delay: 260ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-last-child(1) button > * {
+    transition-delay: 110ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-last-child(2) button > * {
+    transition-delay: 160ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-last-child(3) button > * {
     transition-delay: 210ms;
   }
 }
