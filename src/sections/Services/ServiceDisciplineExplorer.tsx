@@ -188,20 +188,21 @@ export function ServiceDisciplineExplorer() {
       <div className="relative lg:flex lg:min-h-svh lg:items-center lg:overflow-hidden">
         <Container className="relative max-w-7xl py-2 lg:py-12">
           <div
+            data-discipline-layout="true"
             className="grid gap-10 lg:grid-cols-[minmax(15rem,0.58fr)_minmax(0,1.42fr)] lg:items-center lg:gap-12 xl:grid-cols-[minmax(16rem,0.52fr)_minmax(0,1.48fr)] xl:gap-16"
           >
             <div data-services-chapter-copy="true" className="lg:self-center">
               <Reveal>
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">What the work can cover</p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+                <h2 data-discipline-heading="true" className="mt-2 text-display-sm font-display font-normal text-ivory">
                   Six disciplines, used in the order your business needs.
                 </h2>
-                <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
+                <p data-discipline-intro="true" className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
                   {routePlan
                     ? `${routePlan.label} changes what should come first. Nothing is included to make the proposal look larger.`
                     : "Choose a situation above to see the relevant order, or inspect every discipline here."}
                 </p>
-                <div className="mt-7 flex items-center gap-4" aria-hidden="true">
+                <div data-discipline-progress="true" className="mt-7 flex items-center gap-4" aria-hidden="true">
                   <span className="font-display text-2xl text-ivory">
                     {String(activePosition + 1).padStart(2, "0")}
                   </span>
@@ -320,8 +321,8 @@ export function ServiceDisciplineExplorer() {
                     transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.42, ease: EASE }}
                     className="relative flex min-h-[18rem] flex-col justify-between lg:min-h-[20rem]"
                   >
-                    <div>
-                      <div className="flex items-baseline justify-between gap-4">
+                    <div data-discipline-panel-copy="true">
+                      <div data-discipline-panel-meta="true" className="flex items-baseline justify-between gap-4">
                         <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/55">
                           Discipline {String(activePosition + 1).padStart(2, "0")} / {String(offerings.length).padStart(2, "0")}
                         </p>
@@ -329,13 +330,13 @@ export function ServiceDisciplineExplorer() {
                           {String(activePosition + 1).padStart(2, "0")}
                         </span>
                       </div>
-                      <h3 className="mt-5 max-w-xl font-display text-3xl font-normal leading-tight text-ivory sm:text-4xl">
+                      <h3 data-discipline-panel-heading="true" className="mt-5 max-w-xl font-display text-3xl font-normal leading-tight text-ivory sm:text-4xl">
                         {active.name}
                       </h3>
-                      <p className="mt-6 max-w-2xl text-base leading-relaxed text-ivory/[0.88] sm:text-lg">{active.detail}</p>
+                      <p data-discipline-panel-detail="true" className="mt-6 max-w-2xl text-base leading-relaxed text-ivory/[0.88] sm:text-lg">{active.detail}</p>
                     </div>
 
-                    <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ivory/12 pt-5">
+                    <div data-discipline-panel-footer="true" className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ivory/12 pt-5">
                       <p data-service-route-context="true" className="max-w-sm text-sm leading-relaxed text-ivory/60">
                         {routePlan ? (
                           <>
@@ -350,6 +351,7 @@ export function ServiceDisciplineExplorer() {
                       </p>
                       <a
                         href="#desire"
+                        data-discipline-next="true"
                         className="link-underline inline-flex min-h-11 items-center gap-2 px-1 text-sm text-sandstone transition-colors duration-300 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
                       >
                         Compare the three engagements
