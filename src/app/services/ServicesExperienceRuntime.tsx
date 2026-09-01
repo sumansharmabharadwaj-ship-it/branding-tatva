@@ -107,8 +107,12 @@ export function ServicesExperienceRuntime() {
     let lastFrameTime = performance.now();
     let smoothedVelocity = 0;
     let scrollDirection: "up" | "down" = "down";
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    function isMotionReduced() {
+      return reducedMotionQuery.matches || document.documentElement.dataset.motion === "reduced";
+    }
 
     hero.dataset.servicesHeroScene = "true";
     heroMedia.forEach((media) => {
@@ -506,7 +510,7 @@ export function ServicesExperienceRuntime() {
           clamp(0.66 + resolution * 0.34 - departure * 0.08, 0.58, 1).toFixed(4),
         );
 
-        if (motion && !reducedMotion) {
+        if (motion && !isMotionReduced()) {
           scene.style.setProperty(
             "--services-content-x",
             `${(travelAxis * motion.contentX + signedVelocity * motion.contentX * 0.16).toFixed(2)}px`,
@@ -606,18 +610,35 @@ export function ServicesExperienceRuntime() {
     }
 
     function onPointerMove(event: PointerEvent) {
-      if (!finePointer || reducedMotion) return;
+      if (!finePointer || isMotionReduced()) return;
       pointerX = clamp(event.clientX / Math.max(1, window.innerWidth) - 0.5, -0.5, 0.5) * 2;
       pointerY = clamp(event.clientY / Math.max(1, window.innerHeight) - 0.5, -0.5, 0.5) * 2;
       if (!pointerFrame) pointerFrame = window.requestAnimationFrame(publishPointer);
     }
 
     function onPointerLeave() {
-      if (!finePointer || reducedMotion) return;
+      if (!finePointer || isMotionReduced()) return;
       pointerX = 0;
       pointerY = 0;
       if (!pointerFrame) pointerFrame = window.requestAnimationFrame(publishPointer);
     }
+
+    function onMotionPreferenceChange() {
+      if (isMotionReduced()) {
+        pointerX = 0;
+        pointerY = 0;
+        servicesRoot.style.setProperty("--services-pointer-x", "0");
+        servicesRoot.style.setProperty("--services-pointer-y", "0");
+      }
+      scheduleProgress();
+    }
+
+    const motionSettingObserver = new MutationObserver(onMotionPreferenceChange);
+    motionSettingObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-motion"],
+    });
+    reducedMotionQuery.addEventListener("change", onMotionPreferenceChange);
 
     function closestInteractive(target: EventTarget | null) {
       return target instanceof Element ? target.closest(INTERACTIVE_SELECTOR) : null;
@@ -722,6 +743,8 @@ export function ServicesExperienceRuntime() {
       servicesRoot.removeEventListener("pointerup", onInteractivePointerUp);
       servicesRoot.removeEventListener("focusin", onInteractiveFocusIn);
       servicesRoot.removeEventListener("focusout", onInteractiveFocusOut);
+      motionSettingObserver.disconnect();
+      reducedMotionQuery.removeEventListener("change", onMotionPreferenceChange);
       delete document.documentElement.dataset.servicesExperience;
       delete document.documentElement.dataset.servicesScrollDirection;
       delete document.documentElement.dataset.servicesActiveChapter;
