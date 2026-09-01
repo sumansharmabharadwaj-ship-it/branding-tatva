@@ -8,9 +8,11 @@ import { motion, useTransform } from "framer-motion";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { SplitReveal } from "@/components/SplitReveal";
+import { LivingImage } from "@/components/LivingImage";
 import type { CinematicHeroProps } from "./types";
 import { HERO_SCRIM_GRADIENT } from "./constants";
 import { useHeroParallax, useHeroMouseParallax } from "./animations";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const DustMotes = dynamic(() => import("@/components/DustMotes").then((m) => m.DustMotes), {
   ssr: false,
@@ -32,6 +34,7 @@ export function CinematicHero({
   const { imageY, contentOpacity, contentY } = useHeroParallax(ref);
   const mouseParallax = useHeroMouseParallax(ref, Boolean(prefersReducedMotion));
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
+  const livingStill = usesLivingStill(video);
   const foregroundX = useTransform(mouseParallax.x, (v) => v * 2.4);
   const foregroundY = useTransform(mouseParallax.y, (v) => v * 2.4);
 
@@ -40,13 +43,13 @@ export function CinematicHero({
   // protected-preview redirect, tab return, or replay of the guided journey.
   useVideoFadeIn(
     videoRef,
-    Boolean(video && !prefersReducedMotion),
+    Boolean(video && !prefersReducedMotion && !livingStill),
   );
 
   return (
     <section ref={ref} className="relative h-svh min-h-[620px] overflow-hidden bg-soil">
       {video && poster && <link rel="preload" as="image" href={poster} fetchPriority="high" />}
-      {video && !prefersReducedMotion ? (
+      {video && !prefersReducedMotion && !livingStill ? (
         <motion.div
           className="absolute inset-0 top-[-10%] h-[120%] w-full"
           style={{ y: imageY }}
@@ -83,14 +86,25 @@ export function CinematicHero({
             className="absolute inset-0"
             style={prefersReducedMotion ? undefined : { x: mouseParallax.x, y: mouseParallax.y }}
           >
-            <Image
-              src={poster ?? image ?? ""}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              style={{ objectFit: "cover", objectPosition: imagePosition }}
-            />
+            {livingStill ? (
+              <LivingImage
+                src={poster ?? image ?? ""}
+                priority
+                sizes="100vw"
+                imagePosition={imagePosition}
+                intensity="hero"
+                className="absolute inset-0"
+              />
+            ) : (
+              <Image
+                src={poster ?? image ?? ""}
+                alt=""
+                fill
+                priority
+                sizes="100vw"
+                style={{ objectFit: "cover", objectPosition: imagePosition }}
+              />
+            )}
           </motion.div>
           <div className="absolute inset-0" style={{ backgroundImage: HERO_SCRIM_GRADIENT }} />
         </motion.div>

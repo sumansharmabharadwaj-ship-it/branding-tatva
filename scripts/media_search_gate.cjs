@@ -83,6 +83,20 @@ for (const required of [
   }
 }
 
+for (const relative of [
+  "components/CinematicCardMedia.tsx",
+  "components/ElementRowBackground.tsx",
+  "components/FeaturedWorkHero.tsx",
+  "sections/Hero/index.tsx",
+  "sections/Process/JourneyStage.tsx",
+  "sections/Threshold/ThresholdPanel.tsx",
+]) {
+  const component = fs.readFileSync(path.join(SRC, relative), "utf8");
+  if (!component.includes("usesLivingStill") || !component.includes("<LivingImage")) {
+    fail(`${relative} can bypass the shared synthetic-media treatment.`);
+  }
+}
+
 const dataSources = walk(path.join(SRC, "data"))
   .filter((file) => file.endsWith(".ts"))
   .map((file) => fs.readFileSync(file, "utf8"))

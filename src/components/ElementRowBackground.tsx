@@ -5,8 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
+import { LivingImage } from "@/components/LivingImage";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.06, duration: 26 });
 
@@ -60,6 +62,7 @@ export function ElementRowBackground({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ref, shouldLoad] = useLazyMount();
   const [videoReady, setVideoReady] = useState(false);
+  const livingStill = usesLivingStill(video);
   // Tracks the in-flight play() promise so a pause() that lands while
   // it's still pending waits for it to settle first, instead of firing
   // immediately.
@@ -81,7 +84,7 @@ export function ElementRowBackground({
 
   useEffect(() => {
     const el = videoRef.current;
-    if (!el || !shouldLoad || prefersReducedMotion) return;
+    if (!el || !shouldLoad || prefersReducedMotion || livingStill) return;
     if (playing) {
       playPromiseRef.current = el.play().catch(() => {});
     } else {
@@ -96,7 +99,7 @@ export function ElementRowBackground({
       // avoids that race entirely.
       Promise.resolve(playPromiseRef.current).finally(() => el.pause());
     }
-  }, [shouldLoad, prefersReducedMotion, playing]);
+  }, [livingStill, playing, prefersReducedMotion, shouldLoad]);
 
   return (
     // backgroundColor here (not just the tint overlay below) so there's
@@ -127,17 +130,28 @@ export function ElementRowBackground({
             needs the eager/high-priority fetch; the rest can lazy-load
             normally since they won't be seen until scrolled into their
             turn anyway. */}
-        <Image
-          src={image}
-          alt=""
-          fill
-          priority={active}
-          loading={active ? undefined : "lazy"}
-          sizes="100vw"
-          style={{ objectFit: "cover", objectPosition: imagePosition }}
-        />
+        {livingStill ? (
+          <LivingImage
+            src={image}
+            priority={active}
+            sizes="100vw"
+            imagePosition={imagePosition}
+            intensity="cinematic"
+            className="absolute inset-0"
+          />
+        ) : (
+          <Image
+            src={image}
+            alt=""
+            fill
+            priority={active}
+            loading={active ? undefined : "lazy"}
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: imagePosition }}
+          />
+        )}
       </motion.div>
-      {video && shouldLoad && !prefersReducedMotion && (
+      {video && shouldLoad && !prefersReducedMotion && !livingStill && (
         <video
           aria-hidden="true"
           ref={videoRef}

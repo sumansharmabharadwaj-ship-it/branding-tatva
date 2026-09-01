@@ -5,9 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { LinkButton } from "@/components/Button";
+import { LivingImage } from "@/components/LivingImage";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { EASE_AIR } from "@/lib/motion";
+import { usesLivingStill } from "@/lib/mediaMode";
 import type { ThresholdPanelData } from "./types";
 import {
   ACTIVE_IMAGE_SCALE,
@@ -68,6 +70,7 @@ export function ThresholdPanel({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const livingStill = usesLivingStill(panel.video);
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
 
   const imageScale = prefersReducedMotion
@@ -91,15 +94,25 @@ export function ThresholdPanel({
         animate={{ scale: imageScale, opacity: dimmed ? INACTIVE_DIM_OPACITY : 1 }}
         transition={{ duration: PANEL_TRANSITION_MS / 1000, ease: EASE_AIR }}
       >
-        <Image
-          src={panel.image}
-          alt=""
-          fill
-          priority
-          sizes="(min-width: 640px) 50vw, 100vw"
-          style={{ objectFit: "cover" }}
-        />
-        {panel.video && !prefersReducedMotion && <PanelVideo src={panel.video} />}
+        {livingStill ? (
+          <LivingImage
+            src={panel.image}
+            priority
+            sizes="(min-width: 640px) 50vw, 100vw"
+            intensity="cinematic"
+            className="absolute inset-0"
+          />
+        ) : (
+          <Image
+            src={panel.image}
+            alt=""
+            fill
+            priority
+            sizes="(min-width: 640px) 50vw, 100vw"
+            style={{ objectFit: "cover" }}
+          />
+        )}
+        {panel.video && !prefersReducedMotion && !livingStill && <PanelVideo src={panel.video} />}
         <div className="absolute inset-0" style={{ backgroundImage: panel.gradient }} />
       </motion.div>
 

@@ -4,11 +4,13 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { LivingImage } from "@/components/LivingImage";
 import { Reveal } from "@/components/Reveal";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { EASE_AIR } from "@/lib/motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { usesLivingStill } from "@/lib/mediaMode";
 import type { ProcessStage } from "@/data/process";
 
 // Previously the vertical journey had no onMouse*/whileHover anywhere —
@@ -47,12 +49,13 @@ export function JourneyStage({
   const [mediaRef, shouldLoad] = useLazyMount();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
+  const livingStill = usesLivingStill(stage.video);
 
   useEffect(() => {
     const el = videoRef.current;
-    if (!el || !shouldLoad || prefersReducedMotion) return;
+    if (!el || !shouldLoad || prefersReducedMotion || livingStill) return;
     el.play().catch(() => {});
-  }, [shouldLoad, prefersReducedMotion]);
+  }, [livingStill, prefersReducedMotion, shouldLoad]);
 
   return (
     <li
@@ -86,15 +89,24 @@ export function JourneyStage({
       <div className="relative -mx-4 overflow-hidden rounded-2xl px-4 py-3">
         {stage.poster && (
           <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
-            <Image
-              src={stage.poster}
-              alt=""
-              fill
-              sizes="(min-width: 640px) 700px, 100vw"
-              className="object-cover"
-              style={{ objectPosition: "center" }}
-            />
-            {shouldLoad && stage.video && !prefersReducedMotion && (
+            {livingStill ? (
+              <LivingImage
+                src={stage.poster}
+                sizes="(min-width: 640px) 700px, 100vw"
+                intensity="cinematic"
+                className="absolute inset-0"
+              />
+            ) : (
+              <Image
+                src={stage.poster}
+                alt=""
+                fill
+                sizes="(min-width: 640px) 700px, 100vw"
+                className="object-cover"
+                style={{ objectPosition: "center" }}
+              />
+            )}
+            {shouldLoad && stage.video && !prefersReducedMotion && !livingStill && (
               <video
                 aria-hidden="true"
                 ref={videoRef}

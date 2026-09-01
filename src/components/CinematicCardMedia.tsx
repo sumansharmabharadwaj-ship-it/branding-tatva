@@ -4,7 +4,9 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { KenBurnsImage } from "@/components/KenBurnsImage";
+import { LivingImage } from "@/components/LivingImage";
 import { useLazyMount } from "@/hooks/useLazyMount";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const DUST = [
   { top: "20%", left: "15%", size: 3, delay: "0s", duration: "9s" },
@@ -53,6 +55,7 @@ export function CinematicCardMedia({
   const [ref, shouldLoad] = useLazyMount();
   const [videoReady, setVideoReady] = useState(false);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const livingStill = usesLivingStill(video);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const parallaxScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
@@ -60,15 +63,15 @@ export function CinematicCardMedia({
 
   useEffect(() => {
     const el = videoRef.current;
-    if (!el || !shouldLoad || prefersReducedMotion) return;
+    if (!el || !shouldLoad || prefersReducedMotion || livingStill) return;
     el.play().catch(() => {});
-  }, [shouldLoad, prefersReducedMotion]);
+  }, [livingStill, prefersReducedMotion, shouldLoad]);
 
   useEffect(() => {
     const el = videoRef.current;
-    if (!el) return;
+    if (!el || livingStill) return;
     el.playbackRate = isHovered ? 1.12 : 1;
-  }, [isHovered]);
+  }, [isHovered, livingStill]);
 
   const mediaFilter = isHovered ? "brightness(1.08)" : "brightness(1)";
 
@@ -81,10 +84,20 @@ export function CinematicCardMedia({
       <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-110">
         {image && (
           <div className="absolute inset-0 transition-[filter] duration-500" style={{ filter: mediaFilter }}>
-            <KenBurnsImage image={image} gradient={gradient} sizes={sizes} imagePosition={imagePosition} />
+            {livingStill ? (
+              <LivingImage
+                src={image}
+                sizes={sizes}
+                imagePosition={imagePosition}
+                intensity="cinematic"
+                className="absolute inset-0"
+              />
+            ) : (
+              <KenBurnsImage image={image} gradient={gradient} sizes={sizes} imagePosition={imagePosition} />
+            )}
           </div>
         )}
-        {video && shouldLoad && !prefersReducedMotion && (
+        {video && shouldLoad && !prefersReducedMotion && !livingStill && (
           <video
             aria-hidden="true"
             ref={videoRef}
