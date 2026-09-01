@@ -252,6 +252,13 @@ html[data-services-form-interaction="true"] [data-services-journey-thread="true"
   opacity: 0.28;
 }
 
+:root[data-motion="reduced"] [data-services-thread-progress="true"],
+:root[data-motion="reduced"] [data-services-thread-rail="true"],
+:root[data-motion="reduced"] [data-services-thread-focus="true"],
+:root[data-motion="reduced"] [data-services-thread-glyph] {
+  transition: none !important;
+}
+
 :root[data-motion="reduced"] [data-services-thread-focus="true"] {
   display: none;
 }
