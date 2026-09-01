@@ -114,6 +114,13 @@ function fallbackMeta(): StageMeta {
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
+  const pointerLightBoundsRef = useRef<DOMRect | null>(null);
+  const pointerLightFrameRef = useRef<number | null>(null);
+  const pointerLightMotionRef = useRef<{
+    target: HTMLElement;
+    x: number;
+    y: number;
+  } | null>(null);
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -10% 0px" });
   const [active, setActive] = useState(0);
   const [committedStage, setCommittedStage] = useState(0);
@@ -195,6 +202,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     syncVisibility();
     document.addEventListener("visibilitychange", syncVisibility);
     return () => document.removeEventListener("visibilitychange", syncVisibility);
+  }, []);
+
+  useEffect(() => () => {
+    if (pointerLightFrameRef.current !== null) {
+      window.cancelAnimationFrame(pointerLightFrameRef.current);
+    }
   }, []);
 
   useEffect(() => {
@@ -295,17 +308,37 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     setManualHoldUntil(Date.now() + MANUAL_HOLD_MS);
   }
 
-  function moveLight(event: PointerEvent<HTMLElement>) {
-    if (prefersReducedMotion) return;
+  function prepareLight(event: PointerEvent<HTMLElement>) {
+    if (event.pointerType !== "mouse" || prefersReducedMotion) return;
+    pointerLightBoundsRef.current = event.currentTarget.getBoundingClientRect();
+  }
 
-    const bounds = event.currentTarget.getBoundingClientRect();
+  function moveLight(event: PointerEvent<HTMLElement>) {
+    if (event.pointerType !== "mouse" || prefersReducedMotion) return;
+    const target = event.currentTarget;
+    const bounds = pointerLightBoundsRef.current ?? target.getBoundingClientRect();
+    pointerLightBoundsRef.current = bounds;
+    if (!bounds.width || !bounds.height) return;
     const x = ((event.clientX - bounds.left) / bounds.width) * 100;
     const y = ((event.clientY - bounds.top) / bounds.height) * 100;
-    event.currentTarget.style.setProperty("--decision-pointer-x", `${x.toFixed(2)}%`);
-    event.currentTarget.style.setProperty("--decision-pointer-y", `${y.toFixed(2)}%`);
+    pointerLightMotionRef.current = { target, x, y };
+    if (pointerLightFrameRef.current !== null) return;
+    pointerLightFrameRef.current = window.requestAnimationFrame(() => {
+      pointerLightFrameRef.current = null;
+      const motion = pointerLightMotionRef.current;
+      if (!motion) return;
+      motion.target.style.setProperty("--decision-pointer-x", `${motion.x.toFixed(2)}%`);
+      motion.target.style.setProperty("--decision-pointer-y", `${motion.y.toFixed(2)}%`);
+    });
   }
 
   function resetLight(event: PointerEvent<HTMLElement>) {
+    pointerLightBoundsRef.current = null;
+    pointerLightMotionRef.current = null;
+    if (pointerLightFrameRef.current !== null) {
+      window.cancelAnimationFrame(pointerLightFrameRef.current);
+      pointerLightFrameRef.current = null;
+    }
     event.currentTarget.style.removeProperty("--decision-pointer-x");
     event.currentTarget.style.removeProperty("--decision-pointer-y");
   }
@@ -321,9 +354,11 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       className={`decision-flow ${inView ? "is-awake" : "is-resting"}`}
       style={sectionStyle}
       aria-labelledby="decision-flow-title"
+      onPointerEnter={prepareLight}
       onPointerMove={moveLight}
       onPointerDown={holdForReading}
       onPointerLeave={resetLight}
+      onPointerCancel={resetLight}
     >
       <div className="decision-flow__media" aria-hidden="true" data-media-id="BT-HOME-METHOD-STREAM-LIGHT">
         <video

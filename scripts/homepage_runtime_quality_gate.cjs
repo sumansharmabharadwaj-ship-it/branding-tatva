@@ -132,6 +132,9 @@ assert(studioSynthesisStyles.includes('button[data-studio-state="committed"]'), 
 assert(/height:\s*138svh\s*!important/.test(studioStyles), "Studio has no bounded three-stage scroll runway.");
 assert(/#studio > \.studio-film\s*\{[^}]*position:\s*sticky\s*!important/s.test(studioStyles), "Studio film does not hold its one-screen composition while disciplines change.");
 assert(process.includes("const FINE_POINTER_QUERY"), "Working method has no fine-pointer motion boundary.");
+assert(process.includes('event.pointerType !== "mouse" || prefersReducedMotion'), "Working-method light can consume touch gestures or ignore reduced motion.");
+assert(process.includes("pointerLightBoundsRef.current ?? target.getBoundingClientRect()") && process.includes("pointerLightFrameRef.current = window.requestAnimationFrame"), "Working-method light can restore layout reads and writes on every pointer event.");
+assert(process.includes("window.cancelAnimationFrame(pointerLightFrameRef.current)"), "Working-method light can leave a scheduled motion frame behind.");
 assert(process.includes('document.addEventListener("visibilitychange", syncVisibility)'), "Working method can advance in a hidden tab.");
 assert(process.includes("selectorEngaged ||"), "Working method does not yield while its controls are engaged.");
 assert(process.includes('event.pointerType !== "mouse"'), "Working method hover preview can consume touch gestures.");
