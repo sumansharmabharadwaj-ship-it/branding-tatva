@@ -18,6 +18,7 @@ export function InsightFrameworkVisualizer({
   accent,
 }: InsightFrameworkVisualizerProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activeStep = framework.steps[activeIndex];
   const previousIndex =
@@ -26,6 +27,20 @@ export function InsightFrameworkVisualizer({
   const previousStep = framework.steps[previousIndex];
   const nextStep = framework.steps[nextIndex];
 
+  function chooseStep(index: number) {
+    if (index === activeIndex) return;
+
+    const wrappedForward =
+      activeIndex === framework.steps.length - 1 && index === 0;
+    const wrappedBack =
+      activeIndex === 0 && index === framework.steps.length - 1;
+
+    setDirection(
+      wrappedForward ? 1 : wrappedBack ? -1 : index > activeIndex ? 1 : -1,
+    );
+    setActiveIndex(index);
+  }
+
   if (!activeStep) return null;
 
   return (
@@ -33,6 +48,7 @@ export function InsightFrameworkVisualizer({
       id="working-framework"
       className="insight-framework insight-reading-chapter scroll-mt-32 pt-20"
       aria-labelledby="framework-heading"
+      data-framework-direction={direction === 1 ? "forward" : "back"}
       style={{ "--framework-accent": accent } as CSSProperties}
     >
       <p className="insight-framework__eyebrow">
@@ -60,10 +76,11 @@ export function InsightFrameworkVisualizer({
                 aria-controls="framework-active-step"
                 tabIndex={selected ? 0 : -1}
                 className={selected ? "is-active" : undefined}
+                data-reached={index <= activeIndex ? "true" : "false"}
                 onClick={() => {
-                  setActiveIndex(index);
+                  chooseStep(index);
                 }}
-                onFocus={() => setActiveIndex(index)}
+                onFocus={() => chooseStep(index)}
                 onKeyDown={(event) => {
                   if (
                     event.key !== "ArrowRight" &&
@@ -80,7 +97,7 @@ export function InsightFrameworkVisualizer({
                   const nextIndex =
                     (index + direction + framework.steps.length) %
                     framework.steps.length;
-                  setActiveIndex(nextIndex);
+                  chooseStep(nextIndex);
                   const next = event.currentTarget.parentElement?.querySelectorAll("button")[
                     nextIndex
                   ] as HTMLButtonElement | undefined;
@@ -97,6 +114,7 @@ export function InsightFrameworkVisualizer({
 
         <div
           className="insight-framework__active"
+          data-active-index={activeIndex + 1}
         >
           <div className="insight-framework__rings" aria-hidden="true">
             <span />
@@ -106,17 +124,35 @@ export function InsightFrameworkVisualizer({
             className="insight-framework__glyph h-9 w-9"
             strokeWidth={1.15}
           />
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="wait" initial={false} custom={direction}>
             <motion.div
               key={activeStep.title}
               id="framework-active-step"
               role="tabpanel"
               aria-labelledby={`framework-step-${activeIndex}`}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10 }}
+              custom={direction}
+              variants={{
+                enter: (stepDirection: 1 | -1) => ({
+                  opacity: 0,
+                  x: stepDirection * 24,
+                  filter: "blur(6px)",
+                }),
+                active: {
+                  opacity: 1,
+                  x: 0,
+                  filter: "blur(0px)",
+                },
+                exit: (stepDirection: 1 | -1) => ({
+                  opacity: 0,
+                  x: stepDirection * -18,
+                  filter: "blur(4px)",
+                }),
+              }}
+              initial={prefersReducedMotion ? false : "enter"}
+              animate="active"
+              exit={prefersReducedMotion ? undefined : "exit"}
               transition={{
-                duration: prefersReducedMotion ? 0 : 0.46,
+                duration: prefersReducedMotion ? 0 : 0.52,
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
@@ -133,7 +169,7 @@ export function InsightFrameworkVisualizer({
                 >
                   <button
                     type="button"
-                    onClick={() => setActiveIndex(previousIndex)}
+                    onClick={() => chooseStep(previousIndex)}
                     aria-label={`Show previous decision: ${previousStep.title}`}
                   >
                     <span>Previous decision</span>
@@ -141,7 +177,7 @@ export function InsightFrameworkVisualizer({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setActiveIndex(nextIndex)}
+                    onClick={() => chooseStep(nextIndex)}
                     aria-label={`Show next decision: ${nextStep.title}`}
                   >
                     <span>
