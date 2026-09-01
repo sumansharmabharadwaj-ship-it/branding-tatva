@@ -48,6 +48,7 @@ const OPTIONS: ReadonlyArray<{
 const FIRST_OPTION = OPTIONS[0];
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
 const MANUAL_HOLD_MS = 14000;
 
 type ServicesProgressDetail = {
@@ -67,6 +68,10 @@ function publishSituation(id: ServicesSituationId) {
     origin: "services",
   };
   window.dispatchEvent(new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }));
+}
+
+function settlePackageChapter() {
+  window.dispatchEvent(new CustomEvent(ANCHOR_SETTLE_EVENT, { detail: { id: "desire" } }));
 }
 
 export function SituationPath() {
@@ -250,7 +255,7 @@ export function SituationPath() {
                 ) : null}
                 <p data-situation-route-reason="true" className="mt-2.5 text-sm leading-relaxed text-ivory/88">{displayedOption.reason}</p>
                 <div data-situation-route-action="true" className="mt-4">
-                  <LinkButton href="#desire" className="min-h-11 w-full justify-center">
+                  <LinkButton href="#desire" onClick={settlePackageChapter} className="min-h-11 w-full justify-center">
                     See the {displayedPackage.name} path
                   </LinkButton>
                 </div>
@@ -326,7 +331,7 @@ export function SituationPath() {
                 ) : null}
                 <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{displayedOption.reason}</p>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  <LinkButton href="#desire">See the matching engagement</LinkButton>
+                  <LinkButton href="#desire" onClick={settlePackageChapter}>See the matching engagement</LinkButton>
                 </div>
               </motion.div>
             ) : null}
