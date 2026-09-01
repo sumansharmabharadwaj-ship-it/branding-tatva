@@ -684,7 +684,7 @@ export default async function InsightArticlePage({ params }: Props) {
         </article>
 
         {related.length > 0 && (
-          <section className="relative overflow-hidden bg-background-alt py-20 sm:py-28">
+          <section className="insight-related-reading relative overflow-hidden bg-background-alt py-20 sm:py-28">
             <BackgroundVideo
               video="/videos/generated/insights-v2/page-related-reading.mp4"
               poster="/images/generated/insights-v2/page-related-reading.webp"
@@ -696,7 +696,7 @@ export default async function InsightArticlePage({ params }: Props) {
             <div className="absolute inset-0 bg-gradient-to-r from-ivory/95 via-ivory/75 to-ivory/55" />
             <Container className="relative">
               <Reveal>
-                <div className="grid gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
+                <div className="insight-related-reading__header grid gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
                       Adjacent decision
@@ -711,10 +711,11 @@ export default async function InsightArticlePage({ params }: Props) {
                   </p>
                 </div>
               </Reveal>
-              <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              <div className="insight-related-reading__cards mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 {related.map((relatedPost, index) => (
                   <Reveal key={relatedPost.slug} delay={index * 0.05}>
                     <RelatedInsightIntent
+                      position={index + 1}
                       topicSlug={relatedPost.topicSlug}
                       topicName={
                         getInsightTopic(relatedPost.topicSlug)?.name ??

@@ -5,18 +5,21 @@ import { publishInsightsIntent } from "@/lib/insights-intent";
 
 type RelatedInsightIntentProps = {
   children: ReactNode;
+  position: number;
   topicSlug: string;
   topicName: string;
 };
 
 export function RelatedInsightIntent({
   children,
+  position,
   topicSlug,
   topicName,
 }: RelatedInsightIntentProps) {
   return (
     <div
-      className="h-full"
+      className="insight-related-intent h-full"
+      data-related-position={position}
       onClick={() => {
         publishInsightsIntent({
           topicSlug,

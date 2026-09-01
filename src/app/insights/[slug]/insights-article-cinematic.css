@@ -369,6 +369,45 @@
   text-transform: uppercase;
 }
 
+.insight-related-reading__cards {
+  perspective: 72rem;
+}
+
+.insight-related-intent {
+  transform-origin: 50% 82%;
+  transition:
+    filter 360ms ease,
+    opacity 360ms ease,
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insight-related-intent:focus-within {
+  transform: translate3d(0, -0.35rem, 0) scale(1.008);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .insight-related-intent[data-related-position="1"] {
+    transform: translate3d(0, 0.38rem, 0) rotate(-0.42deg);
+  }
+
+  .insight-related-intent[data-related-position="3"] {
+    transform: translate3d(0, 0.38rem, 0) rotate(0.42deg);
+  }
+
+  .insight-related-intent:is(:hover, :focus-within) {
+    transform: translate3d(0, -0.55rem, 1.2rem) rotate(0deg) scale(1.012);
+  }
+
+  .insight-related-reading__cards:has(.insight-related-intent:hover)
+    .insight-related-intent:not(:hover),
+  .insight-related-reading__cards:has(.insight-related-intent:focus-within)
+    .insight-related-intent:not(:focus-within) {
+    filter: saturate(0.82);
+    opacity: 0.68;
+    transform: translate3d(0, 0.42rem, -0.8rem) scale(0.988);
+  }
+}
+
 .insight-reading-chapter {
   --chapter-focus: 1;
   --chapter-progress: 1;
@@ -1067,9 +1106,15 @@
   .insight-article-faq details,
   .insight-article-sources li,
   .insight-article-author > *,
-  .insight-article-next-step > div > * {
+  .insight-article-next-step > div > *,
+  .insight-related-intent {
     transition-duration: 0.01ms !important;
     transform: none !important;
+  }
+
+  .insight-related-intent {
+    filter: none !important;
+    opacity: 1 !important;
   }
 
   .insight-article-hero__content,
@@ -1127,9 +1172,15 @@
 :root[data-motion="reduced"] .insight-article-faq details,
 :root[data-motion="reduced"] .insight-article-sources li,
 :root[data-motion="reduced"] .insight-article-author > *,
-:root[data-motion="reduced"] .insight-article-next-step > div > * {
+:root[data-motion="reduced"] .insight-article-next-step > div > *,
+:root[data-motion="reduced"] .insight-related-intent {
   transition-duration: 0.01ms !important;
   transform: none !important;
+}
+
+:root[data-motion="reduced"] .insight-related-intent {
+  filter: none !important;
+  opacity: 1 !important;
 }
 
 :root[data-motion="reduced"] .insight-article-section > div > p,
