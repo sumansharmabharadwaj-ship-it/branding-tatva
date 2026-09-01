@@ -178,21 +178,23 @@ export function VerifiedOutcome() {
   return (
     <Container className="max-w-6xl">
       <div
+        data-proof-frame="true"
         data-verified-outcome-phase={activeBeat}
         data-proof-route={situation ?? "default"}
         className="grid gap-10 rounded-[2rem] border border-ivory/12 bg-[rgba(18,26,23,0.5)] p-6 shadow-[0_32px_110px_rgba(7,12,10,0.28)] backdrop-blur-xl sm:p-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-16 lg:p-10"
       >
-        <div data-services-chapter-copy="true">
+        <div data-services-chapter-copy="true" data-proof-copy="true">
           <Reveal>
-            <p className="text-sm font-medium uppercase tracking-wide text-sandstone">
+            <p data-proof-eyebrow="true" className="text-sm font-medium uppercase tracking-wide text-sandstone">
               {situation ? `Evidence for ${proofRoute.routeLabel}` : "Client evidence"}
             </p>
-            <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
+            <h2 data-proof-heading="true" className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
               {proofRoute.headline}
             </h2>
           </Reveal>
 
           <motion.div
+            data-proof-stat="true"
             animate={
               prefersReducedMotion
                 ? { opacity: 1, y: 0, scale: 1 }
@@ -203,13 +205,13 @@ export function VerifiedOutcome() {
             transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
             className="mt-10 origin-left"
           >
-            <p className="font-display text-[clamp(4.5rem,11vw,9rem)] font-normal leading-none text-sandstone">
+            <p data-proof-stat-value="true" className="font-display text-[clamp(4.5rem,11vw,9rem)] font-normal leading-none text-sandstone">
               <AnimatedStat value={lead.value} />
             </p>
-            <p className="mt-3 max-w-sm text-base leading-relaxed text-ivory/90">{lead.label}</p>
+            <p data-proof-stat-label="true" className="mt-3 max-w-sm text-base leading-relaxed text-ivory/90">{lead.label}</p>
           </motion.div>
 
-          <div className="mt-8 flex items-center gap-3" aria-hidden="true">
+          <div data-proof-progress="true" className="mt-8 flex items-center gap-3" aria-hidden="true">
             <span className="font-display text-xs text-sandstone">{String(activeBeat + 1).padStart(2, "0")}</span>
             <span className="relative h-px flex-1 overflow-hidden bg-ivory/12">
               <motion.span
@@ -224,17 +226,23 @@ export function VerifiedOutcome() {
           </div>
         </div>
 
-        <div data-services-chapter-instrument="true" className="relative">
-          <p className="mb-4 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/70 sm:ml-14">
+        <div data-services-chapter-instrument="true" data-proof-instrument="true" className="relative">
+          <p data-proof-instrument-label="true" className="mb-4 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-ivory/70 sm:ml-14">
             The problem, the choice, and the record
           </p>
-          <ol className="border-y border-ivory/12">
+          <ol data-proof-beat-list="true" className="border-y border-ivory/12">
             {beats.map((beat, index) => {
               const active = activeBeat === index;
               const completed = index < activeBeat;
               return (
-                <li key={beat.label} className="relative border-b border-ivory/10 last:border-b-0">
+                <li
+                  key={beat.label}
+                  data-proof-beat="true"
+                  data-active={active ? "true" : "false"}
+                  className="relative border-b border-ivory/10 last:border-b-0"
+                >
                   <motion.button
+                    data-proof-beat-button="true"
                     type="button"
                     aria-pressed={active}
                     onClick={() => chooseBeat(index)}
@@ -247,6 +255,7 @@ export function VerifiedOutcome() {
                     className="grid w-full grid-cols-[2.5rem_1fr] gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone sm:py-6"
                   >
                     <span
+                      data-proof-beat-index="true"
                       className={`font-display text-sm transition-colors duration-300 ${
                         active ? "text-sandstone" : "text-ivory/55"
                       }`}
@@ -255,16 +264,17 @@ export function VerifiedOutcome() {
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <div>
-                      <p className={`text-xs font-medium uppercase tracking-[0.16em] ${active ? "text-sandstone" : "text-ivory/72"}`}>
+                      <p data-proof-beat-label="true" className={`text-xs font-medium uppercase tracking-[0.16em] ${active ? "text-sandstone" : "text-ivory/72"}`}>
                         {beat.label}
                       </p>
-                      <p className={`mt-2 max-w-xl text-sm leading-relaxed sm:text-base ${active || prefersReducedMotion ? "text-ivory/95" : "text-ivory/90"}`}>
+                      <p data-proof-beat-detail="true" className={`mt-2 max-w-xl text-sm leading-relaxed sm:text-base ${active || prefersReducedMotion ? "text-ivory/95" : "text-ivory/90"}`}>
                         {beat.text}
                       </p>
                     </div>
                   </motion.button>
                   {active && !prefersReducedMotion && (
                     <motion.span
+                      data-proof-active-line="true"
                       layoutId="verified-proof-active-line"
                       aria-hidden="true"
                       className="absolute inset-y-4 left-0 w-px bg-sandstone"
@@ -276,8 +286,20 @@ export function VerifiedOutcome() {
             })}
           </ol>
 
+          <motion.div
+            key={`${proof.slug}-${activeBeat}`}
+            data-proof-mobile-panel="true"
+            aria-live="polite"
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
+            className="hidden"
+          >
+            <p>{beats[activeBeat]?.text}</p>
+          </motion.div>
+
           <Reveal delay={0.08}>
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div data-proof-actions="true" className="mt-7 flex flex-wrap gap-3">
               <LinkButton
                 href="#book"
                 trackEvent="contextual_cta_clicked"
