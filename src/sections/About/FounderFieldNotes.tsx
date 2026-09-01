@@ -94,6 +94,7 @@ export function FounderFieldNotes() {
   });
   const activeIndex = prefersReducedMotion ? FIELDS.length - 1 : visualizer.activeIndex;
   const active = FIELDS[activeIndex];
+  const finalStage = activeIndex === FIELDS.length - 1;
   const ActiveIcon = active.icon;
   const portraitY = useTransform(visualizer.scrollYProgress, [0, 1], ["2.2%", "-2.2%"]);
   const portraitScale = useTransform(visualizer.scrollYProgress, [0, 0.72, 1], [1.055, 1.015, 0.98]);
@@ -299,24 +300,67 @@ export function FounderFieldNotes() {
                   <small>{active.number} · {active.field}</small>
                 </div>
                 <h3>{active.instinct}</h3>
-                <div className={styles.credential}>
-                  <span>On record</span>
-                  <strong>{active.credential}</strong>
-                  <p>{active.source}</p>
-                  <small>{active.record}</small>
-                </div>
-                <div className={styles.application}>
-                  <span>How the field enters brand work</span>
-                  <p>{active.application}</p>
-                </div>
-                <div className={styles.workingNote}>
-                  <span>How I work</span>
-                  <strong>{active.margin}</strong>
-                  <p>{active.question}</p>
-                </div>
-                <footer>
-                  <span>{active.verb}</span><i /><strong>{active.result}</strong>
-                </footer>
+                {finalStage ? (
+                  <>
+                    <motion.div
+                      className={styles.synthesisPath}
+                      initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.52, delay: prefersReducedMotion ? 0 : 0.08, ease: EASE }}
+                    >
+                      <span>The strategic thread</span>
+                      <strong>Notice the tension. Name the value. Frame the attention. Decide what stays.</strong>
+                      <ol aria-label="How Suman turns a brief into a brand decision">
+                        {FIELDS.map((field, index) => (
+                          <motion.li
+                            key={field.verb}
+                            initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: prefersReducedMotion ? 0 : 0.42, delay: prefersReducedMotion ? 0 : 0.14 + index * 0.07, ease: EASE }}
+                          >
+                            <small>{field.number}</small>
+                            <b>{field.verb}</b>
+                            <em>{field.result}</em>
+                          </motion.li>
+                        ))}
+                      </ol>
+                    </motion.div>
+                    <motion.div
+                      className={styles.hireResolve}
+                      initial={prefersReducedMotion ? false : { opacity: 0, clipPath: "inset(0 0 0 12%)" }}
+                      animate={{ opacity: 1, clipPath: "inset(0 0 0 0%)" }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.54, delay: prefersReducedMotion ? 0 : 0.28, ease: EASE }}
+                    >
+                      <span>The hiring reason</span>
+                      <strong>No relay between strategy and expression.</strong>
+                      <p>You get the person doing the listening, naming, directing, and deciding, so one useful idea stays intact.</p>
+                    </motion.div>
+                    <footer>
+                      <span>{active.verb}</span><i /><strong>{active.result}</strong>
+                    </footer>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.credential}>
+                      <span>On record</span>
+                      <strong>{active.credential}</strong>
+                      <p>{active.source}</p>
+                      <small>{active.record}</small>
+                    </div>
+                    <div className={styles.application}>
+                      <span>How the field enters brand work</span>
+                      <p>{active.application}</p>
+                    </div>
+                    <div className={styles.workingNote}>
+                      <span>How I work</span>
+                      <strong>{active.margin}</strong>
+                      <p>{active.question}</p>
+                    </div>
+                    <footer>
+                      <span>{active.verb}</span><i /><strong>{active.result}</strong>
+                    </footer>
+                  </>
+                )}
               </motion.article>
             </AnimatePresence>
           </div>
@@ -329,7 +373,7 @@ export function FounderFieldNotes() {
             <strong>{String(activeIndex + 1).padStart(2, "0")} / 04</strong>
           </div>
           <div className={styles.hireLine}>
-            <p>You work with the person doing the thinking.</p>
+            <p>One strategic thread stays intact.</p>
             <Link href="/contact">
               Bring me the messy brief <ArrowUpRight size={15} aria-hidden="true" />
             </Link>
@@ -375,7 +419,8 @@ export function FounderFieldNotes() {
           </div>
 
           <div className={styles.mobileHire}>
-            <p>You work with the person doing the thinking.</p>
+            <span>The hiring reason</span>
+            <p>The same strategist notices, names, frames, and decides.</p>
             <ul aria-label="How Suman works">
               {FIELDS.map((field) => <li key={field.margin}>{field.margin}</li>)}
             </ul>

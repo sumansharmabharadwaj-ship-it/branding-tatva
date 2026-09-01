@@ -1,3 +1,49 @@
+# Design QA: The Strategist Decision Payoff
+
+## Target and evidence
+
+- Source visual truth: `/workspace/scratch/e56e36b0002e/generated_images/exec-0ef2e339-82ed-4918-bd55-a584e88477f5.png` (`941 × 1672`)
+- Browser implementation: `/workspace/scratch/about-founder-synthesis-after.jpg` (`1348 × 936` at DPR 1)
+- Source and implementation comparison: `/workspace/scratch/about-founder-source-implementation-comparison.jpg`
+- Before and after comparison: `/workspace/scratch/about-founder-synthesis-comparison.jpg`
+- CSS viewport: `1363 × 936`
+- State: desktop, full motion, final Brand strategy field active, consent control visible
+
+## Findings and resolution
+
+- P2: the previous final field repeated credential and application content already established by the first three fields. The animation resolved visually, but the card did not yet answer why a founder should hire Suman.
+- Resolved: the final card now transforms into a four-step strategic thread, then reveals a specific hiring reason. The existing portrait, marginal note, synthesis seal, progress rail, and contact action stay intact.
+- No remaining actionable P0, P1, or P2 issue appears in the final-state comparison.
+
+## Required fidelity surfaces
+
+- Typography: the existing display and sans-serif hierarchy is preserved. The new sequence uses the same editorial scale and small-cap labels as the selected direction.
+- Spacing and layout: the four-step thread and hiring reason fit inside the existing record frame. The bottom conversion rail remains visible and clear of the consent control.
+- Color: clay, forest, ivory, border, and paper tokens remain unchanged; the hiring reason uses the existing forest wash rather than adding a new palette.
+- Imagery: Suman's real portrait remains the focal image with the same crop, aperture treatment, and synthesis seal.
+- Copy: the final state now connects Suman's observation, language, direction, and decision making to one concrete hiring advantage without generic filler.
+
+## Interaction and runtime checks
+
+- Psychology, Literature, Film, and Brand strategy remain semantic tabs with the existing pointer, keyboard, preview, and committed-state behavior.
+- The final Brand strategy state stages the four decisions and hiring reason with nested motion while reduced motion continues to use the static experience.
+- The contact action remains `/contact` and the final state keeps a single visible conversion destination.
+- Browser console inspection found no application-origin errors; only the existing browser-extension metadata bridge error was present.
+- `pnpm exec tsc --noEmit`, About gates, copy gate, link gate, diff check, and production build passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P2 | The final card repeated proof and application copy, so the cinematic synthesis ended without a distinct hiring payoff. | Replaced only the fourth card body with an animated Notice, Name, Frame, Decide sequence and a specific hiring reason. The before and after board shows a clearer final decision while preserving the selected composition. |
+| 2 | — | The new final card remains inside the existing frame, keeps the conversion action visible, and matches the source's editorial manuscript language. | Passed. |
+
+## Final result
+
+passed
+
+---
+
 # Design QA: The Living Margins
 
 ## Target and evidence
