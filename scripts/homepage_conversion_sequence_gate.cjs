@@ -72,9 +72,16 @@ for (const marker of [
   'tone="light"',
   "guidedMobile",
   'home-v4-experience-upgrade.css',
+  'home-v4-scene-rhythm.css',
 ]) {
   assert(pageSource.includes(marker), `Homepage wayfinding is missing ${marker}.`);
 }
+
+assert(
+  pageSource.indexOf('home-v4-scene-rhythm.css') >
+    pageSource.indexOf('home-v4-homepage-reconstruction.css'),
+  "Homepage seam motion must load after the layout owner that hides decorative handoffs by default.",
+);
 
 assert(
   mountedChapterSource.includes("3 choices · about 30 seconds · instant direction"),

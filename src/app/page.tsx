@@ -36,6 +36,7 @@ import "./home-v4-experience-upgrade.css";
 import "./home-v4-media-continuity.css";
 import "./home-v4-chapter-jump-final.css";
 import "./home-v4-homepage-reconstruction.css";
+import "./home-v4-scene-rhythm.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
