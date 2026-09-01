@@ -117,7 +117,7 @@ export function AboutSplitHero({
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity }}
       >
         <Reveal>
-          <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85 [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]">
+          <span className="inline-flex items-center rounded-full border border-ivory/55 bg-soil/35 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory shadow-[0_8px_24px_rgba(20,17,14,0.16)] backdrop-blur-[2px] [text-shadow:0_2px_12px_rgba(0,0,0,0.72)]">
             {eyebrow}
           </span>
         </Reveal>

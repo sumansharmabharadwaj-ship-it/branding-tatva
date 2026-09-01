@@ -7,8 +7,11 @@
 - Homepage gateway capture: `/workspace/scratch/founder-homepage-gateway-final.jpg`
 - Side-by-side comparison: `qa/founder-living-margins-comparison.jpg`
 - Focused comparison: `qa/founder-living-margins-focused.jpg`
+- Narrow-phone hero comparison: `/workspace/scratch/about-narrow-hero-comparison.jpg`
+- Narrow-phone founder comparison: `/workspace/scratch/about-narrow-founder-comparison.jpg`
+- Reduced-motion phone capture: `/workspace/scratch/about-narrow-reduced-founder.jpg`
 - Viewport: 1363 × 936 at DPR 1
-- State: desktop, full motion, Psychology field active, consent control visible
+- States: desktop full motion; 390 × 844 mobile; 320 × 720 narrow phone; reduced motion; consent control visible
 
 ## Visual review
 
@@ -26,7 +29,9 @@ The implementation preserves the selected direction's warm ivory, clay, and fore
 
 - P2: the first About pass allowed the hire CTA to collide with the fixed consent control. Resolved with a consent-aware right margin. Post-fix CTA bounds: x 764–962, y 867–910; consent begins near x 1072.
 - P2: the first homepage gateway sat too low and could be obscured by consent. Resolved by moving it directly below the Studio chapter headline. Post-fix bounds: x 38–266, y 564–608.
-- No remaining P0, P1, or P2 visual issues in the verified desktop state.
+- P2: at 320px the hero eyebrow disappeared into the pale film frame. Resolved with a translucent soil backdrop, stronger border, and stronger text shadow; the after capture keeps the label readable without changing its editorial shape.
+- P2: at 320px the founder introduction pushed Suman's face below the persistent chapter and consent controls. Resolved with narrow-only vertical compression and type adjustments; the comparison now reveals her face in the entry viewport while preserving the full introduction.
+- No remaining P0, P1, or P2 visual issues in the verified desktop, 390px, 320px, or reduced-motion states.
 
 ## Interaction and accessibility checks
 
@@ -34,7 +39,7 @@ The implementation preserves the selected direction's warm ivory, clay, and fore
 - ArrowRight moves keyboard focus from Literature to Film.
 - About CTA resolves to `/contact`; homepage gateway resolves to `/about`.
 - Site menu exposes `The Strategist` at `/about`.
-- Reduced-motion styles and the existing static mobile fallback are preserved.
+- The `Reduced` control reports `aria-pressed="true"`, sets `html[data-motion="reduced"]`, and displays the static mobile founder experience.
 - Browser console showed no app-origin errors; observed errors came only from the browser extension metadata bridge.
 
 ## Verification
@@ -46,7 +51,7 @@ The implementation preserves the selected direction's warm ivory, clay, and fore
 - `pnpm check:links`
 - `pnpm build`
 
-The selected visual is a conceptual desktop direction rather than a pixel-specific page spec. The desktop target and focused regions were compared together after both layout fixes. Mobile visual QA remains a P3 follow-up because the selected source did not define a mobile target; the existing static responsive experience remains in place.
+The selected visual is a conceptual desktop direction rather than a pixel-specific page spec. The desktop target and focused regions were compared together after both layout fixes. Because the selected source did not define a mobile target, responsive QA compared the existing mobile implementation before and after at the exact same viewport and state; both mobile breakpoints and the reduced-motion fallback now pass.
 
 ## Final result
 
