@@ -93,6 +93,21 @@ const QUESTION_ANSWER_VARIANTS = {
     filter: "blur(4px)",
   }),
 };
+const LENS_READING_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? 9 : -9,
+    y: 4,
+    filter: "blur(3px)",
+  }),
+  active: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? -6 : 6,
+    y: -4,
+    filter: "blur(3px)",
+  }),
+};
 const SITUATION_TO_QUESTION: Record<ServicesSituationId, number> = {
   idea: 0,
   reposition: 1,
@@ -144,6 +159,7 @@ function toQuestionChoice(
 export function HomeQuestionsScene() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const selectionDirectionRef = useRef<SelectionDirection>("forward");
+  const lensDirectionRef = useRef<SelectionDirection>("forward");
   const displayedIndexRef = useRef(0);
   const [committedIndex, setCommittedIndex] = useState(0);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
@@ -275,7 +291,19 @@ export function HomeQuestionsScene() {
     setPreviewIndex(null);
   }
 
-  function chooseLens(lens: HomeStudioLens) {
+  function chooseLens(
+    lens: HomeStudioLens,
+    direction?: SelectionDirection,
+  ) {
+    const currentIndex = carriedLens
+      ? HOME_STUDIO_LENSES.findIndex((option) => option.name === carriedLens.name)
+      : -1;
+    const nextIndex = HOME_STUDIO_LENSES.findIndex((option) => option.name === lens.name);
+    if (nextIndex !== currentIndex) {
+      lensDirectionRef.current = direction ?? (
+        currentIndex < 0 || nextIndex > currentIndex ? "forward" : "backward"
+      );
+    }
     setCarriedLens(lens);
     publishHomeStudioLens(lens);
     publishHomeQuestionChoice(
@@ -305,6 +333,25 @@ export function HomeQuestionsScene() {
         : undefined;
     choose(next, true, true, direction);
     document.getElementById(`decision-question-${next}`)?.focus();
+  }
+
+  function onLensKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % HOME_STUDIO_LENSES.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + HOME_STUDIO_LENSES.length - 1) % HOME_STUDIO_LENSES.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = HOME_STUDIO_LENSES.length - 1;
+    else return;
+    event.preventDefault();
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
+      ? "forward"
+      : event.key === "ArrowLeft" || event.key === "ArrowUp"
+        ? "backward"
+        : undefined;
+    const nextLens = HOME_STUDIO_LENSES[next];
+    if (!nextLens) return;
+    chooseLens(nextLens, direction);
+    document.getElementById(`question-lens-${next}`)?.focus();
   }
 
   return (
@@ -417,16 +464,18 @@ export function HomeQuestionsScene() {
                 <div className="questions-editorial__lens-toolbar">
                   <span>Read this answer through</span>
                   <div role="group" aria-label="Read the answer through a studio lens">
-                    {HOME_STUDIO_LENSES.map((lens) => {
+                    {HOME_STUDIO_LENSES.map((lens, index) => {
                       const selected = lens.name === carriedLens?.name;
                       return (
                         <button
                           key={lens.name}
+                          id={`question-lens-${index}`}
                           type="button"
                           aria-pressed={selected}
                           data-lens-selected={selected ? "true" : undefined}
                           style={{ "--lens-choice-accent": lens.accent } as CSSProperties}
                           onClick={() => chooseLens(lens)}
+                          onKeyDown={(event) => onLensKeyDown(event, index)}
                         >
                           {lens.name}
                         </button>
@@ -435,13 +484,20 @@ export function HomeQuestionsScene() {
                   </div>
                 </div>
 
-                <AnimatePresence mode="sync" initial={false}>
+                <AnimatePresence
+                  mode="sync"
+                  initial={false}
+                  custom={lensDirectionRef.current}
+                >
                   <motion.div
                     key={carriedLens ? `${carriedLens.name}-${active.id}` : `open-${active.id}`}
                     className="questions-editorial__lens-reading"
-                    initial={reducedMotion ? false : { opacity: 0, y: 6, filter: "blur(3px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={reducedMotion ? undefined : { opacity: 0, y: -5, filter: "blur(3px)" }}
+                    data-home-selection-direction={lensDirectionRef.current}
+                    custom={lensDirectionRef.current}
+                    variants={LENS_READING_VARIANTS}
+                    initial={reducedMotion ? false : "enter"}
+                    animate="active"
+                    exit={reducedMotion ? undefined : "exit"}
                     transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE }}
                   >
                     <small>
