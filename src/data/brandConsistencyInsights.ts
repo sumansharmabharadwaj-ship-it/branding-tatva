@@ -24,10 +24,10 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/generated/insights/brand-consistency-thread.webp",
-    heroVideo: "/videos/generated/insights/brand-consistency-thread.mp4",
+    heroImage: "/images/generated/insights-v3/brand-consistency-touchpoint-chain.webp",
+    heroVideo: "/videos/generated/insights-v3/brand-consistency-touchpoint-chain.mp4",
     heroImageAlt:
-      "Five different touchpoint objects joined by one indigo thread through matching terracotta eyelets",
+      "Five different customer touchpoints carrying one recognisable promise through the full journey",
     keyTakeaways: [
       "Consistency protects meaning across touchpoints rather than forcing visual sameness.",
       "The most damaging breaks usually appear during transitions between website, sales, onboarding, and delivery.",

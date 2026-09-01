@@ -615,10 +615,10 @@ export const insightPosts: InsightPost[] = [
     publishedAt: "2026-07-13",
     updatedAt: "2026-08-06",
     readingTime: "10 min read",
-    heroImage: "/images/generated/insights/awareness-recall-archive.webp",
-    heroVideo: "/videos/generated/insights/awareness-recall-archive.mp4",
+    heroImage: "/images/generated/insights-v3/awareness-versus-recall-memory-test.webp",
+    heroVideo: "/videos/generated/insights-v3/awareness-versus-recall-memory-test.mp4",
     heroImageAlt:
-      "Archive drawers of natural specimens with a terracotta spiral repeated in separate compartments as a memory cue",
+      "Repeated brand cues on one side and the same cue retrieved unaided from memory on the other",
     keyTakeaways: [
       "Awareness and recall describe different levels of memory access.",
       "Frequent exposure can create familiarity while leaving the central idea unclear.",
@@ -806,10 +806,10 @@ export const insightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/generated/insights/messaging-framework-letterpress.webp",
-    heroVideo: "/videos/generated/insights/messaging-framework-letterpress.mp4",
+    heroImage: "/images/generated/insights-v3/messaging-framework-five-part-system.webp",
+    heroVideo: "/videos/generated/insights-v3/messaging-framework-five-part-system.mp4",
     heroImageAlt:
-      "Blank message blocks arranged in a working hierarchy and aligned by one repeated brass cue",
+      "One positioning foundation feeding five message roles across several customer touchpoints",
     keyTakeaways: [
       "Messaging translates positioning into language for real touchpoints.",
       "A framework gives every channel a shared centre while allowing contextual variation.",

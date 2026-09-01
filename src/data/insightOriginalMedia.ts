@@ -34,13 +34,13 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "brand-audit-five-layers",
     "Five translucent material layers opened across a conservation light table",
   ),
-  "brand-awareness-vs-brand-recall": media(
-    "awareness-recall-archive",
-    "A deeply embossed memory cue held inside an archive of faint impressions",
+  "brand-awareness-vs-brand-recall": topicMedia(
+    "awareness-versus-recall-memory-test",
+    "Repeated brand cues on one side and the same cue retrieved unaided from memory on the other",
   ),
-  "brand-messaging-framework": media(
-    "messaging-framework-letterpress",
-    "Blank wooden printing blocks arranged into one repeatable message structure",
+  "brand-messaging-framework": topicMedia(
+    "messaging-framework-five-part-system",
+    "One positioning foundation feeding five message roles across several customer touchpoints",
   ),
   "five-element-brand-strategy-framework": media(
     "five-element-strategy-instrument",
@@ -70,17 +70,17 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "positioning-value-tagline-hierarchy",
     "A walnut positioning foundation supporting a terracotta value proposition and concise brass tagline plate",
   ),
-  "brand-consistency-checklist-service-businesses": media(
-    "brand-consistency-thread",
-    "One clay coloured thread passing unchanged through five different materials",
+  "brand-consistency-checklist-service-businesses": topicMedia(
+    "brand-consistency-touchpoint-chain",
+    "Five different customer touchpoints carrying one recognisable promise through the full journey",
   ),
   "why-beautiful-brand-identity-can-be-forgettable": media(
     "forgettable-identity-memory-cue",
     "One grooved ceramic vessel remembered beside a row of polished identical forms",
   ),
-  "find-real-differentiator-crowded-service-market": media(
-    "differentiation-market-vessels",
-    "One useful pouring vessel separated from a crowded field of identical cups",
+  "find-real-differentiator-crowded-service-market": topicMedia(
+    "differentiator-choice-to-consequence",
+    "One operational choice changing the customer consequence and producing visible proof",
   ),
   "brand-positioning-statement-examples-why-generic": media(
     "positioning-specificity",
@@ -130,9 +130,9 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "homepage-message-decision-sequence",
     "A clear first screen leading into an ordered five stage homepage message sequence",
   ),
-  "service-page-messaging-strategy": media(
-    "service-page-confident-choice",
-    "One resolved service material kit placed ahead of many loose options",
+  "service-page-messaging-strategy": topicMedia(
+    "service-page-confidence-stack",
+    "Seven service page messaging stages leading a qualified buyer toward one clear next step",
   ),
   "case-study-structure-service-businesses": media(
     "case-study-decision-record",

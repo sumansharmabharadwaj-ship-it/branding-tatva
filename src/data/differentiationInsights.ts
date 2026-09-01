@@ -24,10 +24,10 @@ export const differentiationInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/generated/insights/differentiation-market-vessels.webp",
-    heroVideo: "/videos/generated/insights/differentiation-market-vessels.mp4",
+    heroImage: "/images/generated/insights-v3/differentiator-choice-to-consequence.webp",
+    heroVideo: "/videos/generated/insights-v3/differentiator-choice-to-consequence.mp4",
     heroImageAlt:
-      "Six identical pale vessels beside one structurally different terracotta vessel with an indigo handle",
+      "One operational choice changing the customer consequence and producing visible proof",
     keyTakeaways: [
       "A differentiator must create consequence for the customer, rather than merely sound distinctive.",
       "The strongest differences often hide inside audience choice, process order, tradeoffs, access, or proof.",

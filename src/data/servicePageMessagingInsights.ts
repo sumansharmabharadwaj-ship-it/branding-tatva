@@ -24,10 +24,10 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/generated/insights/service-page-confident-choice.webp",
-    heroVideo: "/videos/generated/insights/service-page-confident-choice.mp4",
+    heroImage: "/images/generated/insights-v3/service-page-confidence-stack.webp",
+    heroVideo: "/videos/generated/insights-v3/service-page-confidence-stack.mp4",
     heroImageAlt:
-      "An indigo path leading to a chosen terracotta vessel supported by three concrete proof objects",
+      "Seven service page messaging stages leading a qualified buyer toward one clear next step",
     keyTakeaways: [
       "A service page should qualify as much as it persuades.",
       "Lead with the customer situation and desired change before detailed deliverables.",
