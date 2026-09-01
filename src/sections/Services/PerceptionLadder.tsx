@@ -188,9 +188,17 @@ export function PerceptionLadder() {
               <motion.div
                 key={routeFocus.transition}
                 data-perception-route="true"
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+                initial={
+                  prefersReducedMotion
+                    ? false
+                    : { opacity: 0.68, clipPath: "inset(0 62% 0 0 round 1rem)", filter: "blur(2px)" }
+                }
+                animate={{ opacity: 1, clipPath: "inset(0 0% 0 0 round 0rem)", filter: "blur(0px)" }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0.58, clipPath: "inset(0 0 0 64% round 1rem)", filter: "blur(2px)" }
+                }
                 transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
                 className="mt-5 rounded-2xl border border-[#A0A690]/30 bg-[rgba(160,166,144,0.08)] px-4 py-3"
               >
@@ -298,13 +306,13 @@ export function PerceptionLadder() {
               initial={
                 prefersReducedMotion
                   ? false
-                  : { opacity: 0.24, clipPath: "inset(7% 0 7% 0 round 1.5rem)", filter: "blur(5px)" }
+                  : { opacity: 0.72, clipPath: "inset(5% 0 5% 0 round 1.5rem)", filter: "blur(2.5px)" }
               }
               animate={{ opacity: 1, clipPath: "inset(0% 0 0% 0 round 0rem)", filter: "blur(0px)" }}
               exit={
                 prefersReducedMotion
                   ? undefined
-                  : { opacity: 0.18, clipPath: "inset(0 0 68% 0 round 1.5rem)", filter: "blur(4px)" }
+                  : { opacity: 0.55, clipPath: "inset(0 0 68% 0 round 1.5rem)", filter: "blur(2.5px)" }
               }
               transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
             >

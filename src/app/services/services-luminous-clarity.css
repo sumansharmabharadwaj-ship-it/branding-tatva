@@ -54,16 +54,33 @@
 
 @media (min-width: 1024px) {
   #services-opening .services-hero-copy {
+    isolation: isolate;
     border: 0;
     border-left: 1px solid rgba(212, 185, 154, 0.3);
     border-radius: 0;
-    background: linear-gradient(90deg, rgba(19, 28, 23, 0.58), rgba(19, 28, 23, 0.18) 72%, transparent);
+    background: transparent;
     box-shadow: none;
-    backdrop-filter: blur(10px) saturate(0.86);
+    backdrop-filter: none;
+  }
+
+  #services-opening .services-hero-copy::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -0.25rem -2.5rem -0.25rem 0;
+    background: linear-gradient(90deg, rgba(19, 28, 23, 0.5), rgba(19, 28, 23, 0.2) 58%, transparent);
+    -webkit-mask-image: radial-gradient(ellipse 105% 92% at 0% 50%, #000 0%, #000 52%, transparent 100%);
+    mask-image: radial-gradient(ellipse 105% 92% at 0% 50%, #000 0%, #000 52%, transparent 100%);
+    backdrop-filter: blur(7px) saturate(0.88);
   }
 
   #services-opening .services-hero-copy::after {
     left: -1px;
+  }
+
+  #services-opening .services-hero-copy h1,
+  #services-opening .services-hero-copy p {
+    text-shadow: 0 2px 22px rgba(5, 10, 8, 0.28);
   }
 }
 
@@ -421,6 +438,10 @@
   box-shadow:
     0 28px 90px rgba(0, 0, 0, 0.24),
     inset 0 1px 0 rgba(244, 239, 230, 0.035);
+}
+
+#education [data-perception-panel="true"] h3 {
+  text-shadow: 0 2px 24px rgba(5, 10, 8, 0.3);
 }
 
 /* The closing chapter keeps the same invitation and booking logic, but the
