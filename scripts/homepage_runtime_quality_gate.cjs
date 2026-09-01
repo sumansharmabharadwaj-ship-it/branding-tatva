@@ -162,6 +162,8 @@ assert(evidence.includes("const committed = index === committedIndex"), "Selecte
 assert(evidence.includes("aria-selected={committed}"), "Selected-work hover changes assistive selection state.");
 assert(evidence.includes("tabIndex={committed ? 0 : -1}"), "Selected-work hover moves the keyboard tab stop.");
 assert(evidence.includes('publishServicesSituation(activeSituation, "home_evidence")'), "Selected work cannot identify its path handoff as evidence led.");
+assert(evidence.includes("custom={selectionDirectionRef.current}") && evidence.includes('initial={prefersReducedMotion ? false : "enter"}') && evidence.includes('exit={prefersReducedMotion ? undefined : "exit"}'), "Selected-work backdrops no longer follow project direction through their camera handoff.");
+assert(evidence.includes('aria-live={isPreviewing ? "off" : "polite"}'), "Selected-work pointer previews can interrupt assistive reading.");
 assert(evidence.includes("EVIDENCE_META[project.slug]?.type"), "Selected-work index does not distinguish measured performance from delivered systems.");
 assert(evidence.includes('dynamic(\n  () => loadProjectFile()') && evidence.includes("projectFileRequested ?"), "The project-file overlay is bundled before a visitor expresses intent to inspect it.");
 assert(evidence.includes("onPointerEnter={prepareProjectFile}") && evidence.includes("onFocus={prepareProjectFile}"), "The deferred project file is not prepared for pointer and keyboard intent.");

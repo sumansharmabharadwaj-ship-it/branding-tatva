@@ -108,6 +108,18 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 type SelectionDirection = "forward" | "backward";
+const EVIDENCE_CAMERA_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    scale: 1.055,
+    x: direction === "forward" ? 18 : -18,
+  }),
+  active: { opacity: 1, scale: 1.075, x: 0 },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? -12 : 12,
+  }),
+};
 
 const loadProjectFile = () => import("@/sections/Home/ProjectFile");
 const ProjectFile = dynamic(
@@ -295,15 +307,25 @@ export function EvidenceWall() {
       data-media-id="BT-HOME-SELECTED-WORK-CINEMATIC-V2"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
     >
-      <AnimatePresence mode="sync" initial={false}>
+      <AnimatePresence
+        mode="sync"
+        initial={false}
+        custom={selectionDirectionRef.current}
+      >
         <motion.div
           key={`evidence-backdrop-${activeProject.slug}`}
           className="evidence-cinematic__backdrop"
           aria-hidden="true"
-          initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.045 }}
-          animate={{ opacity: 1, scale: prefersReducedMotion ? 1 : 1.075 }}
-          exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-          transition={{ opacity: { duration: 0.9, ease: EASE }, scale: { duration: 11, ease: "linear" } }}
+          custom={selectionDirectionRef.current}
+          variants={EVIDENCE_CAMERA_VARIANTS}
+          initial={prefersReducedMotion ? false : "enter"}
+          animate={prefersReducedMotion ? { opacity: 1, scale: 1, x: 0 } : "active"}
+          exit={prefersReducedMotion ? undefined : "exit"}
+          transition={{
+            opacity: { duration: 0.72, ease: EASE },
+            x: { duration: 0.82, ease: EASE },
+            scale: { duration: 11, ease: "linear" },
+          }}
         >
           {activeProject.cardImage && (
             <Image
@@ -363,7 +385,7 @@ export function EvidenceWall() {
               className="evidence-cinematic__summary"
               data-home-reading-plane
               data-home-selection-direction={selectionDirectionRef.current}
-              aria-live="polite"
+              aria-live={isPreviewing ? "off" : "polite"}
               initial={prefersReducedMotion ? false : {
                 opacity: 0,
                 x: selectionDirectionRef.current === "forward" ? 16 : -16,
