@@ -36,10 +36,10 @@ export const brandRecallMeasurementInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "14 min read",
-    heroImage: "/images/generated/insights/recall-measurement-tabletop-test.webp",
-    heroVideo: "/videos/generated/insights/recall-measurement-tabletop-test.mp4",
+    heroImage: "/images/generated/insights-v3/budget-recall-three-round-test.webp",
+    heroVideo: "/videos/generated/insights-v3/budget-recall-three-round-test.mp4",
     heroImageAlt:
-      "Six blank memory cards with one retrieved terracotta spiral and a row of brass counting beads",
+      "A three round recall test exposing brand cues, hiding them for unaided retrieval, then tallying one remembered cue",
     keyTakeaways: [
       "Unaided recall must be asked before respondents see the brand name, logo, or a list of competitors.",
       "A useful tracker keeps the audience definition, recruitment source, wording, order, and survey mode stable across waves.",

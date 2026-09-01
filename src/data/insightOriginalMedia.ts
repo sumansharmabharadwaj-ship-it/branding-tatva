@@ -54,17 +54,17 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "distinctive-assets-attribution-test",
     "A blind attribution test selecting two recognisable brand cues that survive across four formats",
   ),
-  "customer-journey-mapping-service-businesses": media(
-    "customer-journey-thresholds",
-    "A continuous thread passing through wood stone glass and linen thresholds",
+  "customer-journey-mapping-service-businesses": topicMedia(
+    "customer-journey-transition-map",
+    "Six customer journey stages connected by one indigo thread, with a frayed handoff revealing where confidence falls",
   ),
   "how-to-position-a-consulting-business": topicMedia(
     "consulting-position-focus-and-expansion",
     "One focused consulting position anchoring a broad fan of connected service capabilities",
   ),
-  "measure-brand-recall-limited-budget": media(
-    "recall-measurement-tabletop-test",
-    "A modest memory test with covered objects and a simple wooden tally",
+  "measure-brand-recall-limited-budget": topicMedia(
+    "budget-recall-three-round-test",
+    "A three round recall test exposing brand cues, hiding them for unaided retrieval, then tallying one remembered cue",
   ),
   "value-proposition-vs-positioning-vs-tagline": topicMedia(
     "positioning-value-tagline-hierarchy",
@@ -74,21 +74,21 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "brand-consistency-touchpoint-chain",
     "Five different customer touchpoints carrying one recognisable promise through the full journey",
   ),
-  "why-beautiful-brand-identity-can-be-forgettable": media(
-    "forgettable-identity-memory-cue",
-    "One grooved ceramic vessel remembered beside a row of polished identical forms",
+  "why-beautiful-brand-identity-can-be-forgettable": topicMedia(
+    "beautiful-identity-without-memory-cue",
+    "Four beautiful but anonymous identity fragments compared with one recognisable cue repeated across four practical formats",
   ),
   "find-real-differentiator-crowded-service-market": topicMedia(
     "differentiator-choice-to-consequence",
     "One operational choice changing the customer consequence and producing visible proof",
   ),
-  "brand-positioning-statement-examples-why-generic": media(
-    "positioning-specificity",
-    "A precise brass stamp beside a field of faint generic impressions",
+  "brand-positioning-statement-examples-why-generic": topicMedia(
+    "positioning-statement-specificity-filter",
+    "Five specificity filters removing interchangeable claims before one precise positioning choice locks into a decision frame",
   ),
-  "reposition-established-service-business-without-losing-recognition": media(
-    "reposition-recognition-seal",
-    "A familiar carved seal carried from an old paper system into a new one",
+  "reposition-established-service-business-without-losing-recognition": topicMedia(
+    "reposition-preserve-recognition-bridge",
+    "A familiar recognition cue carried intact across a bridge into a sharper new category and offer system",
   ),
   "brand-refresh-vs-rebrand-how-much-change": media(
     "refresh-rebrand-conservation",

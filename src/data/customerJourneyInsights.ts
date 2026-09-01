@@ -24,10 +24,10 @@ export const customerJourneyInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/generated/insights/customer-journey-thresholds.webp",
-    heroVideo: "/videos/generated/insights/customer-journey-thresholds.mp4",
+    heroImage: "/images/generated/insights-v3/customer-journey-transition-map.webp",
+    heroVideo: "/videos/generated/insights-v3/customer-journey-transition-map.mp4",
     heroImageAlt:
-      "An indigo cord passing through five material thresholds with a brass connector securing a fragile handoff",
+      "Six customer journey stages connected by one indigo thread, with a frayed handoff revealing where confidence falls",
     keyTakeaways: [
       "Map the customer goal and expectation at each stage before listing internal processes.",
       "The most damaging friction often appears between touchpoints rather than inside one touchpoint.",

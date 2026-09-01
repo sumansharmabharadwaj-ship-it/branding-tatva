@@ -39,10 +39,10 @@ export const repositioningInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
-    heroImage: "/images/generated/insights/reposition-recognition-seal.webp",
-    heroVideo: "/videos/generated/insights/reposition-recognition-seal.mp4",
+    heroImage: "/images/generated/insights-v3/reposition-preserve-recognition-bridge.webp",
+    heroVideo: "/videos/generated/insights-v3/reposition-preserve-recognition-bridge.mp4",
     heroImageAlt:
-      "An established ceramic seal reset inside a new angled brass frame while its terracotta spiral stays aligned",
+      "A familiar recognition cue carried intact across a bridge into a sharper new category and offer system",
     keyTakeaways: [
       "Repositioning changes what the business should mean; rebranding changes how that meaning is expressed.",
       "Recognition is an asset to audit before the design process, not a constraint to discover after launch.",

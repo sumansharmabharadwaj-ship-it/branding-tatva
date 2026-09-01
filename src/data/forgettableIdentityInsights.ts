@@ -24,10 +24,10 @@ export const forgettableIdentityInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",
-    heroImage: "/images/generated/insights/forgettable-identity-memory-cue.webp",
-    heroVideo: "/videos/generated/insights/forgettable-identity-memory-cue.mp4",
+    heroImage: "/images/generated/insights-v3/beautiful-identity-without-memory-cue.webp",
+    heroVideo: "/videos/generated/insights-v3/beautiful-identity-without-memory-cue.mp4",
     heroImageAlt:
-      "Five beautiful pale porcelain vessels fading together behind one simple repeated terracotta spiral cue",
+      "Four beautiful but anonymous identity fragments compared with one recognisable cue repeated across four practical formats",
     keyTakeaways: [
       "Aesthetic quality and memorability solve different problems.",
       "Recognition depends on cues that people can attribute to one source.",
