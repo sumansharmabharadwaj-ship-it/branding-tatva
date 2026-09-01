@@ -218,7 +218,9 @@ assert(!v4Scenes.includes("V4RecognitionScene") && !v4Scenes.includes("RECOGNITI
 assert(!homeInterface.includes("useMotionValue") && !homeInterface.includes("useLenis"), "Dormant homepage control runtimes still pull client-side motion or scroll ownership into chapter seams.");
 assert(!mediaDirector.includes("HOME_GUIDE_MODE_EVENT") && !mediaDirector.includes("guideMode"), "Homepage media still listens for the removed autoplay guide.");
 assert(pacing.includes("CINEMATIC_MOTION_QUERY"), "Homepage scenes have lost their shared fine-pointer motion boundary.");
-assert(pacing.includes("prefersReducedMotion || !cinematicMotion.matches"), "Homepage camera motion ignores reduced motion or compact viewports.");
+assert(pacing.includes("if (!homeRoot || prefersReducedMotion)"), "Homepage motion direction ignores the reduced-motion boundary.");
+assert(pacing.includes("if (!cinematicMotion.matches)") && pacing.includes("clearCinematicMotion(true)"), "Homepage camera motion has escaped compact viewports.");
+assert(pacing.includes('homeRoot.dataset.homeScrollDirection = "forward"') && pacing.includes("preserveDirection"), "Compact homepage scrolling no longer publishes a reversible direction signal.");
 assert(pacing.includes('homeRoot.dataset.homeMotion = "live"'), "Homepage camera variables have no explicit live state.");
 assert(pacing.includes('event.pointerType !== "mouse"'), "Homepage camera can consume touch gestures.");
 assert(pacing.includes("window.requestAnimationFrame(renderCinematicMotion)"), "Homepage camera writes are no longer frame bounded.");

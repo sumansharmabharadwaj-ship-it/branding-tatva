@@ -14,10 +14,10 @@ function clamp(value: number, minimum = 0, maximum = 1) {
 
 /**
  * The V4 homepage has one scene-motion owner and one media owner. This
- * director publishes scene presence plus small visitor-controlled camera
- * variables; HomeV4MediaDirector exclusively owns video playback and preload.
- * Keeping those responsibilities separate prevents scroll motion from
- * rewriting playback rate or eligibility.
+ * director publishes scroll direction for every motion-capable input, then
+ * adds scene presence plus small visitor-controlled camera variables on wider
+ * fine-pointer viewports. HomeV4MediaDirector exclusively owns video playback
+ * and preload, preventing scroll motion from rewriting playback eligibility.
  */
 export function HomePacingDirector() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
@@ -42,10 +42,10 @@ export function HomePacingDirector() {
     let pointerY = 0;
     const cinematicMotion = window.matchMedia(CINEMATIC_MOTION_QUERY);
 
-    function clearCinematicMotion() {
+    function clearCinematicMotion(preserveDirection = false) {
       if (!homeRoot) return;
       delete homeRoot.dataset.homeMotion;
-      delete homeRoot.dataset.homeScrollDirection;
+      if (!preserveDirection) delete homeRoot.dataset.homeScrollDirection;
       [
         "--home-page-progress",
         "--home-pointer-x",
@@ -65,24 +65,36 @@ export function HomePacingDirector() {
 
     function renderCinematicMotion(now: number) {
       motionFrame = 0;
-      if (!homeRoot || prefersReducedMotion || !cinematicMotion.matches) {
+      if (!homeRoot || prefersReducedMotion) {
         clearCinematicMotion();
         return;
       }
 
-      const viewport = Math.max(1, window.innerHeight);
       const currentScrollY = window.scrollY;
       const elapsed = Math.max(16, now - previousMotionTime);
       const delta = currentScrollY - previousScrollY;
-      const rawVelocity = Math.min(1, Math.abs(delta) / elapsed / 1.35);
-      smoothedVelocity += (rawVelocity - smoothedVelocity) * 0.22;
 
-      homeRoot.dataset.homeMotion = "live";
+      if (!homeRoot.dataset.homeScrollDirection) {
+        homeRoot.dataset.homeScrollDirection = "forward";
+      }
       if (Math.abs(delta) > 0.25) {
         scrollDirection = delta > 0 ? 1 : -1;
         homeRoot.dataset.homeScrollDirection = scrollDirection > 0 ? "forward" : "backward";
       }
 
+      previousScrollY = currentScrollY;
+      previousMotionTime = now;
+
+      if (!cinematicMotion.matches) {
+        clearCinematicMotion(true);
+        return;
+      }
+
+      const viewport = Math.max(1, window.innerHeight);
+      const rawVelocity = Math.min(1, Math.abs(delta) / elapsed / 1.35);
+      smoothedVelocity += (rawVelocity - smoothedVelocity) * 0.22;
+
+      homeRoot.dataset.homeMotion = "live";
       const scrollRange = Math.max(1, document.documentElement.scrollHeight - viewport);
       homeRoot.style.setProperty(
         "--home-page-progress",
@@ -111,8 +123,6 @@ export function HomePacingDirector() {
         section.style.setProperty("--home-content-y", `${(-travel * 4.5).toFixed(2)}px`);
       });
 
-      previousScrollY = currentScrollY;
-      previousMotionTime = now;
       if (smoothedVelocity > 0.01) {
         motionFrame = window.requestAnimationFrame(renderCinematicMotion);
       }
