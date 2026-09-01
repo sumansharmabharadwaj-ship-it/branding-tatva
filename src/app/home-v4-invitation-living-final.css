@@ -119,7 +119,12 @@ html body .home-v4 #invitation .final-invitation__headline {
   background: var(--invitation-accent);
   border-color: var(--invitation-accent);
   color: #fffaf0;
-  transform: translateY(-2px);
+  transform: translate3d(var(--invitation-cta-x, 0px), calc(var(--invitation-cta-y, 0px) - 2px), 0);
+}
+
+.home-v4 #invitation .final-invitation__actions > a:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--invitation-accent) 68%, #21362c);
+  outline-offset: 3px;
 }
 
 .home-v4 #invitation .final-invitation__actions > a:is(:hover, :focus-visible) svg {
@@ -477,5 +482,6 @@ html body .home-v4 #invitation .final-invitation__headline {
   .home-v4 #invitation .final-invitation__actions > a,
   .home-v4 #invitation .final-invitation__actions > a svg {
     transition: none;
+    transform: none;
   }
 }

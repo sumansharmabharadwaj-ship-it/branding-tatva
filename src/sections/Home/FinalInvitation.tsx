@@ -16,6 +16,7 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent,
+  type PointerEvent,
 } from "react";
 import { TrackedLink } from "@/components/TrackedLink";
 import { consultation, site } from "@/data/site";
@@ -218,6 +219,20 @@ export function FinalInvitation() {
     document.getElementById(`final-invitation-step-${next}`)?.focus();
   }
 
+  function clearBookingCtaMotion(target: HTMLElement) {
+    target.style.removeProperty("--invitation-cta-x");
+    target.style.removeProperty("--invitation-cta-y");
+  }
+
+  function onBookingCtaPointerMove(event: PointerEvent<HTMLAnchorElement>) {
+    if (event.pointerType !== "mouse" || prefersReducedMotion) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 8;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 6;
+    event.currentTarget.style.setProperty("--invitation-cta-x", `${x.toFixed(2)}px`);
+    event.currentTarget.style.setProperty("--invitation-cta-y", `${y.toFixed(2)}px`);
+  }
+
   return (
     <div
       ref={rootRef}
@@ -308,8 +323,14 @@ export function FinalInvitation() {
                   ...(carriedLens ? { lens: carriedLens.name } : {}),
                 }}
                 className="final-invitation__primary"
+                data-magnetic
                 data-cursor-label="Book the diagnosis"
                 aria-label={`Open Calendly in your timezone to book a ${consultation.minutes} minute diagnosis with ${site.founder}`}
+                onPointerMove={onBookingCtaPointerMove}
+                onPointerLeave={(event) => clearBookingCtaMotion(event.currentTarget)}
+                onPointerCancel={(event) => clearBookingCtaMotion(event.currentTarget)}
+                onFocus={(event) => clearBookingCtaMotion(event.currentTarget)}
+                onBlur={(event) => clearBookingCtaMotion(event.currentTarget)}
               >
                 {consultation.actionLabel}
                 <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.5} />

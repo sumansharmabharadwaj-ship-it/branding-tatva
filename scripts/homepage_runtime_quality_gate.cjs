@@ -45,6 +45,7 @@ const homepageReconstruction = read("src/app/home-v4-homepage-reconstruction.css
 const mediaContinuity = read("src/app/home-v4-media-continuity.css");
 const decisionStyles = read("src/app/home-v4-decision-depth.css");
 const questionsStyles = read("src/app/home-v4-questions-editorial-final.css");
+const invitationStyles = read("src/app/home-v4-invitation-living-final.css");
 const chapterJumpStyles = read("src/app/home-v4-chapter-jump-final.css");
 const homePage = read("src/app/page.tsx");
 
@@ -208,6 +209,10 @@ assert(finalInvitation.includes("servicesContactHrefForSituation(selectedSituati
 assert(finalInvitation.includes("consultation.preparation"), "Closing invitation does not reduce preparation anxiety before booking.");
 assert(finalInvitation.includes("`${questionChoice.label} question carried`"), "Closing invitation no longer confirms the visitor's carried question.");
 assert(finalInvitation.includes('className="final-invitation__carried-question"') && finalInvitation.includes("clipPath: prefersReducedMotion || inView"), "Carried question no longer resolves with the invitation handoff.");
+assert(finalInvitation.includes('event.pointerType !== "mouse" || prefersReducedMotion'), "Closing booking response can consume touch gestures or ignore reduced motion.");
+assert(finalInvitation.includes('"--invitation-cta-x"') && finalInvitation.includes('"--invitation-cta-y"'), "Closing booking response has lost its bounded pointer position.");
+assert(finalInvitation.includes("onPointerCancel") && finalInvitation.includes("onFocus"), "Closing booking response can remain stranded or displace keyboard focus.");
+assert(invitationStyles.includes("var(--invitation-cta-x, 0px)") && invitationStyles.includes("calc(var(--invitation-cta-y, 0px) - 2px)"), "Closing booking response is no longer coupled to the CTA transform.");
 assert(finalInvitation.includes("onCallStepKeyDown") && finalInvitation.includes('aria-selected={activeCallStep === index}') && finalInvitation.includes('tabIndex={activeCallStep === index ? 0 : -1}'), "Closing invitation conversation steps have lost their keyboard selection contract.");
 assert(finalInvitation.includes("duration: prefersReducedMotion ? 0 : 0.36"), "Closing invitation conversation detail ignores reduced motion.");
 assert(videoBreak.includes("managedByHomepage = false") && videoBreak.includes('managedByHomepage ? "none"'), "Closing film cannot yield playback to the homepage controller.");
