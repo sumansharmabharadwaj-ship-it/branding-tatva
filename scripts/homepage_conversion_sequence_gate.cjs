@@ -46,6 +46,11 @@ for (const marker of sequence) {
 
 assert(source.includes("<HomeV4SeamDirector />"), "Homepage chapter seams have lost their shared scroll owner.");
 assert(source.includes('<SceneHandoff motif="mist" preservePrevious />'), "Opening boundary no longer remains visually untouched.");
+assert((source.match(/<SceneHandoff /g) ?? []).length === 8, "Homepage chapters no longer meet through one authored seam system.");
+for (const [motif, count] of [["mist", 4], ["river", 1], ["constellation", 1], ["light", 1], ["paper", 1]]) {
+  const matches = source.match(new RegExp(`<SceneHandoff motif="${motif}"`, "g")) ?? [];
+  assert(matches.length === count, `Homepage ${motif} seam inventory drifted.`);
+}
 
 for (const removed of [
   "V4RecognitionScene",

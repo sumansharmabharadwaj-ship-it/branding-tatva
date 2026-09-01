@@ -33,8 +33,10 @@ export function HomeV4Experience() {
       <SceneHandoff motif="mist" preservePrevious />
 
       <HomeBrandHealthCheck />
+      <SceneHandoff motif="mist" />
 
       <V4HiddenCostScene />
+      <SceneHandoff motif="river" />
 
       <div
         id="evidence"
@@ -46,6 +48,7 @@ export function HomeV4Experience() {
       >
         <EvidenceWall />
       </div>
+      <SceneHandoff motif="constellation" />
 
       <div
         data-home-v4-chapter="paths"
@@ -56,6 +59,7 @@ export function HomeV4Experience() {
       >
         <PathsCinematicChapter />
       </div>
+      <SceneHandoff motif="light" />
 
       <section
         id="process"
@@ -68,6 +72,7 @@ export function HomeV4Experience() {
       >
         <ProcessSection stages={processStages} elementColor={elementColor} />
       </section>
+      <SceneHandoff motif="paper" />
 
       <div
         id="studio"
@@ -79,6 +84,7 @@ export function HomeV4Experience() {
       >
         <StudioCinematicChapter />
       </div>
+      <SceneHandoff motif="mist" />
 
       <div
         id="decision"
@@ -90,6 +96,7 @@ export function HomeV4Experience() {
       >
         <HomeQuestionsScene />
       </div>
+      <SceneHandoff motif="mist" />
 
       <section
         id="invitation"
