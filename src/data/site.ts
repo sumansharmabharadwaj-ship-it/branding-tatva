@@ -45,7 +45,7 @@ export const consultation = {
 
 export const navigation = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
+  { label: "The Strategist", href: "/about" },
   { label: "Brand Strategy & Systems", href: "/services" },
   { label: "Insights", href: "/insights" },
   { label: "Contact", href: "/contact" },

@@ -356,7 +356,7 @@ export function StudioCinematicChapter() {
 
         <div className="studio-film__body">
           <div className="studio-film__statement">
-            <p>Three disciplines, used by one strategist</p>
+            <p>The person behind the decisions</p>
             <h2 id="studio-film-title">
               <AnimatePresence mode="sync" initial={false}>
                 <motion.span

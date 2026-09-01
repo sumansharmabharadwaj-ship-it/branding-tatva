@@ -1,39 +1,60 @@
-# Branding Tatva homepage cinematic diagnostic and Insights QA
+# Design QA: The Living Margins
 
-## Comparison target
+## Target and evidence
 
-- Primary source visual truth: `/workspace/scratch/55f96cacf4b7/upload/08a75655-58aa-4a35-9d03-637489c417c4(1).png` (`1536 × 1024`), the user's selected golden flower-on-water diagnostic scene.
-- Secondary source evidence: `/workspace/scratch/55f96cacf4b7/upload/Screenshot 2026-08-24 at 3.30.30 PM.png`, showing the rejected crowded Insights layout.
-- Browser-rendered diagnostic implementation: `qa/quiz-flowerwater-hover-final.jpg` (`1348 × 926`).
-- Browser-rendered Insights implementation: `qa/insights-reading-room-final.jpg` (`1348 × 926`).
-- Full-view diagnostic comparison: `qa/homepage-diagnostic-flowerwater-comparison-final.jpg` (`2696 × 926`).
-- CSS viewport: `1363 × 936`; device pixel ratio: `1`.
-- Density normalization: the source was proportionally resized and centered on a `1348 × 926` canvas; the implementation was captured at the browser's `1348 × 926` page-image output. Both sides of the comparison board therefore share the same pixel footprint without stretching.
-- State: desktop, question `01 / 03`, second answer hovered, diagnostic section aligned to one viewport. The Insights capture shows field note `03` active.
+- Source visual truth: `/workspace/scratch/e56e36b0002e/generated_images/exec-0ef2e339-82ed-4918-bd55-a584e88477f5.png`
+- About implementation capture: `/workspace/scratch/founder-living-margins-final-2.jpg`
+- Homepage gateway capture: `/workspace/scratch/founder-homepage-gateway-final.jpg`
+- Side-by-side comparison: `qa/founder-living-margins-comparison.jpg`
+- Focused comparison: `qa/founder-living-margins-focused.jpg`
+- Viewport: 1363 × 936 at DPR 1
+- State: desktop, full motion, Psychology field active, consent control visible
 
-## Findings
+## Visual review
 
-No actionable P0, P1, or P2 findings remain.
+The implementation preserves the selected direction's warm ivory, clay, and forest palette; high-contrast editorial serif; manuscript-style marginalia; personal trait lines; and direct hiring path. It intentionally keeps the existing chapter spine, field-note interaction, and real Suman portrait rather than copying the concept board as a new standalone page.
 
-The diagnostic now uses the selected scene itself rather than a substitute landscape. The flower, water, reeds, golden light, question placement, progress treatment, three answer columns, and selected-answer gold state are visibly aligned in the normalized comparison. The implementation adds quiet continuous movement without changing the source composition.
+| Surface | Result |
+| --- | --- |
+| Typography | Existing Cormorant and Manrope system retained; display hierarchy matches the editorial concept. |
+| Spacing | Portrait, field tabs, live note, strategy card, and CTA have distinct zones with no visible collisions. |
+| Color | Ivory ground, clay annotations, and forest controls remain consistent with the site and selected visual. |
+| Imagery | Real supplied portrait used at native quality; no invented likeness or placeholder art. |
+| Copy | Traits explain how Suman thinks, while the working question and CTA turn personality into a hiring reason. |
 
-The Insights chapter no longer repeats the active article inside three stacked cards. One open editorial argument occupies the reading area, the five-step visualizer uses the right half, and a compact three-item rail sits at the bottom. The article, visualizer, takeaway, links, and selector rail all fit inside the section with no internal overflow.
+## Issues found and resolved
 
-## Required fidelity surfaces
+- P2: the first About pass allowed the hire CTA to collide with the fixed consent control. Resolved with a consent-aware right margin. Post-fix CTA bounds: x 764–962, y 867–910; consent begins near x 1072.
+- P2: the first homepage gateway sat too low and could be obscured by consent. Resolved by moving it directly below the Studio chapter headline. Post-fix bounds: x 38–266, y 564–608.
+- No remaining P0, P1, or P2 visual issues in the verified desktop state.
 
-### Fonts and typography
+## Interaction and accessibility checks
 
-- The existing Branding Tatva display serif, earth-green text, and compact uppercase UI type match the source direction.
-- Question scale, line height, two-line wrap, answer hierarchy, progress type, and eyebrow spacing are preserved.
-- Hover changes the selected answer to `rgb(228, 173, 80)`, matching the stronger gold emphasis in the target.
-- Insights restores readable editorial type sizes while removing the oversized duplicate card titles.
+- Field tabs update the portrait note, active record, degree, trait, and strategic question.
+- ArrowRight moves keyboard focus from Literature to Film.
+- About CTA resolves to `/contact`; homepage gateway resolves to `/about`.
+- Site menu exposes `The Strategist` at `/about`.
+- Reduced-motion styles and the existing static mobile fallback are preserved.
+- Browser console showed no app-origin errors; observed errors came only from the browser extension metadata bridge.
 
-### Spacing and layout rhythm
+## Verification
 
-- The diagnostic measures exactly `936px` in the `936px` viewport; its header, prompt, moving scene, and all three answers fit within one screen.
-- The fixed navigation may overlay the section during ordinary page travel, but it hides in the captured reading state and does not alter the diagnostic grid.
-- Insights measures exactly one viewport. The active article has `scrollHeight === clientHeight`, so content is not clipped inside the panel.
-- The Insights selector changed from three tall stacked cards to three low horizontal thresholds, eliminating the crowded right column and the large dead region beneath it.
+- `pnpm exec tsc --noEmit`
+- `pnpm check:about`
+- `pnpm check:homepage`
+- `pnpm check:copy`
+- `pnpm check:links`
+- `pnpm build`
+
+The selected visual is a conceptual desktop direction rather than a pixel-specific page spec. The desktop target and focused regions were compared together after both layout fixes. Mobile visual QA remains a P3 follow-up because the selected source did not define a mobile target; the existing static responsive experience remains in place.
+
+## Final result
+
+passed
+
+---
+
+# Prior design QA history
 
 ### Colors and visual tokens
 

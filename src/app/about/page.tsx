@@ -22,19 +22,19 @@ import { pageSchema, PERSON_ID } from "@/lib/pageSchema";
 const pageJsonLd = pageSchema({
   type: "AboutPage",
   path: "/about",
-  name: "About Suman Sharma | Branding Tatva",
+  name: "Inside the Strategist | Suman Sharma",
   description:
     "The thinking behind Branding Tatva: brand strategy grounded in psychology and language.",
-  trail: [{ name: "About", path: "/about" }],
+  trail: [{ name: "The Strategist", path: "/about" }],
   mainEntity: PERSON_ID,
 });
 
 export const metadata: Metadata = {
-  title: "About Suman Sharma",
+  title: "Suman Sharma, Brand Strategist",
   description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
   alternates: { canonical: "/about" },
   openGraph: {
-    title: `About ${site.founder} | ${site.name}`,
+    title: `${site.founder}, Brand Strategist | ${site.name}`,
     description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
     type: "profile",
   },
@@ -52,13 +52,13 @@ export default function AboutPage() {
         />
 
         <AboutSplitHero
-          eyebrow="About"
+          eyebrow="Inside the strategist"
           headline={aboutIntro.opening}
           body={elements[0].poetic}
           ctaHref="/contact"
-          ctaLabel="Bring me a brand question"
-          secondaryCtaHref="/services#proof"
-          secondaryCtaLabel="Inspect client evidence"
+          ctaLabel="Bring me the messy brief"
+          secondaryCtaHref="#about-origin"
+          secondaryCtaLabel="See how Suman thinks"
           video="/videos/own-companions-split.mp4"
           poster="/images/own-companions-split-poster.jpg"
           bgVideo="/videos/about-hero-bg-meadow.mp4"

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   useEffect,
   useRef,
@@ -8,7 +9,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { AnimatePresence, motion, useInView, useTransform } from "framer-motion";
-import { BookOpenText, Brain, Clapperboard, Compass } from "lucide-react";
+import { ArrowUpRight, BookOpenText, Brain, Clapperboard, Compass } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { credentials } from "@/data/about";
@@ -26,6 +27,8 @@ const FIELDS = [
     application:
       "Audience inquiry begins with attention, context, hesitation, and the patterns people repeat before a positioning decision is made.",
     result: "Observed tension",
+    margin: "Curious enough to keep asking.",
+    question: "What is the buyer hesitating to say?",
     icon: Brain,
   },
   {
@@ -39,6 +42,8 @@ const FIELDS = [
     application:
       "Positioning becomes a message hierarchy, verbal character, and set of phrases a team can understand and repeat.",
     result: "Usable language",
+    margin: "Restless with borrowed language.",
+    question: "Which words could belong only to this business?",
     icon: BookOpenText,
   },
   {
@@ -52,6 +57,8 @@ const FIELDS = [
     application:
       "Creative direction gives image, rhythm, composition, and campaign formats a shared strategic reason.",
     result: "Directed attention",
+    margin: "Precise enough to stop.",
+    question: "Where should attention land first?",
     icon: Clapperboard,
   },
   {
@@ -65,6 +72,8 @@ const FIELDS = [
     application:
       "The practice finds a credible position, gives it language and form, then builds the rules that help recognition compound.",
     result: "Brand decision",
+    margin: "Calm when the brief is messy.",
+    question: "Which choice can the whole business keep?",
     icon: Compass,
   },
 ] as const;
@@ -142,19 +151,20 @@ export function FounderFieldNotes() {
       <div className={styles.sticky}>
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>Training and practice</p>
+            <p className={styles.eyebrow}>Inside the strategist</p>
             <h2 id="founder-origin-title">
-              Three disciplines trained the same habit: <em>notice precisely, then name what matters.</em>
+              What I notice changes <em>what your brand can become.</em>
             </h2>
           </div>
           <div className={styles.headerAside}>
             <p>
               Psychology trained observation. Literature trained language. Film trained attention.
-              I use all three when a founder is beginning, a capable business is difficult to
-              explain, or every channel has started to sound different.
+              I use all three when a founder is beginning, a capable business is difficult to explain,
+              or every channel has started to sound different. I keep asking when the first answer
+              sounds too neat, resist borrowed language, and stop when the useful idea appears.
             </p>
             <p className={styles.stageReadout}>
-              <span>{active.verb}</span>
+              <span>{active.margin}</span>
               <strong>{active.number} / 04</strong>
             </p>
           </div>
@@ -254,6 +264,21 @@ export function FounderFieldNotes() {
               <span>Three trained lenses</span>
               <strong>One practice led directly by Suman</strong>
             </motion.div>
+
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.aside
+                key={active.margin}
+                className={styles.liveMargin}
+                initial={prefersReducedMotion ? false : { opacity: 0, x: 18, rotate: 1.2 }}
+                animate={{ opacity: 1, x: 0, rotate: activeIndex % 2 === 0 ? -0.7 : 0.55 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, x: -12, rotate: -1 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
+              >
+                <span>What I am like in the room</span>
+                <strong>{active.margin}</strong>
+                <p>{active.question}</p>
+              </motion.aside>
+            </AnimatePresence>
           </div>
 
           <div className={styles.recordSlot}>
@@ -284,6 +309,11 @@ export function FounderFieldNotes() {
                   <span>How the field enters brand work</span>
                   <p>{active.application}</p>
                 </div>
+                <div className={styles.workingNote}>
+                  <span>How I work</span>
+                  <strong>{active.margin}</strong>
+                  <p>{active.question}</p>
+                </div>
                 <footer>
                   <span>{active.verb}</span><i /><strong>{active.result}</strong>
                 </footer>
@@ -292,10 +322,18 @@ export function FounderFieldNotes() {
           </div>
         </div>
 
-        <div className={styles.progressRail} aria-hidden="true">
-          <span>Formation</span>
-          <div><i style={{ transform: `scaleX(${(activeIndex + 1) / FIELDS.length})` }} /></div>
-          <strong>{String(activeIndex + 1).padStart(2, "0")} / 04</strong>
+        <div className={styles.closingRail}>
+          <div className={styles.progressRail} aria-hidden="true">
+            <span>Formation</span>
+            <div><i style={{ transform: `scaleX(${(activeIndex + 1) / FIELDS.length})` }} /></div>
+            <strong>{String(activeIndex + 1).padStart(2, "0")} / 04</strong>
+          </div>
+          <div className={styles.hireLine}>
+            <p>You work with the person doing the thinking.</p>
+            <Link href="/contact">
+              Bring me the messy brief <ArrowUpRight size={15} aria-hidden="true" />
+            </Link>
+          </div>
         </div>
 
         <div className={styles.staticExperience}>
@@ -334,6 +372,16 @@ export function FounderFieldNotes() {
               <strong>Psychology notices. Literature names. Film frames. Strategy decides.</strong>
               <p>Three trained lenses now guide one practice led directly by Suman.</p>
             </div>
+          </div>
+
+          <div className={styles.mobileHire}>
+            <p>You work with the person doing the thinking.</p>
+            <ul aria-label="How Suman works">
+              {FIELDS.map((field) => <li key={field.margin}>{field.margin}</li>)}
+            </ul>
+            <Link href="/contact">
+              Bring me the messy brief <ArrowUpRight size={16} aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </div>
