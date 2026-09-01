@@ -28,6 +28,7 @@ import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { Magnetic } from "@/components/Magnetic";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { MOOD } from "@/lib/sectionWash";
+import { ArrowDown } from "lucide-react";
 
 const SERVICES_URL = `${site.url}/services`;
 const PERSON_ID = `${site.url}/#person`;
@@ -290,9 +291,11 @@ export default async function ServicesPage() {
                       className="group inline-flex min-h-11 items-center gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
                     >
                       <span className="link-underline">Choose the situation that sounds like yours</span>
-                      <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-y-0.5">
-                        ↓
-                      </span>
+                      <ArrowDown
+                        aria-hidden="true"
+                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5"
+                        strokeWidth={1.8}
+                      />
                     </a>
                   </Magnetic>
                 </div>
