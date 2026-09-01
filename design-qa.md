@@ -91,6 +91,58 @@ passed
 
 ---
 
+# Homepage reconstruction and motion QA · 2026-09-01
+
+## Comparison target
+
+- Source references: `/workspace/scratch/12e9e5565480/upload/Screenshot 2026-09-01 at 5.40.59 PM.png` and `/workspace/scratch/12e9e5565480/upload/Screenshot 2026-09-01 at 5.40.56 PM.png` (`1996 × 1280`, including browser chrome).
+- Implementation evidence: inline cloud-browser captures `processShot`, `studioShot`, `reducedStudioShot`, and the mobile responsive QA route.
+- Desktop implementation viewport: `1363 × 936`; mobile viewport: `390 × 844`.
+- State: full motion for the paired process/studio comparison, plus reduced motion, mobile opening, and keyboard-selected studio states.
+- Density normalization: the source viewport could not be recovered exactly from the browser-chrome screenshot, so the comparison used the complete visible page region at both source and implementation sizes.
+- The two source references and the final process/studio captures were reviewed together in one comparison input after the fixes.
+
+## Findings
+
+No actionable P0, P1, or P2 findings remain.
+
+The decorative green handoff bands shown in the source references are gone, the floating navigation and chapter rail have explicit content-safe lanes, and the process, studio, and questions chapters meet directly without dead visual zones. Every homepage chapter now has a distinct entrance or transition treatment while the existing typography, films, colors, content, and conversion order remain intact.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. The existing display and sans-serif hierarchy is preserved and remains legible.
+- Spacing and layout rhythm: passed. Fixed-header and chapter-rail lanes are reserved; section headings, panels, and controls remain inside the safe frame.
+- Colors and visual tokens: passed. The established earth-tone palette remains consistent across scenes and overlays.
+- Image quality and asset fidelity: passed. Existing genuine film assets are reused without placeholder art, distorted cropping, or simulated imagery.
+- Copy and content: passed. Homepage copy and the conversion sequence are unchanged.
+- Responsive layout: passed. Desktop has no horizontal overflow; the mobile opening, both CTAs, proof bar, and privacy control fit within `390 × 844`.
+- Motion: passed. Every chapter has a distinct reveal; reduced motion collapses transforms, shortens the studio to one viewport, and pauses the film.
+- Interaction: passed. Studio tabs retain roving keyboard focus and update the selected discipline content.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | Decorative dark-green handoff bands created large dead zones between process, studio, and questions. | Removed redundant handoff nodes and disabled the one structurally retained gate marker. Process and studio now transition directly without broken separator bands. |
+| 2 | P1 | Fixed navigation and the right-side chapter rail overlapped or clipped section content. | Added explicit desktop content lanes and constrained section frames. Final captures show complete headings, panels, and controls inside the safe frame. |
+| 3 | P1 | Mobile hero proof content was pushed beneath the consent banner. | Tightened hero typography and CTA spacing and converted proof content to a compact bar. The `390 × 844` capture shows both CTAs and the proof bar above the consent control. |
+| 4 | P2 | Reduced-motion mode retained the long sticky studio runway. | Collapsed the studio to one viewport, neutralized transforms, and paused the film. Final metrics: `936px` section height, relative film positioning, no active animation, and zero playing videos. |
+| 5 | — | Final full-view and focused-state checks found no remaining actionable mismatch. | Passed. |
+
+## Functional and runtime verification
+
+- `npm run check:homepage`: passed all homepage contract gates.
+- `npm run build`: passed with all routes generated.
+- `git diff --check`: passed.
+- Desktop document overflow delta: `-15px` (no horizontal overflow).
+- Browser console: no application errors; the only observed error was a Chrome-extension metadata error outside the app.
+
+## Final result
+
+passed
+
+---
+
 # Homepage method state-coherence QA · 2026-08-26
 
 ## Comparison target
