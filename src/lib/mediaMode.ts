@@ -1,10 +1,16 @@
-const GENERATED_MOTION_PREFIX = "/videos/generated/";
+const SYNTHETIC_MOTION_PREFIXES = [
+  "/videos/generated/",
+  "/videos/higgsfield-",
+] as const;
 
 /**
- * Generated clips on the site are intentionally short. Their resets are
- * visible in long, decision-heavy sections, so those assets now act as still
- * art sources while natural documentary footage can keep its native motion.
+ * Synthetic clips on the site are intentionally short. Their near-static
+ * frames and repeated resets are visible in long, decision-heavy sections,
+ * so those assets act as still art sources while natural documentary footage
+ * can keep its native motion.
  */
 export function usesLivingStill(video?: string) {
-  return Boolean(video?.startsWith(GENERATED_MOTION_PREFIX));
+  return Boolean(
+    video && SYNTHETIC_MOTION_PREFIXES.some((prefix) => video.startsWith(prefix)),
+  );
 }

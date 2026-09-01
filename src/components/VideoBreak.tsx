@@ -148,7 +148,7 @@ export function VideoBreak({
               src={poster}
               priority
               imagePosition={imagePosition}
-              intensity={parallax ? "cinematic" : "subtle"}
+              intensity={parallax ? "cinematic" : cameraPush ? "hero" : "subtle"}
             />
           ) : (
               <Image

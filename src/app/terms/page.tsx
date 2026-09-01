@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
-import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { LivingImage } from "@/components/LivingImage";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { site } from "@/data/site";
@@ -30,13 +30,12 @@ export default function TermsPage() {
       <main id="main-content">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
         <section className="relative overflow-hidden bg-soil pb-16 pt-36 sm:pb-20 sm:pt-44">
-          <BackgroundVideo
-            video="/videos/generated/bt-legal-archive-seal.mp4"
-            poster="/images/generated/bt-legal-archive-seal-poster.jpg"
+          <LivingImage
+            src="/images/generated/bt-terms-commitment-paper-v2.webp"
+            alt=""
+            priority
             imagePosition="center"
-            parallax
-            playbackRate={0.9}
-            posterPriority
+            intensity="cinematic"
           />
           <div className="absolute inset-0 bg-soil/50" />
           <div className="absolute inset-0 bg-gradient-to-r from-soil via-soil/80 to-soil/20" />

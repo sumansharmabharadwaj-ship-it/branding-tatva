@@ -49,6 +49,26 @@ for (const file of sourceFiles) {
 
 if (videoFailures.length > 0) fail(videoFailures.join("\n"));
 
+const mediaMode = fs.readFileSync(path.join(SRC, "lib", "mediaMode.ts"), "utf8");
+for (const prefix of ['"/videos/generated/"', '"/videos/higgsfield-"']) {
+  if (!mediaMode.includes(prefix)) {
+    fail(`Synthetic motion classification is missing ${prefix}.`);
+  }
+}
+
+const videoBreak = fs.readFileSync(path.join(SRC, "components", "VideoBreak.tsx"), "utf8");
+if (!videoBreak.includes('cameraPush ? "hero" : "subtle"')) {
+  fail("Synthetic closing films no longer receive the hero living-image treatment.");
+}
+
+const termsPage = fs.readFileSync(path.join(SRC, "app", "terms", "page.tsx"), "utf8");
+if (
+  !termsPage.includes("bt-terms-commitment-paper-v2.webp") ||
+  !termsPage.includes("<LivingImage")
+) {
+  fail("Terms no longer carries its own interactive agreement image.");
+}
+
 const dataSources = walk(path.join(SRC, "data"))
   .filter((file) => file.endsWith(".ts"))
   .map((file) => fs.readFileSync(file, "utf8"))
