@@ -42,6 +42,7 @@ const DISCIPLINES = [
     proof: "Applied in HerbalCart",
     proofHref: "/work/herbalcart",
     video: "/videos/pexels-fog-sunrise.mp4",
+    playbackRate: 0.74,
     poster: "/images/pexels-fog-sunrise-poster.jpg",
     accent: HOME_STUDIO_LENSES[0].accent,
   },
@@ -61,6 +62,7 @@ const DISCIPLINES = [
     proof: "Applied in MyShopInEurope",
     proofHref: "/work/myshopineurope",
     video: "/videos/pexels-studio-morning-light.mp4",
+    playbackRate: 0.72,
     poster: "/images/pexels-studio-morning-light-poster.jpg",
     accent: HOME_STUDIO_LENSES[1].accent,
   },
@@ -80,6 +82,7 @@ const DISCIPLINES = [
     proof: "Applied in Dr. Haley Nutrition",
     proofHref: "/work/dr-haley-nutrition",
     video: "/videos/pexels-aspen-sunburst.mp4",
+    playbackRate: 0.76,
     poster: "/images/pexels-aspen-sunburst-poster.jpg",
     accent: HOME_STUDIO_LENSES[2].accent,
   },
@@ -307,6 +310,7 @@ export function StudioCinematicChapter() {
               loop
               playsInline
               preload="none"
+              data-home-playback-rate={active.playbackRate}
               aria-hidden="true"
             />
           </motion.div>

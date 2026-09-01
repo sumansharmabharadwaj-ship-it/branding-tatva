@@ -129,6 +129,7 @@ assert(studio.includes('data-home-selection-direction={selectionDirectionRef.cur
 assert(studio.includes("const scrollOffsetRef = useRef(0)"), "Studio cannot distinguish forward and backward runway travel across wrapped lens indices.");
 assert(studio.includes('className="studio-film__strategist"') && studio.includes('href="/about"'), "Studio no longer makes its founder-led authorship actionable.");
 assert(studio.includes('src="/images/suman-sharma-studio-portrait.webp"'), "Studio founder handoff has lost Suman's real portrait.");
+assert(studio.includes("playbackRate: 0.74") && studio.includes("playbackRate: 0.72") && studio.includes("playbackRate: 0.76") && studio.includes("data-home-playback-rate={active.playbackRate}"), "Studio films lost their discipline-specific calm playback pace.");
 assert(experienceUpgrade.includes('.studio-film__strategist:is(:hover, :focus-visible)'), "Studio founder handoff has no pointer or keyboard response.");
 assert(studioSynthesisStyles.includes('button[data-studio-state="committed"]'), "Studio previews erase the visitor's committed visual anchor.");
 assert(/height:\s*138svh\s*!important/.test(studioStyles), "Studio has no bounded three-stage scroll runway.");
