@@ -58,6 +58,7 @@ for (const prefix of ['"/videos/generated/"', '"/videos/higgsfield-"']) {
 
 for (const film of [
   '"/videos/pexels-studio-morning-light.mp4"',
+  '"/videos/pexels-dandelion-release.mp4"',
   '"/videos/pexels-golden-fog-sea.mp4"',
   '"/videos/pexels-river-dawn.mp4"',
   '"/videos/pixabay-campfire-conversation.mp4"',

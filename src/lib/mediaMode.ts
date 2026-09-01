@@ -8,6 +8,7 @@ const SYNTHETIC_MOTION_PREFIXES = [
 
 const REPEAT_PRONE_DOCUMENTARY_FILMS = [
   "/videos/pexels-studio-morning-light.mp4",
+  "/videos/pexels-dandelion-release.mp4",
   "/videos/pexels-golden-fog-sea.mp4",
   "/videos/pexels-river-dawn.mp4",
   "/videos/pixabay-campfire-conversation.mp4",
