@@ -104,6 +104,8 @@ assert(diagnostic.includes('<p aria-live="polite" aria-atomic="true">'), "Diagno
 assert(diagnostic.includes("event.currentTarget.closest('[role=\"radiogroup\"]')"), "Diagnostic arrow-key focus is not scoped to the active radio group.");
 assert(diagnostic.includes("options?.[nextIndex]?.focus({ preventScroll: true })"), "Diagnostic selected radio does not receive focus before the selection render.");
 assert(diagnostic.includes('event.pointerType !== "mouse"'), "Diagnostic hover preview can consume touch gestures.");
+assert(diagnostic.includes("orbitPointerBoundsRef.current ?? target.getBoundingClientRect()") && diagnostic.includes("orbitPointerFrameRef.current = window.requestAnimationFrame"), "Diagnostic landscape can restore layout reads and writes on every pointer event.");
+assert(diagnostic.includes("window.cancelAnimationFrame(orbitPointerFrameRef.current)"), "Diagnostic landscape can leave a scheduled motion frame behind.");
 assert(!diagnostic.includes("<video"), "Diagnostic restored a short generated film instead of visitor-driven still motion.");
 assert(diagnostic.includes("bt-home-brand-diagnostic-flowerwater-v1.png"), "Diagnostic living landscape has no stable still-art base.");
 assert(!diagnostic.includes("void video.play()"), "Diagnostic film bypasses the shared one-film playback budget.");

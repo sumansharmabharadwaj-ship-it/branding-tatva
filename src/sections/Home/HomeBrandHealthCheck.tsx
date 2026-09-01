@@ -161,6 +161,13 @@ export function HomeBrandHealthCheck() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const focusRequestedRef = useRef(false);
+  const orbitPointerBoundsRef = useRef<DOMRect | null>(null);
+  const orbitPointerFrameRef = useRef<number | null>(null);
+  const orbitPointerMotionRef = useRef<{
+    target: HTMLElement;
+    x: number;
+    y: number;
+  } | null>(null);
   const [state, dispatch] = useReducer(homeDiagnosticReducer, initialHomeDiagnosticState);
   const { step, answers, selections, resultVisible, result: resolvedResult, preview } = state;
   const selected = selections[step] ?? null;
@@ -189,13 +196,45 @@ export function HomeBrandHealthCheck() {
     heading.focus({ preventScroll: true });
   }, [done, step]);
 
+  useEffect(() => () => {
+    if (orbitPointerFrameRef.current !== null) {
+      window.cancelAnimationFrame(orbitPointerFrameRef.current);
+    }
+  }, []);
+
+  function prepareScene(event: PointerEvent<HTMLElement>) {
+    if (reducedMotion || event.pointerType !== "mouse") return;
+    orbitPointerBoundsRef.current = event.currentTarget.getBoundingClientRect();
+  }
+
   function moveScene(event: PointerEvent<HTMLElement>) {
-    if (reducedMotion || event.pointerType !== "mouse" || !sectionRef.current) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
+    if (reducedMotion || event.pointerType !== "mouse") return;
+    const target = event.currentTarget;
+    const bounds = orbitPointerBoundsRef.current ?? target.getBoundingClientRect();
+    orbitPointerBoundsRef.current = bounds;
+    if (!bounds.width || !bounds.height) return;
     const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
     const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-    sectionRef.current.style.setProperty("--orbit-pointer-x", x.toFixed(3));
-    sectionRef.current.style.setProperty("--orbit-pointer-y", y.toFixed(3));
+    orbitPointerMotionRef.current = { target, x, y };
+    if (orbitPointerFrameRef.current !== null) return;
+    orbitPointerFrameRef.current = window.requestAnimationFrame(() => {
+      orbitPointerFrameRef.current = null;
+      const motion = orbitPointerMotionRef.current;
+      if (!motion) return;
+      motion.target.style.setProperty("--orbit-pointer-x", motion.x.toFixed(3));
+      motion.target.style.setProperty("--orbit-pointer-y", motion.y.toFixed(3));
+    });
+  }
+
+  function resetScene(event: PointerEvent<HTMLElement>) {
+    orbitPointerBoundsRef.current = null;
+    orbitPointerMotionRef.current = null;
+    if (orbitPointerFrameRef.current !== null) {
+      window.cancelAnimationFrame(orbitPointerFrameRef.current);
+      orbitPointerFrameRef.current = null;
+    }
+    event.currentTarget.style.removeProperty("--orbit-pointer-x");
+    event.currentTarget.style.removeProperty("--orbit-pointer-y");
   }
 
   function choose(choice: Choice, index: number) {
@@ -290,7 +329,10 @@ export function HomeBrandHealthCheck() {
       data-preview={visualPreview === null ? "idle" : String(visualPreview)}
       data-diagnostic-state={done ? "complete" : selected === null ? "choosing" : "ready"}
       aria-labelledby="brand-orbit-title"
+      onPointerEnter={prepareScene}
       onPointerMove={moveScene}
+      onPointerLeave={resetScene}
+      onPointerCancel={resetScene}
     >
       <div className="brand-orbit__landscape" aria-hidden="true">
         <Image
