@@ -1,3 +1,48 @@
+# Design QA: The Recognition Film
+
+## Target and evidence
+
+- Source visual truth: `/workspace/scratch/e56e36b0002e/generated_images/exec-0ef2e339-82ed-4918-bd55-a584e88477f5.png` (`941 × 1672` at density `1`)
+- Intended implementation route: `/about#about-philosophy`
+- Intended desktop viewport: `1440 × 900` at density `1`
+- Intended iPhone viewport: `390 × 844` at density `1`
+- State: full motion with each Category, Value, and Memory tab selected; touch ledger on iPhone
+- Browser implementation screenshot: unavailable in this pass
+- Full view comparison evidence: unavailable because the local Playwright browser binary is absent and the workspace network blocked its download
+- Focused region comparison evidence: unavailable for the same browser infrastructure blocker
+
+## Findings
+
+- [P1 blocked] The updated recognition film has no current browser rendered evidence. Static checks confirm that every animated frame uses an existing project image path and that every decision resolves into a concrete buyer outcome, but code and build output cannot establish crop, contrast, one screen containment, motion quality, or touch readability.
+- The selected editorial direction was opened and inspected. Its warm paper, forest, clay, manuscript hierarchy, real image focal point, and explicit route from strategic observation to choice remain the visual truth for this chapter.
+
+## Required fidelity surfaces
+
+- Fonts and typography: protected by the existing type scale and About reading floor gate; browser wrapping remains unverified.
+- Spacing and layout rhythm: the existing one screen desktop grid and touch ledger are preserved; visible containment remains unverified.
+- Colors and visual tokens: the existing forest, ivory, and clay tokens remain unchanged. The former synthetic chamber gradient is replaced with real case imagery under a solid forest treatment.
+- Image quality and asset fidelity: the three existing HerbalCart, MyShopInEurope, and Dr. Haley Nutrition project images now drive the film and touch fallback. Browser crop and loading remain unverified.
+- Copy and content: the chapter now states Suman's point of view in first person, names the three buyer outcomes, and resolves them into “Easier to choose.” Copy and link gates passed.
+
+## Interaction and runtime checks
+
+- TypeScript, About journey gates, copy gate, internal link gate, diff check, and the production build passed.
+- The existing semantic tabs, roving keyboard focus, pointer preview, committed state, project links, reduced motion fallback, and touch scroll snap contracts remain covered by the About quality gate.
+- Primary interactions tested in a browser: none in this pass because no runnable browser engine is available.
+- Browser console errors checked: unavailable for the same blocker.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | Browser rendered comparison could not start because Playwright had no Chromium executable. | Attempted to install the matching browser. The download was blocked by the workspace network boundary, so no valid after capture exists. |
+
+## Final result
+
+blocked
+
+---
+
 # Design QA: The Strategist Decision Payoff
 
 ## Target and evidence

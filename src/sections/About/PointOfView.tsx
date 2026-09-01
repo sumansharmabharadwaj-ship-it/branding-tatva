@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   useEffect,
@@ -19,7 +20,6 @@ const STAGES = [
     number: "01",
     verb: "See",
     lens: "Category",
-    claim: "People place the category before they weigh the offer.",
     question: "What are people assuming this brand is?",
     decision: "Reset the frame before adding persuasion.",
     proof:
@@ -31,13 +31,13 @@ const STAGES = [
     imagePosition: "50% 46%",
     from: "Inherited frame",
     to: "Intended category",
+    outcome: "People understand where you belong.",
     icon: Eye,
   },
   {
     number: "02",
     verb: "Name",
     lens: "Value",
-    claim: "Language decides which kind of value comes forward.",
     question: "Which words are carrying the advantage?",
     decision: "Choose the value frame before writing the campaign.",
     proof:
@@ -49,13 +49,13 @@ const STAGES = [
     imagePosition: "50% 50%",
     from: "Access and price",
     to: "Craft and origin",
+    outcome: "They can name why you matter.",
     icon: Quote,
   },
   {
     number: "03",
     verb: "Return",
     lens: "Memory",
-    claim: "Repetition turns a deliberate choice into a familiar pattern.",
     question: "Which useful idea deserves to return?",
     decision: "Protect the useful idea from constant reinvention.",
     proof:
@@ -67,6 +67,7 @@ const STAGES = [
     imagePosition: "50% 50%",
     from: "Cadence led by volume",
     to: "Pattern led by quality",
+    outcome: "The useful idea stays with them.",
     icon: Repeat2,
   },
 ] as const;
@@ -148,14 +149,14 @@ export function PointOfView() {
         <section className={styles.root} aria-labelledby="philosophy-title">
           <header className={styles.header}>
             <div>
-              <p className={styles.eyebrow}>How buyers form a brand impression</p>
+              <p className={styles.eyebrow}>Suman&apos;s point of view</p>
               <h2 id="philosophy-title">
-                Buyers meet a brand in three movements: <em>place it, value it, remember it.</em>
+                Before a brand is chosen, it must be easy to <em>place, value and remember.</em>
               </h2>
             </div>
             <p>
-              Buyers first decide what kind of business they are looking at. Then they weigh its
-              value. What repeats is what they remember.
+              I read those three decisions in sequence. First the category, then the value, then the
+              pattern worth returning to. That is how a brand becomes easier to choose.
             </p>
           </header>
 
@@ -200,6 +201,25 @@ export function PointOfView() {
                 style={prefersReducedMotion ? undefined : { y: filmY, scale: filmScale }}
               >
                 <div className={styles.recognitionChamber}>
+                  <AnimatePresence mode="wait" initial={false} custom={transitionDirection}>
+                    <motion.figure
+                      key={active.image}
+                      className={styles.evidenceFilm}
+                      custom={transitionDirection}
+                      initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.12, x: transitionDirection * 14 }}
+                      animate={{ opacity: 1, scale: 1.025, x: 0 }}
+                      exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.98, x: transitionDirection * -10 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.92, ease: EASE }}
+                    >
+                      <Image
+                        src={active.image}
+                        alt=""
+                        fill
+                        sizes="(min-width: 981px) 35vw, 100vw"
+                        style={{ objectPosition: active.imagePosition }}
+                      />
+                    </motion.figure>
+                  </AnimatePresence>
                   <div className={styles.ambientSequence}>
                     {STAGES.map((stage, index) => (
                       <span key={stage.lens} data-active={index === activeIndex}>{stage.lens}</span>
@@ -240,12 +260,12 @@ export function PointOfView() {
                   transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
                 >
                   <p className={styles.recordKicker}>{active.number} · {active.verb} through {active.lens.toLowerCase()}</p>
-                  <h3>{active.decision}</h3>
+                  <h3>{active.outcome}</h3>
 
                   <dl>
                     <div>
-                      <dt>Buyer sequence</dt>
-                      <dd>{active.claim}</dd>
+                      <dt>Suman&apos;s decision</dt>
+                      <dd>{active.decision}</dd>
                     </div>
                     <div>
                       <dt>Visible shift</dt>
@@ -269,7 +289,7 @@ export function PointOfView() {
 
           <div className={styles.staticExperience}>
             <div className={styles.staticLedgerHead}>
-              <small>The recognition sequence</small>
+              <small>How I make a brand easier to choose</small>
               <strong>Place the brand. Name the value. Protect what returns.</strong>
             </div>
             <div className={styles.staticLedger}>
@@ -277,12 +297,21 @@ export function PointOfView() {
                 const Icon = stage.icon;
                 return (
                   <article key={stage.lens}>
+                    <figure className={styles.staticFilm} aria-hidden="true">
+                      <Image
+                        src={stage.image}
+                        alt=""
+                        fill
+                        sizes="20rem"
+                        style={{ objectPosition: stage.imagePosition }}
+                      />
+                    </figure>
                     <div className={styles.staticIndex}>
                       <span><Icon size={16} aria-hidden="true" /></span>
                       <small>{stage.number} · {stage.verb}</small>
                     </div>
                     <strong className={styles.staticLens}>{stage.lens}</strong>
-                    <h3>{stage.claim}</h3>
+                    <h3>{stage.outcome}</h3>
                     <p>{stage.decision}</p>
                     <div className={styles.staticProof}>
                       <small>{stage.project} · {stage.recordType}</small>
@@ -297,10 +326,10 @@ export function PointOfView() {
             </div>
           </div>
 
-          <div className={styles.recognitionLine} aria-hidden="true">
-            <span>Category</span><i data-resolved={activeIndex >= 1} />
-            <span>Value</span><i data-resolved={activeIndex >= 2} />
-            <span>Pattern</span><strong>Recognisable</strong>
+          <div className={styles.recognitionLine} aria-label="The recognition result">
+            <span>Easy to place</span><i data-resolved={activeIndex >= 1} />
+            <span>Worth valuing</span><i data-resolved={activeIndex >= 2} />
+            <span>Made to return</span><strong>Easier to choose</strong>
           </div>
         </section>
       </Container>

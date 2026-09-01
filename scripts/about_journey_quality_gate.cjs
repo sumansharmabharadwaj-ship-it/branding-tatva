@@ -240,6 +240,21 @@ assert(
   "The first post-hero chapter no longer connects Suman's formative fields to a buyer's situation.",
 );
 assert(
+  pointOfView.includes("Suman&apos;s point of view") &&
+    pointOfView.includes("That is how a brand becomes easier to choose.") &&
+    pointOfView.includes("People understand where you belong.") &&
+    pointOfView.includes("They can name why you matter.") &&
+    pointOfView.includes("The useful idea stays with them."),
+  "Suman's point of view no longer resolves its three buyer decisions into a hiring outcome.",
+);
+assert(
+  pointOfView.includes('className={styles.evidenceFilm}') &&
+    pointOfView.includes("src={active.image}") &&
+    pointOfView.includes('className={styles.staticFilm}') &&
+    pointOfView.includes("src={stage.image}"),
+  "The point-of-view sequence no longer grounds its animated argument in real project imagery.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),
