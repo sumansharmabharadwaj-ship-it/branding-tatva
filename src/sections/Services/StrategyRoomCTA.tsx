@@ -34,12 +34,29 @@ const FOCUS_AREAS = ["Positioning and identity", "Content and voice", "Ongoing d
 const QUESTION_COUNT = 2;
 const MODAL_INTERACTION_EVENT = "bt:services-modal-interaction";
 
+type Priority = (typeof PRIORITIES)[number];
+type FocusArea = (typeof FOCUS_AREAS)[number];
+
+const PRIORITY_NOTES: Record<Priority, string> = {
+  "Getting positioning right": "The pressure sits in the position: what the business should mean and why buyers should choose it.",
+  "Building recognition": "The pressure sits in memory: which meaning and cues deserve deliberate repetition.",
+  "Stopping brand drift": "The pressure sits in consistency: which decision should govern every live expression.",
+  "Still deciding": "The first task is to locate the decision that will make the rest easier to order.",
+};
+
+const FOCUS_NOTES: Record<FocusArea, string> = {
+  "Positioning and identity": "Test the position before the identity carries it.",
+  "Content and voice": "Name the voice rule before more content repeats the drift.",
+  "Ongoing direction": "Choose the rule that should guide every live expression.",
+  "Still exploring": "Find the decision that deserves attention first.",
+};
+
 const ROUTE_BRIEFS: Record<
   ServicesSituationId,
   {
     invitation: string;
-    priorities: readonly (typeof PRIORITIES)[number][];
-    focusAreas: readonly (typeof FOCUS_AREAS)[number][];
+    priorities: readonly Priority[];
+    focusAreas: readonly FocusArea[];
   }
 > = {
   idea: {
@@ -74,8 +91,8 @@ export function StrategyRoomCTA() {
   const [briefStarted, setBriefStarted] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [step, setStep] = useState<Step>(0);
-  const [priority, setPriority] = useState<string | null>(null);
-  const [focus, setFocus] = useState<string | null>(null);
+  const [priority, setPriority] = useState<Priority | null>(null);
+  const [focus, setFocus] = useState<FocusArea | null>(null);
   const [carriedPackage, setCarriedPackage] = useState<string | null>(null);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const [recognitionAudit, setRecognitionAudit] = useState<ServicesRecognitionAuditDetail | null>(null);
@@ -249,14 +266,14 @@ export function StrategyRoomCTA() {
     setCalendarOpen(true);
   }
 
-  function pickPriority(value: string) {
+  function pickPriority(value: Priority) {
     setPriority(value);
     setFocus(null);
     setStep(1);
     focusBriefHeading();
   }
 
-  function pickFocus(value: string) {
+  function pickFocus(value: FocusArea) {
     setFocus(value);
     setStep(2);
     focusBriefHeading();
@@ -555,13 +572,42 @@ export function StrategyRoomCTA() {
 
                   {step === 2 && (
                     <motion.div key="ready" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-                      <p className="mt-6 font-display text-2xl font-normal text-ivory">Your starting point is clear.</p>
-                      <div className="mx-auto mt-4 flex max-w-xl flex-wrap justify-center gap-2" aria-label="Your Strategy Room brief">
-                        {answers.map((answer) => (
-                          <span key={answer} className="rounded-full border border-sandstone/30 bg-sandstone/[0.08] px-3 py-1.5 text-xs text-ivory/80">
-                            {answer}
-                          </span>
-                        ))}
+                      <p className="mt-6 font-display text-2xl font-normal text-ivory">Your decision note is ready.</p>
+                      <div
+                        data-strategy-room-decision-note="true"
+                        className="mx-auto mt-4 max-w-xl rounded-2xl border border-sandstone/30 bg-sandstone/[0.075] p-5 text-left shadow-[0_18px_48px_rgba(6,10,8,0.18)]"
+                        aria-label="Your Strategy Room decision note"
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em] text-sandstone/82">
+                            Working decision note
+                          </p>
+                          <span className="text-[0.6rem] uppercase tracking-[0.12em] text-ivory/42">Two answers recorded</span>
+                        </div>
+                        <p className="mt-4 font-display text-xl font-normal leading-snug text-ivory sm:text-2xl">
+                          {focus ? FOCUS_NOTES[focus] : "Find the decision that deserves attention first."}
+                        </p>
+                        <p className="mt-3 text-sm leading-relaxed text-ivory/72">
+                          {priority ? PRIORITY_NOTES[priority] : "The conversation will locate the pressure beneath the visible brand problem."}
+                        </p>
+                        {carriedPackage || recognitionAudit ? (
+                          <dl className={`mt-4 grid gap-3 border-t border-ivory/12 pt-4 ${carriedPackage && recognitionAudit ? "sm:grid-cols-2" : ""}`}>
+                            {carriedPackage ? (
+                              <div>
+                                <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Likely engagement</dt>
+                                <dd className="mt-1 font-display text-lg font-normal text-ivory/88">{carriedPackage}</dd>
+                              </div>
+                            ) : null}
+                            {recognitionAudit ? (
+                              <div className={carriedPackage ? "sm:border-l sm:border-ivory/12 sm:pl-4" : ""}>
+                                <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Recognition evidence</dt>
+                                <dd className="mt-1 font-display text-lg font-normal text-ivory/88">
+                                  {recognitionAudit.score} of {recognitionAudit.total} answers hold
+                                </dd>
+                              </div>
+                            ) : null}
+                          </dl>
+                        ) : null}
                       </div>
                       <div className="mt-6 flex flex-col items-center justify-center gap-2 sm:flex-row">
                         <button
