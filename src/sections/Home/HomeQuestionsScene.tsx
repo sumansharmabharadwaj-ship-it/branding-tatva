@@ -78,6 +78,21 @@ const QUESTIONS = [
 type SelectionDirection = "forward" | "backward";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const QUESTION_ANSWER_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? 16 : -16,
+    y: 5,
+    filter: "blur(5px)",
+  }),
+  active: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? -9 : 9,
+    y: -7,
+    filter: "blur(4px)",
+  }),
+};
 const SITUATION_TO_QUESTION: Record<ServicesSituationId, number> = {
   idea: 0,
   reposition: 1,
@@ -362,7 +377,11 @@ export function HomeQuestionsScene() {
             })}
           </div>
 
-          <AnimatePresence mode="sync" initial={false}>
+          <AnimatePresence
+            mode="sync"
+            initial={false}
+            custom={selectionDirectionRef.current}
+          >
             <motion.article
               key={active.id}
               id="decision-answer"
@@ -371,16 +390,13 @@ export function HomeQuestionsScene() {
               className="questions-editorial__answer"
               data-home-reading-plane
               data-home-selection-direction={selectionDirectionRef.current}
-              initial={reducedMotion ? false : {
-                opacity: 0,
-                x: selectionDirectionRef.current === "forward" ? 16 : -16,
-                y: 5,
-                filter: "blur(5px)",
-              }}
-              animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-              exit={reducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(4px)" }}
+              custom={selectionDirectionRef.current}
+              variants={QUESTION_ANSWER_VARIANTS}
+              initial={reducedMotion ? false : "enter"}
+              animate="active"
+              exit={reducedMotion ? undefined : "exit"}
               transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}
-              aria-live="polite"
+              aria-live={isPreviewing ? "off" : "polite"}
             >
               <div className="questions-editorial__answer-index">
                 <span>{isPreviewing ? "Preview" : active.label}</span>
