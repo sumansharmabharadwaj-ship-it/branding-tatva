@@ -247,7 +247,7 @@ export default async function ServicesPage() {
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal
                 delay={0.35}
-                className="rounded-[1.75rem] border border-ivory/10 bg-[rgba(22,30,25,0.36)] p-5 shadow-[0_28px_90px_rgba(10,16,13,0.2)] backdrop-blur-xl sm:p-7"
+                className="services-hero-copy p-5 sm:p-7 lg:py-8 lg:pl-8 lg:pr-6"
               >
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
                   Brand strategy &amp; systems

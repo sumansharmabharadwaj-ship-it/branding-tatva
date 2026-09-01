@@ -315,9 +315,17 @@ export function ServiceDisciplineExplorer() {
                     id="service-discipline-panel"
                     role="tabpanel"
                     aria-labelledby={`service-discipline-tab-${activeIndex}`}
-                    initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, x: 22, y: 8 }}
-                    animate={{ opacity: 1, x: 0, y: 0 }}
-                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: -18, y: -6 }}
+                    initial={
+                      prefersReducedMotion
+                        ? { opacity: 1 }
+                        : { opacity: 0.18, clipPath: "inset(0 74% 0 0 round 1.25rem)", filter: "blur(5px)" }
+                    }
+                    animate={{ opacity: 1, clipPath: "inset(0 0% 0 0 round 0rem)", filter: "blur(0px)" }}
+                    exit={
+                      prefersReducedMotion
+                        ? { opacity: 0 }
+                        : { opacity: 0.12, clipPath: "inset(0 0 0 76% round 1.25rem)", filter: "blur(4px)" }
+                    }
                     transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.42, ease: EASE }}
                     className="relative flex min-h-[18rem] flex-col justify-between lg:min-h-[20rem]"
                   >

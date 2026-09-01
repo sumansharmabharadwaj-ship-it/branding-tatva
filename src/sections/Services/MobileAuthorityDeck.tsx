@@ -156,7 +156,11 @@ export function MobileAuthorityDeck({
               data-authority-layer-panel="true"
               data-authority-layer={layer.slug}
               initial={false}
-              animate={selected ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              animate={
+                selected
+                  ? { opacity: 1, clipPath: "inset(0% 0 0% 0 round 1rem)", filter: "blur(0px)" }
+                  : { opacity: 0, clipPath: "inset(0 0 72% 0 round 1rem)", filter: "blur(4px)" }
+              }
               transition={prefersReducedMotion ? { duration: 0 } : { duration: motionTokens.durationBase }}
               className="rounded-2xl border border-ivory/12 bg-[rgba(10,13,15,0.58)] p-5 backdrop-blur-md"
               style={{ borderTopColor: layer.color }}

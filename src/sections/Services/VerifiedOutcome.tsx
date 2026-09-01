@@ -181,8 +181,13 @@ export function VerifiedOutcome() {
         data-proof-frame="true"
         data-verified-outcome-phase={activeBeat}
         data-proof-route={situation ?? "default"}
-        className="grid gap-10 rounded-[2rem] border border-ivory/12 bg-[rgba(18,26,23,0.5)] p-6 shadow-[0_32px_110px_rgba(7,12,10,0.28)] backdrop-blur-xl sm:p-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-16 lg:p-10"
+        className="relative grid gap-10 overflow-hidden rounded-[2rem] border border-ivory/12 bg-[rgba(18,26,23,0.5)] p-6 shadow-[0_32px_110px_rgba(7,12,10,0.28)] backdrop-blur-xl sm:p-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-center lg:gap-16 lg:p-10"
       >
+        <div data-verified-proof-thread="true" aria-hidden="true">
+          <span data-verified-proof-node="1" />
+          <span data-verified-proof-node="2" />
+          <span data-verified-proof-node="3" />
+        </div>
         <div data-services-chapter-copy="true" data-proof-copy="true">
           <Reveal>
             <p data-proof-eyebrow="true" className="text-sm font-medium uppercase tracking-wide text-sandstone">
@@ -195,6 +200,7 @@ export function VerifiedOutcome() {
 
           <motion.div
             data-proof-stat="true"
+            data-verified-proof-result="true"
             animate={
               prefersReducedMotion
                 ? { opacity: 1, y: 0, scale: 1 }
@@ -239,6 +245,7 @@ export function VerifiedOutcome() {
                   key={beat.label}
                   data-proof-beat="true"
                   data-active={active ? "true" : "false"}
+                  data-proof-beat-state={active ? "active" : completed ? "complete" : "waiting"}
                   className="relative border-b border-ivory/10 last:border-b-0"
                 >
                   <motion.button
@@ -248,8 +255,8 @@ export function VerifiedOutcome() {
                     onClick={() => chooseBeat(index)}
                     animate={
                       prefersReducedMotion
-                        ? { opacity: 1, x: 0 }
-                        : { opacity: active ? 1 : completed ? 0.9 : 0.82, x: active ? 7 : 0 }
+                        ? { opacity: 1, filter: "blur(0px)" }
+                        : { opacity: active ? 1 : completed ? 0.9 : 0.78, filter: active ? "blur(0px)" : "blur(0.25px)" }
                     }
                     transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
                     className="grid w-full grid-cols-[2.5rem_1fr] gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone sm:py-6"
@@ -290,8 +297,12 @@ export function VerifiedOutcome() {
             key={`${proof.slug}-${activeBeat}`}
             data-proof-mobile-panel="true"
             aria-live="polite"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={
+              prefersReducedMotion
+                ? false
+                : { opacity: 0.18, clipPath: "inset(0 0 74% 0 round 0.9rem)", filter: "blur(4px)" }
+            }
+            animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
             className="hidden"
           >

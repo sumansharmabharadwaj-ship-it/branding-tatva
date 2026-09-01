@@ -235,7 +235,7 @@ export function PackageSelector() {
         aria-label="Choose a package route"
         className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7"
       >
-        {CHOICES.map((choice, choiceIndex) => {
+        {CHOICES.map((choice) => {
           const pkg = packages.find((entry) => entry.slug === choice.slug);
           const isActive = routeReady && active === choice.slug;
           return (
@@ -248,12 +248,9 @@ export function PackageSelector() {
               data-package-choice="true"
               data-package-preview={isActive && selectionSource === "scroll" ? "true" : undefined}
               onClick={() => choosePackage(choice.slug)}
-              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 22 }}
-              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "0px 0px -12% 0px" }}
               whileHover={prefersReducedMotion ? undefined : { y: -5 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
-              transition={{ duration: 0.35, delay: choiceIndex * 0.09, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="flex scroll-mt-28 flex-col items-center gap-2.5 rounded-2xl border-t-2 p-5 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)] lg:min-h-[196px]"
               style={{
                 borderColor: pkg?.color,
@@ -317,8 +314,12 @@ export function PackageSelector() {
         {compare ? (
             <motion.div
               key="compare"
-              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0.2, clipPath: "inset(0 0 82% 0 round 1.25rem)", filter: "blur(5px)" }
+              }
+              animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
               transition={transition}
             >
               <PackageComparisonDeck region={region} />
@@ -326,15 +327,19 @@ export function PackageSelector() {
           ) : activePackage ? (
             <motion.div
               key={activePackage.slug}
-              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 28, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              initial={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0.2, clipPath: "inset(0 0 76% 0 round 1rem)", filter: "blur(4px)" }
+              }
+              animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
               transition={
                 prefersReducedMotion
                   ? { duration: 0 }
                   : {
                       opacity: { duration: 0.14, ease: [0.4, 0, 1, 1] },
-                      y: { type: "spring", stiffness: 170, damping: 24 },
-                      scale: { type: "spring", stiffness: 170, damping: 24 },
+                      clipPath: { duration: 0.52, ease: [0.16, 1, 0.3, 1] },
+                      filter: { duration: 0.38, ease: [0.16, 1, 0.3, 1] },
                     }
               }
               data-package-card="true"

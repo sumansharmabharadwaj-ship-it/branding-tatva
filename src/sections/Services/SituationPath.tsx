@@ -239,9 +239,17 @@ export function SituationPath() {
                 key={displayed}
                 role="tabpanel"
                 aria-labelledby={`situation-tab-${displayed}`}
-                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+                initial={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0.18, clipPath: "inset(0 0 74% 0 round 1rem)", filter: "blur(4px)" }
+                }
+                animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0.12, clipPath: "inset(0 0 0 76% round 1rem)", filter: "blur(4px)" }
+                }
                 transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
                 data-situation-detail="true"
                 className="mt-2.5 rounded-[1.3rem] border-t-2 p-4 backdrop-blur-xl"
@@ -284,10 +292,6 @@ export function SituationPath() {
                   aria-pressed={isCommitted}
                   data-situation-preview={isActive && !isCommitted ? "true" : undefined}
                   onClick={() => pick(option.id)}
-                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: 14 }}
-                  whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-                  transition={{ duration: 0.35, delay: index * 0.07, ease: EASE }}
                   className="group grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:gap-5 sm:py-7"
                 >
                   <span
@@ -320,9 +324,17 @@ export function SituationPath() {
             {displayedPackage ? (
               <motion.div
                 key={displayed}
-                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
+                initial={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0.18, clipPath: "inset(0 0 74% 0 round 1rem)", filter: "blur(4px)" }
+                }
+                animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0.12, clipPath: "inset(0 0 0 76% round 1rem)", filter: "blur(4px)" }
+                }
                 transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
                 data-situation-detail="true"
                 className="mt-5 rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
