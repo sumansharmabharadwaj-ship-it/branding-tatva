@@ -165,6 +165,7 @@ export function HomeQuestionsScene() {
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const [carriedLens, setCarriedLens] = useState<HomeStudioLens | null>(null);
+  const [previewLens, setPreviewLens] = useState<HomeStudioLens | null>(null);
   const decisions = useMemo(
     () => QUESTIONS.map((item) => ({
       ...item,
@@ -177,12 +178,14 @@ export function HomeQuestionsScene() {
   const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const active = decisions[activeIndex] ?? decisions[0];
   const matchedToSituation = carriedSituation !== null && SITUATION_TO_QUESTION[carriedSituation] === activeIndex;
-  const lensReading = carriedLens
-    ? LENS_READINGS[carriedLens.name][active.id]
+  const activeLens = previewLens ?? carriedLens;
+  const isLensPreviewing = previewLens !== null && previewLens.name !== carriedLens?.name;
+  const lensReading = activeLens
+    ? LENS_READINGS[activeLens.name][active.id]
     : null;
   const sceneStyle = {
     "--question-progress": (activeIndex + 1) / decisions.length,
-    "--question-lens-accent": carriedLens?.accent ?? "#9e672b",
+    "--question-lens-accent": activeLens?.accent ?? "#9e672b",
   } as CSSProperties;
 
   useEffect(() => {
@@ -233,6 +236,7 @@ export function HomeQuestionsScene() {
     function onStudioLens(event: Event) {
       const detail = (event as CustomEvent<HomeStudioLensDetail>).detail;
       setCarriedLens(detail?.lens ?? null);
+      setPreviewLens(null);
       publishHomeQuestionChoice(null);
     }
 
@@ -240,6 +244,7 @@ export function HomeQuestionsScene() {
       const detail = (event as CustomEvent<HomeMethodDecisionDetail>).detail;
       if (detail?.decision?.origin !== "method_selection") return;
       setCarriedLens(null);
+      setPreviewLens(null);
       clearHomeStudioLens();
       publishHomeQuestionChoice(null);
     }
@@ -293,10 +298,11 @@ export function HomeQuestionsScene() {
 
   function chooseLens(
     lens: HomeStudioLens,
+    persist = true,
     direction?: SelectionDirection,
   ) {
-    const currentIndex = carriedLens
-      ? HOME_STUDIO_LENSES.findIndex((option) => option.name === carriedLens.name)
+    const currentIndex = activeLens
+      ? HOME_STUDIO_LENSES.findIndex((option) => option.name === activeLens.name)
       : -1;
     const nextIndex = HOME_STUDIO_LENSES.findIndex((option) => option.name === lens.name);
     if (nextIndex !== currentIndex) {
@@ -304,11 +310,26 @@ export function HomeQuestionsScene() {
         currentIndex < 0 || nextIndex > currentIndex ? "forward" : "backward"
       );
     }
+    if (!persist) {
+      setPreviewLens(lens);
+      return;
+    }
     setCarriedLens(lens);
+    setPreviewLens(null);
     publishHomeStudioLens(lens);
     publishHomeQuestionChoice(
       toQuestionChoice(decisions[committedIndex] ?? decisions[0], lens),
     );
+  }
+
+  function clearLensPreview() {
+    if (!previewLens) return;
+    const previewIndex = HOME_STUDIO_LENSES.findIndex((lens) => lens.name === previewLens.name);
+    const committedLensIndex = carriedLens
+      ? HOME_STUDIO_LENSES.findIndex((lens) => lens.name === carriedLens.name)
+      : -1;
+    lensDirectionRef.current = committedLensIndex < previewIndex ? "backward" : "forward";
+    setPreviewLens(null);
   }
 
   function carryQuestionForward() {
@@ -350,7 +371,7 @@ export function HomeQuestionsScene() {
         : undefined;
     const nextLens = HOME_STUDIO_LENSES[next];
     if (!nextLens) return;
-    chooseLens(nextLens, direction);
+    chooseLens(nextLens, true, direction);
     document.getElementById(`question-lens-${next}`)?.focus();
   }
 
@@ -360,7 +381,7 @@ export function HomeQuestionsScene() {
       aria-labelledby="home-questions-title"
       data-question-state={active.id}
       data-question-preview={isPreviewing ? active.id : undefined}
-      data-question-lens={carriedLens?.name.toLowerCase()}
+      data-question-lens={activeLens?.name.toLowerCase()}
       style={sceneStyle}
     >
       <BackgroundVideo
@@ -443,7 +464,7 @@ export function HomeQuestionsScene() {
               animate="active"
               exit={reducedMotion ? undefined : "exit"}
               transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}
-              aria-live={isPreviewing ? "off" : "polite"}
+              aria-live={isPreviewing || isLensPreviewing ? "off" : "polite"}
             >
               <div className="questions-editorial__answer-index">
                 <span>{isPreviewing ? "Preview" : active.label}</span>
@@ -460,21 +481,32 @@ export function HomeQuestionsScene() {
                 <strong>{active.signal}</strong>
               </div>
 
-              <div className="questions-editorial__lens-reader">
+              <div
+                className="questions-editorial__lens-reader"
+                data-lens-preview={isLensPreviewing ? activeLens?.name.toLowerCase() : undefined}
+                onPointerLeave={(event) => {
+                  if (event.pointerType === "mouse") clearLensPreview();
+                }}
+              >
                 <div className="questions-editorial__lens-toolbar">
                   <span>Read this answer through</span>
                   <div role="group" aria-label="Read the answer through a studio lens">
                     {HOME_STUDIO_LENSES.map((lens, index) => {
-                      const selected = lens.name === carriedLens?.name;
+                      const displayed = lens.name === activeLens?.name;
+                      const committed = lens.name === carriedLens?.name;
                       return (
                         <button
                           key={lens.name}
                           id={`question-lens-${index}`}
                           type="button"
-                          aria-pressed={selected}
-                          data-lens-selected={selected ? "true" : undefined}
+                          aria-pressed={committed}
+                          data-lens-selected={displayed ? "true" : undefined}
+                          data-lens-committed={committed ? "true" : undefined}
                           style={{ "--lens-choice-accent": lens.accent } as CSSProperties}
                           onClick={() => chooseLens(lens)}
+                          onPointerEnter={(event) => {
+                            if (event.pointerType === "mouse") chooseLens(lens, false);
+                          }}
                           onKeyDown={(event) => onLensKeyDown(event, index)}
                         >
                           {lens.name}
@@ -490,7 +522,7 @@ export function HomeQuestionsScene() {
                   custom={lensDirectionRef.current}
                 >
                   <motion.div
-                    key={carriedLens ? `${carriedLens.name}-${active.id}` : `open-${active.id}`}
+                    key={activeLens ? `${activeLens.name}-${active.id}` : `open-${active.id}`}
                     className="questions-editorial__lens-reading"
                     data-home-selection-direction={lensDirectionRef.current}
                     custom={lensDirectionRef.current}
@@ -501,8 +533,8 @@ export function HomeQuestionsScene() {
                     transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE }}
                   >
                     <small>
-                      {carriedLens
-                        ? `${carriedLens.name} asks · ${carriedLens.question}`
+                      {activeLens
+                        ? `${activeLens?.name} asks · ${activeLens?.question}`
                         : "One answer · three useful readings"}
                     </small>
                     <strong>

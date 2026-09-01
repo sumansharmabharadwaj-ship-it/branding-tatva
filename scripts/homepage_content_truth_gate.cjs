@@ -65,8 +65,8 @@ assert(!faqs.includes("Brand Beginning work") && !faqs.includes("Brand Elevation
 assert(faqs.includes("The exact implementation depends on the agreed scope."), "Homepage practical answers overstate implementation beyond the agreed scope.");
 assert(!studio.includes("↗"), "Studio proof uses an external-link arrow for an internal route.");
 assert(studio.includes('href="#decision"') && studio.includes("Carry {active.name} into your question") && studio.includes("publishHomeStudioLens"), "Studio no longer hands its active discipline into the visitor's practical question.");
-assert(questions.includes("HOME_STUDIO_LENS_EVENT") && questions.includes("carriedLens.question"), "Practical questions no longer receive the active studio lens.");
-assert(questions.includes("LENS_READINGS") && questions.includes('aria-pressed={selected}') && questions.includes("publishHomeStudioLens(lens)"), "Practical answers no longer let visitors apply or change a studio lens.");
+assert(questions.includes("HOME_STUDIO_LENS_EVENT") && questions.includes("const activeLens = previewLens ?? carriedLens") && questions.includes("activeLens?.question"), "Practical questions no longer receive or preview the active studio lens.");
+assert(questions.includes("LENS_READINGS") && questions.includes('aria-pressed={committed}') && questions.includes("publishHomeStudioLens(lens)"), "Practical answers no longer let visitors deliberately apply or change a studio lens.");
 assert(questions.includes("HOME_METHOD_DECISION_EVENT") && questions.includes('origin !== "method_selection"'), "A changed working-method decision can leave a stale studio lens attached to the final question.");
 assert(questions.includes("resetDecisionThread = false") && questions.includes("applySituation(detail?.situation ?? null, true)"), "Reloading a known path clears the visitor's restored question before the final invitation can read it.");
 assert(!paths.includes("↗"), "Service path uses an external-link arrow for an internal route.");

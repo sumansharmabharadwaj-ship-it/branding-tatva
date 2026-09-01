@@ -225,9 +225,12 @@ assert(questions.includes("const committed = index === committedIndex"), "Practi
 assert(questions.includes("aria-selected={committed}"), "Practical-answer hover changes assistive selection state.");
 assert(questions.includes("tabIndex={committed ? 0 : -1}"), "Practical-answer hover moves the keyboard tab stop.");
 assert(questions.includes("variants={QUESTION_ANSWER_VARIANTS}") && questions.includes("custom={selectionDirectionRef.current}") && questions.includes('exit={reducedMotion ? undefined : "exit"}'), "Practical answers no longer enter and leave in the visitor's chosen direction.");
-assert(questions.includes('aria-live={isPreviewing ? "off" : "polite"}'), "Practical-answer hover previews can interrupt assistive reading.");
+assert(questions.includes('aria-live={isPreviewing || isLensPreviewing ? "off" : "polite"}'), "Practical-answer or lens hover previews can interrupt assistive reading.");
 assert(questions.includes("function onLensKeyDown") && questions.includes("question-lens-${next}"), "Practical-answer lenses no longer support directional keyboard reading.");
 assert(questions.includes("variants={LENS_READING_VARIANTS}") && questions.includes("custom={lensDirectionRef.current}") && questions.includes('data-home-selection-direction={lensDirectionRef.current}'), "Practical-answer lens readings no longer share a reversible camera handoff.");
+assert(questions.includes("const activeLens = previewLens ?? carriedLens") && questions.includes("function clearLensPreview"), "Practical-answer lens previews can overwrite or strand the committed studio lens.");
+assert(questions.includes('event.pointerType === "mouse"') && questions.includes("chooseLens(lens, false)"), "Practical-answer lens previews can consume touch gestures.");
+assert(questions.includes("aria-pressed={committed}") && questions.includes("data-lens-selected={displayed"), "Practical-answer lens previews replace the committed assistive selection.");
 assert(finalInvitation.includes('calendlyHrefForServicesPackage(`${site.calendlyUrl}/30min`, selectedPackage)'), "Closing invitation adds an avoidable page or calendar choice before the exact session.");
 assert(finalInvitation.includes('event="calendar_opened"'), "Direct homepage booking intent is not measured as a calendar open.");
 assert(finalInvitation.includes('target="_blank"') && finalInvitation.includes('rel="noopener noreferrer"'), "Closing invitation does not disclose a safe external calendar handoff.");
