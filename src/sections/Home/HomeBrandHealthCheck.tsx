@@ -21,6 +21,7 @@ import { useEffect, useReducer, useRef, type KeyboardEvent, type PointerEvent } 
 
 type Diagnosis = HomeDiagnosis;
 type ResultDiagnosis = HomeDiagnosis | "mixed";
+type DiagnosticDirection = "forward" | "backward";
 
 type Choice = {
   label: string;
@@ -155,12 +156,29 @@ const RESULTS: Record<
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+const DIAGNOSTIC_SCENE_VARIANTS = {
+  enter: (direction: DiagnosticDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? 18 : -18,
+    y: 6,
+    filter: "blur(4px)",
+  }),
+  center: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  exit: (direction: DiagnosticDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? -12 : 12,
+    y: -4,
+    filter: "blur(3px)",
+  }),
+};
+
 export function HomeBrandHealthCheck() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const focusRequestedRef = useRef(false);
+  const diagnosticDirectionRef = useRef<DiagnosticDirection>("forward");
   const orbitPointerBoundsRef = useRef<DOMRect | null>(null);
   const orbitPointerFrameRef = useRef<number | null>(null);
   const orbitPointerMotionRef = useRef<{
@@ -266,6 +284,7 @@ export function HomeBrandHealthCheck() {
     if (selected === null) return;
 
     if (step < QUESTIONS.length - 1) {
+      diagnosticDirectionRef.current = "forward";
       focusRequestedRef.current = true;
       dispatch({ type: "continue" });
       return;
@@ -285,18 +304,21 @@ export function HomeBrandHealthCheck() {
       result: nextDiagnosis,
       diagnosis: nextDiagnosis,
     });
+    diagnosticDirectionRef.current = "forward";
     focusRequestedRef.current = true;
     dispatch({ type: "complete", answers: committedAnswers });
   }
 
   function back() {
     if (step === 0) return;
+    diagnosticDirectionRef.current = "backward";
     focusRequestedRef.current = true;
     dispatch({ type: "back" });
   }
 
   function reviewAnswers() {
     clearServicesSituation();
+    diagnosticDirectionRef.current = "backward";
     focusRequestedRef.current = true;
     dispatch({ type: "review" });
   }
@@ -395,7 +417,11 @@ export function HomeBrandHealthCheck() {
           {done ? result.title : `Question ${step + 1} of ${QUESTIONS.length}. ${active.prompt}`}
         </p>
 
-        <AnimatePresence mode="sync" initial={false}>
+        <AnimatePresence
+          mode="sync"
+          initial={false}
+          custom={diagnosticDirectionRef.current}
+        >
           {done ? (
             <motion.div
               ref={resultRef}
@@ -405,8 +431,12 @@ export function HomeBrandHealthCheck() {
               role="region"
               aria-labelledby="brand-orbit-result-title"
               tabIndex={-1}
-              initial={reducedMotion ? false : { opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
+              data-home-selection-direction={diagnosticDirectionRef.current}
+              custom={diagnosticDirectionRef.current}
+              variants={DIAGNOSTIC_SCENE_VARIANTS}
+              initial={reducedMotion ? false : "enter"}
+              animate="center"
+              exit={reducedMotion ? undefined : "exit"}
               transition={{ duration: reducedMotion ? 0 : 0.7, ease: EASE }}
             >
               <div className="brand-orbit__result-copy">
@@ -439,9 +469,12 @@ export function HomeBrandHealthCheck() {
               key={active.prompt}
               className="brand-orbit__question"
               data-home-reading-plane
-              initial={reducedMotion ? false : { opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reducedMotion ? undefined : { opacity: 0, y: -18 }}
+              data-home-selection-direction={diagnosticDirectionRef.current}
+              custom={diagnosticDirectionRef.current}
+              variants={DIAGNOSTIC_SCENE_VARIANTS}
+              initial={reducedMotion ? false : "enter"}
+              animate="center"
+              exit={reducedMotion ? undefined : "exit"}
               transition={{ duration: reducedMotion ? 0 : 0.58, ease: EASE }}
             >
               <div className="brand-orbit__prompt">

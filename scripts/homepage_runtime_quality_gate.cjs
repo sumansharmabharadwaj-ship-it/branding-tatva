@@ -111,6 +111,9 @@ assert(!diagnostic.includes("<video"), "Diagnostic restored a short generated fi
 assert(diagnostic.includes("bt-home-brand-diagnostic-flowerwater-v1.png"), "Diagnostic living landscape has no stable still-art base.");
 assert(!diagnostic.includes("void video.play()"), "Diagnostic film bypasses the shared one-film playback budget.");
 assert(diagnostic.includes("active.choices[selected].centre"), "Diagnostic choice does not reveal the strategic implication before continuing.");
+assert(diagnostic.includes('diagnosticDirectionRef.current = "forward"') && diagnostic.includes('diagnosticDirectionRef.current = "backward"'), "Diagnostic next, back, result, and review actions no longer publish their direction.");
+assert(diagnostic.includes("variants={DIAGNOSTIC_SCENE_VARIANTS}") && diagnostic.includes("custom={diagnosticDirectionRef.current}") && diagnostic.includes('exit={reducedMotion ? undefined : "exit"}'), "Diagnostic questions and result no longer share one reversible camera handoff.");
+assert(diagnostic.includes('data-home-selection-direction={diagnosticDirectionRef.current}'), "Diagnostic reading planes no longer expose the visitor's chosen direction.");
 assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused diagnostic result has no visible treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action a:focus-visible"), "Diagnostic result links have no explicit focus treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action button:focus-visible"), "Diagnostic result buttons have no explicit focus treatment.");
