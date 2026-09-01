@@ -36,10 +36,10 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
-    heroImage: "/images/generated/insights/client-proof-balance.webp",
-    heroVideo: "/videos/generated/insights/client-proof-balance.mp4",
+    heroImage: "/images/generated/insights-v3/client-proof-architecture.webp",
+    heroVideo: "/videos/generated/insights-v3/client-proof-architecture.mp4",
     heroImageAlt:
-      "A brass balance weighing blank claim papers against fitted evidence, a calibrated weight, and a growth ring sample",
+      "A positioning claim connected to five structured layers of client evidence",
     keyTakeaways: [
       "Proof should answer a buyer's doubt about the position, not merely show that someone liked the service.",
       "Choose cases for strategic relevance and diagnostic detail rather than client fame alone.",

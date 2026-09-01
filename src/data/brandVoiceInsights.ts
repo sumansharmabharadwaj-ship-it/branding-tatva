@@ -15,9 +15,9 @@ export const brandVoiceInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/generated/insights/brand-voice-resonators.webp",
-    heroVideo: "/videos/generated/insights/brand-voice-resonators.mp4",
-    heroImageAlt: "Three indigo ceramic resonators calibrated by brass tuning forks on one shared tone bar",
+    heroImage: "/images/generated/insights-v3/brand-voice-rules-calibration.webp",
+    heroVideo: "/videos/generated/insights-v3/brand-voice-rules-calibration.mp4",
+    heroImageAlt: "Abstract voice traits calibrated into practical writing rules and examples",
     keyTakeaways: [
       "Voice traits become useful only when they change an editing decision.",
       "Define the reader relationship before choosing adjectives such as warm, bold, or expert.",

@@ -24,10 +24,10 @@ export const consultingPositioningInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/generated/insights/consulting-positioning-aperture.webp",
-    heroVideo: "/videos/generated/insights/consulting-positioning-aperture.mp4",
+    heroImage: "/images/generated/insights-v3/consulting-position-focus-and-expansion.webp",
+    heroVideo: "/videos/generated/insights-v3/consulting-position-focus-and-expansion.mp4",
     heroImageAlt:
-      "An adjustable brass aperture focusing a useful cluster while a wider field of consulting tools remains visible",
+      "One focused consulting position anchoring a broad fan of connected service capabilities",
     keyTakeaways: [
       "A consulting position should narrow the buying reason before it narrows every possible scope of work.",
       "Customer situation is often more useful than industry alone when defining a consulting niche.",

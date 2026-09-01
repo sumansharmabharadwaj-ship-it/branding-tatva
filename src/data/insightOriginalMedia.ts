@@ -58,9 +58,9 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "customer-journey-thresholds",
     "A continuous thread passing through wood stone glass and linen thresholds",
   ),
-  "how-to-position-a-consulting-business": media(
-    "consulting-positioning-aperture",
-    "A wide wooden aperture holding a focused garden path within its frame",
+  "how-to-position-a-consulting-business": topicMedia(
+    "consulting-position-focus-and-expansion",
+    "One focused consulting position anchoring a broad fan of connected service capabilities",
   ),
   "measure-brand-recall-limited-budget": media(
     "recall-measurement-tabletop-test",
@@ -94,9 +94,9 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "refresh-rebrand-conservation",
     "A ceramic vessel held between restoration and complete remaking",
   ),
-  "turn-client-proof-into-positioning-advantage": media(
-    "client-proof-balance",
-    "A claim and a collection of concrete evidence held in exact balance",
+  "turn-client-proof-into-positioning-advantage": topicMedia(
+    "client-proof-architecture",
+    "A positioning claim connected to five structured layers of client evidence",
   ),
   "brand-architecture-service-businesses": media(
     "brand-architecture-service-system",
@@ -110,25 +110,25 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "interview-evidence-to-positioning-brief",
     "Customer interview evidence cards connected into one structured positioning brief",
   ),
-  "service-line-naming-strategy": media(
-    "service-line-naming-cabinet",
-    "Many differently sized drawers held within one coherent wooden cabinet",
+  "service-line-naming-strategy": topicMedia(
+    "service-name-family-system",
+    "Five clearly related service names held under one coherent parent system",
   ),
   "competitor-research-brand-strategy-without-copying-category": media(
     "competitor-research-observation",
     "Related leaf specimens studied through glass beside a blank field notebook",
   ),
-  "brand-voice-guidelines-writers-can-use": media(
-    "brand-voice-resonators",
-    "Five material resonators aligned to one shared frequency line",
+  "brand-voice-guidelines-writers-can-use": topicMedia(
+    "brand-voice-rules-calibration",
+    "Abstract voice traits calibrated into practical writing rules and examples",
   ),
   "brand-discovery-workshop-questions": media(
     "discovery-workshop-decision-table",
     "Three chosen material decisions emerging from a table of blank question cards",
   ),
-  "homepage-messaging-service-businesses": media(
-    "homepage-first-screen",
-    "A single architectural threshold framing one clear destination",
+  "homepage-messaging-service-businesses": topicMedia(
+    "homepage-message-decision-sequence",
+    "A clear first screen leading into an ordered five stage homepage message sequence",
   ),
   "service-page-messaging-strategy": media(
     "service-page-confident-choice",

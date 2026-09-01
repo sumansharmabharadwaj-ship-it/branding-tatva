@@ -24,10 +24,10 @@ export const homepageMessagingInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",
-    heroImage: "/images/generated/insights/homepage-first-screen.webp",
-    heroVideo: "/videos/generated/insights/homepage-first-screen.mp4",
+    heroImage: "/images/generated/insights-v3/homepage-message-decision-sequence.webp",
+    heroVideo: "/videos/generated/insights-v3/homepage-message-decision-sequence.mp4",
     heroImageAlt:
-      "An illuminated entrance displaying three blank message blocks while an indigo path leads through the first threshold",
+      "A clear first screen leading into an ordered five stage homepage message sequence",
     keyTakeaways: [
       "The first screen should orient before it persuades.",
       "A homepage works as a sequence of customer questions rather than a stack of company facts.",

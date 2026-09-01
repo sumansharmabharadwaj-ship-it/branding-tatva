@@ -24,10 +24,10 @@ export const serviceNamingInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/generated/insights/service-line-naming-cabinet.webp",
-    heroVideo: "/videos/generated/insights/service-line-naming-cabinet.mp4",
+    heroImage: "/images/generated/insights-v3/service-name-family-system.webp",
+    heroVideo: "/videos/generated/insights-v3/service-name-family-system.mp4",
     heroImageAlt:
-      "Five service drawers with shared terracotta pulls held inside one walnut cabinet",
+      "Five clearly related service names held under one coherent parent system",
     keyTakeaways: [
       "A service name is primarily a navigation and memory tool, rather than a request for a new visual identity.",
       "Use descriptive names when category clarity matters more than novelty and distinctive names when an offer genuinely needs recall of its own.",
