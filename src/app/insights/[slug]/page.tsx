@@ -266,6 +266,7 @@ export default async function InsightArticlePage({ params }: Props) {
       <main
         id="main-content"
         className="insight-article-page"
+        data-article-slug={post.slug}
         style={{ "--article-accent": color } as CSSProperties}
       >
         <InsightArticleCamera />

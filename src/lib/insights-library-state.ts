@@ -6,6 +6,7 @@ export type InsightsLibraryState = {
   topicSlug: string;
   folio: number;
   mobileCardIndex?: number;
+  selectedArticleSlug?: string;
 };
 
 type StoredInsightsLibraryState = {
@@ -33,7 +34,11 @@ function isInsightsLibraryState(
       (typeof state.mobileCardIndex === "number" &&
         Number.isInteger(state.mobileCardIndex) &&
         state.mobileCardIndex >= 0 &&
-        state.mobileCardIndex <= 2))
+        state.mobileCardIndex <= 2)) &&
+    (state.selectedArticleSlug === undefined ||
+      (typeof state.selectedArticleSlug === "string" &&
+        state.selectedArticleSlug.length > 0 &&
+        state.selectedArticleSlug.length <= 160))
   );
 }
 

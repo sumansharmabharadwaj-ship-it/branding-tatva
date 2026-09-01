@@ -39,8 +39,11 @@ export function InsightCardMedia({
     const touchFirst = window.matchMedia("(hover: none), (pointer: coarse)");
     let pointerFrame = 0;
     let scrollFrame = 0;
+    let velocityFrame = 0;
+    let scrollVelocity = 0;
     let previousScrollY = window.scrollY;
     let previousScrollTime = performance.now();
+    let lastVelocityUpdate = previousScrollTime;
 
     activeCard.dataset.cardMotion = "ready";
     activeCard.dataset.cardRevealed = "false";
@@ -65,6 +68,8 @@ export function InsightCardMedia({
       const elapsed = Math.max(16, currentTime - previousScrollTime);
       const distance = currentScrollY - previousScrollY;
       const velocity = clamp(Math.abs(distance) / elapsed / 1.35);
+      scrollVelocity = velocity;
+      lastVelocityUpdate = currentTime;
 
       activeCard.style.setProperty("--card-scroll-focus", focus.toFixed(3));
       activeCard.style.setProperty(
@@ -77,14 +82,42 @@ export function InsightCardMedia({
       );
       activeCard.style.setProperty(
         "--card-scroll-velocity",
-        velocity.toFixed(3),
+        scrollVelocity.toFixed(3),
       );
       activeCard.dataset.cardFocus = focus >= 0.46 ? "true" : "false";
       activeCard.dataset.cardDirection = distance < 0 ? "back" : "forward";
+      activeCard.dataset.cardScrollState =
+        scrollVelocity > 0.04 ? "moving" : "settled";
 
       previousScrollY = currentScrollY;
       previousScrollTime = currentTime;
       scrollFrame = 0;
+      requestVelocitySettle();
+    }
+
+    function settleVelocity() {
+      const idleFor = performance.now() - lastVelocityUpdate;
+      if (idleFor < 72) {
+        velocityFrame = requestAnimationFrame(settleVelocity);
+        return;
+      }
+
+      scrollVelocity *= 0.78;
+      if (scrollVelocity < 0.012) scrollVelocity = 0;
+      activeCard.style.setProperty(
+        "--card-scroll-velocity",
+        scrollVelocity.toFixed(3),
+      );
+      activeCard.dataset.cardScrollState =
+        scrollVelocity > 0 ? "moving" : "settled";
+
+      velocityFrame =
+        scrollVelocity > 0 ? requestAnimationFrame(settleVelocity) : 0;
+    }
+
+    function requestVelocitySettle() {
+      if (velocityFrame) return;
+      velocityFrame = requestAnimationFrame(settleVelocity);
     }
 
     function requestScrollRender() {
@@ -223,10 +256,12 @@ export function InsightCardMedia({
       window.removeEventListener(CARD_FILM_REQUEST_EVENT, handleFilmRequest);
       if (pointerFrame) cancelAnimationFrame(pointerFrame);
       if (scrollFrame) cancelAnimationFrame(scrollFrame);
+      if (velocityFrame) cancelAnimationFrame(velocityFrame);
       delete activeCard.dataset.cardMotion;
       delete activeCard.dataset.cardRevealed;
       delete activeCard.dataset.cardFocus;
       delete activeCard.dataset.cardDirection;
+      delete activeCard.dataset.cardScrollState;
       activeCard.style.removeProperty("--card-lens-x");
       activeCard.style.removeProperty("--card-lens-y");
       activeCard.style.removeProperty("--card-image-x");

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { readInsightsLibraryState } from "@/lib/insights-library-state";
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 
@@ -15,6 +16,28 @@ export function InsightArticleCamera() {
     const articleRoot = root;
     const hero = articleRoot.querySelector<HTMLElement>(".insight-article-hero");
     const observedChapters = new Set<HTMLElement>();
+    let arrivalStartTimer = 0;
+    let arrivalReleaseTimer = 0;
+
+    const libraryState = readInsightsLibraryState();
+    if (
+      !prefersReducedMotion &&
+      libraryState?.selectedArticleSlug === articleRoot.dataset.articleSlug
+    ) {
+      articleRoot.dataset.articleArrival = "opening";
+      arrivalStartTimer = window.setTimeout(() => {
+        articleRoot.dataset.articleArrival = "settled";
+      }, 48);
+      arrivalReleaseTimer = window.setTimeout(() => {
+        delete articleRoot.dataset.articleArrival;
+      }, 1180);
+    }
+
+    function clearArticleArrival() {
+      if (arrivalStartTimer) window.clearTimeout(arrivalStartTimer);
+      if (arrivalReleaseTimer) window.clearTimeout(arrivalReleaseTimer);
+      delete articleRoot.dataset.articleArrival;
+    }
 
     function readChapters() {
       const chapters = Array.from(
@@ -54,16 +77,52 @@ export function InsightArticleCamera() {
 
       return () => {
         reducedMotionObserver.disconnect();
+        clearArticleArrival();
         articleRoot.style.removeProperty("--article-hero-progress");
         articleRoot.style.removeProperty("--article-scroll-progress");
         articleRoot.style.removeProperty("--article-reading-progress");
+        delete articleRoot.dataset.readingMotion;
         observedChapters.forEach(clearChapterMotion);
       };
     }
 
     let frame = 0;
     let pointerFrame = 0;
+    let velocityFrame = 0;
+    let readingVelocity = 0;
+    let lastVelocityUpdate = performance.now();
     let previousY = window.scrollY;
+
+    function settleVelocity() {
+      const idleFor = performance.now() - lastVelocityUpdate;
+      if (idleFor < 84) {
+        velocityFrame = requestAnimationFrame(settleVelocity);
+        return;
+      }
+
+      readingVelocity *= 0.8;
+      if (readingVelocity < 0.012) readingVelocity = 0;
+      articleRoot.style.setProperty(
+        "--reading-velocity",
+        readingVelocity.toFixed(3),
+      );
+      readChapters().forEach((chapter) => {
+        chapter.style.setProperty(
+          "--chapter-velocity",
+          readingVelocity.toFixed(3),
+        );
+      });
+      articleRoot.dataset.readingMotion =
+        readingVelocity > 0 ? "moving" : "settled";
+
+      velocityFrame =
+        readingVelocity > 0 ? requestAnimationFrame(settleVelocity) : 0;
+    }
+
+    function requestVelocitySettle() {
+      if (velocityFrame) return;
+      velocityFrame = requestAnimationFrame(settleVelocity);
+    }
 
     function render() {
       const viewportHeight = window.innerHeight;
@@ -71,6 +130,8 @@ export function InsightArticleCamera() {
       const distanceTravelled = currentY - previousY;
       const direction = distanceTravelled >= 0 ? "forward" : "back";
       const velocity = clamp(Math.abs(distanceTravelled) / 52);
+      readingVelocity = velocity;
+      lastVelocityUpdate = performance.now();
       const documentTravel = Math.max(
         1,
         document.documentElement.scrollHeight - viewportHeight,
@@ -97,7 +158,12 @@ export function InsightArticleCamera() {
       );
 
       articleRoot.dataset.readingDirection = direction;
-      articleRoot.style.setProperty("--reading-velocity", velocity.toFixed(3));
+      articleRoot.dataset.readingMotion =
+        readingVelocity > 0.04 ? "moving" : "settled";
+      articleRoot.style.setProperty(
+        "--reading-velocity",
+        readingVelocity.toFixed(3),
+      );
       articleRoot.style.setProperty(
         "--article-scroll-progress",
         articleProgress.toFixed(4),
@@ -124,13 +190,17 @@ export function InsightArticleCamera() {
 
         chapter.style.setProperty("--chapter-focus", focus.toFixed(3));
         chapter.style.setProperty("--chapter-progress", progress.toFixed(3));
-        chapter.style.setProperty("--chapter-velocity", velocity.toFixed(3));
+        chapter.style.setProperty(
+          "--chapter-velocity",
+          readingVelocity.toFixed(3),
+        );
         chapter.style.setProperty(
           "--chapter-shift",
           `${((1 - focus) * (direction === "forward" ? 18 : -12)).toFixed(2)}px`,
         );
         chapter.dataset.active = focus > 0.54 ? "true" : "false";
       });
+      requestVelocitySettle();
     }
 
     function renderPointer(event: PointerEvent) {
@@ -180,7 +250,10 @@ export function InsightArticleCamera() {
       document.removeEventListener("pointermove", requestPointerRender);
       if (frame) window.cancelAnimationFrame(frame);
       if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
+      if (velocityFrame) window.cancelAnimationFrame(velocityFrame);
+      clearArticleArrival();
       delete articleRoot.dataset.readingDirection;
+      delete articleRoot.dataset.readingMotion;
       articleRoot.style.removeProperty("--reading-velocity");
       articleRoot.style.removeProperty("--article-scroll-progress");
       articleRoot.style.removeProperty("--article-hero-progress");

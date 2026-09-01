@@ -5,8 +5,40 @@
 }
 
 .insight-article-hero {
+  position: relative;
   min-height: 100svh;
   background: #1f3a28;
+}
+
+.insight-article-hero::after {
+  position: absolute;
+  z-index: 24;
+  inset: 0;
+  background:
+    linear-gradient(
+      106deg,
+      #f4efe6 0%,
+      color-mix(in srgb, var(--article-accent) 34%, #f4efe6) 46%,
+      color-mix(in srgb, var(--article-accent) 72%, #27221e) 100%
+    );
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(102%, 0, 0);
+  will-change: transform;
+}
+
+.insight-article-page[data-article-arrival="opening"]
+  .insight-article-hero::after {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.insight-article-page[data-article-arrival="settled"]
+  .insight-article-hero::after {
+  opacity: 1;
+  transform: translate3d(102%, 0, 0);
+  transition: transform 920ms cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 .insight-article-hero > [data-background-video-stage="true"],
@@ -1085,6 +1117,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .insight-article-hero::after,
   .insight-article-hero > [data-background-video-stage="true"],
   .insight-article-hero > img,
   .insight-article-hero__content,
@@ -1151,12 +1184,17 @@
   .insight-reading-index__all a > span {
     transition-duration: 0.01ms;
   }
+
+  .insight-article-hero::after {
+    opacity: 0 !important;
+  }
 }
 
 /* Keep the in-site Reduced control behaviorally identical to the OS setting:
    no content may wait for a scroll reveal after motion is disabled. */
 :root[data-motion="reduced"] .insight-card-media__poster,
 :root[data-motion="reduced"] .insight-card-media__film,
+:root[data-motion="reduced"] .insight-article-hero::after,
 :root[data-motion="reduced"] .insight-article-section,
 :root[data-motion="reduced"] .insight-article-section::before,
 :root[data-motion="reduced"] .insight-article-section__kicker::after,
@@ -1181,6 +1219,10 @@
 :root[data-motion="reduced"] .insight-related-intent {
   filter: none !important;
   opacity: 1 !important;
+}
+
+:root[data-motion="reduced"] .insight-article-hero::after {
+  opacity: 0 !important;
 }
 
 :root[data-motion="reduced"] .insight-article-section > div > p,

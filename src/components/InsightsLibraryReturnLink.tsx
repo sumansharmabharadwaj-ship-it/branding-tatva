@@ -10,16 +10,25 @@ export function InsightsLibraryReturnLink({
   className?: string;
 }) {
   const [href, setHref] = useState("/insights");
+  const [folio, setFolio] = useState<number>();
 
   useEffect(() => {
-    if (readInsightsLibraryState()) {
+    const libraryState = readInsightsLibraryState();
+    if (libraryState) {
       setHref("/insights#insights-library-scene");
+      setFolio(libraryState.folio + 1);
     }
   }, []);
 
   return (
-    <Link href={href} className={className}>
-      Insights
+    <Link
+      href={href}
+      className={className}
+      aria-label={
+        folio ? `Return to the Insights library, folio ${folio}` : undefined
+      }
+    >
+      {folio ? `Insights · folio ${folio}` : "Insights"}
     </Link>
   );
 }

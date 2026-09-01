@@ -1539,19 +1539,19 @@
 }
 
 .insight-card:is(:hover, :focus-visible) .insight-card__date {
-  transform: translate3d(0.18rem, 0, 0);
+  transform: translate3d(0.12rem, 0, 0);
 }
 
 .insight-card:is(:hover, :focus-visible) .insight-card__title {
-  transform: translate3d(0.34rem, 0, 0);
+  transform: translate3d(0.22rem, 0, 0);
 }
 
 .insight-card:is(:hover, :focus-visible) .insight-card__decision-copy {
-  transform: translate3d(0.5rem, 0, 0);
+  transform: translate3d(0.32rem, 0, 0);
 }
 
 .insight-card:is(:hover, :focus-visible) .insight-card__footer {
-  transform: translate3d(0.66rem, 0, 0);
+  transform: translate3d(0.42rem, 0, 0);
 }
 
 .insight-card-media {
@@ -1742,12 +1742,15 @@
 
 .insights-library .insight-card__open {
   display: inline-flex;
+  min-width: max-content;
   flex-shrink: 0;
   align-items: center;
   gap: 0.35rem;
   font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  white-space: nowrap;
   text-transform: uppercase;
 }
 

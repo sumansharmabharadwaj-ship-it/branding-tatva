@@ -521,6 +521,7 @@ export function InsightsExplorer({
         topicSlug,
         folio: activeFolio,
         mobileCardIndex: cardIndex,
+        selectedArticleSlug: post.slug,
       });
     }
 
