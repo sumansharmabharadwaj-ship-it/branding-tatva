@@ -2,11 +2,27 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight, Pause, Play, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+type SelectionDirection = "forward" | "backward";
+const COST_MOMENT_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? 16 : -16,
+    y: 8,
+    filter: "blur(3px)",
+  }),
+  active: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? -10 : 10,
+    y: -6,
+    filter: "blur(2px)",
+  }),
+};
 
 const COST_STAGES = [
   {
@@ -109,7 +125,7 @@ export function V4OpeningScene() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.12, ease: EASE }}
             >
-              Turn a growing business into a brand buyers{" "}
+              Turn a growing business into a brand buyers
             </motion.span>
             <motion.em
               initial={false}
@@ -177,6 +193,8 @@ export function V4OpeningScene() {
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const selectionDirectionRef = useRef<SelectionDirection>("forward");
+  const displayedIndexRef = useRef(0);
   const ambientCompleteRef = useRef(false);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.55, margin: "0px" });
@@ -186,6 +204,7 @@ export function V4HiddenCostScene() {
   const [sequencePaused, setSequencePaused] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const active = COST_STAGES[activeIndex];
+  displayedIndexRef.current = activeIndex;
   const sequenceComplete = ambientCompleteRef.current;
   const ambientSequencing =
     !prefersReducedMotion &&
@@ -222,6 +241,7 @@ export function V4HiddenCostScene() {
 
     const timer = window.setTimeout(
       () => {
+        rememberSelectionDirection(nextIndex, "forward");
         setCommittedIndex(nextIndex);
         setActiveIndex(nextIndex);
         if (nextIndex === COST_STAGES.length - 1) ambientCompleteRef.current = true;
@@ -232,8 +252,19 @@ export function V4HiddenCostScene() {
     return () => window.clearTimeout(timer);
   }, [ambientSequencing, committedIndex]);
 
-  function choose(index: number) {
+  function rememberSelectionDirection(
+    next: number,
+    direction?: SelectionDirection,
+  ) {
+    const current = displayedIndexRef.current;
+    if (next === current) return;
+    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
+    displayedIndexRef.current = next;
+  }
+
+  function choose(index: number, direction?: SelectionDirection) {
     const next = (index + COST_STAGES.length) % COST_STAGES.length;
+    rememberSelectionDirection(next, direction);
     ambientCompleteRef.current = true;
     setSequencePaused(false);
     setCommittedIndex(next);
@@ -241,16 +272,20 @@ export function V4HiddenCostScene() {
   }
 
   function preview(index: number) {
-    setActiveIndex((index + COST_STAGES.length) % COST_STAGES.length);
+    const next = (index + COST_STAGES.length) % COST_STAGES.length;
+    rememberSelectionDirection(next);
+    setActiveIndex(next);
   }
 
   function releasePreview() {
+    rememberSelectionDirection(committedIndex);
     setActiveIndex(committedIndex);
     setInteractionHeld(false);
   }
 
   function controlSequence() {
     if (ambientCompleteRef.current) {
+      rememberSelectionDirection(0, "forward");
       ambientCompleteRef.current = false;
       setSequencePaused(false);
       setCommittedIndex(0);
@@ -276,7 +311,12 @@ export function V4HiddenCostScene() {
     }
 
     event.preventDefault();
-    choose(next);
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
+      ? "forward"
+      : event.key === "ArrowLeft" || event.key === "ArrowUp"
+        ? "backward"
+        : undefined;
+    choose(next, direction);
     choiceRefs.current[next]?.focus();
   }
 
@@ -351,28 +391,38 @@ export function V4HiddenCostScene() {
             </h2>
           </div>
 
-          <motion.article
-            key={active.number}
-            className="cost-film__moment"
-            id="cost-film-active-panel"
-            role="tabpanel"
-            aria-labelledby={`cost-film-tab-${activeIndex}`}
-            data-home-reading-plane
-            onPointerEnter={(event) => {
-              if (event.pointerType === "mouse") setInteractionHeld(true);
-            }}
-            onPointerLeave={(event) => {
-              if (event.pointerType === "mouse") setInteractionHeld(false);
-            }}
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: EASE }}
+          <AnimatePresence
+            mode="sync"
+            initial={false}
+            custom={selectionDirectionRef.current}
           >
-            <p>{active.signal}</p>
-            <h3>{active.title}</h3>
-            <p>{active.body}</p>
-            <strong>{active.memory}</strong>
-          </motion.article>
+            <motion.article
+              key={active.number}
+              className="cost-film__moment"
+              id="cost-film-active-panel"
+              role="tabpanel"
+              aria-labelledby={`cost-film-tab-${activeIndex}`}
+              data-home-reading-plane
+              data-home-selection-direction={selectionDirectionRef.current}
+              custom={selectionDirectionRef.current}
+              variants={COST_MOMENT_VARIANTS}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse") setInteractionHeld(true);
+              }}
+              onPointerLeave={(event) => {
+                if (event.pointerType === "mouse") setInteractionHeld(false);
+              }}
+              initial={prefersReducedMotion ? false : "enter"}
+              animate="active"
+              exit={prefersReducedMotion ? undefined : "exit"}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: EASE }}
+            >
+              <p>{active.signal}</p>
+              <h3>{active.title}</h3>
+              <p>{active.body}</p>
+              <strong>{active.memory}</strong>
+            </motion.article>
+          </AnimatePresence>
         </div>
 
         <div className="cost-film__lower">

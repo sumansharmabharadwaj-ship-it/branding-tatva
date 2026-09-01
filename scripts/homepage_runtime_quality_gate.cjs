@@ -178,6 +178,8 @@ assert(cost.includes('if (event.pointerType !== "mouse") return;'), "Hidden-cost
 assert(cost.includes("onFocus={() => choose(index)}"), "Hidden-cost stages do not commit from keyboard focus.");
 assert(cost.includes("sequencePaused") && cost.includes("aria-label={sequenceAction}"), "Hidden-cost ambient sequencing gives visitors no explicit playback control.");
 assert(cost.includes("aria-selected={committed}") && cost.includes("tabIndex={committed ? 0 : -1}"), "Hidden-cost hover preview replaces the committed keyboard selection.");
+assert(cost.includes("variants={COST_MOMENT_VARIANTS}") && cost.includes("custom={selectionDirectionRef.current}") && cost.includes('exit={prefersReducedMotion ? undefined : "exit"}'), "Hidden-cost consequences no longer enter and leave through one directional camera transition.");
+assert(cost.includes('rememberSelectionDirection(nextIndex, "forward")') && cost.includes('rememberSelectionDirection(0, "forward")'), "Hidden-cost autoplay or replay can visually rewind the story.");
 assert(costStyles.includes("scaleX(var(--cost-progress))"), "Hidden cost has lost its accumulating memory trace.");
 assert(costStyles.includes('button[data-cost-state="past"]'), "Hidden cost no longer distinguishes remembered stages from upcoming stages.");
 assert(seamDirector.includes('window.addEventListener("scroll", schedule'), "Homepage seams no longer respond to visitor-controlled scroll.");
