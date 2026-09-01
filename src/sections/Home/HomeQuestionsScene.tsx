@@ -444,8 +444,9 @@ export function HomeQuestionsScene() {
                 href="#invitation"
                 data-section-jump-yield="true"
                 onClick={carryQuestionForward}
+                aria-label={`Bring the ${active.label.toLowerCase()} question to Suman`}
               >
-                Bring this question to Suman
+                Bring this {active.label.toLowerCase()} question to Suman
                 <ArrowDown size={16} strokeWidth={1.8} aria-hidden="true" />
               </Link>
             </motion.article>

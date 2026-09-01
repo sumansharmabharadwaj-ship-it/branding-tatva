@@ -196,6 +196,7 @@ assert(
   "Homepage FAQ film or offscreen chapters still issue competing playback or preload commands.",
 );
 assert(questions.includes("managedByHomepage"), "Homepage FAQ does not opt into shared playback ownership.");
+assert(questions.includes("Bring this {active.label.toLowerCase()} question to Suman"), "Practical answers no longer name the question carried into the invitation.");
 assert(questions.includes("const displayed = index === activeIndex"), "Practical-answer preview has no separate visual state.");
 assert(questions.includes("const committed = index === committedIndex"), "Practical-answer previews replace the committed tab state.");
 assert(questions.includes("aria-selected={committed}"), "Practical-answer hover changes assistive selection state.");
@@ -205,6 +206,8 @@ assert(finalInvitation.includes('event="calendar_opened"'), "Direct homepage boo
 assert(finalInvitation.includes('target="_blank"') && finalInvitation.includes('rel="noopener noreferrer"'), "Closing invitation does not disclose a safe external calendar handoff.");
 assert(finalInvitation.includes("servicesContactHrefForSituation(selectedSituation, \"write\")"), "Closing invitation has lost its lower-pressure writing route.");
 assert(finalInvitation.includes("consultation.preparation"), "Closing invitation does not reduce preparation anxiety before booking.");
+assert(finalInvitation.includes("`${questionChoice.label} question carried`"), "Closing invitation no longer confirms the visitor's carried question.");
+assert(finalInvitation.includes('className="final-invitation__carried-question"') && finalInvitation.includes("clipPath: prefersReducedMotion || inView"), "Carried question no longer resolves with the invitation handoff.");
 assert(finalInvitation.includes("onCallStepKeyDown") && finalInvitation.includes('aria-selected={activeCallStep === index}') && finalInvitation.includes('tabIndex={activeCallStep === index ? 0 : -1}'), "Closing invitation conversation steps have lost their keyboard selection contract.");
 assert(finalInvitation.includes("duration: prefersReducedMotion ? 0 : 0.36"), "Closing invitation conversation detail ignores reduced motion.");
 assert(videoBreak.includes("managedByHomepage = false") && videoBreak.includes('managedByHomepage ? "none"'), "Closing film cannot yield playback to the homepage controller.");

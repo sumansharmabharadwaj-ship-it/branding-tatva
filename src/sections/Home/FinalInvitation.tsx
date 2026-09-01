@@ -233,12 +233,23 @@ export function FinalInvitation() {
       <motion.div
         className="final-invitation__frame"
         initial={false}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ duration: prefersReducedMotion ? 0 : 0.8, ease: [0.22, 1, 0.36, 1] }}
+        animate={{
+          opacity: prefersReducedMotion || inView ? 1 : 0.92,
+          y: prefersReducedMotion || inView ? 0 : 10,
+          scale: prefersReducedMotion || inView ? 1 : 0.994,
+          filter: prefersReducedMotion || inView ? "blur(0px)" : "blur(2px)",
+        }}
+        transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="final-invitation__topline">
           <span>09 · Begin</span>
-          <span>{carriedLens ? `${carriedLens.name} lens carried` : "One quiet conversation"}</span>
+          <span>
+            {questionChoice
+              ? `${questionChoice.label} question carried`
+              : carriedLens
+                ? `${carriedLens.name} lens carried`
+                : "One quiet conversation"}
+          </span>
         </div>
 
         <div className="final-invitation__composition">
@@ -247,17 +258,41 @@ export function FinalInvitation() {
             <h2 className="final-invitation__headline">{invitation.headline}</h2>
             <p className="final-invitation__body">{invitation.body}</p>
 
-            {questionChoice ? (
-              <div className="final-invitation__carried-question">
-                <span>
-                  {carriedLens
-                    ? `${carriedLens.name} lens · ${questionChoice.label} question`
-                    : "The question you chose"}
-                </span>
-                <strong>{questionChoice.question}</strong>
-                {carriedLens ? <small>{carriedLens.question}</small> : null}
-              </div>
-            ) : null}
+            <AnimatePresence mode="sync" initial={false}>
+              {questionChoice ? (
+                <motion.div
+                  key={`${questionChoice.id}-${carriedLens?.name ?? "open"}`}
+                  className="final-invitation__carried-question"
+                  initial={false}
+                  animate={{
+                    opacity: prefersReducedMotion || inView ? 1 : 0.24,
+                    x: prefersReducedMotion || inView ? 0 : -14,
+                    clipPath: prefersReducedMotion || inView
+                      ? "inset(0 0% 0 0)"
+                      : "inset(0 100% 0 0)",
+                  }}
+                  exit={prefersReducedMotion ? undefined : {
+                    opacity: 0,
+                    x: 10,
+                    clipPath: "inset(0 0 0 100%)",
+                  }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : 0.58,
+                    delay: prefersReducedMotion || !inView ? 0 : 0.12,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  aria-live="polite"
+                >
+                  <span>
+                    {carriedLens
+                      ? `${carriedLens.name} lens · ${questionChoice.label} question`
+                      : "The question you chose"}
+                  </span>
+                  <strong>{questionChoice.question}</strong>
+                  {carriedLens ? <small>{carriedLens.question}</small> : null}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
 
             <div className="final-invitation__actions">
               <TrackedLink
