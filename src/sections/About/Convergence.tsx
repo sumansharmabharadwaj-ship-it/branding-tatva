@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   useEffect,
@@ -9,7 +10,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
-import { ArrowRight, BookOpenText, Brain, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpenText, Brain } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./Convergence.module.css";
@@ -49,32 +50,32 @@ const PAIRINGS = [
 ] as const;
 
 const OUTPUTS = [
-  { label: "Positioning", line: "What the brand should mean in the market." },
-  { label: "Language", line: "How that meaning becomes specific and repeatable." },
-  { label: "Recognition", line: "What stays consistent enough to become familiar." },
+  { label: "Positioning", line: "A place in the market buyers can understand." },
+  { label: "Language", line: "Phrases your team can actually repeat." },
+  { label: "Recognition", line: "A pattern your audience can meet again." },
 ] as const;
 
 const STAGES = [
   {
     number: "01",
     label: "Read",
-    cue: "Study the human behaviour and the language separately before connecting them.",
-    centreLabel: "Business tension",
-    centreLine: "Read what is really happening.",
+    cue: "I look past the brief to find what makes the choice feel uncertain.",
+    centreLabel: "Buyer tension",
+    centreLine: "What makes the choice feel uncertain.",
   },
   {
     number: "02",
     label: "Connect",
-    cue: "Pair what people notice with the language that can carry its meaning.",
+    cue: "I connect what people notice with language that can carry the meaning.",
     centreLabel: "Synthesis",
-    centreLine: "Turn observation into a point of view.",
+    centreLine: "Observation becomes a point of view.",
   },
   {
     number: "03",
     label: "Carry",
-    cue: "Resolve the connections into a position the brand can keep using.",
-    centreLabel: "Brand position",
-    centreLine: "The idea the whole brand can carry.",
+    cue: "You leave with one position that guides what the brand says and shows.",
+    centreLabel: "Usable position",
+    centreLine: "One clear thought the whole brand can carry.",
   },
 ] as const;
 
@@ -150,9 +151,9 @@ export function Convergence() {
       <div className={styles.shell}>
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>How the method works</p>
+            <p className={styles.eyebrow}>Why the disciplines meet</p>
             <h2 id="convergence-title">
-              Psychology finds the tension. <em>Literature gives it language.</em>
+              I read the decision <em>before I write the line.</em>
             </h2>
           </div>
           <div className={styles.headerAside}>
@@ -231,21 +232,42 @@ export function Convergence() {
               ))}
             </div>
 
-            <motion.div
+            <motion.figure
               className={styles.signalCore}
               animate={{
-                scale: stage === 0 ? 0.82 : stage === 1 ? 1 : 1.2,
-                rotate: stage === 0 ? -5 : stage === 1 ? 0 : 4,
+                scale: stage === 0 ? 0.86 : stage === 1 ? 1 : 0.92,
+                rotateX: stage === 0 ? 7 : stage === 1 ? 0 : -5,
+                rotateY: stage === 0 ? -8 : stage === 1 ? 0 : 7,
+                rotateZ: stage === 0 ? -3 : stage === 1 ? 0 : 2,
+                y: stage === 2 ? 8 : 0,
+                opacity: stage === 2 ? 0.38 : 1,
               }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.78, ease: EASE }}
             >
-              <span className={styles.coreHalo} />
-              <Sparkles size={18} />
-              <small>{stage === 1 ? activePair.result : activeStage.centreLabel}</small>
-              <strong>{stage === 1 ? activePair.coreLine : activeStage.centreLine}</strong>
-            </motion.div>
+              <div className={styles.folioImage} aria-hidden="true">
+                <Image
+                  src="/images/generated/bt-about-psychology-literature-v2.webp"
+                  alt=""
+                  fill
+                  sizes="(min-width: 901px) 18vw, 0px"
+                />
+              </div>
+              <figcaption className={styles.folioCopy}>
+                <span>{activeStage.number} / 03</span>
+                <small>{stage === 1 ? activePair.result : activeStage.centreLabel}</small>
+                <strong>{stage === 1 ? activePair.coreLine : activeStage.centreLine}</strong>
+              </figcaption>
+            </motion.figure>
 
             <div className={styles.outputs}>
+              <motion.p
+                className={styles.outcomeStatement}
+                initial={false}
+                animate={{ opacity: stage === 2 ? 1 : 0, y: stage === 2 ? 0 : 10 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
+              >
+                One position the whole brand can carry.
+              </motion.p>
               {OUTPUTS.map((output, index) => (
                 <motion.div
                   key={output.label}
@@ -316,9 +338,11 @@ export function Convergence() {
             ))}
           </ol>
           <div className={styles.mobileResolution}>
-            <small>What the business can use</small>
+            <small>The hiring payoff</small>
+            <strong>One position the whole brand can carry.</strong>
+            <p>Not two degrees on display. A sharper decision your team can use.</p>
             <ul>{OUTPUTS.map((output) => <li key={output.label}>{output.label}</li>)}</ul>
-            <Link href="/services#proof">Inspect a client record <ArrowRight size={14} aria-hidden="true" /></Link>
+            <Link href="/services#proof">See the thinking in a client record <ArrowRight size={14} aria-hidden="true" /></Link>
           </div>
         </div>
 
@@ -351,7 +375,7 @@ export function Convergence() {
               );
             })}
           </div>
-          <Link href="/services#proof">Inspect a client record <ArrowRight size={14} aria-hidden="true" /></Link>
+          <Link href="/services#proof">See the thinking in a client record <ArrowRight size={14} aria-hidden="true" /></Link>
         </footer>
       </div>
     </section>

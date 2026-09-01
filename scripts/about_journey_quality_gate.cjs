@@ -229,7 +229,7 @@ assert(
 );
 assert(
   /data-scene-active="false"[^}]*\.frameShift i\s*\{[^}]*animation-play-state:\s*paused;/.test(pointOfViewStyles) &&
-    /data-scene-active="false"[^}]*\.coreHalo\s*\{[^}]*animation-play-state:\s*paused;/.test(convergenceStyles) &&
+    !convergenceStyles.includes("animation:") &&
     /data-scene-active="false"[^}]*\.core::before\s*\{[^}]*animation-play-state:\s*paused;/.test(atlasStyles),
   "Off-screen About chapters can keep their ambient CSS loops running.",
 );
@@ -425,6 +425,12 @@ assert(
     convergenceStyles.includes('.thread[data-thread="2"] button { translate:') &&
     convergenceStyles.includes('.thread[data-thread="3"] button { translate:'),
   "The centre seal can block the interactive Synthesis pairings.",
+);
+assert(
+  convergence.includes("/images/generated/bt-about-psychology-literature-v2.webp") &&
+    convergence.includes("One position the whole brand can carry.") &&
+    convergence.includes("A sharper decision your team can use."),
+  "The synthesis chapter lost its real folio image or its explicit hiring payoff.",
 );
 
 assert(

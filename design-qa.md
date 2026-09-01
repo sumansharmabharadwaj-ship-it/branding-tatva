@@ -1,3 +1,46 @@
+# Design QA: The Decision Folio
+
+## Target and evidence
+
+- Source visual truth: `/workspace/scratch/e56e36b0002e/generated_images/exec-0ef2e339-82ed-4918-bd55-a584e88477f5.png` (`941 × 1672`)
+- Intended implementation route: `/about#about-convergence`
+- Real folio image: `public/images/generated/bt-about-psychology-literature-v2.webp` (`1672 × 941`)
+- Intended desktop viewport: `1440 × 900` at density `1`
+- Intended iPhone viewport: `390 × 844` at density `1`
+- State: full motion through Read, Connect, and Carry; static synthesis on touch and reduced motion
+- Browser implementation screenshot: unavailable in this pass
+- Full view and focused comparison evidence: unavailable because the selected Work Mode cloud browser cannot open the local preview and the local Playwright browser binary remains unavailable
+
+## Findings
+
+- [P1 blocked] The chapter has no current browser rendered evidence. Source inspection and the production build confirm the real folio image, stage states, responsive fallback, and client outcome, but they cannot establish final crop, wrapping, one screen containment, or perceived camera motion.
+- The previous abstract centre seal did not make the hiring payoff visible. It is now a real editorial folio whose crop travels from open space to the glass lens to the collected stones as the method moves from reading to synthesis to a usable position.
+- The final frame now resolves into one position the whole brand can carry, supported by positioning, language, and recognition outcomes that a client can evaluate.
+
+## Required fidelity surfaces
+
+- Typography: existing display and body families, reading floors, and clay emphasis remain protected; browser wrapping remains unverified.
+- Spacing: the existing one screen desktop grid, chapter gutter, touch fallback, and consent aware layout are preserved; visible containment remains unverified.
+- Color: warm ivory, clay, forest, and paper tones remain unchanged.
+- Imagery: a project owned source asset replaces the synthetic centre seal. Source dimensions and visual crop were inspected directly.
+- Interaction: the existing semantic stages, keyboard navigation, pointer preview, pair inspection, reduced motion, and mobile fallback remain intact.
+
+## Verification
+
+- `pnpm exec tsc --noEmit`: passed
+- `pnpm check:about`: passed
+- `pnpm check:copy`: passed
+- `pnpm check:links`: passed
+- `git diff --check`: passed
+- `pnpm build`: passed with all routes generated
+- Browser visual comparison: blocked by the existing browser infrastructure limitation
+
+## Final result
+
+blocked
+
+---
+
 # Design QA: The Recognition Film
 
 ## Target and evidence

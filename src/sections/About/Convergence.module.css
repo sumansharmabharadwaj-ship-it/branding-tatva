@@ -287,31 +287,46 @@
   position: relative;
   z-index: 2;
   display: grid;
-  width: clamp(9rem, 14vw, 12.4rem);
-  aspect-ratio: 1;
-  padding: 1.15rem;
-  place-items: center;
+  width: clamp(11rem, 16vw, 14.6rem);
+  aspect-ratio: 0.78;
+  margin: 0;
+  padding: 0.58rem;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.7rem;
   border: 1px solid rgba(150, 91, 67, 0.28);
-  border-radius: 48% 52% 47% 53%;
-  background: rgba(246, 239, 227, 0.96);
+  border-radius: 0.38rem 0.38rem 1.45rem 0.38rem;
+  background: #f6efe3;
   box-shadow: 0 26px 72px rgba(67, 54, 42, 0.18), inset 0 0 44px rgba(101, 120, 95, 0.1);
   color: #965b43;
-  text-align: center;
-  transform: scale(calc(1 + var(--scene-velocity, 0) * 0.8));
+  text-align: left;
+  transform-style: preserve-3d;
   pointer-events: none;
   will-change: transform;
 }
 
-.coreHalo {
-  position: absolute;
-  inset: -0.65rem;
-  border: 1px solid rgba(101, 120, 95, 0.2);
-  border-radius: 53% 47% 52% 48%;
-  animation: synthesis-breathe 7s ease-in-out infinite alternate;
+.folioImage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 0.18rem 0.18rem 1rem 0.18rem;
+  background: #d9cfbf;
+  transform: translateZ(1.2rem);
 }
 
+.folioImage img {
+  object-fit: cover;
+  object-position: 26% center;
+  filter: saturate(0.76) sepia(0.08) contrast(0.94);
+  transform: scale(1.08);
+  transition: filter 760ms ease, object-position 900ms cubic-bezier(0.22, 1, 0.36, 1), transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.section[data-convergence-stage="02"] .folioImage img { object-position: 52% center; filter: saturate(0.94) contrast(0.98); transform: scale(1); }
+.section[data-convergence-stage="03"] .folioImage img { object-position: 76% center; transform: scale(1.12); }
+
+.folioCopy { display: grid; min-height: 5.15rem; align-content: start; gap: 0.18rem; transform: translateZ(1.5rem); }
+.folioCopy > span { color: rgba(43, 41, 36, 0.48); font-size: 0.54rem; font-weight: 700; letter-spacing: 0.16em; }
 .signalCore small {
-  margin-top: -0.7rem;
   font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -320,7 +335,7 @@
 
 .signalCore strong {
   max-width: 14ch;
-  margin-top: -1rem;
+  margin-top: 0.1rem;
   color: #2b2924;
   font-family: var(--font-display), Georgia, serif;
   font-size: clamp(0.9rem, 1.25vw, 1.18rem);
@@ -330,13 +345,24 @@
 
 .outputs {
   position: absolute;
-  inset: 50% -17% auto;
+  inset: 50% -19% auto;
   z-index: 4;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.55rem;
   transform: translateY(-50%);
   pointer-events: none;
+}
+
+.outcomeStatement {
+  grid-column: 1 / -1;
+  max-width: 18ch;
+  margin: 0 auto 0.25rem;
+  color: #2b2924;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.4rem, 2.25vw, 2.2rem);
+  line-height: 0.98;
+  text-align: center;
 }
 
 .outputs > div {
@@ -374,15 +400,6 @@
 .tabs button[data-active="true"] i { transform: scaleX(1); }
 .footer > a { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.8rem 0; color: #80503c; font-size: 0.7rem; font-weight: 650; white-space: nowrap; }
 .mobileSynthesis { display: none; }
-
-@keyframes synthesis-breathe {
-  from { transform: rotate(-4deg) scale(0.98); opacity: 0.62; }
-  to { transform: rotate(5deg) scale(1.04); opacity: 1; }
-}
-
-:global([data-about-film-scene][data-scene-active="false"]) .coreHalo {
-  animation-play-state: paused;
-}
 
 @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
   .section { height: 132svh; min-height: 132svh; }
@@ -433,8 +450,10 @@
   .mobileSynthesis > ol > li > div p { max-width: 48ch; margin: 0.24rem 0 0; color: rgba(43, 41, 36, 0.74); font-size: 0.76rem; line-height: 1.5; }
   .mobileResolution { padding: 1rem; border: 1px solid rgba(101, 120, 95, 0.28); background: rgba(248, 243, 233, 0.65); }
   .mobileResolution small { color: #965b43; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
-.mobileResolution ul { display: flex; margin: 0.65rem 0 0; padding: 0; flex-wrap: wrap; gap: 0.45rem; list-style: none; }
-.mobileResolution li { padding: 0.4rem 0.65rem; border: 1px solid rgba(43, 41, 36, 0.12); border-radius: 999px; color: rgba(43, 41, 36, 0.76); font-size: 0.7rem; }
+  .mobileResolution > strong { display: block; max-width: 21ch; margin-top: 0.55rem; font-family: var(--font-display), Georgia, serif; font-size: 1.45rem; font-weight: 400; line-height: 1.05; }
+  .mobileResolution > p { max-width: 40ch; margin: 0.5rem 0 0; color: rgba(43, 41, 36, 0.72); font-size: 0.76rem; line-height: 1.5; }
+  .mobileResolution ul { display: flex; margin: 0.8rem 0 0; padding: 0; flex-wrap: wrap; gap: 0.45rem; list-style: none; }
+  .mobileResolution li { padding: 0.4rem 0.65rem; border: 1px solid rgba(43, 41, 36, 0.12); border-radius: 999px; color: rgba(43, 41, 36, 0.76); font-size: 0.7rem; }
   .mobileResolution a { display: inline-flex; margin-top: 0.9rem; align-items: center; gap: 0.4rem; color: #80503c; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 }
 
@@ -448,7 +467,6 @@
 @media (prefers-reduced-motion: reduce) {
   .section,
   .shell { position: relative; top: auto; height: auto; min-height: 46rem; }
-  .coreHalo { animation: none; }
   .thread,
   .thread span,
   .tabs button,
@@ -457,7 +475,6 @@
 
 :global(html[data-motion="reduced"]) .section,
 :global(html[data-motion="reduced"]) .shell { position: relative; top: auto; height: auto; min-height: 46rem; }
-:global(html[data-motion="reduced"]) .coreHalo { animation: none; }
 
 @media (max-width: 900px) {
   .mobileResolution a { min-height: 2.75rem; }
