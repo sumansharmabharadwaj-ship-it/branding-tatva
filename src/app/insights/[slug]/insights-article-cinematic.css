@@ -1216,6 +1216,8 @@
   .insight-related-intent {
     filter: none !important;
     opacity: 1 !important;
+    transition: none !important;
+    transform: none !important;
   }
 
   .insight-article-hero__content,
@@ -1287,6 +1289,8 @@
 :root[data-motion="reduced"] .insight-related-intent {
   filter: none !important;
   opacity: 1 !important;
+  transition: none !important;
+  transform: none !important;
 }
 
 :root[data-motion="reduced"] .insight-article-hero::after {
