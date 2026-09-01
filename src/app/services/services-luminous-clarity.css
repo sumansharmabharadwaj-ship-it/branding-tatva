@@ -1050,6 +1050,18 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     height: 0.35rem;
   }
 
+  #offerings .services-discipline-rail > button[aria-selected="false"] > span:nth-of-type(1) {
+    color: rgba(244, 239, 230, 0.56);
+  }
+
+  #offerings .services-discipline-rail > button[aria-selected="false"] > span:nth-of-type(2) {
+    color: rgba(244, 239, 230, 0.82);
+  }
+
+  #offerings .services-discipline-rail > button[aria-selected="false"] > span:last-child {
+    opacity: 0.86;
+  }
+
   #offerings [data-service-discipline-panel-shell="true"] {
     min-height: 13.35rem;
     margin-top: 0.45rem;
