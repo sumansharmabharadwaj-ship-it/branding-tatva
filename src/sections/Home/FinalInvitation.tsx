@@ -46,6 +46,7 @@ import {
 } from "@/lib/servicesJourney";
 
 type Situation = ServicesSituationId | "default";
+type SelectionDirection = "forward" | "backward";
 
 type Invitation = {
   eyebrow: string;
@@ -95,6 +96,22 @@ const INVITATIONS: Record<Situation, Invitation> = {
   },
 };
 
+const CALL_STEP_DETAIL_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? 10 : -10,
+    y: 4,
+    filter: "blur(3px)",
+  }),
+  center: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? -7 : 7,
+    y: -2,
+    filter: "blur(3px)",
+  }),
+};
+
 function readSituation(): Situation {
   try {
     const completedDiagnosis = readCompletedHomeDiagnosis();
@@ -114,6 +131,8 @@ export function FinalInvitation() {
     x: number;
     y: number;
   } | null>(null);
+  const callStepDirectionRef = useRef<SelectionDirection>("forward");
+  const displayedCallStepRef = useRef(0);
   const [situation, setSituation] = useState<Situation>("default");
   const [questionChoice, setQuestionChoice] = useState<HomeQuestionChoice | null>(null);
   const [studioLens, setStudioLens] = useState<HomeStudioLens | null>(null);
@@ -133,6 +152,10 @@ export function FinalInvitation() {
     setStudioLens(readHomeStudioLens());
 
     function resetCallStepThread() {
+      if (displayedCallStepRef.current !== 0) {
+        callStepDirectionRef.current = "backward";
+        displayedCallStepRef.current = 0;
+      }
       setCommittedCallStep(0);
       setPreviewCallStep(null);
     }
@@ -219,7 +242,22 @@ export function FinalInvitation() {
     invitation.callClose,
   ] as const;
 
-  function chooseCallStep(index: number, persist = true) {
+  function rememberCallStepDirection(
+    index: number,
+    direction?: SelectionDirection,
+  ) {
+    const current = displayedCallStepRef.current;
+    if (index === current) return;
+    callStepDirectionRef.current = direction ?? (index > current ? "forward" : "backward");
+    displayedCallStepRef.current = index;
+  }
+
+  function chooseCallStep(
+    index: number,
+    persist = true,
+    direction?: SelectionDirection,
+  ) {
+    rememberCallStepDirection(index, direction);
     if (!persist) {
       setPreviewCallStep(index);
       return;
@@ -228,15 +266,24 @@ export function FinalInvitation() {
     setPreviewCallStep(null);
   }
 
+  function releaseCallStepPreview(event: PointerEvent<HTMLOListElement>) {
+    if (event.pointerType !== "mouse" || previewCallStep === null) return;
+    rememberCallStepDirection(committedCallStep);
+    setPreviewCallStep(null);
+  }
+
   function onCallStepKeyDown(
     event: KeyboardEvent<HTMLButtonElement>,
     index: number,
   ) {
     let next = index;
+    let direction: SelectionDirection | undefined;
     if (event.key === "ArrowRight" || event.key === "ArrowDown") {
       next = (index + 1) % consultation.steps.length;
+      direction = "forward";
     } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
       next = (index + consultation.steps.length - 1) % consultation.steps.length;
+      direction = "backward";
     } else if (event.key === "Home") {
       next = 0;
     } else if (event.key === "End") {
@@ -245,7 +292,7 @@ export function FinalInvitation() {
       return;
     }
     event.preventDefault();
-    chooseCallStep(next);
+    chooseCallStep(next, true, direction);
     document.getElementById(`final-invitation-step-${next}`)?.focus();
   }
 
@@ -432,9 +479,7 @@ export function FinalInvitation() {
               <ol
                 role="tablist"
                 aria-label="Choose a stage of the diagnosis conversation"
-                onPointerLeave={(event) => {
-                  if (event.pointerType === "mouse") setPreviewCallStep(null);
-                }}
+                onPointerLeave={releaseCallStepPreview}
               >
                 {consultation.steps.map((step, index) => (
                   <motion.li
@@ -469,20 +514,28 @@ export function FinalInvitation() {
                   </motion.li>
                 ))}
               </ol>
-              <AnimatePresence mode="sync" initial={false}>
+              <AnimatePresence
+                mode="sync"
+                initial={false}
+                custom={callStepDirectionRef.current}
+              >
                 <motion.p
                   key={`${activeCallStep}-${questionChoice?.id ?? "open"}-${carriedLens?.name ?? "unframed"}-${situation}`}
                   id="final-invitation-step-detail"
                   role="tabpanel"
                   aria-labelledby={`final-invitation-step-${activeCallStep}`}
                   className="final-invitation__step-detail"
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 7, filter: "blur(3px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -5, filter: "blur(3px)" }}
+                  data-home-selection-direction={callStepDirectionRef.current}
+                  custom={callStepDirectionRef.current}
+                  variants={CALL_STEP_DETAIL_VARIANTS}
+                  initial={prefersReducedMotion ? false : "enter"}
+                  animate="center"
+                  exit={prefersReducedMotion ? undefined : "exit"}
                   transition={{
                     duration: prefersReducedMotion ? 0 : 0.36,
                     ease: [0.22, 1, 0.36, 1],
                   }}
+                  aria-live={previewCallStep === null ? "polite" : "off"}
                 >
                   {conversationSteps[activeCallStep]}
                 </motion.p>
