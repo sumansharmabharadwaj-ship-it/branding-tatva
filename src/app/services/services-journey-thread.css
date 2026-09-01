@@ -190,6 +190,21 @@ html[data-services-thread-engaged="true"] [data-services-thread-focus="true"] {
     0 0 34px rgb(var(--services-thread-color) / 0.28);
 }
 
+/* The Strategy Room is the decision, not another motion demonstration.
+   Keep the thread as a quiet arrival mark, then let the calendar and brief
+   controls own the visitor's attention without triggering a larger glow. */
+html[data-services-thread-scene="book"] [data-services-journey-thread="true"] {
+  opacity: 0.38;
+}
+
+html[data-services-thread-scene="book"][data-services-thread-engaged="true"] [data-services-thread-focus="true"] {
+  transform: translate(-50%, -50%) scale(var(--services-thread-glyph-scale));
+  border-color: rgb(var(--services-thread-color) / 0.4);
+  box-shadow:
+    0 0 0 0.3rem rgb(var(--services-thread-color) / 0.05),
+    0 0 22px rgb(var(--services-thread-color) / 0.16);
+}
+
 html[data-services-form-interaction="true"] [data-services-journey-thread="true"] {
   opacity: 0.24;
 }
