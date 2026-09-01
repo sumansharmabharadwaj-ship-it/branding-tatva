@@ -93,7 +93,7 @@ export default function AboutPage() {
           <div className="absolute inset-0" data-about-film-background>
             <BackgroundVideo
               video="/videos/generated/bt-about-point-view-three-stones.mp4"
-              poster="/images/generated/bt-about-point-view-three-stones-poster.jpg"
+              poster="/images/generated/bt-about-psychology-literature-v2.webp"
               parallax
               playbackRate={0.84}
             />

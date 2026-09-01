@@ -14,6 +14,8 @@ import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { initSplitTextReveal } from "@/animations/splitTextReveal";
 import { BREAK_QUOTE_INITIAL, BREAK_QUOTE_ANIMATE, BREAK_QUOTE_TRANSITION } from "@/animations/breakQuote";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const CAMERA_PUSH = kenBurnsAnimation({ scale: 1.06, duration: 30 });
 const ENTRANCE_SCALE_DELTA = 0.06;
@@ -113,6 +115,7 @@ export function VideoBreak({
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const livingStill = usesLivingStill(src);
   const [ref, shouldLoadVideo] = useLazyMount();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const mediaY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
@@ -126,7 +129,7 @@ export function VideoBreak({
   // when it leaves the viewport, and resumes it before the section returns.
   useVideoFadeIn(
     videoRef,
-    Boolean(shouldLoadVideo && !prefersReducedMotion),
+    Boolean(shouldLoadVideo && !prefersReducedMotion && !livingStill),
     managedByHomepage,
   );
   const safeHomePlaybackRate = Math.min(1.5, Math.max(0.65, homePlaybackRate));
@@ -138,18 +141,25 @@ export function VideoBreak({
       className="relative flex flex-col overflow-hidden bg-soil"
       style={{ height: toSvh(height) }}
     >
-      {prefersReducedMotion ? (
+      {prefersReducedMotion || livingStill ? (
         <div className="absolute inset-0">
-          {shouldLoadVideo && (
-            <Image
+          {shouldLoadVideo && (livingStill ? (
+            <LivingImage
               src={poster}
-              alt=""
-              fill
               priority
-              sizes="100vw"
-              style={{ objectFit: "cover", objectPosition: imagePosition }}
+              imagePosition={imagePosition}
+              intensity={parallax ? "cinematic" : "subtle"}
             />
-          )}
+          ) : (
+              <Image
+                src={poster}
+                alt=""
+                fill
+                priority
+                sizes="100vw"
+                style={{ objectFit: "cover", objectPosition: imagePosition }}
+              />
+            ))}
           <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
         </div>
       ) : (
@@ -180,7 +190,7 @@ export function VideoBreak({
         </>
       )}
 
-      {spotlight && !prefersReducedMotion && (
+      {spotlight && !prefersReducedMotion && !livingStill && (
         <div
           ref={spotlightRef}
           aria-hidden="true"

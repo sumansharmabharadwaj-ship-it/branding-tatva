@@ -300,17 +300,6 @@ export function HomeBrandHealthCheck() {
           fill
           sizes="100vw"
         />
-        <video
-          className="brand-orbit__water-motion"
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-          preload="none"
-          data-home-playback-rate="1"
-        >
-          <source src="/videos/generated/bt-home-decision-waterlight.mp4" type="video/mp4" />
-        </video>
         <div className="brand-orbit__petals">
           <Image
             className="brand-orbit__petal brand-orbit__petal--one"

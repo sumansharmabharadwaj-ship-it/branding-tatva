@@ -5,6 +5,8 @@ import { useEffect, useRef, type ReactNode } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 function ParallaxLayer({ children }: { children: ReactNode }) {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -84,6 +86,7 @@ export function BackgroundVideo({
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const livingStill = usesLivingStill(video);
   const safePlaybackRate = Math.min(1.5, Math.max(0.65, playbackRate));
   // The bare `autoplay` attribute alone isn't reliable — confirmed
   // elsewhere on this site (PhotoHero/TexturedDark hero videos, via
@@ -94,14 +97,35 @@ export function BackgroundVideo({
   // sits behind a section heading (Selected work, Process, FAQ,
   // SelectedWorkPinned's own backdrop) — exactly the sections that
   // would read as flat/static if their autoplay silently never fired.
-  useVideoFadeIn(videoRef, !prefersReducedMotion, managedByHomepage);
+  useVideoFadeIn(
+    videoRef,
+    !prefersReducedMotion && !livingStill,
+    managedByHomepage,
+  );
 
   useEffect(() => {
     const element = videoRef.current;
-    if (!element) return;
+    if (!element || livingStill) return;
     element.defaultPlaybackRate = safePlaybackRate;
     element.playbackRate = safePlaybackRate;
-  }, [safePlaybackRate, video]);
+  }, [livingStill, safePlaybackRate, video]);
+
+  if (livingStill) {
+    return (
+      <div
+        data-background-video-stage="true"
+        data-media-mode="living-still"
+        className="absolute inset-0 overflow-hidden"
+      >
+        <LivingImage
+          src={poster}
+          priority={posterPriority}
+          imagePosition={imagePosition}
+          intensity={parallax ? "cinematic" : push ? "hero" : "subtle"}
+        />
+      </div>
+    );
+  }
 
   if (prefersReducedMotion) {
     return (

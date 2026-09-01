@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useCinematicScene } from "@/hooks/useCinematicScene";
 import { motionTokens } from "@/lib/motionTokens";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 type Runway = "none" | "short" | "default" | "long";
 
@@ -59,7 +61,8 @@ export function BtScene({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoFailed, setVideoFailed] = useState(false);
   const fallbackImage = poster || image;
-  const hasMedia = Boolean((video && !videoFailed) || fallbackImage);
+  const livingStill = usesLivingStill(video);
+  const hasMedia = Boolean((video && !videoFailed && !livingStill) || fallbackImage);
 
   useEffect(() => {
     setVideoFailed(false);
@@ -67,11 +70,11 @@ export function BtScene({
 
   useEffect(() => {
     const element = videoRef.current;
-    if (!element) return;
+    if (!element || livingStill) return;
     const safeRate = Math.min(1.15, Math.max(1, playbackRate));
     element.defaultPlaybackRate = safeRate;
     element.playbackRate = safeRate;
-  }, [playbackRate, video]);
+  }, [livingStill, playbackRate, video]);
 
   return (
     <section
@@ -83,7 +86,14 @@ export function BtScene({
       <div className="bt-scene__sticky">
         {hasMedia && (
           <div className="bt-scene__media" data-scene-media data-media-id={mediaId}>
-            {video && !videoFailed ? (
+            {livingStill && fallbackImage ? (
+              <LivingImage
+                src={fallbackImage}
+                alt={mediaAlt}
+                priority={priority}
+                intensity="cinematic"
+              />
+            ) : video && !videoFailed ? (
               <video
                 ref={videoRef}
                 playsInline

@@ -102,7 +102,8 @@ assert(diagnostic.includes('<p aria-live="polite" aria-atomic="true">'), "Diagno
 assert(diagnostic.includes("event.currentTarget.closest('[role=\"radiogroup\"]')"), "Diagnostic arrow-key focus is not scoped to the active radio group.");
 assert(diagnostic.includes("options?.[nextIndex]?.focus({ preventScroll: true })"), "Diagnostic selected radio does not receive focus before the selection render.");
 assert(diagnostic.includes('event.pointerType !== "mouse"'), "Diagnostic hover preview can consume touch gestures.");
-assert(diagnostic.includes('preload="none"'), "Diagnostic film is preloaded before the shared media director admits it.");
+assert(!diagnostic.includes("<video"), "Diagnostic restored a short generated film instead of visitor-driven still motion.");
+assert(diagnostic.includes("bt-home-brand-diagnostic-flowerwater-v1.png"), "Diagnostic living landscape has no stable still-art base.");
 assert(!diagnostic.includes("void video.play()"), "Diagnostic film bypasses the shared one-film playback budget.");
 assert(diagnostic.includes("active.choices[selected].centre"), "Diagnostic choice does not reveal the strategic implication before continuing.");
 assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused diagnostic result has no visible treatment.");
@@ -187,7 +188,8 @@ assert(paths.includes("aria-selected={committed}"), "Service-path hover replaces
 assert(paths.includes("tabIndex={committed ? 0 : -1}"), "Service-path hover moves the keyboard tab stop.");
 assert(videoFadeIn.includes("playbackManagedExternally = false") && videoFadeIn.includes("if (!playbackManagedExternally)"), "Reusable video fade-in cannot yield playback without losing cleanup ownership.");
 assert(
-  backgroundVideo.includes("!prefersReducedMotion, managedByHomepage") &&
+  backgroundVideo.includes("!prefersReducedMotion && !livingStill") &&
+    backgroundVideo.includes("managedByHomepage,") &&
     backgroundVideo.includes('managedByHomepage ? "none"') &&
     backgroundVideo.includes('posterPriority ? "metadata" : "none"'),
   "Homepage FAQ film or offscreen chapters still issue competing playback or preload commands.",

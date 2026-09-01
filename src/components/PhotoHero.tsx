@@ -3,20 +3,17 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { toSvh } from "@/lib/media";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
-
-const KEN_BURNS = kenBurnsAnimation({ scale: 1.07, duration: 22 });
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 // Full-bleed hero, the structure used across every reference site
 // (Nevada House, Haven, Sylvan): a real photo or video fills the
 // section, a dark gradient keeps text legible, content sits on top.
 // Height varies by page: tall on the homepage, shorter elsewhere so
-// secondary pages get to their content faster. When only a still image
-// is given, it holds a slow continuous Ken Burns drift so it's never
-// sitting completely still; a video background moves on its own.
+// secondary pages get to their content faster. Still images respond to
+// scroll and pointer position through LivingImage; there is no timed loop.
 //
 // Height is a deliberate four-tier system across the site, not one
 // value standardized everywhere or an accident of each page being
@@ -70,18 +67,22 @@ export function PhotoHero({
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
-  useVideoFadeIn(videoRef, Boolean(video) && !prefersReducedMotion);
+  const livingStill = usesLivingStill(video);
+  useVideoFadeIn(
+    videoRef,
+    Boolean(video) && !prefersReducedMotion && !livingStill,
+  );
 
   // Keep ambient films inside a calm range. The Services hero opts into
   // 1.15x so its defining visual event arrives before attention drifts,
   // while every existing call site retains the native 1x pace.
   useEffect(() => {
     const element = videoRef.current;
-    if (!element) return;
+    if (!element || livingStill) return;
     const safePlaybackRate = Math.min(1.5, Math.max(0.75, playbackRate));
     element.defaultPlaybackRate = safePlaybackRate;
     element.playbackRate = safePlaybackRate;
-  }, [playbackRate, video]);
+  }, [livingStill, playbackRate, video]);
 
   // A case study's hero footage is industry-specific (an office, a
   // warehouse) rather than generic nature photography, so an
@@ -97,7 +98,7 @@ export function PhotoHero({
       className={`relative flex items-center overflow-hidden bg-soil ${className ?? ""}`}
       style={{ minHeight: toSvh(minHeight) }}
     >
-      {video && !prefersReducedMotion ? (
+      {video && !prefersReducedMotion && !livingStill ? (
         <>
           {/* A next/image base layer instead of relying solely on the
               <video poster> attribute — that's a native browser fetch
@@ -134,23 +135,16 @@ export function PhotoHero({
           <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
         </>
       ) : (
-        <motion.div
-          className="absolute inset-0"
-          initial={KEN_BURNS.initial}
-          animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
-          transition={KEN_BURNS.transition}
-        >
-          <Image
+        <>
+          <LivingImage
             src={poster ?? image ?? ""}
-            alt=""
-            fill
             priority
-            sizes="100vw"
-            style={{ objectFit: "cover", objectPosition: imagePosition }}
+            imagePosition={imagePosition}
+            intensity="hero"
           />
           {accentWash}
           <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
-        </motion.div>
+        </>
       )}
       {children}
     </section>

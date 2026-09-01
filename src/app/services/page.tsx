@@ -218,8 +218,9 @@ export default async function ServicesPage() {
           id="services-opening"
           video="/videos/generated/bt-services-hero-root-system.mp4"
           videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
-          poster="/images/generated/bt-services-hero-root-system-poster.jpg"
+          poster="/images/generated/bt-services-root-archive-v2.webp"
           minHeight="100vh"
+          imagePosition="68% center"
           overlayGradient="linear-gradient(180deg, rgba(36,45,39,0.16) 0%, rgba(36,45,39,0.24) 58%, rgba(36,45,39,0.42) 100%)"
           playbackRate={1.15}
         >

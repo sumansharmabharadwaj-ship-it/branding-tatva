@@ -7,6 +7,8 @@ import Image from "next/image";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 // Dark section wrapper with a subtle organic texture behind the solid
 // soil color, instead of flat, uniform color. The gradient overlay keeps
@@ -55,10 +57,17 @@ export function TexturedDark({
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const spotlightRef = useSpotlight(sectionRef, Boolean(prefersReducedMotion) || !video);
+  const livingStill = usesLivingStill(video);
+  const spotlightRef = useSpotlight(
+    sectionRef,
+    Boolean(prefersReducedMotion) || !video || livingStill,
+  );
   // useVideoFadeIn handles both the fade-in and the explicit play() call
   // (autoplay alone is not reliable across browsers and power modes).
-  useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
+  useVideoFadeIn(
+    videoRef,
+    shouldLoad && Boolean(video) && !prefersReducedMotion && !livingStill,
+  );
 
   const resolvedOverlayGradient =
     overlayGradient ??
@@ -74,15 +83,23 @@ export function TexturedDark({
             let the browser load it when the section approaches instead of
             preloading it beside the opening scene. PhotoHero owns the one
             aggressive first-paint media path. */}
-        <Image
-          src={image}
-          alt=""
-          fill
-          loading="lazy"
-          sizes="100vw"
-          style={{ objectFit: "cover", objectPosition: imagePosition }}
-        />
-        {shouldLoad && video && !prefersReducedMotion && (
+        {livingStill ? (
+          <LivingImage
+            src={image}
+            imagePosition={imagePosition}
+            intensity="cinematic"
+          />
+        ) : (
+          <Image
+            src={image}
+            alt=""
+            fill
+            loading="lazy"
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: imagePosition }}
+          />
+        )}
+        {shouldLoad && video && !prefersReducedMotion && !livingStill && (
           <video
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
@@ -102,7 +119,7 @@ export function TexturedDark({
       <div className="absolute inset-0" style={{ backgroundImage: resolvedOverlayGradient }} />
       <div className="aurora-glow" aria-hidden="true" />
       <div className="light-rays" aria-hidden="true" />
-      {video && !prefersReducedMotion && (
+      {video && !prefersReducedMotion && !livingStill && (
         <div
           ref={spotlightRef}
           aria-hidden="true"

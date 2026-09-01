@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { EASE_AIR } from "@/lib/motion";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 export type ContactPathwayFilmProps = {
   video: string;
@@ -34,19 +36,20 @@ export function ContactPathwayFilm({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
+  const livingStill = usesLivingStill(video);
 
-  useVideoFadeIn(videoRef, !reducedMotion);
+  useVideoFadeIn(videoRef, !reducedMotion && !livingStill);
 
   useEffect(() => {
     const element = videoRef.current;
-    if (!element) return;
+    if (!element || livingStill) return;
 
     // Each route gets its own small hover lift. The ceiling stays below real
     // time so the response reads as attention, never fast-forward playback.
     const nextRate = Math.min(0.96, playbackRate + (isHovering ? hoverBoost : 0));
     element.defaultPlaybackRate = nextRate;
     element.playbackRate = nextRate;
-  }, [hoverBoost, isHovering, playbackRate, video]);
+  }, [hoverBoost, isHovering, livingStill, playbackRate, video]);
 
   return (
     <motion.figure
@@ -63,15 +66,24 @@ export function ContactPathwayFilm({
       animate={{ opacity: 1, scale: 1, clipPath: "inset(0 0% 0 0 round 1.4rem)" }}
       transition={{ duration: reducedMotion ? 0 : 0.64, ease: EASE_AIR }}
     >
-      <Image
-        src={poster}
-        alt=""
-        fill
-        sizes="(min-width: 640px) 24vw, calc(100vw - 4rem)"
-        style={{ objectFit: "cover", objectPosition: imagePosition }}
-      />
+      {livingStill ? (
+        <LivingImage
+          src={poster}
+          sizes="(min-width: 640px) 24vw, calc(100vw - 4rem)"
+          imagePosition={imagePosition}
+          intensity="subtle"
+        />
+      ) : (
+        <Image
+          src={poster}
+          alt=""
+          fill
+          sizes="(min-width: 640px) 24vw, calc(100vw - 4rem)"
+          style={{ objectFit: "cover", objectPosition: imagePosition }}
+        />
+      )}
 
-      {!reducedMotion ? (
+      {!reducedMotion && !livingStill ? (
         <video
           ref={videoRef}
           data-video-priority="foreground"
@@ -100,7 +112,7 @@ export function ContactPathwayFilm({
         <span>{caption}</span>
         <span aria-hidden="true" className="flex items-center gap-1.5 text-ivory/55">
           <span className="h-1.5 w-1.5 rounded-full bg-sandstone shadow-[0_0_12px_rgba(212,185,154,0.8)]" />
-          film
+          {livingStill ? "scene" : "film"}
         </span>
       </figcaption>
     </motion.figure>

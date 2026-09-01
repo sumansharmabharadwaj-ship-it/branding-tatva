@@ -71,9 +71,9 @@ export default function ContactPage() {
         <PhotoHero
           video="/videos/generated/bt-contact-original-hero.mp4"
           videoMobile="/videos/generated/bt-contact-original-hero-mobile.mp4"
-          poster="/images/generated/bt-contact-original-hero-poster.jpg"
+          poster="/images/generated/bt-contact-signal-folio-v2.webp"
           minHeight="88vh"
-          imagePosition="center 56%"
+          imagePosition="62% 56%"
           playbackRate={0.84}
           className="contact-hero-film"
           overlayGradient="linear-gradient(180deg, rgba(25,27,22,0.18) 0%, rgba(28,29,23,0.32) 48%, rgba(29,27,23,0.76) 100%), linear-gradient(90deg, rgba(25,25,21,0.7) 0%, rgba(26,27,22,0.42) 46%, rgba(24,26,21,0.06) 78%)"
@@ -223,7 +223,7 @@ export default function ContactPage() {
               <BackgroundVideo
                 video="/videos/generated/bt-contact-original-write-scene.mp4"
                 videoMobile="/videos/generated/bt-contact-original-write-scene-mobile.mp4"
-                poster="/images/generated/bt-contact-original-write-scene-poster.jpg"
+                poster="/images/generated/bt-contact-write-note-v2.webp"
                 playbackRate={0.8}
                 posterPriority={false}
               />
@@ -322,7 +322,7 @@ export default function ContactPage() {
               <BackgroundVideo
                 video="/videos/generated/bt-contact-original-call.mp4"
                 videoMobile="/videos/generated/bt-contact-original-call-mobile.mp4"
-                poster="/images/generated/bt-contact-original-call-poster.jpg"
+                poster="/images/generated/bt-contact-decision-table-v2.webp"
                 playbackRate={0.83}
                 push
                 posterPriority={false}

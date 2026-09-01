@@ -83,7 +83,9 @@ export function ServicesExperienceRuntime() {
     const signalLayers = new Map<HTMLElement, HTMLSpanElement>();
     const generatedIds = new Set<HTMLElement>();
     const heroMedia = Array.from(
-      hero.querySelectorAll<HTMLElement>(":scope > img, :scope > video"),
+      hero.querySelectorAll<HTMLElement>(
+        ':scope > img, :scope > video, :scope > [data-living-image-stage="true"]',
+      ),
     );
     const heroHeading = hero.querySelector<HTMLElement>("h1");
     const heroIndex = hero.querySelector<HTMLElement>("ol");

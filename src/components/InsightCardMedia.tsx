@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const CARD_FILM_REQUEST_EVENT = "insight-card-media:request-play";
 
@@ -23,6 +24,7 @@ export function InsightCardMedia({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const livingStill = usesLivingStill(video);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -34,6 +36,7 @@ export function InsightCardMedia({
       setIsPlaying(false);
       return;
     }
+    if (livingStill) setIsPlaying(false);
     const activeFilm = film;
     const activeCard = card;
     const touchFirst = window.matchMedia("(hover: none), (pointer: coarse)");
@@ -275,7 +278,7 @@ export function InsightCardMedia({
         activeFilm.pause();
       }
     };
-  }, [prefersReducedMotion, video]);
+  }, [livingStill, prefersReducedMotion, video]);
 
   return (
     <div
@@ -289,7 +292,7 @@ export function InsightCardMedia({
         sizes={sizes}
         className="insight-card-media__poster object-cover"
       />
-      {video && !prefersReducedMotion ? (
+      {video && !prefersReducedMotion && !livingStill ? (
         <video
           ref={videoRef}
           className="insight-card-media__film"

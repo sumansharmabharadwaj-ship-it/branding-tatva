@@ -8,7 +8,8 @@
 #authority [data-authority-media-plane="true"] [data-background-video-stage="true"],
 #book [data-textured-media-stage="true"],
 #services-opening > img,
-#services-opening > video {
+#services-opening > video,
+#services-opening > [data-living-image-stage="true"] {
   filter: brightness(1.13) saturate(0.82) contrast(0.96);
 }
 
@@ -1130,7 +1131,8 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   #authority [data-authority-media-plane="true"] [data-background-video-stage="true"],
   #book [data-textured-media-stage="true"],
   #services-opening > img,
-  #services-opening > video {
+  #services-opening > video,
+  #services-opening > [data-living-image-stage="true"] {
     filter: brightness(1.08) saturate(0.78) contrast(0.98);
   }
 }
@@ -1139,6 +1141,7 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 :root[data-motion="reduced"] #authority [data-authority-media-plane="true"] [data-background-video-stage="true"],
 :root[data-motion="reduced"] #book [data-textured-media-stage="true"],
 :root[data-motion="reduced"] #services-opening > img,
-:root[data-motion="reduced"] #services-opening > video {
+:root[data-motion="reduced"] #services-opening > video,
+:root[data-motion="reduced"] #services-opening > [data-living-image-stage="true"] {
   filter: brightness(1.08) saturate(0.78) contrast(0.98);
 }

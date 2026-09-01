@@ -43,14 +43,23 @@ const expectedFilms = [
   "bt-contact-original-gratitude.mp4",
 ];
 
-const expectedPosters = expectedFilms.map((film) => film.replace(/\.mp4$/, "-poster.jpg"));
+const expectedPosters = [
+  "bt-contact-signal-folio-v2.webp",
+  "bt-contact-original-pathways-poster.jpg",
+  "bt-contact-original-book-poster.jpg",
+  "bt-contact-original-speak-poster.jpg",
+  "bt-contact-original-write-card-poster.jpg",
+  "bt-contact-write-note-v2.webp",
+  "bt-contact-decision-table-v2.webp",
+  "bt-contact-original-gratitude-poster.jpg",
+];
 const desktopReferences = [
   ...source.matchAll(/\/videos\/generated\/(bt-contact-original-[a-z-]+\.mp4)/g),
 ]
   .map((match) => match[1])
   .filter((file) => !file.includes("-mobile"));
 const posterReferences = [
-  ...source.matchAll(/\/images\/generated\/(bt-contact-original-[a-z-]+-poster\.jpg)/g),
+  ...source.matchAll(/\/images\/generated\/(bt-contact-(?:original-[a-z-]+-poster\.jpg|[a-z-]+-v2\.webp))/g),
 ].map((match) => match[1]);
 
 if (desktopReferences.length !== expectedFilms.length) {
@@ -72,7 +81,7 @@ for (const [poster, count] of posterReferenceCounts) {
   }
 }
 
-if (/\bpreload\s*\(\s*["']\/images\/generated\/bt-contact-original-hero-poster\.jpg/.test(source)) {
+if (/\bpreload\s*\(\s*["']\/images\/generated\/bt-contact-signal-folio-v2\.webp/.test(source)) {
   fail("the hero poster must use PhotoHero's optimized image priority instead of a duplicate raw preload");
 }
 
