@@ -1,3 +1,44 @@
+# Design QA: The No Handoff Promise
+
+## Target and evidence
+
+- Source visual truth: `/workspace/scratch/e56e36b0002e/references/Inside the strategist: The living margins.png` (`941 × 1672`)
+- Intended implementation route: `/about#about-founder-led`
+- Intended desktop viewport: `1440 × 900` at density `1`
+- Intended iPhone viewport: `390 × 844` at density `1`
+- State: four stage strategy record, final Application stage, touch and reduced motion fallback
+- Browser implementation screenshot: unavailable because the selected Work Mode cloud browser could not recover a runnable tab
+
+## Findings
+
+- [P1 blocked] The new final record has no current browser rendered evidence. Source inspection and the production build confirm the semantic stage model, responsive fallback, protected reading floors, and final hiring promise, but cannot establish final wrapping, one screen containment, perceived camera motion, or overlap with browser controls.
+- The former chapter described continuity from a distance. The revised chapter introduces Suman as the visitor's strategist, uses first person ownership, and resolves the fourth stage into a concrete promise: the client never briefs the thinking twice.
+- The final record now lifts and settles as the strategic thread completes. Touch and reduced motion receive the same promise as a static editorial card.
+
+## Required fidelity surfaces
+
+- Typography: existing display and body families, uppercase record labels, and protected reading floors remain intact; browser wrapping remains unverified.
+- Spacing: the existing one screen desktop sheet, touch ledger, chapter gutter, and consent aware footer remain intact; visible containment remains unverified.
+- Color: warm paper, clay, ivory, and soil treatments remain unchanged.
+- Imagery: the existing woodlight section film and matching poster remain the real visual ground.
+- Interaction: semantic tabs, keyboard navigation, pointer preview, scroll progression, reduced motion, and mobile fallback remain intact.
+
+## Verification
+
+- `pnpm exec tsc --noEmit`: passed
+- `pnpm check:about`: passed
+- `pnpm check:copy`: passed
+- `pnpm check:links`: passed
+- `git diff --check`: passed
+- `pnpm build`: passed with all routes generated
+- Browser visual comparison: blocked by the existing cloud browser limitation
+
+## Final result
+
+blocked
+
+---
+
 # Design QA: The Decision Folio
 
 ## Target and evidence

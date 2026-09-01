@@ -82,6 +82,7 @@ export function WorkingDirectly() {
     reducedMotion: prefersReducedMotion,
   });
   const active = STAGES[sequence.activeIndex];
+  const complete = sequence.activeIndex === STAGES.length - 1;
   const sheetY = useTransform(sequence.scrollYProgress, [0, 1], ["2%", "-2%"]);
   const sheetScale = useTransform(sequence.scrollYProgress, [0, 0.5, 1], [0.988, 1, 0.992]);
 
@@ -136,12 +137,12 @@ export function WorkingDirectly() {
         <div className={styles.root}>
           <header className={styles.header}>
             <div>
-              <p className={styles.eyebrow}>Working directly with Suman</p>
-              <h2 id="direct-title">The thinking does not pass <em>between departments.</em></h2>
+              <p className={styles.eyebrow}>Meet your brand strategist</p>
+              <h2 id="direct-title">Tell the story once. <em>I carry every decision from there.</em></h2>
             </div>
             <div className={styles.headerAside}>
-              <p>The person who hears the first business question also writes the position, directs the language, and reviews how the brand is applied.</p>
-              <div><span>Direct strategist access</span><i aria-hidden="true" /><span>Context kept throughout</span></div>
+              <p>I hear the first question, choose the position, shape the language, and stay close enough to keep every application true to the decision.</p>
+              <div><span>One strategist throughout</span><i aria-hidden="true" /><span>No context rewritten</span></div>
             </div>
           </header>
 
@@ -225,11 +226,21 @@ export function WorkingDirectly() {
                       <strong>{active.record}</strong>
                       <p>{active.note}</p>
                     </div>
-                    <div className={styles.recordedOutput}>
+                    <motion.div
+                      className={styles.recordedOutput}
+                      data-final={complete}
+                      animate={prefersReducedMotion ? undefined : {
+                        y: complete ? -4 : 0,
+                        rotate: complete ? -1.2 : 0,
+                        scale: complete ? 1.035 : 1,
+                      }}
+                      transition={{ duration: 0.62, ease: EASE }}
+                    >
                       <FileText size={16} aria-hidden="true" />
-                      <span>Added to the same record</span>
-                      <strong>{active.output}</strong>
-                    </div>
+                      <span>{complete ? "Why direct access matters" : "Added to the same record"}</span>
+                      <strong>{complete ? "You never brief the thinking twice." : active.output}</strong>
+                      {complete ? <p>One brief. One strategist. Every decision connected.</p> : null}
+                    </motion.div>
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -247,18 +258,18 @@ export function WorkingDirectly() {
                 >
                   <FileText size={13} aria-hidden="true" />
                   <span>
-                    {sequence.activeIndex === STAGES.length - 1
-                      ? "Full strategic thread retained"
+                    {complete
+                      ? "One strategist holds all four decisions"
                       : `${String(sequence.activeIndex + 1).padStart(2, "0")} of 04 decisions retained`}
                   </span>
                 </p>
-                <Link href="/services#study">See the engagement structure <ArrowUpRight size={14} aria-hidden="true" /></Link>
+                <Link href="/services#study">See what working together looks like <ArrowUpRight size={14} aria-hidden="true" /></Link>
               </footer>
             </article>
           </motion.div>
 
           <div className={styles.staticExperience}>
-            <p>The same record carries every decision from the first question to everyday use.</p>
+            <p>One strategist carries every decision from the first question to everyday use.</p>
             <ol>
               {STAGES.map((stage) => {
                 const Icon = stage.icon;
@@ -270,7 +281,12 @@ export function WorkingDirectly() {
                 );
               })}
             </ol>
-            <Link href="/services#study">See the engagement structure <ArrowUpRight size={14} aria-hidden="true" /></Link>
+            <aside className={styles.staticPromise}>
+              <span>Why direct access matters</span>
+              <strong>You never brief the thinking twice.</strong>
+              <p>One brief. One strategist. Every decision connected.</p>
+            </aside>
+            <Link href="/services#study">See what working together looks like <ArrowUpRight size={14} aria-hidden="true" /></Link>
           </div>
         </div>
       </Container>

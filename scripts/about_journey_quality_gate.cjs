@@ -493,12 +493,23 @@ const protectedWorkingDirectlyType = [
   [".sheetFooter > div span", 0.58],
   [".continuityVerdict", 0.58],
   [".sheetFooter > a", 0.6],
+  [".recordedOutput p", 0.66],
+  [".staticPromise span", 0.61],
+  [".staticPromise p", 0.72],
 ];
 
 for (const [selector, minimum] of protectedWorkingDirectlyType) {
   const size = fontSizeRem(workingDirectlyStyles, selector);
   assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
 }
+assert(
+  workingDirectly.includes("Meet your brand strategist") &&
+    workingDirectly.includes("You never brief the thinking twice.") &&
+    workingDirectly.includes("One brief. One strategist. Every decision connected.") &&
+    workingDirectlyStyles.includes('.recordedOutput[data-final="true"]') &&
+    workingDirectlyStyles.includes(".staticPromise"),
+  "The founder-led chapter lost its direct-access hiring promise or final record treatment.",
+);
 assert(
   workingDirectlyStyles.includes(':global(html[data-consent-banner="visible"]) .sheetFooter') &&
     workingDirectlyStyles.includes("padding-right: clamp(13rem, 18vw, 15.5rem);"),
