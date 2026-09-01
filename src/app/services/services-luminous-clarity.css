@@ -102,14 +102,29 @@
   backdrop-filter: blur(26px) saturate(0.82);
 }
 
+/* Six Disciplines is the clearest place to show the new still-image grammar:
+   the topographic route should remain a visible strategic landscape, while
+   contrast belongs to the local reading surfaces. The former section-wide
+   charcoal grade erased the contour system and made the frame feel like one
+   flat brown panel. */
+#offerings [data-background-video-stage="true"] {
+  filter: brightness(1.42) saturate(0.96) contrast(1.08);
+}
+
+#offerings [data-services-media-wash="offerings"] {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(224, 190, 139, 0.15), transparent 34%),
+    linear-gradient(100deg, rgba(11, 17, 14, 0.34) 0%, rgba(11, 17, 14, 0.14) 48%, rgba(11, 17, 14, 0.04) 100%);
+}
+
 #offerings .services-discipline-rail {
   background:
-    linear-gradient(100deg, rgba(18, 29, 24, 0.86), rgba(13, 22, 18, 0.76)) !important;
+    linear-gradient(100deg, rgba(18, 29, 24, 0.76), rgba(13, 22, 18, 0.62)) !important;
 }
 
 #offerings [data-service-discipline-panel-shell="true"] {
   background:
-    linear-gradient(125deg, rgba(19, 31, 25, 0.88), rgba(12, 21, 17, 0.76)) !important;
+    linear-gradient(125deg, rgba(19, 31, 25, 0.8), rgba(12, 21, 17, 0.64)) !important;
 }
 
 #offerings .services-discipline-rail > button[aria-selected="false"] {

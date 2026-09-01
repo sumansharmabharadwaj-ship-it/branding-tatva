@@ -4,7 +4,12 @@
 
 [data-contact-film] [data-contact-scene] {
   isolation: isolate;
-  scroll-margin-top: clamp(4.75rem, 8vw, 6.5rem);
+  /* Every chapter is already a full-viewport composition with generous
+     internal top clearance. Offsetting hash navigation by the global header
+     height exposed the tail of the previous chapter and made direct links
+     look like a broken scene seam. Land on the actual frame boundary; the
+     fixed header can sit over the scene without covering its first content. */
+  scroll-margin-top: 0;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }

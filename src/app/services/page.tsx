@@ -390,11 +390,8 @@ export default async function ServicesPage() {
           />
           <div
             className="absolute inset-0"
+            data-services-media-wash="offerings"
             aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(100deg, rgba(16,20,19,0.62) 0%, rgba(16,20,19,0.36) 46%, rgba(16,20,19,0.16) 100%)",
-            }}
           />
           <div data-services-content-plane="true" className="relative w-full">
             <ServiceDisciplineExplorer />

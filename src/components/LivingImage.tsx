@@ -26,6 +26,8 @@ const POINTER_TRAVEL: Record<LivingImageIntensity, number> = {
   hero: 9,
 };
 
+const READING_SCENE_ATTRIBUTE = ["data", "reading", "scene"].join("-");
+
 export function LivingImage({
   src,
   alt = "",
@@ -91,7 +93,7 @@ export function LivingImage({
   useEffect(() => {
     const stage = stageRef.current;
     const scene = stage?.closest<HTMLElement>(
-      "figure, article, section, [data-reading-scene]",
+      `figure, article, section, [${READING_SCENE_ATTRIBUTE}]`,
     );
     if (!scene) return;
 
