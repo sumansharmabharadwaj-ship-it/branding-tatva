@@ -44,13 +44,7 @@ jobs:
 
             current="$(node -p "require('./vercel-preview-release.json').release")"
             next="$((current + 1))"
-            RELEASE="${next}" node <<'NODE'
-            const fs = require("node:fs");
-            const path = "vercel-preview-release.json";
-            const manifest = JSON.parse(fs.readFileSync(path, "utf8"));
-            manifest.release = Number(process.env.RELEASE);
-            fs.writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);
-            NODE
+            RELEASE="${next}" node -e 'const fs=require("node:fs"); const path="vercel-preview-release.json"; const manifest=JSON.parse(fs.readFileSync(path,"utf8")); manifest.release=Number(process.env.RELEASE); fs.writeFileSync(path, JSON.stringify(manifest,null,2)+"\n");'
 
             git add vercel-preview-release.json
             git commit -m "Retry the verified homepage preview [deploy] [release:${next}]"
