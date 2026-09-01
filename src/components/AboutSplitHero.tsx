@@ -10,6 +10,8 @@ import { LinkButton } from "@/components/Button";
 import { TiltCard } from "@/components/TiltCard";
 import { Fireflies } from "@/components/Fireflies";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const ABOUT_HERO_VIDEO_GROUP = "about-hero";
 
@@ -56,6 +58,8 @@ export function AboutSplitHero({
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const portraitVideoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const backgroundLivingStill = usesLivingStill(bgVideo);
+  const portraitLivingStill = usesLivingStill(video);
   const heroInView = useInView(ref, { amount: 0.05, margin: "12% 0px 12% 0px" });
   // Keep the same scroll geometry while avoiding Framer Motion's native
   // ViewTimeline cache, which strongly retains unmounted target elements.
@@ -64,8 +68,8 @@ export function AboutSplitHero({
   // VideoWarden owns both films as one composed scene. The fade hook still
   // reveals decoded frames, but it must not add two more playback observers
   // that can race the page-level budget during the opening handoff.
-  useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion, true);
-  useVideoFadeIn(portraitVideoRef, !prefersReducedMotion, true);
+  useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion && !backgroundLivingStill, true);
+  useVideoFadeIn(portraitVideoRef, !prefersReducedMotion && !portraitLivingStill, true);
 
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const cardY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
@@ -79,6 +83,15 @@ export function AboutSplitHero({
     >
       {prefersReducedMotion ? (
         <Image src={bgPoster} alt="" fill priority sizes="100vw" className="object-cover" />
+      ) : backgroundLivingStill ? (
+        <motion.div className="absolute inset-0 top-[-10%] h-[120%] w-full" style={{ y: bgY }}>
+          <LivingImage
+            src={bgPoster}
+            priority
+            imagePosition="center"
+            intensity="hero"
+          />
+        </motion.div>
       ) : (
         <motion.div className="absolute inset-0 top-[-10%] h-[120%] w-full" style={{ y: bgY }}>
           <video
@@ -146,6 +159,13 @@ export function AboutSplitHero({
                 <div className="relative aspect-[3/4] w-full overflow-hidden">
                   {prefersReducedMotion ? (
                     <Image src={poster} alt="" fill sizes="320px" className="object-cover" />
+                  ) : portraitLivingStill ? (
+                    <LivingImage
+                      src={poster}
+                      sizes="320px"
+                      imagePosition="center"
+                      intensity="cinematic"
+                    />
                   ) : (
                     <video
                       ref={portraitVideoRef}

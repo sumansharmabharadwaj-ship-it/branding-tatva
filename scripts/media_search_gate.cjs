@@ -95,10 +95,21 @@ for (const relative of [
   "sections/Home/PathsCinematicChapter.tsx",
   "sections/Home/ProjectFile.tsx",
   "sections/HomeV4/HomeV4Scenes.tsx",
+  "components/AboutSplitHero.tsx",
 ]) {
   const component = fs.readFileSync(path.join(SRC, relative), "utf8");
   if (!component.includes("usesLivingStill") || !component.includes("<LivingImage")) {
     fail(`${relative} can bypass the shared synthetic-media treatment.`);
+  }
+}
+
+for (const relative of [
+  "sections/Home/StudioTriptych.tsx",
+  "sections/Home/TatvaStrip.tsx",
+]) {
+  const component = fs.readFileSync(path.join(SRC, relative), "utf8");
+  if (!component.includes("<LivingImage")) {
+    fail(`${relative} can restore a direct synthetic video loop.`);
   }
 }
 
@@ -108,6 +119,10 @@ if (!fs.readFileSync(path.join(SRC, "lib/mediaMode.ts"), "utf8").includes('"/vid
 
 if (!fs.readFileSync(path.join(SRC, "lib/mediaMode.ts"), "utf8").includes('"/videos/hero-"')) {
   fail("Short synthetic hero films are not classified as living imagery.");
+}
+
+if (!fs.readFileSync(path.join(SRC, "lib/mediaMode.ts"), "utf8").includes('"/videos/about-hero-bg-meadow.mp4"')) {
+  fail("The short About meadow film is not classified as living imagery.");
 }
 
 const dataSources = walk(path.join(SRC, "data"))

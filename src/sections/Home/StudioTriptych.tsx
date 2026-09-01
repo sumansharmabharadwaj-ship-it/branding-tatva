@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { LivingImage } from "@/components/LivingImage";
 
 const DISCIPLINES = [
   {
@@ -58,7 +59,6 @@ const HOVER_PREVIEW_MS = 3400;
 export function StudioTriptych() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
-  const activeVideoRef = useRef<HTMLVideoElement>(null);
   const pauseUntilRef = useRef(0);
   const inView = useInView(sectionRef, { amount: 0.18 });
   const [activeIndex, setActiveIndex] = useState(0);
@@ -86,25 +86,6 @@ export function StudioTriptych() {
     window.addEventListener("bt:home-chapter", onChapter as EventListener);
     return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
   }, []);
-
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const videoAtEffectStart = activeVideoRef.current;
-
-    function syncPlayback() {
-      const video = activeVideoRef.current;
-      if (!video) return;
-      if (inView && !document.hidden) void video.play().catch(() => {});
-      else video.pause();
-    }
-
-    syncPlayback();
-    document.addEventListener("visibilitychange", syncPlayback);
-    return () => {
-      document.removeEventListener("visibilitychange", syncPlayback);
-      videoAtEffectStart?.pause();
-    };
-  }, [activeIndex, inView, prefersReducedMotion]);
 
   function choose(index: number, duration = MANUAL_PAUSE_MS) {
     pauseUntilRef.current = Date.now() + duration;
@@ -172,25 +153,11 @@ export function StudioTriptych() {
                 scale: { duration: prefersReducedMotion ? 0 : 10, ease: "linear" },
               }}
             >
-              {!prefersReducedMotion && inView ? (
-                <video
-                  ref={activeVideoRef}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  src={active.video}
-                  poster={active.poster}
-                  muted
-                  autoPlay
-                  loop
-                  playsInline
-                  preload="metadata"
-                  aria-hidden="true"
-                  onCanPlay={(event) => {
-                    if (inView) void event.currentTarget.play().catch(() => {});
-                  }}
-                />
-              ) : (
-                <Image src={active.poster} alt="" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-cover" />
-              )}
+              <LivingImage
+                src={active.poster}
+                sizes="(min-width: 1024px) 30vw, 100vw"
+                intensity="cinematic"
+              />
             </motion.div>
           </AnimatePresence>
 

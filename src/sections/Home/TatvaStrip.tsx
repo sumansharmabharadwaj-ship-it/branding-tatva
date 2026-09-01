@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
+import { LivingImage } from "@/components/LivingImage";
 import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
@@ -123,16 +124,10 @@ export function TatvaStrip() {
       }}
     >
       <div className="tatva-observatory__film" aria-hidden="true">
-        <video
-          src="/videos/higgsfield-confident-light.mp4"
-          poster="/images/higgsfield-confident-light-poster.jpg"
-          muted
-          autoPlay={!prefersReducedMotion}
-          loop
-          playsInline
-          aria-hidden="true"
-          preload={inView ? "metadata" : "none"}
-          data-home-playback-rate="1.2"
+        <LivingImage
+          src="/images/higgsfield-confident-light-poster.jpg"
+          imagePosition="58% 48%"
+          intensity="cinematic"
         />
         <span />
       </div>

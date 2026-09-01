@@ -3,6 +3,7 @@ const SYNTHETIC_MOTION_PREFIXES = [
   "/videos/higgsfield-",
   "/videos/card-",
   "/videos/hero-",
+  "/videos/about-hero-bg-meadow.mp4",
 ] as const;
 
 /**

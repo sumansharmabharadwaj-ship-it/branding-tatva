@@ -32,7 +32,7 @@
   pointer-events: none;
 }
 
-.tatva-observatory__film video,
+.tatva-observatory__film [data-living-image-stage="true"],
 .tatva-observatory__film > span {
   position: absolute;
   inset: 0;
@@ -40,12 +40,9 @@
   height: 100%;
 }
 
-.tatva-observatory__film video {
-  object-fit: cover;
-  object-position: 58% 48%;
+.tatva-observatory__film [data-living-image-stage="true"] {
   opacity: 0.52;
   filter: saturate(0.72) contrast(1.1) brightness(0.54);
-  transform: scale(1.06);
 }
 
 .tatva-observatory__film > span {
@@ -375,13 +372,6 @@
     padding: 1rem;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .tatva-observatory__film video {
-    transform: none;
-  }
-}
-
 
 .tatva-pressure-lab__film {
   position: absolute;
