@@ -122,6 +122,9 @@ assert(studio.includes("aria-selected={committed}") && studio.includes("tabIndex
 assert(studio.includes('aria-live={manualModeRef.current === "focus" ? "polite" : "off"}'), "Studio scroll or pointer previews can interrupt assistive reading.");
 assert(studio.includes('data-home-selection-direction={selectionDirectionRef.current}'), "Studio reading motion still inherits unrelated page-scroll direction.");
 assert(studio.includes("const scrollOffsetRef = useRef(0)"), "Studio cannot distinguish forward and backward runway travel across wrapped lens indices.");
+assert(studio.includes('className="studio-film__strategist"') && studio.includes('href="/about"'), "Studio no longer makes its founder-led authorship actionable.");
+assert(studio.includes('src="/images/suman-sharma-studio-portrait.webp"'), "Studio founder handoff has lost Suman's real portrait.");
+assert(experienceUpgrade.includes('.studio-film__strategist:is(:hover, :focus-visible)'), "Studio founder handoff has no pointer or keyboard response.");
 assert(studioSynthesisStyles.includes('button[data-studio-state="committed"]'), "Studio previews erase the visitor's committed visual anchor.");
 assert(/height:\s*148svh\s*!important/.test(studioStyles), "Studio has no bounded three-stage scroll runway.");
 assert(/#studio > \.studio-film\s*\{[^}]*position:\s*sticky\s*!important/s.test(studioStyles), "Studio film does not hold its one-screen composition while disciplines change.");

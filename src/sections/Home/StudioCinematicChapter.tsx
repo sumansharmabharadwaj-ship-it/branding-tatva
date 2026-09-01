@@ -3,6 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   HOME_METHOD_DECISION_EVENT,
@@ -36,6 +37,7 @@ const DISCIPLINES = [
     move: "Name the hidden tension.",
     decision: "Build the position around the belief that must change.",
     outcome: "Buyer tension and perception map",
+    founderCue: "Reads the hesitation before shaping the message.",
     questionFrame: HOME_STUDIO_LENSES[0].question,
     proof: "Applied in HerbalCart",
     proofHref: "/work/herbalcart",
@@ -54,6 +56,7 @@ const DISCIPLINES = [
     move: "Give the choice rhythm, metaphor and voice.",
     decision: "Turn the position into a story people can repeat.",
     outcome: "Verbal identity and narrative spine",
+    founderCue: "Turns strategy into language people remember.",
     questionFrame: HOME_STUDIO_LENSES[1].question,
     proof: "Applied in MyShopInEurope",
     proofHref: "/work/myshopineurope",
@@ -72,6 +75,7 @@ const DISCIPLINES = [
     move: "Set one governing decision.",
     decision: "Align identity, website, content and campaigns to it.",
     outcome: "One decision the business can keep applying",
+    founderCue: "Keeps every brand choice working as one system.",
     questionFrame: HOME_STUDIO_LENSES[2].question,
     proof: "Applied in Dr. Haley Nutrition",
     proofHref: "/work/dr-haley-nutrition",
@@ -313,7 +317,41 @@ export function StudioCinematicChapter() {
       <div className="studio-film__frame">
         <header className="studio-film__topline">
           <span>07 · The thinking behind the work</span>
-          <span>Led directly by Suman Sharma</span>
+          <Link
+            href="/about"
+            className="studio-film__strategist"
+            data-studio-strategist={active.name.toLowerCase()}
+            aria-label="Meet Suman Sharma, your brand strategist"
+          >
+            <span className="studio-film__strategist-portrait" aria-hidden="true">
+              <Image
+                src="/images/suman-sharma-studio-portrait.webp"
+                alt=""
+                fill
+                sizes="48px"
+              />
+            </span>
+            <span className="studio-film__strategist-copy">
+              <small>Meet your brand strategist</small>
+              <strong>Suman Sharma</strong>
+              <AnimatePresence mode="sync" initial={false}>
+                <motion.span
+                  key={active.name}
+                  initial={reducedMotion ? false : {
+                    opacity: 0,
+                    x: selectionDirectionRef.current === "forward" ? 8 : -8,
+                    filter: "blur(3px)",
+                  }}
+                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                  exit={reducedMotion ? undefined : { opacity: 0, x: -4, filter: "blur(2px)" }}
+                  transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
+                >
+                  {active.founderCue}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+            <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" />
+          </Link>
         </header>
 
         <div className="studio-film__body">
@@ -466,9 +504,6 @@ export function StudioCinematicChapter() {
             })}
             </div>
           </div>
-          <Link href="/about" className="studio-film__about">
-            Meet the strategist <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" />
-          </Link>
         </div>
       </div>
     </section>

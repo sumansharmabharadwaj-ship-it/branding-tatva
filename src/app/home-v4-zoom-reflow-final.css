@@ -29,9 +29,7 @@
   .home-v4 .evidence-cinematic__actions button,
   .home-v4 .evidence-cinematic__actions a,
   .home-v4 .paths-film__answer > a,
-  .home-v4 .studio-film__reading > a,
   .home-v4 .studio-film__reading-actions a,
-  .home-v4 .studio-film__about,
   .home-v4 .questions-editorial__answer > a {
     min-height: 2.75rem !important;
     align-items: center;
@@ -316,8 +314,7 @@
     grid-column: 3;
   }
 
-  .home-v4 .evidence-cinematic__trail-topline a,
-  .home-v4 .studio-film__about {
+  .home-v4 .evidence-cinematic__trail-topline a {
     display: inline-flex;
   }
 

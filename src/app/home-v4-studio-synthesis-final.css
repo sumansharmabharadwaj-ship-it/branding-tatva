@@ -177,8 +177,7 @@
   transition: transform .32s cubic-bezier(.22, 1, .36, 1), background-color .28s ease, border-color .28s ease;
 }
 
-.home-v4 .studio-film__reading-actions a svg,
-.home-v4 .studio-film__about svg {
+.home-v4 .studio-film__reading-actions a svg {
   flex: 0 0 auto;
   transition: transform .3s cubic-bezier(.22, 1, .36, 1);
 }
@@ -197,8 +196,7 @@
   transform: translateY(-2px);
 }
 
-.home-v4 .studio-film__reading-actions a:first-child:is(:hover, :focus-visible) svg,
-.home-v4 .studio-film__about:is(:hover, :focus-visible) svg {
+.home-v4 .studio-film__reading-actions a:first-child:is(:hover, :focus-visible) svg {
   transform: translateX(2px);
 }
 
@@ -447,8 +445,7 @@
     transition: none;
   }
 
-  .home-v4 .studio-film__reading-actions a svg,
-  .home-v4 .studio-film__about svg {
+  .home-v4 .studio-film__reading-actions a svg {
     transition: none;
   }
 }
