@@ -4,6 +4,8 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 type ChapterId =
   | "opening"
@@ -284,6 +286,7 @@ export function HomeFilmConstellation() {
             {films.map((film, index) => {
               const primary = index === 0;
               const direction = primary ? 1 : -1;
+              const livingStill = usesLivingStill(film.video);
 
               return (
                 <motion.figure
@@ -321,20 +324,29 @@ export function HomeFilmConstellation() {
                     rotate: { duration: primary ? 14 : 16, repeat: Infinity, ease: "easeInOut" },
                   }}
                 >
-                  <video
-                    aria-hidden="true"
-                    ref={(node: HTMLVideoElement | null) => {
-                      videoRefs.current[index] = node;
-                    }}
-                    className="absolute inset-0 h-full w-full object-cover"
-                    src={film.video}
-                    poster={film.poster}
-                    muted
-                    loop
-                    autoPlay
-                    playsInline
-                    preload="metadata"
-                  />
+                  {livingStill ? (
+                    <LivingImage
+                      src={film.poster}
+                      sizes="160px"
+                      intensity="subtle"
+                      className="absolute inset-0"
+                    />
+                  ) : (
+                    <video
+                      aria-hidden="true"
+                      ref={(node: HTMLVideoElement | null) => {
+                        videoRefs.current[index] = node;
+                      }}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      src={film.video}
+                      poster={film.poster}
+                      muted
+                      loop
+                      autoPlay
+                      playsInline
+                      preload="metadata"
+                    />
+                  )}
                   <span
                     className="absolute inset-0"
                     style={{

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
+import { LivingImage } from "@/components/LivingImage";
 import {
   useEffect,
   useRef,
@@ -11,6 +12,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { usesLivingStill } from "@/lib/mediaMode";
 import {
   SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
@@ -112,6 +114,9 @@ const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
 
 export function PathsCinematicChapter() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const backgroundVideo = "/videos/hero-goldendunes.mp4";
+  const backgroundPoster = "/images/hero-goldendunes-poster.jpg";
+  const livingBackground = usesLivingStill(backgroundVideo);
   const selectionDirectionRef = useRef<SelectionDirection>("forward");
   const displayedIndexRef = useRef(0);
   const [committedIndex, setCommittedIndex] = useState(0);
@@ -231,18 +236,27 @@ export function PathsCinematicChapter() {
       style={{ "--paths-film-accent": active.tint } as CSSProperties}
     >
       <div className="paths-film__media" aria-hidden="true">
-        <video
-          muted
-          loop
-          playsInline
-          preload="none"
-          poster="/images/hero-goldendunes-poster.jpg"
-          data-media-id="BT-HOME-PATHS-GOLDEN-DUNES"
-          data-home-playback-rate="0.82"
-          aria-hidden="true"
-        >
-          <source src="/videos/hero-goldendunes.mp4" type="video/mp4" />
-        </video>
+        {livingBackground ? (
+          <LivingImage
+            src={backgroundPoster}
+            imagePosition="50% 50%"
+            intensity="hero"
+            className="paths-film__media-living"
+          />
+        ) : (
+          <video
+            muted
+            loop
+            playsInline
+            preload="none"
+            poster={backgroundPoster}
+            data-media-id="BT-HOME-PATHS-GOLDEN-DUNES"
+            data-home-playback-rate="0.82"
+            aria-hidden="true"
+          >
+            <source src={backgroundVideo} type="video/mp4" />
+          </video>
+        )}
       </div>
       <div className="paths-film__veil" aria-hidden="true" />
 

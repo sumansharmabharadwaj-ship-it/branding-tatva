@@ -10,7 +10,8 @@
   background: #2c3932;
 }
 
-.home-v4-opening__media video {
+.home-v4-opening__media video,
+.home-v4-opening__living {
   filter: brightness(1.22) saturate(0.86) sepia(0.06) contrast(0.94);
 }
 

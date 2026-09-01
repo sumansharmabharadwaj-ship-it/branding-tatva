@@ -91,7 +91,10 @@ for (const relative of [
   "sections/Process/JourneyStage.tsx",
   "sections/Threshold/ThresholdPanel.tsx",
   "sections/Home/EvidenceWall.tsx",
+  "sections/Home/HomeFilmConstellation.tsx",
+  "sections/Home/PathsCinematicChapter.tsx",
   "sections/Home/ProjectFile.tsx",
+  "sections/HomeV4/HomeV4Scenes.tsx",
 ]) {
   const component = fs.readFileSync(path.join(SRC, relative), "utf8");
   if (!component.includes("usesLivingStill") || !component.includes("<LivingImage")) {
@@ -101,6 +104,10 @@ for (const relative of [
 
 if (!fs.readFileSync(path.join(SRC, "lib/mediaMode.ts"), "utf8").includes('"/videos/card-"')) {
   fail("Project-card loops are not classified as synthetic media.");
+}
+
+if (!fs.readFileSync(path.join(SRC, "lib/mediaMode.ts"), "utf8").includes('"/videos/hero-"')) {
+  fail("Short synthetic hero films are not classified as living imagery.");
 }
 
 const dataSources = walk(path.join(SRC, "data"))

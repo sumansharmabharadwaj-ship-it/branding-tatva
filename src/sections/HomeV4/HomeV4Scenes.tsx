@@ -5,6 +5,8 @@ import Link from "next/link";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight, Pause, Play, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 type SelectionDirection = "forward" | "backward";
@@ -63,6 +65,9 @@ export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.28 });
+  const openingVideo = "/videos/hero-forest-sanctuary.mp4";
+  const openingPoster = "/images/hero-forest-sanctuary-poster.jpg";
+  const livingOpening = usesLivingStill(openingVideo);
 
   return (
     <section
@@ -80,16 +85,26 @@ export function V4OpeningScene() {
         aria-hidden="true"
         data-media-id="BT-HOME-HERO-FOREST-SANCTUARY"
       >
-        <video
-          src="/videos/hero-forest-sanctuary.mp4"
-          poster="/images/hero-forest-sanctuary-poster.jpg"
-          data-home-playback-rate="1.1"
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-          preload="metadata"
-        />
+        {livingOpening ? (
+          <LivingImage
+            src={openingPoster}
+            priority
+            imagePosition="36% 44%"
+            intensity="hero"
+            className="home-v4-opening__living"
+          />
+        ) : (
+          <video
+            src={openingVideo}
+            poster={openingPoster}
+            data-home-playback-rate="1.1"
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+            preload="metadata"
+          />
+        )}
         <motion.span
           className="home-v4-opening__camera"
           initial={false}
