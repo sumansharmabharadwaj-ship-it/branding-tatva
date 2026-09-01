@@ -503,90 +503,6 @@
   transform-origin: top;
 }
 
-#book [data-strategy-room-orbit="true"] {
-  position: absolute;
-  z-index: 0;
-  top: 50%;
-  left: 22%;
-  width: clamp(20rem, 37vw, 34rem);
-  aspect-ratio: 1;
-  pointer-events: none;
-  opacity: clamp(0.2, var(--services-discovery, 0), 0.66);
-  transform:
-    translate3d(-50%, -50%, 0)
-    scale(clamp(0.88, var(--services-resolution, 0), 1));
-  transition: opacity 500ms ease;
-}
-
-#book [data-strategy-orbit-ring] {
-  position: absolute;
-  border: 1px solid rgba(212, 185, 154, 0.2);
-  border-radius: 50%;
-}
-
-#book [data-strategy-orbit-ring="outer"] {
-  inset: 0;
-  border-style: dashed;
-  animation: services-strategy-orbit 28s linear infinite;
-}
-
-#book [data-strategy-orbit-ring="inner"] {
-  inset: 20%;
-  border-color: rgba(244, 239, 230, 0.16);
-  animation: services-strategy-orbit 19s linear infinite reverse;
-}
-
-#book [data-strategy-orbit-ring]::before,
-#book [data-strategy-orbit-ring]::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 0.42rem;
-  height: 0.42rem;
-  margin-top: -0.21rem;
-  border-radius: 50%;
-  background: #d4b99a;
-  box-shadow: 0 0 18px rgba(212, 185, 154, 0.7);
-}
-
-#book [data-strategy-orbit-ring]::before {
-  left: -0.21rem;
-}
-
-#book [data-strategy-orbit-ring]::after {
-  right: -0.21rem;
-}
-
-#book [data-strategy-orbit-signal="true"] {
-  position: absolute;
-  top: 50%;
-  left: 4%;
-  width: 92%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212, 185, 154, 0.6), transparent);
-  transform: rotate(-18deg);
-  transform-origin: center;
-}
-
-#book [data-strategy-orbit-core="true"] {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  width: 4.5rem;
-  height: 4.5rem;
-  place-items: center;
-  border: 1px solid rgba(244, 239, 230, 0.24);
-  border-radius: 50%;
-  background: rgba(20, 25, 22, 0.28);
-  color: rgba(244, 239, 230, 0.52);
-  font-family: var(--font-display);
-  font-size: 1rem;
-  letter-spacing: 0.15em;
-  transform: translate(-50%, -50%);
-  backdrop-filter: blur(8px);
-}
-
 #book [data-strategy-agenda-step="true"] {
   overflow: hidden;
   transition:
@@ -652,12 +568,6 @@
 
 #book [data-strategy-control="true"]:hover {
   box-shadow: 0 12px 32px rgba(6, 10, 8, 0.2);
-}
-
-@keyframes services-strategy-orbit {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* A live signal turns the existing checklist into immediate feedback. The
@@ -1412,13 +1322,6 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     display: none;
   }
 
-  #book [data-strategy-room-orbit="true"] {
-    top: 13rem;
-    left: 50%;
-    width: min(84vw, 22rem);
-    opacity: 0.22;
-  }
-
   #book [data-strategy-room-agenda="true"] > ol {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.35rem;
@@ -1902,12 +1805,6 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
     filter: brightness(1.08) saturate(0.78) contrast(0.98);
   }
 
-  #book [data-strategy-orbit-ring],
-  #book [data-strategy-room-orbit="true"] {
-    animation: none;
-    transition: none;
-  }
-
   #book [data-strategy-room-copy="true"],
   #book [data-services-chapter-resolution="true"],
   #book [data-strategy-agenda-step="true"],
@@ -1933,12 +1830,6 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 :root[data-motion="reduced"] #services-opening > video,
 :root[data-motion="reduced"] #services-opening > [data-living-image-stage="true"] {
   filter: brightness(1.08) saturate(0.78) contrast(0.98);
-}
-
-:root[data-motion="reduced"] #book [data-strategy-orbit-ring],
-:root[data-motion="reduced"] #book [data-strategy-room-orbit="true"] {
-  animation: none;
-  transition: none;
 }
 
 :root[data-motion="reduced"] #book [data-strategy-room-copy="true"],

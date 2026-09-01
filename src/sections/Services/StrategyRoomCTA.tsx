@@ -385,13 +385,6 @@ export function StrategyRoomCTA() {
   return (
     <>
       <Container className="relative max-w-6xl">
-        <div data-strategy-room-orbit="true" aria-hidden="true">
-          <span data-strategy-orbit-ring="outer" />
-          <span data-strategy-orbit-ring="inner" />
-          <span data-strategy-orbit-signal="true" />
-          <span data-strategy-orbit-core="true">BT</span>
-        </div>
-
         <div
           data-strategy-room-stage="true"
           className="relative grid items-center gap-7 lg:grid-cols-[minmax(19rem,0.82fr)_minmax(28rem,1.18fr)] lg:gap-12"
