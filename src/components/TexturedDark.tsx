@@ -33,6 +33,7 @@ export function TexturedDark({
   video,
   videoMobile,
   videoWebm,
+  loopVideo = true,
   imagePosition = "center",
   overlayGradient,
 }: {
@@ -48,6 +49,9 @@ export function TexturedDark({
   // Optional WebM sibling, tried before the desktop MP4 when supported.
   // `video` alone keeps working exactly as before for existing callers.
   videoWebm?: string;
+  // Short authentic clips can play once and settle on their final frame.
+  // This avoids a visible restart without replacing genuine footage.
+  loopVideo?: boolean;
   imagePosition?: string;
   // A section-specific grade. Omit it to retain the established soil
   // overlay; provide it when the source film has its own color script.
@@ -105,7 +109,7 @@ export function TexturedDark({
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
             style={{ objectPosition: imagePosition }}
             muted
-            loop
+            loop={loopVideo}
             playsInline
             aria-hidden="true"
             preload="metadata"

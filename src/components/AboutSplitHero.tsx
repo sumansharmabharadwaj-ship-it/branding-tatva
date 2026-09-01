@@ -174,7 +174,7 @@ export function AboutSplitHero({
                       poster={poster}
                       autoPlay
                       muted
-                      loop
+                      loop={false}
                       playsInline
                       aria-hidden="true"
                       data-video-warden-group={ABOUT_HERO_VIDEO_GROUP}

@@ -53,6 +53,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
         <TexturedDark
         image="/images/own-jagged-peaks.jpg"
         video="/videos/own-jagged-peaks.mp4"
+        loopVideo={false}
         imagePosition="center 85%"
         className="py-12 sm:py-14"
       >

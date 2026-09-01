@@ -125,6 +125,16 @@ if (!fs.readFileSync(path.join(SRC, "lib/mediaMode.ts"), "utf8").includes('"/vid
   fail("The short About meadow film is not classified as living imagery.");
 }
 
+const aboutSplitHero = fs.readFileSync(path.join(SRC, "components/AboutSplitHero.tsx"), "utf8");
+if (!aboutSplitHero.includes("loop={false}")) {
+  fail("The authentic About portrait can restore a visible repeat.");
+}
+
+const footer = fs.readFileSync(path.join(SRC, "sections/Footer/index.tsx"), "utf8");
+if (!footer.includes("loopVideo={false}")) {
+  fail("The shared mountain footer can restore a sitewide repeat.");
+}
+
 const dataSources = walk(path.join(SRC, "data"))
   .filter((file) => file.endsWith(".ts"))
   .map((file) => fs.readFileSync(file, "utf8"))
