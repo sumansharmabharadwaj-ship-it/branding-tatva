@@ -124,7 +124,7 @@ export function InsightFrameworkVisualizer({
             className="insight-framework__glyph h-9 w-9"
             strokeWidth={1.15}
           />
-          <AnimatePresence mode="wait" initial={false} custom={direction}>
+          <AnimatePresence mode="popLayout" initial={false} custom={direction}>
             <motion.div
               key={activeStep.title}
               id="framework-active-step"
@@ -152,7 +152,7 @@ export function InsightFrameworkVisualizer({
               animate="active"
               exit={prefersReducedMotion ? undefined : "exit"}
               transition={{
-                duration: prefersReducedMotion ? 0 : 0.52,
+                duration: prefersReducedMotion ? 0 : 0.44,
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
