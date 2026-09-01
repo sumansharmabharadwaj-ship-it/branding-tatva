@@ -1195,3 +1195,50 @@ The Library header also receives a protected navigation line on desktop. The ima
 ## Final result
 
 passed
+
+---
+
+# Services living-roots opening restoration · 2026-09-01
+
+## Comparison target
+
+- Source visual truth: `Screenshot 2026-09-01 at 6.50.56 PM.png`, supplied by the user.
+- Implementation: the local `/services` route at `1363 × 936` CSS pixels.
+- Target state: photographic tree-root archive, rounded smoky reading panel, original four-act index, and full motion mode.
+
+## Findings
+
+No actionable P0, P1, or P2 findings remain.
+
+The Services opening retains the photographic root archive as its visual base and the related root-system film in full motion. The flat left-edge copy treatment introduced later was replaced with the earlier rounded, bordered, translucent panel shown in the reference. Current Services content below the opening remains unchanged.
+
+## Required fidelity surfaces
+
+- Typography: passed; heading, eyebrow, supporting copy, and journey index retain the established hierarchy.
+- Layout: passed; rounded panel proportions and desktop placement align with the reference at the inspected viewport.
+- Color and depth: passed; translucent earth-green fill, ivory border, shadow, and backdrop blur restore the cinematic reading surface.
+- Image fidelity: passed; the photographic root archive remains the hero poster and reduced-motion frame.
+- Motion: passed; full mode preserves the related root-system film, while reduced mode remains complete and static.
+
+## Interaction and browser verification
+
+- Hero media: passed; the root-system film and photographic archive poster remain wired through `PhotoHero`.
+- Situation handoff: passed; keyboard activation moves to `#situation` with the fixed-header offset preserved.
+- Motion preference: passed; the footer control switches to reduced motion without removing content.
+- Console: no site-originated application errors. One logged error came from the browser's `chrome-extension://` metadata bridge.
+- Production checks: TypeScript, copy checks, `git diff --check`, and the Next.js production build passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The current source used a flatter `services-hero-copy` treatment instead of the rounded cinematic panel in the reference. | Restored the rounded border, translucent fill, deep shadow, and backdrop blur; browser geometry confirmed a `28px` corner radius. |
+| 2 | — | Final full-view and focused interaction checks found no remaining actionable P0/P1/P2 issue. | Passed. |
+
+## Follow-up polish
+
+- P3: reconfirm the crop once at the original `2048px` screenshot width during deployment acceptance.
+
+## Final result
+
+passed
