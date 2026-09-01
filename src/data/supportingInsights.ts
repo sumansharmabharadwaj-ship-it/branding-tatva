@@ -24,10 +24,10 @@ export const supportingInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",
-    heroImage: "/images/generated/insights/website-message-hierarchy.webp",
-    heroVideo: "/videos/generated/insights/website-message-hierarchy.mp4",
+    heroImage: "/images/generated/insights-v3/website-message-reader-sequence.webp",
+    heroVideo: "/videos/generated/insights-v3/website-message-reader-sequence.mp4",
     heroImageAlt:
-      "Blank message blocks descending in scale along a brass alignment rail on handmade paper",
+      "Five website message stages guiding a reader from orientation through proof to one clear action",
     keyTakeaways: [
       "The first screen should establish category, relevance, and direction before introducing every capability.",
       "Message order should follow the visitor's questions rather than the company's internal structure.",

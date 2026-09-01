@@ -26,13 +26,13 @@ function topicMedia(slug: string, alt: string): InsightOriginalMedia {
 }
 
 export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
-  "brand-positioning-strategy-service-businesses": media(
-    "positioning-strategy-spine",
-    "A brass rule creates one clear route through a field of handmade service tokens",
+  "brand-positioning-strategy-service-businesses": topicMedia(
+    "positioning-strategy-five-decision-spine",
+    "Three possible category frames narrowed into customer tension, distinctive choice, proof, and one memorable position",
   ),
-  "brand-audit-checklist-before-rebrand": media(
-    "brand-audit-five-layers",
-    "Five translucent material layers opened across a conservation light table",
+  "brand-audit-checklist-before-rebrand": topicMedia(
+    "brand-audit-signal-fracture-diagnosis",
+    "A brand signal passing through five inspection gates with two fractures diagnosed before a sealed rebrand begins",
   ),
   "brand-awareness-vs-brand-recall": topicMedia(
     "awareness-versus-recall-memory-test",
@@ -42,17 +42,17 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "messaging-framework-five-part-system",
     "One positioning foundation feeding five message roles across several customer touchpoints",
   ),
-  "five-element-brand-strategy-framework": media(
-    "five-element-strategy-instrument",
-    "Five natural materials joined around one precise brass instrument",
+  "five-element-brand-strategy-framework": topicMedia(
+    "five-element-brand-ecosystem",
+    "Earth, water, fire, air, and space connected as one living brand strategy system",
   ),
-  "website-messaging-hierarchy-service-businesses": media(
-    "website-message-hierarchy",
-    "Blank handmade paper planes arranged in a clear order of importance",
+  "website-messaging-hierarchy-service-businesses": topicMedia(
+    "website-message-reader-sequence",
+    "Five website message stages guiding a reader from orientation through proof to one clear action",
   ),
-  "distinctive-brand-assets-audit": media(
-    "distinctive-assets-audit-kit",
-    "An open material kit holding shape color texture sound and rhythm cues",
+  "distinctive-brand-assets-audit": topicMedia(
+    "distinctive-assets-attribution-test",
+    "A blind attribution test selecting two recognisable brand cues that survive across four formats",
   ),
   "customer-journey-mapping-service-businesses": media(
     "customer-journey-thresholds",

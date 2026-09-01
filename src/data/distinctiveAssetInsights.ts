@@ -24,10 +24,10 @@ export const distinctiveAssetInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/generated/insights/distinctive-assets-audit-kit.webp",
-    heroVideo: "/videos/generated/insights/distinctive-assets-audit-kit.mp4",
+    heroImage: "/images/generated/insights-v3/distinctive-assets-attribution-test.webp",
+    heroVideo: "/videos/generated/insights-v3/distinctive-assets-attribution-test.mp4",
     heroImageAlt:
-      "An archivist tray of five distinctive material cues with a brass frame selecting the strongest pair",
+      "A blind attribution test selecting two recognisable brand cues that survive across four formats",
     keyTakeaways: [
       "A distinctive asset helps people identify the source before they process every word.",
       "Familiarity alone is insufficient; the cue must also separate the brand from plausible competitors.",

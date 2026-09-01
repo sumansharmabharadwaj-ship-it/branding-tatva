@@ -183,10 +183,10 @@ export const insightPosts: InsightPost[] = [
     updatedAt: "2026-08-06",
     readingTime: "13 min read",
     featured: true,
-    heroImage: "/images/generated/insights/positioning-strategy-spine.webp",
-    heroVideo: "/videos/generated/insights/positioning-strategy-spine.mp4",
+    heroImage: "/images/generated/insights-v3/positioning-strategy-five-decision-spine.webp",
+    heroVideo: "/videos/generated/insights-v3/positioning-strategy-five-decision-spine.mp4",
     heroImageAlt:
-      "Five interlocking material pieces forming one complete positioning spine on a strategy table",
+      "Three possible category frames narrowed into customer tension, distinctive choice, proof, and one memorable position",
     keyTakeaways: [
       "Positioning is a decision system, rather than a sentence kept inside a deck.",
       "A useful position connects category, customer tension, distinctive choice, proof, and a memorable message.",
@@ -403,10 +403,10 @@ export const insightPosts: InsightPost[] = [
     publishedAt: "2026-07-06",
     updatedAt: "2026-08-06",
     readingTime: "12 min read",
-    heroImage: "/images/generated/insights/brand-audit-five-layers.webp",
-    heroVideo: "/videos/generated/insights/brand-audit-five-layers.mp4",
+    heroImage: "/images/generated/insights-v3/brand-audit-signal-fracture-diagnosis.webp",
+    heroVideo: "/videos/generated/insights-v3/brand-audit-signal-fracture-diagnosis.mp4",
     heroImageAlt:
-      "Five material layers of earth, indigo cloth, terracotta, vellum, and mineral plaster examined through a brass loupe",
+      "A brand signal passing through five inspection gates with two fractures diagnosed before a sealed rebrand begins",
     keyTakeaways: [
       "An audit begins with the business decision that triggered the review.",
       "The strongest findings identify a specific break rather than a vague feeling.",
@@ -1008,10 +1008,10 @@ export const insightPosts: InsightPost[] = [
     publishedAt: "2026-07-20",
     updatedAt: "2026-08-06",
     readingTime: "11 min read",
-    heroImage: "/images/generated/insights/five-element-strategy-instrument.webp",
-    heroVideo: "/videos/generated/insights/five-element-strategy-instrument.mp4",
+    heroImage: "/images/generated/insights-v3/five-element-brand-ecosystem.webp",
+    heroVideo: "/videos/generated/insights-v3/five-element-brand-ecosystem.mp4",
     heroImageAlt:
-      "Five elemental material discs joined in brass around one open center",
+      "Earth, water, fire, air, and space connected as one living brand strategy system",
     keyTakeaways: [
       "Brand problems become easier to diagnose when the system is separated into distinct jobs.",
       "Earth sets the position, Water shapes the experience, Fire earns attention, Air carries meaning, and Space builds memory.",
