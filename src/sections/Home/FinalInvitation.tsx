@@ -125,6 +125,11 @@ export function FinalInvitation() {
     setQuestionChoice(readHomeQuestionChoice());
     setStudioLens(readHomeStudioLens());
 
+    function resetCallStepThread() {
+      setCommittedCallStep(0);
+      setPreviewCallStep(null);
+    }
+
     function sync() {
       setSituation(readSituation());
     }
@@ -147,6 +152,7 @@ export function FinalInvitation() {
         setSituation(detail.situation);
         setQuestionChoice(null);
         setStudioLens(null);
+        resetCallStepThread();
       }
     }
 
@@ -154,16 +160,19 @@ export function FinalInvitation() {
       setSituation("default");
       setQuestionChoice(null);
       setStudioLens(null);
+      resetCallStepThread();
     }
 
     function onQuestionChoice(event: Event) {
       const detail = (event as CustomEvent<HomeQuestionChoiceDetail>).detail;
       setQuestionChoice(detail?.choice ?? null);
+      resetCallStepThread();
     }
 
     function onStudioLens(event: Event) {
       const detail = (event as CustomEvent<HomeStudioLensDetail>).detail;
       setStudioLens(detail?.lens ?? null);
+      resetCallStepThread();
     }
 
     window.addEventListener("storage", sync);
