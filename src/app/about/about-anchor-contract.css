@@ -1,14 +1,16 @@
 /* About chapter links are available as native hashes before the cinematic
    runtime hydrates, then reused by Lenis and browser-history restoration.
-   Keep every path on the same fixed-header-safe resting line without adding
-   scroll interception or changing the natural height of any scene. */
+   Each full-frame chapter already keeps its content below the fixed header,
+   so the scene itself should meet the viewport edge on direct entry. */
 
 [data-about-chapter] {
-  scroll-margin-top: clamp(5.75rem, 10svh, 6.5rem);
+  /* Each chapter owns its top clearance. A header-sized scroll margin exposes
+     the previous scene on direct entry and makes the transition feel broken. */
+  scroll-margin-top: 0;
 }
 
 @media (max-width: 430px) {
   [data-about-chapter] {
-    scroll-margin-top: calc(5rem + env(safe-area-inset-top, 0px));
+    scroll-margin-top: 0;
   }
 }

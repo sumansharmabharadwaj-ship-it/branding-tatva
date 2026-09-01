@@ -87,9 +87,9 @@ assert(
   "The copy dense closing chapter can fade below the protected reading exposure.",
 );
 assert(
-  /\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*clamp\(5\.75rem,\s*10svh,\s*6\.5rem\);/.test(anchorContract) &&
-    /@media \(max-width:\s*430px\)[\s\S]*?\[data-about-chapter\]\s*\{[^}]*scroll-margin-top:\s*calc\(5rem \+ env\(safe-area-inset-top,\s*0px\)\);/.test(anchorContract),
-  "About chapter hashes can settle beneath the fixed header in a responsive state.",
+  (anchorContract.match(/scroll-margin-top:\s*0;/g) || []).length === 2 &&
+    anchorContract.includes("Each full-frame chapter already keeps its content below the fixed header"),
+  "About chapter hashes can expose the previous cinematic scene instead of landing on a clean frame.",
 );
 assert(
   smoothScroll.includes("if (!hydrated || !prefersReducedMotion || !window.location.hash) return;") &&
