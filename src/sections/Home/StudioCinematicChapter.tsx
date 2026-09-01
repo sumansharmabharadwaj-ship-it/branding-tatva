@@ -120,6 +120,68 @@ const METHOD_TO_LENS: Record<HomeMethodStage, { index: number; bridge: string }>
 type ManualMode = "none" | "pointer" | "focus";
 type SelectionDirection = "forward" | "backward";
 
+function directionSign(direction: SelectionDirection) {
+  return direction === "forward" ? 1 : -1;
+}
+
+const STUDIO_SHOT_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: `${directionSign(direction) * 1.2}%`,
+    scale: 1.018,
+  }),
+  center: { opacity: 1, x: "0%", scale: 1 },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: `${directionSign(direction) * -0.8}%`,
+    scale: 1.008,
+  }),
+};
+
+const STUDIO_CUE_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: directionSign(direction) * 8,
+    filter: "blur(3px)",
+  }),
+  center: { opacity: 1, x: 0, filter: "blur(0px)" },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: directionSign(direction) * -5,
+    filter: "blur(2px)",
+  }),
+};
+
+const STUDIO_TITLE_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    y: directionSign(direction) * 10,
+    filter: "blur(4px)",
+  }),
+  center: { opacity: 1, y: 0, filter: "blur(0px)" },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    y: directionSign(direction) * -7,
+    filter: "blur(3px)",
+  }),
+};
+
+const STUDIO_READING_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: directionSign(direction) * 14,
+    y: 4,
+    filter: "blur(4px)",
+  }),
+  center: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: directionSign(direction) * -8,
+    y: -3,
+    filter: "blur(3px)",
+  }),
+};
+
 export function StudioCinematicChapter() {
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
@@ -294,13 +356,19 @@ export function StudioCinematicChapter() {
       style={{ "--studio-film-accent": active.accent } as CSSProperties}
     >
       <div className="studio-film__media" aria-hidden="true">
-        <AnimatePresence mode="sync" initial={false}>
+        <AnimatePresence
+          mode="sync"
+          initial={false}
+          custom={selectionDirectionRef.current}
+        >
           <motion.div
             key={active.video}
             className="studio-film__shot"
-            initial={reducedMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reducedMotion ? undefined : { opacity: 0 }}
+            custom={selectionDirectionRef.current}
+            variants={STUDIO_SHOT_VARIANTS}
+            initial={reducedMotion ? false : "enter"}
+            animate="center"
+            exit={reducedMotion ? undefined : "exit"}
             transition={{ duration: reducedMotion ? 0 : 0.62, ease: EASE }}
           >
             <video
@@ -338,16 +406,18 @@ export function StudioCinematicChapter() {
             <span className="studio-film__strategist-copy">
               <small>Meet your brand strategist</small>
               <strong>Suman Sharma</strong>
-              <AnimatePresence mode="sync" initial={false}>
+              <AnimatePresence
+                mode="sync"
+                initial={false}
+                custom={selectionDirectionRef.current}
+              >
                 <motion.span
                   key={active.name}
-                  initial={reducedMotion ? false : {
-                    opacity: 0,
-                    x: selectionDirectionRef.current === "forward" ? 8 : -8,
-                    filter: "blur(3px)",
-                  }}
-                  animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                  exit={reducedMotion ? undefined : { opacity: 0, x: -4, filter: "blur(2px)" }}
+                  custom={selectionDirectionRef.current}
+                  variants={STUDIO_CUE_VARIANTS}
+                  initial={reducedMotion ? false : "enter"}
+                  animate="center"
+                  exit={reducedMotion ? undefined : "exit"}
                   transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
                 >
                   {active.founderCue}
@@ -362,17 +432,19 @@ export function StudioCinematicChapter() {
           <div className="studio-film__statement">
             <p>The person behind the decisions</p>
             <h2 id="studio-film-title">
-              <AnimatePresence mode="sync" initial={false}>
+              <AnimatePresence
+                mode="sync"
+                initial={false}
+                custom={selectionDirectionRef.current}
+              >
                 <motion.span
                   key={active.name}
                   className="is-active"
-                  initial={reducedMotion ? false : {
-                    opacity: 0,
-                    y: selectionDirectionRef.current === "forward" ? 10 : -10,
-                    filter: "blur(4px)",
-                  }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={reducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(3px)" }}
+                  custom={selectionDirectionRef.current}
+                  variants={STUDIO_TITLE_VARIANTS}
+                  initial={reducedMotion ? false : "enter"}
+                  animate="center"
+                  exit={reducedMotion ? undefined : "exit"}
                   transition={{ duration: reducedMotion ? 0 : 0.42, ease: EASE }}
                 >
                   {active.name} <em>{active.verb}.</em>
@@ -381,7 +453,11 @@ export function StudioCinematicChapter() {
             </h2>
           </div>
 
-          <AnimatePresence mode="sync" initial={false}>
+          <AnimatePresence
+            mode="sync"
+            initial={false}
+            custom={selectionDirectionRef.current}
+          >
             <motion.article
               key={active.name}
               id="studio-film-panel"
@@ -390,14 +466,11 @@ export function StudioCinematicChapter() {
               className="studio-film__reading"
               data-home-reading-plane
               data-home-selection-direction={selectionDirectionRef.current}
-              initial={reducedMotion ? false : {
-                opacity: 0,
-                x: selectionDirectionRef.current === "forward" ? 14 : -14,
-                y: 5,
-                filter: "blur(4px)",
-              }}
-              animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-              exit={reducedMotion ? undefined : { opacity: 0, x: -7, y: -5, filter: "blur(3px)" }}
+              custom={selectionDirectionRef.current}
+              variants={STUDIO_READING_VARIANTS}
+              initial={reducedMotion ? false : "enter"}
+              animate="center"
+              exit={reducedMotion ? undefined : "exit"}
               transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
               aria-live={manualModeRef.current === "focus" ? "polite" : "off"}
             >

@@ -127,6 +127,8 @@ assert(studio.includes("methodLensIndexRef.current + offset") && studio.includes
 assert(studio.includes("aria-selected={committed}") && studio.includes("tabIndex={committed ? 0 : -1}"), "Studio hover changes the selected tab or keyboard stop.");
 assert(studio.includes('aria-live={manualModeRef.current === "focus" ? "polite" : "off"}'), "Studio scroll or pointer previews can interrupt assistive reading.");
 assert(studio.includes('data-home-selection-direction={selectionDirectionRef.current}'), "Studio reading motion still inherits unrelated page-scroll direction.");
+assert(studio.includes("variants={STUDIO_SHOT_VARIANTS}") && studio.includes("variants={STUDIO_CUE_VARIANTS}") && studio.includes("variants={STUDIO_TITLE_VARIANTS}") && studio.includes("variants={STUDIO_READING_VARIANTS}"), "Studio film and reading planes no longer share one directional camera handoff.");
+assert(studio.includes("custom={selectionDirectionRef.current}") && studio.includes('exit={reducedMotion ? undefined : "exit"}'), "Studio exit motion cannot receive the visitor's latest selection direction.");
 assert(studio.includes("const scrollOffsetRef = useRef(0)"), "Studio cannot distinguish forward and backward runway travel across wrapped lens indices.");
 assert(studio.includes('className="studio-film__strategist"') && studio.includes('href="/about"'), "Studio no longer makes its founder-led authorship actionable.");
 assert(studio.includes('src="/images/suman-sharma-studio-portrait.webp"'), "Studio founder handoff has lost Suman's real portrait.");
