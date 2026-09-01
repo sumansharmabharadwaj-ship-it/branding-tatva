@@ -15,9 +15,9 @@ export const competitorResearchInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/generated/insights/competitor-research-observation.webp",
-    heroVideo: "/videos/generated/insights/competitor-research-observation.mp4",
-    heroImageAlt: "Four similar clay forms observed through a brass lens beside untouched terracotta ready for an original answer",
+    heroImage: "/images/generated/insights-v3/competitor-research-distance-map.webp",
+    heroVideo: "/videos/generated/insights-v3/competitor-research-distance-map.mp4",
+    heroImageAlt: "Repeated competitor conventions measured at a distance while internal proof produces one original strategic choice",
     keyTakeaways: [
       "Study the customer's real alternative set, including internal solutions and doing nothing, rather than only obvious competitors.",
       "Separate category conventions that aid comprehension from habits that merely make every brand look alike.",

@@ -36,10 +36,10 @@ export const customerInterviewInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "14 min read",
-    heroImage: "/images/generated/insights/customer-interviews-listening-table.webp",
-    heroVideo: "/videos/generated/insights/customer-interviews-listening-table.mp4",
+    heroImage: "/images/generated/insights-v3/customer-interview-decision-reconstruction.webp",
+    heroVideo: "/videos/generated/insights-v3/customer-interview-decision-reconstruction.mp4",
     heroImageAlt:
-      "Two ceramic listening cups held under tension with a rough terracotta truth pulled forward from smooth polite tokens",
+      "A customer decision reconstructed from context through memory while smooth polite answers remain outside the evidence path",
     keyTakeaways: [
       "Ask about real past behaviour before asking for opinions about the brand.",
       "Neutral, open questions reveal more useful language than questions that contain the preferred answer.",

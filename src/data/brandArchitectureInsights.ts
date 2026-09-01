@@ -37,10 +37,10 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
-    heroImage: "/images/generated/insights/brand-architecture-service-system.webp",
-    heroVideo: "/videos/generated/insights/brand-architecture-service-system.mp4",
+    heroImage: "/images/generated/insights-v3/brand-architecture-independence-threshold.webp",
+    heroVideo: "/videos/generated/insights-v3/brand-architecture-independence-threshold.mp4",
     heroImageAlt:
-      "A dark walnut root block feeding three indigo glazed service vessels through branching brass channels",
+      "One master brand holding four clear service offers while a fifth candidate faces five tests for independence",
     keyTakeaways: [
       "Brand architecture is a customer navigation system before it is a naming exercise.",
       "Most service businesses gain more from one strong master brand than from several lightly funded sub brands.",

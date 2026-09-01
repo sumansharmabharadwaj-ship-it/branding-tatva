@@ -36,10 +36,10 @@ export const brandRefreshInsightPosts: SourcedInsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "15 min read",
-    heroImage: "/images/generated/insights/refresh-rebrand-conservation.webp",
-    heroVideo: "/videos/generated/insights/refresh-rebrand-conservation.mp4",
+    heroImage: "/images/generated/insights-v3/brand-change-depth-ladder.webp",
+    heroVideo: "/videos/generated/insights-v3/brand-change-depth-ladder.mp4",
     heroImageAlt:
-      "An indigo textile repaired in place on one side and unwoven for reconstruction on the other",
+      "One familiar brand cue moving through five levels of change from contained repair to complete strategic rebuild",
     keyTakeaways: [
       "A refresh updates expression; a rebrand changes market meaning and the system required to support it.",
       "The correct scope is the smallest level of change that resolves the diagnosed business problem.",

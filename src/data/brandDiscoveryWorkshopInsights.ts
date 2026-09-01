@@ -17,9 +17,9 @@ export const brandDiscoveryWorkshopInsightPosts: InsightPost[] = [
     publishedAt: "2026-08-07",
     updatedAt: "2026-08-07",
     readingTime: "13 min read",
-    heroImage: "/images/generated/insights/discovery-workshop-decision-table.webp",
-    heroVideo: "/videos/generated/insights/discovery-workshop-decision-table.mp4",
-    heroImageAlt: "Five workshop objects connected by brass paths to one central terracotta decision tile",
+    heroImage: "/images/generated/insights-v3/discovery-workshop-evidence-to-decisions.webp",
+    heroVideo: "/videos/generated/insights-v3/discovery-workshop-evidence-to-decisions.mp4",
+    heroImageAlt: "Evidence sorted through a tradeoff gate into three accountable brand decisions with owners and validation needs",
     keyTakeaways: [
       "Discovery should reduce uncertainty rather than collect adjectives.",
       "Ask for examples, decisions, and evidence before asking for aspirations.",

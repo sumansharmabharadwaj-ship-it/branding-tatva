@@ -90,21 +90,21 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "reposition-preserve-recognition-bridge",
     "A familiar recognition cue carried intact across a bridge into a sharper new category and offer system",
   ),
-  "brand-refresh-vs-rebrand-how-much-change": media(
-    "refresh-rebrand-conservation",
-    "A ceramic vessel held between restoration and complete remaking",
+  "brand-refresh-vs-rebrand-how-much-change": topicMedia(
+    "brand-change-depth-ladder",
+    "One familiar brand cue moving through five levels of change from contained repair to complete strategic rebuild",
   ),
   "turn-client-proof-into-positioning-advantage": topicMedia(
     "client-proof-architecture",
     "A positioning claim connected to five structured layers of client evidence",
   ),
-  "brand-architecture-service-businesses": media(
-    "brand-architecture-service-system",
-    "A strong parent beam holding several related wooden offer modules",
+  "brand-architecture-service-businesses": topicMedia(
+    "brand-architecture-independence-threshold",
+    "One master brand holding four clear service offers while a fifth candidate faces five tests for independence",
   ),
-  "customer-interviews-brand-strategy": media(
-    "customer-interviews-listening-table",
-    "Two chairs and an analogue recorder arranged for an open conversation",
+  "customer-interviews-brand-strategy": topicMedia(
+    "customer-interview-decision-reconstruction",
+    "A customer decision reconstructed from context through memory while smooth polite answers remain outside the evidence path",
   ),
   "turn-customer-interviews-into-positioning-brief": topicMedia(
     "interview-evidence-to-positioning-brief",
@@ -114,17 +114,17 @@ export const insightOriginalMedia: Record<string, InsightOriginalMedia> = {
     "service-name-family-system",
     "Five clearly related service names held under one coherent parent system",
   ),
-  "competitor-research-brand-strategy-without-copying-category": media(
-    "competitor-research-observation",
-    "Related leaf specimens studied through glass beside a blank field notebook",
+  "competitor-research-brand-strategy-without-copying-category": topicMedia(
+    "competitor-research-distance-map",
+    "Repeated competitor conventions measured at a distance while internal proof produces one original strategic choice",
   ),
   "brand-voice-guidelines-writers-can-use": topicMedia(
     "brand-voice-rules-calibration",
     "Abstract voice traits calibrated into practical writing rules and examples",
   ),
-  "brand-discovery-workshop-questions": media(
-    "discovery-workshop-decision-table",
-    "Three chosen material decisions emerging from a table of blank question cards",
+  "brand-discovery-workshop-questions": topicMedia(
+    "discovery-workshop-evidence-to-decisions",
+    "Evidence sorted through a tradeoff gate into three accountable brand decisions with owners and validation needs",
   ),
   "homepage-messaging-service-businesses": topicMedia(
     "homepage-message-decision-sequence",
