@@ -330,7 +330,7 @@ html[data-services-form-interaction="true"] [data-services-scroll-scene="book"] 
   overflow: hidden;
   contain: paint;
   pointer-events: none;
-  opacity: calc(0.12 + var(--services-scene-presence, 0) * 0.28);
+  opacity: clamp(0.12, var(--services-scene-presence, 0), 0.4);
 }
 
 [data-services-scroll-scene] > [data-services-scene-signal="true"]::before {
@@ -424,7 +424,7 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
 
   [data-services-scroll-scene] > [data-services-scene-signal="true"] {
     height: 2.7rem;
-    opacity: calc(0.08 + var(--services-scene-presence, 0) * 0.2);
+    opacity: clamp(0.08, var(--services-scene-presence, 0), 0.28);
   }
 
   [data-services-scroll-scene] > [data-services-scene-signal="true"]::after {

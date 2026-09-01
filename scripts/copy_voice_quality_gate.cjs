@@ -202,6 +202,14 @@ function shouldInspect(node, text) {
   if (ts.isJsxText(node)) return true;
   if (ts.isImportDeclaration(node.parent) || ts.isExportDeclaration(node.parent)) return false;
 
+  if (
+    ts.isCallExpression(node.parent) &&
+    ts.isPropertyAccessExpression(node.parent.expression) &&
+    /^(?:closest|matches|querySelector|querySelectorAll)$/.test(node.parent.expression.name.text)
+  ) {
+    return false;
+  }
+
   if (ts.isJsxAttribute(node.parent)) {
     const key = propertyName(node.parent.name);
     if (TECHNICAL_ATTRIBUTES.has(key) || key.startsWith("data-")) return false;
