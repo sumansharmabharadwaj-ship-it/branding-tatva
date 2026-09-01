@@ -22,12 +22,11 @@ const KEN_BURNS = kenBurnsAnimation({ scale: 1.06, duration: 26 });
 // why the row's text also flips to ivory in page.tsx — dark text was
 // only ever legible against the old cream wash, not against a photo
 // that's actually visible. Photo shows at real opacity, and where a
-// matching clip exists (video), cross-fades into a continuously-
-// playing loop once the row nears the viewport instead of just
-// drifting via Ken Burns — the image alone still carries the Ken
-// Burns drift as the poster/fallback. A light tint in the element's
-// own color keeps the five rows reading as one coherent set rather
-// than five unrelated photos or clips.
+// matching clip exists (video), longer documentary footage cross-fades
+// in once the row nears the viewport. Reviewed short clips with visible
+// resets stay as visitor-driven living images instead. A light tint in
+// the element's own color keeps the five rows reading as one coherent
+// set rather than five unrelated photos or clips.
 export function ElementRowBackground({
   image,
   video,

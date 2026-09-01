@@ -56,6 +56,21 @@ for (const prefix of ['"/videos/generated/"', '"/videos/higgsfield-"']) {
   }
 }
 
+for (const film of [
+  '"/videos/pexels-studio-morning-light.mp4"',
+  '"/videos/pexels-golden-fog-sea.mp4"',
+  '"/videos/pixabay-forest-sunbeams.mp4"',
+  '"/videos/pixabay-golden-forest-glow.mp4"',
+]) {
+  if (!mediaMode.includes(film)) {
+    fail(`Repeat-prone documentary film can restore a boomerang loop: ${film}.`);
+  }
+}
+
+if (mediaMode.includes('"/videos/pexels-root-network.mp4"')) {
+  fail("The longer About root-network film must remain purposeful documentary motion.");
+}
+
 const videoBreak = fs.readFileSync(path.join(SRC, "components", "VideoBreak.tsx"), "utf8");
 if (!videoBreak.includes('cameraPush ? "hero" : "subtle"')) {
   fail("Synthetic closing films no longer receive the hero living-image treatment.");
