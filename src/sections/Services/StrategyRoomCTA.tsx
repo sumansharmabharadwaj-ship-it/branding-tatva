@@ -87,6 +87,61 @@ const CARRIED_CONTEXT_CLASS =
 
 type Step = 0 | 1 | 2;
 
+type StrategyDecisionNoteProps = {
+  priority: Priority;
+  focus: FocusArea;
+  carriedPackage: string | null;
+  recognitionAudit: ServicesRecognitionAuditDetail | null;
+  compact?: boolean;
+};
+
+function StrategyDecisionNote({
+  priority,
+  focus,
+  carriedPackage,
+  recognitionAudit,
+  compact = false,
+}: StrategyDecisionNoteProps) {
+  return (
+    <div
+      data-strategy-room-decision-note="true"
+      className={`mx-auto max-w-xl rounded-2xl border border-sandstone/30 bg-sandstone/[0.075] text-left shadow-[0_18px_48px_rgba(6,10,8,0.18)] ${
+        compact ? "mt-5 p-4" : "mt-4 p-5"
+      }`}
+      aria-label="Your Strategy Room decision note"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em] text-sandstone/82">
+          Working decision note
+        </p>
+        <span className="text-[0.6rem] uppercase tracking-[0.12em] text-ivory/42">Two answers recorded</span>
+      </div>
+      <p className={`font-display font-normal leading-snug text-ivory ${compact ? "mt-3 text-xl" : "mt-4 text-xl sm:text-2xl"}`}>
+        {FOCUS_NOTES[focus]}
+      </p>
+      <p className="mt-3 text-sm leading-relaxed text-ivory/72">{PRIORITY_NOTES[priority]}</p>
+      {carriedPackage || recognitionAudit ? (
+        <dl className={`mt-4 grid gap-3 border-t border-ivory/12 pt-4 ${carriedPackage && recognitionAudit ? "sm:grid-cols-2" : ""}`}>
+          {carriedPackage ? (
+            <div>
+              <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Likely engagement</dt>
+              <dd className="mt-1 font-display text-lg font-normal text-ivory/88">{carriedPackage}</dd>
+            </div>
+          ) : null}
+          {recognitionAudit ? (
+            <div className={carriedPackage ? "sm:border-l sm:border-ivory/12 sm:pl-4" : ""}>
+              <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Recognition evidence</dt>
+              <dd className="mt-1 font-display text-lg font-normal text-ivory/88">
+                {recognitionAudit.score} of {recognitionAudit.total} answers hold
+              </dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : null}
+    </div>
+  );
+}
+
 export function StrategyRoomCTA() {
   const [briefStarted, setBriefStarted] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -378,7 +433,15 @@ export function StrategyRoomCTA() {
                       <span aria-hidden="true">×</span>
                     </button>
                   </div>
-                  {answers.length > 0 && (
+                  {priority && focus ? (
+                    <StrategyDecisionNote
+                      priority={priority}
+                      focus={focus}
+                      carriedPackage={carriedPackage}
+                      recognitionAudit={recognitionAudit}
+                      compact
+                    />
+                  ) : answers.length > 0 ? (
                     <div className="mt-5 flex flex-wrap gap-2 px-1" aria-label="Your Strategy Room brief">
                       {answers.map((answer) => (
                         <span
@@ -389,7 +452,7 @@ export function StrategyRoomCTA() {
                         </span>
                       ))}
                     </div>
-                  )}
+                  ) : null}
                   <CalendlyEmbed url={`${site.calendlyUrl}/30min`} />
                 </motion.div>
               </motion.div>
@@ -573,42 +636,14 @@ export function StrategyRoomCTA() {
                   {step === 2 && (
                     <motion.div key="ready" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
                       <p className="mt-6 font-display text-2xl font-normal text-ivory">Your decision note is ready.</p>
-                      <div
-                        data-strategy-room-decision-note="true"
-                        className="mx-auto mt-4 max-w-xl rounded-2xl border border-sandstone/30 bg-sandstone/[0.075] p-5 text-left shadow-[0_18px_48px_rgba(6,10,8,0.18)]"
-                        aria-label="Your Strategy Room decision note"
-                      >
-                        <div className="flex items-center justify-between gap-4">
-                          <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em] text-sandstone/82">
-                            Working decision note
-                          </p>
-                          <span className="text-[0.6rem] uppercase tracking-[0.12em] text-ivory/42">Two answers recorded</span>
-                        </div>
-                        <p className="mt-4 font-display text-xl font-normal leading-snug text-ivory sm:text-2xl">
-                          {focus ? FOCUS_NOTES[focus] : "Find the decision that deserves attention first."}
-                        </p>
-                        <p className="mt-3 text-sm leading-relaxed text-ivory/72">
-                          {priority ? PRIORITY_NOTES[priority] : "The conversation will locate the pressure beneath the visible brand problem."}
-                        </p>
-                        {carriedPackage || recognitionAudit ? (
-                          <dl className={`mt-4 grid gap-3 border-t border-ivory/12 pt-4 ${carriedPackage && recognitionAudit ? "sm:grid-cols-2" : ""}`}>
-                            {carriedPackage ? (
-                              <div>
-                                <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Likely engagement</dt>
-                                <dd className="mt-1 font-display text-lg font-normal text-ivory/88">{carriedPackage}</dd>
-                              </div>
-                            ) : null}
-                            {recognitionAudit ? (
-                              <div className={carriedPackage ? "sm:border-l sm:border-ivory/12 sm:pl-4" : ""}>
-                                <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Recognition evidence</dt>
-                                <dd className="mt-1 font-display text-lg font-normal text-ivory/88">
-                                  {recognitionAudit.score} of {recognitionAudit.total} answers hold
-                                </dd>
-                              </div>
-                            ) : null}
-                          </dl>
-                        ) : null}
-                      </div>
+                      {priority && focus ? (
+                        <StrategyDecisionNote
+                          priority={priority}
+                          focus={focus}
+                          carriedPackage={carriedPackage}
+                          recognitionAudit={recognitionAudit}
+                        />
+                      ) : null}
                       <div className="mt-6 flex flex-col items-center justify-center gap-2 sm:flex-row">
                         <button
                           type="button"
