@@ -151,7 +151,11 @@ export function RecognitionAudit() {
   const scoreGuidance = recognitionAuditGuidance(markedCount, shown.length);
 
   return (
-    <div data-recognition-audit-desk="true" data-mobile-chapter={mobileChapter}>
+    <div
+      data-recognition-audit-desk="true"
+      data-mobile-chapter={mobileChapter}
+      data-section-jump-yield="true"
+    >
       <Container className="max-w-6xl">
         <div
           ref={mobileNavRef}

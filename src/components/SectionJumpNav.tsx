@@ -497,6 +497,7 @@ export function SectionJumpNav({
         data-section-jump-moving={mobileTargetHref ? "true" : "false"}
         aria-hidden={mobileYielding || undefined}
         inert={mobileYielding || undefined}
+        style={{ opacity: mobileYielding ? 0 : undefined }}
         className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 transition-[opacity,transform] ${
           prefersReducedMotion ? "duration-0" : "duration-300"
         } ${

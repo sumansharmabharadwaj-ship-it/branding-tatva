@@ -222,6 +222,54 @@ passed
 
 ---
 
+# Services Recognition Audit mobile-control QA · 2026-09-01
+
+## Comparison target
+
+- Source visual truth: `/workspace/scratch/services-audit-current/9-mobile-audit.jpg`, the accepted August 8 Services composition before the obstruction fix (`390 × 844` at DPR 1).
+- Browser implementation: `/workspace/scratch/services-audit-fix/mobile-audit-final.jpg` (`390 × 844` at DPR 1).
+- Desktop regression capture: `/workspace/scratch/services-audit-fix/desktop-audit-final.jpg` (`1365 × 936` at DPR 1).
+- Full-view paired evidence: `/workspace/scratch/services-audit-fix/mobile-audit-before-final.jpg` (`844 × 844`, with both source frames preserved at native pixel size).
+- State: `/services#audit`, five open checks, consent notice visible, full motion.
+- Focused-region comparison: not needed because the affected question, chapter pill and consent edge are fully legible at the mobile capture's native 1:1 size.
+
+## Findings and resolution
+
+No actionable P0, P1 or P2 findings remain.
+
+The source frame contained a P1 obstruction: the mobile chapter pill covered the fourth recognition question while the consent notice occupied the edge below it. The Recognition Audit now participates in the existing chapter-control yield system. The yielded control is also given an explicit zero-opacity state so the Services route activation rule cannot leave a visible edge behind the consent notice.
+
+## Required fidelity surfaces
+
+- Fonts and typography: passed. Existing display and body families, weights, sizes, line heights, tracking and wraps are unchanged.
+- Spacing and layout rhythm: passed. Question four is fully readable above the consent notice, with the checklist card, tabs and mobile gutters unchanged.
+- Colors and visual tokens: passed. Forest, ivory, sandstone and consent surfaces are unchanged.
+- Image quality and asset fidelity: passed. The existing forest film, crop and travelling thread marker remain intact; no asset was replaced or regenerated.
+- Copy and content: passed. All audit labels, questions, consent language and form content are unchanged.
+
+## Interaction and runtime checks
+
+- The mobile chapter control reports `aria-hidden="true"`, `inert`, and computed `opacity: 0` while the Recognition Audit owns the reading viewport.
+- The fourth check remains visible, clears the consent region, accepts a click and changes to `aria-pressed="true"`.
+- The desktop chapter rail remains visible and the two-column audit layout is unchanged at `1365 × 936`.
+- Browser page errors: none.
+- Browser console errors: none.
+- Targeted ESLint, TypeScript, `git diff --check`, and the complete `79`-route Next.js production build passed.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | The mobile chapter pill covered question four and competed with the consent notice. | Added the Recognition Audit to the shared yield system. The paired mobile frame shows question four clear of both controls. |
+| 2 | P2 | Route-level opacity left a thin peach edge behind the consent notice after the pill moved away. | Added an explicit yielded opacity to the shared chapter control. The final mobile capture contains no remnant. |
+| 3 | — | Mobile interaction, desktop composition, console and production checks found no remaining actionable issue. | Passed. |
+
+## Final result
+
+passed
+
+---
+
 # Design QA: The Living Margins
 
 ## Target and evidence
