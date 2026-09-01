@@ -1,0 +1,67 @@
+name: Push a bounded august preview retry
+
+on:
+  push:
+    branches:
+      - august-8-isolated
+    paths:
+      - .github/workflows/push-august-preview-retry.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: push-august-preview-retry
+  cancel-in-progress: false
+
+jobs:
+  push-retry:
+    if: contains(github.event.head_commit.message, '[prime-vercel]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out the release controls
+        uses: actions/checkout@v4
+        with:
+          ref: august-8-isolated
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            vercel-preview-release.json
+            .github/workflows/push-august-preview-retry.yml
+
+      - name: Push one source-bearing preview retry
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            git fetch origin august-8-isolated
+            git checkout -B bounded-preview-retry origin/august-8-isolated
+
+            current="$(node -p "require('./vercel-preview-release.json').release")"
+            next="$((current + 1))"
+            RELEASE="${next}" node <<'NODE'
+            const fs = require("node:fs");
+            const path = "vercel-preview-release.json";
+            const manifest = JSON.parse(fs.readFileSync(path, "utf8"));
+            manifest.release = Number(process.env.RELEASE);
+            fs.writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);
+            NODE
+
+            git add vercel-preview-release.json
+            git commit -m "Retry the verified homepage preview [deploy] [release:${next}]"
+
+            if git push origin HEAD:august-8-isolated; then
+              echo "Pushed release ${next} from a native Git lane."
+              exit 0
+            fi
+
+            echo "The branch moved during retry ${attempt}; recalculating from the new head."
+          done
+
+          echo "Could not publish a bounded preview retry after three attempts." >&2
+          exit 1
