@@ -55,6 +55,24 @@
   will-change: opacity, transform;
 }
 
+.insight-article-hero nav[aria-label="Breadcrumb"] {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgb(244 239 230 / 12%);
+  border-radius: 999px;
+  background: rgb(24 31 25 / 26%);
+  box-shadow: 0 0.8rem 2rem rgb(10 15 11 / 9%);
+  color: rgb(244 239 230 / 82%);
+  text-shadow: 0 1px 0.6rem rgb(10 15 11 / 56%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.insight-article-hero nav[aria-label="Breadcrumb"] > span {
+  color: rgb(244 239 230 / 42%);
+}
+
 .insight-article-hero__veil {
   background:
     linear-gradient(
