@@ -9,7 +9,7 @@
   color: #23362b;
 }
 
-.home-v4 .studio-film__media video {
+.home-v4 .studio-film__living img {
   filter: saturate(.62) sepia(.08) contrast(.88) brightness(1.14);
 }
 

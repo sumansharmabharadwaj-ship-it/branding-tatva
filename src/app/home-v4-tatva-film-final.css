@@ -1,11 +1,9 @@
 .home-v4 .home-v4-chapter--tatva { background: #e9dfcc; color: #27372b; }
 .home-v4 .tatva-film { position: relative; height: 100svh; min-height: 100svh; overflow: hidden; isolation: isolate; color: #26382c; }
 .home-v4 .tatva-film__media,
-.home-v4 .tatva-film__media video,
 .home-v4 .tatva-film__wash { position: absolute; inset: 0; width: 100%; height: 100%; }
-.home-v4 .tatva-film__media video {
-  object-fit: cover; object-position: 55% 48%; filter: saturate(.64) sepia(.2) brightness(1.12) contrast(.88);
-  transform: scale(1.04); animation: tatva-film-breathe 18s ease-in-out infinite alternate;
+.home-v4 .tatva-film__living img {
+  filter: saturate(.64) sepia(.2) brightness(1.12) contrast(.88);
 }
 .home-v4 .tatva-film__wash {
   z-index: 1; background:
@@ -64,7 +62,6 @@
 .home-v4 .tatva-film__forces button small { font: 650 .58rem/1.2 var(--font-sans,sans-serif); letter-spacing: .13em; text-transform: uppercase; }
 .home-v4 .tatva-film__forces button strong { overflow: hidden; font: 400 clamp(1.15rem,1.8vw,1.8rem)/1.05 var(--font-display,serif); text-overflow: ellipsis; white-space: nowrap; }
 .home-v4 .tatva-film__forces button small { color: var(--tatva-accent); }
-@keyframes tatva-film-breathe { from { transform: scale(1.04) translate3d(-.4%,0,0); } to { transform: scale(1.1) translate3d(.7%,-.5%,0); } }
 @media (max-width: 760px) {
   .home-v4 .tatva-film { height: auto; }
   .home-v4 .tatva-film__frame { min-height: 100svh; padding-top: 6rem; }
@@ -80,7 +77,6 @@
   .home-v4 .tatva-film__forces button small { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .home-v4 .tatva-film__media video { animation: none; transform: none; }
   .home-v4 .tatva-film__forces button,
   .home-v4 .tatva-film__forces button::before { transition: none; }
 }

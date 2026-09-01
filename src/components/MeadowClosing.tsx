@@ -1,10 +1,9 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 
+import { LivingImage } from "@/components/LivingImage";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { elements } from "@/data/elements";
 import { blendHex, SOIL } from "@/lib/sectionWash";
@@ -50,7 +49,7 @@ const STAGES = elements;
 
 export function MeadowClosing() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const indexRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -59,8 +58,6 @@ export function MeadowClosing() {
   const activeIndexRef = useRef(0);
   const lenis = useLenis();
   const prefersReducedMotion = useHydratedReducedMotion();
-
-  useVideoFadeIn(videoRef, !prefersReducedMotion);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -80,8 +77,10 @@ export function MeadowClosing() {
         setActiveIndex(idx);
       }
 
-      if (videoRef.current) {
-        videoRef.current.style.transform = `scale(${1 + clamped * 0.12})`;
+      if (mediaRef.current) {
+        mediaRef.current.style.transform = prefersReducedMotion
+          ? "none"
+          : `scale(${1 + clamped * 0.12})`;
       }
 
       if (overlayRef.current) {
@@ -128,39 +127,27 @@ export function MeadowClosing() {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [lenis]);
+  }, [lenis, prefersReducedMotion]);
 
   return (
     <div ref={wrapperRef} className="relative bg-soil" style={{ height: `${(STAGES.length - 1) * 100 * STAGE_SPEED + 100}vh` }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        {/* Video zoom is scroll-linked motion, same category PinnedJourney
-            already gates under reduced motion — a static poster stands
-            in instead, same as that file's own pattern (only the video
-            element is skipped; the crossfade/color-shift sequence
-            itself still runs, matching PinnedJourney's precedent of
-            keeping pin/crossfade behavior but dropping video playback). */}
-        {prefersReducedMotion ? (
-          <Image
+        {/* The former seven-second meadow loop visibly reset during this
+            long pinned sequence. The photograph now responds to the same
+            scroll, pointer, touch and focus language as the rest of the
+            site, while reduced motion receives a completely still frame. */}
+        <div
+          ref={mediaRef}
+          className="absolute inset-0 will-change-transform"
+          style={{ transformOrigin: "center" }}
+        >
+          <LivingImage
             src="/images/pixabay-alpine-wildflowers-poster.jpg"
-            alt=""
-            fill
             sizes="100vw"
-            className="object-cover"
+            imagePosition="center"
+            intensity="hero"
           />
-        ) : (
-          <video
-            ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ willChange: "transform" }}
-            src="/videos/pixabay-alpine-wildflowers.mp4"
-            poster="/images/pixabay-alpine-wildflowers-poster.jpg"
-            autoPlay
-            muted
-            loop
-            playsInline
-            aria-hidden="true"
-          />
-        )}
+        </div>
         {/* Tint shifts to each stage's own element color as it becomes
             active (blendHex toward Soil, matching every other section
             wash on this site) — the color itself moves with scroll,

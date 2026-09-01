@@ -5,15 +5,8 @@
   inset: 0;
 }
 
-.home-v4 .studio-film__media video {
-  object-position: 54% 50%;
+.home-v4 .studio-film__living img {
   filter: saturate(.72) sepia(.06) contrast(.92) brightness(1.08);
-  animation: studio-film-camera 18s ease-in-out infinite alternate;
-}
-
-@keyframes studio-film-camera {
-  from { transform: scale(1.065) translate3d(0, 0, 0); }
-  to { transform: scale(1.035) translate3d(-.55%, .2%, 0); }
 }
 
 .home-v4 .studio-film__wash {
@@ -262,10 +255,6 @@
 }
 
 @media (max-width: 760px) {
-  .home-v4 .studio-film__media video {
-    object-position: 64% 50%;
-  }
-
   .home-v4 .studio-film__wash {
     background: rgba(239, 231, 214, .72);
   }
@@ -432,11 +421,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-v4 .studio-film__media video {
-    animation: none;
-    transform: scale(1.035);
-  }
-
   .home-v4 .studio-film__statement h2 > span {
     transition: none;
   }

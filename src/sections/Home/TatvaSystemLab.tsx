@@ -1,6 +1,7 @@
 "use client";
 
 import { Container } from "@/components/Container";
+import { LivingImage } from "@/components/LivingImage";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import Link from "next/link";
@@ -48,10 +49,12 @@ export function TatvaSystemLab() {
   return (
     <section ref={sectionRef} className="tatva-film" aria-labelledby="tatva-film-title">
       <div className="tatva-film__media" aria-hidden="true">
-        <video muted autoPlay loop playsInline preload="metadata" poster="/images/pexels-golden-fog-sea-poster.jpg">
-          <source src="/videos/pexels-golden-fog-sea.webm" type="video/webm" />
-          <source src="/videos/pexels-golden-fog-sea.mp4" type="video/mp4" />
-        </video>
+        <LivingImage
+          src="/images/pexels-golden-fog-sea-poster.jpg"
+          imagePosition="55% 48%"
+          intensity="hero"
+          className="tatva-film__living"
+        />
       </div>
       <div className="tatva-film__wash" aria-hidden="true" />
 

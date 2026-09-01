@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { LivingImage } from "@/components/LivingImage";
 import {
   HOME_METHOD_DECISION_EVENT,
   readHomeMethodDecision,
@@ -41,9 +42,8 @@ const DISCIPLINES = [
     questionFrame: HOME_STUDIO_LENSES[0].question,
     proof: "Applied in HerbalCart",
     proofHref: "/work/herbalcart",
-    video: "/videos/pexels-fog-sunrise.mp4",
-    playbackRate: 0.74,
     poster: "/images/pexels-fog-sunrise-poster.jpg",
+    imagePosition: "54% 50%",
     accent: HOME_STUDIO_LENSES[0].accent,
   },
   {
@@ -61,9 +61,8 @@ const DISCIPLINES = [
     questionFrame: HOME_STUDIO_LENSES[1].question,
     proof: "Applied in MyShopInEurope",
     proofHref: "/work/myshopineurope",
-    video: "/videos/pexels-studio-morning-light.mp4",
-    playbackRate: 0.72,
     poster: "/images/pexels-studio-morning-light-poster.jpg",
+    imagePosition: "58% 50%",
     accent: HOME_STUDIO_LENSES[1].accent,
   },
   {
@@ -81,9 +80,8 @@ const DISCIPLINES = [
     questionFrame: HOME_STUDIO_LENSES[2].question,
     proof: "Applied in Dr. Haley Nutrition",
     proofHref: "/work/dr-haley-nutrition",
-    video: "/videos/pexels-aspen-sunburst.mp4",
-    playbackRate: 0.76,
     poster: "/images/pexels-aspen-sunburst-poster.jpg",
+    imagePosition: "54% 50%",
     accent: HOME_STUDIO_LENSES[2].accent,
   },
 ] as const;
@@ -362,7 +360,7 @@ export function StudioCinematicChapter() {
           custom={selectionDirectionRef.current}
         >
           <motion.div
-            key={active.video}
+            key={active.poster}
             className="studio-film__shot"
             custom={selectionDirectionRef.current}
             variants={STUDIO_SHOT_VARIANTS}
@@ -371,15 +369,11 @@ export function StudioCinematicChapter() {
             exit={reducedMotion ? undefined : "exit"}
             transition={{ duration: reducedMotion ? 0 : 0.62, ease: EASE }}
           >
-            <video
-              src={active.video}
-              poster={active.poster}
-              muted
-              loop
-              playsInline
-              preload="none"
-              data-home-playback-rate={active.playbackRate}
-              aria-hidden="true"
+            <LivingImage
+              src={active.poster}
+              imagePosition={active.imagePosition}
+              intensity="hero"
+              className="studio-film__living"
             />
           </motion.div>
         </AnimatePresence>

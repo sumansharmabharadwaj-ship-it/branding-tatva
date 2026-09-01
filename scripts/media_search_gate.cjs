@@ -113,6 +113,36 @@ for (const relative of [
   }
 }
 
+for (const relative of [
+  "sections/Home/BrandFoundationScene.tsx",
+  "sections/Home/StudioCinematicChapter.tsx",
+  "sections/Home/TatvaSystemLab.tsx",
+  "components/MeadowClosing.tsx",
+]) {
+  const component = fs.readFileSync(path.join(SRC, relative), "utf8");
+  if (!component.includes("<LivingImage") || component.includes("<video")) {
+    fail(`${relative} can restore a short repeating background film.`);
+  }
+}
+
+if (
+  !fs.existsSync(
+    path.join(ROOT, "public/images/generated/bt-home-foundation-root-system-still.webp"),
+  )
+) {
+  fail("The homepage foundation scene is missing its bespoke root-system image.");
+}
+
+const servicesPage = fs.readFileSync(path.join(SRC, "app/services/page.tsx"), "utf8");
+for (const required of [
+  'video="/videos/generated/bt-services-hero-root-system.mp4"',
+  'mediaMode="video"',
+]) {
+  if (!servicesPage.includes(required)) {
+    fail(`The explicitly restored Services roots film is missing ${required}.`);
+  }
+}
+
 if (!fs.readFileSync(path.join(SRC, "lib/mediaMode.ts"), "utf8").includes('"/videos/card-"')) {
   fail("Project-card loops are not classified as synthetic media.");
 }

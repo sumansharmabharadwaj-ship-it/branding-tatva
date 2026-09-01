@@ -4,6 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { LivingImage } from "@/components/LivingImage";
 
 const FOUNDATION_LAYERS = [
   { id: "category", number: "01", label: "Category", title: "Where the business belongs.", description: "The frame that tells people what you are, what they should compare you with, and why the category has room for you.", produces: ["Category frame", "Competitor codes", "Market boundaries"] },
@@ -43,10 +44,12 @@ export function BrandFoundationScene() {
   return (
     <section ref={wrapperRef} className="foundation-orbit" data-scroll-story="foundation" aria-labelledby="brand-foundation-title">
       <div className="foundation-orbit__media" data-media-id="BT-HOME-FOUNDATION-ROOT-NETWORK" aria-hidden="true">
-        <video muted loop autoPlay playsInline aria-hidden="true" preload={inView ? "metadata" : "none"} poster="/images/pexels-root-network-poster.jpg">
-          <source src="/videos/pexels-root-network.webm" type="video/webm" />
-          <source src="/videos/pexels-root-network.mp4" type="video/mp4" />
-        </video>
+        <LivingImage
+          src="/images/generated/bt-home-foundation-root-system-still.webp"
+          imagePosition="54% 48%"
+          intensity="hero"
+          className="foundation-orbit__living"
+        />
       </div>
       <div className="foundation-orbit__wash" aria-hidden="true" />
 
