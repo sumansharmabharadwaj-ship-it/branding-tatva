@@ -1,7 +1,6 @@
 name: Deploy one controlled august preview
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - august-8-isolated
@@ -9,7 +8,8 @@ on:
       - vercel-preview-release.json
 
 permissions:
-  contents: read
+  contents: write
+  statuses: read
 
 concurrency:
   group: deploy-one-controlled-august-preview
@@ -17,15 +17,11 @@ concurrency:
 
 jobs:
   deploy-preview:
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
+    if: contains(github.event.head_commit.message, '[deploy]')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       REQUIRED_ANCESTOR: 839f37cf0fbb35f290b2fd70d396ab7037f65268
-      VERCEL_PROJECT_ID: prj_oqWzTWCHURqzPAdpjXv3b7cubJwJ
-      VERCEL_TEAM_ID: team_Y7dQ5jNk61chQvy2A92AEyTt
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      PREVIEW_ALIAS: branding-tatva-git-august-8-isolated-suman22.vercel.app
 
     steps:
       - name: Check out the exact release source
@@ -54,128 +50,119 @@ jobs:
           echo "source_sha=${source_sha}" >> "$GITHUB_OUTPUT"
           echo "release=${release}" >> "$GITHUB_OUTPUT"
 
-      - name: Request exactly one preview deployment
-        id: deployment
+      - name: Enable one Git integrated preview
+        id: enable
         shell: bash
         env:
           SOURCE_SHA: ${{ steps.release.outputs.source_sha }}
           RELEASE: ${{ steps.release.outputs.release }}
         run: |
           set -euo pipefail
-          if [ -z "${VERCEL_TOKEN:-}" ]; then
-            echo "VERCEL_TOKEN is not configured in GitHub Actions." >&2
-            exit 1
-          fi
 
-          node <<'NODE' > /tmp/vercel-preview-request.json
-          const payload = {
-            name: "branding-tatva",
-            project: process.env.VERCEL_PROJECT_ID,
-            target: null,
-            gitSource: {
-              type: "github",
-              org: "sumansharmabharadwaj-ship-it",
-              repo: "branding-tatva",
-              ref: "august-8-isolated",
-              sha: process.env.SOURCE_SHA,
-            },
-            meta: {
-              controlledPreview: "august-8-isolated",
-              release: process.env.RELEASE,
-              sourceCommit: process.env.SOURCE_SHA,
-            },
-          };
-          process.stdout.write(JSON.stringify(payload));
-          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin "$GITHUB_REF_NAME"
+          git switch -C "$GITHUB_REF_NAME" "origin/$GITHUB_REF_NAME"
 
-          status="$(curl --silent --show-error \
-            --output /tmp/vercel-preview-response.json \
-            --write-out '%{http_code}' \
-            --request POST \
-            --url "https://api.vercel.com/v13/deployments?teamId=${VERCEL_TEAM_ID}" \
-            --header "Authorization: Bearer ${VERCEL_TOKEN}" \
-            --header "Content-Type: application/json" \
-            --data-binary @/tmp/vercel-preview-request.json)"
-
-          if [ "$status" != "200" ] && [ "$status" != "201" ]; then
-            echo "Vercel rejected the single preview request (HTTP ${status})." >&2
-            node -e 'const fs=require("node:fs"); const x=JSON.parse(fs.readFileSync("/tmp/vercel-preview-response.json","utf8")); console.error(x.error?.message || x.message || "Unknown Vercel error");'
+          git merge-base --is-ancestor "$SOURCE_SHA" HEAD
+          current_release="$(node -p "require('./vercel-preview-release.json').release")"
+          if [ "$current_release" != "$RELEASE" ]; then
+            echo "Release ${RELEASE} is stale because the branch now declares release ${current_release}." >&2
             exit 1
           fi
 
           node <<'NODE'
           const fs = require("node:fs");
-          const response = JSON.parse(fs.readFileSync("/tmp/vercel-preview-response.json", "utf8"));
-          if (!response.id || !response.url) {
-            throw new Error("Vercel did not return a deployment id and URL.");
-          }
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `id=${response.id}\nurl=${response.url}\n`);
+          const file = "vercel.json";
+          const config = JSON.parse(fs.readFileSync(file, "utf8"));
+          config.git ??= {};
+          config.git.deploymentEnabled ??= {};
+          config.git.deploymentEnabled["august-8-isolated"] = true;
+          fs.writeFileSync(file, `${JSON.stringify(config, null, 2)}\n`);
           NODE
 
-      - name: Wait for the preview to become READY
+          git add vercel.json
+          git commit --allow-empty -m "Request release ${RELEASE} through Git integration [deploy] [release:${RELEASE}]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "enable_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for Vercel to finish
+        id: wait
         shell: bash
         env:
-          DEPLOYMENT_ID: ${{ steps.deployment.outputs.id }}
+          ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+
           for attempt in $(seq 1 120); do
             curl --fail --silent --show-error \
-              --url "https://api.vercel.com/v13/deployments/${DEPLOYMENT_ID}?teamId=${VERCEL_TEAM_ID}" \
-              --header "Authorization: Bearer ${VERCEL_TOKEN}" \
-              > /tmp/vercel-preview-status.json
+              --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${ENABLE_SHA}/status" \
+              --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+              --header "Accept: application/vnd.github+json" \
+              --header "X-GitHub-Api-Version: 2022-11-28" \
+              > /tmp/vercel-commit-status.json
 
-            state="$(node -e "const x=require('/tmp/vercel-preview-status.json'); process.stdout.write(x.readyState || x.state || '')")"
-            echo "Vercel deployment ${DEPLOYMENT_ID}: ${state:-unknown}"
-            if [ "$state" = "READY" ]; then
-              exit 0
-            fi
-            if [ "$state" = "ERROR" ] || [ "$state" = "CANCELED" ]; then
-              node -e 'const x=require("/tmp/vercel-preview-status.json"); console.error(x.errorMessage || x.errorCode || `Deployment ended in ${x.readyState || x.state}`);'
-              exit 1
-            fi
-            sleep 6
-          done
+            state="$(node -e 'const x=require("/tmp/vercel-commit-status.json"); const s=x.statuses?.find((item)=>item.context==="Vercel"); process.stdout.write(s?.state || "waiting")')"
+            target_url="$(node -e 'const x=require("/tmp/vercel-commit-status.json"); const s=x.statuses?.find((item)=>item.context==="Vercel"); process.stdout.write(s?.target_url || "")')"
+            echo "Vercel status for ${ENABLE_SHA}: ${state}"
 
-          echo "The preview did not become READY within 12 minutes." >&2
-          exit 1
-
-      - name: Move and verify the permanent branch alias
-        shell: bash
-        env:
-          DEPLOYMENT_ID: ${{ steps.deployment.outputs.id }}
-          DEPLOYMENT_URL: ${{ steps.deployment.outputs.url }}
-          SOURCE_SHA: ${{ steps.release.outputs.source_sha }}
-        run: |
-          set -euo pipefail
-          printf '{"alias":"%s"}\n' "$PREVIEW_ALIAS" > /tmp/vercel-alias-request.json
-          curl --fail --silent --show-error \
-            --request POST \
-            --url "https://api.vercel.com/v2/deployments/${DEPLOYMENT_ID}/aliases?teamId=${VERCEL_TEAM_ID}" \
-            --header "Authorization: Bearer ${VERCEL_TOKEN}" \
-            --header "Content-Type: application/json" \
-            --data-binary @/tmp/vercel-alias-request.json \
-            > /tmp/vercel-alias-response.json
-
-          for attempt in $(seq 1 30); do
-            curl --fail --silent --show-error \
-              --url "https://api.vercel.com/v13/deployments/${PREVIEW_ALIAS}?teamId=${VERCEL_TEAM_ID}" \
-              --header "Authorization: Bearer ${VERCEL_TOKEN}" \
-              > /tmp/vercel-alias-status.json
-
-            if DEPLOYMENT_ID="$DEPLOYMENT_ID" node -e 'const x=require("/tmp/vercel-alias-status.json"); process.exit(x.id === process.env.DEPLOYMENT_ID && (x.readyState || x.state) === "READY" ? 0 : 1)'; then
+            if [ "$state" = "success" ]; then
               {
                 echo "## Controlled august preview"
                 echo
-                echo "- Source: \`${SOURCE_SHA}\`"
-                echo "- Deployment: https://${DEPLOYMENT_URL}/"
-                echo "- Branch alias: https://${PREVIEW_ALIAS}/"
+                echo "- Source: \`${ENABLE_SHA}\`"
+                echo "- Inspector: ${target_url}"
+                echo "- Branch alias: https://branding-tatva-git-august-8-isolated-suman22.vercel.app/"
                 echo "- Target: preview only"
                 echo "- Status: READY"
               } >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
-            sleep 4
+
+            if [ "$state" = "failure" ] || [ "$state" = "error" ]; then
+              echo "Vercel reported ${state} for ${ENABLE_SHA}." >&2
+              exit 1
+            fi
+
+            sleep 6
           done
 
-          echo "The branch alias did not resolve to READY deployment ${DEPLOYMENT_ID}." >&2
+          echo "Vercel did not finish within 12 minutes." >&2
+          exit 1
+
+      - name: Return the branch to controlled mode
+        if: always() && steps.enable.outputs.enable_sha != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in $(seq 1 5); do
+            git fetch origin "$GITHUB_REF_NAME"
+            git rebase "origin/$GITHUB_REF_NAME"
+
+            node <<'NODE'
+            const fs = require("node:fs");
+            const file = "vercel.json";
+            const config = JSON.parse(fs.readFileSync(file, "utf8"));
+            config.git ??= {};
+            config.git.deploymentEnabled ??= {};
+            config.git.deploymentEnabled["august-8-isolated"] = false;
+            fs.writeFileSync(file, `${JSON.stringify(config, null, 2)}\n`);
+          NODE
+
+            if ! git diff --quiet -- vercel.json; then
+              git add vercel.json
+              git commit -m "Return august preview to controlled mode"
+            fi
+
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+          done
+
+          echo "Could not return august-8-isolated to controlled deployment mode." >&2
           exit 1
