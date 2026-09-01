@@ -105,6 +105,45 @@ passed
 
 ---
 
+# Services August 28 animated-roots restoration · 2026-09-01
+
+## Comparison target
+
+- Historical source of truth: commit `7bb0d06a`, the Services state deployed on August 28.
+- Historical media: `/videos/generated/bt-services-hero-root-system.mp4`, its mobile encode, and `/images/generated/bt-services-hero-root-system-poster.jpg`.
+- Intended behavior: the five-second mineral-ivory signal travels through the dark root network at `1.15×`; reduced motion falls back to the matching root-network poster.
+- This report supersedes the earlier Services photographic-root report below. The user clarified that the required August 28 opening is the animated root-network film, not the later photographic archive.
+
+## Findings
+
+The source-level mismatch is corrected. A later generic `PhotoHero` rule converted every generated short loop into a pointer/scroll-driven still, so the historical Services MP4 remained named in the page but no longer rendered as a video. `PhotoHero` now supports an explicit per-instance media mode, and Services alone opts into the historical video. Other generated media keeps the later living-still behavior.
+
+The cloud browser could not reach the local preview: its URL policy rejected the local route after the preview connection returned `ERR_CONNECTION_REFUSED`. Per the browser safety boundary, no alternate browser surface or policy workaround was attempted. Visual acceptance therefore remains blocked even though compilation and production-build verification pass.
+
+## Required fidelity surfaces
+
+- Media identity: passed by source and asset inspection; the desktop/mobile MP4s and matching poster are the exact historical files used by commit `7bb0d06a`.
+- Motion behavior: passed by source inspection; Services explicitly selects video mode, retains the `1.15` playback rate, and preserves the existing autoplay/fade hook.
+- Reduced motion: passed by source inspection; the matching historical poster replaces the video when reduced motion is active.
+- Layout: passed by source inspection; the restored rounded smoky reading panel and current Services content remain unchanged.
+- Scope: passed; only the Services hero opts into video mode. Other `PhotoHero` callers retain automatic living-still treatment.
+
+## Verification
+
+- TypeScript: passed (`pnpm exec tsc --noEmit`).
+- Targeted ESLint: passed for `src/components/PhotoHero.tsx` and `src/app/services/page.tsx`.
+- Copy gate: passed (`pnpm check:copy`).
+- Production build: passed; all routes generated successfully.
+- Production response: passed; `/services` emits the desktop/mobile root-film sources and matching poster, and both media endpoints return `200` with the expected MIME types.
+- Historical asset inspection: passed; the root-network film is `1280 × 720`, five seconds, and visibly carries the mineral-ivory signal through the animated roots.
+- Live browser visual comparison: blocked by the cloud browser's local-preview connection and URL-policy failure.
+
+## Final result
+
+blocked
+
+---
+
 # Prior design QA history
 
 ### Colors and visual tokens

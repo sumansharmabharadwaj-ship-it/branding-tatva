@@ -218,19 +218,20 @@ export default async function ServicesPage() {
           id="services-opening"
           video="/videos/generated/bt-services-hero-root-system.mp4"
           videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
-          poster="/images/generated/bt-services-root-archive-v2.webp"
+          poster="/images/generated/bt-services-hero-root-system-poster.jpg"
+          mediaMode="video"
           minHeight="100vh"
-          imagePosition="68% center"
           overlayGradient="linear-gradient(180deg, rgba(36,45,39,0.16) 0%, rgba(36,45,39,0.24) 58%, rgba(36,45,39,0.42) 100%)"
           playbackRate={1.15}
         >
-          {/* Original generated hero loop: a living underground root
+          {/* Restored August 28 hero film: a living underground root
               network becomes legible as a restrained mineral-ivory
               signal travels through connected paths. The image explains
               the page's premise before the copy does: brand recognition
               is a system beneath the visible surface, not one isolated
-              deliverable. A dedicated mobile encode and generated poster
-              keep the first paint quiet, fast, and semantically intact. */}
+              deliverable. The explicit video mode keeps this historical
+              banner moving while later short generated loops elsewhere
+              remain protected by the living-still treatment. */}
           <HeroReveal />
           {/* A restrained directional scrim protects the masthead
               while leaving the generated root architecture readable

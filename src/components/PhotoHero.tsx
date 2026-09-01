@@ -43,6 +43,7 @@ export function PhotoHero({
   video,
   videoMobile,
   poster,
+  mediaMode = "auto",
   minHeight = "60vh",
   imagePosition = "center",
   className,
@@ -58,6 +59,7 @@ export function PhotoHero({
   video?: string;
   videoMobile?: string;
   poster?: string;
+  mediaMode?: "auto" | "video" | "living-image";
   minHeight?: string;
   imagePosition?: string;
   className?: string;
@@ -67,7 +69,9 @@ export function PhotoHero({
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const livingStill = usesLivingStill(video);
+  const livingStill =
+    mediaMode === "living-image" ||
+    (mediaMode === "auto" && usesLivingStill(video));
   useVideoFadeIn(
     videoRef,
     Boolean(video) && !prefersReducedMotion && !livingStill,
