@@ -194,6 +194,8 @@ assert(paths.includes('data-home-playback-rate="0.82"'), "Service-path film has 
 assert(paths.includes("const displayed = index === activeIndex"), "Service-path preview has no separate visual state.");
 assert(paths.includes('type CarriedPathSource = "diagnostic" | "evidence" | null'), "Service paths cannot preserve the source of a carried recommendation.");
 assert(paths.includes('data-proof-origin={carriedFrom === "evidence" && !isPreviewing ? "evidence" : "case"}'), "Evidence reasoning can remain attached to an unrelated path preview.");
+assert(paths.includes("variants={PATH_ANSWER_VARIANTS}") && paths.includes("custom={selectionDirectionRef.current}") && paths.includes('exit={prefersReducedMotion ? undefined : "exit"}'), "Service-path answers no longer leave in the visitor's selection direction.");
+assert(paths.includes('aria-live={isPreviewing ? "off" : "polite"}') && paths.includes('className="paths-film__counter" aria-hidden="true"'), "Service-path previews can interrupt assistive reading or duplicate the committed answer.");
 assert(paths.includes("aria-selected={committed}"), "Service-path hover replaces the committed recommendation.");
 assert(paths.includes("tabIndex={committed ? 0 : -1}"), "Service-path hover moves the keyboard tab stop.");
 assert(videoFadeIn.includes("playbackManagedExternally = false") && videoFadeIn.includes("if (!playbackManagedExternally)"), "Reusable video fade-in cannot yield playback without losing cleanup ownership.");

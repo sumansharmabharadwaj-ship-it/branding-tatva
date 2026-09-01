@@ -89,6 +89,21 @@ const PATHS = [
 const EASE = [0.22, 1, 0.36, 1] as const;
 type SelectionDirection = "forward" | "backward";
 type CarriedPathSource = "diagnostic" | "evidence" | null;
+const PATH_ANSWER_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? 18 : -18,
+    y: 6,
+    filter: "blur(4px)",
+  }),
+  active: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? -10 : 10,
+    y: -6,
+    filter: "blur(3px)",
+  }),
+};
 const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
   idea: 0,
   reposition: 1,
@@ -237,7 +252,7 @@ export function PathsCinematicChapter() {
             <span>05</span>
             <p>Brand Strategy &amp; Systems</p>
           </div>
-          <p className="paths-film__counter" aria-live="polite">
+          <p className="paths-film__counter" aria-hidden="true">
             {active.number} / 03
           </p>
         </header>
@@ -311,7 +326,11 @@ export function PathsCinematicChapter() {
             </div>
           </div>
 
-          <AnimatePresence mode="sync" initial={false}>
+          <AnimatePresence
+            mode="sync"
+            initial={false}
+            custom={selectionDirectionRef.current}
+          >
             <motion.article
               key={active.number}
               id="path-active-panel"
@@ -321,14 +340,12 @@ export function PathsCinematicChapter() {
               data-path-state={isPreviewing ? "preview" : "chosen"}
               data-home-reading-plane
               data-home-selection-direction={selectionDirectionRef.current}
-              initial={prefersReducedMotion ? false : {
-                opacity: 0,
-                x: selectionDirectionRef.current === "forward" ? 18 : -18,
-                y: 6,
-                filter: "blur(4px)",
-              }}
-              animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(3px)" }}
+              aria-live={isPreviewing ? "off" : "polite"}
+              custom={selectionDirectionRef.current}
+              variants={PATH_ANSWER_VARIANTS}
+              initial={prefersReducedMotion ? false : "enter"}
+              animate="active"
+              exit={prefersReducedMotion ? undefined : "exit"}
               transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
             >
               <p className="paths-film__answer-eyebrow">{active.eyebrow}</p>
