@@ -320,56 +320,6 @@ html[data-services-form-interaction="true"] [data-services-scroll-scene="book"] 
   transform: none;
 }
 
-[data-services-scroll-scene] > [data-services-scene-signal="true"] {
-  position: absolute;
-  z-index: 20;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: clamp(2.5rem, 7vh, 5rem);
-  overflow: hidden;
-  contain: paint;
-  pointer-events: none;
-  opacity: clamp(0.12, var(--services-scene-presence, 0), 0.4);
-}
-
-[data-services-scroll-scene] > [data-services-scene-signal="true"]::before {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0.7rem;
-  left: 0;
-  height: 1px;
-  width: var(--services-scene-signal-x, 0%);
-  background: linear-gradient(90deg, transparent, rgba(212, 185, 154, 0.7), rgba(125, 155, 175, 0.46), transparent);
-  box-shadow: 0 0 18px rgba(212, 185, 154, 0.12);
-}
-
-[data-services-scroll-scene] > [data-services-scene-signal="true"]::after {
-  content: "";
-  position: absolute;
-  bottom: -2.7rem;
-  left: var(--services-scene-signal-x, 0%);
-  width: min(24rem, 34vw);
-  height: 5.4rem;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(212, 185, 154, 0.15) 0%, rgba(125, 155, 175, 0.07) 38%, rgba(125, 155, 175, 0.025) 58%, transparent 76%);
-  transform: translateX(-50%);
-  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-html[data-services-scroll-direction="down"]
-  [data-services-scroll-scene][data-services-active="true"]
-  > [data-services-scene-signal="true"]::after {
-  transform: translateX(-50%) skewX(-7deg) scaleX(1.08);
-}
-
-html[data-services-scroll-direction="up"]
-  [data-services-scroll-scene][data-services-active="true"]
-  > [data-services-scene-signal="true"]::after {
-  transform: translateX(-50%) skewX(7deg) scaleX(1.08);
-}
-
 /* Forms own the viewport while a visitor is answering them. The media
    director publishes this state from real focused form controls; wayfinding
    fades out without being removed from layout and returns as soon as focus
@@ -420,15 +370,6 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
   [data-services-hero-aperture="true"] {
     bottom: -10rem;
     width: 22rem;
-  }
-
-  [data-services-scroll-scene] > [data-services-scene-signal="true"] {
-    height: 2.7rem;
-    opacity: clamp(0.08, var(--services-scene-presence, 0), 0.28);
-  }
-
-  [data-services-scroll-scene] > [data-services-scene-signal="true"]::after {
-    width: 48vw;
   }
 
   [data-services-scroll-scene] [data-services-chapter-copy="true"] {
@@ -628,10 +569,6 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
     height: auto !important;
   }
 
-  [data-services-scroll-scene] > [data-services-scene-signal="true"] {
-    display: none;
-  }
-
   html[data-services-experience="active"] nav[aria-label="Jump to section"]:not([data-section-jump-nav-mobile="true"]):not([data-section-jump-nav-desktop-mode="rail"])::after {
     transition: none;
   }
@@ -667,8 +604,7 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
 }
 
 :root[data-motion="reduced"] [data-services-hero-fragments="true"],
-:root[data-motion="reduced"] [data-services-hero-aperture="true"],
-:root[data-motion="reduced"] [data-services-scroll-scene] > [data-services-scene-signal="true"] {
+:root[data-motion="reduced"] [data-services-hero-aperture="true"] {
   display: none;
 }
 

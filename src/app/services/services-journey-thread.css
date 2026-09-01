@@ -1,0 +1,237 @@
+/* -------------------------------------------------------------------------- */
+/* Services journey thread                                                     */
+/* -------------------------------------------------------------------------- */
+
+html[data-services-experience="active"] {
+  --services-journey-progress: 0%;
+  --services-thread-x: clamp(1.35rem, 4.4vw, 4.75rem);
+  --services-thread-color: 212 185 154;
+  --services-thread-secondary: 125 155 175;
+  --services-thread-glyph-scale: 1;
+}
+
+[data-services-journey-thread="true"] {
+  position: fixed;
+  z-index: 34;
+  inset: 0;
+  overflow: hidden;
+  contain: strict;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms ease;
+  mask-image: linear-gradient(to bottom, transparent 4%, black 14%, black 88%, transparent 97%);
+}
+
+html[data-services-experience="active"] [data-services-journey-thread="true"] {
+  opacity: 1;
+}
+
+[data-services-thread-rail="true"] {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--services-thread-x);
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(var(--services-thread-secondary) / 0.12) 15%,
+    rgb(var(--services-thread-color) / 0.28) 38%,
+    rgb(var(--services-thread-secondary) / 0.18) 72%,
+    transparent
+  );
+  transform: translateX(-0.5px);
+  transition:
+    left 720ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 520ms ease;
+}
+
+[data-services-thread-progress="true"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: var(--services-journey-progress);
+  min-height: 10%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(var(--services-thread-secondary) / 0.55),
+    rgb(var(--services-thread-color) / 0.92)
+  );
+  box-shadow: 0 0 16px rgb(var(--services-thread-color) / 0.24);
+  transition:
+    height 110ms linear,
+    background 520ms ease;
+}
+
+[data-services-thread-focus="true"] {
+  position: absolute;
+  top: 34%;
+  left: var(--services-thread-x);
+  width: clamp(2.75rem, 4.2vw, 4.5rem);
+  aspect-ratio: 1;
+  border: 1px solid rgb(var(--services-thread-color) / 0.34);
+  border-radius: 999px;
+  background: rgb(19 27 23 / 0.3);
+  box-shadow:
+    0 0 0 0.3rem rgb(var(--services-thread-color) / 0.06),
+    0 0 26px rgb(var(--services-thread-color) / 0.16);
+  transform: translate(-50%, -50%) scale(var(--services-thread-glyph-scale));
+  backdrop-filter: blur(10px);
+  transition:
+    left 720ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 520ms ease,
+    background 520ms ease,
+    box-shadow 520ms ease;
+}
+
+[data-services-thread-glyph] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46%;
+  height: 46%;
+  color: rgb(var(--services-thread-color) / 0.95);
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-18deg) scale(0.58);
+  transition:
+    color 520ms ease,
+    opacity 260ms ease,
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-services-thread-glyph] > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+html[data-services-thread-scene="opening"] [data-services-thread-glyph="opening"],
+html[data-services-thread-scene="situation"] [data-services-thread-glyph="situation"],
+html[data-services-thread-scene="offerings"] [data-services-thread-glyph="offerings"],
+html[data-services-thread-scene="desire"] [data-services-thread-glyph="desire"],
+html[data-services-thread-scene="verified-outcome"] [data-services-thread-glyph="verified-outcome"],
+html[data-services-thread-scene="authority"] [data-services-thread-glyph="authority"],
+html[data-services-thread-scene="education"] [data-services-thread-glyph="education"],
+html[data-services-thread-scene="audit"] [data-services-thread-glyph="audit"],
+html[data-services-thread-scene="book"] [data-services-thread-glyph="book"] {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
+}
+
+/* The single signal adopts the active chapter's material palette and moves a
+   few pixels laterally, enough to feel alive without competing with reading. */
+html[data-services-thread-scene="opening"] {
+  --services-thread-x: clamp(1.35rem, 5.2vw, 5.7rem);
+  --services-thread-color: 221 190 132;
+  --services-thread-secondary: 154 181 137;
+  --services-thread-glyph-scale: 1.08;
+}
+
+html[data-services-thread-scene="situation"] {
+  --services-thread-color: 212 185 154;
+  --services-thread-secondary: 139 171 151;
+  --services-thread-glyph-scale: 1.04;
+}
+
+html[data-services-thread-scene="offerings"] {
+  --services-thread-x: clamp(1.35rem, 5.6vw, 6.1rem);
+  --services-thread-color: 184 196 159;
+  --services-thread-secondary: 125 155 175;
+}
+
+html[data-services-thread-scene="desire"] {
+  --services-thread-x: clamp(1.35rem, 4.8vw, 5.2rem);
+  --services-thread-color: 201 151 113;
+  --services-thread-secondary: 105 147 172;
+  --services-thread-glyph-scale: 0.9;
+}
+
+html[data-services-thread-scene="verified-outcome"] {
+  --services-thread-color: 218 190 148;
+  --services-thread-secondary: 156 184 166;
+  --services-thread-glyph-scale: 1.12;
+}
+
+html[data-services-thread-scene="authority"] {
+  --services-thread-x: clamp(1.35rem, 5.4vw, 5.9rem);
+  --services-thread-color: 188 199 169;
+  --services-thread-secondary: 125 155 175;
+}
+
+html[data-services-thread-scene="education"] {
+  --services-thread-color: 191 207 179;
+  --services-thread-secondary: 119 164 145;
+  --services-thread-glyph-scale: 1.06;
+}
+
+html[data-services-thread-scene="audit"] {
+  --services-thread-x: clamp(1.35rem, 4.6vw, 5rem);
+  --services-thread-color: 212 185 154;
+  --services-thread-secondary: 158 177 151;
+}
+
+html[data-services-thread-scene="book"] {
+  --services-thread-color: 224 191 137;
+  --services-thread-secondary: 196 145 107;
+  --services-thread-glyph-scale: 1.18;
+}
+
+html[data-services-thread-engaged="true"] [data-services-thread-focus="true"] {
+  transform: translate(-50%, -50%) scale(calc(var(--services-thread-glyph-scale) + 0.12));
+  border-color: rgb(var(--services-thread-color) / 0.62);
+  box-shadow:
+    0 0 0 0.45rem rgb(var(--services-thread-color) / 0.09),
+    0 0 34px rgb(var(--services-thread-color) / 0.28);
+}
+
+html[data-services-form-interaction="true"] [data-services-journey-thread="true"] {
+  opacity: 0.24;
+}
+
+@media (max-width: 1023px) {
+  html[data-services-experience="active"],
+  html[data-services-thread-scene] {
+    --services-thread-x: 1.1rem;
+  }
+
+  [data-services-journey-thread="true"] {
+    z-index: 18;
+    opacity: 0.58;
+  }
+
+  [data-services-thread-focus="true"] {
+    top: 30%;
+    width: 2.2rem;
+    background: rgb(19 27 23 / 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-services-thread-progress="true"],
+  [data-services-thread-rail="true"],
+  [data-services-thread-focus="true"],
+  [data-services-thread-glyph] {
+    transition: none !important;
+  }
+
+  [data-services-thread-progress="true"] {
+    height: 100%;
+    opacity: 0.28;
+  }
+
+  [data-services-thread-focus="true"] {
+    display: none;
+  }
+}
+
+:root[data-motion="reduced"] [data-services-thread-progress="true"] {
+  height: 100%;
+  opacity: 0.28;
+}
+
+:root[data-motion="reduced"] [data-services-thread-focus="true"] {
+  display: none;
+}

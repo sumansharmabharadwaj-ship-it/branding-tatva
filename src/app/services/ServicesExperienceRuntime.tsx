@@ -8,6 +8,8 @@ const CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
 const ACTIVE_CHAPTER_EVENT = "bt:services-active-chapter";
 const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
 const DIRECT_ANCHOR_PROGRESS = 0.455;
+const INTERACTIVE_SELECTOR =
+  "a[href], button, input, textarea, select, [role='button'], [role='tab'], [contenteditable='true']";
 
 type AnchorSettleDetail = {
   id?: string;
@@ -80,7 +82,6 @@ export function ServicesExperienceRuntime() {
     const hero = firstScene;
 
     document.documentElement.dataset.servicesExperience = "active";
-    const signalLayers = new Map<HTMLElement, HTMLSpanElement>();
     const generatedIds = new Set<HTMLElement>();
     const heroMedia = Array.from(
       hero.querySelectorAll<HTMLElement>(
@@ -96,6 +97,7 @@ export function ServicesExperienceRuntime() {
     let frame = 0;
     let scrollSettleTimer = 0;
     let pointerFrame = 0;
+    let threadEngagementTimer = 0;
     let anchorAlignTimer = 0;
     let anchorAlignAttempts = 0;
     let anchorAlignCancelled = false;
@@ -166,11 +168,6 @@ export function ServicesExperienceRuntime() {
       scene.style.setProperty("--services-resolution-y", "0px");
       scene.style.setProperty("--services-resolution-opacity", "1");
 
-      const signal = document.createElement("span");
-      signal.dataset.servicesSceneSignal = "true";
-      signal.setAttribute("aria-hidden", "true");
-      scene.appendChild(signal);
-      signalLayers.set(scene, signal);
     });
 
     const chapterDetail = scenes.map((scene, index) => ({
@@ -196,6 +193,8 @@ export function ServicesExperienceRuntime() {
 
       document.documentElement.dataset.servicesActiveChapter =
         chapter.dataset.servicesScrollScene || String(index + 1);
+      document.documentElement.dataset.servicesThreadScene =
+        chapter.dataset.servicesScrollScene || "opening";
       document.documentElement.dataset.servicesActiveChapterId = chapter.id;
       document.documentElement.style.setProperty(
         "--services-chapter-progress",
@@ -395,6 +394,9 @@ export function ServicesExperienceRuntime() {
     function updateSceneProgress() {
       frame = 0;
       const viewportHeight = Math.max(1, window.innerHeight);
+      const rootBounds = servicesRoot.getBoundingClientRect();
+      const rootTravel = Math.max(1, servicesRoot.scrollHeight - viewportHeight);
+      const journeyProgress = clamp(-rootBounds.top / rootTravel);
       const now = performance.now();
       const elapsed = Math.max(16, now - lastFrameTime);
       const scrollDelta = window.scrollY - lastScrollY;
@@ -408,6 +410,10 @@ export function ServicesExperienceRuntime() {
       document.documentElement.style.setProperty(
         "--services-scroll-velocity",
         smoothedVelocity.toFixed(4),
+      );
+      document.documentElement.style.setProperty(
+        "--services-journey-progress",
+        `${(journeyProgress * 100).toFixed(3)}%`,
       );
       updateHeroProgress(viewportHeight);
       publishChapter(chapterAtFocalLine(viewportHeight));
@@ -451,7 +457,6 @@ export function ServicesExperienceRuntime() {
         scene.style.setProperty("--services-scene-progress", progress.toFixed(4));
         scene.style.setProperty("--services-scene-presence", centred.toFixed(4));
         scene.style.setProperty("--services-scene-axis", axis.toFixed(4));
-        scene.style.setProperty("--services-scene-signal-x", `${(progress * 100).toFixed(3)}%`);
         scene.style.setProperty("--services-anticipation", anticipation.toFixed(4));
         scene.style.setProperty("--services-activation", activation.toFixed(4));
         scene.style.setProperty("--services-discovery", discovery.toFixed(4));
@@ -614,6 +619,61 @@ export function ServicesExperienceRuntime() {
       if (!pointerFrame) pointerFrame = window.requestAnimationFrame(publishPointer);
     }
 
+    function closestInteractive(target: EventTarget | null) {
+      return target instanceof Element ? target.closest(INTERACTIVE_SELECTOR) : null;
+    }
+
+    function hasFocusedInteractive() {
+      return Boolean(
+        document.activeElement instanceof Element &&
+          servicesRoot.contains(document.activeElement) &&
+          closestInteractive(document.activeElement),
+      );
+    }
+
+    function publishThreadEngagement(active: boolean) {
+      document.documentElement.dataset.servicesThreadEngaged = active ? "true" : "false";
+    }
+
+    function onInteractivePointerOver(event: PointerEvent) {
+      if (!closestInteractive(event.target)) return;
+      window.clearTimeout(threadEngagementTimer);
+      publishThreadEngagement(true);
+    }
+
+    function onInteractivePointerOut(event: PointerEvent) {
+      const from = closestInteractive(event.target);
+      if (!from) return;
+      const to = closestInteractive(event.relatedTarget);
+      if (to && servicesRoot.contains(to)) return;
+      if (!hasFocusedInteractive()) publishThreadEngagement(false);
+    }
+
+    function onInteractiveFocusIn(event: FocusEvent) {
+      if (!closestInteractive(event.target)) return;
+      window.clearTimeout(threadEngagementTimer);
+      publishThreadEngagement(true);
+    }
+
+    function onInteractiveFocusOut() {
+      window.setTimeout(() => {
+        if (!hasFocusedInteractive()) publishThreadEngagement(false);
+      }, 0);
+    }
+
+    function onInteractivePointerDown(event: PointerEvent) {
+      if (!closestInteractive(event.target)) return;
+      window.clearTimeout(threadEngagementTimer);
+      publishThreadEngagement(true);
+    }
+
+    function onInteractivePointerUp() {
+      window.clearTimeout(threadEngagementTimer);
+      threadEngagementTimer = window.setTimeout(() => {
+        if (!hasFocusedInteractive()) publishThreadEngagement(false);
+      }, 420);
+    }
+
     const initialAnchorIndex = chapterIndexForHash();
     if (initialAnchorIndex >= 0) {
       pendingAnchorIndex = initialAnchorIndex;
@@ -633,12 +693,19 @@ export function ServicesExperienceRuntime() {
     window.addEventListener("keydown", onManualAnchorKey);
     servicesRoot.addEventListener("pointermove", onPointerMove, { passive: true });
     servicesRoot.addEventListener("pointerleave", onPointerLeave);
+    servicesRoot.addEventListener("pointerover", onInteractivePointerOver, { passive: true });
+    servicesRoot.addEventListener("pointerout", onInteractivePointerOut, { passive: true });
+    servicesRoot.addEventListener("pointerdown", onInteractivePointerDown, { passive: true });
+    servicesRoot.addEventListener("pointerup", onInteractivePointerUp, { passive: true });
+    servicesRoot.addEventListener("focusin", onInteractiveFocusIn);
+    servicesRoot.addEventListener("focusout", onInteractiveFocusOut);
 
     return () => {
       window.cancelAnimationFrame(frame);
       window.cancelAnimationFrame(pointerFrame);
       window.clearTimeout(scrollSettleTimer);
       window.clearTimeout(anchorAlignTimer);
+      window.clearTimeout(threadEngagementTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
@@ -649,14 +716,23 @@ export function ServicesExperienceRuntime() {
       window.removeEventListener("keydown", onManualAnchorKey);
       servicesRoot.removeEventListener("pointermove", onPointerMove);
       servicesRoot.removeEventListener("pointerleave", onPointerLeave);
+      servicesRoot.removeEventListener("pointerover", onInteractivePointerOver);
+      servicesRoot.removeEventListener("pointerout", onInteractivePointerOut);
+      servicesRoot.removeEventListener("pointerdown", onInteractivePointerDown);
+      servicesRoot.removeEventListener("pointerup", onInteractivePointerUp);
+      servicesRoot.removeEventListener("focusin", onInteractiveFocusIn);
+      servicesRoot.removeEventListener("focusout", onInteractiveFocusOut);
       delete document.documentElement.dataset.servicesExperience;
       delete document.documentElement.dataset.servicesScrollDirection;
       delete document.documentElement.dataset.servicesActiveChapter;
       delete document.documentElement.dataset.servicesActiveChapterId;
+      delete document.documentElement.dataset.servicesThreadScene;
+      delete document.documentElement.dataset.servicesThreadEngaged;
       delete document.documentElement.dataset.servicesChapterCount;
       document.documentElement.style.removeProperty("--services-chapter-progress");
       document.documentElement.style.removeProperty("--services-chapter-angle");
       document.documentElement.style.removeProperty("--services-scroll-velocity");
+      document.documentElement.style.removeProperty("--services-journey-progress");
       servicesRoot.style.removeProperty("--services-pointer-x");
       servicesRoot.style.removeProperty("--services-pointer-y");
 
@@ -681,7 +757,6 @@ export function ServicesExperienceRuntime() {
       ].forEach((property) => hero.style.removeProperty(property));
 
       scenes.forEach((scene) => {
-        signalLayers.get(scene)?.remove();
         delete scene.dataset.servicesScrollScene;
         delete scene.dataset.servicesScrollIndex;
         delete scene.dataset.servicesChapterLabel;
@@ -692,7 +767,6 @@ export function ServicesExperienceRuntime() {
         scene.style.removeProperty("--services-scene-progress");
         scene.style.removeProperty("--services-scene-presence");
         scene.style.removeProperty("--services-scene-axis");
-        scene.style.removeProperty("--services-scene-signal-x");
         scene.style.removeProperty("--services-content-x");
         scene.style.removeProperty("--services-content-y");
         scene.style.removeProperty("--services-content-rotate");
@@ -717,7 +791,6 @@ export function ServicesExperienceRuntime() {
         scene.style.removeProperty("--services-resolution-y");
         scene.style.removeProperty("--services-resolution-opacity");
       });
-      signalLayers.clear();
       generatedIds.clear();
     };
   }, []);
