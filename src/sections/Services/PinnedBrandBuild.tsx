@@ -79,9 +79,10 @@ const WAVE_PATH = (() => {
 
 export function PinnedBrandBuild() {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const layerRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const waveRef = useRef<SVGGElement>(null);
   const [situation, setSituation] = useState<ServicesSituationId | null>(null);
+  const [inspectedLayer, setInspectedLayer] = useState<number | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const recommendedPackage = packages.find(
     (pkg) => pkg.slug === (situation ? SITUATION_TO_PACKAGE[situation] : "brand-clarity"),
@@ -257,11 +258,23 @@ export function PinnedBrandBuild() {
               {/* The output signal — a wave whose oscillation widens as
                   the layers beneath it assemble. Decorative twin of the
                   rows below, which carry the full text alternative. */}
-              <div data-authority-wave="true" aria-hidden="true" className="mb-6 border-b border-ivory/10 pb-4">
-                <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
-                  What must exist before promotion
-                </p>
-                <svg viewBox="0 0 400 80" className="mt-2 h-14 w-full max-w-lg" fill="none">
+              <div data-authority-wave="true" className="mb-6 border-b border-ivory/10 pb-4">
+                <div data-authority-signal-header="true">
+                  <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
+                    What must exist before promotion
+                  </p>
+                  <p
+                    data-authority-signal-status="true"
+                    className="text-right text-[0.58rem] font-medium uppercase tracking-[0.16em] text-ivory/55"
+                    aria-live="polite"
+                  >
+                    <span className="text-ivory/40">Layer in focus</span>
+                    <span className="ml-2 text-sandstone">
+                      {inspectedLayer === null ? "Entire brand system" : LAYERS[inspectedLayer]?.label}
+                    </span>
+                  </p>
+                </div>
+                <svg aria-hidden="true" viewBox="0 0 400 80" className="mt-2 h-14 w-full max-w-lg" fill="none">
                   <g ref={waveRef} style={{ transformOrigin: "50% 50%" }}>
                     <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
                     <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="5" strokeLinecap="round" opacity="0.12" />
@@ -269,13 +282,16 @@ export function PinnedBrandBuild() {
                 </svg>
               </div>
               {LAYERS.map((layer, i) => (
-                <div
+                <button
                   key={layer.slug}
                   data-authority-desktop-layer="true"
+                  type="button"
+                  aria-pressed={inspectedLayer === i}
+                  onClick={() => setInspectedLayer((current) => (current === i ? null : i))}
                   ref={(node) => {
                     layerRefs.current[i] = node;
                   }}
-                  className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 transition-[border-color] duration-300 last:border-b-0 hover:border-ivory/30 xl:py-5"
+                  className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 text-left transition-[border-color,background-color,box-shadow] duration-300 last:border-b-0 hover:border-ivory/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone xl:py-5"
                   style={{ marginLeft: `${i * 18}px` }}
                 >
                   <span className="relative flex items-start gap-3">
@@ -302,7 +318,7 @@ export function PinnedBrandBuild() {
                       <p className="mt-1 max-w-lg text-xs leading-relaxed text-ivory/60 xl:text-sm">{layer.skipped}</p>
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>

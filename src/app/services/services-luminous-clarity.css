@@ -311,6 +311,17 @@
   color: rgba(244, 239, 230, 0.78);
 }
 
+#authority [data-authority-signal-header="true"] {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+#authority [data-authority-signal-status="true"] {
+  min-width: max-content;
+}
+
 #authority [data-authority-desktop-layer="true"] {
   border-color: rgba(244, 239, 230, 0.16);
   border-radius: 0.9rem;
@@ -319,6 +330,15 @@
 
 #authority [data-authority-desktop-layer="true"]:hover {
   background: rgba(244, 239, 230, 0.035);
+}
+
+#authority [data-authority-desktop-layer="true"][aria-pressed="true"] {
+  border-color: rgba(212, 185, 154, 0.62);
+  background:
+    linear-gradient(90deg, rgba(212, 185, 154, 0.12), rgba(212, 185, 154, 0.025) 72%, transparent);
+  box-shadow:
+    inset 2px 0 rgba(212, 185, 154, 0.78),
+    0 14px 34px rgba(6, 12, 9, 0.16);
 }
 
 #authority [data-authority-desktop-layer="true"] > div p:nth-child(2) {
