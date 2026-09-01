@@ -232,7 +232,7 @@ export function SituationPath() {
             })}
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="popLayout" initial={false}>
             {displayedPackage ? (
               <motion.div
                 id="situation-mobile-panel"
@@ -242,15 +242,15 @@ export function SituationPath() {
                 initial={
                   prefersReducedMotion
                     ? undefined
-                    : { opacity: 0.18, clipPath: "inset(0 0 74% 0 round 1rem)", filter: "blur(4px)" }
+                    : { opacity: 0.9, clipPath: "inset(1.5% round 1rem)", filter: "blur(1px)" }
                 }
                 animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
                 exit={
                   prefersReducedMotion
                     ? undefined
-                    : { opacity: 0.12, clipPath: "inset(0 0 0 76% round 1rem)", filter: "blur(4px)" }
+                    : { opacity: 0.2, clipPath: "inset(1.5% round 1rem)", filter: "blur(1.5px)" }
                 }
-                transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: EASE }}
                 data-situation-detail="true"
                 className="mt-2.5 rounded-[1.3rem] border-t-2 p-4 backdrop-blur-xl"
                 style={{ borderTopColor: displayedPackage.color, backgroundColor: "rgba(18,28,23,0.76)" }}
@@ -320,22 +320,22 @@ export function SituationPath() {
             );
           })}
           <div className="h-px bg-ivory/12" aria-hidden="true" />
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="popLayout" initial={false}>
             {displayedPackage ? (
               <motion.div
                 key={displayed}
                 initial={
                   prefersReducedMotion
                     ? undefined
-                    : { opacity: 0.18, clipPath: "inset(0 0 74% 0 round 1rem)", filter: "blur(4px)" }
+                    : { opacity: 0.9, clipPath: "inset(1.5% round 1rem)", filter: "blur(1px)" }
                 }
                 animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
                 exit={
                   prefersReducedMotion
                     ? undefined
-                    : { opacity: 0.12, clipPath: "inset(0 0 0 76% round 1rem)", filter: "blur(4px)" }
+                    : { opacity: 0.2, clipPath: "inset(1.5% round 1rem)", filter: "blur(1.5px)" }
                 }
-                transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: EASE }}
                 data-situation-detail="true"
                 className="mt-5 rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
                 style={{ borderTopColor: displayedPackage.color, backgroundColor: "rgba(244,239,230,0.05)" }}
