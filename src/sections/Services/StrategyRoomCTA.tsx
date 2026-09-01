@@ -114,8 +114,18 @@ function StrategyDecisionNote({
         <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em] text-sandstone/82">
           Working decision note
         </p>
-        <span className="text-[0.6rem] uppercase tracking-[0.12em] text-ivory/42">Two answers recorded</span>
+        <span className="text-right text-[0.6rem] uppercase tracking-[0.12em] text-ivory/42">Prepared from 2 answers</span>
       </div>
+      <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-ivory/12 pt-4">
+        <div>
+          <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Priority</dt>
+          <dd className="mt-1 text-sm leading-snug text-ivory/82">{priority}</dd>
+        </div>
+        <div className="border-l border-ivory/12 pl-4">
+          <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Conversation focus</dt>
+          <dd className="mt-1 text-sm leading-snug text-ivory/82">{focus}</dd>
+        </div>
+      </dl>
       <p className={`font-display font-normal leading-snug text-ivory ${compact ? "mt-3 text-xl" : "mt-4 text-xl sm:text-2xl"}`}>
         {FOCUS_NOTES[focus]}
       </p>
@@ -357,7 +367,6 @@ export function StrategyRoomCTA() {
 
   function skipBriefAndOpenCalendar() {
     openCalendar();
-    restart();
     setBriefStarted(false);
   }
 
@@ -366,6 +375,8 @@ export function StrategyRoomCTA() {
   const priorityOptions = routeBrief?.priorities ?? PRIORITIES;
   const focusOptions = routeBrief?.focusAreas ?? FOCUS_AREAS;
   const progressLabel = step < QUESTION_COUNT ? `Question ${step + 1} of ${QUESTION_COUNT}` : "Brief ready";
+  const hasCompletedBrief = Boolean(priority && focus);
+  const hasPartialBrief = step > 0 && step < QUESTION_COUNT;
   const answers = [
     carriedPackage ? `Route: ${carriedPackage}` : null,
     recognitionAudit ? `Recognition: ${recognitionAudit.score} / ${recognitionAudit.total} answers hold` : null,
@@ -410,10 +421,14 @@ export function StrategyRoomCTA() {
                         Choose a time that feels unhurried.
                       </h3>
                       <p id="strategy-calendar-description" className="mt-2 max-w-2xl text-sm leading-relaxed text-ivory/72">
-                        Choose a time without losing the brief you have already prepared.
+                        {hasCompletedBrief
+                          ? "Your decision note stays in view while you choose a time."
+                          : answers.length > 0
+                            ? "The context you have already named stays in view while you choose a time."
+                            : "Choose a time now; a polished brief is not required."}
                       </p>
                       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-relaxed text-ivory/65">
-                        <span>Calendar not showing times? Send the decision directly.</span>
+                        <span>Calendar not showing times? {hasCompletedBrief ? "Send this decision directly." : "Write the decision directly."}</span>
                         <Link
                           href="/contact"
                           className="inline-flex min-h-11 items-center rounded-full border border-sandstone/35 px-4 py-2 font-medium text-ivory transition-colors hover:border-sandstone/65 hover:bg-sandstone/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
@@ -542,7 +557,9 @@ export function StrategyRoomCTA() {
                 ) : null}
                 <p className="font-display text-2xl font-normal text-ivory">Choose a time or write first.</p>
                 <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-ivory/72">
-                  Open the calendar now, or answer two short questions so the call can begin with the real decision.
+                  {hasPartialBrief
+                    ? "Your first answer is held. Continue when you are ready, or choose a time now."
+                    : "Open the calendar now, or answer two short questions so the call can begin with the real decision."}
                 </p>
                 <div data-strategy-room-actions="true" className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
                   <button
@@ -555,7 +572,7 @@ export function StrategyRoomCTA() {
                     <span aria-hidden="true" className="ml-2">↗</span>
                   </button>
                   <button ref={registerBriefStartButton} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
-                    Add a short brief
+                    {hasPartialBrief ? "Continue the brief" : "Add a short brief"}
                   </button>
                 </div>
                 <p data-strategy-room-note="true" className="mt-5 text-xs leading-relaxed text-ivory/48">The brief is optional and never blocks the calendar.</p>
