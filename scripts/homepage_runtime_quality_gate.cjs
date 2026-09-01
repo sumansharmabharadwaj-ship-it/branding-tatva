@@ -211,6 +211,8 @@ assert(finalInvitation.includes("`${questionChoice.label} question carried`"), "
 assert(finalInvitation.includes('className="final-invitation__carried-question"') && finalInvitation.includes("clipPath: prefersReducedMotion || inView"), "Carried question no longer resolves with the invitation handoff.");
 assert(finalInvitation.includes('event.pointerType !== "mouse" || prefersReducedMotion'), "Closing booking response can consume touch gestures or ignore reduced motion.");
 assert(finalInvitation.includes('"--invitation-cta-x"') && finalInvitation.includes('"--invitation-cta-y"'), "Closing booking response has lost its bounded pointer position.");
+assert(finalInvitation.includes("bookingCtaBoundsRef.current ?? target.getBoundingClientRect()") && finalInvitation.includes("window.requestAnimationFrame"), "Closing booking response can restore layout reads and writes on every pointer event.");
+assert(finalInvitation.includes("window.cancelAnimationFrame(bookingCtaFrameRef.current)"), "Closing booking response can leave a scheduled motion frame behind.");
 assert(finalInvitation.includes("onPointerCancel") && finalInvitation.includes("onFocus"), "Closing booking response can remain stranded or displace keyboard focus.");
 assert(invitationStyles.includes("var(--invitation-cta-x, 0px)") && invitationStyles.includes("calc(var(--invitation-cta-y, 0px) - 2px)"), "Closing booking response is no longer coupled to the CTA transform.");
 assert(finalInvitation.includes("const activeCallStep = previewCallStep ?? committedCallStep"), "Closing invitation conversation steps have lost their reversible preview state.");

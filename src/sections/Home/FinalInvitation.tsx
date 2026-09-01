@@ -107,6 +107,13 @@ function readSituation(): Situation {
 
 export function FinalInvitation() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const bookingCtaBoundsRef = useRef<DOMRect | null>(null);
+  const bookingCtaFrameRef = useRef<number | null>(null);
+  const bookingCtaMotionRef = useRef<{
+    target: HTMLAnchorElement;
+    x: number;
+    y: number;
+  } | null>(null);
   const [situation, setSituation] = useState<Situation>("default");
   const [questionChoice, setQuestionChoice] = useState<HomeQuestionChoice | null>(null);
   const [studioLens, setStudioLens] = useState<HomeStudioLens | null>(null);
@@ -190,6 +197,9 @@ export function FinalInvitation() {
       window.removeEventListener(HOME_STUDIO_LENS_EVENT, onStudioLens as EventListener);
       window.removeEventListener("bt:situation", sync as EventListener);
       window.removeEventListener("bt:home-chapter", onChapter as EventListener);
+      if (bookingCtaFrameRef.current !== null) {
+        window.cancelAnimationFrame(bookingCtaFrameRef.current);
+      }
     };
   }, []);
 
@@ -240,17 +250,38 @@ export function FinalInvitation() {
   }
 
   function clearBookingCtaMotion(target: HTMLElement) {
+    bookingCtaBoundsRef.current = null;
+    bookingCtaMotionRef.current = null;
+    if (bookingCtaFrameRef.current !== null) {
+      window.cancelAnimationFrame(bookingCtaFrameRef.current);
+      bookingCtaFrameRef.current = null;
+    }
     target.style.removeProperty("--invitation-cta-x");
     target.style.removeProperty("--invitation-cta-y");
   }
 
+  function onBookingCtaPointerEnter(event: PointerEvent<HTMLAnchorElement>) {
+    if (event.pointerType !== "mouse" || prefersReducedMotion) return;
+    bookingCtaBoundsRef.current = event.currentTarget.getBoundingClientRect();
+  }
+
   function onBookingCtaPointerMove(event: PointerEvent<HTMLAnchorElement>) {
     if (event.pointerType !== "mouse" || prefersReducedMotion) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
+    const target = event.currentTarget;
+    const bounds = bookingCtaBoundsRef.current ?? target.getBoundingClientRect();
+    bookingCtaBoundsRef.current = bounds;
+    if (!bounds.width || !bounds.height) return;
     const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 8;
     const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 6;
-    event.currentTarget.style.setProperty("--invitation-cta-x", `${x.toFixed(2)}px`);
-    event.currentTarget.style.setProperty("--invitation-cta-y", `${y.toFixed(2)}px`);
+    bookingCtaMotionRef.current = { target, x, y };
+    if (bookingCtaFrameRef.current !== null) return;
+    bookingCtaFrameRef.current = window.requestAnimationFrame(() => {
+      bookingCtaFrameRef.current = null;
+      const motion = bookingCtaMotionRef.current;
+      if (!motion) return;
+      motion.target.style.setProperty("--invitation-cta-x", `${motion.x.toFixed(2)}px`);
+      motion.target.style.setProperty("--invitation-cta-y", `${motion.y.toFixed(2)}px`);
+    });
   }
 
   return (
@@ -346,6 +377,7 @@ export function FinalInvitation() {
                 data-magnetic
                 data-cursor-label="Book the diagnosis"
                 aria-label={`Open Calendly in your timezone to book a ${consultation.minutes} minute diagnosis with ${site.founder}`}
+                onPointerEnter={onBookingCtaPointerEnter}
                 onPointerMove={onBookingCtaPointerMove}
                 onPointerLeave={(event) => clearBookingCtaMotion(event.currentTarget)}
                 onPointerCancel={(event) => clearBookingCtaMotion(event.currentTarget)}
