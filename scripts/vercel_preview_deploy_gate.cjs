@@ -1,8 +1,11 @@
 const { spawnSync } = require("node:child_process");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const CONTROLLED_PREVIEW_BRANCH = "august-8-isolated";
 const DEPLOY_MARKER = /\[deploy\]/i;
+const RELEASE_MARKER = /\[release:(\d+)\]/i;
 const RELEASE_MANIFEST = "vercel-preview-release.json";
 const RELEVANT_PATHS = [
   "src",
@@ -21,11 +24,17 @@ function shouldIgnoreControlledPreview({
   branch,
   message,
   releaseManifestChanged,
+  releaseManifestMatches,
 }) {
   return (
     branch === CONTROLLED_PREVIEW_BRANCH &&
-    (!DEPLOY_MARKER.test(message) || !releaseManifestChanged)
+    (!DEPLOY_MARKER.test(message) || (!releaseManifestChanged && !releaseManifestMatches))
   );
+}
+
+function releaseManifestMatchesMessage(message, manifestRelease) {
+  const match = message.match(RELEASE_MARKER);
+  return Boolean(match && Number(match[1]) === manifestRelease);
 }
 
 function runSelfTest() {
@@ -34,6 +43,7 @@ function runSelfTest() {
       branch: CONTROLLED_PREVIEW_BRANCH,
       message: "Refine the services copy",
       releaseManifestChanged: true,
+      releaseManifestMatches: false,
     }),
     true,
   );
@@ -42,6 +52,7 @@ function runSelfTest() {
       branch: CONTROLLED_PREVIEW_BRANCH,
       message: "Publish the audited site [deploy]",
       releaseManifestChanged: false,
+      releaseManifestMatches: false,
     }),
     true,
   );
@@ -50,6 +61,7 @@ function runSelfTest() {
       branch: CONTROLLED_PREVIEW_BRANCH,
       message: "Publish the audited site [deploy]",
       releaseManifestChanged: true,
+      releaseManifestMatches: false,
     }),
     false,
   );
@@ -58,6 +70,18 @@ function runSelfTest() {
       branch: "main",
       message: "Publish the audited site",
       releaseManifestChanged: false,
+      releaseManifestMatches: false,
+    }),
+    false,
+  );
+  assert.equal(releaseManifestMatchesMessage("Retry [deploy] [release:9]", 9), true);
+  assert.equal(releaseManifestMatchesMessage("Retry [deploy] [release:8]", 9), false);
+  assert.equal(
+    shouldIgnoreControlledPreview({
+      branch: CONTROLLED_PREVIEW_BRANCH,
+      message: "Retry [deploy] [release:9]",
+      releaseManifestChanged: false,
+      releaseManifestMatches: true,
     }),
     false,
   );
@@ -108,14 +132,23 @@ if (process.argv.includes("--self-test")) {
 
 const branch = process.env.VERCEL_GIT_COMMIT_REF || "";
 const message = process.env.VERCEL_GIT_COMMIT_MESSAGE || "";
+const manifest = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), RELEASE_MANIFEST), "utf8"),
+);
+const releaseManifestMatches =
+  branch === CONTROLLED_PREVIEW_BRANCH &&
+  releaseManifestMatchesMessage(message, Number(manifest.release));
 const releaseManifestChanged =
-  branch === CONTROLLED_PREVIEW_BRANCH && pathChanged(RELEASE_MANIFEST);
+  branch === CONTROLLED_PREVIEW_BRANCH &&
+  !releaseManifestMatches &&
+  pathChanged(RELEASE_MANIFEST);
 
 if (
   shouldIgnoreControlledPreview({
     branch,
     message,
     releaseManifestChanged,
+    releaseManifestMatches,
   })
 ) {
   console.log(
@@ -126,7 +159,7 @@ if (
 
 if (branch === CONTROLLED_PREVIEW_BRANCH) {
   console.log(
-    `Deliberate preview release detected through ${RELEASE_MANIFEST}. Continuing the build.`,
+    `Deliberate preview release detected through ${RELEASE_MANIFEST} release ${manifest.release}. Continuing the build.`,
   );
   process.exit(1);
 }
