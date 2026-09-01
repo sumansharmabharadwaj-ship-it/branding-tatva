@@ -263,8 +263,12 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 
   /* The first commercial decision must expose all three routes at once.
      The selected tab already carries state on mobile, so the duplicate
-     diagnosis badge stays out of the action's protected bottom area. */
+     diagnosis badge stays out of the action's protected bottom area. Start
+     at the top of the frame as well: vertical centering otherwise turns the
+     section's safe-area reserve into a large dead band above the decision. */
   #situation {
+    justify-content: flex-start !important;
+    overflow-anchor: none;
     padding-top: 1.5rem !important;
     padding-bottom: calc(7.75rem + env(safe-area-inset-bottom, 0px)) !important;
   }
