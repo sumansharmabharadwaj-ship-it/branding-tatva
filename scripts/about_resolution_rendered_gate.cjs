@@ -1,9 +1,12 @@
 const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
 const { chromium } = require("playwright");
 
 const BASE_URL = (process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
-const OUTPUT_DIR = path.join(process.cwd(), "about-resolution-audit");
+const OUTPUT_DIR = process.env.ABOUT_AUDIT_OUTPUT_DIR
+  ? path.resolve(process.env.ABOUT_AUDIT_OUTPUT_DIR)
+  : path.join(process.cwd(), "about-resolution-audit");
 const MOCK_VIDEO_PATH = process.env.ABOUT_MEMORY_MOCK_VIDEO || "";
 const VIEWPORTS = [
   { name: "desktop-1440x900", width: 1440, height: 900, interactive: true },
@@ -20,6 +23,30 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function resolveChromiumExecutable() {
+  const configured = process.env.PLAYWRIGHT_EXECUTABLE_PATH;
+  if (configured) {
+    assert(fs.existsSync(configured), `Configured Playwright executable does not exist: ${configured}`);
+    return configured;
+  }
+
+  const bundled = chromium.executablePath();
+  if (fs.existsSync(bundled)) return bundled;
+
+  const cacheRoot = path.join(os.homedir(), ".cache", "ms-playwright");
+  if (!fs.existsSync(cacheRoot)) return undefined;
+
+  const entries = fs.readdirSync(cacheRoot, { withFileTypes: true });
+  const newestCachedExecutable = (pattern, executableName) => entries
+    .filter((entry) => entry.isDirectory() && pattern.test(entry.name))
+    .sort((left, right) => Number(right.name.split("-").at(-1)) - Number(left.name.split("-").at(-1)))
+    .map((entry) => path.join(cacheRoot, entry.name, "chrome-linux", executableName))
+    .find((candidate) => fs.existsSync(candidate));
+
+  return newestCachedExecutable(/^chromium_headless_shell-\d+$/, "headless_shell")
+    || newestCachedExecutable(/^chromium-\d+$/, "chrome");
+}
+
 async function waitForPrelude(page) {
   const loader = page.locator("[data-page-load-veil]");
   if ((await loader.count()) > 0) await loader.waitFor({ state: "detached", timeout: 10_000 }).catch(() => {});
@@ -27,44 +54,21 @@ async function waitForPrelude(page) {
   await page.waitForTimeout(300);
 }
 
-async function readChapterAlignment(page, id) {
-  let alignment = null;
-  for (let attempt = 0; attempt < 40; attempt += 1) {
-    alignment = await page.evaluate((chapterId) => {
-      const target = document.getElementById(chapterId);
-      const header = document.querySelector("[data-site-header]");
-      const headerBar = header?.querySelector(".site-header__bar");
-      if (!target || !header || !headerBar) return null;
+async function readChapterHeadingClearance(page, id) {
+  return page.evaluate((chapterId) => {
+    const target = document.getElementById(chapterId);
+    const heading = target?.querySelector("h2");
+    const header = document.querySelector("[data-site-header]");
+    const headerBar = header?.querySelector(".site-header__bar");
+    if (!target || !heading || !header || !headerBar) return null;
 
-      const margin = Number.parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
-      const padding = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-      const headerPadding = Number.parseFloat(getComputedStyle(header).paddingTop) || 0;
-      return {
-        top: target.getBoundingClientRect().top,
-        restingTop: margin + padding,
-        headerClearance: headerPadding + headerBar.getBoundingClientRect().height,
-      };
-    }, id);
-    if (alignment && Math.abs(alignment.top - alignment.restingTop) <= 3) return alignment;
-    await page.waitForTimeout(250);
-  }
-  return alignment;
-}
-
-function assertChapterAlignment(viewportName, chapterId, alignment) {
-  assert(alignment, `${viewportName}: ${chapterId} has no measurable anchor geometry`);
-  assert(
-    Math.abs(alignment.top - alignment.restingTop) <= 3,
-    `${viewportName}: ${chapterId} rested at ${alignment.top}px instead of ${alignment.restingTop}px`,
-  );
-  assert(
-    alignment.restingTop >= alignment.headerClearance - 1,
-    `${viewportName}: ${chapterId} clears ${alignment.restingTop}px but the header occupies ${alignment.headerClearance}px`,
-  );
-  assert(
-    alignment.top >= alignment.headerClearance - 1,
-    `${viewportName}: ${chapterId} is visibly covered at ${alignment.top}px by a ${alignment.headerClearance}px header`,
-  );
+    const headerPadding = Number.parseFloat(getComputedStyle(header).paddingTop) || 0;
+    return {
+      chapterTop: target.getBoundingClientRect().top,
+      headingTop: heading.getBoundingClientRect().top,
+      headerClearance: headerPadding + headerBar.getBoundingClientRect().height,
+    };
+  }, id);
 }
 
 async function auditViewport(browser, viewport) {
@@ -83,11 +87,82 @@ async function auditViewport(browser, viewport) {
   }
 
   try {
-    const response = await page.goto(`${BASE_URL}/about#about-system`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+    const response = await page.goto(`${BASE_URL}/about#about-founder-led`, { waitUntil: "domcontentloaded", timeout: 90_000 });
     assert(response?.ok(), `${viewport.name}: /about returned ${response?.status()}`);
     await waitForPrelude(page);
-    const directAnchorAlignment = await readChapterAlignment(page, "about-system");
-    assertChapterAlignment(viewport.name, "about-system", directAnchorAlignment);
+    const founderAnchorAlignment = await readChapterHeadingClearance(page, "about-founder-led");
+    assert(founderAnchorAlignment, `${viewport.name}: founder-led chapter has no measurable heading geometry`);
+    assert(
+      founderAnchorAlignment.headingTop >= founderAnchorAlignment.headerClearance - 1,
+      `${viewport.name}: founder-led heading is covered at ${founderAnchorAlignment.headingTop}px by a ${founderAnchorAlignment.headerClearance}px header`,
+    );
+    const founderScene = page.locator('[data-scroll-story="about-founder-led"]');
+    await founderScene.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+
+    const founderInteractive = viewport.width >= 821
+      && viewport.height > 620
+      && !viewport.touch
+      && !viewport.reducedMotion;
+    const founderMode = await founderScene.evaluate((node) => {
+      const interactive = node.querySelector('[class*="sheetCamera"]');
+      const fallback = node.querySelector('[class*="staticExperience"]');
+      return {
+        interactive: getComputedStyle(interactive).display !== "none",
+        static: getComputedStyle(fallback).display !== "none",
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+      };
+    });
+    assert(founderMode.interactive === founderInteractive, `${viewport.name}: founder-led chapter rendered the wrong mode`);
+    assert(founderMode.static !== founderInteractive, `${viewport.name}: founder-led fallback visibility is incorrect`);
+    assert(founderMode.documentWidth <= founderMode.viewportWidth + 2, `${viewport.name}: founder-led chapter causes horizontal overflow`);
+
+    if (founderInteractive) {
+      const founderTabs = founderScene.locator('[role="tablist"] [role="tab"]');
+      assert((await founderTabs.count()) === 4, `${viewport.name}: founder-led record does not expose four decisions`);
+      await founderTabs.first().click();
+      await founderTabs.first().press("End");
+      await page.waitForFunction(() => {
+        const record = document.querySelector('[data-record-stage="4"]');
+        if (!record) return false;
+        const values = (getComputedStyle(record).clipPath.match(/-?\d*\.?\d+/g) || []).map(Number);
+        return values.length > 0 && values.every((value) => Math.abs(value) < 0.5);
+      }, undefined, { timeout: 3_000 });
+      const finalFounderState = await founderScene.evaluate((root) => ({
+        focusId: document.activeElement?.id,
+        selected: Array.from(root.querySelectorAll('[role="tablist"] [role="tab"]')).map((tab) => tab.getAttribute("aria-selected")),
+        promise: root.querySelector('[class*="recordedOutput"][data-final="true"]')?.textContent?.replace(/\s+/g, " ").trim(),
+        servicesHref: root.querySelector('a[href="/services#study"]')?.getAttribute("href"),
+      }));
+      assert(finalFounderState.focusId === "direct-stage-3", `${viewport.name}: End did not focus the final founder-led decision`);
+      assert(finalFounderState.selected.join(",") === "false,false,false,true", `${viewport.name}: End did not select Application`);
+      assert(finalFounderState.promise?.includes("You never brief the thinking twice."), `${viewport.name}: final direct-access promise is missing`);
+      assert(finalFounderState.promise?.includes("Every decision connected."), `${viewport.name}: final continuity promise is incomplete`);
+      assert(finalFounderState.servicesHref === "/services#study", `${viewport.name}: founder-led services path is missing`);
+    } else {
+      const staticFounder = founderScene.locator('[class*="staticExperience"]:visible');
+      assert((await staticFounder.locator("ol > li").count()) === 4, `${viewport.name}: static founder-led record is incomplete`);
+      const staticPromiseText = await staticFounder.locator('[class*="staticPromise"]').textContent();
+      assert(
+        staticPromiseText?.includes("You never brief the thinking twice."),
+        `${viewport.name}: static direct-access promise is missing`,
+      );
+      assert(
+        (await staticFounder.locator('a[href="/services#study"]').count()) === 1,
+        `${viewport.name}: static founder-led services path is missing`,
+      );
+    }
+    await page.screenshot({ path: path.join(OUTPUT_DIR, `founder-led-${viewport.name}.png`) });
+
+    await page.goto(`${BASE_URL}/about#about-system`, { waitUntil: "domcontentloaded", timeout: 90_000 });
+    await waitForPrelude(page);
+    const resolutionAnchorAlignment = await readChapterHeadingClearance(page, "about-system");
+    assert(resolutionAnchorAlignment, `${viewport.name}: brand-system chapter has no measurable heading geometry`);
+    assert(
+      resolutionAnchorAlignment.headingTop >= resolutionAnchorAlignment.headerClearance - 1,
+      `${viewport.name}: brand-system heading is covered at ${resolutionAnchorAlignment.headingTop}px by a ${resolutionAnchorAlignment.headerClearance}px header`,
+    );
     const scene = page.locator('[data-scroll-story="about-resolution-threshold"]');
     await scene.scrollIntoViewIfNeeded();
     await page.waitForTimeout(500);
@@ -137,7 +212,7 @@ async function auditViewport(browser, viewport) {
           geometry.content.bottom <= geometry.sheet.bottom + 1 &&
           geometry.content.left >= geometry.sheet.left - 1;
         routeResults.push({ route: index + 1, contained, geometry });
-        await scene.screenshot({ path: path.join(OUTPUT_DIR, `${viewport.name}-route-${index + 1}.png`) });
+        await page.screenshot({ path: path.join(OUTPUT_DIR, `${viewport.name}-route-${index + 1}.png`) });
         assert(geometry.selected[index] === "true", `${viewport.name}: route ${index + 1} did not become selected`);
         assert(geometry.hidden.filter((value) => value === "false").length === 1, `${viewport.name}: more than one record is exposed`);
       }
@@ -241,23 +316,57 @@ async function auditViewport(browser, viewport) {
 
         await chooser.click();
         await page.locator('#about-mobile-chapter-list a[href="#about-philosophy"]').click();
-        const chooserAnchorAlignment = await readChapterAlignment(page, "about-philosophy");
-        assertChapterAlignment(viewport.name, "about-philosophy", chooserAnchorAlignment);
+        await page.waitForFunction(() => {
+          const heading = document.querySelector("#about-philosophy h2");
+          const header = document.querySelector("[data-site-header]");
+          const headerBar = header?.querySelector(".site-header__bar");
+          if (!heading || !header || !headerBar) return false;
+          const headerPadding = Number.parseFloat(getComputedStyle(header).paddingTop) || 0;
+          const headerClearance = headerPadding + headerBar.getBoundingClientRect().height;
+          return heading.getBoundingClientRect().top >= headerClearance - 1;
+        }, undefined, { timeout: 3_000 });
+        const chooserAnchorAlignment = await readChapterHeadingClearance(page, "about-philosophy");
+        assert(chooserAnchorAlignment, `${viewport.name}: about-philosophy has no measurable heading geometry`);
+        assert(
+          chooserAnchorAlignment.headingTop >= chooserAnchorAlignment.headerClearance - 1,
+          `${viewport.name}: about-philosophy heading is covered at ${chooserAnchorAlignment.headingTop}px by a ${chooserAnchorAlignment.headerClearance}px header`,
+        );
         assert(page.url().endsWith("/about#about-philosophy"), `${viewport.name}: chapter choice did not update the URL hash`);
         assert(
           await page.locator("#about-philosophy h2").evaluate((node) => document.activeElement === node),
           `${viewport.name}: chapter choice did not move focus to its heading`,
         );
+        await page.screenshot({ path: path.join(OUTPUT_DIR, `chapter-navigation-${viewport.name}.png`) });
       }
     }
 
     assert(pageErrors.length === 0, `${viewport.name}: page errors ${JSON.stringify(pageErrors)}`);
-    await scene.screenshot({ path: path.join(OUTPUT_DIR, `${viewport.name}.png`) });
+    await page.locator("#about-resolution").evaluate((node) => {
+      node.scrollIntoView({ behavior: "instant", block: "start" });
+    });
+    await page.waitForFunction(() => {
+      const heading = document.querySelector("#about-resolution h2");
+      const header = document.querySelector("[data-site-header]");
+      const headerBar = header?.querySelector(".site-header__bar");
+      if (!heading || !header || !headerBar) return false;
+      const headerPadding = Number.parseFloat(getComputedStyle(header).paddingTop) || 0;
+      const headerClearance = headerPadding + headerBar.getBoundingClientRect().height;
+      return heading.getBoundingClientRect().top >= headerClearance - 1;
+    }, undefined, { timeout: 3_000 });
+    await page.waitForFunction(() => {
+      const controls = document.querySelector("[data-about-mobile-chapter-controls]");
+      if (!controls || getComputedStyle(controls).display === "none") return true;
+      const summary = controls.querySelector('button[aria-controls="about-mobile-chapter-list"]');
+      return summary?.getAttribute("aria-label")?.includes("The next move");
+    }, undefined, { timeout: 3_000 });
+    await page.screenshot({ path: path.join(OUTPUT_DIR, `${viewport.name}.png`) });
     return {
       viewport: viewport.name,
       mode: viewport.interactive ? "interactive" : "static",
-      anchorTop: directAnchorAlignment.top,
-      headerClearance: directAnchorAlignment.headerClearance,
+      anchorTop: resolutionAnchorAlignment.chapterTop,
+      headerClearance: resolutionAnchorAlignment.headerClearance,
+      founderLedMode: founderInteractive ? "interactive" : "static",
+      founderLedAnchorTop: founderAnchorAlignment.chapterTop,
     };
   } finally {
     await context.close();
@@ -266,7 +375,11 @@ async function auditViewport(browser, viewport) {
 
 (async () => {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  const browser = await chromium.launch({ headless: true });
+  const executablePath = resolveChromiumExecutable();
+  const browser = await chromium.launch({
+    headless: true,
+    ...(executablePath ? { executablePath } : {}),
+  });
   try {
     const results = [];
     const failures = [];

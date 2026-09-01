@@ -1,17 +1,18 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { execFileSync } = require("node:child_process");
 
 const root = path.resolve(__dirname, "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
-const readPrefix = (relative, length = 64 * 1024) => {
-  const descriptor = fs.openSync(path.join(root, relative), "r");
-  try {
-    const prefix = Buffer.alloc(length);
-    const bytesRead = fs.readSync(descriptor, prefix, 0, length, 0);
-    return prefix.subarray(0, bytesRead);
-  } finally {
-    fs.closeSync(descriptor);
-  }
+const readTrackedBinary = (relative) => {
+  const filePath = path.join(root, relative);
+  if (fs.existsSync(filePath)) return fs.readFileSync(filePath);
+
+  return execFileSync("git", ["show", `HEAD:${relative}`], {
+    cwd: root,
+    encoding: "buffer",
+    maxBuffer: 8 * 1024 * 1024,
+  });
 };
 const runtime = read("src/components/AboutCinematicRuntime.tsx");
 const videoWarden = read("src/components/VideoWarden.tsx");
@@ -38,8 +39,9 @@ const convergenceStyles = read("src/sections/About/Convergence.module.css");
 const evidenceStyles = read("src/sections/About/Evidence.module.css");
 const standardsStyles = read("src/sections/About/Behaviours.module.css");
 const workingDirectlyStyles = read("src/sections/About/WorkingDirectly.module.css");
-const heroPortraitVideoPrefix = readPrefix("public/videos/own-companions-split.mp4");
-const heroPortraitVideoBytes = fs.statSync(path.join(root, "public/videos/own-companions-split.mp4")).size;
+const heroPortraitVideo = readTrackedBinary("public/videos/own-companions-split.mp4");
+const heroPortraitVideoPrefix = heroPortraitVideo.subarray(0, 64 * 1024);
+const heroPortraitVideoBytes = heroPortraitVideo.length;
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);

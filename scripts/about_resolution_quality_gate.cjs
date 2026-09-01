@@ -51,7 +51,7 @@ assert(
   "The closing cinematic frame mark has fallen below the protected reading floor.",
 );
 assert(
-  /\.recordSheet\s*\{[^}]*min-height:\s*27rem;/.test(styles),
+  /\.recordSheet\s*\{[^}]*min-height:\s*30rem;/.test(styles),
   "Desktop closing records have lost their protected vertical reading room.",
 );
 assert(
