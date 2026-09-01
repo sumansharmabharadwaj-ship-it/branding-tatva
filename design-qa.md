@@ -1,3 +1,52 @@
+# Homepage direct-cut transition QA · 2026-09-01
+
+## Target and evidence
+
+- Source visual truth: `/workspace/scratch/12e9e5565480/upload/Screenshot 2026-09-01 at 8.40.42 PM.png`, `/workspace/scratch/12e9e5565480/upload/Screenshot 2026-09-01 at 8.40.47 PM.png`, `/workspace/scratch/12e9e5565480/upload/Screenshot 2026-09-01 at 5.40.59 PM(1).png`, and `/workspace/scratch/12e9e5565480/upload/Screenshot 2026-09-01 at 5.40.56 PM(1).png` (`2048 × 1280`, browser chrome included).
+- Intended implementation route: `/`, especially the Process → Studio → Practical answers sequence.
+- Intended desktop viewport: the supplied screenshots expose approximately `1996 × 994` CSS pixels inside Chrome; the exact device density is unavailable.
+- State: full motion, mid-scroll, fixed header and desktop chapter rail visible.
+- Browser-rendered implementation screenshot: unavailable in this pass. The selected cloud browser could not create or refresh a tab, and the already-authorized local Playwright fallback could not launch Chromium inside the restricted process sandbox.
+- Full-view comparison evidence: source screenshots opened and inspected; post-fix implementation capture unavailable.
+- Focused-region comparison evidence: the supplied Process → Studio and Studio → Practical answers boundaries were inspected at original resolution; post-fix focused capture unavailable.
+
+## Findings and resolution
+
+- [P1 resolved in source] Eight decorative handoff elements could re-enter the cascade and expose the dark blank bands visible between chapters. They and their independent scroll listener are no longer mounted.
+- [P1 resolved in source] The late arrival stylesheet could re-enable retired seam artwork after the layout owner hid it. That re-enable path is removed, so cached or partially hydrated markup remains hidden by the fail-safe layout rule.
+- [P2 retained] The shared chapter arrival rhythm, per-chapter motion states, film playback director, interactive tabs, keyboard behavior, and reduced-motion fallbacks remain mounted. The fix removes only decorative spacer choreography.
+- [P1 blocked] No browser-rendered post-fix image is available to prove that the dark bands, content clipping, and fixed-chrome competition are gone in the final pixels.
+
+## Required fidelity surfaces
+
+- Fonts and typography: existing Cormorant/Manrope hierarchy and chapter copy are unchanged; post-fix wrapping is not browser-verified.
+- Spacing and layout rhythm: the layout-bearing handoffs are removed and the nine chapters now meet directly in the rendered tree; final visible boundaries are not browser-verified.
+- Colors and visual tokens: the forest, ivory, clay, and warm-film palette is unchanged.
+- Image quality and asset fidelity: all existing real film and image assets remain unchanged; no placeholder or synthetic separator asset was added.
+- Copy and content: all nine chapters, conversion actions, practical-answer states, and founder-led handoffs remain unchanged.
+
+## Interaction and build verification
+
+- `pnpm check:homepage`: passed.
+- `pnpm exec tsc --noEmit`: passed.
+- `pnpm build`: passed with all `79` static pages generated.
+- `pnpm check:homepage:built`: passed; nine ordered chapters, media semantics, conversion handoffs, and the CSS budget are intact.
+- Primary interactions tested in a browser: blocked by the browser infrastructure limitation above.
+- Browser console errors checked: blocked for the same reason.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | Supplied screenshots show 100–160px dark dead zones between complete chapter compositions. | Removed all eight layout-bearing handoff nodes and their extra scroll runtime. Source and production build confirm the nodes are absent; browser pixels remain unavailable. |
+| 2 | P1 | A late stylesheet could re-enable seam artwork when the seam runtime initialized. | Removed the entire re-enable block and added contract assertions that prevent `SceneHandoff`, `HomeV4SeamDirector`, or `data-seam-ready` from returning. |
+
+## Final result
+
+blocked
+
+---
+
 # Design QA: The No Handoff Promise
 
 ## Target and evidence

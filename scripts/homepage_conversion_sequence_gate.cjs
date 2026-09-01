@@ -44,14 +44,9 @@ for (const marker of sequence) {
   previous = index;
 }
 
-assert(source.includes("<HomeV4SeamDirector />"), "Homepage chapter seams have lost their shared scroll owner.");
 assert(source.includes("<HomeV4SceneRhythm />"), "Homepage chapters have lost their shared arrival rhythm.");
-assert(source.includes('<SceneHandoff motif="mist" preservePrevious />'), "Opening boundary no longer remains visually untouched.");
-assert((source.match(/<SceneHandoff /g) ?? []).length === 8, "Homepage chapters no longer meet through one authored seam system.");
-for (const [motif, count] of [["mist", 4], ["river", 1], ["constellation", 1], ["light", 1], ["paper", 1]]) {
-  const matches = source.match(new RegExp(`<SceneHandoff motif="${motif}"`, "g")) ?? [];
-  assert(matches.length === count, `Homepage ${motif} seam inventory drifted.`);
-}
+assert(!source.includes("<HomeV4SeamDirector />"), "Homepage restored a decorative seam runtime between chapters.");
+assert(!source.includes("<SceneHandoff "), "Homepage restored a layout-bearing handoff between chapters.");
 
 for (const removed of [
   "V4RecognitionScene",
@@ -81,7 +76,7 @@ for (const marker of [
 assert(
   pageSource.indexOf('home-v4-scene-rhythm.css') >
     pageSource.indexOf('home-v4-homepage-reconstruction.css'),
-  "Homepage seam motion must load after the layout owner that hides decorative handoffs by default.",
+  "Homepage arrival rhythm must load after the shared layout owner.",
 );
 
 assert(

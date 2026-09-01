@@ -12,11 +12,9 @@ import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
 import { process as processStages } from "@/data/process";
 import { elementColor } from "@/lib/elementColor";
-import { SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { HomeV4SceneRhythm } from "./HomeV4SceneRhythm";
-import { HomeV4SeamDirector } from "./HomeV4SeamDirector";
 import { V4HiddenCostScene, V4OpeningScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
@@ -29,16 +27,12 @@ export function HomeV4Experience() {
     <div className="home-v4" data-home-v4>
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
-      <HomeV4SeamDirector />
       <HomeV4SceneRhythm />
       <V4OpeningScene />
-      <SceneHandoff motif="mist" preservePrevious />
 
       <HomeBrandHealthCheck />
-      <SceneHandoff motif="mist" />
 
       <V4HiddenCostScene />
-      <SceneHandoff motif="river" />
 
       <div
         id="evidence"
@@ -50,7 +44,6 @@ export function HomeV4Experience() {
       >
         <EvidenceWall />
       </div>
-      <SceneHandoff motif="constellation" />
 
       <div
         data-home-v4-chapter="paths"
@@ -61,7 +54,6 @@ export function HomeV4Experience() {
       >
         <PathsCinematicChapter />
       </div>
-      <SceneHandoff motif="light" />
 
       <section
         id="process"
@@ -74,7 +66,6 @@ export function HomeV4Experience() {
       >
         <ProcessSection stages={processStages} elementColor={elementColor} />
       </section>
-      <SceneHandoff motif="paper" />
 
       <div
         id="studio"
@@ -86,7 +77,6 @@ export function HomeV4Experience() {
       >
         <StudioCinematicChapter />
       </div>
-      <SceneHandoff motif="mist" />
 
       <div
         id="decision"
@@ -98,7 +88,6 @@ export function HomeV4Experience() {
       >
         <HomeQuestionsScene />
       </div>
-      <SceneHandoff motif="mist" />
 
       <section
         id="invitation"
