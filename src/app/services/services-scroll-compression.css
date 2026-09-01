@@ -17,7 +17,7 @@ html[data-services-experience="active"] {
   --services-hero-copy-y: 0px;
   --services-hero-copy-opacity: 1;
   --services-hero-index-x: 18px;
-  --services-hero-index-opacity: 0.28;
+  --services-hero-index-opacity: 0.72;
   --services-hero-aperture-scale: 0.58;
   --services-hero-aperture-opacity: 0.08;
   perspective: 1000px;

@@ -378,7 +378,7 @@ export function ServicesExperienceRuntime() {
       );
       hero.style.setProperty(
         "--services-hero-index-opacity",
-        (0.28 + resolveProgress * 0.72 - copyExit * 0.52).toFixed(4),
+        (0.72 + resolveProgress * 0.28 - copyExit * 0.28).toFixed(4),
       );
       hero.style.setProperty(
         "--services-hero-aperture-scale",

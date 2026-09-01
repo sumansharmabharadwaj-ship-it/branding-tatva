@@ -306,7 +306,7 @@ export default async function ServicesPage() {
                     <li key={item.href}>
                       <a
                         href={item.href}
-                        className="group grid grid-cols-[auto_1fr] items-start gap-x-3 border-b border-ivory/15 py-3.5 text-left transition-colors duration-200 hover:border-ivory/45 focus-visible:border-ivory/60"
+                        className="group grid grid-cols-[auto_1fr] items-start gap-x-3 border-b border-ivory/20 py-3.5 text-left transition-colors duration-200 hover:border-ivory/45 focus-visible:border-ivory/60"
                       >
                         <span className="row-span-2 font-display text-sm text-sandstone/90 transition-colors duration-200 group-hover:text-sandstone">
                           {item.number}
@@ -314,7 +314,7 @@ export default async function ServicesPage() {
                         <span className="text-sm tracking-wide text-ivory transition-colors duration-200">
                           {item.label}
                         </span>
-                        <span className="mt-1 text-[0.68rem] leading-snug tracking-[0.02em] text-ivory/60 transition-colors duration-200 group-hover:text-ivory/78">
+                        <span className="mt-1 text-[0.68rem] leading-snug tracking-[0.02em] text-ivory/72 transition-colors duration-200 group-hover:text-ivory/86">
                           {item.note}
                         </span>
                       </a>
