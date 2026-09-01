@@ -451,13 +451,18 @@
   border-color: rgba(244, 239, 230, 0.17);
 }
 
-#education [data-services-chapter-instrument="true"],
-#education [data-services-chapter-resolution="true"] {
+#education [data-perception-console="true"] {
   border-color: rgba(244, 239, 230, 0.2);
-  background-color: rgba(16, 25, 21, 0.76);
+  background:
+    linear-gradient(132deg, rgba(16, 25, 21, 0.82), rgba(11, 19, 16, 0.66));
   box-shadow:
     0 28px 90px rgba(0, 0, 0, 0.24),
     inset 0 1px 0 rgba(244, 239, 230, 0.035);
+}
+
+#education [data-perception-console="true"] > :not([data-perception-trace="true"]) {
+  position: relative;
+  z-index: 1;
 }
 
 #education [data-perception-panel="true"] h3 {
@@ -745,13 +750,12 @@
 
 #education [data-perception-trace="true"] {
   position: absolute;
-  z-index: 0;
-  top: 50%;
-  left: 22%;
-  right: 4%;
+  z-index: 2;
+  top: 0;
+  left: 1.75rem;
+  right: 1.75rem;
   height: 1px;
   pointer-events: none;
-  transform: rotate(-3deg);
 }
 
 #education [data-perception-trace="line"] {
@@ -778,14 +782,37 @@
   height: 0.55rem;
   border: 1px solid rgba(198, 204, 184, 0.36);
   border-radius: 50%;
-  background: #18221f;
+  background: #121c18;
   transform: translate(-50%, -50%);
+  transition:
+    background-color 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #education [data-perception-trace-node="1"] { left: 0; }
 #education [data-perception-trace-node="2"] { left: 33.333%; }
 #education [data-perception-trace-node="3"] { left: 66.666%; }
 #education [data-perception-trace-node="4"] { left: 100%; }
+
+#education [data-perception-stage="1"] [data-perception-trace-node="1"],
+#education [data-perception-stage="2"] [data-perception-trace-node="1"],
+#education [data-perception-stage="2"] [data-perception-trace-node="2"],
+#education [data-perception-stage="3"] [data-perception-trace-node="1"],
+#education [data-perception-stage="3"] [data-perception-trace-node="2"],
+#education [data-perception-stage="3"] [data-perception-trace-node="3"],
+#education [data-perception-stage="4"] [data-perception-trace-node] {
+  border-color: rgba(198, 204, 184, 0.82);
+  background: #a0a690;
+}
+
+#education [data-perception-stage="1"] [data-perception-trace-node="1"],
+#education [data-perception-stage="2"] [data-perception-trace-node="2"],
+#education [data-perception-stage="3"] [data-perception-trace-node="3"],
+#education [data-perception-stage="4"] [data-perception-trace-node="4"] {
+  background: #c6ccb8;
+  box-shadow: 0 0 18px rgba(198, 204, 184, 0.5);
+}
 
 /* The fixed rail belongs to the film, while its active label stays readable
    over both luminous footage and deeper glass chapters. */
@@ -1551,6 +1578,10 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 
   #education [data-perception-system="true"] {
     gap: 0.75rem;
+  }
+
+  #education [data-perception-console="true"] {
+    border-radius: 1.25rem;
   }
 
   #education [data-perception-trace="true"] {

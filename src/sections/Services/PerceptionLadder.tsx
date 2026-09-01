@@ -167,12 +167,6 @@ export function PerceptionLadder() {
         style={{ "--perception-progress": `${(activeIndex / (RUNGS.length - 1)) * 100}%` } as CSSProperties}
         className="grid gap-8 lg:grid-cols-[minmax(15rem,0.62fr)_minmax(16rem,0.72fr)_minmax(21rem,1.05fr)] lg:items-center lg:gap-10 xl:gap-16"
       >
-        <div data-perception-trace="true" aria-hidden="true">
-          <span data-perception-trace="line" />
-          {RUNGS.map((rung, index) => (
-            <span key={rung.label} data-perception-trace-node={index + 1} />
-          ))}
-        </div>
         <div data-services-chapter-copy="true">
           <p className="text-sm font-medium uppercase tracking-wide text-[#C6CCB8]">How buyers remember</p>
           <h2 className="mt-2 max-w-lg text-display-sm font-display font-normal text-ivory">
@@ -234,124 +228,136 @@ export function PerceptionLadder() {
         </div>
 
         <div
-          data-services-chapter-instrument="true"
-          role="tablist"
-          aria-label="Four stages of brand recognition"
-          className="grid grid-cols-2 gap-1 rounded-3xl border border-ivory/12 bg-[rgba(14,20,18,0.42)] p-2 backdrop-blur-xl lg:block"
+          data-perception-console="true"
+          className="relative grid min-w-0 overflow-hidden rounded-[2rem] border border-ivory/15 bg-[rgba(12,18,17,0.66)] shadow-[0_32px_96px_rgba(0,0,0,0.3)] backdrop-blur-xl lg:col-span-2 lg:grid-cols-[minmax(14.5rem,0.72fr)_minmax(21rem,1.05fr)] lg:items-stretch"
         >
-          {RUNGS.map((rung, index) => {
-            const active = index === activeIndex;
-            const complete = index < activeIndex;
-            return (
-              <button
-                key={rung.label}
-                ref={(node) => {
-                  tabRefs.current[index] = node;
-                }}
-                id={`perception-stage-tab-${index}`}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                aria-controls="perception-stage-panel"
-                tabIndex={active ? 0 : -1}
-                onPointerEnter={(event) => handlePointerEnter(index, event)}
-                onFocus={() => activate(index, "focus")}
-                onClick={() => activate(index, "click")}
-                onKeyDown={(event) => handleKeyDown(index, event)}
-                className={`group relative grid min-h-14 w-full grid-cols-[2rem_1fr_auto] items-center gap-2 overflow-hidden rounded-2xl px-2.5 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] sm:px-4 lg:min-h-16 lg:grid-cols-[2.5rem_1fr_auto] lg:gap-3 lg:py-3 ${
-                  active ? "text-ivory" : "text-ivory/55 hover:bg-ivory/[0.04] hover:text-ivory/85"
-                }`}
-              >
-                {active && (
-                  <motion.span
-                    layoutId="active-perception-stage"
-                    aria-hidden="true"
-                    className="absolute inset-0 rounded-2xl border border-[#A0A690]/45 bg-ivory/[0.075] shadow-[0_14px_42px_rgba(0,0,0,0.18)]"
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
-                  />
-                )}
-                <span className={`relative font-display text-sm ${active || complete ? "text-[#C6CCB8]" : "text-ivory/35"}`}>
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="relative font-display text-base font-normal sm:text-lg lg:text-xl">{rung.label}</span>
-                <span
-                  aria-hidden="true"
-                  className={`relative h-2.5 w-2.5 rounded-full border transition-colors duration-300 ${
-                    active ? "border-[#C6CCB8] bg-[#C6CCB8] shadow-[0_0_14px_rgba(198,204,184,0.5)]" : complete ? "border-[#A0A690] bg-[#A0A690]/60" : "border-ivory/25"
-                  }`}
-                />
-              </button>
-            );
-          })}
-        </div>
-
-        <div
-          data-services-chapter-resolution="true"
-          data-perception-panel="true"
-          id="perception-stage-panel"
-          role="tabpanel"
-          aria-labelledby={`perception-stage-tab-${activeIndex}`}
-          className="relative min-h-[24rem] overflow-hidden rounded-[1.75rem] border border-ivory/15 bg-[rgba(12,18,17,0.62)] p-6 shadow-[0_30px_90px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:p-8"
-        >
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/55">What buyers currently do</p>
-            <span className="font-display text-5xl leading-none text-ivory/[0.08]" aria-hidden="true">
-              {String(activeIndex + 1).padStart(2, "0")}
-            </span>
+          <div data-perception-trace="true" aria-hidden="true">
+            <span data-perception-trace="line" />
+            {RUNGS.map((rung, index) => (
+              <span key={rung.label} data-perception-trace-node={index + 1} />
+            ))}
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={activeRung.label}
-              initial={
-                prefersReducedMotion
-                  ? false
-                  : { opacity: 0.72, clipPath: "inset(5% 0 5% 0 round 1.5rem)", filter: "blur(2.5px)" }
-              }
-              animate={{ opacity: 1, clipPath: "inset(0% 0 0% 0 round 0rem)", filter: "blur(0px)" }}
-              exit={
-                prefersReducedMotion
-                  ? undefined
-                  : { opacity: 0.55, clipPath: "inset(0 0 68% 0 round 1.5rem)", filter: "blur(2.5px)" }
-              }
-              transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
-            >
-              <h3 className="mt-5 font-display text-[clamp(2.8rem,5vw,4.8rem)] font-normal leading-none text-ivory">
-                {activeRung.label}
-              </h3>
-              <p className="mt-4 max-w-lg font-display text-xl font-normal leading-snug text-[#C6CCB8] sm:text-2xl">
-                {activeRung.signal}
-              </p>
-              <p data-perception-explanation="true" className="mt-5 max-w-lg text-sm leading-relaxed text-ivory/82 sm:text-base">
-                {activeRung.explanation}
-              </p>
-
-              <div data-perception-evidence-grid="true" className="mt-7 grid gap-5 border-t border-ivory/12 pt-5 sm:grid-cols-2">
-                <div>
-                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/55">What to decide next</p>
-                  <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.decision}</p>
-                </div>
-                <div className="sm:border-l sm:border-ivory/12 sm:pl-5">
-                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/55">Evidence to collect</p>
-                  <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.evidence}</p>
-                </div>
-              </div>
-
-              <div data-perception-system-result="true" className="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-ivory/12 pt-4">
-                <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/50">System to build</p>
-                <p className="font-display text-xl font-normal text-[#C6CCB8]">{activeRung.system}</p>
-                <a
-                  href="#audit"
-                  aria-label="Test which brand signals already hold"
-                  data-perception-mobile-action="true"
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#A0A690]/45 bg-[rgba(198,204,184,0.12)] px-4 text-sm font-medium text-ivory transition-[border-color,background-color] hover:border-[#C6CCB8]/75 hover:bg-[rgba(198,204,184,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A0A690] sm:hidden"
+          <div
+            data-services-chapter-instrument="true"
+            role="tablist"
+            aria-label="Four stages of brand recognition"
+            className="grid grid-cols-2 gap-1 border-b border-ivory/12 bg-[rgba(14,20,18,0.34)] p-2 lg:flex lg:flex-col lg:justify-center lg:border-b-0 lg:border-r lg:p-3"
+          >
+            {RUNGS.map((rung, index) => {
+              const active = index === activeIndex;
+              const complete = index < activeIndex;
+              return (
+                <button
+                  key={rung.label}
+                  ref={(node) => {
+                    tabRefs.current[index] = node;
+                  }}
+                  id={`perception-stage-tab-${index}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  aria-controls="perception-stage-panel"
+                  tabIndex={active ? 0 : -1}
+                  onPointerEnter={(event) => handlePointerEnter(index, event)}
+                  onFocus={() => activate(index, "focus")}
+                  onClick={() => activate(index, "click")}
+                  onKeyDown={(event) => handleKeyDown(index, event)}
+                  className={`group relative grid min-h-14 w-full grid-cols-[2rem_1fr_auto] items-center gap-2 overflow-hidden rounded-2xl px-2.5 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] sm:px-4 lg:min-h-16 lg:grid-cols-[2.5rem_1fr_auto] lg:gap-3 lg:py-3 ${
+                    active ? "text-ivory" : "text-ivory/55 hover:bg-ivory/[0.04] hover:text-ivory/85"
+                  }`}
                 >
-                  Test signals
-                  <span aria-hidden="true">↓</span>
-                </a>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+                  {active && (
+                    <motion.span
+                      layoutId="active-perception-stage"
+                      aria-hidden="true"
+                      className="absolute inset-0 rounded-2xl border border-[#A0A690]/45 bg-ivory/[0.075] shadow-[0_14px_42px_rgba(0,0,0,0.18)]"
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+                    />
+                  )}
+                  <span className={`relative font-display text-sm ${active || complete ? "text-[#C6CCB8]" : "text-ivory/35"}`}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="relative font-display text-base font-normal sm:text-lg lg:text-xl">{rung.label}</span>
+                  <span
+                    aria-hidden="true"
+                    className={`relative h-2.5 w-2.5 rounded-full border transition-colors duration-300 ${
+                      active ? "border-[#C6CCB8] bg-[#C6CCB8] shadow-[0_0_14px_rgba(198,204,184,0.5)]" : complete ? "border-[#A0A690] bg-[#A0A690]/60" : "border-ivory/25"
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
+
+          <div
+            data-services-chapter-resolution="true"
+            data-perception-panel="true"
+            id="perception-stage-panel"
+            role="tabpanel"
+            aria-labelledby={`perception-stage-tab-${activeIndex}`}
+            className="relative min-h-[24rem] overflow-hidden bg-[rgba(12,18,17,0.26)] p-6 sm:p-8"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/55">What buyers currently do</p>
+              <span className="font-display text-5xl leading-none text-ivory/[0.08]" aria-hidden="true">
+                {String(activeIndex + 1).padStart(2, "0")}
+              </span>
+            </div>
+
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeRung.label}
+                initial={
+                  prefersReducedMotion
+                    ? false
+                    : { opacity: 0.72, clipPath: "inset(5% 0 5% 0 round 1.5rem)", filter: "blur(2.5px)" }
+                }
+                animate={{ opacity: 1, clipPath: "inset(0% 0 0% 0 round 0rem)", filter: "blur(0px)" }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0.55, clipPath: "inset(0 0 68% 0 round 1.5rem)", filter: "blur(2.5px)" }
+                }
+                transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
+              >
+                <h3 className="mt-5 font-display text-[clamp(2.8rem,5vw,4.8rem)] font-normal leading-none text-ivory">
+                  {activeRung.label}
+                </h3>
+                <p className="mt-4 max-w-lg font-display text-xl font-normal leading-snug text-[#C6CCB8] sm:text-2xl">
+                  {activeRung.signal}
+                </p>
+                <p data-perception-explanation="true" className="mt-5 max-w-lg text-sm leading-relaxed text-ivory/82 sm:text-base">
+                  {activeRung.explanation}
+                </p>
+
+                <div data-perception-evidence-grid="true" className="mt-7 grid gap-5 border-t border-ivory/12 pt-5 sm:grid-cols-2">
+                  <div>
+                    <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/55">What to decide next</p>
+                    <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.decision}</p>
+                  </div>
+                  <div className="sm:border-l sm:border-ivory/12 sm:pl-5">
+                    <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/55">Evidence to collect</p>
+                    <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.evidence}</p>
+                  </div>
+                </div>
+
+                <div data-perception-system-result="true" className="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-ivory/12 pt-4">
+                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/50">System to build</p>
+                  <p className="font-display text-xl font-normal text-[#C6CCB8]">{activeRung.system}</p>
+                  <a
+                    href="#audit"
+                    aria-label="Test which brand signals already hold"
+                    data-perception-mobile-action="true"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#A0A690]/45 bg-[rgba(198,204,184,0.12)] px-4 text-sm font-medium text-ivory transition-[border-color,background-color] hover:border-[#C6CCB8]/75 hover:bg-[rgba(198,204,184,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A0A690] sm:hidden"
+                  >
+                    Test signals
+                    <span aria-hidden="true">↓</span>
+                  </a>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </Container>
