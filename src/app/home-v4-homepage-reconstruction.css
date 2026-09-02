@@ -57,9 +57,7 @@
     width: 15rem !important;
     transition:
       width 420ms cubic-bezier(0.22, 1, 0.36, 1),
-      padding 420ms cubic-bezier(0.22, 1, 0.36, 1),
-      background-color 300ms ease,
-      border-color 300ms ease;
+      padding 420ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   body:has(.home-v4) .consent-notice[data-consent-compact="true"] {
@@ -140,7 +138,7 @@ html[data-motion="reduced"] body .home-v4 #studio .studio-film__frame {
 
 @media (prefers-reduced-motion: reduce) {
   body:has(.home-v4) .consent-notice,
-  body:has(.home-v4) .consent-notice__message {
+  body:has(.home-v4) .consent-notice__motion {
     transition: none !important;
   }
 }
