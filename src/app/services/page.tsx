@@ -336,7 +336,7 @@ export default async function ServicesPage() {
               chapter's charcoal. Every later chapter uses the same
               veil-and-handoff grammar, so the page reads as one colour
               journey rather than a stack of unrelated blocks. */}
-          <SceneHandoff color="#171A17" heightClass="h-[24vh]" />
+          <SceneHandoff color="#171A17" heightClass="h-[24vh]" endOpacity={1} reducedOpacity={1} />
         </PhotoHero>
 
         {/* Choose your situation — the visitor places themselves before
