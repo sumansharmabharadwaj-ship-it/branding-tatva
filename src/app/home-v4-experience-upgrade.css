@@ -24,7 +24,7 @@
   background: linear-gradient(90deg, #a86645, #c6a97a 64%, #8fae83);
   box-shadow: 0 0 18px rgba(198, 169, 122, 0.34);
   transform: scaleX(var(--home-page-progress));
-  transform-origin: left center;
+  transform-origin: left;
 }
 
 .home-v4-opening__proof-link {
@@ -141,7 +141,6 @@
 @media (max-width: 900px), (max-height: 639px) {
   .home-v4-opening__proof-link {
     min-height: 2.75rem;
-    align-items: center;
   }
 
   .home-v4 :is(
@@ -1660,7 +1659,6 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
 
 @media (max-width: 760px) {
   .home-v4 .studio-film__topline {
-    align-items: center;
     gap: .75rem;
   }
 
@@ -1672,24 +1670,22 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
     width: min(12.6rem, 61vw);
     min-width: 0;
     min-height: 3rem;
-    grid-template-columns: 2.15rem minmax(0, 1fr) 1.5rem;
+    grid-template-columns: 2rem minmax(0, 1fr) 1.5rem;
     gap: .42rem;
     padding: .3rem .34rem;
   }
 
   .home-v4 .studio-film__strategist-portrait {
-    width: 2.15rem;
-    height: 2.15rem;
+    width: 2rem;
+    height: 2rem;
   }
 
   .home-v4 .studio-film__strategist-copy small { font-size: .43rem; }
   .home-v4 .studio-film__strategist-copy strong { font-size: .82rem; }
 
   .home-v4 .studio-film__strategist-copy > span {
-    display: -webkit-box;
     font-size: .47rem;
     line-height: 1.22;
-    -webkit-line-clamp: 2;
   }
 
   .home-v4 .studio-film__strategist > svg {
