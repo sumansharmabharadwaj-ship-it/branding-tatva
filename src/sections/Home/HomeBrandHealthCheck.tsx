@@ -14,10 +14,10 @@ import {
   type HomeDiagnosis,
 } from "@/lib/homeDiagnosticState";
 import { track, trackRuntimeIssue } from "@/lib/analytics";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useReducer, useRef, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useLayoutEffect, useReducer, useRef, type KeyboardEvent, type PointerEvent } from "react";
 
 type Diagnosis = HomeDiagnosis;
 type ResultDiagnosis = HomeDiagnosis | "mixed";
@@ -158,18 +158,12 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 const DIAGNOSTIC_SCENE_VARIANTS = {
   enter: (direction: DiagnosticDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? 18 : -18,
-    y: 6,
-    filter: "blur(4px)",
+    opacity: 1,
+    x: direction === "forward" ? 12 : -12,
+    y: 4,
+    filter: "blur(2px)",
   }),
   center: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
-  exit: (direction: DiagnosticDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? -12 : 12,
-    y: -4,
-    filter: "blur(3px)",
-  }),
 };
 
 export function HomeBrandHealthCheck() {
@@ -177,6 +171,7 @@ export function HomeBrandHealthCheck() {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const questionPanelRef = useRef<HTMLDivElement>(null);
   const focusRequestedRef = useRef(false);
   const diagnosticDirectionRef = useRef<DiagnosticDirection>("forward");
   const orbitPointerBoundsRef = useRef<DOMRect | null>(null);
@@ -194,24 +189,17 @@ export function HomeBrandHealthCheck() {
   const result = RESULTS[resolvedResult ?? "mixed"];
   const visualPreview = preview ?? selected;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!focusRequestedRef.current) return;
     focusRequestedRef.current = false;
-    if (done) {
-      const resultPanel = resultRef.current;
-      if (!resultPanel) {
-        trackRuntimeIssue("diagnostic_transition_failed", { scene: "diagnostic" });
-        return;
-      }
-      resultPanel.focus({ preventScroll: true });
-      return;
-    }
-    const heading = headingRef.current;
-    if (!heading) {
+    const section = sectionRef.current;
+    const focusTarget = done ? resultRef.current : headingRef.current;
+    if (!section || !focusTarget) {
       trackRuntimeIssue("diagnostic_transition_failed", { scene: "diagnostic" });
       return;
     }
-    heading.focus({ preventScroll: true });
+    section.scrollIntoView({ behavior: "auto", block: "start", inline: "nearest" });
+    focusTarget.focus({ preventScroll: true });
   }, [done, step]);
 
   useEffect(() => () => {
@@ -335,7 +323,9 @@ export function HomeBrandHealthCheck() {
       moveChoiceFocus(event, index, -1);
     } else if (event.key === "Tab" && !event.shiftKey && selected !== null) {
       event.preventDefault();
-      document.querySelector<HTMLButtonElement>(".brand-orbit__continue")?.focus();
+      questionPanelRef.current
+        ?.querySelector<HTMLButtonElement>(".brand-orbit__continue")
+        ?.focus({ preventScroll: true });
     }
   }
 
@@ -350,6 +340,7 @@ export function HomeBrandHealthCheck() {
       data-cursor-world="light"
       data-preview={visualPreview === null ? "idle" : String(visualPreview)}
       data-diagnostic-state={done ? "complete" : selected === null ? "choosing" : "ready"}
+      data-diagnostic-panel={done ? "result" : `question-${step + 1}`}
       aria-labelledby="brand-orbit-title"
       onPointerEnter={prepareScene}
       onPointerMove={moveScene}
@@ -419,17 +410,13 @@ export function HomeBrandHealthCheck() {
           {done ? result.title : `Question ${step + 1} of ${QUESTIONS.length}. ${active.prompt}`}
         </p>
 
-        <AnimatePresence
-          mode="sync"
-          initial={false}
-          custom={diagnosticDirectionRef.current}
-        >
-          {done ? (
+        {done ? (
             <motion.div
               ref={resultRef}
               key="result"
               className="brand-orbit__result"
               data-home-reading-plane
+              data-diagnostic-active-panel="true"
               role="region"
               aria-labelledby="brand-orbit-result-title"
               tabIndex={-1}
@@ -438,8 +425,7 @@ export function HomeBrandHealthCheck() {
               variants={DIAGNOSTIC_SCENE_VARIANTS}
               initial={reducedMotion ? false : "enter"}
               animate="center"
-              exit={reducedMotion ? undefined : "exit"}
-              transition={{ duration: reducedMotion ? 0 : 0.7, ease: EASE }}
+              transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
             >
               <div className="brand-orbit__result-copy">
                 <p>Your answers point toward</p>
@@ -468,16 +454,17 @@ export function HomeBrandHealthCheck() {
             </motion.div>
           ) : (
             <motion.div
-              key={active.prompt}
+              ref={questionPanelRef}
+              key={`question-${step}`}
               className="brand-orbit__question"
               data-home-reading-plane
+              data-diagnostic-active-panel="true"
               data-home-selection-direction={diagnosticDirectionRef.current}
               custom={diagnosticDirectionRef.current}
               variants={DIAGNOSTIC_SCENE_VARIANTS}
               initial={reducedMotion ? false : "enter"}
               animate="center"
-              exit={reducedMotion ? undefined : "exit"}
-              transition={{ duration: reducedMotion ? 0 : 0.58, ease: EASE }}
+              transition={{ duration: reducedMotion ? 0 : 0.4, ease: EASE }}
             >
               <div className="brand-orbit__prompt">
                 <p>{active.eyebrow}</p>
@@ -541,7 +528,6 @@ export function HomeBrandHealthCheck() {
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
       </div>
     </section>
   );

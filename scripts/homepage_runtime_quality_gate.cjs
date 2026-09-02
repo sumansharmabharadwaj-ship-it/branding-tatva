@@ -106,6 +106,7 @@ assert(diagnostic.includes('id="brand-orbit-result-title"'), "Diagnostic result 
 assert(diagnostic.includes('<p aria-live="polite" aria-atomic="true">'), "Diagnostic selection implications are not announced.");
 assert(diagnostic.includes("event.currentTarget.closest('[role=\"radiogroup\"]')"), "Diagnostic arrow-key focus is not scoped to the active radio group.");
 assert(diagnostic.includes("options?.[nextIndex]?.focus({ preventScroll: true })"), "Diagnostic selected radio does not receive focus before the selection render.");
+assert(diagnostic.includes("questionPanelRef.current") && diagnostic.includes('querySelector<HTMLButtonElement>(".brand-orbit__continue")') && diagnostic.includes("?.focus({ preventScroll: true })"), "Diagnostic Tab handoff is not scoped to the active question panel.");
 assert(diagnostic.includes('event.pointerType !== "mouse"'), "Diagnostic hover preview can consume touch gestures.");
 assert(diagnostic.includes("orbitPointerBoundsRef.current ?? target.getBoundingClientRect()") && diagnostic.includes("orbitPointerFrameRef.current = window.requestAnimationFrame"), "Diagnostic landscape can restore layout reads and writes on every pointer event.");
 assert(diagnostic.includes("window.cancelAnimationFrame(orbitPointerFrameRef.current)"), "Diagnostic landscape can leave a scheduled motion frame behind.");
@@ -114,7 +115,11 @@ assert(diagnostic.includes("bt-home-brand-diagnostic-flowerwater-v1.png"), "Diag
 assert(!diagnostic.includes("void video.play()"), "Diagnostic film bypasses the shared one-film playback budget.");
 assert(diagnostic.includes("active.choices[selected].centre"), "Diagnostic choice does not reveal the strategic implication before continuing.");
 assert(diagnostic.includes('diagnosticDirectionRef.current = "forward"') && diagnostic.includes('diagnosticDirectionRef.current = "backward"'), "Diagnostic next, back, result, and review actions no longer publish their direction.");
-assert(diagnostic.includes("variants={DIAGNOSTIC_SCENE_VARIANTS}") && diagnostic.includes("custom={diagnosticDirectionRef.current}") && diagnostic.includes('exit={reducedMotion ? undefined : "exit"}'), "Diagnostic questions and result no longer share one reversible camera handoff.");
+assert(!diagnostic.includes("<AnimatePresence"), "Diagnostic can retain overlapping interactive question panels during a handoff.");
+assert(diagnostic.includes('key={`question-${step}`}') && diagnostic.includes('data-diagnostic-active-panel="true"'), "Diagnostic active question panels are not uniquely keyed and inspectable.");
+assert(diagnostic.includes("opacity: 1") && diagnostic.includes("variants={DIAGNOSTIC_SCENE_VARIANTS}") && diagnostic.includes("custom={diagnosticDirectionRef.current}"), "Diagnostic questions and result no longer share one visible directional arrival.");
+assert(diagnostic.includes('section.scrollIntoView({ behavior: "auto", block: "start", inline: "nearest" })'), "Diagnostic transitions can leave the next question outside the stable section frame.");
+assert(diagnostic.includes("focusTarget.focus({ preventScroll: true })"), "Diagnostic transition focus can undo the stable section frame.");
 assert(diagnostic.includes('data-home-selection-direction={diagnosticDirectionRef.current}'), "Diagnostic reading planes no longer expose the visitor's chosen direction.");
 assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused diagnostic result has no visible treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action a:focus-visible"), "Diagnostic result links have no explicit focus treatment.");
