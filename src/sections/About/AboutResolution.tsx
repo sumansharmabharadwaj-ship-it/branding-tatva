@@ -17,7 +17,6 @@ import { Container } from "@/components/Container";
 import { packages, type Package } from "@/data/services";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
-import { servicesContactHref } from "@/lib/servicesJourney";
 import styles from "./AboutResolution.module.css";
 
 const PATH_DEFINITIONS = [
@@ -357,7 +356,7 @@ export function AboutResolution() {
             <div className={styles.interactiveContactCta}>
               <LinkButton
                 key={activePath.slug}
-                href={servicesContactHref(activePath.slug)}
+                href="https://calendly.com/suman-brandingtatva/30min"
                 trackEvent="hero_booking_click"
                 trackProps={{
                   page: "about",
@@ -365,16 +364,16 @@ export function AboutResolution() {
                   package: activePath.slug,
                 }}
               >
-                Bring this question
+                Book this diagnosis
               </LinkButton>
             </div>
             <div className={styles.staticContactCta}>
               <LinkButton
-                href="/contact"
+                href="https://calendly.com/suman-brandingtatva/30min"
                 trackEvent="hero_booking_click"
                 trackProps={{ page: "about", position: "resolution_threshold" }}
               >
-                Bring your brand question
+                Book the 30 minute diagnosis
               </LinkButton>
             </div>
           </div>
