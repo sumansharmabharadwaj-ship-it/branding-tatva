@@ -13,11 +13,19 @@ import { motion, useScroll, useTransform } from "framer-motion";
 // than a painted-on band. Opacity-only on a static gradient; under
 // reduced motion it simply stays at full strength as the original
 // static dissolve.
-export function SceneVeil({ color, heightClass = "h-[16vh]" }: { color: string; heightClass?: string }) {
+export function SceneVeil({
+  color,
+  heightClass = "h-[16vh]",
+  endOpacity = 0.15,
+}: {
+  color: string;
+  heightClass?: string;
+  endOpacity?: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.95", "start 0.2"] });
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.15]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, endOpacity]);
 
   return (
     <motion.div

@@ -374,7 +374,7 @@ export default async function ServicesPage() {
               anticipates this chapter with a 24vh departure veil; the
               matching arrival veil lets that tone release into the
               Situation film instead of exposing a hard horizontal cut. */}
-          <SceneVeil color="#171A17" heightClass="h-[24vh]" />
+          <SceneVeil color="#171A17" heightClass="h-[24vh]" endOpacity={1} />
           <div data-services-content-plane="true" className="relative">
             <SituationPath />
           </div>
