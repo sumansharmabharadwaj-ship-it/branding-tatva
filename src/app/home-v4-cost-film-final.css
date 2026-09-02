@@ -470,7 +470,7 @@
   }
 
   .home-v4 .cost-film[data-cost-motion="sequencing"] .cost-film__rail button.is-active::before {
-    animation: costMemoryBeat 1.8s ease-in-out infinite;
+    animation: costMemoryBeat 1.8s ease-in-out both;
   }
 }
 

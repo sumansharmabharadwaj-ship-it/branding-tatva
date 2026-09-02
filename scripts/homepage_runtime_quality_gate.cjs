@@ -192,6 +192,7 @@ assert(cost.includes("variants={COST_MOMENT_VARIANTS}") && cost.includes("custom
 assert(cost.includes('rememberSelectionDirection(nextIndex, "forward")') && cost.includes('rememberSelectionDirection(0, "forward")'), "Hidden-cost autoplay or replay can visually rewind the story.");
 assert(costStyles.includes("scaleX(var(--cost-progress))"), "Hidden cost has lost its accumulating memory trace.");
 assert(costStyles.includes('button[data-cost-state="past"]'), "Hidden cost no longer distinguishes remembered stages from upcoming stages.");
+assert(costStyles.includes("animation: costMemoryBeat 1.8s ease-in-out both") && !costStyles.includes("costMemoryBeat 1.8s ease-in-out infinite"), "Hidden-cost stage arrivals can return to an endless beacon pulse.");
 assert(sceneRhythmRuntime.includes('const ARRIVAL_EVENT = "bt:home-scene-enter"'), "Homepage chapter arrivals are no longer driven by the shared scene owner.");
 assert(!sceneRhythmRuntime.includes("scrollTo("), "Homepage chapter arrival rhythm can move the visitor's viewport.");
 assert(sceneRhythmRuntime.includes("eligible.addEventListener(\"change\", updateEligibility)"), "Homepage chapter arrivals can remain active after the viewport becomes ineligible.");
