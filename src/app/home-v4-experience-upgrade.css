@@ -1660,6 +1660,11 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
 }
 
 @media (max-width: 760px) {
+  .home-v4 .studio-film__topline {
+    align-items: center;
+    gap: .75rem;
+  }
+
   .home-v4 .studio-film__topline > span:first-child {
     font-size: .53rem;
   }
@@ -1667,21 +1672,25 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
   .home-v4 .studio-film__strategist {
     width: min(12.6rem, 61vw);
     min-width: 0;
-    grid-template-columns: 2rem minmax(0, 1fr) 1.5rem;
+    min-height: 3rem;
+    grid-template-columns: 2.15rem minmax(0, 1fr) 1.5rem;
     gap: .42rem;
-    padding: .26rem .34rem;
+    padding: .3rem .34rem;
   }
 
   .home-v4 .studio-film__strategist-portrait {
-    width: 2rem;
-    height: 2rem;
+    width: 2.15rem;
+    height: 2.15rem;
   }
 
   .home-v4 .studio-film__strategist-copy small { font-size: .43rem; }
   .home-v4 .studio-film__strategist-copy strong { font-size: .82rem; }
 
   .home-v4 .studio-film__strategist-copy > span {
-    display: none;
+    display: -webkit-box;
+    font-size: .47rem;
+    line-height: 1.22;
+    -webkit-line-clamp: 2;
   }
 
   .home-v4 .studio-film__strategist > svg {
