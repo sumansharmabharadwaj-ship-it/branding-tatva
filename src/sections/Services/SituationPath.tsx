@@ -231,7 +231,8 @@ export function SituationPath() {
           <div
             role="tablist"
             aria-label="Choose the situation closest to your brand"
-            className="grid grid-cols-3 gap-1.5 rounded-[1.2rem] border border-ivory/14 bg-[rgba(18,28,23,0.72)] p-1.5 backdrop-blur-xl"
+            className="grid grid-cols-3 gap-1.5 border border-ivory/14 p-1.5 backdrop-blur-xl"
+            style={{ borderRadius: "1.2rem", backgroundColor: "rgba(18,28,23,0.72)" }}
           >
             {OPTIONS.map((option, index) => {
               const isActive = displayed === option.id;
@@ -250,11 +251,15 @@ export function SituationPath() {
                   }}
                   onClick={() => pick(option.id)}
                   onKeyDown={(event) => moveMobileTab(event, index)}
-                  className={`min-h-12 rounded-[0.9rem] border px-1.5 py-2 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone ${
+                  className={`min-h-12 border px-1.5 py-2 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone ${
                     isActive
-                      ? "border-sandstone/45 bg-sandstone/[0.12] text-ivory"
+                      ? "border-sandstone/45 text-ivory"
                       : "border-transparent text-ivory/58"
                   }`}
+                  style={{
+                    borderRadius: "0.9rem",
+                    backgroundColor: isActive ? "rgba(212,185,154,0.12)" : undefined,
+                  }}
                 >
                   <span className="block text-[0.58rem] font-medium uppercase tracking-[0.12em] text-sandstone/80">
                     {String(index + 1).padStart(2, "0")}
@@ -276,8 +281,8 @@ export function SituationPath() {
               animate={{ borderTopColor: displayedPackage.color }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
               data-situation-detail="true"
-              className="mt-2.5 overflow-hidden rounded-[1.3rem] border-t-2 p-4 backdrop-blur-xl"
-              style={{ backgroundColor: "rgba(18,28,23,0.76)" }}
+              className="mt-2.5 overflow-hidden border-t-2 p-4 backdrop-blur-xl"
+              style={{ borderRadius: "1.3rem", backgroundColor: "rgba(18,28,23,0.76)" }}
             >
               <AnimatePresence mode="popLayout" initial={false} custom={routeDirection}>
                 <motion.div

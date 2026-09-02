@@ -503,8 +503,12 @@ export function SectionJumpNav({
         data-section-jump-moving={mobileTargetHref ? "true" : "false"}
         aria-hidden={mobileYielding || undefined}
         inert={mobileYielding || undefined}
-        style={{ opacity: mobileYielding ? 0 : undefined }}
-        className={`fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] right-[calc(0.75rem+env(safe-area-inset-right))] z-30 transition-[opacity,transform] ${
+        style={{
+          right: "calc(0.75rem + env(safe-area-inset-right))",
+          bottom: "calc(0.75rem + env(safe-area-inset-bottom))",
+          opacity: mobileYielding ? 0 : undefined,
+        }}
+        className={`fixed z-30 transition-[opacity,transform] ${
           prefersReducedMotion ? "duration-0" : "duration-300"
         } ${
           mobileYielding
@@ -525,7 +529,8 @@ export function SectionJumpNav({
           }
           tabIndex={mobileYielding ? -1 : undefined}
           onClick={() => setMobileOpen((open) => !open)}
-          className={`relative flex h-14 max-w-[min(18rem,calc(100vw-1.5rem))] items-center justify-center gap-2.5 rounded-full border px-3.5 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
+          style={{ maxWidth: "min(18rem, calc(100vw - 1.5rem))" }}
+          className={`relative flex h-14 items-center justify-center gap-2.5 rounded-full border px-3.5 shadow-elevation-lg backdrop-blur-md transition-[opacity,transform,background-color] duration-300 hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terracotta ${
             lightTone
               ? "border-soil/14 bg-ivory/92 hover:bg-ivory"
               : "border-ivory/16 bg-soil/92 hover:bg-soil"
@@ -634,7 +639,12 @@ export function SectionJumpNav({
                   ? { duration: 0 }
                   : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }
               }
-              className={`absolute bottom-[calc(100%+0.5rem)] right-0 grid max-h-[calc(100dvh-6.5rem-env(safe-area-inset-top,0px))] w-[min(19rem,calc(100vw-1.5rem))] origin-bottom-right grid-cols-2 gap-1.5 overflow-y-auto overscroll-contain rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+              style={{
+                bottom: "calc(100% + 0.5rem)",
+                maxHeight: "calc(100dvh - 6.5rem - env(safe-area-inset-top, 0px))",
+                width: "min(19rem, calc(100vw - 1.5rem))",
+              }}
+              className={`absolute right-0 grid origin-bottom-right grid-cols-2 gap-1.5 overflow-y-auto overscroll-contain rounded-2xl border p-2 shadow-elevation-lg backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
                 lightTone ? "border-soil/12 bg-ivory/95" : "border-ivory/12 bg-soil/95"
               }`}
             >
@@ -726,10 +736,12 @@ export function SectionJumpNav({
           data-section-jump-progress-mode={continuousProgress ? "continuous" : "chapters"}
           data-section-jump-tone={tone}
           data-section-jump-desktop-yielding={guidedMobile && mobileYielding ? "true" : "false"}
-          className="fixed right-[calc(0.75rem+env(safe-area-inset-right))] top-1/2 z-30 hidden -translate-y-1/2 lg:block"
+          style={{ right: "calc(0.75rem + env(safe-area-inset-right))" }}
+          className="fixed top-1/2 z-30 hidden -translate-y-1/2 lg:block"
         >
           <div
-            className={`relative flex w-12 flex-col items-center rounded-[1.65rem] border px-1.5 py-3 shadow-elevation-lg backdrop-blur-md ${
+            style={{ borderRadius: "1.65rem" }}
+            className={`relative flex w-12 flex-col items-center border px-1.5 py-3 shadow-elevation-lg backdrop-blur-md ${
               lightTone ? "border-soil/12 bg-ivory/90" : "border-ivory/12 bg-soil/88"
             }`}
           >
@@ -779,7 +791,8 @@ export function SectionJumpNav({
                         className={`group relative flex h-7 w-7 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${lightTone ? "focus-visible:outline-terracotta" : "focus-visible:outline-sandstone"}`}
                       >
                         <span
-                          className={`absolute right-[calc(100%+0.55rem)] whitespace-nowrap rounded-full border px-3 py-1.5 text-[0.58rem] font-medium uppercase tracking-[0.14em] shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-200 ${
+                          style={{ right: "calc(100% + 0.55rem)" }}
+                          className={`absolute whitespace-nowrap rounded-full border px-3 py-1.5 text-[0.58rem] font-medium uppercase tracking-[0.14em] shadow-elevation-lg backdrop-blur-md transition-[opacity,transform] duration-200 ${
                             active && showActiveLabel && !(guidedMobile && mobileYielding)
                               ? lightTone
                                 ? "border-terracotta/30 bg-ivory/96 text-terracotta opacity-100"
