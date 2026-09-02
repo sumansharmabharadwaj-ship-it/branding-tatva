@@ -120,6 +120,9 @@ assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused
 assert(diagnosticStyles.includes(".brand-orbit__result-action a:focus-visible"), "Diagnostic result links have no explicit focus treatment.");
 assert(diagnosticStyles.includes(".brand-orbit__result-action button:focus-visible"), "Diagnostic result buttons have no explicit focus treatment.");
 assert(diagnosticStyles.includes("white-space:normal"), "Diagnostic effort promise cannot wrap on narrow screens.");
+assert(diagnostic.includes('className="brand-orbit__progress-count"'), "Diagnostic progress has no independently fitted mobile count.");
+assert(diagnosticStyles.includes(".brand-orbit__progress-count { white-space:nowrap; }"), "Diagnostic progress can split its count across lines.");
+assert(diagnosticStyles.includes("min-height:calc(100svh - 12rem)"), "Mobile diagnostic still grows beyond its one-screen decision frame.");
 assert(diagnosticStyles.includes("button.is-selected::after"), "Touch selections lose their strongest diagnostic commitment cue.");
 assert(!diagnosticStyles.includes("infinite"), "Diagnostic scenery restored a perpetual CSS motion loop.");
 assert(!studio.includes("useScroll") && !studio.includes("useMotionValueEvent"), "Studio restored an unbounded global scroll timeline.");

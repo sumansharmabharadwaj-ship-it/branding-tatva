@@ -141,7 +141,8 @@
 .brand-orbit__header>h2>span { margin-left:.85rem; color:rgba(32,50,40,.62); font-size:.58rem; letter-spacing:.14em; white-space:nowrap; }
 .brand-orbit__progress { width: min(16rem, 22vw); text-align: right; }
 .brand-orbit__progress strong { display:flex; justify-content:flex-end; align-items:baseline; gap:.65rem; margin-bottom:.7rem; font-size:.72rem; letter-spacing:.18em; }
-.brand-orbit__progress strong>span { color:rgba(32,50,40,.62); font-size:.57rem; font-weight:650; text-transform:uppercase; letter-spacing:.15em; }
+.brand-orbit__progress-label { color:rgba(32,50,40,.62); font-size:.57rem; font-weight:650; text-transform:uppercase; letter-spacing:.15em; }
+.brand-orbit__progress-count { white-space:nowrap; }
 .brand-orbit__progress>span { display:block; height:1px; background:rgba(32,50,40,.25); overflow:hidden; }
 .brand-orbit__progress i { display:block; width:100%; height:100%; background:#b78537; transform-origin:left; transition:transform 650ms cubic-bezier(.22,1,.36,1); }
 
@@ -308,7 +309,9 @@
   .brand-orbit__shell { min-height:100svh; height:auto; }
   .brand-orbit__header { gap:1rem; }
   .brand-orbit__header>h2>span { display:block; margin:.35rem 0 0; white-space:normal; line-height:1.35; letter-spacing:.1em; }
-  .brand-orbit__progress { width:5rem; }
+  .brand-orbit__progress { flex:0 0 4.5rem; width:4.5rem; }
+  .brand-orbit__progress strong { display:grid; justify-items:end; gap:.2rem; margin-bottom:.55rem; line-height:1.1; }
+  .brand-orbit__progress-label { line-height:1; }
   .brand-orbit__question { padding:2rem 0 1rem; display:flex; flex-direction:column; }
   .brand-orbit__prompt { position:relative; inset:auto; width:100%; }
   .brand-orbit__prompt h3 { font-size:clamp(2.6rem,13vw,4.3rem); }
@@ -318,7 +321,7 @@
   .brand-orbit__result { grid-template-columns:1fr; padding:2rem 0; gap:1.3rem; }
   .brand-orbit__result-action button { min-height:2.75rem; display:inline-flex; align-items:center; }
   .brand-orbit__shell { padding:clamp(5.6rem, 10svh, 6.5rem) 0 1rem; }
-  .brand-orbit__question { min-height:calc(100svh - clamp(6.8rem, 13svh, 8.3rem)); padding:.75rem 0 .35rem; }
+  .brand-orbit__question { min-height:calc(100svh - 12rem); padding:.75rem 0 .35rem; }
   .brand-orbit__prompt p { margin-bottom:.35rem; }
   .brand-orbit__prompt h3 { font-size:clamp(2.3rem,11.2vw,3.6rem); }
   .brand-orbit__choices { grid-template-columns:1fr; }

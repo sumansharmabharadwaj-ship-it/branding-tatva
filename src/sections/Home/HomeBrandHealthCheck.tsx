@@ -406,8 +406,10 @@ export function HomeBrandHealthCheck() {
             aria-valuetext={done ? "Complete" : `Question ${step + 1} of ${QUESTIONS.length}`}
           >
             <strong>
-              <span>Question</span>
-              {String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / 03
+              <span className="brand-orbit__progress-label">Question</span>
+              <span className="brand-orbit__progress-count">
+                {String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / 03
+              </span>
             </strong>
             <span><i style={{ transform: `scaleX(${done ? 1 : (step + 1) / QUESTIONS.length})` }} /></span>
           </div>
