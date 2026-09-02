@@ -34,6 +34,9 @@ import {
 
 type Draft = { analytics: boolean; marketing: boolean };
 
+const NOTICE_COLLAPSE_Y = 96;
+const NOTICE_EXPAND_Y = 32;
+
 export function ConsentManager() {
   const pathname = usePathname();
   // Server and first client render agree on "undecided, nothing granted", so
@@ -146,21 +149,39 @@ export function ConsentManager() {
 
     setNoticeCompact(false);
     const compactViewport = window.matchMedia("(min-width: 1024px)");
-    const collapseAfterJourneyStarts = () => {
+    let compact = false;
+    let syncFrame: number | null = null;
+
+    const syncNotice = () => {
+      syncFrame = null;
       if (!compactViewport.matches) {
+        compact = false;
         setNoticeCompact(false);
         return;
       }
-      if (window.scrollY <= 24) return;
-      setNoticeCompact(true);
+
+      // Separate entry and return thresholds stop the control flickering when
+      // a trackpad settles near the opening boundary.
+      const nextCompact = compact
+        ? window.scrollY > NOTICE_EXPAND_Y
+        : window.scrollY > NOTICE_COLLAPSE_Y;
+      if (nextCompact === compact) return;
+      compact = nextCompact;
+      setNoticeCompact(nextCompact);
     };
 
-    collapseAfterJourneyStarts();
-    window.addEventListener("scroll", collapseAfterJourneyStarts, { passive: true });
-    compactViewport.addEventListener("change", collapseAfterJourneyStarts);
+    const scheduleNoticeSync = () => {
+      if (syncFrame !== null) return;
+      syncFrame = window.requestAnimationFrame(syncNotice);
+    };
+
+    syncNotice();
+    window.addEventListener("scroll", scheduleNoticeSync, { passive: true });
+    compactViewport.addEventListener("change", scheduleNoticeSync);
     return () => {
-      window.removeEventListener("scroll", collapseAfterJourneyStarts);
-      compactViewport.removeEventListener("change", collapseAfterJourneyStarts);
+      window.removeEventListener("scroll", scheduleNoticeSync);
+      compactViewport.removeEventListener("change", scheduleNoticeSync);
+      if (syncFrame !== null) window.cancelAnimationFrame(syncFrame);
     };
   }, [pathname, showBanner]);
 
@@ -195,7 +216,7 @@ export function ConsentManager() {
           <div className="flex min-h-10 items-center justify-between gap-3">
             <p
               aria-hidden={noticeCompact}
-              className="consent-notice__message m-0 text-[0.69rem] leading-tight text-soil/76"
+              className="consent-notice__message consent-notice__motion m-0 text-[0.69rem] leading-tight text-soil/76"
             >
               Analytics stays off.{" "}
               <Link
@@ -213,8 +234,39 @@ export function ConsentManager() {
               aria-haspopup="dialog"
               onClick={openPanel}
               className="consent-notice__action inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-soil/22 px-3 text-[0.58rem] font-medium uppercase tracking-[0.1em] text-soil/76 transition-colors duration-300 hover:border-soil/45 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              style={{ position: "relative", overflow: "hidden" }}
             >
-              {noticeCompact ? <ShieldCheck size={17} aria-hidden="true" /> : "Choices"}
+              <span
+                className="consent-notice__action-label consent-notice__motion"
+                aria-hidden="true"
+                style={{
+                  display: "block",
+                  maxWidth: noticeCompact ? 0 : "4.75rem",
+                  overflow: "hidden",
+                  opacity: noticeCompact ? 0 : 1,
+                  transform: noticeCompact ? "translateX(0.45rem)" : "translateX(0)",
+                  transition:
+                    "opacity 220ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1), max-width 360ms cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
+              >
+                Choices
+              </span>
+              <ShieldCheck
+                className="consent-notice__action-icon consent-notice__motion"
+                size={17}
+                aria-hidden="true"
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  opacity: noticeCompact ? 1 : 0,
+                  transform: noticeCompact
+                    ? "translate(-50%, -50%) scale(1) rotate(0deg)"
+                    : "translate(-50%, -50%) scale(0.72) rotate(-10deg)",
+                  transition:
+                    "opacity 220ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1)",
+                }}
+              />
             </button>
           </div>
         </div>
