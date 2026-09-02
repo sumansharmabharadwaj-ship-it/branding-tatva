@@ -47,6 +47,7 @@ const decisionStyles = read("src/app/home-v4-decision-depth.css");
 const questionsStyles = read("src/app/home-v4-questions-editorial-final.css");
 const invitationStyles = read("src/app/home-v4-invitation-living-final.css");
 const chapterJumpStyles = read("src/app/home-v4-chapter-jump-final.css");
+const openingFitStyles = read("src/app/home-v4-opening-mobile-fit-final.css");
 const homePage = read("src/app/page.tsx");
 
 function assert(condition, message) {
@@ -267,6 +268,10 @@ assert(chapterJumpStyles.includes("@media (max-width: 359px)"), "Narrow phones n
 assert(chapterJumpStyles.includes("max-height: 560px"), "Short phones no longer receive a compact chapter sheet.");
 assert(chapterJumpStyles.includes("max-height: 420px"), "Very short phones retain a summary that crowds out chapter choices.");
 assert(chapterJumpStyles.includes("min-height: 2.75rem"), "Compact chapter choices have fallen below the 44px touch target.");
+assert(openingFitStyles.includes('html[data-consent-banner="visible"] .home-v4 .home-v4-opening__proof'), "The opening proof can collide with the privacy choice on first visit.");
+assert(openingFitStyles.includes("bottom: clamp(4.5rem, 8svh, 5.25rem)"), "Wide-screen consent clearance no longer lifts the opening proof.");
+assert(openingFitStyles.includes("bottom: calc(3.2rem + clamp(4.5rem, 8svh, 5.25rem))"), "Laptop consent clearance no longer preserves the proof card's base offset.");
+assert(openingFitStyles.includes("@media (max-width: 820px)") && openingFitStyles.includes("display: none"), "Compact screens can show the opening proof beneath the privacy choice.");
 assert(!homeInterface.includes("GuidedView") && !homeInterface.includes("LivingCursor"), "Removed homepage-only controls remain bundled beside the active seam primitive.");
 assert(!v4Scenes.includes("V4RecognitionScene") && !v4Scenes.includes("RECOGNITION_STATES"), "The retired recognition chapter remains bundled beside the active opening and cost scenes.");
 assert(!homeInterface.includes("useMotionValue") && !homeInterface.includes("useLenis"), "Dormant homepage control runtimes still pull client-side motion or scroll ownership into chapter seams.");
