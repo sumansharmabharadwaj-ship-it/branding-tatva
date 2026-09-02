@@ -49,6 +49,7 @@ const invitationStyles = read("src/app/home-v4-invitation-living-final.css");
 const chapterJumpStyles = read("src/app/home-v4-chapter-jump-final.css");
 const openingFitStyles = read("src/app/home-v4-opening-mobile-fit-final.css");
 const homePage = read("src/app/page.tsx");
+const consentManager = read("src/components/ConsentManager.tsx");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -287,6 +288,12 @@ assert(pacing.includes('"--home-velocity-y"') && pacing.includes("smoothedVeloci
 assert(experienceUpgrade.includes('@media (min-width: 901px)') && experienceUpgrade.includes('(prefers-reduced-motion: no-preference)'), "Homepage camera styles have escaped their viewport or motion boundary.");
 assert(experienceUpgrade.includes('transform: scaleX(var(--home-page-progress))'), "Homepage has lost its quiet journey progress signal.");
 assert(homepageReconstruction.includes("--home-frame-right"), "Homepage reconstruction no longer protects the chapter-rail lane.");
+assert(consentManager.includes('window.scrollY <= 24'), "Homepage consent notice can remain over chapter controls after the journey starts.");
+assert(consentManager.includes('data-consent-compact={noticeCompact ? "true" : "false"}'), "The docked homepage privacy control has no explicit state.");
+assert(consentManager.includes("ShieldCheck") && consentManager.includes('aria-label="Review measurement choices"'), "The docked homepage privacy control is not identifiable or operable.");
+assert(homepageReconstruction.includes('body:has(.home-v4) .consent-notice[data-consent-compact="true"]'), "The homepage privacy control does not dock clear of chapter instruments.");
+assert(homepageReconstruction.includes("width: 3rem !important"), "The docked homepage privacy control can still cover a chapter instrument.");
+assert(homepageReconstruction.includes("@media (prefers-reduced-motion: reduce)"), "The homepage privacy-control handoff ignores reduced motion.");
 assert(!homepageReconstruction.includes("@media (min-width: 1101px)"), "Homepage reconstruction restored a second studio-runway owner.");
 assert(!homepageReconstruction.includes("home-v4-opening__"), "Homepage reconstruction modified the preserved opening.");
 assert(!homepageReconstruction.includes("data-home-scene-observed"), "Homepage reconstruction restored a second scene-motion owner.");

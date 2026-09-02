@@ -49,6 +49,48 @@
     margin-right: var(--home-frame-right) !important;
     padding-top: var(--home-frame-top) !important;
   }
+
+  /* The unresolved-consent notice explains the default in full on the
+   * opening screen. After the visitor starts the journey it docks inside the
+   * reserved rail lane, keeping proof tabs and Studio disciplines usable. */
+  body:has(.home-v4) .consent-notice {
+    width: 15rem !important;
+    transition:
+      width 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      padding 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 300ms ease,
+      border-color 300ms ease;
+  }
+
+  body:has(.home-v4) .consent-notice[data-consent-compact="true"] {
+    width: 3rem !important;
+    padding: 0.2rem !important;
+  }
+
+  body:has(.home-v4) .consent-notice[data-consent-compact="true"] > div {
+    gap: 0;
+  }
+
+  body:has(.home-v4) .consent-notice__message {
+    max-width: 11rem;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 1;
+    transition:
+      max-width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 180ms ease;
+  }
+
+  body:has(.home-v4) .consent-notice[data-consent-compact="true"] .consent-notice__message {
+    max-width: 0;
+    opacity: 0;
+  }
+
+  body:has(.home-v4) .consent-notice[data-consent-compact="true"] .consent-notice__action {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    padding-inline: 0;
+  }
 }
 
 /* Touch keeps the same chapter identities with shorter travel and no blur,
@@ -94,4 +136,11 @@ html[data-motion="reduced"] body .home-v4 #studio .studio-film__frame {
   min-height: 100svh !important;
   max-height: none !important;
   overflow: clip !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:has(.home-v4) .consent-notice,
+  body:has(.home-v4) .consent-notice__message {
+    transition: none !important;
+  }
 }

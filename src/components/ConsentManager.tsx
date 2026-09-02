@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
-import { X } from "lucide-react";
+import { ShieldCheck, X } from "lucide-react";
 import {
   CONSENT_CHANGED_EVENT,
   CONSENT_OPEN_EVENT,
@@ -34,11 +35,13 @@ import {
 type Draft = { analytics: boolean; marketing: boolean };
 
 export function ConsentManager() {
+  const pathname = usePathname();
   // Server and first client render agree on "undecided, nothing granted", so
   // there is no hydration mismatch and nothing loads before the check.
   const [consent, setConsent] = useState<ConsentState>(NO_CONSENT);
   const [ready, setReady] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [noticeCompact, setNoticeCompact] = useState(false);
   const [draft, setDraft] = useState<Draft>({ analytics: false, marketing: false });
   const panelRef = useRef<HTMLDivElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -130,14 +133,51 @@ export function ConsentManager() {
   const decided = hasDecided(consent);
   const showBanner = ready && !decided && !panelOpen;
 
+  // Keep the privacy-preserving default legible on the opening scene. Once a
+  // visitor begins the homepage journey, dock the notice into a persistent
+  // 48px control so it cannot obscure the chapter instruments below. This is
+  // deliberately driven by intent rather than a timer: nobody has to race a
+  // disappearing message, and no consent choice is made on their behalf.
+  useEffect(() => {
+    if (!showBanner || pathname !== "/") {
+      setNoticeCompact(false);
+      return;
+    }
+
+    setNoticeCompact(false);
+    const compactViewport = window.matchMedia("(min-width: 1024px)");
+    const collapseAfterJourneyStarts = () => {
+      if (!compactViewport.matches) {
+        setNoticeCompact(false);
+        return;
+      }
+      if (window.scrollY <= 24) return;
+      setNoticeCompact(true);
+    };
+
+    collapseAfterJourneyStarts();
+    window.addEventListener("scroll", collapseAfterJourneyStarts, { passive: true });
+    compactViewport.addEventListener("change", collapseAfterJourneyStarts);
+    return () => {
+      window.removeEventListener("scroll", collapseAfterJourneyStarts);
+      compactViewport.removeEventListener("change", collapseAfterJourneyStarts);
+    };
+  }, [pathname, showBanner]);
+
   useEffect(() => {
     const root = document.documentElement;
-    if (showBanner) root.dataset.consentBanner = "visible";
-    else delete root.dataset.consentBanner;
+    if (showBanner) {
+      root.dataset.consentBanner = "visible";
+      root.dataset.consentBannerCompact = noticeCompact ? "true" : "false";
+    } else {
+      delete root.dataset.consentBanner;
+      delete root.dataset.consentBannerCompact;
+    }
     return () => {
       delete root.dataset.consentBanner;
+      delete root.dataset.consentBannerCompact;
     };
-  }, [showBanner]);
+  }, [noticeCompact, showBanner]);
 
   return (
     <>
@@ -148,13 +188,22 @@ export function ConsentManager() {
         <div
           role="region"
           aria-label="Your choice about measurement"
+          data-consent-compact={noticeCompact ? "true" : "false"}
           className="consent-notice fixed inset-x-3 bottom-3 z-[100] rounded-full border px-3 py-2 shadow-xl backdrop-blur-xl sm:right-5 sm:left-auto sm:w-auto"
           style={{ borderColor: "rgba(39,34,30,0.14)", backgroundColor: "rgba(244,239,230,0.94)" }}
         >
           <div className="flex min-h-10 items-center justify-between gap-3">
-            <p className="m-0 text-[0.69rem] leading-tight text-soil/76">
+            <p
+              aria-hidden={noticeCompact}
+              className="consent-notice__message m-0 text-[0.69rem] leading-tight text-soil/76"
+            >
               Analytics stays off.{" "}
-              <Link href="/privacy" className="link-underline" style={{ color: "#9b5c43" }}>
+              <Link
+                href="/privacy"
+                tabIndex={noticeCompact ? -1 : undefined}
+                className="link-underline"
+                style={{ color: "#9b5c43" }}
+              >
                 Privacy
               </Link>
             </p>
@@ -163,9 +212,9 @@ export function ConsentManager() {
               aria-label="Review measurement choices"
               aria-haspopup="dialog"
               onClick={openPanel}
-              className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-soil/22 px-3 text-[0.58rem] font-medium uppercase tracking-[0.1em] text-soil/76 transition-colors duration-300 hover:border-soil/45 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="consent-notice__action inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-soil/22 px-3 text-[0.58rem] font-medium uppercase tracking-[0.1em] text-soil/76 transition-colors duration-300 hover:border-soil/45 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
             >
-              Choices
+              {noticeCompact ? <ShieldCheck size={17} aria-hidden="true" /> : "Choices"}
             </button>
           </div>
         </div>
