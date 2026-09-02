@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
-import { ChevronDown, ChevronUp, ListTree } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, ListTree } from "lucide-react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import styles from "./AboutCinematicRuntime.module.css";
@@ -667,12 +667,14 @@ export function AboutCinematicRuntime() {
         <button
           className={styles.mobileStepButton}
           type="button"
-          aria-label="Next About chapter"
+          aria-label={activeChapter === CHAPTERS.length - 1 ? "About story complete" : "Next About chapter"}
           disabled={activeChapter === CHAPTERS.length - 1}
           tabIndex={mobileNavigatorActive ? 0 : -1}
           onClick={() => goToChapter(activeChapter + 1, activeChapter === CHAPTERS.length - 2)}
         >
-          <ChevronDown size={16} aria-hidden="true" />
+          {activeChapter === CHAPTERS.length - 1
+            ? <Check size={16} aria-hidden="true" />
+            : <ChevronDown size={16} aria-hidden="true" />}
         </button>
       </nav>
     </div>
