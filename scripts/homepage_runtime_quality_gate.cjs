@@ -297,6 +297,7 @@ assert(sectionJumpNav.includes('data-section-jump-progress-mode={continuousProgr
 assert(sectionJumpNav.includes('calc(var(--home-page-progress'), "Homepage rail has fallen back to chapter-by-chapter progress jumps.");
 assert(sectionJumpNav.includes('data-section-jump-nav-mobile="true"') && sectionJumpNav.includes('data-section-jump-progress-mode={continuousProgress ? "continuous" : "chapters"}'), "Compact homepage wayfinding no longer exposes its continuous journey state.");
 assert(sectionJumpNav.includes('scaleX(var(--home-page-progress, ${mobileDisplayProgress / 100}))') && sectionJumpNav.includes('prefersReducedMotion || continuousProgress'), "Compact homepage progress jumps between chapters instead of following visitor travel.");
+assert(sectionJumpNav.includes('data-section-jump-travel-cue="one-shot"') && !sectionJumpNav.includes("repeat: mobileTargetHref ? Infinity"), "Compact homepage travel has restored a boomerang-like looping cue.");
 assert(homepageReconstruction.includes("--home-frame-right"), "Homepage reconstruction no longer protects the chapter-rail lane.");
 assert(consentManager.includes('data-consent-compact={noticeCompact ? "true" : "false"}'), "The docked homepage privacy control has no explicit state.");
 assert(consentManager.includes("ShieldCheck") && consentManager.includes('aria-label="Review measurement choices"'), "The docked homepage privacy control is not identifiable or operable.");

@@ -106,6 +106,7 @@ for (const marker of [
   "focusDesktopChapter",
   "chooseMobile",
   "data-section-jump-moving",
+  'data-section-jump-travel-cue="one-shot"',
   "Moving to chapter",
   'behavior: prefersReducedMotion ? "auto" : "smooth"',
   "window.history.pushState",
@@ -128,6 +129,11 @@ for (const marker of [
 assert(
   (mountedChapterSource.match(/data-section-jump-yield="true"/g) || []).length === 7,
   "Every intermediate homepage chapter must expose one primary action that can dismiss the mobile guide.",
+);
+
+assert(
+  !jumpNavSource.includes("repeat: mobileTargetHref ? Infinity"),
+  "Compact chapter travel has returned to a repetitive pulse instead of one directional response.",
 );
 
 assert(

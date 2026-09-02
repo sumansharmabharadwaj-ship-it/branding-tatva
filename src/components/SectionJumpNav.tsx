@@ -533,20 +533,24 @@ export function SectionJumpNav({
         >
           {guidedMobile && (
             <motion.span
+              key={mobileTargetHref ?? "travel-idle"}
               aria-hidden="true"
+              data-section-jump-travel-cue="one-shot"
               className="pointer-events-none absolute inset-[-1px] rounded-full border border-terracotta/55"
               initial={false}
               animate={
                 prefersReducedMotion
-                  ? { opacity: mobileTargetHref ? 0.46 : 0, scale: 1 }
+                  ? { opacity: mobileTargetHref ? 0.42 : 0, scale: 1 }
                   : mobileTargetHref
-                    ? { opacity: [0.18, 0.62, 0.18], scale: [0.985, 1.035, 1.005] }
+                    ? { opacity: [0, 0.58, 0], scale: [0.985, 1.025, 1] }
                     : { opacity: 0, scale: 1 }
               }
               transition={
                 prefersReducedMotion
                   ? { duration: 0 }
-                  : { duration: 0.82, ease: "easeInOut", repeat: mobileTargetHref ? Infinity : 0 }
+                  : mobileTargetHref
+                    ? { duration: 0.68, times: [0, 0.38, 1], ease: [0.22, 1, 0.36, 1] }
+                    : { duration: 0.16, ease: "easeOut" }
               }
             />
           )}
