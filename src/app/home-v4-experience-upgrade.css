@@ -12,6 +12,18 @@
   --home-velocity-y: 0px;
 }
 
+/* Only the chapter in view should spend a frame budget on ambient motion.
+   Resting chapters keep their exact visual state, then resume naturally when
+   HomePacingDirector marks them active again. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-v4 :where(
+    [data-home-scene-state="resting"],
+    [data-home-scene-state="resting"] *
+  ) {
+    animation-play-state: paused !important;
+  }
+}
+
 .home-v4[data-home-motion="live"]::before {
   content: "";
   position: fixed;

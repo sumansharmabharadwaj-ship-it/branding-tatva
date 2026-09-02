@@ -308,6 +308,7 @@ assert(homepageReconstruction.includes('body:has(.home-v4) .consent-notice[data-
 assert(homepageReconstruction.includes("width: 3rem !important"), "The docked homepage privacy control can still cover a chapter instrument.");
 assert(consentManager.includes("consent-notice__action-icon") && consentManager.includes("rotate(-10deg)"), "The docked privacy icon has lost its calm arrival motion.");
 assert(homepageReconstruction.includes("@media (prefers-reduced-motion: reduce)"), "The homepage privacy-control handoff ignores reduced motion.");
+assert(experienceUpgrade.includes('[data-home-scene-state="resting"] *') && experienceUpgrade.includes("animation-play-state: paused !important"), "Offscreen homepage chapters can keep spending the ambient animation budget.");
 assert(!homepageReconstruction.includes("@media (min-width: 1101px)"), "Homepage reconstruction restored a second studio-runway owner.");
 assert(!homepageReconstruction.includes("home-v4-opening__"), "Homepage reconstruction modified the preserved opening.");
 assert(!homepageReconstruction.includes("data-home-scene-observed"), "Homepage reconstruction restored a second scene-motion owner.");
