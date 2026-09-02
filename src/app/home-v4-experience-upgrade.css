@@ -1619,12 +1619,8 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
 }
 
 .home-v4 .studio-film__strategist-copy > span {
-  display: -webkit-box;
-  overflow: hidden;
   color: #526458;
   font: 500 .61rem/1.25 var(--font-sans, sans-serif);
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
   white-space: normal;
 }
 
