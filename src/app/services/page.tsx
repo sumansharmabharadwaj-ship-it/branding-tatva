@@ -370,6 +370,11 @@ export default async function ServicesPage() {
                 "linear-gradient(100deg, rgba(16,19,20,0.66) 0%, rgba(16,19,20,0.34) 46%, rgba(16,19,20,0.14) 100%)",
             }}
           />
+          {/* Complete the opening cross-dissolve. The hero already
+              anticipates this chapter with a 24vh departure veil; the
+              matching arrival veil lets that tone release into the
+              Situation film instead of exposing a hard horizontal cut. */}
+          <SceneVeil color="#171A17" heightClass="h-[24vh]" />
           <div data-services-content-plane="true" className="relative">
             <SituationPath />
           </div>
