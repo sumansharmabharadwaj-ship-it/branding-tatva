@@ -3,6 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Check } from "lucide-react";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
@@ -50,6 +51,33 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
 const MANUAL_HOLD_MS = 14000;
+const ROUTE_PANEL_VARIANTS = {
+  enter: (direction: number) => ({
+    opacity: 0.62,
+    y: direction * 14,
+    clipPath:
+      direction > 0
+        ? "inset(0 0 14% 0 round 1rem)"
+        : "inset(14% 0 0 0 round 1rem)",
+    filter: "blur(1.5px)",
+  }),
+  center: {
+    opacity: 1,
+    y: 0,
+    clipPath: "inset(0 0 0 0 round 0rem)",
+    filter: "blur(0px)",
+  },
+  exit: (direction: number) => ({
+    opacity: 0.28,
+    y: direction * -10,
+    clipPath:
+      direction > 0
+        ? "inset(14% 0 0 0 round 1rem)"
+        : "inset(0 0 14% 0 round 1rem)",
+    filter: "blur(1.5px)",
+  }),
+  reducedExit: { opacity: 0 },
+};
 
 type ServicesProgressDetail = {
   id?: string;
@@ -87,6 +115,7 @@ export function SituationPath() {
   const [preview, setPreview] = useState<ServicesSituationId>(FIRST_OPTION.id);
   const [carried, setCarried] = useState(false);
   const holdUntilRef = useRef(0);
+  const previousDisplayedIndexRef = useRef(0);
   const mobileTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
 
@@ -165,6 +194,12 @@ export function SituationPath() {
   const displayed = selected ?? preview;
   const displayedOption = OPTIONS.find((option) => option.id === displayed) ?? FIRST_OPTION;
   const displayedPackage = packages.find((entry) => entry.slug === SITUATION_TO_PACKAGE[displayed]);
+  const displayedIndex = Math.max(0, OPTIONS.findIndex((option) => option.id === displayed));
+  const routeDirection = displayedIndex >= previousDisplayedIndexRef.current ? 1 : -1;
+
+  useEffect(() => {
+    previousDisplayedIndexRef.current = displayedIndex;
+  }, [displayedIndex]);
 
   return (
     <Container className="max-w-6xl">
@@ -232,52 +267,52 @@ export function SituationPath() {
             })}
           </div>
 
-          <AnimatePresence mode="popLayout" initial={false}>
-            {displayedPackage ? (
-              <motion.div
-                id="situation-mobile-panel"
-                key={displayed}
-                role="tabpanel"
-                aria-labelledby={`situation-tab-${displayed}`}
-                initial={
-                  prefersReducedMotion
-                    ? undefined
-                    : { opacity: 0.9, clipPath: "inset(1.5% round 1rem)", filter: "blur(1px)" }
-                }
-                animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
-                exit={
-                  prefersReducedMotion
-                    ? undefined
-                    : { opacity: 0.2, clipPath: "inset(1.5% round 1rem)", filter: "blur(1.5px)" }
-                }
-                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: EASE }}
-                data-situation-detail="true"
-                className="mt-2.5 rounded-[1.3rem] border-t-2 p-4 backdrop-blur-xl"
-                style={{ borderTopColor: displayedPackage.color, backgroundColor: "rgba(18,28,23,0.76)" }}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p data-situation-package-name="true" className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
-                    <p data-situation-package-for="true" className="mt-1 text-xs leading-relaxed text-ivory/66">{displayedPackage.forWho}</p>
+          {displayedPackage ? (
+            <motion.div
+              id="situation-mobile-panel"
+              role="tabpanel"
+              aria-labelledby={`situation-tab-${displayed}`}
+              layout="size"
+              animate={{ borderTopColor: displayedPackage.color }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+              data-situation-detail="true"
+              className="mt-2.5 overflow-hidden rounded-[1.3rem] border-t-2 p-4 backdrop-blur-xl"
+              style={{ backgroundColor: "rgba(18,28,23,0.76)" }}
+            >
+              <AnimatePresence mode="popLayout" initial={false} custom={routeDirection}>
+                <motion.div
+                  key={displayed}
+                  custom={routeDirection}
+                  variants={ROUTE_PANEL_VARIANTS}
+                  initial={prefersReducedMotion ? false : "enter"}
+                  animate="center"
+                  exit={prefersReducedMotion ? "reducedExit" : "exit"}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p data-situation-package-name="true" className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
+                      <p data-situation-package-for="true" className="mt-1 text-xs leading-relaxed text-ivory/66">{displayedPackage.forWho}</p>
+                    </div>
+                    <span className="shrink-0 font-display text-sm text-sandstone" aria-hidden="true">
+                      {String(OPTIONS.findIndex((option) => option.id === displayed) + 1).padStart(2, "0")} / 03
+                    </span>
                   </div>
-                  <span className="shrink-0 font-display text-sm text-sandstone" aria-hidden="true">
-                    {String(OPTIONS.findIndex((option) => option.id === displayed) + 1).padStart(2, "0")} / 03
-                  </span>
-                </div>
-                {!selected ? (
-                  <p data-situation-route-status="true" className="mt-3 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-sandstone/78">
-                    Route currently in view
-                  </p>
-                ) : null}
-                <p data-situation-route-reason="true" className="mt-2.5 text-sm leading-relaxed text-ivory/88">{displayedOption.reason}</p>
-                <div data-situation-route-action="true" className="mt-4">
-                  <LinkButton href="#desire" onClick={settlePackageChapter} className="min-h-11 w-full justify-center">
-                    See the {displayedPackage.name} path
-                  </LinkButton>
-                </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+                  {!selected ? (
+                    <p data-situation-route-status="true" className="mt-3 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-sandstone/78">
+                      Route currently in view
+                    </p>
+                  ) : null}
+                  <p data-situation-route-reason="true" className="mt-2.5 text-sm leading-relaxed text-ivory/88">{displayedOption.reason}</p>
+                  <div data-situation-route-action="true" className="mt-4">
+                    <LinkButton href="#desire" onClick={settlePackageChapter} className="min-h-11 w-full justify-center">
+                      See the {displayedPackage.name} path
+                    </LinkButton>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          ) : null}
         </div>
 
         <div data-services-chapter-instrument="true" className="hidden lg:block">
@@ -291,17 +326,26 @@ export function SituationPath() {
                   type="button"
                   aria-pressed={isCommitted}
                   data-situation-preview={isActive && !isCommitted ? "true" : undefined}
+                  data-situation-state={isCommitted ? "committed" : isActive ? "preview" : "idle"}
                   onClick={() => pick(option.id)}
-                  className="group grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:gap-5 sm:py-7"
+                  className="group relative grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 overflow-hidden py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:gap-5 sm:py-7"
                 >
+                  {isActive ? (
+                    <motion.span
+                      layoutId="active-situation-route"
+                      aria-hidden="true"
+                      className="absolute inset-x-0 inset-y-1 rounded-2xl border border-sandstone/15 bg-gradient-to-r from-sandstone/[0.08] via-sandstone/[0.025] to-transparent"
+                      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.44, ease: EASE }}
+                    />
+                  ) : null}
                   <span
-                    className={`font-display text-base transition-colors duration-300 ${isActive ? "text-sandstone" : "text-ivory/35"}`}
+                    className={`relative z-10 font-display text-base transition-colors duration-300 ${isActive ? "text-sandstone" : "text-ivory/35"}`}
                     aria-hidden="true"
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <span
-                    className={`font-display text-xl font-normal leading-snug transition-all duration-500 ease-out group-hover:translate-x-1 sm:text-2xl ${
+                    className={`relative z-10 font-display text-xl font-normal leading-snug transition-all duration-500 ease-out group-hover:translate-x-1 sm:text-2xl ${
                       isActive ? "text-ivory" : "text-ivory/80 group-hover:text-ivory"
                     }`}
                   >
@@ -309,53 +353,53 @@ export function SituationPath() {
                   </span>
                   <span
                     aria-hidden="true"
-                    className={`pt-1 text-xl font-light transition-all duration-300 ${
-                      isActive ? "rotate-45 text-sandstone" : "text-ivory/50 group-hover:text-ivory"
+                    className={`relative z-10 pt-1 transition-all duration-300 ${
+                      isActive ? "translate-x-0 text-sandstone" : "-translate-x-1 text-ivory/45 group-hover:translate-x-0 group-hover:text-ivory"
                     }`}
                   >
-                    +
+                    {isCommitted ? <Check size={18} strokeWidth={1.6} /> : <ArrowRight size={18} strokeWidth={1.5} />}
                   </span>
                 </motion.button>
               </div>
             );
           })}
           <div className="h-px bg-ivory/12" aria-hidden="true" />
-          <AnimatePresence mode="popLayout" initial={false}>
-            {displayedPackage ? (
-              <motion.div
-                key={displayed}
-                initial={
-                  prefersReducedMotion
-                    ? undefined
-                    : { opacity: 0.9, clipPath: "inset(1.5% round 1rem)", filter: "blur(1px)" }
-                }
-                animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
-                exit={
-                  prefersReducedMotion
-                    ? undefined
-                    : { opacity: 0.2, clipPath: "inset(1.5% round 1rem)", filter: "blur(1.5px)" }
-                }
-                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: EASE }}
-                data-situation-detail="true"
-                className="mt-5 rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
-                style={{ borderTopColor: displayedPackage.color, backgroundColor: "rgba(244,239,230,0.05)" }}
-              >
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                  <p className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
-                  <p className="text-sm text-ivory/70">{displayedPackage.forWho}</p>
-                </div>
-                {!selected ? (
-                  <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
-                    Route currently in view
-                  </p>
-                ) : null}
-                <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{displayedOption.reason}</p>
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <LinkButton href="#desire" onClick={settlePackageChapter}>See the matching engagement</LinkButton>
-                </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+          {displayedPackage ? (
+            <motion.div
+              layout="size"
+              animate={{ borderTopColor: displayedPackage.color }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.34, ease: EASE }}
+              data-situation-detail="true"
+              className="mt-5 overflow-hidden rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
+              style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
+            >
+              <AnimatePresence mode="popLayout" initial={false} custom={routeDirection}>
+                <motion.div
+                  key={displayed}
+                  custom={routeDirection}
+                  variants={ROUTE_PANEL_VARIANTS}
+                  initial={prefersReducedMotion ? false : "enter"}
+                  animate="center"
+                  exit={prefersReducedMotion ? "reducedExit" : "exit"}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+                >
+                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                    <p className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
+                    <p className="text-sm text-ivory/70">{displayedPackage.forWho}</p>
+                  </div>
+                  {!selected ? (
+                    <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
+                      Route currently in view
+                    </p>
+                  ) : null}
+                  <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{displayedOption.reason}</p>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <LinkButton href="#desire" onClick={settlePackageChapter}>See the matching engagement</LinkButton>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          ) : null}
         </div>
       </div>
     </Container>
