@@ -153,11 +153,11 @@ export function VerifiedOutcome() {
   const beats = [
     {
       label: "What the business faced",
-      text: proof.strategy ?? proof.challenge,
+      text: proof.challenge,
     },
     {
       label: "What was decided",
-      text: proof.hook ?? proof.reflection ?? proof.outcome,
+      text: proof.strategy ?? proof.hook ?? proof.reflection ?? proof.outcome,
     },
     {
       label: proofRoute.resultLabel,
