@@ -119,6 +119,8 @@ for (const marker of [
   "showActiveLabel",
   "data-section-jump-progress-mode",
   "var(--home-page-progress",
+  "mobileDisplayProgress / 100",
+  'willChange: continuousProgress ? "transform"',
 ]) {
   assert(jumpNavSource.includes(marker), `Homepage wayfinding interaction is missing ${marker}.`);
 }

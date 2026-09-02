@@ -498,6 +498,7 @@ export function SectionJumpNav({
         data-section-jump-nav-mobile="true"
         data-section-jump-tone={tone}
         data-section-jump-guided={guidedMobile ? "true" : undefined}
+        data-section-jump-progress-mode={continuousProgress ? "continuous" : "chapters"}
         data-section-jump-yielding={mobileYielding ? "true" : "false"}
         data-section-jump-moving={mobileTargetHref ? "true" : "false"}
         aria-hidden={mobileYielding || undefined}
@@ -555,15 +556,18 @@ export function SectionJumpNav({
               data-section-jump-progress="true"
               className={`absolute bottom-1 left-4 right-4 h-px overflow-hidden rounded-full ${lightTone ? "bg-soil/12" : "bg-ivory/14"}`}
             >
-              <motion.span
+              <span
                 className="block h-full origin-left bg-terracotta"
-                initial={false}
-                animate={{ scaleX: mobileDisplayProgress / 100 }}
-                transition={
-                  prefersReducedMotion
-                    ? { duration: 0 }
-                    : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }
-                }
+                style={{
+                  transform: continuousProgress
+                    ? `scaleX(var(--home-page-progress, ${mobileDisplayProgress / 100}))`
+                    : `scaleX(${mobileDisplayProgress / 100})`,
+                  transition:
+                    prefersReducedMotion || continuousProgress
+                      ? "none"
+                      : "transform 420ms cubic-bezier(0.22, 1, 0.36, 1)",
+                  willChange: continuousProgress ? "transform" : undefined,
+                }}
               />
             </span>
           )}
