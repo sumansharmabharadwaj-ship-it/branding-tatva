@@ -89,6 +89,7 @@ export function ServicesExperienceRuntime() {
       ),
     );
     const heroHeading = hero.querySelector<HTMLElement>("h1");
+    const heroCopy = heroHeading?.closest<HTMLElement>(".services-hero-copy") ?? null;
     const heroIndex = hero.querySelector<HTMLElement>("ol");
     const heroAperture = document.createElement("span");
     const heroFragments = document.createElement("span");
@@ -119,6 +120,7 @@ export function ServicesExperienceRuntime() {
       media.dataset.servicesHeroMedia = "true";
     });
     if (heroHeading) heroHeading.dataset.servicesHeroHeading = "true";
+    if (heroCopy) heroCopy.dataset.servicesHeroCopy = "true";
     if (heroIndex) heroIndex.dataset.servicesHeroIndex = "true";
 
     heroAperture.dataset.servicesHeroAperture = "true";
@@ -767,6 +769,7 @@ export function ServicesExperienceRuntime() {
         delete media.dataset.servicesHeroMedia;
       });
       if (heroHeading) delete heroHeading.dataset.servicesHeroHeading;
+      if (heroCopy) delete heroCopy.dataset.servicesHeroCopy;
       if (heroIndex) delete heroIndex.dataset.servicesHeroIndex;
       [
         "--services-hero-scale",

@@ -28,7 +28,7 @@ html[data-services-experience="active"] {
   transform-origin: 50% 48%;
 }
 
-[data-services-hero-heading="true"] {
+[data-services-hero-copy="true"] {
   opacity: var(--services-hero-copy-opacity);
   transform: translate3d(0, var(--services-hero-copy-y), 0);
   transform-origin: left center;
@@ -45,7 +45,7 @@ html[data-services-experience="active"] {
   will-change: transform;
 }
 
-[data-services-hero-scene="true"][data-services-active="true"] [data-services-hero-heading="true"],
+[data-services-hero-scene="true"][data-services-active="true"] [data-services-hero-copy="true"],
 [data-services-hero-scene="true"][data-services-active="true"] [data-services-hero-index="true"],
 [data-services-hero-scene="true"][data-services-active="true"] [data-services-hero-aperture="true"] {
   will-change: transform, opacity;
@@ -547,7 +547,7 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
   }
 
   [data-services-hero-media="true"],
-  [data-services-hero-heading="true"],
+  [data-services-hero-copy="true"],
   [data-services-hero-index="true"] {
     transform: none !important;
     opacity: 1 !important;
@@ -596,7 +596,7 @@ html[data-services-experience="active"] [data-section-jump-nav-trigger="true"] {
 }
 
 :root[data-motion="reduced"] [data-services-hero-media="true"],
-:root[data-motion="reduced"] [data-services-hero-heading="true"],
+:root[data-motion="reduced"] [data-services-hero-copy="true"],
 :root[data-motion="reduced"] [data-services-hero-index="true"] {
   transform: none !important;
   opacity: 1 !important;
