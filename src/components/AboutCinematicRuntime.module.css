@@ -130,7 +130,7 @@
 }
 
 .chapterSpine:hover a,
-.chapterSpine:focus-within a {
+.chapterSpine a:focus-visible {
   width: min(12.5rem, 28vw);
 }
 
@@ -155,7 +155,7 @@
 }
 
 .chapterSpine:hover a strong,
-.chapterSpine:focus-within a strong {
+.chapterSpine a:focus-visible strong {
   opacity: 1;
   transform: translateX(0);
 }
@@ -170,11 +170,6 @@
 .chapterSpine li[data-active="true"] a strong {
   opacity: 1;
   transform: translateX(0);
-}
-
-.chapterSpine:hover li[data-active="true"] a,
-.chapterSpine:focus-within li[data-active="true"] a {
-  width: min(12.5rem, 28vw);
 }
 
 .chapterSpine li[data-state="passed"] a span { color: #d4b99a; }
