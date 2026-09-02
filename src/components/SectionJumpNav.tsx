@@ -747,13 +747,14 @@ export function SectionJumpNav({
                 <span
                   className={`block w-full ${
                     continuousProgress
-                      ? "will-change-[height]"
+                      ? ""
                       : "transition-[height] duration-500 ease-out"
                   } ${lightTone ? "bg-terracotta" : "bg-sandstone"}`}
                   style={{
                     height: continuousProgress
                       ? `calc(var(--home-page-progress, ${progress / 100}) * 100%)`
                       : `${progress}%`,
+                    willChange: continuousProgress ? "height" : undefined,
                   }}
                 />
               </span>

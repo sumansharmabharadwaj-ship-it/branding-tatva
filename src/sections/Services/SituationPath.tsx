@@ -334,7 +334,11 @@ export function SituationPath() {
                     <motion.span
                       layoutId="active-situation-route"
                       aria-hidden="true"
-                      className="absolute inset-x-0 inset-y-1 rounded-2xl border border-sandstone/15 bg-gradient-to-r from-sandstone/[0.08] via-sandstone/[0.025] to-transparent"
+                      className="absolute inset-x-0 inset-y-1 rounded-2xl border"
+                      style={{
+                        borderColor: "rgba(212, 185, 154, 0.15)",
+                        background: "linear-gradient(90deg, rgba(212, 185, 154, 0.08), rgba(212, 185, 154, 0.025), transparent)",
+                      }}
                       transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.44, ease: EASE }}
                     />
                   ) : null}
