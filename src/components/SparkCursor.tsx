@@ -22,6 +22,7 @@ export function SparkCursor() {
     const cursorLabel: HTMLDivElement = label;
     let active = false;
     let keyboardMode = false;
+    let observedInteractiveTarget: HTMLElement | null = null;
 
     function sync() {
       active =
@@ -60,7 +61,17 @@ export function SparkCursor() {
     }
 
     function syncInteractiveTarget(targetElement: Element | null) {
-      const target = targetElement?.closest<HTMLElement>(INTERACTIVE_SELECTOR);
+      const target = targetElement?.closest<HTMLElement>(INTERACTIVE_SELECTOR) ?? null;
+      if (target !== observedInteractiveTarget) {
+        labelObserver.disconnect();
+        observedInteractiveTarget = target;
+        if (observedInteractiveTarget) {
+          labelObserver.observe(observedInteractiveTarget, {
+            attributes: true,
+            attributeFilter: ["aria-label", "data-cursor-label"],
+          });
+        }
+      }
       cursorSun.classList.toggle("spark-cursor-core--hover", Boolean(target));
       const copy =
         target?.dataset.cursorLabel ||
@@ -69,6 +80,10 @@ export function SparkCursor() {
       cursorLabel.textContent = copy.slice(0, 24);
       cursorLabel.classList.toggle("spark-cursor-label--visible", Boolean(copy));
     }
+
+    const labelObserver = new MutationObserver(() => {
+      if (observedInteractiveTarget) syncInteractiveTarget(observedInteractiveTarget);
+    });
 
     function over(event: PointerEvent) {
       if (!active || !(event.target instanceof Element)) return;
@@ -97,6 +112,7 @@ export function SparkCursor() {
       window.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerover", over);
       document.removeEventListener("pointerout", out);
+      labelObserver.disconnect();
       document.documentElement.classList.remove("sun-cursor-active");
     };
   }, [pref]);
