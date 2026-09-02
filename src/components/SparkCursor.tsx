@@ -50,6 +50,7 @@ export function SparkCursor() {
         `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
       cursorLabel.style.transform =
         `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, 24px)`;
+      syncInteractiveTarget(event.target instanceof Element ? event.target : null);
     }
 
     function onKeyDown(event: KeyboardEvent) {
@@ -58,9 +59,8 @@ export function SparkCursor() {
       sync();
     }
 
-    function over(event: PointerEvent) {
-      if (!active || !(event.target instanceof Element)) return;
-      const target = event.target.closest<HTMLElement>(INTERACTIVE_SELECTOR);
+    function syncInteractiveTarget(targetElement: Element | null) {
+      const target = targetElement?.closest<HTMLElement>(INTERACTIVE_SELECTOR);
       cursorSun.classList.toggle("spark-cursor-core--hover", Boolean(target));
       const copy =
         target?.dataset.cursorLabel ||
@@ -68,6 +68,11 @@ export function SparkCursor() {
         "";
       cursorLabel.textContent = copy.slice(0, 24);
       cursorLabel.classList.toggle("spark-cursor-label--visible", Boolean(copy));
+    }
+
+    function over(event: PointerEvent) {
+      if (!active || !(event.target instanceof Element)) return;
+      syncInteractiveTarget(event.target);
     }
 
     function out(event: PointerEvent) {
