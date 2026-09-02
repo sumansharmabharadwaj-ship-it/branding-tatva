@@ -34,8 +34,30 @@ export function ContactScrollRuntime() {
     let hashFrame = 0;
     let hashTimer = 0;
 
+    const syncFormOwnership = () => {
+      const formCard = contactFilm.querySelector<HTMLElement>("[data-contact-form-card]");
+      if (!formCard) {
+        delete root.dataset.contactFormOwnsViewport;
+        return;
+      }
+
+      const viewportHeight = Math.max(1, window.visualViewport?.height ?? window.innerHeight);
+      const rect = formCard.getBoundingClientRect();
+      const visibleHeight = Math.max(
+        0,
+        Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0),
+      );
+      const minimumReadingArea = Math.min(180, viewportHeight * 0.24);
+      const ownsViewport =
+        rect.top <= viewportHeight * 0.82 && visibleHeight >= minimumReadingArea;
+
+      if (ownsViewport) root.dataset.contactFormOwnsViewport = "true";
+      else delete root.dataset.contactFormOwnsViewport;
+    };
+
     const render = () => {
       frame = 0;
+      syncFormOwnership();
       const motionAllowed = cameraReady.matches && root.dataset.motion !== "reduced";
       const interactionOwnsScroll = scenes.some(
         (scene) =>
@@ -153,6 +175,7 @@ export function ContactScrollRuntime() {
     scenes.forEach((scene) =>
       interactionObserver.observe(scene, {
         attributes: true,
+        childList: true,
         subtree: true,
         attributeFilter: [
           "data-contact-reading-focus",
@@ -165,6 +188,7 @@ export function ContactScrollRuntime() {
     scheduleHashRecovery();
     window.addEventListener("scroll", requestRender, { passive: true });
     window.addEventListener("resize", requestRender);
+    window.visualViewport?.addEventListener("resize", requestRender);
     window.addEventListener("wheel", cancelHashRecovery, { passive: true });
     window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
     window.addEventListener("pointerdown", cancelHashRecovery, { passive: true });
@@ -186,6 +210,7 @@ export function ContactScrollRuntime() {
       window.clearTimeout(hashTimer);
       window.removeEventListener("scroll", requestRender);
       window.removeEventListener("resize", requestRender);
+      window.visualViewport?.removeEventListener("resize", requestRender);
       window.removeEventListener("wheel", cancelHashRecovery);
       window.removeEventListener("touchstart", cancelHashRecovery);
       window.removeEventListener("pointerdown", cancelHashRecovery);
@@ -197,6 +222,7 @@ export function ContactScrollRuntime() {
       motionPreferenceObserver.disconnect();
       interactionObserver.disconnect();
       delete root.dataset.contactFilmSnap;
+      delete root.dataset.contactFormOwnsViewport;
     };
   }, []);
 

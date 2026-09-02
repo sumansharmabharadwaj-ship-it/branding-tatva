@@ -743,6 +743,34 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 }
 
+/* On compact/touch viewports the form takes ownership before a field receives
+   focus. This prevents the chapter dock and privacy choice from covering the
+   untouched submit state while preserving the desktop side rail. Keep the
+   width and input-mode queries separate for the production CSS optimizer. */
+@media (max-width: 899px) {
+  html[data-contact-form-owns-viewport="true"] .consent-notice {
+    display: none;
+  }
+
+  html[data-contact-form-owns-viewport="true"] [data-contact-chapter-rail] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 0.75rem);
+  }
+}
+
+@media (pointer: coarse) {
+  html[data-contact-form-owns-viewport="true"] .consent-notice {
+    display: none;
+  }
+
+  html[data-contact-form-owns-viewport="true"] [data-contact-chapter-rail] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 0.75rem);
+  }
+}
+
 @media (min-width: 1360px) and (pointer: fine) {
   [data-contact-chapter-rail] {
     left: auto;

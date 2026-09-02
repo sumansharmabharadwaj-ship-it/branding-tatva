@@ -9,6 +9,15 @@
   overflow-wrap: anywhere;
 }
 
+/* Quiet legal and attribution links still need a real pointer target on wide
+   screens. The compact-phone rule below expands the same controls to 44px. */
+.site-footer-meta a,
+.site-footer-meta button {
+  display: inline-flex;
+  min-height: 1.5rem;
+  align-items: center;
+}
+
 /* Route-specific chapter controls all compete for the same lower edge on a
    phone. Keep them behind the primary menu, and lift them as one system when
    the privacy choice is present instead of allowing each route to guess the

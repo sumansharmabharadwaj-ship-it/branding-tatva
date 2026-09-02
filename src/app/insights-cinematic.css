@@ -3185,6 +3185,31 @@
     padding-block: 5.5rem 3.75rem;
   }
 
+  /* The Library camera is a full-width flex item. Reset every nested grid's
+     intrinsic minimum so long editorial copy and the search instrument cannot
+     grow the scene beyond the phone before the intentional rails take over. */
+  .insights-library__camera,
+  .insights-library__header,
+  .insights-library__header > *,
+  .insights-library__lens,
+  .insights-library__lens > label {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .insights-library__header {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .insights-library__header h2,
+  .insights-library__lens input,
+  .insights-library__topics,
+  .insights-library__folios {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .insights-foundation__film,
   .insights-library__film,
   .insights-atlas > div:first-child,
