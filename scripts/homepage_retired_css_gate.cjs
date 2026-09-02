@@ -10,6 +10,7 @@ const retiredSelectors = [
   ".home-v4-guide",
   ".home-v4-cursor",
   ".home-v4-recognition",
+  ".foundation-orbit",
   ".home-v4-chapter--foundation",
   '[data-home-v4-chapter="foundation"]',
   ".home-v4-chapter--insights",

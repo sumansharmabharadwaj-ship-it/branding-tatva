@@ -291,6 +291,8 @@ assert(experienceUpgrade.includes('transform: scaleX(var(--home-page-progress))'
 assert(homePage.includes("continuousProgress"), "Homepage desktop rail no longer requests continuous journey progress.");
 assert(pacing.includes('document.documentElement.style.setProperty("--home-page-progress"'), "Homepage progress is not shared with the fixed journey rail.");
 assert(pacing.includes('document.documentElement.style.removeProperty("--home-page-progress"'), "Homepage progress can leak into later routes.");
+assert(pacing.includes("new ResizeObserver(() => scheduleCinematicMotion())") && pacing.includes("layoutObserver.observe(homeRoot)"), "Interactive chapter reflow can leave the homepage journey thread out of sync.");
+assert(pacing.includes("layoutObserver?.disconnect()"), "Homepage layout observation survives route teardown.");
 assert(sectionJumpNav.includes('data-section-jump-progress-mode={continuousProgress ? "continuous" : "chapters"}'), "Homepage rail progress mode is not inspectable.");
 assert(sectionJumpNav.includes('calc(var(--home-page-progress'), "Homepage rail has fallen back to chapter-by-chapter progress jumps.");
 assert(sectionJumpNav.includes('data-section-jump-nav-mobile="true"') && sectionJumpNav.includes('data-section-jump-progress-mode={continuousProgress ? "continuous" : "chapters"}'), "Compact homepage wayfinding no longer exposes its continuous journey state.");

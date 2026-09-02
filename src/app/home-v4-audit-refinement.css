@@ -4,32 +4,3 @@
   max-width: 34rem;
   line-height: 1.6;
 }
-
-.home-v4 .foundation-orbit__header {
-  grid-template-columns: 8rem minmax(0, 1fr);
-}
-
-.home-v4 .foundation-orbit__header h2 {
-  max-width: 46rem;
-  font-size: clamp(2.7rem, 4.8vw, 5.2rem);
-}
-
-.home-v4 .foundation-orbit__active h3 {
-  max-width: 42rem;
-  font-size: clamp(3.7rem, 6.6vw, 7rem);
-}
-
-.home-v4 .foundation-orbit__choices button {
-  min-height: 3.25rem;
-  color: rgba(244, 236, 222, 0.72);
-}
-
-.home-v4 .foundation-orbit__choices button.is-active {
-  border-top-color: rgba(210, 164, 86, 0.72);
-  color: #f4ecde;
-}
-
-.home-v4 .foundation-orbit__choices button:focus-visible {
-  outline: 2px solid rgba(210, 164, 86, 0.72);
-  outline-offset: 4px;
-}

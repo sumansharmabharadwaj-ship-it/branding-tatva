@@ -30,6 +30,7 @@ export function HomePacingDirector() {
     const observed = new Set<HTMLElement>();
     let sectionObserver: IntersectionObserver | null = null;
     let mutationObserver: MutationObserver | null = null;
+    let layoutObserver: ResizeObserver | null = null;
     const visibilityTimers = new Map<HTMLElement, number>();
     const recoveryFrames = new Map<HTMLElement, number>();
     let qaProbeTimer: number | null = null;
@@ -293,6 +294,13 @@ export function HomePacingDirector() {
 
     registerSections();
     scheduleCinematicMotion();
+    // Interactive chapters can grow without a window resize, especially on
+    // compact screens. Keep the shared journey thread and scene measurements
+    // aligned after those reflows without introducing another scroll owner.
+    if (homeRoot && typeof ResizeObserver !== "undefined") {
+      layoutObserver = new ResizeObserver(() => scheduleCinematicMotion());
+      layoutObserver.observe(homeRoot);
+    }
     window.addEventListener("scroll", scheduleCinematicMotion, { passive: true });
     window.addEventListener("resize", scheduleCinematicMotion, { passive: true });
     window.addEventListener("pointermove", trackPointer, { passive: true });
@@ -338,6 +346,7 @@ export function HomePacingDirector() {
     return () => {
       mutationObserver?.disconnect();
       sectionObserver?.disconnect();
+      layoutObserver?.disconnect();
       window.cancelAnimationFrame(motionFrame);
       window.removeEventListener("scroll", scheduleCinematicMotion);
       window.removeEventListener("resize", scheduleCinematicMotion);
