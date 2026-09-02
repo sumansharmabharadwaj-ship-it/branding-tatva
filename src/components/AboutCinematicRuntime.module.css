@@ -112,7 +112,7 @@
 .chapterSpine a {
   display: grid;
   width: 2.75rem;
-  min-width: 2.75rem;
+  flex-shrink: 0;
   min-height: 2.75rem;
   padding: 0.58rem 0.72rem;
   overflow: hidden;
