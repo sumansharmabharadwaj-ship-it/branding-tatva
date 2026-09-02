@@ -248,8 +248,8 @@ export default async function ServicesPage() {
           <Container className="relative py-20 sm:py-28">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal
-                delay={0.35}
-                className="rounded-[1.75rem] border border-ivory/10 bg-[rgba(22,30,25,0.36)] p-5 shadow-[0_28px_90px_rgba(10,16,13,0.2)] backdrop-blur-xl sm:p-7"
+                delay={0.08}
+                className="services-hero-copy rounded-[1.75rem] border border-ivory/10 bg-[rgba(22,30,25,0.36)] p-5 shadow-[0_28px_90px_rgba(10,16,13,0.2)] backdrop-blur-xl sm:p-7"
               >
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
                   Brand strategy &amp; systems
@@ -304,8 +304,12 @@ export default async function ServicesPage() {
                   complete nine-chapter rail takes over once the visitor
                   moves, so the headline never has to compete with a table
                   of contents before its argument has landed. */}
-              <Reveal delay={0.1} className="hidden lg:block lg:pb-2">
-                <ol aria-label="The Brand Strategy journey" className="lg:min-w-64">
+              <Reveal delay={0.34} className="hidden lg:block lg:pb-2">
+                <ol
+                  aria-label="The Brand Strategy journey"
+                  data-services-hero-index="true"
+                  className="lg:min-w-64"
+                >
                   {HERO_ACTS.map((item) => (
                     <li key={item.href}>
                       <a
