@@ -161,7 +161,7 @@
 }
 
 .chapterSpine li[data-active="true"] a {
-  width: min(10.5rem, 24vw);
+  width: min(12.5rem, 28vw);
   border-color: #d4b99a;
   background: rgba(13, 23, 21, 0.94);
   color: #f4efe6;
