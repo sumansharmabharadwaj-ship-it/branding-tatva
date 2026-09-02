@@ -12,17 +12,14 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 type SelectionDirection = "forward" | "backward";
 const COST_MOMENT_VARIANTS = {
   enter: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? 16 : -16,
-    y: 8,
-    filter: "blur(3px)",
+    opacity: 1,
+    x: direction === "forward" ? 18 : -18,
   }),
-  active: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  active: { opacity: 1, x: 0 },
   exit: (direction: SelectionDirection) => ({
     opacity: 0,
-    x: direction === "forward" ? -10 : 10,
-    y: -6,
-    filter: "blur(2px)",
+    x: direction === "forward" ? -14 : 14,
+    transition: { duration: 0 },
   }),
 };
 
@@ -423,7 +420,7 @@ export function V4HiddenCostScene() {
               initial={prefersReducedMotion ? false : "enter"}
               animate="active"
               exit={prefersReducedMotion ? undefined : "exit"}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: EASE }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
             >
               <p>{active.signal}</p>
               <h3>{active.title}</h3>
