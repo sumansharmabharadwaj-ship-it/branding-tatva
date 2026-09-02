@@ -52,7 +52,7 @@ const REQUIRED_HOME_CHAPTERS = [
     'href="/work/herbalcart"',
     'href="/about"',
     'href="#evidence"',
-    'href="/services#desire"',
+    'href="/services"',
   ];
 
   for (const link of serverRenderedLinks) {
