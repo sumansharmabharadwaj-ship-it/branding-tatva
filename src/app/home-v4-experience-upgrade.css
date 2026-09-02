@@ -1659,6 +1659,7 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
 
 @media (max-width: 760px) {
   .home-v4 .studio-film__topline {
+    flex-wrap: wrap;
     gap: .75rem;
   }
 
@@ -1667,8 +1668,7 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
   }
 
   .home-v4 .studio-film__strategist {
-    width: min(12.6rem, 61vw);
-    min-width: 0;
+    width: min(25rem, 100%);
     min-height: 3rem;
     grid-template-columns: 2rem minmax(0, 1fr) 1.5rem;
     gap: .42rem;
