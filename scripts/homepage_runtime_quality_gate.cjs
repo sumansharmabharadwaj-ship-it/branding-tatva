@@ -218,6 +218,9 @@ assert(paths.includes("const displayed = index === activeIndex"), "Service-path 
 assert(paths.includes('type CarriedPathSource = "diagnostic" | "evidence" | null'), "Service paths cannot preserve the source of a carried recommendation.");
 assert(paths.includes('data-proof-origin={carriedFrom === "evidence" && !isPreviewing ? "evidence" : "case"}'), "Evidence reasoning can remain attached to an unrelated path preview.");
 assert(paths.includes("variants={PATH_ANSWER_VARIANTS}") && paths.includes("custom={selectionDirectionRef.current}") && paths.includes('exit={prefersReducedMotion ? undefined : "exit"}'), "Service-path answers no longer leave in the visitor's selection direction.");
+assert(paths.includes("transition: { duration: 0 }") && paths.includes("duration: prefersReducedMotion ? 0 : 0.3"), "Service-path answers can retain the old reading plane after a new choice.");
+assert(!paths.includes('filter: "blur('), "Service-path answers can become unreadable during their directional handoff.");
+assert(paths.includes('aria-controls={`path-active-panel-${path.number}`}') && paths.includes('id={`path-active-panel-${active.number}`}'), "Service-path transitions can expose duplicate panel IDs during a handoff.");
 assert(paths.includes('aria-live={isPreviewing ? "off" : "polite"}') && paths.includes('className="paths-film__counter" aria-hidden="true"'), "Service-path previews can interrupt assistive reading or duplicate the committed answer.");
 assert(paths.includes("aria-selected={committed}"), "Service-path hover replaces the committed recommendation.");
 assert(paths.includes("tabIndex={committed ? 0 : -1}"), "Service-path hover moves the keyboard tab stop.");

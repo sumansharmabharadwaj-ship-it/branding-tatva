@@ -93,17 +93,14 @@ type SelectionDirection = "forward" | "backward";
 type CarriedPathSource = "diagnostic" | "evidence" | null;
 const PATH_ANSWER_VARIANTS = {
   enter: (direction: SelectionDirection) => ({
-    opacity: 0,
+    opacity: 1,
     x: direction === "forward" ? 18 : -18,
-    y: 6,
-    filter: "blur(4px)",
   }),
-  active: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  active: { opacity: 1, x: 0 },
   exit: (direction: SelectionDirection) => ({
     opacity: 0,
-    x: direction === "forward" ? -10 : 10,
-    y: -6,
-    filter: "blur(3px)",
+    x: direction === "forward" ? -14 : 14,
+    transition: { duration: 0 },
   }),
 };
 const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
@@ -313,7 +310,7 @@ export function PathsCinematicChapter() {
                       type="button"
                       role="tab"
                       aria-selected={committed}
-                      aria-controls="path-active-panel"
+                      aria-controls={`path-active-panel-${path.number}`}
                       tabIndex={committed ? 0 : -1}
                       onClick={() => choose(index)}
                       onFocus={() => choose(index, false)}
@@ -347,7 +344,7 @@ export function PathsCinematicChapter() {
           >
             <motion.article
               key={active.number}
-              id="path-active-panel"
+              id={`path-active-panel-${active.number}`}
               className="paths-film__answer"
               role="tabpanel"
               aria-labelledby={`path-film-tab-${active.number}`}
@@ -360,7 +357,7 @@ export function PathsCinematicChapter() {
               initial={prefersReducedMotion ? false : "enter"}
               animate="active"
               exit={prefersReducedMotion ? undefined : "exit"}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
             >
               <p className="paths-film__answer-eyebrow">{active.eyebrow}</p>
               <h3>{active.title}</h3>
@@ -380,10 +377,10 @@ export function PathsCinematicChapter() {
                   key={`${active.number}-${carriedFrom ?? "direct"}-${isPreviewing ? "preview" : "chosen"}`}
                   className="paths-film__proof"
                   data-proof-origin={carriedFrom === "evidence" && !isPreviewing ? "evidence" : "case"}
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 5, filter: "blur(3px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -4, filter: "blur(2px)" }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+                  initial={prefersReducedMotion ? false : { opacity: 1, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={prefersReducedMotion ? undefined : { opacity: 0, transition: { duration: 0 } }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.24, ease: EASE }}
                 >
                   {carriedFrom === "evidence" && !isPreviewing ? (
                     <>
