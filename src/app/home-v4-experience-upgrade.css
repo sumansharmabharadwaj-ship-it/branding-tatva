@@ -1573,17 +1573,17 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
 
 .home-v4 .studio-film__strategist {
   display: grid;
-  width: min(23rem, 32vw);
+  width: min(25rem, 36vw);
   grid-template-columns: 3.15rem minmax(0, 1fr) 1.8rem;
   align-items: center;
   gap: .65rem;
-  padding: .42rem .52rem;
+  padding: .48rem .58rem;
   border: 1px solid rgba(35, 54, 43, .28);
   border-radius: 999px;
   background: rgba(250, 244, 231, .78);
   text-decoration: none;
   text-transform: none;
-  transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), border-color .35s ease, box-shadow .35s ease;
 }
 
 .home-v4 .studio-film__strategist-portrait {
@@ -1621,11 +1621,13 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
 }
 
 .home-v4 .studio-film__strategist-copy > span {
+  display: -webkit-box;
   overflow: hidden;
   color: #526458;
   font: 500 .61rem/1.25 var(--font-sans, sans-serif);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
 }
 
 .home-v4 .studio-film__strategist > svg {
@@ -1641,7 +1643,8 @@ html body .home-v4 #evidence .evidence-cinematic__index-copy em {
 .home-v4 .studio-film__strategist:is(:hover, :focus-visible) {
   border-color: var(--studio-film-accent);
   outline: none;
-  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 14px 38px rgba(35, 54, 43, .14);
+  transform: translate3d(0, -3px, 0);
 }
 
 .home-v4 .studio-film__strategist:is(:hover, :focus-visible) .studio-film__strategist-portrait img {

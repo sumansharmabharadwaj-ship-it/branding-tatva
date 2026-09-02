@@ -70,7 +70,7 @@ const HOME_JUMP_ITEMS = [
   { href: "#evidence", label: "Client proof" },
   { href: "#paths", label: "Choose a path" },
   { href: "#process", label: "Working method" },
-  { href: "#studio", label: "Psychology + literature" },
+  { href: "#studio", label: "Meet your strategist" },
   { href: "#decision", label: "Practical answers" },
   { href: "#invitation", label: "Begin" },
 ] as const;

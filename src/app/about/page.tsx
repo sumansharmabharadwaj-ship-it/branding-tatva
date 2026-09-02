@@ -25,7 +25,7 @@ const pageJsonLd = pageSchema({
   name: "Inside the Strategist | Suman Sharma",
   description:
     "The thinking behind Branding Tatva: brand strategy grounded in psychology and language.",
-  trail: [{ name: "The Strategist", path: "/about" }],
+  trail: [{ name: "Meet Your Strategist", path: "/about" }],
   mainEntity: PERSON_ID,
 });
 
