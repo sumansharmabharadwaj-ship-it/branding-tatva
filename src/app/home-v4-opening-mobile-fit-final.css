@@ -2,6 +2,37 @@
 /* Homepage opening · one-screen mobile composition                           */
 /* -------------------------------------------------------------------------- */
 
+/* The privacy choice stays available on every first visit. On desktop it
+   occupies the same lower-right corner as the strategist proof, so let that
+   proof lift into clear space while the choice is present. Compact screens
+   already repeat the direct-with-Suman promise in the opening topline; remove
+   the supporting card there instead of squeezing the two primary actions. */
+.home-v4 .home-v4-opening__proof {
+  transition:
+    bottom 560ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 420ms ease,
+    border-color 320ms ease,
+    background-color 320ms ease;
+}
+
+@media (min-width: 1121px) {
+  html[data-consent-banner="visible"] .home-v4 .home-v4-opening__proof {
+    bottom: clamp(4.5rem, 8svh, 5.25rem);
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1120px) {
+  html[data-consent-banner="visible"] .home-v4 .home-v4-opening__proof {
+    bottom: calc(3.2rem + clamp(4.5rem, 8svh, 5.25rem));
+  }
+}
+
+@media (max-width: 820px) {
+  html[data-consent-banner="visible"] .home-v4 .home-v4-opening__proof {
+    display: none;
+  }
+}
+
 /* The opening already has the right hierarchy and cinematic backdrop. On a
    phone, stacking both actions and the full engagement note made the scene
    1.26 viewports tall, so the first scroll only revealed the remainder of the
