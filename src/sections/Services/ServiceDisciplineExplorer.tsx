@@ -23,8 +23,36 @@ import {
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const USER_HOLD_MS = 14000;
+const HOVER_INTENT_MS = 180;
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const DEFAULT_DISCIPLINE_ORDER = offerings.map((_, index) => index);
+const PANEL_VARIANTS = {
+  enter: (direction: number) => ({
+    opacity: 0.64,
+    x: direction * 20,
+    clipPath:
+      direction > 0
+        ? "inset(3% 18% 3% 0 round 1.15rem)"
+        : "inset(3% 0 3% 18% round 1.15rem)",
+    filter: "blur(2px)",
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+    clipPath: "inset(0 0 0 0 round 0rem)",
+    filter: "blur(0px)",
+  },
+  exit: (direction: number) => ({
+    opacity: 0.34,
+    x: direction * -14,
+    clipPath:
+      direction > 0
+        ? "inset(3% 0 3% 18% round 1.15rem)"
+        : "inset(3% 18% 3% 0 round 1.15rem)",
+    filter: "blur(2px)",
+  }),
+  reducedExit: { opacity: 0 },
+};
 
 // A situation changes sequencing, not scope. Every route can still inspect all
 // six disciplines, while the work most consequential at that stage appears
@@ -66,6 +94,8 @@ export function ServiceDisciplineExplorer() {
   const railViewportRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const userHoldUntilRef = useRef(0);
+  const hoverIntentRef = useRef<number | null>(null);
+  const previousPositionRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [situation, setSituation] = useState<ServicesSituationId | null>(null);
   const [routeReady, setRouteReady] = useState(false);
@@ -75,6 +105,19 @@ export function ServiceDisciplineExplorer() {
   const routePlan = situation ? ROUTE_PLANS[situation] : null;
   const disciplineOrder = routePlan?.order ?? DEFAULT_DISCIPLINE_ORDER;
   const activePosition = Math.max(0, disciplineOrder.indexOf(activeIndex));
+  const panelDirection = activePosition >= previousPositionRef.current ? 1 : -1;
+
+  useEffect(() => {
+    previousPositionRef.current = activePosition;
+  }, [activePosition]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverIntentRef.current !== null) {
+        window.clearTimeout(hoverIntentRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     function applySituation(nextSituation: ServicesSituationId | null) {
@@ -146,7 +189,14 @@ export function ServiceDisciplineExplorer() {
     };
   }, [disciplineOrder, prefersReducedMotion, routeReady]);
 
+  function clearHoverIntent() {
+    if (hoverIntentRef.current === null) return;
+    window.clearTimeout(hoverIntentRef.current);
+    hoverIntentRef.current = null;
+  }
+
   function activate(index: number, source: "hover" | "focus" | "click") {
+    clearHoverIntent();
     userHoldUntilRef.current = Date.now() + USER_HOLD_MS;
     if (index === activeIndex) return;
     setActiveIndex(index);
@@ -159,9 +209,12 @@ export function ServiceDisciplineExplorer() {
 
   function handlePointerEnter(index: number, event: PointerEvent<HTMLButtonElement>) {
     // Touch browsers can retain a synthetic hover state after a tap.
-    // Only a real fine-pointer hover previews; touch remains click-led.
+    // Only a deliberate fine-pointer hover previews; touch remains click-led.
     if (event.pointerType === "mouse" || event.pointerType === "pen") {
-      activate(index, "hover");
+      clearHoverIntent();
+      hoverIntentRef.current = window.setTimeout(() => {
+        activate(index, "hover");
+      }, HOVER_INTENT_MS);
     }
   }
 
@@ -249,9 +302,10 @@ export function ServiceDisciplineExplorer() {
                         type="button"
                         role="tab"
                         aria-selected={isActive}
-                        aria-controls="service-discipline-panel"
+                        aria-controls={`service-discipline-panel-${offeringIndex}`}
                         tabIndex={isActive ? 0 : -1}
                         onPointerEnter={(event) => handlePointerEnter(offeringIndex, event)}
+                        onPointerLeave={clearHoverIntent}
                         onFocus={() => activate(offeringIndex, "focus")}
                         onClick={() => activate(offeringIndex, "click")}
                         onKeyDown={(event) => handleTabKey(offeringIndex, event)}
@@ -302,31 +356,34 @@ export function ServiceDisciplineExplorer() {
                 data-service-discipline-panel-shell="true"
                 className="relative mt-4 min-h-[22rem] overflow-hidden rounded-3xl border border-ivory/14 bg-[rgba(10,16,16,0.58)] p-6 backdrop-blur-lg sm:p-8 lg:min-h-[24rem]"
               >
-                <div
+                <motion.div
                   aria-hidden="true"
                   className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full blur-3xl"
-                  style={{ backgroundColor: `${active.color}28` }}
+                  animate={{ backgroundColor: `${active.color}28`, scale: [0.96, 1.04, 1] }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.72, ease: EASE }}
                 />
-                <div aria-hidden="true" className="absolute inset-x-6 top-0 h-px sm:inset-x-8" style={{ backgroundColor: active.color }} />
+                <motion.div
+                  key={`discipline-thread-${active.name}`}
+                  aria-hidden="true"
+                  className="absolute inset-x-6 top-0 h-px origin-left sm:inset-x-8"
+                  style={{ backgroundColor: active.color }}
+                  initial={prefersReducedMotion ? false : { opacity: 0.32, scaleX: 0.08 }}
+                  animate={{ opacity: 1, scaleX: 1 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.56, ease: EASE }}
+                />
 
-                <AnimatePresence mode="popLayout" initial={false}>
+                <AnimatePresence mode="popLayout" initial={false} custom={panelDirection}>
                   <motion.div
                     key={active.name}
-                    id="service-discipline-panel"
+                    custom={panelDirection}
+                    id={`service-discipline-panel-${activeIndex}`}
                     role="tabpanel"
                     aria-labelledby={`service-discipline-tab-${activeIndex}`}
-                    initial={
-                      prefersReducedMotion
-                        ? { opacity: 1 }
-                        : { opacity: 0.72, clipPath: "inset(4% 24% 4% 0 round 1.25rem)", filter: "blur(2.5px)" }
-                    }
-                    animate={{ opacity: 1, clipPath: "inset(0 0% 0 0 round 0rem)", filter: "blur(0px)" }}
-                    exit={
-                      prefersReducedMotion
-                        ? { opacity: 0 }
-                        : { opacity: 0.55, clipPath: "inset(4% 0 4% 24% round 1.25rem)", filter: "blur(2.5px)" }
-                    }
-                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.36, ease: EASE }}
+                    variants={PANEL_VARIANTS}
+                    initial={prefersReducedMotion ? false : "enter"}
+                    animate="center"
+                    exit={prefersReducedMotion ? "reducedExit" : "exit"}
+                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.34, ease: EASE }}
                     className="relative flex min-h-[18rem] flex-col justify-between lg:min-h-[20rem]"
                   >
                     <div data-discipline-panel-copy="true">
