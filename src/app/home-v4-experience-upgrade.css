@@ -67,7 +67,6 @@
       calc(var(--home-media-y, 0px) + var(--home-pointer-y) + var(--home-velocity-y)),
       0
     ) scale(1.025);
-    transform-origin: center;
     will-change: transform;
   }
 
@@ -110,17 +109,17 @@
 
 /* Selected work carries the strongest proof burden. Give its small evidence
    labels enough size and contrast to read at a glance without adding copy. */
-.home-v4 #evidence .evidence-cinematic__trail-grid dt,
-.home-v4 #evidence .evidence-cinematic__trail-grid span,
-.home-v4 #evidence .evidence-cinematic__trail-grid p {
+.home-v4 #evidence .evidence-cinematic__trail-grid {
   text-shadow: 0 1px 14px rgba(246, 241, 230, 0.34);
 }
 
-.home-v4 #evidence .evidence-cinematic__actions :is(button, a),
-.home-v4 #paths .paths-film__choices button,
-.home-v4 #process .decision-flow__rail button,
-.home-v4 #studio .studio-film__chapters button,
-.home-v4 #decision .questions-editorial__choices button {
+.home-v4 :is(
+  #evidence .evidence-cinematic__actions :is(button, a),
+  #paths .paths-film__choices button,
+  #process .decision-flow__rail button,
+  #studio .studio-film__chapters button,
+  #decision .questions-editorial__choices button
+) {
   min-height: 3rem;
 }
 
@@ -134,8 +133,7 @@
       box-shadow 420ms ease;
   }
 
-  .home-v4 [role="tab"]:hover,
-  .home-v4 [role="tab"]:focus-visible {
+  .home-v4 [role="tab"]:is(:hover, :focus-visible) {
     transform: translateY(-2px);
   }
 }
@@ -146,11 +144,13 @@
     align-items: center;
   }
 
-  .home-v4 #evidence .evidence-cinematic__actions :is(button, a),
-  .home-v4 #paths .paths-film__choices button,
-  .home-v4 #process .decision-flow__rail button,
-  .home-v4 #studio .studio-film__chapters button,
-  .home-v4 #decision .questions-editorial__choices button {
+  .home-v4 :is(
+    #evidence .evidence-cinematic__actions :is(button, a),
+    #paths .paths-film__choices button,
+    #process .decision-flow__rail button,
+    #studio .studio-film__chapters button,
+    #decision .questions-editorial__choices button
+  ) {
     min-height: 3.25rem;
   }
 }
