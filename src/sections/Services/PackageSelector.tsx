@@ -224,7 +224,7 @@ export function PackageSelector() {
               transition={transition}
               className="mx-auto mt-5 max-w-xl text-xs font-medium uppercase tracking-[0.15em] text-sandstone/80"
             >
-              Closest fit: {activePackage.name}
+              Previewing: {activePackage.name}
             </motion.p>
           )}
         </AnimatePresence>
