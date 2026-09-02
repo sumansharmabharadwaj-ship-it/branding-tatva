@@ -52,8 +52,8 @@ async function waitForPathname(page, pathname, timeout = 15_000) {
 }
 
 async function clickRoute(page, pathname) {
-  const routeLink = page.locator(`a[href="${pathname}"]:visible`).first();
-  await routeLink.waitFor({ state: "visible", timeout: 8_000 });
+  const routeLink = page.locator(`a[href="${pathname}"]`).first();
+  await routeLink.waitFor({ state: "attached", timeout: 8_000 });
 
   // Next's client router changes location without a document load. Playwright's
   // waitForURL waits for the load state by default and can therefore time out

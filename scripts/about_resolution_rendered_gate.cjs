@@ -71,6 +71,46 @@ async function readChapterHeadingClearance(page, id) {
   }, id);
 }
 
+async function waitForChapterHeadingClearance(page, id, timeout = 3_000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    const geometry = await readChapterHeadingClearance(page, id);
+    if (geometry && geometry.headingTop >= geometry.headerClearance - 1) return;
+    await page.waitForTimeout(50);
+  }
+  throw new Error(`${id}: heading did not clear the fixed header`);
+}
+
+async function waitForMobileChapterLabel(page, expectedLabel, timeout = 3_000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    const ready = await page.evaluate((label) => {
+      const controls = document.querySelector("[data-about-mobile-chapter-controls]");
+      if (!controls || getComputedStyle(controls).display === "none") return true;
+      const summary = controls.querySelector('button[aria-controls="about-mobile-chapter-list"]');
+      return summary?.getAttribute("aria-label")?.includes(label) ?? false;
+    }, expectedLabel);
+    if (ready) return;
+    await page.waitForTimeout(50);
+  }
+  throw new Error(`Mobile chapter controls did not reach ${expectedLabel}`);
+}
+
+async function waitForFounderRecordReveal(page, timeout = 3_000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    const revealed = await page.evaluate(() => {
+      const record = document.querySelector('[data-record-stage="4"]');
+      if (!record) return false;
+      const values = (getComputedStyle(record).clipPath.match(/-?\d*\.?\d+/g) || []).map(Number);
+      return values.length > 0 && values.every((value) => Math.abs(value) < 0.5);
+    });
+    if (revealed) return;
+    await page.waitForTimeout(50);
+  }
+  throw new Error("Final founder-led record did not finish revealing");
+}
+
 async function auditViewport(browser, viewport) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -123,12 +163,7 @@ async function auditViewport(browser, viewport) {
       assert((await founderTabs.count()) === 4, `${viewport.name}: founder-led record does not expose four decisions`);
       await founderTabs.first().click();
       await founderTabs.first().press("End");
-      await page.waitForFunction(() => {
-        const record = document.querySelector('[data-record-stage="4"]');
-        if (!record) return false;
-        const values = (getComputedStyle(record).clipPath.match(/-?\d*\.?\d+/g) || []).map(Number);
-        return values.length > 0 && values.every((value) => Math.abs(value) < 0.5);
-      }, undefined, { timeout: 3_000 });
+      await waitForFounderRecordReveal(page);
       const finalFounderState = await founderScene.evaluate((root) => ({
         focusId: document.activeElement?.id,
         selected: Array.from(root.querySelectorAll('[role="tablist"] [role="tab"]')).map((tab) => tab.getAttribute("aria-selected")),
@@ -316,15 +351,7 @@ async function auditViewport(browser, viewport) {
 
         await chooser.click();
         await page.locator('#about-mobile-chapter-list a[href="#about-philosophy"]').click();
-        await page.waitForFunction(() => {
-          const heading = document.querySelector("#about-philosophy h2");
-          const header = document.querySelector("[data-site-header]");
-          const headerBar = header?.querySelector(".site-header__bar");
-          if (!heading || !header || !headerBar) return false;
-          const headerPadding = Number.parseFloat(getComputedStyle(header).paddingTop) || 0;
-          const headerClearance = headerPadding + headerBar.getBoundingClientRect().height;
-          return heading.getBoundingClientRect().top >= headerClearance - 1;
-        }, undefined, { timeout: 3_000 });
+        await waitForChapterHeadingClearance(page, "about-philosophy");
         const chooserAnchorAlignment = await readChapterHeadingClearance(page, "about-philosophy");
         assert(chooserAnchorAlignment, `${viewport.name}: about-philosophy has no measurable heading geometry`);
         assert(
@@ -344,21 +371,8 @@ async function auditViewport(browser, viewport) {
     await page.locator("#about-resolution").evaluate((node) => {
       node.scrollIntoView({ behavior: "instant", block: "start" });
     });
-    await page.waitForFunction(() => {
-      const heading = document.querySelector("#about-resolution h2");
-      const header = document.querySelector("[data-site-header]");
-      const headerBar = header?.querySelector(".site-header__bar");
-      if (!heading || !header || !headerBar) return false;
-      const headerPadding = Number.parseFloat(getComputedStyle(header).paddingTop) || 0;
-      const headerClearance = headerPadding + headerBar.getBoundingClientRect().height;
-      return heading.getBoundingClientRect().top >= headerClearance - 1;
-    }, undefined, { timeout: 3_000 });
-    await page.waitForFunction(() => {
-      const controls = document.querySelector("[data-about-mobile-chapter-controls]");
-      if (!controls || getComputedStyle(controls).display === "none") return true;
-      const summary = controls.querySelector('button[aria-controls="about-mobile-chapter-list"]');
-      return summary?.getAttribute("aria-label")?.includes("The next move");
-    }, undefined, { timeout: 3_000 });
+    await waitForChapterHeadingClearance(page, "about-resolution");
+    await waitForMobileChapterLabel(page, "The next move");
     await page.screenshot({ path: path.join(OUTPUT_DIR, `${viewport.name}.png`) });
     return {
       viewport: viewport.name,
