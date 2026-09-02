@@ -42,12 +42,20 @@ export function HomePacingDirector() {
     let pointerY = 0;
     const cinematicMotion = window.matchMedia(CINEMATIC_MOTION_QUERY);
 
+    function publishPageProgress() {
+      if (!homeRoot) return;
+      const viewport = Math.max(1, window.innerHeight);
+      const scrollRange = Math.max(1, document.documentElement.scrollHeight - viewport);
+      const pageProgress = clamp(window.scrollY / scrollRange).toFixed(5);
+      homeRoot.style.setProperty("--home-page-progress", pageProgress);
+      document.documentElement.style.setProperty("--home-page-progress", pageProgress);
+    }
+
     function clearCinematicMotion(preserveDirection = false) {
       if (!homeRoot) return;
       delete homeRoot.dataset.homeMotion;
       if (!preserveDirection) delete homeRoot.dataset.homeScrollDirection;
       [
-        "--home-page-progress",
         "--home-pointer-x",
         "--home-pointer-y",
         "--home-scroll-velocity",
@@ -65,6 +73,7 @@ export function HomePacingDirector() {
 
     function renderCinematicMotion(now: number) {
       motionFrame = 0;
+      publishPageProgress();
       if (!homeRoot || prefersReducedMotion) {
         clearCinematicMotion();
         return;
@@ -95,11 +104,6 @@ export function HomePacingDirector() {
       smoothedVelocity += (rawVelocity - smoothedVelocity) * 0.22;
 
       homeRoot.dataset.homeMotion = "live";
-      const scrollRange = Math.max(1, document.documentElement.scrollHeight - viewport);
-      homeRoot.style.setProperty(
-        "--home-page-progress",
-        clamp(currentScrollY / scrollRange).toFixed(5),
-      );
       homeRoot.style.setProperty("--home-pointer-x", `${(pointerX * 5.5).toFixed(2)}px`);
       homeRoot.style.setProperty("--home-pointer-y", `${(pointerY * 3.5).toFixed(2)}px`);
       homeRoot.style.setProperty("--home-scroll-velocity", smoothedVelocity.toFixed(4));
@@ -341,6 +345,8 @@ export function HomePacingDirector() {
       document.documentElement.removeEventListener("pointerleave", releasePointer);
       cinematicMotion.removeEventListener("change", scheduleCinematicMotion);
       clearCinematicMotion();
+      homeRoot?.style.removeProperty("--home-page-progress");
+      document.documentElement.style.removeProperty("--home-page-progress");
       if (qaProbeTimer !== null) window.clearTimeout(qaProbeTimer);
       visibilityTimers.forEach((timer) => window.clearTimeout(timer));
       visibilityTimers.clear();

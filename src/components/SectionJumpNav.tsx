@@ -48,6 +48,10 @@ type SectionJumpNavProps = {
   // A long conversion journey can turn the compact mobile control into a
   // progress cue and keep the active destination visible when the list opens.
   guidedMobile?: boolean;
+  // Cinematic routes can feed their existing frame-bounded page progress into
+  // the desktop rail. Active chapter dots remain discrete, while the thread
+  // between them follows the visitor continuously instead of jumping.
+  continuousProgress?: boolean;
 };
 
 const SERVICES_CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
@@ -73,6 +77,7 @@ export function SectionJumpNav({
   tone = "dark",
   showActiveLabel = true,
   guidedMobile = false,
+  continuousProgress = false,
 }: SectionJumpNavProps) {
   const pathname = usePathname();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
@@ -710,6 +715,7 @@ export function SectionJumpNav({
         <nav
           aria-label="Jump to section"
           data-section-jump-nav-desktop-mode="rail"
+          data-section-jump-progress-mode={continuousProgress ? "continuous" : "chapters"}
           data-section-jump-tone={tone}
           data-section-jump-desktop-yielding={guidedMobile && mobileYielding ? "true" : "false"}
           className="fixed right-[calc(0.75rem+env(safe-area-inset-right))] top-1/2 z-30 hidden -translate-y-1/2 lg:block"
@@ -735,8 +741,16 @@ export function SectionJumpNav({
                 className={`absolute bottom-2 left-1/2 top-2 w-px -translate-x-1/2 overflow-hidden ${lightTone ? "bg-soil/12" : "bg-ivory/10"}`}
               >
                 <span
-                  className={`block w-full transition-[height] duration-500 ease-out ${lightTone ? "bg-terracotta" : "bg-sandstone"}`}
-                  style={{ height: `${progress}%` }}
+                  className={`block w-full ${
+                    continuousProgress
+                      ? "will-change-[height]"
+                      : "transition-[height] duration-500 ease-out"
+                  } ${lightTone ? "bg-terracotta" : "bg-sandstone"}`}
+                  style={{
+                    height: continuousProgress
+                      ? `calc(var(--home-page-progress, ${progress / 100}) * 100%)`
+                      : `${progress}%`,
+                  }}
                 />
               </span>
               <ol className="relative flex flex-col items-center gap-0.5">

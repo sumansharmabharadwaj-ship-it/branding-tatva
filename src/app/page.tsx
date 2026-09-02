@@ -89,6 +89,7 @@ export default function Home() {
         desktopMode="rail"
         tone="light"
         guidedMobile
+        continuousProgress
       />
       <Footer />
       <script

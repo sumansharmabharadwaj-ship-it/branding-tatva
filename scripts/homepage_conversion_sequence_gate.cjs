@@ -67,6 +67,7 @@ for (const marker of [
   'desktopMode="rail"',
   'tone="light"',
   "guidedMobile",
+  "continuousProgress",
   'home-v4-experience-upgrade.css',
   'home-v4-scene-rhythm.css',
 ]) {
@@ -116,6 +117,8 @@ for (const marker of [
   "Continue to chapter",
   "scrollIntoView",
   "showActiveLabel",
+  "data-section-jump-progress-mode",
+  "var(--home-page-progress",
 ]) {
   assert(jumpNavSource.includes(marker), `Homepage wayfinding interaction is missing ${marker}.`);
 }
