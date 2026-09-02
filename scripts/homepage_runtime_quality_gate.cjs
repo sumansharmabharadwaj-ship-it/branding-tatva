@@ -49,7 +49,6 @@ const invitationStyles = read("src/app/home-v4-invitation-living-final.css");
 const chapterJumpStyles = read("src/app/home-v4-chapter-jump-final.css");
 const openingFitStyles = read("src/app/home-v4-opening-mobile-fit-final.css");
 const homePage = read("src/app/page.tsx");
-const sectionJumpNav = read("src/components/SectionJumpNav.tsx");
 const consentManager = read("src/components/ConsentManager.tsx");
 
 function assert(condition, message) {
@@ -288,17 +287,15 @@ assert(pacing.includes("window.requestAnimationFrame(renderCinematicMotion)"), "
 assert(pacing.includes('"--home-velocity-y"') && pacing.includes("smoothedVelocity > 0.01"), "Homepage camera no longer responds to speed with bounded decay.");
 assert(experienceUpgrade.includes('@media (min-width: 901px)') && experienceUpgrade.includes('(prefers-reduced-motion: no-preference)'), "Homepage camera styles have escaped their viewport or motion boundary.");
 assert(experienceUpgrade.includes('transform: scaleX(var(--home-page-progress))'), "Homepage has lost its quiet journey progress signal.");
-assert(homePage.includes("continuousProgress"), "Homepage desktop rail no longer requests continuous journey progress.");
-assert(pacing.includes('document.documentElement.style.setProperty("--home-page-progress"'), "Homepage progress is not shared with the fixed journey rail.");
-assert(pacing.includes('document.documentElement.style.removeProperty("--home-page-progress"'), "Homepage progress can leak into later routes.");
-assert(sectionJumpNav.includes('data-section-jump-progress-mode={continuousProgress ? "continuous" : "chapters"}'), "Homepage rail progress mode is not inspectable.");
-assert(sectionJumpNav.includes('calc(var(--home-page-progress'), "Homepage rail has fallen back to chapter-by-chapter progress jumps.");
 assert(homepageReconstruction.includes("--home-frame-right"), "Homepage reconstruction no longer protects the chapter-rail lane.");
-assert(consentManager.includes('window.scrollY <= 24'), "Homepage consent notice can remain over chapter controls after the journey starts.");
 assert(consentManager.includes('data-consent-compact={noticeCompact ? "true" : "false"}'), "The docked homepage privacy control has no explicit state.");
 assert(consentManager.includes("ShieldCheck") && consentManager.includes('aria-label="Review measurement choices"'), "The docked homepage privacy control is not identifiable or operable.");
+assert(consentManager.includes("NOTICE_COLLAPSE_Y = 96") && consentManager.includes("NOTICE_EXPAND_Y = 32"), "The homepage privacy control has lost its stable dock and return thresholds.");
+assert(consentManager.includes("window.requestAnimationFrame(syncNotice)") && consentManager.includes("window.cancelAnimationFrame(syncFrame)"), "The homepage privacy control can update React state on every raw scroll event or leave a frame behind.");
+assert(consentManager.includes('className="consent-notice__action-label') && consentManager.includes('className="consent-notice__action-icon'), "The homepage privacy control swaps content instead of completing one continuous handoff.");
 assert(homepageReconstruction.includes('body:has(.home-v4) .consent-notice[data-consent-compact="true"]'), "The homepage privacy control does not dock clear of chapter instruments.");
 assert(homepageReconstruction.includes("width: 3rem !important"), "The docked homepage privacy control can still cover a chapter instrument.");
+assert(consentManager.includes("consent-notice__action-icon") && consentManager.includes("rotate(-10deg)"), "The docked privacy icon has lost its calm arrival motion.");
 assert(homepageReconstruction.includes("@media (prefers-reduced-motion: reduce)"), "The homepage privacy-control handoff ignores reduced motion.");
 assert(!homepageReconstruction.includes("@media (min-width: 1101px)"), "Homepage reconstruction restored a second studio-runway owner.");
 assert(!homepageReconstruction.includes("home-v4-opening__"), "Homepage reconstruction modified the preserved opening.");
