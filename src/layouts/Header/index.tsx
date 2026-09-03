@@ -12,7 +12,7 @@ import { useLenis } from "@/components/SmoothScrollProvider";
 import { useCurrentElement } from "@/lib/currentElement";
 import { navigation } from "@/data/site";
 import type { HeaderProps } from "./types";
-import { SCROLLED_THRESHOLD, HIDE_REVEAL_DELTA, HIDE_REVEAL_MIN_SCROLL } from "./constants";
+import { SCROLLED_THRESHOLD } from "./constants";
 import {
   ICON_TRANSITION,
   BACKDROP_TRANSITION,
@@ -29,19 +29,14 @@ import {
   barVariants,
 } from "./animations";
 
-// A compact, floating pill instead of a full-width bar: the wordmark stays
-// the only permanent fixture (dead center, so it reads the same whether
-// the CTA or menu button is present), everything else — every nav link,
-// on every breakpoint — lives behind one hamburger toggle. Less chrome
-// competing with whatever hero sits underneath it. Hides on scroll-down
-// and reveals on scroll-up, so it gets out of the way while reading but
-// is always one upward flick away.
+// A compact, framed route bar instead of a full-width shell. Desktop keeps
+// the key routes and CTA visible; smaller screens collapse them into one
+// menu. The Parker reference keeps this primary route bar present through
+// every scene.
 
 export function Header({ transparent = false }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [barHidden, setBarHidden] = useState(false);
-  const lastScrollRef = useRef(0);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -52,17 +47,6 @@ export function Header({ transparent = false }: HeaderProps) {
   useEffect(() => {
     function handleScroll(current: number) {
       setScrolled(current > SCROLLED_THRESHOLD);
-
-      const last = lastScrollRef.current;
-      const delta = current - last;
-      if (Math.abs(delta) < HIDE_REVEAL_DELTA) return;
-
-      if (current < HIDE_REVEAL_MIN_SCROLL) {
-        setBarHidden(false);
-      } else {
-        setBarHidden(delta > 0);
-      }
-      lastScrollRef.current = current;
     }
 
     if (lenis) {
@@ -134,7 +118,6 @@ export function Header({ transparent = false }: HeaderProps) {
     setOpen(false);
   }, [pathname, transparent]);
 
-  const isBarHidden = barHidden && !open;
   const accent =
     pathname.startsWith("/services") ? "#8FAE83"
     : pathname.startsWith("/work") ? "#D4B99A"
@@ -149,11 +132,11 @@ export function Header({ transparent = false }: HeaderProps) {
       <motion.header
         data-site-header
         variants={barVariants}
-        animate={isBarHidden ? "hidden" : "visible"}
+        animate="visible"
         transition={prefersReducedMotion ? { duration: 0 } : BAR_TRANSITION}
         className="site-header fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
-        <div className="relative w-full max-w-4xl lg:max-w-5xl">
+        <div className="relative w-full max-w-[64rem]">
           <div
             className={`site-header__bar flex w-full items-center justify-between gap-4 rounded-full border border-soil/10 px-4 py-2.5 shadow-elevation-md backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3 ${
               scrolled ? "bg-[#f4efe6]/94" : "bg-[#f4efe6]/84"
@@ -176,11 +159,16 @@ export function Header({ transparent = false }: HeaderProps) {
                   laptop widths the CTA and always-available menu preserve
                   every route without compressing the wordmark or allowing
                   Brand Strategy & Systems to collide with its neighbours. */}
-              <nav aria-label="Primary" className="hidden items-center gap-7 2xl:flex">
+              <nav aria-label="Primary" className="site-header__desktop-nav hidden items-center gap-5">
                 {navigation
                   .filter((item) => item.href !== "/" && item.href !== "/contact")
                   .map((item) => {
                     const active = isActive(item.href);
+                    const label = item.href === "/about"
+                      ? "Strategist"
+                      : item.href === "/services"
+                        ? "Strategy"
+                        : item.label;
                     return (
                       <Link
                         key={item.href}
@@ -191,7 +179,7 @@ export function Header({ transparent = false }: HeaderProps) {
                         }`}
                         style={active ? { color: accent } : undefined}
                       >
-                        {item.label}
+                        {label}
                         {active && (
                           <span
                             aria-hidden="true"
@@ -203,11 +191,10 @@ export function Header({ transparent = false }: HeaderProps) {
                     );
                   })}
               </nav>
-              <span aria-hidden="true" className="hidden h-6 w-px bg-soil/20 2xl:block" />
+              <span aria-hidden="true" className="site-header__desktop-divider hidden h-6 w-px bg-soil/20" />
               <Link
                 href="/contact"
-                className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
-                style={{ borderColor: `${accent}c0`, color: accent }}
+                className="site-header__cta group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
               >
                 Talk with Suman
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">

@@ -188,6 +188,10 @@
 
 .mobileChapterControls { display: none; }
 
+/* The Parker reference keeps navigation in the header and lets each scroll
+   scene read without a second floating control system. */
+.chapterSpine { display: none; }
+
 @media (max-width: 940px), (pointer: coarse) {
   .livingThread,
   .cursorLight,

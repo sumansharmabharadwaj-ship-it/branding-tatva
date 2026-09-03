@@ -8,6 +8,7 @@ import "./visualizer.css";
 import "./sun-cursor.css";
 import "./august-8-refinement.css";
 import "./mobile-system.css";
+import "./parker-reference.css";
 import { AmbientAudio } from "@/components/AmbientAudio";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 import { ConsentManager } from "@/components/ConsentManager";

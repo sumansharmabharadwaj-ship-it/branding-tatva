@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   useEffect,
   useRef,
@@ -244,8 +245,25 @@ export function Convergence() {
               }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.78, ease: EASE }}
             >
-              <div className={styles.folioImage} aria-hidden="true">
-                <AboutSignalField3D mode="synthesis" stage={stage} pair={inspectedPair} />
+              <div className={styles.folioImage}>
+                <motion.div
+                  className={styles.folioImageInner}
+                  animate={{
+                    scale: stage === 1 ? 1.06 : 1,
+                    x: stage === 0 ? "-1.5%" : stage === 2 ? "1.5%" : "0%",
+                  }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.9, ease: EASE }}
+                >
+                  <Image
+                    src="/images/generated/bt-about-psychology-literature-v2.webp"
+                    alt="A hand bound folio linking observation, memory, language, and meaning"
+                    fill
+                    sizes="(max-width: 900px) 92vw, 34vw"
+                  />
+                </motion.div>
+                <div className={styles.folioSignalOverlay} aria-hidden="true">
+                  <AboutSignalField3D mode="synthesis" stage={stage} pair={inspectedPair} />
+                </div>
               </div>
               <figcaption className={styles.folioCopy}>
                 <span>{activeStage.number} / 03</span>
@@ -335,7 +353,7 @@ export function Convergence() {
           <div className={styles.mobileResolution}>
             <small>The hiring payoff</small>
             <strong>One position the whole brand can carry.</strong>
-            <p>Not two degrees on display. A sharper decision your team can use.</p>
+            <p>Two disciplines in one practice. A sharper decision your team can use.</p>
             <ul>{OUTPUTS.map((output) => <li key={output.label}>{output.label}</li>)}</ul>
             <Link href="/services#proof">See the thinking in a client record <ArrowRight size={14} aria-hidden="true" /></Link>
           </div>
