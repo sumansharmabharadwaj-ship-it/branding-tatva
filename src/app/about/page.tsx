@@ -89,16 +89,13 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section id="about-philosophy" className="relative overflow-clip bg-soil" data-about-chapter="philosophy" data-about-film-scene data-scene-tone="dark">
-          <div className="absolute inset-0" data-about-film-background>
-            <BackgroundVideo
-              video="/videos/generated/bt-about-point-view-three-stones.mp4"
-              poster="/images/generated/bt-about-psychology-literature-v2.webp"
-              parallax
-              playbackRate={0.84}
-            />
-          </div>
-          <div aria-hidden="true" className="absolute inset-0 bg-soil/80" />
+        <section
+          id="about-philosophy"
+          className="relative overflow-clip bg-soil"
+          data-about-chapter="philosophy"
+          data-about-film-scene
+          data-scene-tone="dark"
+        >
           <div className="relative" data-about-film-plane>
             <PointOfView />
           </div>

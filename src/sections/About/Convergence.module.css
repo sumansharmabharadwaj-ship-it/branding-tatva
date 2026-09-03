@@ -5,7 +5,7 @@
   position: relative;
   min-height: 100svh;
   overflow: clip;
-  background: #eee7db url("/images/generated/bt-services-deliverables-paperlight-poster.jpg") center / cover;
+  background: #eee7db;
   color: #2b2924;
 }
 
@@ -287,8 +287,8 @@
   position: relative;
   z-index: 2;
   display: grid;
-  width: clamp(11rem, 16vw, 14.6rem);
-  aspect-ratio: 0.78;
+  width: clamp(14.5rem, 20vw, 18.5rem);
+  aspect-ratio: 0.8;
   margin: 0;
   padding: 0.58rem;
   grid-template-rows: minmax(0, 1fr) auto;
@@ -315,14 +315,14 @@
 
 .folioImage img {
   object-fit: cover;
-  object-position: 26% center;
-  filter: saturate(0.76) sepia(0.08) contrast(0.94);
-  transform: scale(1.08);
+  object-position: 50% 28%;
+  filter: saturate(0.9) contrast(1.02);
+  transform: scale(1.04);
   transition: filter 760ms ease, object-position 900ms cubic-bezier(0.22, 1, 0.36, 1), transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.section[data-convergence-stage="02"] .folioImage img { object-position: 52% center; filter: saturate(0.94) contrast(0.98); transform: scale(1); }
-.section[data-convergence-stage="03"] .folioImage img { object-position: 76% center; transform: scale(1.12); }
+.section[data-convergence-stage="02"] .folioImage img { object-position: 50% 50%; filter: saturate(0.98) contrast(1.02); transform: scale(1); }
+.section[data-convergence-stage="03"] .folioImage img { object-position: 50% 72%; transform: scale(1.07); }
 
 .folioCopy { display: grid; min-height: 5.15rem; align-content: start; gap: 0.18rem; transform: translateZ(1.5rem); }
 .folioCopy > span { color: rgba(43, 41, 36, 0.48); font-size: 0.54rem; font-weight: 700; letter-spacing: 0.16em; }

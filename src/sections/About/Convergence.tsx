@@ -246,10 +246,10 @@ export function Convergence() {
             >
               <div className={styles.folioImage} aria-hidden="true">
                 <Image
-                  src="/images/generated/bt-about-psychology-literature-v2.webp"
+                  src="/images/generated/bt-about-synthesis-imprint-v3.webp"
                   alt=""
                   fill
-                  sizes="(min-width: 901px) 18vw, 0px"
+                  sizes="(min-width: 901px) 22vw, 0px"
                 />
               </div>
               <figcaption className={styles.folioCopy}>
