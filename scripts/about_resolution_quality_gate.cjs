@@ -91,8 +91,8 @@ assert(
 );
 assert(
   component.includes("key={activePath.slug}") &&
-    component.includes("href={servicesContactHref(activePath.slug)}"),
-  "The closing Contact link can retain a stale client-side destination after the route changes.",
+    component.includes('href="https://calendly.com/suman-brandingtatva/30min"'),
+  "The closing diagnosis action lost its stable direct-booking destination.",
 );
 assert(
   component.includes("data-about-resolution-actions") &&
