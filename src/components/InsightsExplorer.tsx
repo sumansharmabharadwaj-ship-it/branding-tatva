@@ -12,10 +12,8 @@ import {
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { ArrowLeft, ArrowRight, Search } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import {
-  InsightCard,
-  type InsightCardPost,
-} from "@/components/InsightCard";
+import type { InsightCardPost } from "@/components/InsightCard";
+import { InsightEditorialRow } from "@/components/InsightEditorialRow";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { InsightElement } from "@/data/insights";
 import { buildInsightEditorialVisuals } from "@/data/insightEditorialVisuals";
@@ -218,10 +216,7 @@ export function InsightsExplorer({
   posts,
   topics,
   sectionId = "insights-library",
-  eyebrow = "Essay library",
-  heading = "Find the article that sounds like your problem.",
-  description = "Search with the words already used in the room: price pressure, buyer hesitation, sameness, a weak value argument, or poor recall. The closest essays appear first.",
-  searchPlaceholder = "Try “price pressure” or “hard to explain”",
+  searchPlaceholder = "Search insights",
   video = "/videos/generated/insights-v2/page-insight-library.mp4",
   poster = "/images/generated/insights-v2/page-insight-library.webp",
 }: InsightsExplorerProps) {
@@ -595,7 +590,7 @@ export function InsightsExplorer({
   return (
     <section
       id={sectionId}
-      className="insights-library relative overflow-hidden bg-background-alt"
+      className="insights-library insights-library--editorial relative overflow-hidden bg-background-alt"
       data-thread-active={Boolean(carriedTopic)}
       style={{ "--library-thread": threadColor } as CSSProperties}
     >
@@ -638,19 +633,11 @@ export function InsightsExplorer({
         </span>
         <i />
       </div>
-      <div className="insights-library__camera relative mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-12">
+      <div className="insights-library__camera relative mx-auto w-full">
         <div className="insights-library__header">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
-              {eyebrow}
-            </p>
-            <h2 className="mt-3 max-w-xl font-display text-display-sm font-normal text-soil">
-              {heading}
-            </h2>
-          </div>
-          <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
-            {description}
-          </p>
+          <h2 className="insights-library__wordmark">
+            Branding Tatva <em>Insights</em>
+          </h2>
         </div>
 
         <div
@@ -750,11 +737,10 @@ export function InsightsExplorer({
                     : "border-border bg-transparent text-soil hover:border-soil/30"
                 }`}
               >
-                All themes
+                All topics
               </button>
               {topics.map((topic, index) => {
                 const active = topicSlug === topic.slug;
-                const color = ELEMENT_COLORS[topic.element];
 
                 return (
                   <button
@@ -765,12 +751,9 @@ export function InsightsExplorer({
                     type="button"
                     onClick={() => chooseTopic(topic)}
                     aria-pressed={active}
-                    className="min-h-11 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition"
-                    style={{
-                      borderColor: active ? color : "#D9CDBC",
-                      backgroundColor: active ? `${color}18` : "transparent",
-                      color: active ? color : "#27221E",
-                    }}
+                    className={`min-h-11 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                      active ? "is-active" : ""
+                    }`}
                   >
                     {topic.name}
                   </button>
@@ -857,7 +840,7 @@ export function InsightsExplorer({
                 key={`${topicSlug}-${activeFolio}-${visibleFolioKey}`}
                 ref={folioTrackRef}
                 custom={folio.direction}
-                className="insights-library__folios grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+                className="insights-library__folios"
                 onScroll={handleMobileCardScroll}
                 variants={FOLIO_TURN_VARIANTS}
                 initial={prefersReducedMotion ? false : "enter"}
@@ -880,17 +863,12 @@ export function InsightsExplorer({
                       "--folio-delay": `${index * 38}ms`,
                     } as CSSProperties}
                   >
-                    <InsightCard
+                    <InsightEditorialRow
                       post={post}
+                      visual={libraryVisuals.get(post.slug)!}
+                      rowNumber={firstPostIndex + index + 1}
                       onOpen={(openedPost) =>
                         carryArticleIntent(openedPost, index)
-                      }
-                      imageOverride={libraryVisuals.get(post.slug)}
-                      showReadingOutcome
-                      readingCue={
-                        firstPostIndex === 0 && index === 0
-                          ? topMatch?.label
-                          : undefined
                       }
                       tracking={{
                         source: "insights_library",

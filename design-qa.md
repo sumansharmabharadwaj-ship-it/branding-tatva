@@ -1784,3 +1784,41 @@ The scheduling dialog now opens at scroll position zero and keeps a sticky mobil
 ## Final result
 
 passed
+---
+
+# Insights editorial library — design QA
+
+- Source truth: `artifacts/insights-editorial-reference.png` (1586 × 992)
+- Implementation capture: `artifacts/insights-editorial-implementation.jpg` (1348 × 926)
+- Same-state comparison: `artifacts/insights-editorial-comparison.png`
+- Verified route: `/insights#insights-library-scene`
+- Browser and viewport: Chrome, 1348 × 926
+- Comparison state: All topics, empty search, no article hover or focus
+
+## Visual comparison
+
+The source was proportionally scaled to the implementation viewport width and padded at the bottom so both captures could be inspected together at the same 1348 × 926 canvas size. The final build preserves the approved composition: wordmark and search on one line, a quiet topic rail, a 34/66 text-to-diagram split, three editorial rows, thin rules, paper texture, short article promises, and the three exact approved diagrams.
+
+The existing site-owned scene navigator, privacy control, progress rule, and folio control remain visible around the library. They are outside the redesigned article surface and do not alter the approved row composition.
+
+## Interaction checks
+
+- Pointer: each diagram responds to pointer position with restrained perspective rotation and two article-specific depth planes.
+- Scroll: rows reveal once and the diagram plane shifts subtly with viewport position; there is no autonomous loop.
+- Keyboard: topic controls and article links receive visible focus; focused article rows activate the same depth hierarchy without moving the text plane.
+- Search: `testimonial` returns two relevant articles and updates the result announcement.
+- Topic filters: Positioning selects correctly and reports 3 visible essays from 10 results; All topics restores the first folio.
+- Reduced motion: CSS and runtime motion detection remove row reveals, depth transforms, and transition movement while keeping every card readable and clickable.
+- Console: no application-origin errors or warnings. Chrome extension metadata errors were observed and excluded as browser-extension noise.
+
+## Comparison history
+
+1. Initial browser pass exposed a cached background crop and an overly narrow text column. Rebuilt with the quiet paper crop and changed the row grid to 34/66.
+2. Second pass matched the horizontal geometry but left too much vertical padding in the copy column. Reduced copy padding so row height follows each approved diagram ratio.
+3. Final side-by-side comparison confirmed the approved information hierarchy, imagery, spacing, and typography at the verification viewport.
+
+## Remaining polish
+
+- P3: the site-owned scene and consent controls overlap the far-right edge at this viewport; the article text and primary diagram content remain unobstructed.
+
+final result: passed
