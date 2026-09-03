@@ -9,6 +9,7 @@ on:
       - august-8-isolated
     paths:
       - .github/workflows/about-route-memory-gate.yml
+      - scripts/about_resolution_quality_gate.cjs
       - scripts/about_resolution_rendered_gate.cjs
       - scripts/about_route_memory_gate.cjs
       - src/app/about/**
