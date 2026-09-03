@@ -9,23 +9,49 @@ const READY_ATTRIBUTE = "data-home-prelude-ready";
 export function HomeV4PreludeBridge() {
   useEffect(() => {
     const root = document.documentElement;
-    const veil = document.querySelector<HTMLElement>(VEIL_SELECTOR);
+    let readyFrame = 0;
+    let publishedState: boolean | null = null;
+    let observer: MutationObserver | null = null;
 
-    // The full-screen load veil used to be server-rendered, so a slow
-    // hydration could leave a visitor looking at an empty dark screen. The
-    // homepage now arrives immediately. Keep the ready signal for the media
-    // director and the restrained light sweep, without hiding readable copy.
-    root.removeAttribute(BRIDGE_ATTRIBUTE);
-    root.setAttribute(READY_ATTRIBUTE, "true");
-    window.dispatchEvent(new CustomEvent("bt:home-prelude-ready"));
+    root.setAttribute(BRIDGE_ATTRIBUTE, "active");
 
-    // Defensive compatibility for a cached layout that still contains the
-    // old veil during a client transition: it must never block interaction.
-    if (veil) {
-      veil.style.display = "none";
+    function setReady(ready: boolean) {
+      if (publishedState === ready) return;
+      publishedState = ready;
+      root.setAttribute(READY_ATTRIBUTE, ready ? "true" : "false");
+
+      if (ready) {
+        window.dispatchEvent(new CustomEvent("bt:home-prelude-ready"));
+        observer?.disconnect();
+      }
     }
 
+    function sync() {
+      const veil = document.querySelector<HTMLElement>(VEIL_SELECTOR);
+      const leaving = veil?.dataset.pageLoadState === "leaving";
+
+      if (!veil || leaving) {
+        window.cancelAnimationFrame(readyFrame);
+        readyFrame = window.requestAnimationFrame(() => setReady(true));
+      } else {
+        window.cancelAnimationFrame(readyFrame);
+        readyFrame = 0;
+        setReady(false);
+      }
+    }
+
+    sync();
+    observer = new MutationObserver(sync);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-page-load-state"],
+    });
+
     return () => {
+      observer?.disconnect();
+      window.cancelAnimationFrame(readyFrame);
       root.removeAttribute(BRIDGE_ATTRIBUTE);
       root.removeAttribute(READY_ATTRIBUTE);
     };

@@ -1,21 +1,28 @@
 "use client";
 
 import { useEffect } from "react";
+import { DustMotes } from "@/components/DustMotes";
 import { VideoBreak } from "@/components/VideoBreak";
+import { ElementsSection } from "@/sections/Elements";
 import { ProcessSection } from "@/sections/Process";
+import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
-import { HomeBrandHealthCheck } from "@/sections/Home/HomeBrandHealthCheck";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
-import { process as processStages } from "@/data/process";
+import { TatvaStrip } from "@/sections/Home/TatvaStrip";
+import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
+import { elements } from "@/data/elements";
+import { process as processStages } from "./homeSnapshotProcess";
 import { elementColor } from "@/lib/elementColor";
+import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
+import { GuidedView, LivingCursor, SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
-import { HomeV4SceneRhythm } from "./HomeV4SceneRhythm";
-import { V4HiddenCostScene, V4OpeningScene } from "./HomeV4Scenes";
+import { HomeV4ProcessTempo } from "./HomeV4ProcessTempo";
+import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
   useEffect(() => {
@@ -27,12 +34,57 @@ export function HomeV4Experience() {
     <div className="home-v4" data-home-v4>
       <HomeV4PreludeBridge />
       <HomeV4MediaDirector />
-      <HomeV4SceneRhythm />
-      <V4OpeningScene />
+      <HomeV4HeaderDirector />
+      <HomeV4ProcessTempo />
+      <LivingCursor />
+      <GuidedView />
 
-      <HomeBrandHealthCheck />
+      <V4OpeningScene />
+      <SceneHandoff motif="mist" />
+
+      <V4RecognitionScene />
+      <SceneHandoff motif="river" />
 
       <V4HiddenCostScene />
+      <SceneHandoff motif="root" />
+
+      <div
+        id="foundation"
+        data-home-v4-chapter="foundation"
+        data-home-chapter="foundation"
+        data-home-section="foundation"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--foundation"
+      >
+        <BrandFoundationScene />
+      </div>
+
+      <SceneHandoff motif="aperture" />
+
+      <div
+        data-home-v4-chapter="paths"
+        data-home-section="paths"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--paths"
+      >
+        <PathsCinematicChapter />
+      </div>
+
+      <SceneHandoff motif="light" />
+
+      <section
+        id="process"
+        data-home-v4-chapter="process"
+        data-home-chapter="process"
+        data-home-section="process"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--process"
+        aria-label="How the Branding Tatva method moves"
+      >
+        <ProcessSection stages={processStages} elementColor={elementColor} />
+      </section>
+
+      <SceneHandoff motif="paper" />
 
       <div
         id="evidence"
@@ -45,32 +97,26 @@ export function HomeV4Experience() {
         <EvidenceWall />
       </div>
 
-      <div
-        data-home-v4-chapter="paths"
-        data-home-chapter="paths"
-        data-home-section="paths"
-        data-cursor-world="light"
-        className="home-v4-chapter home-v4-chapter--paths"
-      >
-        <PathsCinematicChapter />
-      </div>
+      <SceneHandoff motif="constellation" />
 
       <section
-        id="process"
-        data-home-v4-chapter="process"
-        data-home-chapter="process"
-        data-home-section="process"
-        data-cursor-world="light"
-        className="home-v4-chapter home-v4-chapter--process"
-        aria-label="How the Branding Tatva method moves"
+        id="tatva"
+        data-home-v4-chapter="tatva"
+        data-home-chapter="tatva"
+        data-home-section="tatva"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--tatva"
+        aria-label="The five Tatvas as one operating system"
       >
-        <ProcessSection stages={processStages} elementColor={elementColor} />
+        <TatvaStrip />
+        <TatvaSystemLab />
+        <ElementsSection elements={elements} />
       </section>
 
+      <SceneHandoff motif="river" />
+
       <div
-        id="studio"
         data-home-v4-chapter="studio"
-        data-home-chapter="studio"
         data-home-section="studio"
         data-cursor-world="dark"
         className="home-v4-chapter home-v4-chapter--studio"
@@ -78,36 +124,42 @@ export function HomeV4Experience() {
         <StudioCinematicChapter />
       </div>
 
+      <SceneHandoff motif="mist" />
+
       <div
         id="decision"
         data-home-v4-chapter="decision"
         data-home-chapter="decision"
         data-home-section="decision"
-        data-cursor-world="light"
+        data-cursor-world="dark"
         className="home-v4-chapter home-v4-chapter--decision"
       >
         <HomeQuestionsScene />
       </div>
+
+      <SceneHandoff motif="light" />
 
       <section
         id="invitation"
         data-home-v4-chapter="invitation"
         data-home-chapter="invitation"
         data-home-section="invitation"
-        data-cursor-world="light"
+        data-cursor-world="dark"
         className="home-v4-chapter home-v4-chapter--invitation invitation-cinematic"
         aria-label="Begin a conversation with Branding Tatva"
       >
         <VideoBreak
           src="/videos/higgsfield-silver-tide.mp4"
           poster="/images/higgsfield-silver-tide-poster.jpg"
-          height="100svh"
-          imagePosition="52% 48%"
+          quote="Some things only become visible once everything else goes quiet."
+          height="auto"
+          imagePosition="50% 18%"
+          quoteVariant="statement"
           cameraPush
-          managedByHomepage
-          homePlaybackRate={0.84}
-          overlayGradient="linear-gradient(180deg, rgba(217,201,170,0.34) 0%, rgba(216,209,193,0.12) 18%, transparent 34%), linear-gradient(102deg, rgba(244,238,224,0.92) 0%, rgba(244,238,224,0.72) 42%, rgba(238,224,198,0.60) 70%, rgba(238,224,198,0.88) 100%)"
+          wordFade
+          overlayGradient="linear-gradient(180deg, rgba(16,20,24,0.36) 0%, rgba(16,20,24,0.12) 25%, rgba(16,20,24,0.28) 55%, rgba(17,20,23,0.96) 100%)"
         >
+          <DustMotes />
           <FinalInvitation />
         </VideoBreak>
       </section>

@@ -35,46 +35,8 @@
 }
 
 @media (max-width: 640px) {
-  .tatva-pressure-lab__controls {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(13rem, 78vw);
-    grid-template-columns: none;
-    gap: 0.65rem;
-    margin-inline: -1rem;
-    padding: 0.2rem 1rem 0.75rem;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scroll-snap-type: inline mandatory;
-    scrollbar-width: none;
-  }
-
-  .tatva-pressure-lab__controls::-webkit-scrollbar {
-    display: none;
-  }
-
-  .tatva-pressure-lab__controls .tatva-pressure-lab__force {
-    min-height: 4.75rem;
-    scroll-snap-align: center;
-  }
-
   .tatva-pressure-lab__diagram {
     overflow: hidden;
-  }
-
-  .tatva-pressure-lab__mechanism {
-    min-height: 17rem;
-    aspect-ratio: 1 / 0.82;
-  }
-
-  .tatva-pressure-lab__mechanism svg {
-    transform: scale(0.94);
-    transform-origin: center;
-  }
-
-  .tatva-pressure-lab__svg-layer,
-  .tatva-pressure-lab__svg-kicker {
-    font-size: 9px;
   }
 
   .tatva-pressure-lab__reading > p.font-display {

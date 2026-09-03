@@ -2,14 +2,11 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { LivingImage } from "@/components/LivingImage";
-import type { Project } from "@/data/projects";
+import type { Project } from "@/sections/HomeV4/homeSnapshotProjects";
 import { useLenis } from "@/components/SmoothScrollProvider";
-import { usesLivingStill } from "@/lib/mediaMode";
 
 // Suman's board: "Click — the whole homepage freezes. The card opens
 // full screen. The page becomes the project." The file opens as a
@@ -24,67 +21,39 @@ import { usesLivingStill } from "@/lib/mediaMode";
 export function ProjectFile({ project, onClose }: { project: Project | null; onClose: () => void }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
-  const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (!project) return;
-    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const previousOverflow = document.documentElement.style.overflow;
     lenis?.stop();
     document.documentElement.style.overflow = "hidden";
-    const focusFrame = window.requestAnimationFrame(() => closeRef.current?.focus());
-
+    closeRef.current?.focus();
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        onClose();
-        return;
-      }
-
-      if (e.key !== "Tab") return;
-      const focusable = Array.from(
-        dialogRef.current?.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ) ?? [],
-      ).filter((element) => element.getClientRects().length > 0);
-
-      if (!focusable.length) {
-        e.preventDefault();
-        closeRef.current?.focus();
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
+      if (e.key === "Escape") onClose();
     }
-
     window.addEventListener("keydown", onKey);
     return () => {
-      window.cancelAnimationFrame(focusFrame);
       lenis?.start();
-      document.documentElement.style.overflow = previousOverflow;
+      document.documentElement.style.overflow = "";
       window.removeEventListener("keydown", onKey);
     };
   }, [project, lenis, onClose]);
 
+  // The bare autoplay attribute is unreliable on this site — every
+  // video plays explicitly (see CLAUDE.md).
+  useEffect(() => {
+    if (!project || prefersReducedMotion) return;
+    videoRef.current?.play().catch(() => {});
+  });
+
   const video = project?.heroVideo ?? project?.cardVideo;
   const poster = project?.heroPoster ?? project?.cardImage;
-  const livingStill = usesLivingStill(video);
 
   return (
-    <AnimatePresence onExitComplete={() => previousFocusRef.current?.focus()}>
+    <AnimatePresence>
       {project && (
         <motion.div
-          ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-label={`${project.title}, project file`}
@@ -97,39 +66,23 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
         >
           {/* The room: the project's own footage, accent tinted. */}
           <div className="pointer-events-none fixed inset-0" aria-hidden="true">
-            {video && !prefersReducedMotion && !livingStill ? (
+            {video && !prefersReducedMotion ? (
               <video
+                ref={videoRef}
                 className="h-full w-full object-cover"
                 src={video}
                 poster={poster}
                 muted
                 loop
                 playsInline
-                aria-hidden="true"
-                preload="none"
-                data-home-media-priority="10"
-                data-home-playback-rate="0.86"
+                preload="metadata"
               />
-            ) : poster ? (
-              livingStill && !prefersReducedMotion ? (
-                <LivingImage
-                  src={poster}
-                  sizes="100vw"
-                  imagePosition={project.cardImagePosition ?? "center"}
-                  intensity="hero"
-                  className="absolute inset-0"
-                />
-              ) : (
-                <Image
-                  src={poster}
-                  alt=""
-                  fill
-                  sizes="100vw"
-                  className="object-cover"
-                  style={{ objectPosition: project.cardImagePosition ?? "center" }}
-                />
+            ) : (
+              poster && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={poster} alt="" className="h-full w-full object-cover" />
               )
-            ) : null}
+            )}
             <div className="absolute inset-0" style={{ backgroundColor: `${project.accent}26` }} />
             <div
               className="absolute inset-0"

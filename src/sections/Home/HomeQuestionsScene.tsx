@@ -1,594 +1,393 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import Link from "next/link";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { AuditInvite } from "@/components/AuditInvite";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { faqs } from "@/data/faqs";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import {
-  SERVICES_SITUATION_CLEARED_EVENT,
-  SERVICES_SITUATION_EVENT,
-  SERVICES_SITUATION_STORAGE_KEY,
-  isServicesSituation,
-  readCompletedHomeDiagnosis,
-  type ServicesSituationDetail,
-  type ServicesSituationId,
-} from "@/lib/servicesJourney";
-import { track } from "@/lib/analytics";
-import {
-  HOME_METHOD_DECISION_EVENT,
-  type HomeMethodDecisionDetail,
-} from "@/lib/homeMethodJourney";
-import {
-  publishHomeQuestionChoice,
-  type HomeQuestionChoice,
-} from "@/lib/homeQuestionJourney";
-import {
-  clearHomeStudioLens,
-  HOME_STUDIO_LENS_EVENT,
-  HOME_STUDIO_LENSES,
-  publishHomeStudioLens,
-  readHomeStudioLens,
-  type HomeStudioLens,
-  type HomeStudioLensDetail,
-  type HomeStudioLensName,
-} from "@/lib/homeStudioJourney";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown, ArrowRight } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
-const QUESTIONS = [
+const QUESTION_ORDER = [
+  "Can you help a brand new business?",
+  "Can you help an existing brand that already has an identity?",
+  "Can you actually implement, or just strategize?",
+  "How long does a project take?",
+  "Can we work remotely?",
+] as const;
+
+const DECISION_META = [
   {
-    id: "new-brand",
-    label: "New",
-    question: "Can you help a brand new business?",
-    signalLabel: "What comes first",
-    signal: "Decide the category, buyer, and reason to choose before identity or launch work begins.",
+    signal: "Scope",
+    title: "Begin before assumptions become assets.",
+    outcome: "Discovery → positioning → audience",
+    color: "#D4B99A",
+    x: 50,
+    y: 11,
   },
   {
-    id: "existing-brand",
-    label: "Existing",
-    question: "Can you help an existing brand that already has an identity?",
-    signalLabel: "What usually changed",
-    signal: "The business evolved, but buyers still meet the category, story, or identity it used to need.",
+    signal: "Fit",
+    title: "Keep the useful. Rework what confuses.",
+    outcome: "Clarity → sharper expression → continuity",
+    color: "#8FA283",
+    x: 84,
+    y: 35,
   },
   {
-    id: "implementation",
-    label: "Delivery",
-    question: "Can you actually implement, or just strategise?",
-    signalLabel: "What implementation can include",
-    signal: "Messaging, visual direction, website structure, content, and campaigns.",
+    signal: "Implementation",
+    title: "The plan continues into the build.",
+    outcome: "Strategy → website → content → campaigns",
+    color: "#C77752",
+    x: 80,
+    y: 78,
   },
   {
-    id: "timing",
-    label: "Timing",
-    question: "How long does a project take?",
-    signalLabel: "How timing is set",
-    signal: "Scope, dependencies, and the speed of feedback determine the schedule.",
+    signal: "Timing",
+    title: "Scope decides the clock.",
+    outcome: "A timeline shaped after diagnosis",
+    color: "#D3A24F",
+    x: 20,
+    y: 78,
   },
   {
-    id: "remote",
-    label: "Remote",
-    question: "Can we work remotely?",
-    signalLabel: "Working model",
-    signal: "Remote collaboration across every client project shown on this site.",
+    signal: "Distance",
+    title: "Distance changes the room, not the work.",
+    outcome: "Remote collaboration from diagnosis to delivery",
+    color: "#7D9AA8",
+    x: 16,
+    y: 35,
   },
 ] as const;
 
-type SelectionDirection = "forward" | "backward";
-
+const AUTO_ADVANCE_MS = 4300;
+const MANUAL_HOLD_MS = 14000;
+const HOVER_HOLD_MS = 3200;
 const EASE = [0.22, 1, 0.36, 1] as const;
-const QUESTION_ANSWER_VARIANTS = {
-  enter: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? 16 : -16,
-    y: 5,
-    filter: "blur(5px)",
-  }),
-  active: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
-  exit: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? -9 : 9,
-    y: -7,
-    filter: "blur(4px)",
-  }),
-};
-const LENS_READING_VARIANTS = {
-  enter: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? 9 : -9,
-    y: 4,
-    filter: "blur(3px)",
-  }),
-  active: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
-  exit: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? -6 : 6,
-    y: -4,
-    filter: "blur(3px)",
-  }),
-};
-const SITUATION_TO_QUESTION: Record<ServicesSituationId, number> = {
-  idea: 0,
-  reposition: 1,
-  ongoing: 2,
-};
-const SITUATION_LABEL: Record<ServicesSituationId, string> = {
-  idea: "New brand",
-  reposition: "Repositioning",
-  ongoing: "Repeatable system",
-};
-type QuestionId = (typeof QUESTIONS)[number]["id"];
 
-const LENS_READINGS: Record<HomeStudioLensName, Record<QuestionId, string>> = {
-  Psychology: {
-    "new-brand": "Find the belief people need before a name or identity can earn trust.",
-    "existing-brand": "Locate the gap between what the business has become and what people still assume it is.",
-    implementation: "Every output should reinforce the same perception, so the strategy can leave the document.",
-    timing: "Leave enough room to hear hesitation, test language, and decide with evidence.",
-    remote: "Make uncertainty, language, and decision patterns visible across every conversation.",
-  },
-  Literature: {
-    "new-brand": "Give the new brand one idea clear enough to survive every retelling.",
-    "existing-brand": "Find the story the current identity carries after the business has outgrown it.",
-    implementation: "Use voice, symbols, and rhythm to give the position a form people can repeat.",
-    timing: "Give the central idea enough time to be found, tested, and edited.",
-    remote: "Use shared language to keep meaning coherent across screens, documents, and decisions.",
-  },
-  Strategy: {
-    "new-brand": "Resolve category, audience, and offer into one governing position before launch.",
-    "existing-brand": "Decide whether the system needs repair, repositioning, or a stronger centre.",
-    implementation: "Define which outputs must carry the governing position into the market.",
-    timing: "Let dependencies and decision speed shape the sequence more honestly than a fixed estimate.",
-    remote: "Keep responsibilities, approvals, and the governing decision visible across distance.",
-  },
-};
-
-function toQuestionChoice(
-  decision: (typeof QUESTIONS)[number] & { answer: string },
-  lens: HomeStudioLens | null,
-): HomeQuestionChoice {
-  return {
-    id: decision.id,
-    label: decision.label,
-    question: decision.question,
-    lens,
-  };
+function answerFor(question: string) {
+  return faqs.find((item) => item.question === question)?.answer ?? "";
 }
 
 export function HomeQuestionsScene() {
-  const reducedMotion = Boolean(useHydratedReducedMotion());
-  const selectionDirectionRef = useRef<SelectionDirection>("forward");
-  const lensDirectionRef = useRef<SelectionDirection>("forward");
-  const displayedIndexRef = useRef(0);
-  const questionKeyboardNavigationRef = useRef(false);
-  const lensKeyboardNavigationRef = useRef(false);
-  const [committedIndex, setCommittedIndex] = useState(0);
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-  const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
-  const [carriedLens, setCarriedLens] = useState<HomeStudioLens | null>(null);
-  const [previewLens, setPreviewLens] = useState<HomeStudioLens | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const holdUntilRef = useRef(0);
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
+  const [activeIndex, setActiveIndex] = useState(0);
   const decisions = useMemo(
-    () => QUESTIONS.map((item) => ({
-      ...item,
-      answer: faqs.find((faq) => faq.question === item.question)?.answer ?? "",
-    })),
+    () =>
+      QUESTION_ORDER.map((question, index) => ({
+        ...DECISION_META[index],
+        question,
+        answer: answerFor(question),
+      })),
     [],
   );
-  const activeIndex = previewIndex ?? committedIndex;
-  displayedIndexRef.current = activeIndex;
-  const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
   const active = decisions[activeIndex] ?? decisions[0];
-  const matchedToSituation = carriedSituation !== null && SITUATION_TO_QUESTION[carriedSituation] === activeIndex;
-  const activeLens = previewLens ?? carriedLens;
-  const isLensPreviewing = previewLens !== null && previewLens.name !== carriedLens?.name;
-  const lensReading = activeLens
-    ? LENS_READINGS[activeLens.name][active.id]
-    : null;
-  const sceneStyle = {
-    "--question-progress": (activeIndex + 1) / decisions.length,
-    "--question-lens-accent": activeLens?.accent ?? "#9e672b",
-  } as CSSProperties;
+  const motionActive = inView && !prefersReducedMotion;
 
   useEffect(() => {
-    function applySituation(value: string | null, resetDecisionThread = false) {
-      if (!isServicesSituation(value)) return;
-      setCarriedSituation(value);
-      setCommittedIndex(SITUATION_TO_QUESTION[value]);
-      setPreviewIndex(null);
-      if (resetDecisionThread) {
-        publishHomeQuestionChoice(null);
-        clearHomeStudioLens();
-      }
-    }
+    if (!motionActive || decisions.length < 2) return;
 
-    try {
-      const completedDiagnosis = readCompletedHomeDiagnosis();
-      if (completedDiagnosis) applySituation(completedDiagnosis);
-      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY));
-    } catch {}
+    const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < holdUntilRef.current) return;
+      setActiveIndex((current) => (current + 1) % decisions.length);
+    }, AUTO_ADVANCE_MS);
 
-    function onSituation(event: Event) {
-      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
-      applySituation(detail?.situation ?? null, true);
-    }
-
-    function onSituationCleared() {
-      setCarriedSituation(null);
-      setCommittedIndex(0);
-      setPreviewIndex(null);
-      publishHomeQuestionChoice(null);
-      clearHomeStudioLens();
-    }
-
-    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
-    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
-    return () => {
-      window.removeEventListener(
-        SERVICES_SITUATION_EVENT,
-        onSituation as EventListener,
-      );
-      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
-    };
-  }, []);
+    return () => window.clearInterval(timer);
+  }, [decisions.length, motionActive]);
 
   useEffect(() => {
-    setCarriedLens(readHomeStudioLens());
-
-    function onStudioLens(event: Event) {
-      const detail = (event as CustomEvent<HomeStudioLensDetail>).detail;
-      setCarriedLens(detail?.lens ?? null);
-      setPreviewLens(null);
-      publishHomeQuestionChoice(null);
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "questions") return;
+      holdUntilRef.current = Date.now() + 700;
+      setActiveIndex(0);
     }
 
-    function onMethodDecision(event: Event) {
-      const detail = (event as CustomEvent<HomeMethodDecisionDetail>).detail;
-      if (detail?.decision?.origin !== "method_selection") return;
-      setCarriedLens(null);
-      setPreviewLens(null);
-      clearHomeStudioLens();
-      publishHomeQuestionChoice(null);
-    }
-
-    window.addEventListener(HOME_STUDIO_LENS_EVENT, onStudioLens as EventListener);
-    window.addEventListener(HOME_METHOD_DECISION_EVENT, onMethodDecision as EventListener);
-    return () => {
-      window.removeEventListener(HOME_STUDIO_LENS_EVENT, onStudioLens as EventListener);
-      window.removeEventListener(HOME_METHOD_DECISION_EVENT, onMethodDecision as EventListener);
-    };
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
   }, []);
 
-  function rememberSelectionDirection(
-    next: number,
-    direction?: SelectionDirection,
-  ) {
-    const current = displayedIndexRef.current;
-    if (next === current) return;
-    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
-    displayedIndexRef.current = next;
-  }
-
-  function choose(
-    index: number,
-    persist = true,
-    measure = false,
-    direction?: SelectionDirection,
-  ) {
-    rememberSelectionDirection(index, direction);
-    if (!persist) {
-      setPreviewIndex(index);
-      return;
-    }
-    if (measure) {
-      track("faq_opened", {
-        source: "home_questions",
-        question: decisions[index]?.id ?? "unknown",
-      });
-    }
-    setCommittedIndex(index);
-    setPreviewIndex(null);
-    publishHomeQuestionChoice(
-      toQuestionChoice(decisions[index] ?? decisions[0], carriedLens),
-    );
-  }
-
-  function clearPreview() {
-    rememberSelectionDirection(committedIndex);
-    setPreviewIndex(null);
-  }
-
-  function chooseLens(
-    lens: HomeStudioLens,
-    persist = true,
-    direction?: SelectionDirection,
-  ) {
-    const currentIndex = activeLens
-      ? HOME_STUDIO_LENSES.findIndex((option) => option.name === activeLens.name)
-      : -1;
-    const nextIndex = HOME_STUDIO_LENSES.findIndex((option) => option.name === lens.name);
-    if (nextIndex !== currentIndex) {
-      lensDirectionRef.current = direction ?? (
-        currentIndex < 0 || nextIndex > currentIndex ? "forward" : "backward"
-      );
-    }
-    if (!persist) {
-      setPreviewLens(lens);
-      return;
-    }
-    setCarriedLens(lens);
-    setPreviewLens(null);
-    publishHomeStudioLens(lens);
-    publishHomeQuestionChoice(
-      toQuestionChoice(decisions[committedIndex] ?? decisions[0], lens),
-    );
-  }
-
-  function clearLensPreview() {
-    if (!previewLens) return;
-    const previewIndex = HOME_STUDIO_LENSES.findIndex((lens) => lens.name === previewLens.name);
-    const committedLensIndex = carriedLens
-      ? HOME_STUDIO_LENSES.findIndex((lens) => lens.name === carriedLens.name)
-      : -1;
-    lensDirectionRef.current = committedLensIndex < previewIndex ? "backward" : "forward";
-    setPreviewLens(null);
-  }
-
-  function carryQuestionForward() {
-    const selected = decisions[activeIndex] ?? decisions[0];
-    setCommittedIndex(activeIndex);
-    setPreviewIndex(null);
-    publishHomeQuestionChoice(toQuestionChoice(selected, carriedLens));
-  }
-
-  function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    let next = index;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % decisions.length;
-    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + decisions.length - 1) % decisions.length;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = decisions.length - 1;
-    else return;
-    event.preventDefault();
-    questionKeyboardNavigationRef.current = true;
-    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
-      ? "forward"
-      : event.key === "ArrowLeft" || event.key === "ArrowUp"
-        ? "backward"
-        : undefined;
-    choose(next, true, true, direction);
-    document.getElementById(`decision-question-${next}`)?.focus();
-  }
-
-  function onLensKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    let next = index;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % HOME_STUDIO_LENSES.length;
-    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + HOME_STUDIO_LENSES.length - 1) % HOME_STUDIO_LENSES.length;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = HOME_STUDIO_LENSES.length - 1;
-    else return;
-    event.preventDefault();
-    lensKeyboardNavigationRef.current = true;
-    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
-      ? "forward"
-      : event.key === "ArrowLeft" || event.key === "ArrowUp"
-        ? "backward"
-        : undefined;
-    const nextLens = HOME_STUDIO_LENSES[next];
-    if (!nextLens) return;
-    chooseLens(nextLens, true, direction);
-    document.getElementById(`question-lens-${next}`)?.focus();
+  function choose(index: number, hold = MANUAL_HOLD_MS) {
+    holdUntilRef.current = Date.now() + hold;
+    setActiveIndex(index);
   }
 
   return (
     <section
-      className="questions-editorial"
+      ref={sectionRef}
+      className="questions-cinematic"
       aria-labelledby="home-questions-title"
-      data-question-state={active.id}
-      data-question-preview={isPreviewing ? active.id : undefined}
-      data-question-lens={activeLens?.name.toLowerCase()}
-      style={sceneStyle}
+      style={{ "--questions-accent": active.color } as CSSProperties}
+      onPointerDown={() => {
+        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+      }}
+      onFocusCapture={() => {
+        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+      }}
     >
+      <span className="sr-only">The practical questions</span>
       <BackgroundVideo
-        video="/videos/pixabay-golden-reeds-wind.mp4"
-        poster="/images/pixabay-golden-reeds-wind-poster.jpg"
-        playbackRate={0.78}
-        managedByHomepage
+        video="/videos/pexels-golden-fog-sea.mp4"
+        videoWebm="/videos/pexels-golden-fog-sea.webm"
+        poster="/images/pexels-golden-fog-sea-poster.jpg"
+        parallax
       />
-      <div className="questions-editorial__veil" aria-hidden="true" />
+      <div className="questions-cinematic__veil" aria-hidden="true" />
+      <motion.div
+        aria-hidden="true"
+        className="questions-cinematic__light questions-cinematic__light--one"
+        animate={
+          motionActive
+            ? { x: [0, 78, 0], y: [0, 26, 0], scale: [0.95, 1.08, 0.95] }
+            : undefined
+        }
+        transition={
+          motionActive
+            ? { duration: 17, repeat: Infinity, ease: "easeInOut" }
+            : undefined
+        }
+      />
+      <motion.div
+        aria-hidden="true"
+        className="questions-cinematic__light questions-cinematic__light--two"
+        animate={
+          motionActive
+            ? { x: [0, -60, 0], y: [0, -24, 0], scale: [1.04, 0.95, 1.04] }
+            : undefined
+        }
+        transition={
+          motionActive
+            ? { duration: 20, repeat: Infinity, ease: "easeInOut" }
+            : undefined
+        }
+      />
 
-      <Container className="questions-editorial__frame max-w-[104rem]" data-home-frame>
-        <header className="questions-editorial__header">
+      <Container className="questions-cinematic__shell max-w-[96rem]">
+        <header className="questions-cinematic__header">
           <div>
-            <p>
-              08 · Before we work together
-              {carriedSituation ? ` · ${SITUATION_LABEL[carriedSituation]}` : ""}
-              {carriedLens ? ` · ${carriedLens.name} lens` : ""}
-            </p>
-            <h2 id="home-questions-title">Questions founders usually ask.<br /><em>Answers without a sales script.</em></h2>
+            <p className="questions-cinematic__eyebrow">Before we work together</p>
+            <h2 id="home-questions-title">
+              Five practical doubts. <em>One clear starting point.</em>
+            </h2>
           </div>
-          <p className="questions-editorial__intro">Scope, timing, delivery, and fit, stated before you book anything.</p>
+          <div className="questions-cinematic__intro">
+            <p>
+              Before money enters the room, scope, fit, implementation, timing, and
+              distance should stop feeling vague.
+            </p>
+            <span>
+              The compass moves while you watch. Select a doubt and it waits while you read.
+            </span>
+          </div>
         </header>
 
-        <div className="questions-editorial__experience">
+        <div className="questions-cinematic__stage">
           <div
-            className="questions-editorial__choices"
-            role="tablist"
-            aria-label="Choose a practical question"
-            onPointerLeave={(event) => {
-              if (event.pointerType === "mouse") {
-                questionKeyboardNavigationRef.current = false;
-                clearPreview();
-              }
-            }}
+            className="questions-cinematic__compass"
+            aria-label="Five practical doubts converging into a clear starting decision"
           >
-            <p className="questions-editorial__instruction">Choose what you need to know</p>
+            <div className="questions-cinematic__compass-topline">
+              <span>Clarity compass</span>
+              <strong>{String(activeIndex + 1).padStart(2, "0")} / 05</strong>
+            </div>
+
+            <svg viewBox="0 0 500 500" aria-hidden="true">
+              <defs>
+                <radialGradient id="questions-core-field" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor={active.color} stopOpacity="0.24" />
+                  <stop offset="100%" stopColor={active.color} stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <circle cx="250" cy="250" r="138" fill="url(#questions-core-field)" />
+              <circle
+                cx="250"
+                cy="250"
+                r="178"
+                fill="none"
+                stroke="rgba(244,239,230,0.08)"
+                strokeDasharray="3 12"
+              />
+              <motion.circle
+                cx="250"
+                cy="250"
+                r="157"
+                fill="none"
+                stroke={active.color}
+                strokeWidth="1"
+                strokeDasharray="8 16"
+                animate={motionActive ? { rotate: 360, opacity: [0.22, 0.58, 0.22] } : undefined}
+                style={{ transformOrigin: "250px 250px" }}
+                transition={
+                  motionActive
+                    ? {
+                        rotate: { duration: 22, repeat: Infinity, ease: "linear" },
+                        opacity: { duration: 4.8, repeat: Infinity, ease: "easeInOut" },
+                      }
+                    : undefined
+                }
+              />
+
+              {decisions.map((decision, index) => {
+                const x = (decision.x / 100) * 500;
+                const y = (decision.y / 100) * 500;
+                const selected = index === activeIndex;
+                return (
+                  <g key={decision.signal}>
+                    <line
+                      x1={x}
+                      y1={y}
+                      x2="250"
+                      y2="250"
+                      stroke="rgba(244,239,230,0.08)"
+                      strokeWidth="1"
+                    />
+                    <motion.line
+                      x1={x}
+                      y1={y}
+                      x2="250"
+                      y2="250"
+                      stroke={decision.color}
+                      strokeWidth={selected ? 2.2 : 1}
+                      strokeLinecap="round"
+                      pathLength="1"
+                      strokeDasharray="0.08 0.12"
+                      animate={
+                        selected && motionActive
+                          ? { strokeDashoffset: [0, -1], opacity: [0.48, 1, 0.48] }
+                          : { opacity: selected ? 0.72 : 0.13 }
+                      }
+                      transition={{
+                        strokeDashoffset: { duration: 3.2, repeat: Infinity, ease: "linear" },
+                        opacity: { duration: 2.8, repeat: selected ? Infinity : 0, ease: "easeInOut" },
+                      }}
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+
             {decisions.map((decision, index) => {
-              const displayed = index === activeIndex;
-              const committed = index === committedIndex;
+              const selected = index === activeIndex;
               return (
                 <button
-                  key={decision.id}
-                  id={`decision-question-${index}`}
+                  key={decision.signal}
                   type="button"
-                  role="tab"
-                  aria-selected={committed}
-                  aria-controls="decision-answer"
-                  aria-label={`${decision.label}: ${decision.question}`}
-                  tabIndex={committed ? 0 : -1}
-                  className={displayed ? "is-active" : undefined}
-                  data-committed={committed ? "true" : undefined}
-                  onClick={() => choose(index, true, true)}
-                  onPointerDown={(event) => {
-                    if (event.pointerType === "mouse") questionKeyboardNavigationRef.current = false;
-                  }}
-                  onPointerEnter={(event) => {
-                    if (event.pointerType === "mouse" && !questionKeyboardNavigationRef.current) {
-                      choose(index, false);
-                    }
-                  }}
-                  onPointerMove={(event) => {
-                    if (
-                      event.pointerType === "mouse"
-                      && questionKeyboardNavigationRef.current
-                      && (event.movementX !== 0 || event.movementY !== 0)
-                    ) {
-                      questionKeyboardNavigationRef.current = false;
-                      choose(index, false);
-                    }
-                  }}
+                  className={`questions-cinematic__node${selected ? " is-active" : ""}`}
+                  style={
+                    {
+                      left: `${decision.x}%`,
+                      top: `${decision.y}%`,
+                      "--decision-color": decision.color,
+                    } as CSSProperties
+                  }
+                  aria-label={`Focus ${decision.signal}: ${decision.question}`}
+                  aria-pressed={selected}
+                  onClick={() => choose(index)}
+                  onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
                   onFocus={() => choose(index)}
-                  onKeyDown={(event) => onKeyDown(event, index)}
                 >
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <strong>{decision.label}</strong>
-                  <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />
+                  <motion.i
+                    aria-hidden="true"
+                    animate={
+                      selected && motionActive
+                        ? { scale: [0.78, 1.24, 0.78], opacity: [0.7, 1, 0.7] }
+                        : { scale: 1, opacity: selected ? 1 : 0.58 }
+                    }
+                    transition={{ duration: 2.4, repeat: selected && motionActive ? Infinity : 0, ease: "easeInOut" }}
+                  />
+                  <span>{decision.signal}</span>
                 </button>
               );
             })}
+
+            <motion.div
+              className="questions-cinematic__core"
+              animate={
+                motionActive
+                  ? { scale: [0.97, 1.04, 0.97], opacity: [0.88, 1, 0.88] }
+                  : { scale: 1, opacity: 1 }
+              }
+              transition={{ duration: 4.6, repeat: motionActive ? Infinity : 0, ease: "easeInOut" }}
+            >
+              <span>Clear enough</span>
+              <strong>to begin</strong>
+            </motion.div>
           </div>
 
-          <motion.article
-            key={active.id}
-            id="decision-answer"
-            role="tabpanel"
-            aria-labelledby={`decision-question-${activeIndex}`}
-            className="questions-editorial__answer"
-            data-home-reading-plane
-            data-home-atomic-reading-plane
-            data-home-selection-direction={selectionDirectionRef.current}
-            custom={selectionDirectionRef.current}
-            variants={QUESTION_ANSWER_VARIANTS}
-            initial={reducedMotion ? false : "enter"}
-            animate="active"
-            transition={{ duration: reducedMotion ? 0 : 0.45, ease: EASE }}
-            aria-live={isPreviewing || isLensPreviewing ? "off" : "polite"}
-          >
-              <div className="questions-editorial__answer-index">
-                <span>{isPreviewing ? "Preview" : active.label}</span>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.article
+              key={active.signal}
+              id="questions-cinematic-panel"
+              role="tabpanel"
+              className="questions-cinematic__answer"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(5px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+              aria-live="polite"
+            >
+              <div className="questions-cinematic__answer-topline">
+                <span>{active.signal}</span>
                 <strong>{String(activeIndex + 1).padStart(2, "0")} / 05</strong>
               </div>
-              <h3>{active.question}</h3>
-              <p>{active.answer}</p>
-              <div className="questions-editorial__fit">
-                <span>
-                  {matchedToSituation && carriedSituation
-                    ? `Matched to ${SITUATION_LABEL[carriedSituation]}`
-                    : active.signalLabel}
-                </span>
-                <strong>{active.signal}</strong>
+              <p className="questions-cinematic__answer-label">What this doubt is really asking</p>
+              <h3>{active.title}</h3>
+              <p className="questions-cinematic__question">“{active.question}”</p>
+              <p className="questions-cinematic__answer-copy">{active.answer}</p>
+              <div className="questions-cinematic__outcome">
+                <span>What becomes clear</span>
+                <strong>{active.outcome}</strong>
               </div>
-
-              <div
-                className="questions-editorial__lens-reader"
-                data-lens-preview={isLensPreviewing ? activeLens?.name.toLowerCase() : undefined}
-                onPointerLeave={(event) => {
-                  if (event.pointerType === "mouse") {
-                    lensKeyboardNavigationRef.current = false;
-                    clearLensPreview();
-                  }
-                }}
-              >
-                <div className="questions-editorial__lens-toolbar">
-                  <span>Read this answer through</span>
-                  <div role="group" aria-label="Read the answer through a studio lens">
-                    {HOME_STUDIO_LENSES.map((lens, index) => {
-                      const displayed = lens.name === activeLens?.name;
-                      const committed = lens.name === carriedLens?.name;
-                      return (
-                        <button
-                          key={lens.name}
-                          id={`question-lens-${index}`}
-                          type="button"
-                          aria-pressed={committed}
-                          data-lens-selected={displayed ? "true" : undefined}
-                          data-lens-committed={committed ? "true" : undefined}
-                          style={{ "--lens-choice-accent": lens.accent } as CSSProperties}
-                          onClick={() => chooseLens(lens)}
-                          onPointerDown={(event) => {
-                            if (event.pointerType === "mouse") lensKeyboardNavigationRef.current = false;
-                          }}
-                          onPointerEnter={(event) => {
-                            if (event.pointerType === "mouse" && !lensKeyboardNavigationRef.current) {
-                              chooseLens(lens, false);
-                            }
-                          }}
-                          onPointerMove={(event) => {
-                            if (
-                              event.pointerType === "mouse"
-                              && lensKeyboardNavigationRef.current
-                              && (event.movementX !== 0 || event.movementY !== 0)
-                            ) {
-                              lensKeyboardNavigationRef.current = false;
-                              chooseLens(lens, false);
-                            }
-                          }}
-                          onKeyDown={(event) => onLensKeyDown(event, index)}
-                        >
-                          {lens.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <AnimatePresence
-                  mode="sync"
-                  initial={false}
-                  custom={lensDirectionRef.current}
-                >
-                  <motion.div
-                    key={activeLens ? `${activeLens.name}-${active.id}` : `open-${active.id}`}
-                    className="questions-editorial__lens-reading"
-                    data-home-selection-direction={lensDirectionRef.current}
-                    custom={lensDirectionRef.current}
-                    variants={LENS_READING_VARIANTS}
-                    initial={reducedMotion ? false : "enter"}
-                    animate="active"
-                    exit={reducedMotion ? undefined : "exit"}
-                    transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE }}
-                  >
-                    <small>
-                      {activeLens
-                        ? `${activeLens?.name} asks · ${activeLens?.question}`
-                        : "One answer · three useful readings"}
-                    </small>
-                    <strong>
-                      {lensReading ?? "Choose a lens to expose the decision beneath the practical detail."}
-                    </strong>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              <Link
-                href="#invitation"
-                data-section-jump-yield="true"
-                onClick={carryQuestionForward}
-                aria-label={`Bring the ${active.label.toLowerCase()} question to Suman`}
-              >
-                Bring this {active.label.toLowerCase()} question to Suman
-                <ArrowDown size={16} strokeWidth={1.8} aria-hidden="true" />
+              <Link href="/contact" className="questions-cinematic__answer-link">
+                Bring the remaining question <span aria-hidden="true">↗</span>
               </Link>
-          </motion.article>
+              <span className="questions-cinematic__timer" aria-hidden="true">
+                <motion.i
+                  key={`questions-timer-${active.signal}`}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+                />
+              </span>
+            </motion.article>
+          </AnimatePresence>
+        </div>
+
+        <div className="questions-cinematic__tabs" role="tablist" aria-label="Choose a practical doubt">
+          {decisions.map((decision, index) => {
+            const selected = index === activeIndex;
+            return (
+              <button
+                key={decision.signal}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls="questions-cinematic-panel"
+                className={selected ? "is-active" : undefined}
+                style={{ "--decision-color": decision.color } as CSSProperties}
+                onClick={() => choose(index)}
+                onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
+                onFocus={() => choose(index)}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{decision.signal}</strong>
+                <small>{decision.question}</small>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="questions-cinematic__utility">
+          <div>
+            <span>Still deciding where to begin?</span>
+            <p>
+              The audit gives you a useful diagnosis before any conversation becomes a proposal.
+            </p>
+          </div>
+          <AuditInvite tone="dark" />
         </div>
       </Container>
     </section>

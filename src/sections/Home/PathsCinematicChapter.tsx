@@ -1,413 +1,347 @@
 "use client";
 
-import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
-import { LivingImage } from "@/components/LivingImage";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type KeyboardEvent,
-} from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { usesLivingStill } from "@/lib/mediaMode";
-import {
-  SERVICES_SITUATION_CLEARED_EVENT,
-  SERVICES_SITUATION_EVENT,
-  SERVICES_SITUATION_STORAGE_KEY,
-  isServicesSituation,
-  publishServicesSituation,
-  readCompletedHomeDiagnosis,
-  type ServicesSituationDetail,
-  type ServicesSituationId,
-} from "@/lib/servicesJourney";
+import Link from "next/link";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const PATHS = [
   {
     number: "01",
-    situation: "idea",
-    choice: "I have a strong offer but no brand yet.",
-    shortChoice: "New brand",
+    eyebrow: "For an idea becoming a business",
     title: "Build the foundation",
-    eyebrow: "An idea becoming a business",
+    start: "An idea",
     body:
-      "Decide the category, priority buyer, promise, and proof before identity or launch work begins.",
-    route: "Category / Buyer / Position",
-    result: "A market position that makes later creative choices easier to judge.",
-    tint: "#ad7336",
-    proof: "MyShopInEurope chose craft and origin ahead of price before the platform entered the market.",
-    evidenceBridge:
-      "The case began before the market had a clear category signal. Foundation came before identity.",
+      "Choose what the brand means before the logo, website, and content begin making accidental promises.",
+    route: ["Question", "Architect", "Signal"],
+    result: "A position the business can grow from",
+    href: "/services#desire",
+    tint: "#C98B63",
   },
   {
     number: "02",
-    situation: "reposition",
-    choice: "The business has outgrown what the brand says about it.",
-    shortChoice: "Outgrown",
-    title: "Reposition the business",
-    eyebrow: "An established business in transition",
+    eyebrow: "For a business that outgrew its brand",
+    title: "Reposition the system",
+    start: "A brand that drifted",
     body:
-      "Study what buyers still recognise, keep what earns trust, and replace the meaning that no longer fits the business.",
-    route: "Audit / Keep / Reposition",
-    result: "A brand that represents the business customers are buying today.",
-    tint: "#667d63",
-    proof: "HerbalCart moved from an accidental herbal frame to a modern supplement position.",
-    evidenceBridge:
-      "The case already had market activity. The immediate work was correcting the meaning buyers received.",
+      "Find the gap between what the company has become and what its current identity still teaches people to expect.",
+    route: ["Decode", "Architect", "Signal"],
+    result: "One recognisable idea across every touchpoint",
+    href: "/services#situation",
+    tint: "#88A77E",
   },
   {
     number: "03",
-    situation: "ongoing",
-    choice: "Everything changes from channel to channel.",
-    shortChoice: "Scale it",
-    title: "Make the brand easier to use",
-    eyebrow: "A brand moving across channels",
+    eyebrow: "For a brand ready to compound",
+    title: "Create consistency",
+    start: "A brand in motion",
     body:
-      "Turn the brand choices into usable rules for language, content, campaigns, websites, and teams.",
-    route: "Write / Apply / Review",
-    result: "A brand the team can use without returning every choice to the founder.",
-    tint: "#bd8a3f",
-    proof: "Dr. Haley Nutrition posted 48% less and earned 104% more followers per post.",
-    evidenceBridge:
-      "The case already had active channels. The next move was making every signal repeat one decision.",
+      "Translate the strategy into a repeatable system for content, campaigns, websites, and teams.",
+    route: ["Signal", "Influence", "Compound"],
+    result: "Recognition that keeps earning after launch",
+    href: "/services#offerings",
+    tint: "#D3A24F",
   },
-] as const satisfies ReadonlyArray<{
-  number: string;
-  situation: ServicesSituationId;
-  choice: string;
-  shortChoice: string;
-  title: string;
-  eyebrow: string;
-  body: string;
-  route: string;
-  result: string;
-  tint: string;
-  proof: string;
-  evidenceBridge: string;
-}>;
+] as const;
 
+const CURVES = [
+  "M112 70 C210 70 238 160 338 160",
+  "M112 160 C210 160 238 160 338 160",
+  "M112 250 C210 250 238 160 338 160",
+] as const;
+
+const ENTRY_Y = [70, 160, 250] as const;
+const AUTO_ADVANCE_MS = 4000;
+const MANUAL_HOLD_MS = 10500;
+const HOVER_HOLD_MS = 3200;
 const EASE = [0.22, 1, 0.36, 1] as const;
-type SelectionDirection = "forward" | "backward";
-type CarriedPathSource = "diagnostic" | "evidence" | null;
-const PATH_ANSWER_VARIANTS = {
-  enter: (direction: SelectionDirection) => ({
-    opacity: 1,
-    x: direction === "forward" ? 18 : -18,
-  }),
-  active: { opacity: 1, x: 0 },
-  exit: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? -14 : 14,
-    transition: { duration: 0 },
-  }),
-};
-const SITUATION_TO_INDEX: Record<ServicesSituationId, number> = {
-  idea: 0,
-  reposition: 1,
-  ongoing: 2,
-};
 
 export function PathsCinematicChapter() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const holdUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const backgroundVideo = "/videos/hero-goldendunes.mp4";
-  const backgroundPoster = "/images/hero-goldendunes-poster.jpg";
-  const livingBackground = usesLivingStill(backgroundVideo);
-  const selectionDirectionRef = useRef<SelectionDirection>("forward");
-  const displayedIndexRef = useRef(0);
-  const [committedIndex, setCommittedIndex] = useState(0);
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-  const [carriedFrom, setCarriedFrom] = useState<CarriedPathSource>(null);
-  const activeIndex = previewIndex ?? committedIndex;
-  displayedIndexRef.current = activeIndex;
-  const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
+  const inView = useInView(sectionRef, {
+    amount: 0.22,
+    margin: "8% 0px -12% 0px",
+  });
+  const [activeIndex, setActiveIndex] = useState(0);
   const active = PATHS[activeIndex];
 
   useEffect(() => {
-    function applySituation(value: string | null, source: CarriedPathSource) {
-      if (!isServicesSituation(value)) return;
-      setCommittedIndex(SITUATION_TO_INDEX[value]);
-      setPreviewIndex(null);
-      setCarriedFrom(source);
-    }
+    if (!inView || prefersReducedMotion) return;
 
-    try {
-      const completedDiagnosis = readCompletedHomeDiagnosis();
-      if (completedDiagnosis) applySituation(completedDiagnosis, "diagnostic");
-      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY), null);
-    } catch {}
+    const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < holdUntilRef.current) return;
+      setActiveIndex((current) => (current + 1) % PATHS.length);
+    }, AUTO_ADVANCE_MS);
 
-    function onSituation(event: Event) {
-      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
-      const source = detail?.origin === "home_diagnostic"
-        ? "diagnostic"
-        : detail?.origin === "home_evidence"
-          ? "evidence"
-          : null;
-      applySituation(detail?.situation ?? null, source);
-    }
+    return () => window.clearInterval(timer);
+  }, [inView, prefersReducedMotion]);
 
-    function onSituationCleared() {
-      setCommittedIndex(0);
-      setPreviewIndex(null);
-      setCarriedFrom(null);
-    }
-
-    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
-    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
-    return () => {
-      window.removeEventListener(
-        SERVICES_SITUATION_EVENT,
-        onSituation as EventListener,
-      );
-      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
-    };
-  }, []);
-
-  function rememberSelectionDirection(
-    next: number,
-    direction?: SelectionDirection,
-  ) {
-    const current = displayedIndexRef.current;
-    if (next === current) return;
-    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
-    displayedIndexRef.current = next;
-  }
-
-  function choose(
-    index: number,
-    persist = true,
-    direction?: SelectionDirection,
-  ) {
-    rememberSelectionDirection(index, direction);
-    if (!persist) {
-      setPreviewIndex(index);
-      return;
-    }
-    setCommittedIndex(index);
-    setPreviewIndex(null);
-    setCarriedFrom(null);
-    publishServicesSituation(PATHS[index].situation, "home_paths");
-  }
-
-  function clearPreview() {
-    rememberSelectionDirection(committedIndex);
-    setPreviewIndex(null);
-  }
-
-  function onChoiceKeyDown(
-    event: KeyboardEvent<HTMLButtonElement>,
-    index: number,
-  ) {
-    let next = index;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-      next = (index + 1) % PATHS.length;
-    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-      next = (index + PATHS.length - 1) % PATHS.length;
-    } else if (event.key === "Home") {
-      next = 0;
-    } else if (event.key === "End") {
-      next = PATHS.length - 1;
-    } else {
-      return;
-    }
-
-    event.preventDefault();
-    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
-      ? "forward"
-      : event.key === "ArrowLeft" || event.key === "ArrowUp"
-        ? "backward"
-        : undefined;
-    choose(next, true, direction);
-    document.getElementById(`path-film-tab-${PATHS[next].number}`)?.focus();
+  function choose(index: number, hold = MANUAL_HOLD_MS) {
+    holdUntilRef.current = Date.now() + hold;
+    setActiveIndex(index);
   }
 
   return (
     <section
+      ref={sectionRef}
       id="paths"
-      data-active-path={active.situation}
-      data-path-origin={carriedFrom ?? "direct"}
-      className="paths-film home-scene"
-      aria-labelledby="paths-film-title"
-      style={{ "--paths-film-accent": active.tint } as CSSProperties}
+      data-home-chapter="paths"
+      data-home-section="paths"
+      className="paths-cinematic home-scene"
+      aria-labelledby="paths-cinematic-title"
+      style={{ "--paths-accent": active.tint } as CSSProperties}
+      onPointerDown={() => {
+        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+      }}
+      onFocusCapture={() => {
+        holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+      }}
     >
-      <div className="paths-film__media" aria-hidden="true">
-        {livingBackground ? (
-          <LivingImage
-            src={backgroundPoster}
-            imagePosition="50% 50%"
-            intensity="hero"
-            className="paths-film__media-living"
-          />
-        ) : (
-          <video
-            muted
-            loop
-            playsInline
-            preload="none"
-            poster={backgroundPoster}
-            data-media-id="BT-HOME-PATHS-GOLDEN-DUNES"
-            data-home-playback-rate="0.82"
-            aria-hidden="true"
-          >
-            <source src={backgroundVideo} type="video/mp4" />
-          </video>
-        )}
+      <div className="paths-cinematic__film" aria-hidden="true">
+        <video
+          src="/videos/higgsfield-mountain-mist.mp4"
+          poster="/images/higgsfield-mountain-mist-poster.jpg"
+          muted
+          autoPlay={!prefersReducedMotion}
+          loop
+          playsInline
+          preload={inView ? "metadata" : "none"}
+          data-home-playback-rate="1.22"
+        />
+        <span />
       </div>
-      <div className="paths-film__veil" aria-hidden="true" />
 
-      <div className="paths-film__frame" data-home-frame>
-        <header className="paths-film__header">
-          <div className="paths-film__chapter">
-            <span>05</span>
-            <p>Brand Strategy &amp; Systems</p>
+      <div className="paths-cinematic__glow paths-cinematic__glow--left" aria-hidden="true" />
+      <div className="paths-cinematic__glow paths-cinematic__glow--right" aria-hidden="true" />
+
+      <div className="paths-cinematic__shell">
+        <header className="paths-cinematic__header">
+          <div>
+            <p className="paths-cinematic__eyebrow">Three paths</p>
+            <h2 id="paths-cinematic-title">
+              The diagnosis names the gap. <em>The path decides what to build next.</em>
+            </h2>
           </div>
-          <p className="paths-film__counter" aria-hidden="true">
-            {active.number} / 03
-          </p>
+          <div className="paths-cinematic__intro">
+            <p>
+              Each path shows the intervention, the decisions it moves through, and what
+              the business should be able to do afterwards.
+            </p>
+            <span>
+              The map advances while you watch. Select a path and it waits while you read.
+            </span>
+          </div>
         </header>
 
-        <div className="paths-film__story">
-          <div className="paths-film__lead">
-            <p className="paths-film__eyebrow">Three business situations</p>
-            <h2 id="paths-film-title">
-              Which sentence sounds most like <em>your business today?</em>
-            </h2>
-            <p className="paths-film__instruction">
-              The right engagement depends on what the business has already
-              built and what buyers are currently misunderstanding.
-            </p>
+        <div className="paths-cinematic__stage">
+          <div className="paths-cinematic__map" aria-label="Three brand paths converging into a recognisable system">
+            <div className="paths-cinematic__map-heading">
+              <span>Decision architecture</span>
+              <strong>{active.number} / 03</strong>
+            </div>
 
-            <div className="paths-film__chooser">
-              <div className="paths-film__chooser-label">
-                <span>
-                  {isPreviewing
-                    ? "Previewing another starting point"
-                    : carriedFrom === "diagnostic"
-                      ? "Your 30 second diagnosis is carried forward"
-                      : carriedFrom === "evidence"
-                        ? "This path follows the case you selected"
-                        : "Choose your starting point"}
-                </span>
-                <span>{active.choice}</span>
-              </div>
-              <div
-                className="paths-film__choices"
-                role="tablist"
-                aria-label="Choose the service starting point that matches your brand"
-                onPointerLeave={(event) => {
-                  if (event.pointerType === "mouse") clearPreview();
-                }}
-              >
-                {PATHS.map((path, index) => {
-                  const displayed = index === activeIndex;
-                  const committed = index === committedIndex;
-                  return (
-                    <button
-                      key={path.number}
-                      id={`path-film-tab-${path.number}`}
-                      type="button"
-                      role="tab"
-                      aria-selected={committed}
-                      aria-controls={`path-active-panel-${path.number}`}
-                      tabIndex={committed ? 0 : -1}
-                      onClick={() => choose(index)}
-                      onFocus={() => choose(index, false)}
-                      onKeyDown={(event) => onChoiceKeyDown(event, index)}
-                      onPointerEnter={(event) => {
-                        if (event.pointerType === "mouse") choose(index, false);
+            <svg
+              viewBox="0 0 860 320"
+              role="img"
+              aria-label={`${active.start} moves through ${active.route.join(", ")} toward ${active.result}`}
+            >
+              <defs>
+                <radialGradient id="paths-core-glow">
+                  <stop offset="0%" stopColor={active.tint} stopOpacity="0.28" />
+                  <stop offset="100%" stopColor={active.tint} stopOpacity="0" />
+                </radialGradient>
+              </defs>
+
+              <circle cx="338" cy="160" r="90" fill="url(#paths-core-glow)" />
+
+              {CURVES.map((curve, index) => {
+                const selected = index === activeIndex;
+                return (
+                  <g key={curve}>
+                    <path
+                      d={curve}
+                      fill="none"
+                      stroke={PATHS[index].tint}
+                      strokeWidth="1"
+                      opacity={selected ? 0.38 : 0.12}
+                    />
+                    <motion.path
+                      d={curve}
+                      fill="none"
+                      stroke={PATHS[index].tint}
+                      strokeWidth={selected ? 2.4 : 1.2}
+                      strokeLinecap="round"
+                      strokeDasharray="6 11"
+                      animate={
+                        selected && inView && !prefersReducedMotion
+                          ? { strokeDashoffset: [0, -34] }
+                          : { strokeDashoffset: 0 }
+                      }
+                      transition={{
+                        duration: selected ? 1.05 : 2.5,
+                        repeat: Infinity,
+                        ease: "linear",
                       }}
-                      className={displayed ? "is-active" : undefined}
-                      data-committed={committed ? "true" : undefined}
-                      style={{ "--path-choice-accent": path.tint } as CSSProperties}
+                      opacity={selected ? 0.96 : 0.16}
+                    />
+                  </g>
+                );
+              })}
+
+              {PATHS.map((path, index) => {
+                const selected = index === activeIndex;
+                const center = `112px ${ENTRY_Y[index]}px`;
+                return (
+                  <g key={path.start} opacity={selected ? 1 : 0.28}>
+                    <motion.circle
+                      cx="112"
+                      cy={ENTRY_Y[index]}
+                      r={selected ? 8 : 5}
+                      fill={path.tint}
+                      animate={
+                        selected && inView && !prefersReducedMotion
+                          ? { scale: [0.78, 1.3, 0.78], opacity: [0.65, 1, 0.65] }
+                          : { scale: 1 }
+                      }
+                      style={{ transformOrigin: center }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                    <text
+                      x="90"
+                      y={ENTRY_Y[index] + 5}
+                      textAnchor="end"
+                      className="paths-cinematic__svg-label"
                     >
-                      <span className="paths-film__choice-number">{path.number}</span>
-                      <strong>{path.choice}</strong>
-                      <span className="paths-film__choice-short" aria-hidden="true">
-                        {path.shortChoice}
-                      </span>
-                      <span className="paths-film__choice-cue">
-                        {displayed && isPreviewing ? "Preview" : committed ? "Chosen" : ""}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+                      {path.start}
+                    </text>
+                  </g>
+                );
+              })}
+
+              <line x1="338" y1="160" x2="648" y2="160" className="paths-cinematic__spine" />
+
+              {active.route.map((step, index) => {
+                const x = 405 + index * 96;
+                return (
+                  <g key={`${active.number}-${step}`}>
+                    <motion.circle
+                      cx={x}
+                      cy="160"
+                      r="6"
+                      fill={active.tint}
+                      initial={prefersReducedMotion ? false : { scale: 0.4, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: prefersReducedMotion ? 0 : index * 0.13, ease: EASE }}
+                      style={{ transformOrigin: `${x}px 160px` }}
+                    />
+                    <text x={x} y="132" textAnchor="middle" className="paths-cinematic__svg-step">
+                      {step}
+                    </text>
+                  </g>
+                );
+              })}
+
+              <motion.circle
+                cx="680"
+                cy="160"
+                r="32"
+                fill="none"
+                stroke={active.tint}
+                strokeWidth="1.4"
+                animate={
+                  inView && !prefersReducedMotion
+                    ? { scale: [0.88, 1.14, 0.88], opacity: [0.38, 0.72, 0.38] }
+                    : { scale: 1 }
+                }
+                style={{ transformOrigin: "680px 160px" }}
+                transition={{ duration: 3.1, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <circle cx="680" cy="160" r="8" fill={active.tint} />
+              <text x="720" y="151" className="paths-cinematic__svg-result">
+                A brand people
+              </text>
+              <text x="720" y="175" className="paths-cinematic__svg-result">
+                recognise and choose
+              </text>
+            </svg>
+
+            <div className="paths-cinematic__mobile-route" aria-hidden="true">
+              <span>{active.start}</span>
+              {active.route.map((step) => (
+                <span key={step}>{step}</span>
+              ))}
+              <strong>{active.result}</strong>
             </div>
           </div>
 
-          <AnimatePresence
-            mode="sync"
-            initial={false}
-            custom={selectionDirectionRef.current}
-          >
+          <AnimatePresence mode="wait" initial={false}>
             <motion.article
               key={active.number}
-              id={`path-active-panel-${active.number}`}
-              className="paths-film__answer"
-              role="tabpanel"
-              aria-labelledby={`path-film-tab-${active.number}`}
-              data-path-state={isPreviewing ? "preview" : "chosen"}
-              data-home-reading-plane
-              data-home-selection-direction={selectionDirectionRef.current}
-              aria-live={isPreviewing ? "off" : "polite"}
-              custom={selectionDirectionRef.current}
-              variants={PATH_ANSWER_VARIANTS}
-              initial={prefersReducedMotion ? false : "enter"}
-              animate="active"
-              exit={prefersReducedMotion ? undefined : "exit"}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
+              className="paths-cinematic__focus"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(3px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
+              aria-live="polite"
             >
-              <p className="paths-film__answer-eyebrow">{active.eyebrow}</p>
+              <div className="paths-cinematic__focus-topline">
+                <span>Path {active.number}</span>
+                <i aria-hidden="true" />
+              </div>
+              <p>{active.eyebrow}</p>
               <h3>{active.title}</h3>
-              <p className="paths-film__answer-body">{active.body}</p>
-              <dl>
-                <div>
-                  <dt>What we decide</dt>
-                  <dd>{active.route}</dd>
-                </div>
-                <div>
-                  <dt>What changes</dt>
-                  <dd>{active.result}</dd>
-                </div>
-              </dl>
-              <AnimatePresence mode="sync" initial={false}>
-                <motion.p
-                  key={`${active.number}-${carriedFrom ?? "direct"}-${isPreviewing ? "preview" : "chosen"}`}
-                  className="paths-film__proof"
-                  data-proof-origin={carriedFrom === "evidence" && !isPreviewing ? "evidence" : "case"}
-                  initial={prefersReducedMotion ? false : { opacity: 1, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, transition: { duration: 0 } }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.24, ease: EASE }}
-                >
-                  {carriedFrom === "evidence" && !isPreviewing ? (
-                    <>
-                      <span>Why this path follows</span>
-                      {active.evidenceBridge}
-                    </>
-                  ) : active.proof}
-                </motion.p>
-              </AnimatePresence>
-              <Link
-                className="paths-film__method-link"
-                href="#process"
-                data-section-jump-yield="true"
-                onClick={() => choose(activeIndex)}
-              >
-                <span className="paths-film__method-link-copy">
-                  <small>Next chapter</small>
-                  See how Suman makes the decision
-                </span>
-                <span className="paths-film__method-link-arrow" aria-hidden="true">
-                  <ArrowDown size={16} strokeWidth={1.8} />
-                </span>
+              <p className="paths-cinematic__focus-body">{active.body}</p>
+              <div className="paths-cinematic__focus-result">
+                <span>What changes next</span>
+                <strong>{active.result}</strong>
+              </div>
+              <Link href={active.href}>
+                Follow this path <span aria-hidden="true">↗</span>
               </Link>
             </motion.article>
           </AnimatePresence>
         </div>
 
+        <div className="paths-cinematic__choices" role="tablist" aria-label="Choose a brand path">
+          {PATHS.map((path, index) => {
+            const selected = index === activeIndex;
+            return (
+              <button
+                key={path.number}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => choose(index)}
+                onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
+                onFocus={() => choose(index)}
+                className={selected ? "is-active" : undefined}
+                style={{ "--path-tint": path.tint } as CSSProperties}
+              >
+                <span>{path.number}</span>
+                <strong>{path.title}</strong>
+                <p>{path.eyebrow}</p>
+                <i aria-hidden="true">
+                  <b
+                    style={{
+                      animationDuration: `${AUTO_ADVANCE_MS}ms`,
+                      animationPlayState:
+                        selected && inView && !prefersReducedMotion ? "running" : "paused",
+                    }}
+                  />
+                </i>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="paths-cinematic__footer">
+          <span>Still between paths?</span>
+          <Link href="/services#health">
+            Find the right starting point <span aria-hidden="true">→</span>
+          </Link>
+        </div>
       </div>
     </section>
   );

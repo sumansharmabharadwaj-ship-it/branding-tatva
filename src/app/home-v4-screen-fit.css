@@ -10,18 +10,22 @@
 }
 
 @media (min-width: 821px) {
-
   /* These chapters previously carried 108–112svh minimums. The extra strip
      exposed the next chapter without adding a new narrative beat. Content can
      still grow naturally whenever it genuinely needs more than one screen. */
+  .home-v4-recognition,
+  .home-v4-recognition__shell,
+  .home-v4-chapter--paths .paths-cinematic,
   .home-v4-chapter--process,
-.home-v4-chapter--evidence,
-.home-v4-chapter--evidence > section,
-.home-v4-chapter--decision,
-.home-v4-chapter--decision > section,
-.home-v4-chapter--invitation,
-.home-v4-chapter--invitation [data-cursor-media],
-.home-v4-chapter--invitation [data-cursor-media] > div.relative.flex.flex-1 {
+  .home-v4-chapter--process .project-journey,
+  .home-v4-chapter--evidence,
+  .home-v4-chapter--evidence > section,
+  .home-v4-chapter--studio .studio-cinematic,
+  .home-v4-chapter--decision,
+  .home-v4-chapter--decision > section,
+  .home-v4-chapter--invitation,
+  .home-v4-chapter--invitation [data-cursor-media],
+  .home-v4-chapter--invitation [data-cursor-media] > div.relative.flex.flex-1 {
     min-height: 100svh;
   }
 
@@ -32,27 +36,18 @@
     min-height: clamp(18rem, 36svh, 25rem);
   }
 
-  /* Hidden cost is a single visitor-led frame. The four states resolve inside
-     the viewport, so guided view never races through a sticky runway. */
-
-  /* Five Tatva mechanisms already fit inside their pressure-lab frame. A
-     short pause supports discovery; the former 160svh hold delayed Studio. */
-  .home-v4-chapter--tatva {
-    min-height: 100svh !important;
+  /* Four cost states now unfold over a denser held scene. Each state still has
+     a clear scroll interval, while the visitor travels roughly one quarter
+     less distance than the previous 195svh / 82rem version. */
+  .home-v4-cost {
+    height: 175svh;
+    min-height: 72rem;
   }
 }
 
 /* Short laptops are where a cinematic layout most easily turns into cropped
    copy plus empty scrolling. Compress spacing and type, not information. */
-@media (min-width: 821px) and (max-height: 960px) {
-  .final-invitation__eyebrow,
-.final-invitation__details span,
-.final-invitation__map p,
-.final-invitation__node span,
-.final-invitation__core span {
-    font-size: 0.75rem !important;
-  }
-
+@media (min-width: 821px) and (max-height: 820px) {
   .home-v4-handoff {
     height: 1.75rem;
   }
@@ -85,9 +80,75 @@
     padding: 1rem 1.1rem;
   }
 
-  /* Studio carried a 52rem floor, which exceeded common 13-inch laptop
-     heights before its content was considered. Let the authored two-column
-     frame use the available screen and compress its controls in place. */
+  .home-v4-recognition__shell {
+    padding-top: clamp(4.75rem, 9svh, 5.7rem);
+    padding-bottom: clamp(2.1rem, 4.5svh, 3.2rem);
+  }
+
+  .home-v4-recognition__header {
+    gap: clamp(1.2rem, 3svh, 2rem);
+  }
+
+  .home-v4-recognition__header h2 {
+    font-size: clamp(2.65rem, min(4.7vw, 7.4svh), 4.9rem);
+  }
+
+  .home-v4-recognition__stage {
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-top: clamp(1.6rem, 3.8svh, 2.6rem);
+  }
+
+  .home-v4-recognition__copy {
+    min-height: clamp(20rem, 44svh, 23rem);
+    padding: clamp(1.25rem, 2.2vw, 1.8rem);
+  }
+
+  .home-v4-recognition__copy h3 {
+    font-size: clamp(2.2rem, min(3.5vw, 6svh), 3.65rem);
+  }
+
+  .home-v4-recognition__diagram {
+    width: min(100%, 33rem);
+    max-height: 51svh;
+  }
+
+  .home-v4-cost {
+    height: 168svh;
+    min-height: 66rem;
+  }
+
+  .home-v4-cost__shell {
+    padding-top: clamp(4.75rem, 9svh, 5.6rem);
+    padding-bottom: clamp(2rem, 4svh, 3rem);
+  }
+
+  .home-v4-cost__shell > header h2 {
+    font-size: clamp(2.7rem, min(4.8vw, 7.6svh), 4.9rem);
+  }
+
+  .home-v4-cost__stage {
+    margin-top: clamp(1.4rem, 3.4svh, 2.4rem);
+  }
+
+  .home-v4-cost__stage > article,
+  .home-v4-cost__diagram {
+    min-height: clamp(18rem, 42svh, 20rem);
+    padding: clamp(1.1rem, 2vw, 1.55rem);
+  }
+
+  .home-v4-cost__stage > article h3 {
+    margin-top: 0.8rem;
+    font-size: clamp(2rem, min(3vw, 5.2svh), 3rem);
+  }
+
+  .home-v4-cost__stage > article > p {
+    margin-top: 0.7rem;
+    line-height: 1.55;
+  }
+
+  .home-v4-cost__footer {
+    margin-top: 0.9rem;
+  }
 
   .home-v4-chapter--invitation [data-cursor-media] > div.relative.flex.flex-1 {
     gap: clamp(1.5rem, 3.5svh, 2.5rem);
@@ -97,55 +158,6 @@
 
   .home-v4-chapter--invitation [data-cursor-media] p[role="text"] {
     font-size: clamp(2.35rem, min(4.6vw, 7.2svh), 4.7rem);
-  }
-
-  /* Paths keeps the three choices, active route, and proof in one frame. */
-
-  /* The Tatva lab is a stable chooser. Its board stays mounted while copy
-     changes, so the chapter no longer needs a sticky runway. */
-  .home-v4-chapter--tatva .bt-scene__sticky {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 100svh;
-  }
-
-  /* Studio uses the authored two-column frame throughout laptop widths.
-     The portrait remains visible beside the thinking room. */
-
-  /* Health keeps a stable diagnostic footprint between every answer. */
-
-  /* Insights and practical doubts keep their complete interactive argument
-     while secondary support moves out of the first frame. */
-
-  /* The invitation's primary action stays in the first frame. */
-  .home-v4-chapter--invitation [data-cursor-media] > div.relative.flex.flex-1 {
-    gap: 1rem;
-    padding-top: clamp(4.75rem, 8svh, 5.5rem);
-    padding-bottom: clamp(1.5rem, 3svh, 2.25rem);
-  }
-
-  .home-v4-chapter--invitation [data-cursor-media] p[role="text"] {
-    max-width: 48rem;
-    font-size: clamp(2.2rem, min(4vw, 6.2svh), 4rem);
-  }
-
-  .final-invitation__copy {
-    min-height: clamp(22rem, 43svh, 25rem);
-  }
-
-  .final-invitation__headline {
-    font-size: clamp(2.25rem, min(4vw, 6.2svh), 4rem) !important;
-  }
-
-  .final-invitation__copy {
-    padding: 1.5rem 1.75rem !important;
-  }
-
-  .final-invitation__body,
-  .final-invitation__actions,
-  .final-invitation__details {
-    margin-top: 0.85rem !important;
   }
 }
 
@@ -165,11 +177,20 @@
     justify-self: end;
     margin-bottom: 1.5rem;
   }
-}
 
-/* The screenshot viewport sits just above the former small-laptop breakpoint.
-   Keep both information panels inside its width instead of allowing an
-   intrinsic card label to expand the scene beyond the frame. */
+  .home-v4-recognition__header {
+    grid-template-columns: minmax(0, 1.2fr) minmax(14rem, 0.58fr);
+    align-items: end;
+  }
+
+  .home-v4-recognition__stage {
+    grid-template-columns: minmax(20rem, 0.82fr) minmax(26rem, 1.18fr);
+  }
+
+  .home-v4-cost__stage {
+    grid-template-columns: minmax(15rem, 0.58fr) minmax(25rem, 1.42fr);
+  }
+}
 
 /* Leave touch scrolling native and predictable. Only protect anchors and the
    opening frame from device cut-outs and dynamic browser chrome. */
@@ -179,26 +200,34 @@
   }
 
   .home-v4-opening__shell {
-    padding-top: max(6.25rem, calc(5.25rem + env(safe-area-inset-top, 0px)));
     padding-bottom: max(4.6rem, calc(2.8rem + env(safe-area-inset-bottom, 0px)));
   }
 }
 
 @supports not (height: 1svh) {
   @media (min-width: 821px) {
+    .home-v4-recognition,
+    .home-v4-recognition__shell,
+    .home-v4-chapter--paths .paths-cinematic,
     .home-v4-chapter--process,
-.home-v4-chapter--evidence,
-.home-v4-chapter--evidence > section,
-.home-v4-chapter--decision,
-.home-v4-chapter--decision > section,
-.home-v4-chapter--invitation,
-.home-v4-chapter--invitation [data-cursor-media],
-.home-v4-chapter--invitation [data-cursor-media] > div.relative.flex.flex-1 {
+    .home-v4-chapter--process .project-journey,
+    .home-v4-chapter--evidence,
+    .home-v4-chapter--evidence > section,
+    .home-v4-chapter--studio .studio-cinematic,
+    .home-v4-chapter--decision,
+    .home-v4-chapter--decision > section,
+    .home-v4-chapter--invitation,
+    .home-v4-chapter--invitation [data-cursor-media],
+    .home-v4-chapter--invitation [data-cursor-media] > div.relative.flex.flex-1 {
       min-height: 100vh;
     }
 
     .home-v4-chapter--process > div:first-child {
       min-height: clamp(18rem, 36vh, 25rem);
+    }
+
+    .home-v4-cost {
+      height: 175vh;
     }
   }
 }
@@ -208,84 +237,3 @@
     height: 1.5rem;
   }
 }
-
-
-/* Exact-checkpoint correction: scenes that behave as one chapter now own one
-   desktop frame. Dense archives remain naturally scrollable; interactive
-   scenes compress their chrome and keep the active content visible. */
-@media (min-width: 821px) and (max-height: 1000px) {
-  .home-v4-chapter--decision > section,
-.home-v4-chapter--invitation {
-    min-height: 100svh;
-  }
-
-  .home-v4-chapter--tatva {
-    min-height: 112svh !important;
-  }
-}
-
-@supports not (height: 1svh) {
-  @media (min-width: 821px) and (max-height: 1000px) {
-
-    .home-v4-chapter--tatva {
-      min-height: 112vh !important;
-    }
-  }
-}
-
-
-/* Workbook-authority pass: H05, H10, H11, H13 and the process spine.
-   The two required desktop matrices are 1366x768 and 1440x900. Each scene
-   keeps its controls, active explanation, evidence and next action in the same
-   frame; inactive-card detail yields to the active panel instead of creating a
-   second runway. */
-@media (min-width: 1101px) and (max-height: 1000px) {
-  .home-v4-chapter--paths,
-.home-v4-chapter--process,
-.home-v4-chapter--health,
-.home-v4-chapter--health > section,
-.home-v4-chapter--decision,
-.home-v4-chapter--decision > section {
-    height: 100svh;
-    min-height: 100svh;
-  }
-
-  /* H05 — the three tributaries, one active route and its evidence. */
-
-  /* Process/evidence spine — active decision, architecture and readiness share
-     one frame. Ambient video remains the only continuous movement. */
-
-  /* The fixed journey controller occupies the upper-right of every chapter.
-     The process intro repeated what the tabs already explain and sat directly
-     beneath that controller, so remove the duplicate line in this one-screen
-     composition instead of forcing two interface layers to compete. */
-
-  /* H10 — one diagnostic question and five visible signals. */
-
-  /* H11 — three authored guides plus one active field-note argument. */
-
-  /* H13 — stable copy, one selected answer, five direct controls. */
-}
-
-@supports not (height: 1svh) {
-  @media (min-width: 1101px) and (max-height: 1000px) {
-    .home-v4-chapter--paths,
-.home-v4-chapter--process,
-.home-v4-chapter--health,
-.home-v4-chapter--health > section,
-.home-v4-chapter--decision,
-.home-v4-chapter--decision > section {
-      height: 100vh;
-      min-height: 100vh;
-    }
-  }
-}
-
-
-/* Workbook H02 follow-up: the degree-to-strategy signature keeps its
-   proof and authorship inside the same desktop frame. */
-
-/* H11 readability correction. The previous screen-fit pass made this scene
-   technically fit by shrinking its useful copy. Keep the one-screen cadence,
-   remove the redundant instruction line, and give the reading choices an
-   honest type size. This block stays last so it wins over earlier compression. */

@@ -1,87 +1,38 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type KeyboardEvent as ReactKeyboardEvent,
-} from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Container } from "@/components/Container";
-import { LivingImage } from "@/components/LivingImage";
-import { projects, type Project } from "@/data/projects";
-import { usesLivingStill } from "@/lib/mediaMode";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import {
-  SERVICES_SITUATION_CLEARED_EVENT,
-  SERVICES_SITUATION_EVENT,
-  SERVICES_SITUATION_STORAGE_KEY,
-  SITUATION_TO_PROOF_SLUG,
-  isServicesSituation,
-  publishServicesSituation,
-  readCompletedHomeDiagnosis,
-  type ServicesSituationDetail,
-  type ServicesSituationId,
-} from "@/lib/servicesJourney";
+  projects,
+  type Project,
+} from "@/sections/HomeV4/homeSnapshotProjects";
+import { ProjectFile } from "@/sections/Home/ProjectFile";
 
-const DEFAULT_PROJECTS = projects.filter((project) => project.featured);
-const PROJECTS_BY_SLUG = new Map(projects.map((project) => [project.slug, project]));
-
-const SITUATION_LABEL: Record<ServicesSituationId, string> = {
-  idea: "New brand",
-  reposition: "Repositioning",
-  ongoing: "Repeatable system",
-};
-
-const PROOF_TO_SITUATION: Partial<Record<string, ServicesSituationId>> = {
-  [SITUATION_TO_PROOF_SLUG.idea]: "idea",
-  [SITUATION_TO_PROOF_SLUG.reposition]: "reposition",
-  [SITUATION_TO_PROOF_SLUG.ongoing]: "ongoing",
-  "executive-springboard": "ongoing",
+const ACTION: Record<string, string> = {
+  "dr-haley-nutrition": "Watch the story",
+  myshopineurope: "Open the file",
+  "executive-springboard": "View the case",
+  herbalcart: "View the case",
+  "plaxonic-content-portfolio": "Open the file",
 };
 
 const DECISION: Record<string, { big: string; label: string }> = {
   myshopineurope: {
     big: "Craft over price",
-    label: "the positioning choice that moved the platform beyond cheap supply",
+    label: "the positioning refusal that reframed the platform",
   },
   "executive-springboard": {
-    big: "One next action",
-    label: "every platform sequence designed toward webinar registration",
+    big: "Registrations",
+    label: "content built to end in one, well past a like",
   },
   herbalcart: {
-    big: "Perception reset",
-    label: "a modern supplement position replacing the accidental herbal frame",
-  },
-};
-
-const EVIDENCE_META: Record<string, { type: string; period: string; source: string }> = {
-  "dr-haley-nutrition": {
-    type: "Measured performance",
-    period: "December 2025 to January 2026",
-    source: "Instagram account comparison: 111 followers from 23 posts versus 126 from 12 posts. The homepage shows the raw values per post instead of an unexplained percentage.",
-  },
-  myshopineurope: {
-    type: "Delivered system",
-    period: "Completed project output",
-    source: "Brand foundation, channel playbooks, and a content operating plan for four quarters.",
-  },
-  "executive-springboard": {
-    type: "Documented decision and delivered work",
-    period: "Completed project output",
-    source: "Competitive audit, eight content pillars, and channel playbooks structured around webinar registration.",
-  },
-  herbalcart: {
-    type: "Delivered campaign reset",
-    period: "Completed project output",
-    source: "Repositioned content themes, five formats ready for production, and complete video scripts.",
+    big: "Wellness first",
+    label: "perception moved from herbal supplement to modern brand",
   },
 };
 
@@ -89,59 +40,34 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
   "dr-haley-nutrition": {
     signal: "More posts were producing weaker audience response.",
     decision: "Post less, then make every remaining post earn its place.",
-    proof: "Engagement moved from 0.71% to 2.81%; followers earned per Instagram post moved from 4.8 to 10.5.",
+    proof: "Engagement moved from 0.71% to 2.81%; followers earned per post rose 104%.",
   },
   myshopineurope: {
     signal: "A new marketplace risked reading as generic access and cheap supply.",
     decision: "Position Indian craft, origin, and wellness heritage ahead of price.",
-    proof: "A complete brand foundation and content operating plan for twelve months.",
+    proof: "A complete brand foundation and year-long content operating system.",
   },
   "executive-springboard": {
     signal: "Social content was building awareness without a clear destination.",
     decision: "Sequence each platform toward webinar registration and mentor action.",
-    proof: "Eight content pillars and channel plans built around webinar registration.",
+    proof: "An eight-pillar, platform-specific content system built around conversion.",
   },
   herbalcart: {
-    signal: "The product range was being read through an accidental herbal and Ayurvedic frame.",
-    decision: "Reposition the campaign around practical, modern supplementation for active lifestyles.",
-    proof: "Five content formats ready to shoot, with complete scripts built around the modern supplement category.",
+    signal: "A modern supplement range was being read through a purely herbal lens.",
+    decision: "Explain supplementation as a practical gap-filler for active lifestyles.",
+    proof: "Five content formats ready to shoot and complete Hinglish video scripts.",
+  },
+  "plaxonic-content-portfolio": {
+    signal: "One content tone failed to serve beginners and technical experts with equal credibility.",
+    decision: "Give research, perspective, education, and fast consumption different jobs.",
+    proof: "A sixteen-piece authority portfolio structured to validate, challenge, humanise, and define.",
   },
 };
 
+const AUTO_ADVANCE_MS = 4800;
+const MANUAL_PAUSE_MS = 14000;
+const HOVER_PAUSE_MS = 3200;
 const EASE = [0.22, 1, 0.36, 1] as const;
-type SelectionDirection = "forward" | "backward";
-const EVIDENCE_CAMERA_VARIANTS = {
-  enter: (direction: SelectionDirection) => ({
-    opacity: 0,
-    scale: 1.055,
-    x: direction === "forward" ? 18 : -18,
-  }),
-  active: { opacity: 1, scale: 1.075, x: 0 },
-  exit: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? -12 : 12,
-  }),
-};
-const EVIDENCE_SUMMARY_VARIANTS = {
-  enter: (direction: SelectionDirection) => ({
-    opacity: 1,
-    x: direction === "forward" ? 18 : -18,
-    y: 4,
-  }),
-  active: { opacity: 1, x: 0, y: 0 },
-  exit: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? -14 : 14,
-    y: -4,
-    transition: { duration: 0 },
-  }),
-};
-
-const loadProjectFile = () => import("@/sections/Home/ProjectFile");
-const ProjectFile = dynamic(
-  () => loadProjectFile().then((module) => module.ProjectFile),
-  { ssr: false },
-);
 
 function trailFor(project: Project) {
   return (
@@ -154,405 +80,319 @@ function trailFor(project: Project) {
 }
 
 function metricFor(project: Project) {
-  if (project.slug === "dr-haley-nutrition") {
-    return {
-      big: "10.5 vs 4.8",
-      label: "followers earned per Instagram post · January vs December",
-    };
-  }
-
   const stat = project.stats?.[0];
   const fallback = DECISION[project.slug];
   return {
-    big: stat?.value ?? fallback?.big ?? "A stronger brand choice",
+    big: stat?.value ?? fallback?.big ?? "A clearer system",
     label: stat?.label ?? fallback?.label ?? project.hook ?? project.outcome,
   };
 }
 
-function projectsForSituation(situation: ServicesSituationId | null) {
-  if (!situation) return DEFAULT_PROJECTS;
-
-  const primary = PROJECTS_BY_SLUG.get(SITUATION_TO_PROOF_SLUG[situation]);
-  if (!primary) return DEFAULT_PROJECTS;
-
-  return [
-    primary,
-    ...DEFAULT_PROJECTS.filter((project) => project.slug !== primary.slug).slice(0, 2),
-  ];
-}
-
 export function EvidenceWall() {
-  const indexButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const selectionDirectionRef = useRef<SelectionDirection>("forward");
-  const displayedIndexRef = useRef(0);
-  const [committedIndex, setCommittedIndex] = useState(0);
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const activeVideoRef = useRef<HTMLVideoElement>(null);
+  const manualPauseUntilRef = useRef(0);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
-  const [projectFileRequested, setProjectFileRequested] = useState(false);
-  const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const visibleProjects = useMemo(
-    () => projectsForSituation(carriedSituation),
-    [carriedSituation],
-  );
-  const activeIndex = previewIndex ?? committedIndex;
-  displayedIndexRef.current = activeIndex;
-  const isPreviewing = previewIndex !== null && previewIndex !== committedIndex;
-  const activeProject = visibleProjects[activeIndex] ?? visibleProjects[0];
-  const activeLivingStill = usesLivingStill(activeProject.cardVideo);
+  const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
+  const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
-  const activeEvidence = EVIDENCE_META[activeProject.slug];
-  const activeSituation = PROOF_TO_SITUATION[activeProject.slug];
 
-  function rememberSelectionDirection(
-    next: number,
-    direction?: SelectionDirection,
-  ) {
-    const current = displayedIndexRef.current;
-    if (next === current) return;
-    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
-    displayedIndexRef.current = next;
+  function pauseAutoplay(duration = MANUAL_PAUSE_MS) {
+    manualPauseUntilRef.current = Date.now() + duration;
   }
 
-  function choose(
-    index: number,
-    persist = true,
-    direction?: SelectionDirection,
-  ) {
-    const count = visibleProjects.length;
-    const next = count > 0 ? ((index % count) + count) % count : 0;
-    rememberSelectionDirection(next, direction);
-    if (!persist) {
-      setPreviewIndex(next);
-      return;
-    }
-    setCommittedIndex(next);
-    setPreviewIndex(null);
-  }
-
-  function clearPreview() {
-    rememberSelectionDirection(committedIndex);
-    setPreviewIndex(null);
+  function choose(index: number, hold = MANUAL_PAUSE_MS) {
+    if (!projects.length) return;
+    const safeIndex = ((index % projects.length) + projects.length) % projects.length;
+    pauseAutoplay(hold);
+    setActiveIndex(safeIndex);
   }
 
   useEffect(() => {
-    function applySituation(value: string | null) {
-      if (!isServicesSituation(value)) return;
-      setCarriedSituation(value);
-      setCommittedIndex(0);
-      setPreviewIndex(null);
-      setOpenSlug(null);
+    if (prefersReducedMotion || !inView || projects.length < 2) return;
+
+    const timer = window.setInterval(() => {
+      if (
+        Date.now() < manualPauseUntilRef.current ||
+        openSlug ||
+        document.hidden
+      ) {
+        return;
+      }
+      setActiveIndex((current) => (current + 1) % projects.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearInterval(timer);
+  }, [inView, openSlug, prefersReducedMotion]);
+
+  useEffect(() => {
+    function onChapter(event: Event) {
+      const detail = (event as CustomEvent<{ id?: string }>).detail;
+      if (detail?.id !== "evidence") return;
+      manualPauseUntilRef.current = Date.now() + 700;
+      setActiveIndex(0);
     }
 
-    try {
-      const completedDiagnosis = readCompletedHomeDiagnosis();
-      if (completedDiagnosis) applySituation(completedDiagnosis);
-      else applySituation(window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY));
-    } catch {}
-
-    function onSituation(event: Event) {
-      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
-      applySituation(detail?.situation ?? null);
-    }
-
-    function onSituationCleared() {
-      setCarriedSituation(null);
-      setCommittedIndex(0);
-      setPreviewIndex(null);
-      setOpenSlug(null);
-    }
-
-    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
-    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
-    return () => {
-      window.removeEventListener(
-        SERVICES_SITUATION_EVENT,
-        onSituation as EventListener,
-      );
-      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onSituationCleared);
-    };
+    window.addEventListener("bt:home-chapter", onChapter as EventListener);
+    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
   }, []);
 
-  function chooseFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
-    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
-      ? 1
-      : event.key === "ArrowLeft" || event.key === "ArrowUp"
-        ? -1
-        : 0;
-    if (!direction && event.key !== "Home" && event.key !== "End") return;
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const videoAtEffectStart = activeVideoRef.current;
 
-    event.preventDefault();
-    const nextIndex = event.key === "Home"
-      ? 0
-      : event.key === "End"
-        ? visibleProjects.length - 1
-        : (index + direction + visibleProjects.length) % visibleProjects.length;
-    const selectionDirection = direction > 0
-      ? "forward"
-      : direction < 0
-        ? "backward"
-        : undefined;
-    choose(nextIndex, true, selectionDirection);
-    indexButtonRefs.current[nextIndex]?.focus();
-  }
+    function syncPlayback() {
+      const video = activeVideoRef.current;
+      if (!video) return;
+      video.playbackRate = 1.2;
+      if (inView && !document.hidden) void video.play().catch(() => {});
+      else video.pause();
+    }
 
-  const closeProjectFile = useCallback(() => setOpenSlug(null), []);
-
-  function prepareProjectFile() {
-    setProjectFileRequested(true);
-    void loadProjectFile();
-  }
-
-  function openProjectFile() {
-    prepareProjectFile();
-    setOpenSlug(activeProject.slug);
-  }
-
-  function continueIntoPath() {
-    if (!activeSituation) return;
-    publishServicesSituation(activeSituation, "home_evidence");
-  }
+    syncPlayback();
+    document.addEventListener("visibilitychange", syncPlayback);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPlayback);
+      videoAtEffectStart?.pause();
+    };
+  }, [activeIndex, inView, prefersReducedMotion]);
 
   return (
     <section
+      ref={sectionRef}
       className="evidence-cinematic"
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
-      data-evidence-match={carriedSituation ?? "default"}
-      data-evidence-preview={isPreviewing ? activeProject.slug : undefined}
-      data-media-id="BT-HOME-SELECTED-WORK-CINEMATIC-V2"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
+      onFocusCapture={() => pauseAutoplay()}
+      onPointerDown={() => pauseAutoplay()}
+      onTouchStart={() => pauseAutoplay()}
     >
-      <AnimatePresence
-        mode="sync"
-        initial={false}
-        custom={selectionDirectionRef.current}
-      >
-        <motion.div
-          key={`evidence-backdrop-${activeProject.slug}`}
-          className="evidence-cinematic__backdrop"
-          aria-hidden="true"
-          custom={selectionDirectionRef.current}
-          variants={EVIDENCE_CAMERA_VARIANTS}
-          initial={prefersReducedMotion ? false : "enter"}
-          animate={prefersReducedMotion ? { opacity: 1, scale: 1, x: 0 } : "active"}
-          exit={prefersReducedMotion ? undefined : "exit"}
-          transition={{
-            opacity: { duration: 0.72, ease: EASE },
-            x: { duration: 0.82, ease: EASE },
-            scale: { duration: 11, ease: "linear" },
-          }}
-        >
-          {activeProject.cardImage && (activeLivingStill && !prefersReducedMotion ? (
-            <LivingImage
-              src={activeProject.cardImage}
-              priority={activeIndex === 0}
-              sizes="100vw"
-              imagePosition={activeProject.cardImagePosition ?? "center"}
-              intensity="hero"
-              className="evidence-cinematic__backdrop-image"
-            />
-          ) : (
-            <Image
-              src={activeProject.cardImage}
-              alt=""
-              fill
-              priority={activeIndex === 0}
-              sizes="100vw"
-              className="evidence-cinematic__backdrop-image"
-              style={{ objectPosition: activeProject.cardImagePosition ?? "center" }}
-            />
-          ))}
-          {!prefersReducedMotion && activeProject.cardVideo && !activeLivingStill && (
-            <video
-              className="evidence-cinematic__backdrop-video"
-              src={activeProject.cardVideo}
-              poster={activeProject.cardImage}
-              muted
-              loop
-              playsInline
-              aria-hidden="true"
-              preload="none"
-              data-home-playback-rate="0.86"
-            />
-          )}
-        </motion.div>
-      </AnimatePresence>
-
+      <BackgroundVideo
+        video="/videos/pexels-fog-sunrise.mp4"
+        videoWebm="/videos/pexels-fog-sunrise.webm"
+        poster="/images/pexels-fog-sunrise-poster.jpg"
+      />
       <div className="evidence-cinematic__veil" aria-hidden="true" />
+      <motion.div
+        aria-hidden="true"
+        className="evidence-cinematic__light evidence-cinematic__light--one"
+        animate={
+          prefersReducedMotion || !inView
+            ? undefined
+            : { x: [0, 86, 0], y: [0, -30, 0], scale: [0.96, 1.12, 0.96] }
+        }
+        transition={
+          prefersReducedMotion || !inView
+            ? undefined
+            : { duration: 18, repeat: Infinity, ease: "easeInOut" }
+        }
+      />
+      <motion.div
+        aria-hidden="true"
+        className="evidence-cinematic__light evidence-cinematic__light--two"
+        animate={
+          prefersReducedMotion || !inView
+            ? undefined
+            : { x: [0, -64, 0], y: [0, 24, 0], scale: [1.05, 0.94, 1.05] }
+        }
+        transition={
+          prefersReducedMotion || !inView
+            ? undefined
+            : { duration: 21, repeat: Infinity, ease: "easeInOut" }
+        }
+      />
 
-      <Container className="evidence-cinematic__shell max-w-[100rem]" data-home-frame>
+      <Container className="evidence-cinematic__shell max-w-[100rem]">
         <header className="evidence-cinematic__header">
           <div>
-            <p className="evidence-cinematic__eyebrow">04 · Selected work</p>
-            <h2 id="evidence-wall-title">Client work should reveal <em>the thinking behind it.</em></h2>
+            <p className="evidence-cinematic__eyebrow">The evidence archive</p>
+            <h2 id="evidence-wall-title">
+              Decisions first. <em>Proof follows the trail.</em>
+            </h2>
           </div>
           <div className="evidence-cinematic__intro">
-            <span>{String(activeIndex + 1).padStart(2, "0")} / {String(visibleProjects.length).padStart(2, "0")}</span>
-            {(isPreviewing || carriedSituation) && (
-              <small className="evidence-cinematic__match">
-                {isPreviewing
-                  ? "Previewing project"
-                  : `Matched proof · ${SITUATION_LABEL[carriedSituation!]}`}
-              </small>
-            )}
-            <p>Each project shows what was happening, what changed, and what the available evidence can honestly support.</p>
+            <p>
+              Five real engagements. Each file begins with a signal that was misread,
+              then records the decision that changed the direction.
+            </p>
+            <span>The active file changes while you watch. Choose one and it waits.</span>
           </div>
         </header>
 
         <div className="evidence-cinematic__stage">
-          <AnimatePresence
-            mode="sync"
-            initial={false}
-            custom={selectionDirectionRef.current}
-          >
+          <AnimatePresence mode="wait" initial={false}>
             <motion.article
-              key={`evidence-summary-${activeProject.slug}`}
-              id={`evidence-active-file-${activeProject.slug}`}
-              role="tabpanel"
-              aria-labelledby={`evidence-tab-${activeProject.slug}`}
-              className="evidence-cinematic__summary"
-              data-home-reading-plane
-              data-home-selection-direction={selectionDirectionRef.current}
-              aria-live={isPreviewing ? "off" : "polite"}
-              custom={selectionDirectionRef.current}
-              variants={EVIDENCE_SUMMARY_VARIANTS}
-              initial={prefersReducedMotion ? false : "enter"}
-              animate="active"
-              exit={prefersReducedMotion ? undefined : "exit"}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
+              key={`media-${activeProject.slug}`}
+              className="evidence-cinematic__media"
+              initial={prefersReducedMotion ? false : { opacity: 0.34, scale: 1.035, filter: "blur(4px)" }}
+              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 1.015, filter: "blur(3px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}
+              aria-live="polite"
             >
-              <p>{activeProject.title} · {activeProject.industry}</p>
-              <strong>{activeMetric.big}</strong>
-              <span>{activeMetric.label}</span>
-              <ol className="evidence-cinematic__proof-line" aria-label="Project reasoning">
-                {[
-                  ["What was happening", activeTrail.signal],
-                  ["What changed", activeTrail.decision],
-                  ["What we can show", activeTrail.proof],
-                ].map(([label, value], index) => (
-                  <motion.li
-                    key={label}
-                    initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: prefersReducedMotion ? 0 : 0.48,
-                      delay: prefersReducedMotion ? 0 : 0.08 + index * 0.08,
-                      ease: EASE,
-                    }}
-                  >
-                    <span className="evidence-cinematic__proof-number" aria-hidden="true">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <div>
-                      <small>{label}</small>
-                      <p>{value}</p>
-                    </div>
-                  </motion.li>
-                ))}
-              </ol>
+              <div className="evidence-cinematic__media-layer">
+                {activeProject.cardImage && (
+                  <Image
+                    src={activeProject.cardImage}
+                    alt=""
+                    fill
+                    priority={activeIndex === 0}
+                    sizes="(min-width: 1100px) 62vw, 100vw"
+                    className="evidence-cinematic__media-image"
+                    style={{ objectPosition: activeProject.cardImagePosition ?? "center" }}
+                  />
+                )}
 
-              {activeEvidence && (
-                <aside className="evidence-cinematic__source" aria-label="Evidence source">
-                  <p>Evidence source</p>
-                  <div>
-                    <strong>{activeEvidence.type} · {activeEvidence.period}</strong>
-                    <span>{activeEvidence.source}</span>
-                  </div>
-                </aside>
-              )}
-
-              <div className="evidence-cinematic__actions">
+                {!prefersReducedMotion && activeProject.cardVideo && (
+                  <motion.video
+                    ref={activeVideoRef}
+                    key={activeProject.cardVideo}
+                    className="evidence-cinematic__media-video"
+                    src={activeProject.cardVideo}
+                    poster={activeProject.cardImage}
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                    preload={inView ? "metadata" : "none"}
+                    data-home-playback-rate="1.2"
+                    aria-hidden="true"
+                    initial={{ opacity: 0, scale: 1.035 }}
+                    animate={{ opacity: 1, scale: inView ? 1.1 : 1.04 }}
+                    transition={{ opacity: { duration: 0.72 }, scale: { duration: 8, ease: "linear" } }}
+                  />
+                )}
+              </div>
+              <div className="evidence-cinematic__media-wash" aria-hidden="true" />
+              <div className="evidence-cinematic__media-topline">
+                <span>Case file {String(activeIndex + 1).padStart(2, "0")}</span>
+                <span>{activeProject.industry}</span>
+              </div>
+              <div className="evidence-cinematic__media-copy">
+                <p>{activeProject.title}</p>
+                <strong>{activeMetric.big}</strong>
+                <span>{activeMetric.label}</span>
+              </div>
+              <div className="evidence-cinematic__media-actions">
                 <button
                   type="button"
-                  onClick={openProjectFile}
-                  onPointerEnter={prepareProjectFile}
-                  onFocus={prepareProjectFile}
+                  onClick={() => {
+                    pauseAutoplay();
+                    setOpenSlug(activeProject.slug);
+                  }}
                 >
-                  Open the project record
-                  <ArrowUpRight size={14} strokeWidth={1.8} aria-hidden="true" />
+                  Inspect the project file <span aria-hidden="true">↗</span>
                 </button>
-                <Link
-                  className="evidence-cinematic__path-link"
-                  href="#paths"
-                  data-section-jump-yield="true"
-                  onClick={continueIntoPath}
-                >
-                  <span className="evidence-cinematic__path-link-copy">
-                    <small>{activeSituation ? "This case points toward" : "Next chapter"}</small>
-                    <strong>
-                      {activeSituation
-                        ? `${SITUATION_LABEL[activeSituation]} path`
-                        : "Choose your starting point"}
-                    </strong>
-                  </span>
-                  <ArrowDown size={15} strokeWidth={1.8} aria-hidden="true" />
+                <Link href={`/work/${activeProject.slug}`}>
+                  {ACTION[activeProject.slug] ?? "View the case"} <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </motion.article>
           </AnimatePresence>
+
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.aside
+              key={`trail-${activeProject.slug}`}
+              className="evidence-cinematic__dossier"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(5px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+            >
+              <div className="evidence-cinematic__dossier-topline">
+                <span>Decision record</span>
+                <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</strong>
+              </div>
+
+              {[
+                ["01 · The signal", activeTrail.signal],
+                ["02 · The decision", activeTrail.decision],
+                ["03 · Recorded proof", activeTrail.proof],
+              ].map(([label, value], index) => (
+                <div key={label} className="evidence-cinematic__trail-step">
+                  <div>
+                    <span>{label}</span>
+                    <i aria-hidden="true" />
+                  </div>
+                  <p>{value}</p>
+                  {index < 2 && (
+                    <motion.b
+                      aria-hidden="true"
+                      animate={
+                        prefersReducedMotion || !inView
+                          ? undefined
+                          : { scaleY: [0, 1], opacity: [0.18, 0.68] }
+                      }
+                      transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 1.4, delay: index * 0.32, ease: "easeInOut" }}
+                    />
+                  )}
+                </div>
+              ))}
+
+              <div className="evidence-cinematic__dossier-footer">
+                <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
+                <Link href="/work">Explore the full archive <span aria-hidden="true">→</span></Link>
+              </div>
+
+              <span className="evidence-cinematic__timer" aria-hidden="true">
+                <motion.i
+                  key={`evidence-timer-${activeProject.slug}`}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+                />
+              </span>
+            </motion.aside>
+          </AnimatePresence>
         </div>
 
-        <div className="evidence-cinematic__index-area">
-          <p className="evidence-cinematic__index-guide">
-            <span>Choose a project</span>
-            <span>Inspect the reasoning and evidence</span>
-          </p>
-          <div
-            className="evidence-cinematic__index"
-            role="tablist"
-            aria-label="Choose a project case"
-            onPointerLeave={(event) => {
-              if (event.pointerType === "mouse") clearPreview();
-            }}
-          >
-            {visibleProjects.map((project, index) => {
-              const displayed = index === activeIndex;
-              const committed = index === committedIndex;
-              return (
-                <button
-                  key={project.slug}
-                  type="button"
-                  role="tab"
-                  id={`evidence-tab-${project.slug}`}
-                  aria-selected={committed}
-                  aria-controls={`evidence-active-file-${project.slug}`}
-                  tabIndex={committed ? 0 : -1}
-                  ref={(node) => { indexButtonRefs.current[index] = node; }}
-                  className={displayed ? "is-active" : undefined}
-                  style={{ "--project-accent": project.accent } as CSSProperties}
-                  onClick={() => choose(index)}
-                  onFocus={() => choose(index)}
-                  onPointerEnter={(event) => {
-                    if (event.pointerType === "mouse") choose(index, false);
-                  }}
-                  onKeyDown={(event) => chooseFromKeyboard(event, index)}
-                >
-                  <span className="evidence-cinematic__index-number">{String(index + 1).padStart(2, "0")}</span>
-                  <span className="evidence-cinematic__index-copy">
-                    <strong>{project.title}</strong>
-                    <em>
-                      {EVIDENCE_META[project.slug]?.type ?? "Project evidence"} · {project.industry}
-                    </em>
-                  </span>
-                  <span className="evidence-cinematic__index-state" aria-hidden="true">
-                    {displayed ? (isPreviewing ? "Preview" : "Viewing") : ""}
-                  </span>
-                  <i aria-hidden="true" />
-                </button>
-              );
-            })}
-          </div>
+        <div className="evidence-cinematic__index" role="tablist" aria-label="Choose a project file">
+          {projects.map((project, index) => {
+            const selected = index === activeIndex;
+            return (
+              <button
+                key={project.slug}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls="evidence-active-file"
+                className={selected ? "is-active" : undefined}
+                style={{ "--project-accent": project.accent } as CSSProperties}
+                onClick={() => choose(index)}
+                onPointerEnter={() => choose(index, HOVER_PAUSE_MS)}
+                onFocus={() => choose(index)}
+              >
+                <span className="evidence-cinematic__index-image" aria-hidden="true">
+                  {project.cardImage && (
+                    <Image
+                      src={project.cardImage}
+                      alt=""
+                      fill
+                      sizes="180px"
+                      style={{ objectFit: "cover", objectPosition: project.cardImagePosition ?? "center" }}
+                    />
+                  )}
+                  <i />
+                </span>
+                <span className="evidence-cinematic__index-copy">
+                  <small>{String(index + 1).padStart(2, "0")}</small>
+                  <strong>{project.title}</strong>
+                  <em>{project.industry}</em>
+                </span>
+              </button>
+            );
+          })}
         </div>
       </Container>
 
-      {projectFileRequested ? (
-        <ProjectFile
-          project={visibleProjects.find((project) => project.slug === openSlug) ?? null}
-          onClose={closeProjectFile}
-        />
-      ) : null}
+      <ProjectFile
+        project={projects.find((project) => project.slug === openSlug) ?? null}
+        onClose={() => setOpenSlug(null)}
+      />
     </section>
   );
 }

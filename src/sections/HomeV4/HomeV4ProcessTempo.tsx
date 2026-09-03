@@ -5,13 +5,10 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
 
 const PROCESS_SELECTOR = '[data-project-journey="true"]';
-const TAB_SELECTOR = '.decision-flow__rail [role="tab"]';
-// The method now carries one large decision at a time. Give each statement a
-// complete reading beat before the next one arrives; manual interaction keeps
-// the scene still long enough to inspect the selected stage.
-const FIRST_ADVANCE_MS = 3000;
-const AUTO_ADVANCE_MS = 5200;
-const USER_HOLD_MS = 14000;
+const TAB_SELECTOR = '.project-journey__rail [role="tab"]';
+const FIRST_ADVANCE_MS = 2400;
+const AUTO_ADVANCE_MS = 4200;
+const USER_HOLD_MS = 12000;
 const PAUSE_PULSE_MS = 4200;
 
 /**
@@ -111,7 +108,7 @@ export function HomeV4ProcessTempo() {
     }
 
     // Continue should feel immediate. Reset the local hold and return to the
-    // short opening beat before the steady rhythm resumes.
+    // short opening beat before the longer steady rhythm resumes.
     holdUntilRef.current = 0;
     firstAdvanceRef.current = true;
     setRevision((value) => value + 1);

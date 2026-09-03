@@ -2,59 +2,73 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight, Pause, Play, RotateCcw } from "lucide-react";
-import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
-import { LivingImage } from "@/components/LivingImage";
-import { usesLivingStill } from "@/lib/mediaMode";
+import { AnimatePresence, motion, useInView, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-type SelectionDirection = "forward" | "backward";
-const COST_MOMENT_VARIANTS = {
-  enter: (direction: SelectionDirection) => ({
-    opacity: 1,
-    x: direction === "forward" ? 18 : -18,
-  }),
-  active: { opacity: 1, x: 0 },
-  exit: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: direction === "forward" ? -14 : 14,
-    transition: { duration: 0 },
-  }),
-};
+
+const RECOGNITION_STATES = [
+  {
+    number: "01",
+    label: "The idea is clear in your head.",
+    headline: "The market keeps meeting a different version.",
+    body:
+      "The logo, website, pitch, and content are making separate promises because the position was never committed first.",
+    path: "Build the foundation",
+    proof: "A position the rest of the business can inherit.",
+    accent: "#C77752",
+  },
+  {
+    number: "02",
+    label: "The identity already exists.",
+    headline: "The business has quietly outgrown it.",
+    body:
+      "What the company has become and what its brand still teaches people to expect are no longer the same thing.",
+    path: "Reposition the system",
+    proof: "Useful recognition kept. Confusing signals removed.",
+    accent: "#7D9BAF",
+  },
+  {
+    number: "03",
+    label: "Marketing is active.",
+    headline: "Memory is starting from zero each time.",
+    body:
+      "Every campaign works alone. Attention arrives, then disappears because no repeated pattern is waiting underneath it.",
+    path: "Create consistency",
+    proof: "One idea repeated with intent across every channel.",
+    accent: "#C6A97A",
+  },
+] as const;
 
 const COST_STAGES = [
   {
     number: "01",
-    title: "A campaign introduces the business.",
-    body: "Buyers meet a promise and begin deciding where the brand belongs.",
-    signal: "First impression",
-    memory: "Association begins",
-    cause: "The business enters memory",
+    title: "A campaign begins.",
+    body: "The audience is introduced to the business.",
+    effort: "18%",
+    memory: "10%",
   },
   {
     number: "02",
-    title: "The next touchpoint tells a different story.",
-    body: "Buyers must decide whether they are still looking at the same business.",
-    signal: "Meaning changes",
-    memory: "Association splits",
-    cause: "A second version arrives",
+    title: "The brand changes shape.",
+    body: "The next channel teaches a different expectation.",
+    effort: "46%",
+    memory: "15%",
   },
   {
     number: "03",
-    title: "Every channel starts from the beginning.",
-    body: "Content keeps rebuilding context before it can make the offer desirable.",
-    signal: "Context repeats",
-    memory: "Familiarity slows",
-    cause: "Channels rebuild context",
+    title: "Every channel relearns the company.",
+    body: "More content is spent explaining what should already feel familiar.",
+    effort: "78%",
+    memory: "21%",
   },
   {
     number: "04",
-    title: "Marketing keeps paying for the introduction.",
-    body: "Reach grows, yet buyers still struggle to say what the brand stands for.",
-    signal: "Spend repeats",
-    memory: "Recognition trails",
-    cause: "Investment carries the reset",
+    title: "Marketing pays the introduction fee again.",
+    body: "Reach grows. Recognition barely compounds.",
+    effort: "100%",
+    memory: "28%",
   },
 ] as const;
 
@@ -62,9 +76,6 @@ export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.28 });
-  const openingVideo = "/videos/hero-forest-sanctuary.mp4";
-  const openingPoster = "/images/hero-forest-sanctuary-poster.jpg";
-  const livingOpening = usesLivingStill(openingVideo);
 
   return (
     <section
@@ -77,126 +88,372 @@ export function V4OpeningScene() {
       className="home-v4-opening"
       aria-labelledby="home-v4-opening-title"
     >
-      <div
-        className="home-v4-opening__media"
-        aria-hidden="true"
-        data-media-id="BT-HOME-HERO-FOREST-SANCTUARY"
-      >
-        {livingOpening ? (
-          <LivingImage
-            src={openingPoster}
-            priority
-            imagePosition="36% 44%"
-            intensity="hero"
-            className="home-v4-opening__living"
-          />
-        ) : (
-          <video
-            src={openingVideo}
-            poster={openingPoster}
-            data-home-playback-rate="1.1"
-            muted
-            loop
-            playsInline
-            aria-hidden="true"
-            preload="metadata"
-          />
-        )}
+      <div className="home-v4-opening__media" aria-hidden="true">
+        <video
+          src="/videos/hero-forest-sanctuary.mp4"
+          poster="/images/hero-forest-sanctuary-poster.jpg"
+          muted
+          autoPlay
+          loop
+          playsInline
+          preload="auto"
+        />
         <motion.span
           className="home-v4-opening__camera"
-          initial={false}
           animate={
             prefersReducedMotion || !inView
-              ? { scale: 1.03, x: 0, y: 0 }
-              : { scale: 1.075, x: -8, y: -5 }
+              ? undefined
+              : { scale: [1.03, 1.105, 1.03], x: [0, -10, 0], y: [0, -4, 0] }
           }
-          transition={{ duration: prefersReducedMotion ? 0 : 8, ease: "easeOut" }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
         />
         <span className="home-v4-opening__wash" />
       </div>
 
+      <motion.span
+        aria-hidden="true"
+        className="home-v4-opening__light home-v4-opening__light--one"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { x: ["-18%", "28%", "-18%"], opacity: [0.18, 0.56, 0.18] }
+        }
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.span
+        aria-hidden="true"
+        className="home-v4-opening__light home-v4-opening__light--two"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { x: ["12%", "-24%", "12%"], opacity: [0.1, 0.42, 0.1] }
+        }
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="home-v4-opening__signal" aria-hidden="true">
+        <svg viewBox="0 0 520 520">
+          <motion.path
+            d="M40 314 C120 252 168 350 244 282 C316 218 340 132 482 90"
+            fill="none"
+            stroke="rgba(212,185,154,.75)"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            pathLength="1"
+            animate={
+              prefersReducedMotion
+                ? { pathLength: 1, opacity: 0.6 }
+                : { pathLength: [0.12, 1, 0.12], opacity: [0.24, 0.9, 0.24] }
+            }
+            transition={{ duration: 6.8, repeat: Infinity, ease: "easeInOut" }}
+          />
+          {[
+            [72, 294],
+            [176, 322],
+            [257, 267],
+            [344, 156],
+            [470, 96],
+          ].map(([cx, cy], index) => (
+            <motion.circle
+              key={`${cx}-${cy}`}
+              cx={cx}
+              cy={cy}
+              r="4"
+              fill={index === 4 ? "#F4EFE6" : "#D4B99A"}
+              animate={
+                prefersReducedMotion
+                  ? undefined
+                  : { scale: [0.7, 1.45, 0.7], opacity: [0.35, 1, 0.35] }
+              }
+              style={{ transformOrigin: `${cx}px ${cy}px` }}
+              transition={{
+                duration: 3.2 + index * 0.35,
+                delay: index * 0.24,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </svg>
+        <span>signal</span>
+        <span>pattern</span>
+        <span>recognition</span>
+      </div>
+
       <div className="home-v4-opening__shell">
         <div className="home-v4-opening__topline">
-          <span>Brand strategy &amp; systems</span>
-          <span>Direct with Suman Sharma</span>
+          <span>Brand strategy · direct authorship</span>
+          <span>The page is alive before you touch it</span>
         </div>
 
-        <div className="home-v4-opening__copy" data-home-reading-plane>
+        <div className="home-v4-opening__copy">
           <motion.p
             className="home-v4-opening__eyebrow"
-            initial={false}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.58, delay: 0.08, ease: EASE }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.62, delay: 0.12, ease: EASE }}
           >
-            Brand strategy, written and directed by Suman Sharma
+            Psychology reads the tension. Language gives it form.
           </motion.p>
 
           <h1 id="home-v4-opening-title">
             <motion.span
-              initial={false}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.12, ease: EASE }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 44, rotateX: -10 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.86, delay: 0.18, ease: EASE }}
             >
-              Turn a growing business into a brand buyers
+              Your audience has already formed an opinion.
             </motion.span>
             <motion.em
-              initial={false}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.66, delay: 0.24, ease: EASE }}
+              initial={prefersReducedMotion ? false : { opacity: 0, x: -34 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.82, delay: 0.34, ease: EASE }}
             >
-              understand, remember, and choose.
+              Did you design it?
             </motion.em>
           </h1>
 
           <motion.p
             className="home-v4-opening__lede"
-            initial={false}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.58, delay: 0.32, ease: EASE }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.48, ease: EASE }}
           >
-            For founders whose business has outgrown the way it sounds or looks, Branding Tatva rebuilds the position first, then the language, identity, website, and content around it.
+            Branding Tatva decides the pattern people should recognise, then carries that decision through position, identity, language, website, and market behaviour.
           </motion.p>
 
           <motion.div
             className="home-v4-opening__actions"
-            initial={false}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.56, delay: 0.4, ease: EASE }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.66, delay: 0.6, ease: EASE }}
           >
             <Link
-              href="/contact#call"
+              href="#recognition"
               className="home-v4-button home-v4-button--primary"
               data-magnetic
-              data-cursor-label="begin"
+              data-cursor-label="inspect"
             >
-              Bring me the brand question <ArrowUpRight size={15} />
+              See what your brand is signalling <ArrowDownRight size={15} />
             </Link>
             <Link
-              href="#brand-diagnostic"
+              href="#evidence"
               className="home-v4-button home-v4-button--quiet"
               data-magnetic
-              data-cursor-label="diagnose"
+              data-cursor-label="proof"
             >
-              Diagnose my brand <ArrowDownRight size={15} />
+              Open the evidence <ArrowUpRight size={15} />
             </Link>
           </motion.div>
         </div>
 
         <motion.aside
           className="home-v4-opening__proof"
-          initial={false}
+          initial={prefersReducedMotion ? false : { opacity: 0, x: 26 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: 0.42, ease: EASE }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.72, delay: 0.52, ease: EASE }}
         >
-          <span>Working with Branding Tatva</span>
-          <strong>You speak with the strategist doing the work.</strong>
-          <p>Nothing passes between sales, strategy, and delivery. Suman keeps the original business problem in view throughout.</p>
-          <Link href="#evidence" className="home-v4-opening__proof-link">
-            Inspect the client evidence <ArrowDownRight size={13} />
-          </Link>
+          <span>Recorded outcome</span>
+          <strong>0.71 → 2.81%</strong>
+          <p>engagement rate in eight weeks, while the account posted less</p>
           <i aria-hidden="true" />
         </motion.aside>
 
+        <a href="#recognition" className="home-v4-opening__scroll" aria-label="Continue to visitor recognition">
+          <span>Follow the signal</span>
+          <i aria-hidden="true" />
+        </a>
+      </div>
+    </section>
+  );
+}
+
+export function V4RecognitionScene() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const holdUntilRef = useRef(0);
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const inView = useInView(sectionRef, { amount: 0.34 });
+  const [activeIndex, setActiveIndex] = useState(0);
+  const active = RECOGNITION_STATES[activeIndex];
+
+  useEffect(() => {
+    if (!inView || prefersReducedMotion) return;
+
+    const timer = window.setInterval(() => {
+      if (document.hidden || Date.now() < holdUntilRef.current) return;
+      setActiveIndex((current) => (current + 1) % RECOGNITION_STATES.length);
+    }, 4300);
+
+    return () => window.clearInterval(timer);
+  }, [inView, prefersReducedMotion]);
+
+  function choose(index: number) {
+    holdUntilRef.current = Date.now() + 11000;
+    setActiveIndex(index);
+  }
+
+  return (
+    <section
+      ref={sectionRef}
+      id="recognition"
+      data-home-v4-chapter="recognition"
+      data-home-chapter="recognition"
+      data-home-section="recognition"
+      data-cursor-world="dark"
+      className="home-v4-recognition"
+      aria-labelledby="home-v4-recognition-title"
+      style={{ "--recognition-accent": active.accent } as React.CSSProperties}
+      onPointerDown={() => {
+        holdUntilRef.current = Date.now() + 11000;
+      }}
+      onFocusCapture={() => {
+        holdUntilRef.current = Date.now() + 11000;
+      }}
+    >
+      <div className="home-v4-recognition__media" aria-hidden="true">
+        <video
+          muted
+          autoPlay
+          loop
+          playsInline
+          preload="metadata"
+          poster="/images/pexels-fog-sunrise-poster.jpg"
+        >
+          <source src="/videos/pexels-fog-sunrise.webm" type="video/webm" />
+          <source src="/videos/pexels-fog-sunrise.mp4" type="video/mp4" />
+        </video>
+        <span />
+      </div>
+
+      <motion.div
+        className="home-v4-recognition__reflection"
+        aria-hidden="true"
+        animate={
+          prefersReducedMotion || !inView
+            ? undefined
+            : { x: ["-8%", "8%", "-8%"], opacity: [0.18, 0.5, 0.18] }
+        }
+        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="home-v4-recognition__shell">
+        <header className="home-v4-recognition__header">
+          <div>
+            <p>01 · Recognition</p>
+            <h2 id="home-v4-recognition-title">
+              Most inconsistency begins <em>before the design file.</em>
+            </h2>
+          </div>
+          <span>
+            Watch the conditions change, or choose the one that sounds familiar.
+          </span>
+        </header>
+
+        <div className="home-v4-recognition__stage">
+          <div className="home-v4-recognition__copy" aria-live="polite">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={active.number}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+              >
+                <p className="home-v4-recognition__label">{active.label}</p>
+                <h3>{active.headline}</h3>
+                <p className="home-v4-recognition__body">{active.body}</p>
+                <div className="home-v4-recognition__answer">
+                  <span>The useful move</span>
+                  <strong>{active.path}</strong>
+                  <p>{active.proof}</p>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <Link href="#cost" className="home-v4-text-link" data-magnetic data-cursor-label="follow">
+              See what the drift quietly costs <span aria-hidden="true">↘</span>
+            </Link>
+          </div>
+
+          <div className="home-v4-recognition__diagram" aria-label="Three brand conditions converging on one strategic decision">
+            <svg viewBox="0 0 620 520" role="img">
+              <defs>
+                <radialGradient id="v4-recognition-core">
+                  <stop offset="0%" stopColor={active.accent} stopOpacity="0.34" />
+                  <stop offset="100%" stopColor={active.accent} stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <circle cx="310" cy="258" r="130" fill="url(#v4-recognition-core)" />
+              {[
+                "M92 92 C182 110 224 182 310 258",
+                "M528 92 C438 118 396 184 310 258",
+                "M310 474 C310 390 310 330 310 258",
+              ].map((path, index) => (
+                <g key={path}>
+                  <path d={path} fill="none" stroke="rgba(244,239,230,.12)" strokeWidth="1" />
+                  <motion.path
+                    d={path}
+                    fill="none"
+                    stroke={RECOGNITION_STATES[index].accent}
+                    strokeWidth={index === activeIndex ? 2.2 : 1}
+                    strokeDasharray="7 12"
+                    animate={{
+                      strokeDashoffset: index === activeIndex && inView ? [0, -52] : 0,
+                      opacity: index === activeIndex ? 0.92 : 0.22,
+                    }}
+                    transition={{
+                      strokeDashoffset: { duration: 1.5, repeat: Infinity, ease: "linear" },
+                      opacity: { duration: 0.38 },
+                    }}
+                  />
+                </g>
+              ))}
+              <motion.circle
+                cx="310"
+                cy="258"
+                r="54"
+                fill="rgba(18,22,25,.7)"
+                stroke={active.accent}
+                strokeWidth="1.6"
+                animate={
+                  prefersReducedMotion || !inView
+                    ? undefined
+                    : { scale: [0.94, 1.08, 0.94], opacity: [0.8, 1, 0.8] }
+                }
+                style={{ transformOrigin: "310px 258px" }}
+                transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </svg>
+
+            <div className="home-v4-recognition__core">
+              <span>one decision</span>
+              <strong>{active.path.split(" ")[0]}</strong>
+            </div>
+
+            {RECOGNITION_STATES.map((state, index) => {
+              const positions = [
+                { left: "15%", top: "18%" },
+                { left: "85%", top: "18%" },
+                { left: "50%", top: "88%" },
+              ];
+              return (
+                <button
+                  key={state.number}
+                  type="button"
+                  aria-pressed={index === activeIndex}
+                  onClick={() => choose(index)}
+                  style={positions[index]}
+                  className={index === activeIndex ? "is-active" : undefined}
+                  data-cursor-label={state.number}
+                >
+                  <span>{state.number}</span>
+                  <strong>{state.label}</strong>
+                  <i aria-hidden="true" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -204,133 +461,31 @@ export function V4OpeningScene() {
 
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const selectionDirectionRef = useRef<SelectionDirection>("forward");
-  const displayedIndexRef = useRef(0);
-  const ambientCompleteRef = useRef(false);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.55, margin: "0px" });
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
   const [activeIndex, setActiveIndex] = useState(0);
-  const [committedIndex, setCommittedIndex] = useState(0);
-  const [interactionHeld, setInteractionHeld] = useState(false);
-  const [sequencePaused, setSequencePaused] = useState(false);
-  const [pageVisible, setPageVisible] = useState(true);
+  const mediaScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.14]);
+  const mediaY = useTransform(scrollYProgress, [0, 1], [0, -26]);
+  const copyY = useTransform(scrollYProgress, [0, 1], [18, -18]);
+  const diagramRotate = useTransform(scrollYProgress, [0, 1], [-2, 2]);
   const active = COST_STAGES[activeIndex];
-  displayedIndexRef.current = activeIndex;
-  const sequenceComplete = ambientCompleteRef.current;
-  const ambientSequencing =
-    !prefersReducedMotion &&
-    inView &&
-    pageVisible &&
-    !interactionHeld &&
-    !sequencePaused &&
-    !ambientCompleteRef.current;
-  const sequenceAction = sequenceComplete
-    ? "Replay sequence"
-    : sequencePaused
-      ? "Resume sequence"
-      : "Pause sequence";
-  const SequenceIcon = sequenceComplete ? RotateCcw : sequencePaused ? Play : Pause;
 
-  useEffect(() => {
-    function syncVisibility() {
-      setPageVisible(document.visibilityState === "visible");
-    }
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    const next = Math.min(COST_STAGES.length - 1, Math.floor(progress * COST_STAGES.length));
+    setActiveIndex((current) => (current === next ? current : next));
+  });
 
-    syncVisibility();
-    document.addEventListener("visibilitychange", syncVisibility);
-    return () => document.removeEventListener("visibilitychange", syncVisibility);
-  }, []);
-
-  useEffect(() => {
-    if (!ambientSequencing) return;
-
-    const nextIndex = committedIndex + 1;
-    if (nextIndex >= COST_STAGES.length) {
-      ambientCompleteRef.current = true;
-      return;
-    }
-
-    const timer = window.setTimeout(
-      () => {
-        rememberSelectionDirection(nextIndex, "forward");
-        setCommittedIndex(nextIndex);
-        setActiveIndex(nextIndex);
-        if (nextIndex === COST_STAGES.length - 1) ambientCompleteRef.current = true;
-      },
-      committedIndex === 0 ? 2800 : 3600,
-    );
-
-    return () => window.clearTimeout(timer);
-  }, [ambientSequencing, committedIndex]);
-
-  function rememberSelectionDirection(
-    next: number,
-    direction?: SelectionDirection,
-  ) {
-    const current = displayedIndexRef.current;
-    if (next === current) return;
-    selectionDirectionRef.current = direction ?? (next > current ? "forward" : "backward");
-    displayedIndexRef.current = next;
-  }
-
-  function choose(index: number, direction?: SelectionDirection) {
-    const next = (index + COST_STAGES.length) % COST_STAGES.length;
-    rememberSelectionDirection(next, direction);
-    ambientCompleteRef.current = true;
-    setSequencePaused(false);
-    setCommittedIndex(next);
-    setActiveIndex(next);
-  }
-
-  function preview(index: number) {
-    const next = (index + COST_STAGES.length) % COST_STAGES.length;
-    rememberSelectionDirection(next);
-    setActiveIndex(next);
-  }
-
-  function releasePreview() {
-    rememberSelectionDirection(committedIndex);
-    setActiveIndex(committedIndex);
-    setInteractionHeld(false);
-  }
-
-  function controlSequence() {
-    if (ambientCompleteRef.current) {
-      rememberSelectionDirection(0, "forward");
-      ambientCompleteRef.current = false;
-      setSequencePaused(false);
-      setCommittedIndex(0);
-      setActiveIndex(0);
-      return;
-    }
-
-    setSequencePaused((paused) => !paused);
-  }
-
-  function moveFromKeyboard(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
-    let next = index;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-      next = (index + 1) % COST_STAGES.length;
-    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-      next = (index + COST_STAGES.length - 1) % COST_STAGES.length;
-    } else if (event.key === "Home") {
-      next = 0;
-    } else if (event.key === "End") {
-      next = COST_STAGES.length - 1;
-    } else {
-      return;
-    }
-
-    event.preventDefault();
-    const direction = event.key === "ArrowRight" || event.key === "ArrowDown"
-      ? "forward"
-      : event.key === "ArrowLeft" || event.key === "ArrowUp"
-        ? "backward"
-        : undefined;
-    choose(next, direction);
-    choiceRefs.current[next]?.focus();
-  }
+  const effortPath = useMemo(
+    () => "M42 270 C140 260 168 242 236 212 C312 178 356 150 424 96 C480 50 530 35 584 26",
+    [],
+  );
+  const memoryPath = useMemo(
+    () => "M42 276 C150 270 218 262 304 248 C392 234 480 222 584 210",
+    [],
+  );
 
   return (
     <section
@@ -339,153 +494,143 @@ export function V4HiddenCostScene() {
       data-home-v4-chapter="cost"
       data-home-chapter="cost"
       data-home-section="cost"
-      data-cursor-world="light"
-      data-scroll-story="cost"
-      data-active-cost={active.number}
-      data-cost-motion={ambientSequencing ? "sequencing" : "held"}
-      data-cost-preview={activeIndex !== committedIndex ? "true" : undefined}
-      className="cost-film"
-      aria-labelledby="cost-film-title"
+      data-cursor-world="dark"
+      className="home-v4-cost"
+      aria-labelledby="home-v4-cost-title"
     >
-      <motion.div
-        className="cost-film__media"
-        data-media-id="BT-HOME-HIDDEN-COST-RIVER-DAWN"
-        animate={
-          prefersReducedMotion || !inView
-            ? { scale: 1.025, x: 0 }
-            : { scale: 1.025 + activeIndex * 0.012, x: activeIndex * -5 }
-        }
-        transition={{ duration: prefersReducedMotion ? 0 : 1.1, ease: EASE }}
-        aria-hidden="true"
-      >
-        <LivingImage
-          src="/images/pexels-river-dawn-poster.jpg"
-          intensity="cinematic"
-          className="cost-film__living"
-        />
-      </motion.div>
-      <div className="cost-film__veil" aria-hidden="true" />
-
-      <div className="cost-film__frame" data-home-frame>
-        <header className="cost-film__header">
-          <div>
-            <span>03</span>
-            <p>The hidden cost</p>
-          </div>
-          <div className="cost-film__header-actions">
-            <p>{active.number} / 04</p>
-            {!prefersReducedMotion && (
-              <button
-                type="button"
-                className="cost-film__sequence-control"
-                aria-label={sequenceAction}
-                onClick={controlSequence}
-              >
-                <SequenceIcon size={14} aria-hidden="true" />
-                <span>{sequenceAction}</span>
-              </button>
-            )}
-          </div>
-        </header>
-
-        <div className="cost-film__story">
-          <div className="cost-film__lead">
-            <p>What inconsistency makes buyers do</p>
-            <h2 id="cost-film-title">
-              Every new version makes the market <em>learn you again.</em>
-            </h2>
-          </div>
-
-          <AnimatePresence
-            mode="sync"
-            initial={false}
-            custom={selectionDirectionRef.current}
+      <div className="home-v4-cost__sticky">
+        <motion.div
+          className="home-v4-cost__media"
+          style={prefersReducedMotion ? undefined : { scale: mediaScale, y: mediaY }}
+          aria-hidden="true"
+        >
+          <video
+            muted
+            autoPlay
+            loop
+            playsInline
+            preload="metadata"
+            poster="/images/pexels-river-dawn-poster.jpg"
           >
-            <motion.article
-              key={active.number}
-              className="cost-film__moment"
-              id="cost-film-active-panel"
-              role="tabpanel"
-              aria-labelledby={`cost-film-tab-${activeIndex}`}
-              data-home-reading-plane
-              data-home-selection-direction={selectionDirectionRef.current}
-              custom={selectionDirectionRef.current}
-              variants={COST_MOMENT_VARIANTS}
-              onPointerEnter={(event) => {
-                if (event.pointerType === "mouse") setInteractionHeld(true);
-              }}
-              onPointerLeave={(event) => {
-                if (event.pointerType === "mouse") setInteractionHeld(false);
-              }}
-              initial={prefersReducedMotion ? false : "enter"}
-              animate="active"
-              exit={prefersReducedMotion ? undefined : "exit"}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
-            >
-              <p>{active.signal}</p>
-              <h3>{active.title}</h3>
-              <p>{active.body}</p>
-              <strong>{active.memory}</strong>
-            </motion.article>
-          </AnimatePresence>
-        </div>
+            <source src="/videos/pexels-river-dawn.webm" type="video/webm" />
+            <source src="/videos/pexels-river-dawn.mp4" type="video/mp4" />
+          </video>
+          <span />
+        </motion.div>
 
-        <div className="cost-film__lower">
-          <div className="cost-film__rail" role="tablist" aria-label="Four moments in the cost of changing brand signals">
-            {COST_STAGES.map((stage, index) => {
-              const displayed = index === activeIndex;
-              const committed = index === committedIndex;
-              const stageState = displayed ? "active" : index < committedIndex ? "past" : "future";
-              return (
-                <button
-                  key={stage.number}
-                  ref={(node) => {
-                    choiceRefs.current[index] = node;
-                  }}
-                  type="button"
-                  role="tab"
-                  id={`cost-film-tab-${index}`}
-                  aria-selected={committed}
-                  aria-controls="cost-film-active-panel"
-                  tabIndex={committed ? 0 : -1}
-                  className={displayed ? "is-active" : undefined}
-                  data-cost-state={stageState}
-                  data-cursor-label={stage.number}
-                  onClick={() => choose(index)}
-                  onPointerEnter={(event) => {
-                    if (event.pointerType !== "mouse") return;
-                    setInteractionHeld(true);
-                    preview(index);
-                  }}
-                  onPointerLeave={(event) => {
-                    if (document.activeElement !== event.currentTarget) releasePreview();
-                  }}
-                  onFocus={() => choose(index)}
-                  onBlur={releasePreview}
-                  onKeyDown={(event) => moveFromKeyboard(event, index)}
-                >
-                  <span>{stage.number}</span>
-                  <span className="cost-film__rail-copy">
-                    <strong>{stage.cause}</strong>
-                    <small>{stage.memory}</small>
-                  </span>
-                </button>
-              );
-            })}
+        <div className="home-v4-cost__shell">
+          <motion.header style={prefersReducedMotion ? undefined : { y: copyY }}>
+            <p>02 · The hidden cost</p>
+            <h2 id="home-v4-cost-title">
+              Marketing becomes expensive when the brand underneath it <em>keeps changing shape.</em>
+            </h2>
+          </motion.header>
+
+          <div className="home-v4-cost__stage">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.article
+                key={active.number}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+                aria-live="polite"
+              >
+                <span>{active.number} / 04</span>
+                <h3>{active.title}</h3>
+                <p>{active.body}</p>
+                <dl>
+                  <div>
+                    <dt>Marketing effort</dt>
+                    <dd>{active.effort}</dd>
+                  </div>
+                  <div>
+                    <dt>Memory retained</dt>
+                    <dd>{active.memory}</dd>
+                  </div>
+                </dl>
+              </motion.article>
+            </AnimatePresence>
+
+            <motion.div
+              className="home-v4-cost__diagram"
+              style={prefersReducedMotion ? undefined : { rotate: diagramRotate }}
+              aria-label="Marketing effort rises faster than brand memory when the underlying brand keeps changing"
+            >
+              <div className="home-v4-cost__diagram-head">
+                <span>Effort</span>
+                <span>Recognition</span>
+              </div>
+              <svg viewBox="0 0 620 310" role="img">
+                {[0, 1, 2, 3].map((line) => (
+                  <line
+                    key={line}
+                    x1="40"
+                    x2="590"
+                    y1={42 + line * 74}
+                    y2={42 + line * 74}
+                    stroke="rgba(244,239,230,.08)"
+                    strokeWidth="1"
+                  />
+                ))}
+                <path d={effortPath} fill="none" stroke="rgba(199,119,82,.18)" strokeWidth="10" strokeLinecap="round" />
+                <motion.path
+                  d={effortPath}
+                  fill="none"
+                  stroke="#C77752"
+                  strokeWidth="2.3"
+                  strokeLinecap="round"
+                  pathLength="1"
+                  style={{ pathLength: prefersReducedMotion ? 1 : scrollYProgress }}
+                />
+                <path d={memoryPath} fill="none" stroke="rgba(125,155,175,.18)" strokeWidth="10" strokeLinecap="round" />
+                <motion.path
+                  d={memoryPath}
+                  fill="none"
+                  stroke="#7D9BAF"
+                  strokeWidth="2.3"
+                  strokeLinecap="round"
+                  pathLength="1"
+                  style={{ pathLength: prefersReducedMotion ? 1 : scrollYProgress }}
+                />
+
+                {COST_STAGES.map((stage, index) => {
+                  const x = 70 + index * 168;
+                  const effortY = [262, 205, 122, 42][index];
+                  const memoryY = [270, 258, 236, 214][index];
+                  const reached = index <= activeIndex;
+                  return (
+                    <g key={stage.number} opacity={reached ? 1 : 0.24}>
+                      <motion.circle
+                        cx={x}
+                        cy={effortY}
+                        r="6"
+                        fill="#C77752"
+                        animate={
+                          reached && !prefersReducedMotion
+                            ? { scale: [0.82, 1.35, 0.82], opacity: [0.58, 1, 0.58] }
+                            : undefined
+                        }
+                        style={{ transformOrigin: `${x}px ${effortY}px` }}
+                        transition={{ duration: 2.6, delay: index * 0.2, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                      <circle cx={x} cy={memoryY} r="4.5" fill="#7D9BAF" />
+                    </g>
+                  );
+                })}
+              </svg>
+              <p>
+                The gap between the two lines is the price of reintroducing the business.
+              </p>
+            </motion.div>
           </div>
 
-          <div className="cost-film__resolution">
+          <div className="home-v4-cost__footer">
             <p>
-              <span>The alternative</span>
-              Keep the position stable and every campaign can deepen what buyers already know.
+              A stable foundation does not make marketing quieter. It lets each signal remember the one before it.
             </p>
-            <Link
-              href="#evidence"
-              data-magnetic
-              data-cursor-label="proof"
-              data-section-jump-yield="true"
-            >
-              See what this changed for clients <ArrowDownRight size={15} />
+            <Link href="#foundation" className="home-v4-button home-v4-button--sand" data-magnetic data-cursor-label="foundation">
+              Inspect the foundation <ArrowDownRight size={15} />
             </Link>
           </div>
         </div>

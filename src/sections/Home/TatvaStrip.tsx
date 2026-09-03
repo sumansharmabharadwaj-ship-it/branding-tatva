@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
-import { LivingImage } from "@/components/LivingImage";
 import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
@@ -124,10 +123,15 @@ export function TatvaStrip() {
       }}
     >
       <div className="tatva-observatory__film" aria-hidden="true">
-        <LivingImage
-          src="/images/higgsfield-confident-light-poster.jpg"
-          imagePosition="58% 48%"
-          intensity="cinematic"
+        <video
+          src="/videos/higgsfield-confident-light.mp4"
+          poster="/images/higgsfield-confident-light-poster.jpg"
+          muted
+          autoPlay={!prefersReducedMotion}
+          loop
+          playsInline
+          preload={inView ? "metadata" : "none"}
+          data-home-playback-rate="1.2"
         />
         <span />
       </div>
@@ -205,11 +209,11 @@ export function TatvaStrip() {
             </motion.div>
 
             <Link
-              href="#tatva"
+              href="#elements"
               className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em]"
               style={{ color: "#D4B99A" }}
             >
-              Enter the five element chapter <span aria-hidden="true">→</span>
+              Enter the five-element chapter <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
 

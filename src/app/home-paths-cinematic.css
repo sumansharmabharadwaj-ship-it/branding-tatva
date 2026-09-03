@@ -108,7 +108,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.42fr) minmax(18rem, 0.66fr);
   gap: 1rem;
-  margin-top: 0.8rem;
+  margin-top: clamp(2.6rem, 5vw, 4.75rem);
 }
 
 .paths-cinematic__map,
@@ -283,7 +283,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.7rem;
-  margin-top: clamp(2.2rem, 4vw, 3.5rem);
+  margin-top: 0.8rem;
 }
 
 .paths-cinematic__choices button {
