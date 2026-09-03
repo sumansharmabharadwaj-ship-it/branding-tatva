@@ -512,30 +512,16 @@ export default async function ServicesPage() {
           <SceneHandoff color="#141A15" />
         </section>
 
-        {/* The Brand Recognition Audit — the site's one secondary lead
-            asset, placed right after the recognition ladder so a visitor who
-            has located the brand's stage can inspect the deeper signals
-            away. Five checks open to anyone, the full ten behind an
-            explicit consent form feeding the existing Mailchimp double
-            opt in. Charcoal ground between the forest and the warm
-            strategy room that closes the page. */}
-        <section id="audit" data-services-scene="audit" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-start overflow-hidden pb-16 pt-24 sm:py-20 lg:justify-center lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
-          <BackgroundVideo
-            video="/videos/generated/bt-services-recognition-audit-leaf.mp4"
-            poster="/images/generated/bt-services-recognition-audit-leaf-poster.jpg"
-            parallax
-            playbackRate={0.9}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(100deg, rgba(13,18,17,0.62) 0%, rgba(13,18,17,0.36) 50%, rgba(13,18,17,0.18) 100%)",
-            }}
-          />
-          <SceneVeil color="#141A15" />
-          <div data-services-content-plane="true" className="relative">
+        {/* The Recognition Audit becomes a tactile field note. Five private
+            answers remain open before the same explicit Mailchimp consent
+            handoff reveals the remaining questions. */}
+        <section
+          id="audit"
+          data-services-scene="audit"
+          className="relative flex min-h-[100svh] scroll-mt-24 flex-col items-center justify-center overflow-hidden"
+          style={{ backgroundColor: "#EEE6D7" }}
+        >
+          <div data-services-content-plane="true" className="relative w-full">
             <RecognitionAudit />
           </div>
           <SceneHandoff color="#27221E" />

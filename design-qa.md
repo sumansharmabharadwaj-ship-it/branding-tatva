@@ -1,3 +1,64 @@
+# Design QA: Recognition Field Notes · 2026-09-03
+
+**Findings**
+
+- No actionable P0, P1, or P2 mismatch remains. The selected field-notes direction is now a live, responsive recognition check rather than a decorative recreation.
+- [P3] The source mock's drawn connector line and separate lock tab are simplified in the implementation. The privacy statement remains explicit, and the omission keeps the live question, tabs, answer states, and mobile layout readable.
+
+**Target and evidence**
+
+- Source visual truth: `/workspace/scratch/41664d6afc73/generated_images/exec-ce9a175f-834a-40e4-a426-fc4597fbd34b.png` (`1487 × 1058`).
+- Generated production asset: `public/images/generated/bt-services-recognition-field-notes.webp` (`1536 × 1024`, 80 KB).
+- Implementation route: `/services#audit`.
+- Desktop browser capture: `/workspace/scratch/services-field-notes-evidence/bt-services-recognition-audit-desktop-final-1363x936.jpg` (`1348 × 926` image from a `1363 × 936` CSS viewport, DPR `1`; the browser capture excludes scrollbar pixels).
+- Mobile browser capture: `/workspace/scratch/services-field-notes-evidence/bt-services-recognition-audit-mobile-390x844.jpg` (`390 × 844` image and CSS viewport, DPR `1`).
+- Full-view comparison: `/workspace/scratch/services-field-notes-evidence/source-implementation-comparison.jpg`. Both uncropped images were normalized to `800` px height and placed in one comparison image.
+- Focused paper-panel comparison: `/workspace/scratch/services-field-notes-evidence/source-implementation-focused-comparison.jpg`. Source and implementation question-panel crops were normalized to `800` px height and placed in one comparison image so type, paper, tabs, and answer controls remained readable.
+- State: question 1, no answers selected, full motion. Mobile was also checked at question 3 and in reduced-motion mode.
+
+**Comparison history**
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P2 | On `390 × 844`, the answer controls initially fell below the first frame and inactive tabs were too quiet. | Compressed the mobile introduction and paper spacing, strengthened the five tab states, and preserved 44–48 px controls. The final mobile capture shows both answer actions in the first frame; `scrollWidth` is `375` within a `390` px viewport. |
+| 2 | P2 | The live desktop question hierarchy was materially smaller than the selected mock. | Added density-aware display sizing for standard and longer questions. The final full and focused comparisons show the same three-line opening question and editorial hierarchy as the source. |
+| 3 | P2 | Opening the email handoff could focus before the animated form mounted, leaving focus on the trigger and making the transition less clear. | Focus now moves when the form heading actually mounts, with `preventScroll`. Browser verification found the heading focused and only a `22` px settling delta while the form entered. |
+
+**Required fidelity surfaces**
+
+- Fonts and typography: the existing display and sans families carry the source's editorial contrast; the question uses optical display sizing, balanced wrapping, and a compact treatment only for longer prompts. Small labels retain uppercase spacing and remain legible.
+- Spacing and layout rhythm: desktop preserves the left thesis, leather folio, five paper tabs, dial, private note, and continuation pocket. Mobile reflows those same parts into a single readable stack without horizontal overflow or hidden primary actions.
+- Colors and visual tokens: warm mineral paper, forest leather, kraft tabs, muted ink, and clay accents match the selected direction while using the page's existing ivory, forest, and sandstone language.
+- Image quality and asset fidelity: a project-owned `1536 × 1024` generated WebP provides the paper, leather, dial, pocket, and leaf-shadow detail. It is eagerly loaded for direct hash visits and remains sharp at the tested desktop and mobile crops.
+- Copy and content: all ten recognition statements, the private-first-five promise, score guidance, email handoff, consent language, and Strategy Room publishing behavior remain intact.
+- Interaction and accessibility: the tabs use tab/tabpanel semantics, Arrow keys plus Home/End work, answer states advance predictably, controls meet a 44 px mobile floor, focus enters the email handoff, and reduced motion reports a `0.00001s` tab transition.
+
+**Verification**
+
+- Desktop keyboard test: Question 2 + ArrowRight selected Question 3 and updated the panel.
+- Private flow test: five positive answers produced `5 of 5 answered`, unlocked the complete-check handoff, and focused its heading. No form data was entered or submitted.
+- Mobile test: `390 × 844`, both answer actions visible, tabs navigable by keyboard, no horizontal overflow.
+- Reduced-motion test: the site toggle set `data-motion="reduced"` and collapsed the tab transition to `0.00001s`; full motion was restored afterward.
+- Browser console: no application-origin errors. The cloud browser's existing extension metadata bridge logged extension-only errors.
+- `npm run build`: passed; all 79 static pages generated and `/services` typechecked successfully.
+
+**Implementation Checklist**
+
+- [x] Match the selected field-notes composition with a real generated image asset.
+- [x] Preserve the existing recognition logic and newsletter endpoint.
+- [x] Make the first five questions private and the remaining five consent-gated.
+- [x] Verify desktop, mobile, keyboard, focus, motion preference, console, and production build.
+
+**Follow-up Polish**
+
+- If the source illustration is ever rebuilt as a fully bespoke interactive asset, the decorative connector and lock tab could return as image details without compromising the responsive UI.
+
+## Final result
+
+passed
+
+---
+
 # Parker reference alignment QA
 
 Date: 2026-09-03

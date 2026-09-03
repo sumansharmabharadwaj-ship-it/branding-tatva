@@ -470,9 +470,13 @@
 
 }
 
-/* The audit carries the page's secondary conversion. Detailed leaf footage
-   now frames the interaction instead of competing with the questions and
-   consent form. */
+/* The audit carries the page's secondary conversion as a tactile field note.
+   The warm paper room separates the diagnostic from the forest chapter and
+   keeps the folio legible without another dark glass panel. */
+.august-8-refined #audit[data-services-scene="audit"] {
+  background-color: #eee6d7 !important;
+}
+
 #audit [data-audit-chapter="checks"] {
   border: 1px solid rgba(244, 239, 230, 0.14);
   border-radius: 1.65rem;
