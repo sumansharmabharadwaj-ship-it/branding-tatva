@@ -1,7 +1,6 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-
+import { useReducedMotion } from "framer-motion";
 import { PinnedSlider } from "./PinnedSlider";
 import { VerticalUnfold } from "./VerticalUnfold";
 import type { Element } from "@/data/elements";
@@ -12,7 +11,7 @@ import type { Element } from "@/data/elements";
 // room to breathe that a phone screen doesn't have) gets the vertical
 // unfold instead of the slide sequence.
 export function ElementsSection({ elements }: { elements: Element[] }) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
 
   if (prefersReducedMotion) {
     return <VerticalUnfold elements={elements} />;

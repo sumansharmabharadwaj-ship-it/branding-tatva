@@ -1,16 +1,14 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
+import { useReducedMotion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { stageOpacity } from "@/lib/pinnedStageOpacity";
-import { usesLivingStill } from "@/lib/mediaMode";
 import type { ProcessSectionProps } from "./types";
 
 type GlyphSlug = "earth" | "water" | "fire" | "air" | "space";
@@ -68,7 +66,7 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
   const lenis = useLenis();
 
   const [mediaRef, shouldLoad] = useLazyMount();
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const [videoReady, setVideoReady] = useState<boolean[]>(() => stages.map(() => false));
   // Tracks each stage's in-flight play() promise so a pause() landing
   // while one is still pending waits for it to settle first.
@@ -266,12 +264,8 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
                   shouldLoad fires for the section as a whole), so by
                   the time a visitor actually scrolls to a given stage
                   its video is already substantially downloaded. */}
-              {stage.video &&
-                !usesLivingStill(stage.video) &&
-                shouldLoad &&
-                !prefersReducedMotion && (
+              {stage.video && shouldLoad && !prefersReducedMotion && (
                 <video
-                  aria-hidden="true"
                   ref={(node) => {
                     videoRefs.current[i] = node;
                   }}

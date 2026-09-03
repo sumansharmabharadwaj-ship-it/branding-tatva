@@ -1,16 +1,13 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { AnimatedStat } from "@/components/AnimatedStat";
-import { LivingImage } from "@/components/LivingImage";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { useTilt } from "@/hooks/useTilt";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
-import { usesLivingStill } from "@/lib/mediaMode";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.05, duration: 16 });
 
@@ -47,22 +44,18 @@ export function FeaturedWorkHero({
   imagePosition?: string;
   accent?: string;
 }) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const [lazyRef, shouldLoad] = useLazyMount();
   const tiltRef = useRef<HTMLAnchorElement>(null);
   const { rotateX, rotateY } = useTilt(tiltRef, 2.5, Boolean(prefersReducedMotion));
   const videoRef = useRef<HTMLVideoElement>(null);
-  const livingStill = usesLivingStill(video);
-  useVideoFadeIn(
-    videoRef,
-    shouldLoad && Boolean(video) && !prefersReducedMotion && !livingStill,
-  );
+  useVideoFadeIn(videoRef, shouldLoad && Boolean(video) && !prefersReducedMotion);
 
   return (
     <a
       ref={tiltRef}
       href={href}
-      data-cursor-label="Read case study"
+      data-cursor-label="View case study"
       className="group relative flex min-h-[75svh] items-end overflow-hidden bg-soil"
       style={{ perspective: 1000 }}
     >
@@ -84,25 +77,14 @@ export function FeaturedWorkHero({
                 (IntersectionObserver + Lenis-scroll fallback) already
                 decides correct timing, so priority just skips the
                 second, unreliable gate on top of that. */}
-            {livingStill ? (
-              <LivingImage
-                src={image}
-                priority
-                sizes="100vw"
-                imagePosition={imagePosition}
-                intensity="hero"
-                className="absolute inset-0"
-              />
-            ) : (
-              <Image
-                src={image}
-                alt=""
-                fill
-                priority
-                sizes="100vw"
-                style={{ objectFit: "cover", objectPosition: imagePosition }}
-              />
-            )}
+            <Image
+              src={image}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: imagePosition }}
+            />
             {/* project.cardVideo was already in the data (data/projects.ts)
                 but this component had no video prop at all — the featured
                 hero slot silently fell back to a still image with only a
@@ -110,7 +92,7 @@ export function FeaturedWorkHero({
                 next to every other video-forward section on the page.
                 Fades in on top of the still image once ready, same
                 pattern as TexturedDark/CinematicCardMedia. */}
-            {video && !livingStill && (
+            {video && (
               <video
                 ref={videoRef}
                 className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
@@ -119,7 +101,6 @@ export function FeaturedWorkHero({
                 muted
                 loop
                 playsInline
-                aria-hidden="true"
                 preload="metadata"
               />
             )}

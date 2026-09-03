@@ -1,8 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { CinematicCardMedia } from "@/components/CinematicCardMedia";
 import { useTilt } from "@/hooks/useTilt";
 import type { Project } from "@/data/projects";
@@ -20,14 +19,14 @@ const GRADIENT = "linear-gradient(0deg, rgba(39,34,30,0.9) 0%, rgba(39,34,30,0.4
 export function FeaturedSecondaryCard({ project }: { project: Project }) {
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef<HTMLAnchorElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const { rotateX, rotateY } = useTilt(ref, 5, Boolean(prefersReducedMotion));
 
   return (
     <a
       ref={ref}
       href={`/work/${project.slug}`}
-      data-cursor-label="Read case study"
+      data-cursor-label="View case study"
       className="group relative block h-full"
       style={{ perspective: 1000 }}
       onMouseEnter={() => setIsHovered(true)}
@@ -35,7 +34,7 @@ export function FeaturedSecondaryCard({ project }: { project: Project }) {
     >
       <motion.div
         style={prefersReducedMotion ? undefined : { rotateX, rotateY }}
-        className="relative flex h-full min-h-88 flex-col justify-end overflow-hidden rounded-2xl p-6 sm:p-8"
+        className="relative flex h-full min-h-88 flex-col justify-end overflow-hidden rounded-lg p-6 sm:p-8"
       >
         <CinematicCardMedia
           image={project.cardImage}

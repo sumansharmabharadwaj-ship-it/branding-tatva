@@ -1,16 +1,13 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { LivingImage } from "@/components/LivingImage";
+import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { EASE_AIR } from "@/lib/motion";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
-import { usesLivingStill } from "@/lib/mediaMode";
 import type { ProcessStage } from "@/data/process";
 
 // Previously the vertical journey had no onMouse*/whileHover anywhere —
@@ -44,18 +41,17 @@ export function JourneyStage({
   dark?: boolean;
 }) {
   const ref = useRef<HTMLLIElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const prefersReducedMotion = useReducedMotion();
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
   const [mediaRef, shouldLoad] = useLazyMount();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
-  const livingStill = usesLivingStill(stage.video);
 
   useEffect(() => {
     const el = videoRef.current;
-    if (!el || !shouldLoad || prefersReducedMotion || livingStill) return;
+    if (!el || !shouldLoad || prefersReducedMotion) return;
     el.play().catch(() => {});
-  }, [livingStill, prefersReducedMotion, shouldLoad]);
+  }, [shouldLoad, prefersReducedMotion]);
 
   return (
     <li
@@ -76,7 +72,7 @@ export function JourneyStage({
             initial={{ pathLength: 0 }}
             whileInView={prefersReducedMotion ? undefined : { pathLength: 1 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.72, ease: EASE_AIR, delay }}
+            transition={{ duration: 0.7, ease: EASE_AIR, delay }}
           />
         </svg>
         <span
@@ -86,29 +82,19 @@ export function JourneyStage({
           {index + 1}
         </span>
       </span>
-      <div className="relative -mx-4 overflow-hidden rounded-2xl px-4 py-3">
+      <div className="relative -mx-4 overflow-hidden rounded-lg px-4 py-3">
         {stage.poster && (
           <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
-            {livingStill ? (
-              <LivingImage
-                src={stage.poster}
-                sizes="(min-width: 640px) 700px, 100vw"
-                intensity="cinematic"
-                className="absolute inset-0"
-              />
-            ) : (
-              <Image
-                src={stage.poster}
-                alt=""
-                fill
-                sizes="(min-width: 640px) 700px, 100vw"
-                className="object-cover"
-                style={{ objectPosition: "center" }}
-              />
-            )}
-            {shouldLoad && stage.video && !prefersReducedMotion && !livingStill && (
+            <Image
+              src={stage.poster}
+              alt=""
+              fill
+              sizes="(min-width: 640px) 700px, 100vw"
+              className="object-cover"
+              style={{ objectPosition: "center" }}
+            />
+            {shouldLoad && stage.video && !prefersReducedMotion && (
               <video
-                aria-hidden="true"
                 ref={videoRef}
                 className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
                 style={{ opacity: videoReady ? 1 : 0 }}
@@ -128,7 +114,7 @@ export function JourneyStage({
           <div
             ref={spotlightRef}
             aria-hidden="true"
-            className="stage-spotlight pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500"
+            className="stage-spotlight pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity duration-500"
           />
         )}
         <Reveal delay={delay}>
