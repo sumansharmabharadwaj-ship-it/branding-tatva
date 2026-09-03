@@ -87,6 +87,18 @@ const FINE_POINTER_QUERY = "(min-width: 901px) and (hover: hover) and (pointer: 
 const FIRST_BEAT_MS = 4400;
 const AMBIENT_BEAT_MS = 6200;
 const MANUAL_HOLD_MS = 14000;
+const METHOD_STAGE_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 1,
+    y: direction === "forward" ? 14 : -14,
+  }),
+  active: { opacity: 1, y: 0 },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    y: direction === "forward" ? -12 : 12,
+    transition: { duration: 0 },
+  }),
+};
 const SITUATION_TO_STAGE: Record<ServicesSituationId, number> = {
   idea: 0,
   reposition: 1,
@@ -405,23 +417,25 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         </header>
 
         <div className="decision-flow__stage">
-          <AnimatePresence mode="sync" initial={false}>
+          <AnimatePresence
+            mode="sync"
+            initial={false}
+            custom={selectionDirectionRef.current}
+          >
             <motion.article
               key={`${active}-${stage.stage}`}
-              id="decision-flow-panel"
+              id={`decision-flow-panel-${active}`}
               role="tabpanel"
               aria-labelledby={`decision-flow-tab-${active}`}
               aria-live={selectorEngaged ? "polite" : "off"}
               data-home-reading-plane
               data-home-selection-direction={selectionDirectionRef.current}
-              initial={prefersReducedMotion ? false : {
-                opacity: 0,
-                y: selectionDirectionRef.current === "forward" ? 14 : -14,
-                filter: "blur(4px)",
-              }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12, filter: "blur(3px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.62, ease: EASE }}
+              custom={selectionDirectionRef.current}
+              variants={METHOD_STAGE_VARIANTS}
+              initial={prefersReducedMotion ? false : "enter"}
+              animate="active"
+              exit={prefersReducedMotion ? undefined : "exit"}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
             >
               <div className="decision-flow__topline">
                 <span>Decision {String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>
@@ -490,7 +504,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                   type="button"
                   role="tab"
                   aria-selected={committed}
-                  aria-controls="decision-flow-panel"
+                  aria-controls={`decision-flow-panel-${index}`}
                   tabIndex={committed ? 0 : -1}
                   className={displayed ? "is-active" : undefined}
                   data-committed={committed ? "true" : undefined}

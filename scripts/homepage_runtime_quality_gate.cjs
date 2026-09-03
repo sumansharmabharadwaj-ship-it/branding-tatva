@@ -168,6 +168,9 @@ assert(process.includes("tabIndex={committed ? 0 : -1}"), "Working-method hover 
 assert(process.includes("setActive(committedStage)"), "Working-method hover does not restore the visitor's committed decision.");
 assert(process.includes('rememberSelectionDirection(next, "forward")'), "Working-method ambient wrap can read as a backward visitor choice.");
 assert(process.includes('data-home-selection-direction={selectionDirectionRef.current}'), "Working-method reading motion still inherits unrelated page-scroll direction.");
+assert(process.includes("variants={METHOD_STAGE_VARIANTS}") && process.includes("transition: { duration: 0 }") && process.includes("duration: prefersReducedMotion ? 0 : 0.3"), "Working-method decisions can retain the old reading plane after a new decision appears.");
+assert(!process.includes('filter: "blur('), "Working-method text can become unreadable during its directional handoff.");
+assert(process.includes('aria-controls={`decision-flow-panel-${index}`}') && process.includes('id={`decision-flow-panel-${active}`}'), "Working-method transitions can expose duplicate panel IDs during a handoff.");
 assert(process.includes("data-path-entry-stage=") && process.includes("data-path-entry={pathEntry"), "Working method no longer distinguishes the visitor's original path entry from later exploration.");
 assert(process.includes('href="#studio"') && process.includes("chooseStage(active, true)"), "Working method can leave without committing the decision the visitor is currently reading.");
 assert(!process.includes("void video.play()") && !process.includes("video.pause()"), "Working method bypasses the shared one-film playback budget.");
