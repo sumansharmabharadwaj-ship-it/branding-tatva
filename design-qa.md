@@ -1744,3 +1744,43 @@ Focused assembly-start and mid-progress captures were required because the chang
 No P3 follow-up is required for this scoped pass.
 
 final result: passed
+
+# Design QA: Strategy Room Mobile Handoff
+
+## Comparison target
+
+- source visual truth: exact pre-change branch head `c2e2492b476bdb21169c34a17299b57906ddc75d`, rendered from `/workspace/scratch/0e36bd1781e4/services-baseline`
+- implementation: the current source-fresh local build from `/workspace/scratch/0e36bd1781e4/repo`
+- comparison evidence: paired inline cloud-browser captures of the completed brief at `390 × 844` CSS px and DPR 1; the browser sidecar did not expose a durable workspace path for the capture bytes
+- additional viewport: desktop `1363 × 936` CSS px at DPR 1
+- state: completed two-question brief, completed-brief scheduling dialog, direct-booking dialog, and dialog-close focus return
+
+## Findings and resolution
+
+No actionable P0, P1, or P2 findings remain.
+
+The pre-change iPhone capture showed both completed-brief actions beneath the fixed consent notice: the action group ran from `787.671` to `887.671` px while the notice began at `774.812` px. The accepted build compacts the decision note and reveals the action group after surrounding motion settles. Its actions now run from `659.139` to `759.139` px, with the notice still beginning at `774.812` px. Both controls are completely visible with the intended safe clearance and no horizontal overflow.
+
+The scheduling dialog now opens at scroll position zero and keeps a sticky mobile title bar in view. On iPhone the dialog measures `351 × 820` px inside the `390 × 844` viewport; its title bar begins at `29` px, the heading remains readable, and the close control retains a `44 × 44` px target. Desktop opens at the same top position with a `896 × 912` dialog and no clipped title or close control.
+
+## Required fidelity surfaces
+
+- Completed brief: passed. The decision note, primary scheduling action, secondary answer-reset action, and consent notice are simultaneously readable on iPhone.
+- Calendar entry: passed. Both direct booking and completed-brief entry open at the dialog top with the heading and close control visible.
+- Calendar fallback: passed. When Calendly reports an unavailable calendar, the project-owned contact-room fallback remains visible and operable.
+- Focus handling: passed. Focus enters the close control without moving the dialog, Escape/close dismisses the modal, and focus returns to the originating `See available times` button.
+- Responsive layout: passed. No horizontal overflow was measured at `390 × 844`; the narrowest agenda layout also collapses below `360` px.
+- Icon and copy fidelity: passed. Text glyph arrows and close marks were replaced with Lucide icons, and the supporting status copy was tightened without changing the decision context.
+- Runtime: passed. No site-originated console errors were observed; logged errors were limited to the cloud browser extension bridge.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P1 | Calendar readiness could leave the modal scrolled below its title and close control. | Reset modal scroll and focus on open and iframe readiness; desktop and iPhone both settle at `scrollTop: 0`. |
+| 2 | P2 | Completed-brief actions were hidden behind the fixed consent notice on iPhone. | Compacted the standard note and added a guarded post-layout reveal; both actions now end above the notice with safe clearance. |
+| 3 | — | Final desktop, iPhone, focus, overflow, console, type, lint, diff, and production-build checks found no remaining actionable issue. | Passed. |
+
+## Final result
+
+passed

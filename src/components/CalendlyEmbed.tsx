@@ -2,6 +2,7 @@
 
 import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { track } from "@/lib/analytics";
 
 // Calendly's own widget.js resizes this div's height to fit whatever
@@ -14,7 +15,7 @@ import { track } from "@/lib/analytics";
 // visitor still has a full-size direct scheduling link rather than a
 // silent cream void.
 
-export function CalendlyEmbed({ url }: { url: string }) {
+export function CalendlyEmbed({ url, onReady }: { url: string; onReady?: () => void }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [widgetReady, setWidgetReady] = useState(false);
   const [scriptFailed, setScriptFailed] = useState(false);
@@ -46,6 +47,7 @@ export function CalendlyEmbed({ url }: { url: string }) {
 
     function markReady() {
       setWidgetReady(true);
+      onReady?.();
     }
 
     function bindIframe(root: HTMLDivElement) {
@@ -64,7 +66,7 @@ export function CalendlyEmbed({ url }: { url: string }) {
       observer.disconnect();
       if (iframe) iframe.removeEventListener("load", markReady);
     };
-  }, [url]);
+  }, [onReady, url]);
 
   const schedulingUrl = `${url}?hide_gdpr_banner=1&hide_landing_page_details=1&background_color=F6F2EA&text_color=27221E&primary_color=8A6B3D`;
 
@@ -74,6 +76,7 @@ export function CalendlyEmbed({ url }: { url: string }) {
     // the full booking interface instead of clipping it.
     <div
       ref={wrapperRef}
+      data-calendar-embed="true"
       className="relative mt-8 overflow-x-auto rounded-2xl border"
       style={{ borderColor: "rgba(198,169,122,0.45)", backgroundColor: "#F6F2EA" }}
     >
@@ -106,7 +109,7 @@ export function CalendlyEmbed({ url }: { url: string }) {
               className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full border border-[#8A6B3D]/40 px-5 py-2.5 text-sm font-medium text-[#5F482B] transition-colors duration-300 hover:border-[#8A6B3D] hover:bg-[#8A6B3D]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8A6B3D]"
             >
               Open the scheduling page
-              <span aria-hidden="true" className="ml-2">↗</span>
+              <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
             </a>
           </div>
         </div>

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Copy } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Check, Copy, X } from "lucide-react";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
 import { packages } from "@/data/services";
@@ -110,6 +110,7 @@ function StrategyDecisionNote({
   return (
     <div
       data-strategy-room-decision-note="true"
+      data-strategy-room-note-density={compact ? "compact" : "standard"}
       className={`mx-auto max-w-xl rounded-2xl border border-sandstone/30 bg-sandstone/[0.075] text-left shadow-[0_18px_48px_rgba(6,10,8,0.18)] ${
         compact ? "mt-5 p-4" : "mt-4 p-5"
       }`}
@@ -159,7 +160,7 @@ function StrategyDecisionNote({
             ? "Decision note copied."
             : copyStatus === "error"
               ? "Copy unavailable. The note remains here to select."
-              : "Keep this note for the call or share it with your team."}
+              : "Keep this note for the call."}
         </p>
         <button
           type="button"
@@ -195,6 +196,7 @@ export function StrategyRoomCTA() {
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const briefHeadingRef = useRef<HTMLParagraphElement>(null);
   const briefStartButtonRef = useRef<HTMLButtonElement>(null);
+  const completedActionsRef = useRef<HTMLDivElement>(null);
   const shouldFocusBriefHeadingRef = useRef(false);
   const shouldRestoreBriefStartFocusRef = useRef(false);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -298,7 +300,8 @@ export function StrategyRoomCTA() {
     }
 
     window.addEventListener("keydown", closeOnEscape);
-    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus());
+    dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus({ preventScroll: true }));
 
     return () => {
       window.cancelAnimationFrame(focusFrame);
@@ -341,6 +344,33 @@ export function StrategyRoomCTA() {
     shouldRestoreBriefStartFocusRef.current = false;
     node.focus();
   }
+
+  const registerCompletedActions = useCallback((node: HTMLDivElement | null) => {
+    completedActionsRef.current = node;
+    if (!node) return;
+
+    const reveal = () => {
+      if (completedActionsRef.current !== node) return;
+
+      const actionRect = node.getBoundingClientRect();
+      const notice = document.querySelector<HTMLElement>(".consent-notice");
+      const noticeTop = notice?.getBoundingClientRect().top ?? window.innerHeight;
+      const safeBottom = Math.min(window.innerHeight, noticeTop) - 16;
+
+      if (actionRect.bottom > safeBottom) {
+        window.scrollBy(0, actionRect.bottom - safeBottom);
+      }
+    };
+
+    // Recheck while the surrounding motion and fixed notice finish settling.
+    // Later checks are no-ops unless another layout shift hides the actions.
+    [450, 1400, 2800].forEach((delay) => window.setTimeout(reveal, delay));
+  }, []);
+
+  const resetCalendarPosition = useCallback(() => {
+    dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    closeButtonRef.current?.focus({ preventScroll: true });
+  }, []);
 
   function startBrief() {
     shouldFocusBriefHeadingRef.current = true;
@@ -490,29 +520,15 @@ export function StrategyRoomCTA() {
                   exit={{ opacity: 0, y: 10, scale: 0.99 }}
                   transition={transition}
                 >
-                  <div className="flex items-start justify-between gap-6 px-1">
+                  <div
+                    data-strategy-calendar-titlebar="true"
+                    className="flex items-start justify-between gap-6 px-1"
+                  >
                     <div>
                       <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">30 minute brand diagnosis</p>
                       <h3 id="strategy-calendar-title" className="mt-2 font-display text-3xl font-normal text-ivory sm:text-4xl">
                         Choose a time that feels unhurried.
                       </h3>
-                      <p id="strategy-calendar-description" className="mt-2 max-w-2xl text-sm leading-relaxed text-ivory/72">
-                        {hasCompletedBrief
-                          ? "Your decision note stays in view while you choose a time."
-                          : answers.length > 0
-                            ? "The context you have already named stays in view while you choose a time."
-                            : "Choose a time now; a polished brief is not required."}
-                      </p>
-                      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-relaxed text-ivory/65">
-                        <span>Calendar not showing times? {hasCompletedBrief ? "Send this decision directly." : "Write the decision directly."}</span>
-                        <Link
-                          href="/contact"
-                          className="inline-flex min-h-11 items-center rounded-full border border-sandstone/35 px-4 py-2 font-medium text-ivory transition-colors hover:border-sandstone/65 hover:bg-sandstone/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
-                        >
-                          Open the contact room
-                          <span aria-hidden="true" className="ml-2">→</span>
-                        </Link>
-                      </div>
                     </div>
                     <button
                       ref={closeButtonRef}
@@ -521,8 +537,27 @@ export function StrategyRoomCTA() {
                       className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ivory/20 text-xl text-ivory/75 transition-colors hover:border-sandstone/55 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                       aria-label="Close scheduling calendar"
                     >
-                      <span aria-hidden="true">×</span>
+                      <X aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
                     </button>
+                  </div>
+                  <div data-strategy-calendar-support="true" className="px-1">
+                    <p id="strategy-calendar-description" className="mt-2 max-w-2xl text-sm leading-relaxed text-ivory/72">
+                      {hasCompletedBrief
+                        ? "Your decision note stays in view while you choose a time."
+                        : answers.length > 0
+                          ? "The context you have already named stays in view while you choose a time."
+                          : "Choose a time now; a polished brief is not required."}
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-relaxed text-ivory/65">
+                      <span>Calendar not showing times? {hasCompletedBrief ? "Send this decision directly." : "Write the decision directly."}</span>
+                      <Link
+                        href="/contact"
+                        className="inline-flex min-h-11 items-center rounded-full border border-sandstone/35 px-4 py-2 font-medium text-ivory transition-colors hover:border-sandstone/65 hover:bg-sandstone/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                      >
+                        Open the contact room
+                        <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
+                      </Link>
+                    </div>
                   </div>
                   {priority && focus ? (
                     <StrategyDecisionNote
@@ -546,7 +581,7 @@ export function StrategyRoomCTA() {
                       ))}
                     </div>
                   ) : null}
-                  <CalendlyEmbed url={`${site.calendlyUrl}/30min`} />
+                  <CalendlyEmbed url={`${site.calendlyUrl}/30min`} onReady={resetCalendarPosition} />
                 </motion.div>
               </motion.div>
             ) : null}
@@ -647,7 +682,7 @@ export function StrategyRoomCTA() {
                     className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
                   >
                     See available times
-                    <span aria-hidden="true" className="ml-2">↗</span>
+                    <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
                   </button>
                   <button ref={registerBriefStartButton} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
                     {hasPartialBrief ? "Continue the brief" : "Add a short brief"}
@@ -722,7 +757,7 @@ export function StrategyRoomCTA() {
                         ))}
                       </div>
                       <button type="button" data-strategy-control="true" onClick={goBack} className={`${QUIET_ACTION_CLASS} mt-5`}>
-                        <span aria-hidden="true">←</span>
+                        <ArrowLeft aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
                         <span className="ml-2">Previous question</span>
                       </button>
                     </motion.div>
@@ -741,7 +776,11 @@ export function StrategyRoomCTA() {
                           onCopy={copyDecisionNote}
                         />
                       ) : null}
-                      <div className="mt-6 flex flex-col items-center justify-center gap-2 sm:flex-row">
+                      <div
+                        ref={registerCompletedActions}
+                        data-strategy-room-completed-actions="true"
+                        className="mt-6 flex flex-col items-center justify-center gap-2 sm:flex-row"
+                      >
                         <button
                           type="button"
                           data-strategy-control="true"
@@ -749,7 +788,7 @@ export function StrategyRoomCTA() {
                           className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
                         >
                           See available times
-                          <span aria-hidden="true" className="ml-2">↗</span>
+                          <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
                         </button>
                         <button type="button" data-strategy-control="true" onClick={restart} className={QUIET_ACTION_CLASS}>
                           Change answers
