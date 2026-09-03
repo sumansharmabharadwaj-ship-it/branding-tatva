@@ -73,11 +73,10 @@ assert(
   "Closing-record controls have lost their accessible state relationship.",
 );
 assert(
-  component.includes("href={servicesContactHref(activePath.slug)}") &&
+  (component.match(/href="https:\\/\\/calendly\\.com\\/suman-brandingtatva\\/30min"/g) || []).length >= 2 &&
     component.includes("package: activePath.slug") &&
-    component.includes("className={styles.staticContactCta}") &&
-    component.includes('href="/contact"'),
-  "The closing route no longer carries an explicit choice while keeping static journeys neutral.",
+    component.includes("className={styles.staticContactCta}"),
+  "The closing route no longer carries its explicit choice into the direct diagnosis booking action.",
 );
 assert(
   component.includes("manualChoiceRef.current = true") &&
