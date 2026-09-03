@@ -182,6 +182,9 @@ assert(evidence.includes("tabIndex={committed ? 0 : -1}"), "Selected-work hover 
 assert(evidence.includes('publishServicesSituation(activeSituation, "home_evidence")'), "Selected work cannot identify its path handoff as evidence led.");
 assert(evidence.includes("custom={selectionDirectionRef.current}") && evidence.includes('initial={prefersReducedMotion ? false : "enter"}') && evidence.includes('exit={prefersReducedMotion ? undefined : "exit"}'), "Selected-work backdrops no longer follow project direction through their camera handoff.");
 assert(evidence.includes('aria-live={isPreviewing ? "off" : "polite"}'), "Selected-work pointer previews can interrupt assistive reading.");
+assert(evidence.includes("variants={EVIDENCE_SUMMARY_VARIANTS}") && evidence.includes("transition: { duration: 0 }") && evidence.includes("duration: prefersReducedMotion ? 0 : 0.3"), "Selected-work summaries can retain the old reading plane after a new project appears.");
+assert(!evidence.includes('filter: "blur('), "Selected-work text can become unreadable during its directional handoff.");
+assert(evidence.includes('aria-controls={`evidence-active-file-${project.slug}`}') && evidence.includes('id={`evidence-active-file-${activeProject.slug}`}'), "Selected-work transitions can expose duplicate panel IDs during a handoff.");
 assert(evidence.includes("EVIDENCE_META[project.slug]?.type"), "Selected-work index does not distinguish measured performance from delivered systems.");
 assert(evidence.includes('dynamic(\n  () => loadProjectFile()') && evidence.includes("projectFileRequested ?"), "The project-file overlay is bundled before a visitor expresses intent to inspect it.");
 assert(evidence.includes("onPointerEnter={prepareProjectFile}") && evidence.includes("onFocus={prepareProjectFile}"), "The deferred project file is not prepared for pointer and keyboard intent.");

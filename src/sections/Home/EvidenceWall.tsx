@@ -122,6 +122,20 @@ const EVIDENCE_CAMERA_VARIANTS = {
     x: direction === "forward" ? -12 : 12,
   }),
 };
+const EVIDENCE_SUMMARY_VARIANTS = {
+  enter: (direction: SelectionDirection) => ({
+    opacity: 1,
+    x: direction === "forward" ? 18 : -18,
+    y: 4,
+  }),
+  active: { opacity: 1, x: 0, y: 0 },
+  exit: (direction: SelectionDirection) => ({
+    opacity: 0,
+    x: direction === "forward" ? -14 : 14,
+    y: -4,
+    transition: { duration: 0 },
+  }),
+};
 
 const loadProjectFile = () => import("@/sections/Home/ProjectFile");
 const ProjectFile = dynamic(
@@ -388,25 +402,26 @@ export function EvidenceWall() {
         </header>
 
         <div className="evidence-cinematic__stage">
-          <AnimatePresence mode="sync" initial={false}>
+          <AnimatePresence
+            mode="sync"
+            initial={false}
+            custom={selectionDirectionRef.current}
+          >
             <motion.article
               key={`evidence-summary-${activeProject.slug}`}
-              id="evidence-active-file"
+              id={`evidence-active-file-${activeProject.slug}`}
               role="tabpanel"
-              aria-labelledby={`evidence-tab-${activeIndex}`}
+              aria-labelledby={`evidence-tab-${activeProject.slug}`}
               className="evidence-cinematic__summary"
               data-home-reading-plane
               data-home-selection-direction={selectionDirectionRef.current}
               aria-live={isPreviewing ? "off" : "polite"}
-              initial={prefersReducedMotion ? false : {
-                opacity: 0,
-                x: selectionDirectionRef.current === "forward" ? 16 : -16,
-                y: 4,
-                filter: "blur(4px)",
-              }}
-              animate={{ opacity: 1, x: 0, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, x: -8, y: -8, filter: "blur(3px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
+              custom={selectionDirectionRef.current}
+              variants={EVIDENCE_SUMMARY_VARIANTS}
+              initial={prefersReducedMotion ? false : "enter"}
+              animate="active"
+              exit={prefersReducedMotion ? undefined : "exit"}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
             >
               <p>{activeProject.title} · {activeProject.industry}</p>
               <strong>{activeMetric.big}</strong>
@@ -500,9 +515,9 @@ export function EvidenceWall() {
                   key={project.slug}
                   type="button"
                   role="tab"
-                  id={`evidence-tab-${index}`}
+                  id={`evidence-tab-${project.slug}`}
                   aria-selected={committed}
-                  aria-controls="evidence-active-file"
+                  aria-controls={`evidence-active-file-${project.slug}`}
                   tabIndex={committed ? 0 : -1}
                   ref={(node) => { indexButtonRefs.current[index] = node; }}
                   className={displayed ? "is-active" : undefined}
