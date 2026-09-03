@@ -29,6 +29,7 @@ const origin = read("src/sections/About/FounderFieldNotes.tsx");
 const atlas = read("src/sections/About/BrandSignalAtlas.tsx");
 const pointOfView = read("src/sections/About/PointOfView.tsx");
 const convergence = read("src/sections/About/Convergence.tsx");
+const signalField = read("src/components/AboutSignalField3D.tsx");
 const evidence = read("src/sections/About/Evidence.tsx");
 const standards = read("src/sections/About/Behaviours.tsx");
 const workingDirectly = read("src/sections/About/WorkingDirectly.tsx");
@@ -250,11 +251,12 @@ assert(
   "Suman's point of view no longer resolves its three buyer decisions into a hiring outcome.",
 );
 assert(
-  pointOfView.includes('className={styles.evidenceFilm}') &&
-    pointOfView.includes("src={active.image}") &&
-    pointOfView.includes('className={styles.staticFilm}') &&
-    pointOfView.includes("src={stage.image}"),
-  "The point-of-view sequence no longer grounds its animated argument in real project imagery.",
+  pointOfView.includes('<AboutSignalField3D mode="recognition" stage={activeIndex} />') &&
+    !pointOfView.includes('from "next/image"') &&
+    !pointOfView.includes("src={active.image}") &&
+    signalField.includes('await import("three")') &&
+    signalField.includes('data-about-signal-canvas'),
+  "The point-of-view sequence lost its image-free, lazily loaded 3D recognition field.",
 );
 assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
@@ -429,10 +431,13 @@ assert(
   "The centre seal can block the interactive Synthesis pairings.",
 );
 assert(
-  convergence.includes("/images/generated/bt-about-psychology-literature-v2.webp") &&
+  convergence.includes('<AboutSignalField3D mode="synthesis" stage={stage} pair={inspectedPair} />') &&
+    !convergence.includes('from "next/image"') &&
+    signalField.includes('mode === "recognition"') &&
+    signalField.includes("synthesisSignal") &&
     convergence.includes("One position the whole brand can carry.") &&
     convergence.includes("A sharper decision your team can use."),
-  "The synthesis chapter lost its real folio image or its explicit hiring payoff.",
+  "The synthesis chapter lost its image-free 3D convergence field or its explicit hiring payoff.",
 );
 
 assert(

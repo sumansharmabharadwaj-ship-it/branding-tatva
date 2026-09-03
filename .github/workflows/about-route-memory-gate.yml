@@ -13,6 +13,7 @@ on:
       - scripts/about_route_memory_gate.cjs
       - src/app/about/**
       - src/components/AboutSplitHero.tsx
+      - src/components/AboutSignalField3D.tsx
       - src/components/MeadowClosing.tsx
       - src/components/ParallaxVideoBackdrop.tsx
       - src/components/BackgroundVideo.tsx
