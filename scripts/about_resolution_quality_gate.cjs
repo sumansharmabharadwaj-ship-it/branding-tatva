@@ -73,7 +73,7 @@ assert(
   "Closing-record controls have lost their accessible state relationship.",
 );
 assert(
-  (component.match(/href="https:\\/\\/calendly\\.com\\/suman-brandingtatva\\/30min"/g) || []).length >= 2 &&
+  component.split('href="https://calendly.com/suman-brandingtatva/30min"').length - 1 >= 2 &&
     component.includes("package: activePath.slug") &&
     component.includes("className={styles.staticContactCta}"),
   "The closing route no longer carries its explicit choice into the direct diagnosis booking action.",
