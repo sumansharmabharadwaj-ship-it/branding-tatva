@@ -49,11 +49,12 @@ export function AboutSignalField3D({
       canvas.style.display = "block";
       container.appendChild(canvas);
 
-      const context = canvas.getContext("2d");
-      if (!context) {
+      const canvasContext = canvas.getContext("2d");
+      if (!canvasContext) {
         canvas.remove();
         return () => undefined;
       }
+      const context = canvasContext;
 
       let width = 1;
       let height = 1;
