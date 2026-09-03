@@ -138,45 +138,42 @@ const STUDIO_SHOT_VARIANTS = {
 
 const STUDIO_CUE_VARIANTS = {
   enter: (direction: SelectionDirection) => ({
-    opacity: 0,
-    x: directionSign(direction) * 8,
-    filter: "blur(3px)",
+    opacity: 1,
+    x: directionSign(direction) * 7,
   }),
-  center: { opacity: 1, x: 0, filter: "blur(0px)" },
+  center: { opacity: 1, x: 0 },
   exit: (direction: SelectionDirection) => ({
     opacity: 0,
     x: directionSign(direction) * -5,
-    filter: "blur(2px)",
+    transition: { duration: 0 },
   }),
 };
 
 const STUDIO_TITLE_VARIANTS = {
   enter: (direction: SelectionDirection) => ({
-    opacity: 0,
+    opacity: 1,
     y: directionSign(direction) * 10,
-    filter: "blur(4px)",
   }),
-  center: { opacity: 1, y: 0, filter: "blur(0px)" },
+  center: { opacity: 1, y: 0 },
   exit: (direction: SelectionDirection) => ({
     opacity: 0,
     y: directionSign(direction) * -7,
-    filter: "blur(3px)",
+    transition: { duration: 0 },
   }),
 };
 
 const STUDIO_READING_VARIANTS = {
   enter: (direction: SelectionDirection) => ({
-    opacity: 0,
+    opacity: 1,
     x: directionSign(direction) * 14,
     y: 4,
-    filter: "blur(4px)",
   }),
-  center: { opacity: 1, x: 0, y: 0, filter: "blur(0px)" },
+  center: { opacity: 1, x: 0, y: 0 },
   exit: (direction: SelectionDirection) => ({
     opacity: 0,
     x: directionSign(direction) * -8,
     y: -3,
-    filter: "blur(3px)",
+    transition: { duration: 0 },
   }),
 };
 
@@ -291,7 +288,9 @@ export function StudioCinematicChapter() {
 
   function choose(index: number, direction?: SelectionDirection) {
     rememberSelectionDirection(index, direction);
-    manualModeRef.current = "none";
+    manualModeRef.current = document.activeElement?.id === `studio-film-tab-${index}`
+      ? "focus"
+      : "none";
     setCommittedIndex(index);
     setActiveIndex(index);
   }
@@ -412,7 +411,7 @@ export function StudioCinematicChapter() {
                   initial={reducedMotion ? false : "enter"}
                   animate="center"
                   exit={reducedMotion ? undefined : "exit"}
-                  transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
+                  transition={{ duration: reducedMotion ? 0 : 0.3, ease: EASE }}
                 >
                   {active.founderCue}
                 </motion.span>
@@ -439,7 +438,7 @@ export function StudioCinematicChapter() {
                   initial={reducedMotion ? false : "enter"}
                   animate="center"
                   exit={reducedMotion ? undefined : "exit"}
-                  transition={{ duration: reducedMotion ? 0 : 0.42, ease: EASE }}
+                  transition={{ duration: reducedMotion ? 0 : 0.3, ease: EASE }}
                 >
                   {active.name} <em>{active.verb}.</em>
                 </motion.span>
@@ -454,7 +453,7 @@ export function StudioCinematicChapter() {
           >
             <motion.article
               key={active.name}
-              id="studio-film-panel"
+              id={`studio-film-panel-${activeIndex}`}
               role="tabpanel"
               aria-labelledby={`studio-film-tab-${activeIndex}`}
               className="studio-film__reading"
@@ -465,7 +464,7 @@ export function StudioCinematicChapter() {
               initial={reducedMotion ? false : "enter"}
               animate="center"
               exit={reducedMotion ? undefined : "exit"}
-              transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE }}
+              transition={{ duration: reducedMotion ? 0 : 0.3, ease: EASE }}
               aria-live={manualModeRef.current === "focus" ? "polite" : "off"}
             >
               <div className="studio-film__reading-label">
@@ -549,7 +548,7 @@ export function StudioCinematicChapter() {
                   type="button"
                   role="tab"
                   aria-selected={committed}
-                  aria-controls="studio-film-panel"
+                  aria-controls={`studio-film-panel-${index}`}
                   tabIndex={committed ? 0 : -1}
                   className={displayed ? "is-active" : undefined}
                   data-studio-state={displayed ? "active" : committed ? "committed" : "idle"}

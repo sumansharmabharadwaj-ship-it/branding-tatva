@@ -142,6 +142,10 @@ assert(studio.includes('aria-live={manualModeRef.current === "focus" ? "polite" 
 assert(studio.includes('data-home-selection-direction={selectionDirectionRef.current}'), "Studio reading motion still inherits unrelated page-scroll direction.");
 assert(studio.includes("variants={STUDIO_SHOT_VARIANTS}") && studio.includes("variants={STUDIO_CUE_VARIANTS}") && studio.includes("variants={STUDIO_TITLE_VARIANTS}") && studio.includes("variants={STUDIO_READING_VARIANTS}"), "Studio film and reading planes no longer share one directional camera handoff.");
 assert(studio.includes("custom={selectionDirectionRef.current}") && studio.includes('exit={reducedMotion ? undefined : "exit"}'), "Studio exit motion cannot receive the visitor's latest selection direction.");
+assert(studio.includes("transition: { duration: 0 }") && studio.includes("duration: reducedMotion ? 0 : 0.3"), "Studio disciplines can retain earlier reading planes after a new lens appears.");
+assert(!studio.includes('filter: "blur('), "Studio text can become unreadable during its directional handoff.");
+assert(studio.includes('aria-controls={`studio-film-panel-${index}`}') && studio.includes('id={`studio-film-panel-${activeIndex}`}'), "Studio transitions can expose duplicate panel IDs during a handoff.");
+assert(studio.includes('document.activeElement?.id === `studio-film-tab-${index}`') && studio.includes('? "focus"'), "Studio clicks can be immediately replaced by the runway scroll state.");
 assert(studio.includes("const scrollOffsetRef = useRef(0)"), "Studio cannot distinguish forward and backward runway travel across wrapped lens indices.");
 assert(studio.includes('className="studio-film__strategist"') && studio.includes('href="/about"'), "Studio no longer makes its founder-led authorship actionable.");
 assert(studio.includes('src="/images/suman-sharma-studio-portrait.webp"'), "Studio founder handoff has lost Suman's real portrait.");
