@@ -388,6 +388,9 @@
   pointer-events: none;
   opacity: 0;
   white-space: nowrap;
+  max-width: calc(100vw - 24px);
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding: 6px 14px;
   border-radius: 9999px;
   background: rgba(39, 34, 30, 0.92);
