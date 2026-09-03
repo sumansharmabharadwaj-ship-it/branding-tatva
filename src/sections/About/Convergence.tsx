@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
   useEffect,
@@ -11,6 +10,7 @@ import {
 } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowRight, BookOpenText, Brain } from "lucide-react";
+import { AboutSignalField3D } from "@/components/AboutSignalField3D";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./Convergence.module.css";
@@ -245,12 +245,7 @@ export function Convergence() {
               transition={{ duration: prefersReducedMotion ? 0 : 0.78, ease: EASE }}
             >
               <div className={styles.folioImage} aria-hidden="true">
-                <Image
-                  src="/images/generated/bt-about-synthesis-imprint-v3.webp"
-                  alt=""
-                  fill
-                  sizes="(min-width: 901px) 22vw, 0px"
-                />
+                <AboutSignalField3D mode="synthesis" stage={stage} pair={inspectedPair} />
               </div>
               <figcaption className={styles.folioCopy}>
                 <span>{activeStage.number} / 03</span>

@@ -157,19 +157,18 @@
   position: absolute;
   inset: 0;
   margin: 0;
-  opacity: 0.88;
-  filter: saturate(0.82) contrast(1.08) brightness(0.7);
-  will-change: opacity, transform;
+  overflow: hidden;
+  background: #0a130f;
 }
 
 .evidenceFilm::after {
   position: absolute;
   inset: 0;
-  background: rgba(9, 17, 14, 0.38);
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(7, 14, 11, 0.08), rgba(7, 14, 11, 0.44));
   content: "";
+  pointer-events: none;
 }
-
-.evidenceFilm img { object-fit: cover; }
 
 .ambientSequence {
   position: absolute;
@@ -329,9 +328,6 @@
 .staticLedger article { position: relative; display: flex; min-width: 0; min-height: clamp(20rem, 42svh, 25rem); padding: clamp(1rem, 1.8vw, 1.45rem); flex-direction: column; overflow: hidden; }
 .staticLedger article + article { border-left: 1px solid rgba(244, 239, 230, 0.13); }
 .staticLedger article > *:not(.staticFilm) { position: relative; z-index: 1; }
-.staticFilm { position: absolute; inset: 0; margin: 0; opacity: 0.18; filter: saturate(0.64) contrast(1.08) brightness(0.58); }
-.staticFilm::after { position: absolute; inset: 0; background: rgba(13, 24, 19, 0.56); content: ""; }
-.staticFilm img { object-fit: cover; }
 .staticIndex { display: flex; align-items: center; justify-content: space-between; color: #d4b99a; }
 .staticIndex > span { display: grid; width: 2.35rem; height: 2.35rem; place-items: center; border: 1px solid rgba(212, 185, 154, 0.36); border-radius: 999px; }
 .staticIndex small,

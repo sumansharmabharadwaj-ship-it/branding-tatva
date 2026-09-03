@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
   useEffect,
@@ -11,6 +10,7 @@ import {
 import { AnimatePresence, motion, useInView, useTransform } from "framer-motion";
 import { ArrowUpRight, Eye, Quote, Repeat2 } from "lucide-react";
 import { Container } from "@/components/Container";
+import { AboutSignalField3D } from "@/components/AboutSignalField3D";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./PointOfView.module.css";
@@ -27,8 +27,6 @@ const STAGES = [
     recordType: "Documented perception reset",
     project: "HerbalCart",
     slug: "herbalcart",
-    image: "/images/generated/bt-about-recognition-signal-v3.webp",
-    imagePosition: "22% 50%",
     from: "Inherited frame",
     to: "Intended category",
     outcome: "People understand where you belong.",
@@ -45,8 +43,6 @@ const STAGES = [
     recordType: "Documented brand foundation",
     project: "MyShopInEurope",
     slug: "myshopineurope",
-    image: "/images/generated/bt-about-recognition-signal-v3.webp",
-    imagePosition: "50% 50%",
     from: "Access and price",
     to: "Craft and origin",
     outcome: "They can name why you matter.",
@@ -63,8 +59,6 @@ const STAGES = [
     recordType: "Measured performance · December 2025 to January 2026",
     project: "Dr. Haley Nutrition",
     slug: "dr-haley-nutrition",
-    image: "/images/generated/bt-about-recognition-signal-v3.webp",
-    imagePosition: "78% 50%",
     from: "Cadence led by volume",
     to: "Pattern led by quality",
     outcome: "The useful idea stays with them.",
@@ -201,25 +195,9 @@ export function PointOfView() {
                 style={prefersReducedMotion ? undefined : { y: filmY, scale: filmScale }}
               >
                 <div className={styles.recognitionChamber}>
-                  <AnimatePresence mode="wait" initial={false} custom={transitionDirection}>
-                    <motion.figure
-                      key={active.image}
-                      className={styles.evidenceFilm}
-                      custom={transitionDirection}
-                      initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.12, x: transitionDirection * 14 }}
-                      animate={{ opacity: 1, scale: 1.025, x: 0 }}
-                      exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.98, x: transitionDirection * -10 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.92, ease: EASE }}
-                    >
-                      <Image
-                        src={active.image}
-                        alt=""
-                        fill
-                        sizes="(min-width: 981px) 35vw, 100vw"
-                        style={{ objectPosition: active.imagePosition }}
-                      />
-                    </motion.figure>
-                  </AnimatePresence>
+                  <div className={styles.evidenceFilm}>
+                    <AboutSignalField3D mode="recognition" stage={activeIndex} />
+                  </div>
                   <div className={styles.ambientSequence}>
                     {STAGES.map((stage, index) => (
                       <span key={stage.lens} data-active={index === activeIndex}>{stage.lens}</span>
@@ -297,15 +275,6 @@ export function PointOfView() {
                 const Icon = stage.icon;
                 return (
                   <article key={stage.lens}>
-                    <figure className={styles.staticFilm} aria-hidden="true">
-                      <Image
-                        src={stage.image}
-                        alt=""
-                        fill
-                        sizes="20rem"
-                        style={{ objectPosition: stage.imagePosition }}
-                      />
-                    </figure>
                     <div className={styles.staticIndex}>
                       <span><Icon size={16} aria-hidden="true" /></span>
                       <small>{stage.number} · {stage.verb}</small>
