@@ -199,6 +199,7 @@ export function AboutSignalField3D({
           synthesisRight.push(right);
           root.add(right);
         }
+        sheetGeometry.dispose();
 
         synthesisSignal = new THREE.Mesh(
           new THREE.BoxGeometry(0.14, 2.65, 0.14),
@@ -247,8 +248,12 @@ export function AboutSignalField3D({
 
       const pointer = { x: 0, y: 0 };
       const pointerTarget = { x: 0, y: 0 };
-      const pointerSurface = container.parentElement ?? container;
+      const pointerSurface =
+        (container.closest("[data-scroll-story]") as HTMLElement | null) ??
+        container.parentElement ??
+        container;
       function onPointerMove(event: PointerEvent) {
+        if (event.pointerType === "touch") return;
         const bounds = pointerSurface.getBoundingClientRect();
         pointerTarget.x = ((event.clientX - bounds.left) / Math.max(bounds.width, 1) - 0.5) * 2;
         pointerTarget.y = ((event.clientY - bounds.top) / Math.max(bounds.height, 1) - 0.5) * 2;
