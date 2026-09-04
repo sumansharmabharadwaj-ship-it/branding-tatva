@@ -461,12 +461,14 @@ export function V4RecognitionScene() {
 
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
+  const previousIndexRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectionDirection, setSelectionDirection] = useState<"forward" | "backward">("forward");
   const mediaScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.14]);
   const mediaY = useTransform(scrollYProgress, [0, 1], [0, -26]);
   const copyY = useTransform(scrollYProgress, [0, 1], [18, -18]);
@@ -475,7 +477,10 @@ export function V4HiddenCostScene() {
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     const next = Math.min(COST_STAGES.length - 1, Math.floor(progress * COST_STAGES.length));
-    setActiveIndex((current) => (current === next ? current : next));
+    if (next === previousIndexRef.current) return;
+    setSelectionDirection(next > previousIndexRef.current ? "forward" : "backward");
+    previousIndexRef.current = next;
+    setActiveIndex(next);
   });
 
   const effortPath = useMemo(
@@ -527,13 +532,25 @@ export function V4HiddenCostScene() {
           </motion.header>
 
           <div className="home-v4-cost__stage">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.article
                 key={active.number}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+                initial={
+                  prefersReducedMotion
+                    ? false
+                    : { opacity: 1, x: selectionDirection === "forward" ? 18 : -18 }
+                }
+                animate={{ opacity: 1, x: 0 }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : {
+                        opacity: 0,
+                        x: selectionDirection === "forward" ? -14 : 14,
+                        transition: { duration: 0 },
+                      }
+                }
+                transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
                 aria-live="polite"
               >
                 <span>{active.number} / 04</span>

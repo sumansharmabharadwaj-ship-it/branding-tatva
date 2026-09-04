@@ -1,0 +1,80 @@
+/* Motion-only Parker carry-forward for the restored 6 August structure. */
+
+.home-v4 {
+  --home-page-progress: 0;
+  --home-scroll-velocity: 0;
+}
+
+.home-v4 .home-v4-handoff__veil,
+.home-v4 .home-v4-handoff svg,
+.home-v4 .home-v4-handoff__stars {
+  transition:
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 420ms ease;
+  will-change: transform;
+}
+
+.home-v4[data-home-scroll-direction="forward"] .home-v4-handoff__veil {
+  transform: translate3d(0, 5%, 0) scaleY(1.05);
+}
+
+.home-v4[data-home-scroll-direction="backward"] .home-v4-handoff__veil {
+  transform: translate3d(0, -5%, 0) scaleY(1.05);
+}
+
+.home-v4[data-home-scroll-direction="forward"] .home-v4-handoff svg,
+.home-v4[data-home-scroll-direction="forward"] .home-v4-handoff__stars {
+  transform: translate3d(1.1rem, 0, 0);
+}
+
+.home-v4[data-home-scroll-direction="backward"] .home-v4-handoff svg,
+.home-v4[data-home-scroll-direction="backward"] .home-v4-handoff__stars {
+  transform: translate3d(-1.1rem, 0, 0);
+}
+
+.home-v4 [data-home-scene-state="resting"] :is(
+  .home-v4-opening__light,
+  .home-v4-recognition__diagram,
+  .home-v4-cost__diagram,
+  .studio-cinematic__logic-step i,
+  .studio-cinematic__tabs button > i > b,
+  .paths-cinematic__choices button > i > b
+) {
+  animation-play-state: paused !important;
+}
+
+.home-v4 :is(a, button, [role="button"], [role="tab"]):focus-visible {
+  outline: 2px solid #f4efe6;
+  outline-offset: 4px;
+}
+
+.home-v4 [data-cursor-world="light"] :is(a, button, [role="button"], [role="tab"]):focus-visible {
+  outline-color: #1b1b1b;
+}
+
+@media (max-width: 720px) {
+  .home-v4-opening__shell {
+    padding-top: max(6.5rem, calc(env(safe-area-inset-top) + 5.4rem));
+  }
+
+  .studio-cinematic__footer a[href="/about"] {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 .home-v4-handoff__veil,
+  .home-v4 .home-v4-handoff svg,
+  .home-v4 .home-v4-handoff__stars {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .home-v4 [data-home-scene-state] * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
