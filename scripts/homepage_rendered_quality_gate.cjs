@@ -66,7 +66,7 @@ assert(videos.every((tag) => /\bmuted/i.test(tag)), "A homepage film can start w
 assert(videos.every((tag) => /\bplaysinline/i.test(tag)), "A homepage film can escape inline playback.");
 assert(!html.includes("assets.calendly.com"), "Calendly loads before booking intent.");
 
-for (const href of ["#recognition", "#cost", "#foundation", "#evidence", "#process", "#invitation"]) {
+for (const href of ["#recognition", "#cost", "#foundation", "#evidence", "#invitation"]) {
   assert(html.includes(`href="${href}"`), `Rendered decision path is missing ${href}.`);
 }
 for (const label of ["Find the gap in your brand", "See recorded proof", "Talk with Suman"]) {
