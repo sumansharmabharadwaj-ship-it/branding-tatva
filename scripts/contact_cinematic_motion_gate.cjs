@@ -60,7 +60,8 @@ for (const camera of ["folio", "conversation", "letter"]) {
 
 requireText(pathways, "<AnimatePresence", "pathway changes no longer use a cinematic cut");
 requireText(pathways, "data-contact-pathway-shot", "pathway shot boundary is missing");
-requireText(gratitude, "data-contact-gratitude-bloom", "gratitude bloom is missing");
+requireText(gratitude, "data-contact-gratitude-ledger", "gratitude acknowledgement ledger is missing");
+requireText(gratitude, "data-contact-gratitude-statement", "gratitude closing statement is missing");
 requireText(gratitude, "data-contact-gratitude-complete", "gratitude completion state is missing");
 requireText(callSequence, "data-contact-call-step", "call sequence no longer exposes its active step");
 requireText(form, "data-contact-form-completion", "written enquiry no longer exposes completion progress");

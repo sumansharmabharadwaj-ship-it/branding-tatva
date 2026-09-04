@@ -22,63 +22,49 @@
   transform-origin: 50% 55%;
 }
 
-[data-contact-film] [data-contact-gratitude-bloom] {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 1;
-  width: clamp(18rem, 44vw, 36rem);
-  aspect-ratio: 1;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
+[data-contact-film] [data-contact-gratitude] {
+  isolation: isolate;
 }
 
-[data-contact-film] [data-contact-gratitude-bloom-arm] {
-  position: absolute;
-  inset: 0;
+/* The closing scene keeps the meadow luminous. A local wash preserves type
+   contrast without grading the whole film into another dark interlude. */
+[data-contact-film] [data-contact-gratitude-media-wash] {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(21, 28, 21, 0.7) 0%,
+      rgba(23, 31, 23, 0.5) 48%,
+      rgba(27, 34, 26, 0.34) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(20, 27, 20, 0.12) 0%,
+      rgba(26, 34, 25, 0.3) 54%,
+      rgba(35, 31, 26, 0.76) 100%
+    );
+  transition: opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-[data-contact-film] [data-contact-gratitude-bloom-petal] {
-  position: absolute;
-  top: 2%;
-  left: 50%;
-  display: block;
-  width: clamp(1rem, 2.2vw, 1.7rem);
-  height: 37%;
-  margin-left: clamp(-0.85rem, -1.1vw, -0.5rem);
-  border: 1px solid rgba(240, 209, 161, 0.34);
-  border-radius: 999px 999px 52% 52%;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 229, 187, 0.46) 0%,
-    rgba(212, 185, 154, 0.13) 72%,
-    rgba(212, 185, 154, 0) 100%
-  );
-  box-shadow: 0 0 48px rgba(224, 190, 139, 0.16);
-  mix-blend-mode: screen;
-  transform-origin: 50% 100%;
-  will-change: transform, opacity;
+[data-contact-film] [data-contact-gratitude-statement] {
+  text-shadow: 0 2px 24px rgba(10, 16, 11, 0.32);
 }
 
-[data-contact-film] [data-contact-gratitude-bloom-heart] {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: block;
-  width: clamp(5rem, 12vw, 9rem);
-  aspect-ratio: 1;
-  margin: clamp(-4.5rem, -6vw, -2.5rem) 0 0 clamp(-4.5rem, -6vw, -2.5rem);
-  border: 1px solid rgba(240, 209, 161, 0.26);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(244, 213, 164, 0.36) 0%,
-    rgba(212, 185, 154, 0.08) 48%,
-    transparent 72%
-  );
-  box-shadow: 0 0 80px rgba(224, 190, 139, 0.15);
-  mix-blend-mode: screen;
-  will-change: transform, opacity;
+[data-contact-film] [data-contact-gratitude-note] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@supports selector(section:has(*)) {
+  [data-contact-film]
+    [data-contact-scene="afterglow"]:has([data-contact-gratitude-active="true"])
+    [data-contact-gratitude-media-wash] {
+    opacity: 0.88;
+  }
+
+  [data-contact-film]
+    [data-contact-scene="afterglow"]:has([data-contact-gratitude-complete="true"])
+    [data-contact-gratitude-media-wash] {
+    opacity: 0.78;
+  }
 }
 
 /* The three-part call ledger now develops the booking card instead of living

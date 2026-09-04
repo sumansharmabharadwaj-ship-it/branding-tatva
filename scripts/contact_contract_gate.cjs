@@ -188,16 +188,16 @@ if (!contactGratitude.includes("document.activeElement !== event.currentTarget")
   fail("Contact gratitude hover must preserve a keyboard-focused acknowledgement.");
 }
 if (!contactGratitude.includes('data-contact-gratitude-next')) {
-  fail("Contact gratitude must expose its completed reading handoff.");
+  fail("Contact gratitude must expose its onward routes.");
 }
 if (!contactGratitude.includes('href="/insights"')) {
-  fail("Contact gratitude must offer a useful reading route after completion.");
+  fail("Contact gratitude must offer a useful reading route.");
 }
-if (!contactGratitude.includes("aria-hidden={!allNotesVisited}")) {
-  fail("Contact gratitude reading route must stay hidden until completion.");
+if (!contactGratitude.includes('href="#call"')) {
+  fail("Contact gratitude must keep the booking route available.");
 }
-if (!contactGratitude.includes("tabIndex={allNotesVisited ? undefined : -1}")) {
-  fail("Contact gratitude reading route must stay outside the tab order until completion.");
+if (!contactGratitude.includes('aria-hidden="false"')) {
+  fail("Contact gratitude onward routes must remain available without a completion gate.");
 }
 if (!contactChapterRail.includes("data-contact-chapter-status")) {
   fail("Contact chapter navigation must expose an assistive current-chapter status.");

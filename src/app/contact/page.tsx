@@ -444,11 +444,8 @@ export default function ContactPage() {
               />
               <div
                 aria-hidden="true"
+                data-contact-gratitude-media-wash
                 className="absolute inset-0"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(180deg, rgba(24,31,23,0.5) 0%, rgba(26,34,24,0.58) 58%, rgba(39,34,30,0.86) 100%), radial-gradient(circle at 50% 43%, rgba(238,216,174,0.12) 0%, rgba(24,31,23,0.38) 70%)",
-                }}
               />
             </>
           }
