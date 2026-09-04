@@ -43,6 +43,7 @@ export function BackgroundVideo({
   imagePosition = "center",
   parallax = false,
   push = false,
+  loop = true,
   playbackRate = 1,
   posterPriority = false,
   managedByHomepage = false,
@@ -72,6 +73,9 @@ export function BackgroundVideo({
   // wallpaper. Disabled automatically under prefers-reduced-motion by
   // the sitewide animation kill rule.
   push?: boolean;
+  // Most ambient scenes repeat. Closing scenes can opt out so their final
+  // frame becomes a still hold instead of exposing the loop boundary.
+  loop?: boolean;
   // An opt-in pace adjustment for generated or unusually slow ambient
   // clips. Existing sections remain at their encoded 1x speed.
   playbackRate?: number;
@@ -151,7 +155,7 @@ export function BackgroundVideo({
       // once before the observer could pause it, which was the source of
       // the long-page bandwidth spike.
       muted
-      loop
+      loop={loop}
       playsInline
       aria-hidden="true"
       data-home-playback-rate={safePlaybackRate}

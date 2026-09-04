@@ -30,6 +30,7 @@ const scene = read("src/components/ContactCinematicScene.tsx");
 const pathwayFilm = read("src/components/ContactPathwayFilm.tsx");
 const pathways = read("src/components/ContactPathways.tsx");
 const gratitude = read("src/components/ContactGratitude.tsx");
+const backgroundVideo = read("src/components/BackgroundVideo.tsx");
 const callSequence = read("src/components/ContactCallSequence.tsx");
 const form = read("src/components/ContactForm.tsx");
 const rail = read("src/components/ContactChapterRail.tsx");
@@ -63,6 +64,12 @@ requireText(pathways, "data-contact-pathway-shot", "pathway shot boundary is mis
 requireText(gratitude, "data-contact-gratitude-ledger", "gratitude acknowledgement ledger is missing");
 requireText(gratitude, "data-contact-gratitude-statement", "gratitude closing statement is missing");
 requireText(gratitude, "data-contact-gratitude-complete", "gratitude completion state is missing");
+requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
+requireText(gratitude, 'event.key === "ArrowDown"', "gratitude arrow-key choreography is missing");
+requireText(gratitude, "selectedNote", "gratitude click and touch selection no longer persists");
+requireText(backgroundVideo, "loop = true", "background films must keep a safe default loop contract");
+requireText(backgroundVideo, "loop={loop}", "background films can no longer hold their final frame");
+requireText(page, "loop={false}", "gratitude film must settle instead of exposing its loop boundary");
 requireText(callSequence, "data-contact-call-step", "call sequence no longer exposes its active step");
 requireText(form, "data-contact-form-completion", "written enquiry no longer exposes completion progress");
 requireText(form, "activeRequiredField", "written enquiry no longer follows the active required field");
@@ -102,6 +109,11 @@ forbidPattern(
   callSequence,
   /repeat:\s*Infinity/,
   "call sequence must use finite arrival motion",
+);
+forbidPattern(
+  gratitude,
+  /repeat:\s*Infinity/,
+  "gratitude motion must resolve instead of looping like a GIF",
 );
 
 if (!process.exitCode) {

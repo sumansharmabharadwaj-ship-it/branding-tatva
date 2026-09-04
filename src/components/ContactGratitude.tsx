@@ -55,9 +55,14 @@ type GratitudeNoteProps = {
   index: number;
   progress: MotionValue<number>;
   activeNote: number | null;
+  selected: boolean;
   visited: boolean;
   reducedMotion: boolean;
+  buttonRef: (node: HTMLButtonElement | null) => void;
   onActiveNoteChange: (index: number | null) => void;
+  onBlurNote: () => void;
+  onNavigate: (index: number, key: string) => void;
+  onSelect: (index: number) => void;
 };
 
 function GratitudeNote({
@@ -65,9 +70,14 @@ function GratitudeNote({
   index,
   progress,
   activeNote,
+  selected,
   visited,
   reducedMotion,
+  buttonRef,
   onActiveNoteChange,
+  onBlurNote,
+  onNavigate,
+  onSelect,
 }: GratitudeNoteProps) {
   const arrivalStart = 0.1 + index * 0.045;
   const arrivalEnd = 0.38 + index * 0.045;
@@ -82,27 +92,33 @@ function GratitudeNote({
 
   return (
     <motion.button
+      ref={buttonRef}
       type="button"
-      aria-label={`${active ? "Close" : "Open"} acknowledgement for ${note.label}${noteState}`}
-      aria-pressed={active}
+      aria-label={`${selected ? "Close" : "Open"} acknowledgement for ${note.label}${noteState}`}
+      aria-pressed={selected}
       aria-controls="contact-gratitude-response"
-      onClick={() => onActiveNoteChange(active ? null : index)}
+      onClick={() => onSelect(index)}
       onPointerEnter={(event) => {
         if (event.pointerType === "mouse") onActiveNoteChange(index);
       }}
-      onPointerLeave={(event) => {
+      onFocus={() => onActiveNoteChange(index)}
+      onBlur={onBlurNote}
+      onKeyDown={(event) => {
         if (
-          event.pointerType === "mouse" &&
-          document.activeElement !== event.currentTarget
+          event.key === "ArrowDown" ||
+          event.key === "ArrowRight" ||
+          event.key === "ArrowUp" ||
+          event.key === "ArrowLeft" ||
+          event.key === "Home" ||
+          event.key === "End"
         ) {
-          onActiveNoteChange(null);
+          event.preventDefault();
+          onNavigate(index, event.key);
         }
       }}
-      onFocus={() => onActiveNoteChange(index)}
-      onBlur={() => onActiveNoteChange(null)}
       data-contact-gratitude-note
       data-contact-gratitude-visited={visited ? "true" : undefined}
-      data-cursor-label={active ? "Close note" : "Receive note"}
+      data-cursor-label={selected ? "Close note" : "Receive note"}
       className="group relative grid min-h-16 w-full grid-cols-[1.7rem_1fr] items-center gap-2 overflow-hidden px-3 py-3 text-left text-ivory focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:min-h-[4.5rem] sm:grid-cols-[2.25rem_1fr_auto] sm:gap-3 sm:px-4 lg:min-h-[5.35rem] lg:border-t lg:border-white/18 lg:px-1 lg:last:border-b"
       initial={false}
       animate={{ color: active ? "rgb(246,242,234)" : "rgba(246,242,234,0.82)" }}
@@ -134,7 +150,7 @@ function GratitudeNote({
         aria-hidden="true"
         className="relative hidden text-[0.57rem] font-medium uppercase tracking-[0.16em] text-sandstone sm:block"
         initial={false}
-        animate={{ opacity: visited ? 1 : 0.34, x: active ? 0 : -3 }}
+        animate={{ opacity: visited ? 1 : 0.48, x: active ? 0 : -3 }}
         transition={{ duration: reducedMotion ? 0 : 0.3, ease: EASE_AIR }}
       >
         {visited ? "received" : "open"}
@@ -150,7 +166,9 @@ function GratitudeNote({
  */
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
+  const noteRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [activeNote, setActiveNote] = useState<number | null>(null);
+  const [selectedNote, setSelectedNote] = useState<number | null>(null);
   const [visitedNotes, setVisitedNotes] = useState(0);
   const reducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -175,6 +193,8 @@ export function ContactGratitude() {
     ["inset(0 100% 0 0%)", "inset(0 0% 0 0%)", "inset(0 0% 0 0%)", "inset(0 10% 0 0%)"],
   );
   const signalScale = useTransform(progress, [0.1, 0.7], [0, 1]);
+  const nextY = useTransform(progress, [0.22, 0.5, 0.9, 1], [22, 0, 0, -4]);
+  const nextOpacity = useTransform(progress, [0.22, 0.46, 0.94, 1], [0, 1, 1, 0.82]);
 
   const allNotesVisited = visitedNotes === ALL_NOTES_VISITED;
   const visitedCount = NOTES.reduce(
@@ -197,15 +217,47 @@ export function ContactGratitude() {
     }
   }, []);
 
+  const handleNoteSelect = useCallback(
+    (index: number) => {
+      const nextSelectedNote = selectedNote === index ? null : index;
+      setSelectedNote(nextSelectedNote);
+      handleActiveNoteChange(nextSelectedNote);
+    },
+    [handleActiveNoteChange, selectedNote],
+  );
+
+  const handleNoteBlur = useCallback(() => {
+    setActiveNote(selectedNote);
+  }, [selectedNote]);
+
+  const handleNoteNavigate = useCallback((index: number, key: string) => {
+    const lastIndex = NOTES.length - 1;
+    let nextIndex = index;
+
+    if (key === "ArrowDown" || key === "ArrowRight") {
+      nextIndex = (index + 1) % NOTES.length;
+    } else if (key === "ArrowUp" || key === "ArrowLeft") {
+      nextIndex = (index - 1 + NOTES.length) % NOTES.length;
+    } else if (key === "Home") {
+      nextIndex = 0;
+    } else if (key === "End") {
+      nextIndex = lastIndex;
+    }
+
+    noteRefs.current[nextIndex]?.focus();
+  }, []);
+
   function handleScenePointerDown(event: PointerEvent<HTMLDivElement>) {
     const target = event.target;
     if (target instanceof Element && !target.closest("[data-contact-gratitude-note]")) {
+      setSelectedNote(null);
       setActiveNote(null);
     }
   }
 
   function handleSceneKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key === "Escape" && activeNote !== null) {
+      setSelectedNote(null);
       setActiveNote(null);
     }
   }
@@ -293,10 +345,15 @@ export function ContactGratitude() {
               </p>
             </motion.div>
 
-            <div
+            <motion.div
               data-contact-gratitude-next
               aria-hidden="false"
               className="mt-6 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap"
+              style={
+                reducedMotion
+                  ? undefined
+                  : { y: nextY, opacity: nextOpacity, willChange: "transform, opacity" }
+              }
             >
               <TrackedLink
                 href="#call"
@@ -327,7 +384,7 @@ export function ContactGratitude() {
                   strokeWidth={1.5}
                 />
               </TrackedLink>
-            </div>
+            </motion.div>
           </div>
 
           <motion.div
@@ -344,13 +401,23 @@ export function ContactGratitude() {
                   A useful first conversation begins here.
                 </p>
               </div>
-              <span className="hidden pb-1 text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/46 sm:block">
+              <span className="hidden pb-1 text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/60 sm:block">
                 four acknowledgements
               </span>
             </div>
 
             <div
               data-contact-gratitude-notes
+              data-contact-gratitude-flow="continuous"
+              onPointerLeave={(event) => {
+                const focusedInside =
+                  document.activeElement instanceof Node &&
+                  event.currentTarget.contains(document.activeElement);
+
+                if (event.pointerType === "mouse" && !focusedInside) {
+                  setActiveNote(selectedNote);
+                }
+              }}
               className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-[1.35rem] border border-white/16 bg-white/12 backdrop-blur-xl sm:mt-5 lg:block lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent lg:backdrop-blur-none"
             >
               {NOTES.map((note, index) => (
@@ -360,9 +427,16 @@ export function ContactGratitude() {
                   index={index}
                   progress={progress}
                   activeNote={activeNote}
+                  selected={selectedNote === index}
                   visited={(visitedNotes & (1 << index)) !== 0}
                   reducedMotion={reducedMotion}
+                  buttonRef={(node) => {
+                    noteRefs.current[index] = node;
+                  }}
                   onActiveNoteChange={handleActiveNoteChange}
+                  onBlurNote={handleNoteBlur}
+                  onNavigate={handleNoteNavigate}
+                  onSelect={handleNoteSelect}
                 />
               ))}
             </div>
@@ -426,7 +500,7 @@ export function ContactGratitude() {
                   transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE_AIR }}
                 />
               </motion.span>
-              <span aria-hidden="true" className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-ivory/54">
+              <span aria-hidden="true" className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-ivory/64">
                 0{visitedCount} / 04 received
               </span>
             </div>

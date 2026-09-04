@@ -439,6 +439,7 @@ export default function ContactPage() {
                 poster="/images/generated/bt-contact-original-gratitude-poster.jpg"
                 imagePosition="center 42%"
                 playbackRate={0.78}
+                loop={false}
                 posterPriority={false}
                 push
               />
