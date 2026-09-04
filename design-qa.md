@@ -1,3 +1,63 @@
+# Design QA: Services Memory Horizon · 2026-09-04
+
+## Findings
+
+- No actionable P0, P1, or P2 mismatch remains. The selected Memory Horizon direction is implemented as a responsive, interactive section that preserves the page's existing recognition model and content.
+- [P3] The selected concept included three invented exploratory text links and a decorative botanical line drawing. They are intentionally omitted because they were not part of the existing service journey; the live tabs, reading panel, evidence, and brand audit CTA remain the complete interaction path.
+
+## Target and evidence
+
+- Source visual truth: `/workspace/scratch/41664d6afc73/generated_images/exec-bfb6d327-d8f0-45d3-9be6-40b01d0ec646.png` (`1487 × 1058`).
+- Generated production landscape: `public/images/generated/bt-services-memory-horizon.webp` (`2243 × 701`, approximately 70 KB).
+- Implementation route: `/services#education`.
+- Desktop browser capture: `artifacts/services-memory-horizon-desktop.jpg` (`1348 × 926` image from a `1363 × 936` CSS viewport, DPR `1`; scrollbar pixels are excluded by the browser capture).
+- Mobile browser capture: `artifacts/services-memory-horizon-mobile.jpg` (`390 × 844` image and tested frame, DPR `1`).
+- Full visual comparison: `artifacts/services-memory-horizon-comparison.jpg` (`1363 × 1944`), with the selected design and rendered implementation shown at the same desktop width and the same Unfamiliar state.
+- State: Unfamiliar, full motion. Recalled and Considered states plus reduced motion were also exercised separately.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P2 | The first implementation wrapped the title too early and let the section approach the framed header too closely. | Increased the display measure to `24ch` and adjusted the education scene's top rhythm. The final desktop capture matches the source's two-line title and clear header separation. |
+| 2 | P2 | The audit CTA initially stretched across the full scene and could collide visually with the fixed privacy controls. | Capped the CTA at `60rem`, centered it, and reserved desktop breathing room. The final comparison shows a contained audit strip clear of the privacy control. |
+| 3 | P2 | A legacy narrow-screen selector shrank the active timeline bar into a small square, and the three evidence columns made body copy too narrow. | Added a specific timeline override and converted the mobile evidence area into three readable stacked rows. The final `390 × 844` capture shows an 81 px active bar, 11 px evidence body type, and no horizontal overflow. |
+
+## Required fidelity surfaces
+
+- Fonts and typography: the established display serif and sans families reproduce the source's editorial contrast. The large thesis, small tracked labels, stage names, and reading-panel hierarchy maintain the site's existing brand language.
+- Spacing and layout rhythm: desktop follows the source's heading, four-stage horizon, open reading surface, three evidence columns, audit strip, and landscape sequence. Mobile preserves that order while stacking evidence into readable rows.
+- Colors and visual tokens: warm ivory paper, forest ink, muted sage, mineral grey, and clay orange remain within Branding Tatva's current palette.
+- Image quality and asset fidelity: a project-owned generated WebP supplies the full-width misty valley. Its aspect ratio and masked crop were created for the slot, remain sharp at the tested desktop width, and recede behind live content.
+- Copy and content: all four existing stages, explanations, decisions, evidence statements, systems, route personalization, and the brand audit CTA remain intact. The text does not imply that the four conditions form a guaranteed ladder.
+- Interaction and accessibility: tabs retain tab/tabpanel semantics, mouse and pen hover, click, focus, Arrow keys, Home/End, analytics, 44 px or larger touch targets, and the site's reduced-motion behavior.
+
+## Verification
+
+- Desktop interaction: Recalled activated by click and updated its panel; ArrowRight then moved focus and selection to Considered.
+- Mobile interaction: Considered activated successfully at `390 × 844`; the panel changed after its intended transition and the document did not overflow horizontally.
+- Reduced motion: the site's Reduced control set `html[data-motion="reduced"]`, removed the ambient film, and collapsed stage transitions to the sitewide minimal duration. Full motion was restored afterward.
+- Browser console: no application-origin errors. Cloud-browser extension metadata messages and existing Vercel One Tap warnings were excluded because they do not originate in the section.
+- Production build: passed; all 79 static pages generated and `/services` typechecked successfully.
+
+## Implementation checklist
+
+- [x] Match the selected Memory Horizon composition with a real generated landscape asset.
+- [x] Preserve all existing recognition content, personalization, analytics, and controls.
+- [x] Adapt the evidence surface and active timeline treatment for phones.
+- [x] Verify desktop, mobile, pointer, keyboard, motion preference, console, and production build.
+- [x] Compare the selected visual and browser-rendered implementation in one evidence image.
+
+## Follow-up polish
+
+- [P3] Revisit the fixed mobile progress and privacy controls as a page-wide system if future testing shows they obscure too much mid-section content; changing those controls is outside this section-specific pass.
+
+## Final result
+
+final result: passed
+
+---
+
 # Design QA: Recognition Field Notes · 2026-09-03
 
 **Findings**

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { cookies, headers } from "next/headers";
 import { preload } from "react-dom";
 import { site } from "@/data/site";
@@ -488,28 +489,32 @@ export default async function ServicesPage() {
           id="education"
           data-services-scene="education"
           className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
-          style={{ backgroundColor: "#18221F" }}
+          style={{ backgroundColor: "#F2EBDD" }}
         >
-          <BackgroundVideo
-            parallax
-            video="/videos/generated/bt-services-perception-ascent.mp4"
-            videoMobile="/videos/generated/bt-services-perception-ascent-mobile.mp4"
-            poster="/images/generated/bt-services-perception-ascent-poster.jpg"
-            playbackRate={1.08}
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(102deg, rgba(13,19,17,0.62) 0%, rgba(16,24,21,0.36) 48%, rgba(16,24,21,0.2) 100%)",
-            }}
-          />
-          <SceneVeil color="#191B16" />
+          <div data-perception-ambient-film="true" aria-hidden="true" className="absolute inset-0">
+            <BackgroundVideo
+              parallax
+              video="/videos/generated/bt-services-perception-ascent.mp4"
+              videoMobile="/videos/generated/bt-services-perception-ascent-mobile.mp4"
+              poster="/images/generated/bt-services-perception-ascent-poster.jpg"
+              playbackRate={0.82}
+            />
+          </div>
+          <div data-perception-landscape="true" aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[35%] sm:h-[38%]">
+            <Image
+              src="/images/generated/bt-services-memory-horizon.webp"
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+          </div>
+          <div data-perception-paper-wash="true" aria-hidden="true" className="absolute inset-0" />
+          <SceneVeil color="#F2EBDD" />
           <div data-services-content-plane="true" className="relative">
             <PerceptionLadder />
           </div>
-          <SceneHandoff color="#141A15" />
+          <SceneHandoff color="#EEE6D7" />
         </section>
 
         {/* The Recognition Audit becomes a tactile field note. Five private

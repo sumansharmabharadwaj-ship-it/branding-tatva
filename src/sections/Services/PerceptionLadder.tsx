@@ -3,6 +3,7 @@
 import type { CSSProperties, KeyboardEvent, PointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, ArrowRight, Compass, FileText, Sprout } from "lucide-react";
 import { Container } from "@/components/Container";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
@@ -160,205 +161,167 @@ export function PerceptionLadder() {
   }
 
   return (
-    <Container className="relative max-w-7xl">
+    <Container className="relative max-w-[90rem]">
       <div
         data-perception-system="true"
         data-perception-stage={activeIndex + 1}
         style={{ "--perception-progress": `${(activeIndex / (RUNGS.length - 1)) * 100}%` } as CSSProperties}
-        className="grid gap-8 lg:grid-cols-[minmax(15rem,0.62fr)_minmax(16rem,0.72fr)_minmax(21rem,1.05fr)] lg:items-center lg:gap-10 xl:gap-16"
+        className="relative"
       >
-        <div data-services-chapter-copy="true">
-          <p className="text-sm font-medium uppercase tracking-wide text-[#C6CCB8]">How buyers remember</p>
-          <h2 className="mt-2 max-w-lg text-display-sm font-display font-normal text-ivory">
-            Four ways buyers may hold your brand in memory.
-          </h2>
-          <p data-perception-intro="true" className="mt-4 max-w-md text-sm leading-relaxed text-ivory/78 sm:text-base">
-            These are different market conditions, not a guaranteed ladder. Each condition asks for a different
-            brand decision and a different form of evidence.
-          </p>
-
-          <AnimatePresence initial={false}>
-            {routeFocus ? (
-              <motion.div
-                key={routeFocus.transition}
-                data-perception-route="true"
-                initial={
-                  prefersReducedMotion
-                    ? false
-                    : { opacity: 0.68, clipPath: "inset(0 62% 0 0 round 1rem)", filter: "blur(2px)" }
-                }
-                animate={{ opacity: 1, clipPath: "inset(0 0% 0 0 round 0rem)", filter: "blur(0px)" }}
-                exit={
-                  prefersReducedMotion
-                    ? undefined
-                    : { opacity: 0.58, clipPath: "inset(0 0 0 64% round 1rem)", filter: "blur(2px)" }
-                }
-                transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
-                className="mt-5 rounded-2xl border border-[#A0A690]/30 bg-[rgba(160,166,144,0.08)] px-4 py-3"
-              >
-                <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em] text-[#C6CCB8]/75">
-                  Where your selected engagement concentrates
-                </p>
-                <p className="mt-1 font-display text-lg font-normal text-ivory">{routeFocus.transition}</p>
-                <p className="mt-1.5 text-xs leading-relaxed text-ivory/68">{routeFocus.note}</p>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-
-          <div data-perception-progress="true" className="mt-7 flex items-center gap-3" aria-hidden="true">
-            <span className="font-display text-lg text-[#C6CCB8]">{String(activeIndex + 1).padStart(2, "0")}</span>
-            <span className="relative h-px flex-1 overflow-hidden bg-ivory/14">
-              <motion.span
-                className="absolute inset-y-0 left-0 bg-[#A0A690]"
-                animate={{ width: `${((activeIndex + 1) / RUNGS.length) * 100}%` }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
-              />
-            </span>
-            <span className="text-[0.58rem] uppercase tracking-[0.16em] text-ivory/45">/ 04</span>
+        <div data-perception-heading="true" className="grid gap-6 lg:grid-cols-[minmax(0,1.16fr)_minmax(19rem,0.74fr)] lg:items-end lg:gap-16">
+          <div>
+            <p className="text-[0.66rem] font-semibold uppercase tracking-[0.22em] text-[#45583F] sm:text-xs">
+              How buyers remember
+            </p>
+            <h2 className="mt-3 max-w-[24ch] font-display text-[clamp(2.45rem,4.6vw,5rem)] font-normal leading-[0.98] tracking-[-0.025em] text-[#1D2D25]">
+              Four ways buyers may hold your brand in memory.
+            </h2>
           </div>
 
-          <a
-            href="#audit"
-            data-perception-audit-action="true"
-            className="link-underline mt-7 hidden min-h-11 items-center gap-2 text-sm text-[#C6CCB8] transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A0A690] sm:inline-flex"
-          >
-            Check which conditions are already true
-            <span aria-hidden="true">↓</span>
-          </a>
-        </div>
+          <div className="max-w-xl lg:justify-self-end">
+            <p data-perception-intro="true" className="max-w-[39rem] text-sm leading-relaxed text-[#3F463E] sm:text-base">
+              These are different market conditions, not a guaranteed ladder. Each condition asks for a different
+              brand decision and a different form of evidence.
+            </p>
 
-        <div
-          data-perception-console="true"
-          className="relative grid min-w-0 overflow-hidden rounded-[2rem] border border-ivory/15 bg-[rgba(12,18,17,0.66)] shadow-[0_32px_96px_rgba(0,0,0,0.3)] backdrop-blur-xl lg:col-span-2 lg:grid-cols-[minmax(14.5rem,0.72fr)_minmax(21rem,1.05fr)] lg:items-stretch"
-        >
-          <div data-perception-trace="true" aria-hidden="true">
-            <span data-perception-trace="line" />
-            {RUNGS.map((rung, index) => (
-              <span key={rung.label} data-perception-trace-node={index + 1} />
-            ))}
-          </div>
-
-          <div
-            data-services-chapter-instrument="true"
-            role="tablist"
-            aria-label="Four stages of brand recognition"
-            className="grid grid-cols-2 gap-1 border-b border-ivory/12 bg-[rgba(14,20,18,0.34)] p-2 lg:flex lg:flex-col lg:justify-center lg:border-b-0 lg:border-r lg:p-3"
-          >
-            {RUNGS.map((rung, index) => {
-              const active = index === activeIndex;
-              const complete = index < activeIndex;
-              return (
-                <button
-                  key={rung.label}
-                  ref={(node) => {
-                    tabRefs.current[index] = node;
-                  }}
-                  id={`perception-stage-tab-${index}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  aria-controls="perception-stage-panel"
-                  tabIndex={active ? 0 : -1}
-                  onPointerEnter={(event) => handlePointerEnter(index, event)}
-                  onFocus={() => activate(index, "focus")}
-                  onClick={() => activate(index, "click")}
-                  onKeyDown={(event) => handleKeyDown(index, event)}
-                  className={`group relative grid min-h-14 w-full grid-cols-[2rem_1fr_auto] items-center gap-2 overflow-hidden rounded-2xl px-2.5 py-2.5 text-left transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] sm:px-4 lg:min-h-16 lg:grid-cols-[2.5rem_1fr_auto] lg:gap-3 lg:py-3 ${
-                    active ? "text-ivory" : "text-ivory/55 hover:bg-ivory/[0.04] hover:text-ivory/85"
-                  }`}
+            <AnimatePresence initial={false}>
+              {routeFocus ? (
+                <motion.div
+                  key={routeFocus.transition}
+                  data-perception-route="true"
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
+                  className="mt-4 border-l border-[#B85A34]/55 pl-4"
                 >
-                  {active && (
-                    <motion.span
-                      layoutId="active-perception-stage"
-                      aria-hidden="true"
-                      className="absolute inset-0 rounded-2xl border border-[#A0A690]/45 bg-ivory/[0.075] shadow-[0_14px_42px_rgba(0,0,0,0.18)]"
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
-                    />
-                  )}
-                  <span className={`relative font-display text-sm ${active || complete ? "text-[#C6CCB8]" : "text-ivory/35"}`}>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="relative font-display text-base font-normal sm:text-lg lg:text-xl">{rung.label}</span>
-                  <span
-                    aria-hidden="true"
-                    className={`relative h-2.5 w-2.5 rounded-full border transition-colors duration-300 ${
-                      active ? "border-[#C6CCB8] bg-[#C6CCB8] shadow-[0_0_14px_rgba(198,204,184,0.5)]" : complete ? "border-[#A0A690] bg-[#A0A690]/60" : "border-ivory/25"
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </div>
-
-          <div
-            data-services-chapter-resolution="true"
-            data-perception-panel="true"
-            id="perception-stage-panel"
-            role="tabpanel"
-            aria-labelledby={`perception-stage-tab-${activeIndex}`}
-            className="relative min-h-[24rem] overflow-hidden bg-[rgba(12,18,17,0.26)] p-6 sm:p-8"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/55">What buyers currently do</p>
-              <span className="font-display text-5xl leading-none text-ivory/[0.08]" aria-hidden="true">
-                {String(activeIndex + 1).padStart(2, "0")}
-              </span>
-            </div>
-
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={activeRung.label}
-                initial={
-                  prefersReducedMotion
-                    ? false
-                    : { opacity: 0.72, clipPath: "inset(5% 0 5% 0 round 1.5rem)", filter: "blur(2.5px)" }
-                }
-                animate={{ opacity: 1, clipPath: "inset(0% 0 0% 0 round 0rem)", filter: "blur(0px)" }}
-                exit={
-                  prefersReducedMotion
-                    ? undefined
-                    : { opacity: 0.55, clipPath: "inset(0 0 68% 0 round 1.5rem)", filter: "blur(2.5px)" }
-                }
-                transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
-              >
-                <h3 className="mt-5 font-display text-[clamp(2.8rem,5vw,4.8rem)] font-normal leading-none text-ivory">
-                  {activeRung.label}
-                </h3>
-                <p className="mt-4 max-w-lg font-display text-xl font-normal leading-snug text-[#C6CCB8] sm:text-2xl">
-                  {activeRung.signal}
-                </p>
-                <p data-perception-explanation="true" className="mt-5 max-w-lg text-sm leading-relaxed text-ivory/82 sm:text-base">
-                  {activeRung.explanation}
-                </p>
-
-                <div data-perception-evidence-grid="true" className="mt-7 grid gap-5 border-t border-ivory/12 pt-5 sm:grid-cols-2">
-                  <div>
-                    <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/55">What to decide next</p>
-                    <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.decision}</p>
-                  </div>
-                  <div className="sm:border-l sm:border-ivory/12 sm:pl-5">
-                    <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/55">Evidence to collect</p>
-                    <p className="mt-2 text-sm leading-relaxed text-ivory/90">{activeRung.evidence}</p>
-                  </div>
-                </div>
-
-                <div data-perception-system-result="true" className="mt-5 flex flex-wrap items-baseline justify-between gap-3 border-t border-ivory/12 pt-4">
-                  <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/50">System to build</p>
-                  <p className="font-display text-xl font-normal text-[#C6CCB8]">{activeRung.system}</p>
-                  <a
-                    href="#audit"
-                    aria-label="Test which brand signals already hold"
-                    data-perception-mobile-action="true"
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#A0A690]/45 bg-[rgba(198,204,184,0.12)] px-4 text-sm font-medium text-ivory transition-[border-color,background-color] hover:border-[#C6CCB8]/75 hover:bg-[rgba(198,204,184,0.18)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A0A690] sm:hidden"
-                  >
-                    Test signals
-                    <span aria-hidden="true">↓</span>
-                  </a>
-                </div>
-              </motion.div>
+                  <p className="text-[0.58rem] font-semibold uppercase tracking-[0.16em] text-[#68725F]">
+                    Your selected engagement
+                  </p>
+                  <p className="mt-1 font-display text-lg font-normal text-[#273A2F]">{routeFocus.transition}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-[#4F574D]">{routeFocus.note}</p>
+                </motion.div>
+              ) : null}
             </AnimatePresence>
           </div>
         </div>
+
+        <div
+          data-perception-horizon="true"
+          data-services-chapter-instrument="true"
+          role="tablist"
+          aria-label="Four stages of brand recognition"
+          className="relative mt-8 grid grid-cols-2 sm:mt-10 sm:grid-cols-4"
+        >
+          {RUNGS.map((rung, index) => {
+            const active = index === activeIndex;
+            return (
+              <button
+                key={rung.label}
+                ref={(node) => {
+                  tabRefs.current[index] = node;
+                }}
+                id={`perception-stage-tab-${index}`}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                aria-controls="perception-stage-panel"
+                tabIndex={active ? 0 : -1}
+                onPointerEnter={(event) => handlePointerEnter(index, event)}
+                onFocus={() => activate(index, "focus")}
+                onClick={() => activate(index, "click")}
+                onKeyDown={(event) => handleKeyDown(index, event)}
+                data-perception-stage-tab="true"
+                className="group relative min-h-20 px-3 py-3 text-left sm:min-h-24 sm:px-5 sm:text-center"
+              >
+                <span className={`block font-display text-2xl leading-none transition-colors sm:text-3xl ${active ? "text-[#B85A34]" : "text-[#9A927E] group-hover:text-[#5C6B4A]"}`}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className={`mt-2 block font-display text-base font-normal transition-colors sm:text-lg ${active ? "text-[#B85A34]" : "text-[#615C50] group-hover:text-[#2E3D32]"}`}>
+                  {rung.label}
+                </span>
+                <span data-perception-horizon-node="true" data-active={active ? "true" : "false"} aria-hidden="true" />
+                {active ? (
+                  <motion.span
+                    layoutId="active-perception-horizon"
+                    data-perception-horizon-active="true"
+                    aria-hidden="true"
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.44, ease: EASE }}
+                  />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+
+        <div
+          data-services-chapter-resolution="true"
+          data-perception-panel="true"
+          id="perception-stage-panel"
+          role="tabpanel"
+          aria-labelledby={`perception-stage-tab-${activeIndex}`}
+          className="relative mt-5"
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeRung.label}
+              data-perception-reading="true"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16, clipPath: "inset(0 0 18% 0)" }}
+              animate={{ opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -10, clipPath: "inset(0 0 30% 0)" }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+              className="grid gap-8 border-t border-[#B9AD96]/75 pt-8 lg:grid-cols-[minmax(0,1fr)_minmax(35rem,1.35fr)] lg:gap-12"
+            >
+              <div>
+                <p className="text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-[#45583F]">
+                  What buyers currently do
+                </p>
+                <h3 className="mt-4 max-w-[25ch] font-display text-[clamp(2rem,3.25vw,3.65rem)] font-normal leading-[1.04] tracking-[-0.02em] text-[#1E3328]">
+                  {activeRung.signal}
+                </h3>
+                <span className="mt-5 block h-px w-12 bg-[#79866F]" aria-hidden="true" />
+                <p data-perception-explanation="true" className="mt-5 max-w-xl text-sm leading-relaxed text-[#3E473F] sm:text-base">
+                  {activeRung.explanation}
+                </p>
+              </div>
+
+              <div data-perception-evidence-grid="true" className="grid gap-0 sm:grid-cols-3">
+                <div data-perception-detail="decision">
+                  <Compass aria-hidden="true" strokeWidth={1.45} />
+                  <p>What to decide next</p>
+                  <p>{activeRung.decision}</p>
+                </div>
+                <div data-perception-detail="evidence">
+                  <FileText aria-hidden="true" strokeWidth={1.45} />
+                  <p>Evidence to collect</p>
+                  <p>{activeRung.evidence}</p>
+                </div>
+                <div data-perception-detail="system" data-perception-system-result="true">
+                  <Sprout aria-hidden="true" strokeWidth={1.45} />
+                  <p>System to build</p>
+                  <p>{activeRung.system}</p>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <a
+          href="#audit"
+          data-perception-audit-action="true"
+          className="group relative mt-8 grid min-h-16 items-center gap-4 border border-[#CFC4B0]/85 bg-[rgba(250,247,239,0.88)] px-4 py-3 text-[#24372C] shadow-[0_18px_54px_rgba(65,56,43,0.09)] backdrop-blur-sm sm:grid-cols-[auto_1fr_auto] sm:rounded-2xl sm:px-6"
+        >
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#819076] bg-[#748266] text-[#FCFAF6] transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden="true">
+            <ArrowDown className="h-4 w-4" strokeWidth={1.8} />
+          </span>
+          <span className="text-sm leading-relaxed text-[#424A42] sm:max-w-lg">
+            Check which conditions are already true and plan your next move in the brand audit.
+          </span>
+          <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#2D4A32] px-5 text-sm font-medium text-[#FCFAF6] transition-colors duration-300 group-hover:bg-[#243D2A]">
+            Open brand audit
+            <ArrowRight className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+          </span>
+        </a>
       </div>
     </Container>
   );
