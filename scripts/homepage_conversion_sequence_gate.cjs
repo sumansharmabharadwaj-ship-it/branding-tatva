@@ -2,24 +2,13 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
-const source = fs.readFileSync(
-  path.join(root, "src/sections/HomeV4/HomeV4Experience.tsx"),
-  "utf8",
-);
-const pageSource = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
-const jumpNavSource = fs.readFileSync(path.join(root, "src/components/SectionJumpNav.tsx"), "utf8");
-const openingSource = fs.readFileSync(path.join(root, "src/sections/HomeV4/HomeV4Scenes.tsx"), "utf8");
-const mountedChapterSources = [
-  "src/sections/HomeV4/HomeV4Scenes.tsx",
-  "src/sections/Home/HomeBrandHealthCheck.tsx",
-  "src/sections/Home/EvidenceWall.tsx",
-  "src/sections/Home/PathsCinematicChapter.tsx",
-  "src/sections/Process/RootSystem.tsx",
-  "src/sections/Home/StudioCinematicChapter.tsx",
-  "src/sections/Home/HomeQuestionsScene.tsx",
-  "src/sections/Home/FinalInvitation.tsx",
-].map((file) => fs.readFileSync(path.join(root, file), "utf8"));
-const mountedChapterSource = mountedChapterSources.join("\n");
+const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
+const experience = read("src/sections/HomeV4/HomeV4Experience.tsx");
+const scenes = read("src/sections/HomeV4/HomeV4Scenes.tsx");
+const interfaceSource = read("src/sections/HomeV4/HomeV4Interface.tsx");
+const mediaDirector = read("src/sections/HomeV4/HomeV4MediaDirector.tsx");
+const page = read("src/app/page.tsx");
+const refinement = read("src/app/home-v4-refinement.css");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -27,167 +16,82 @@ function assert(condition, message) {
 
 const sequence = [
   "<V4OpeningScene />",
-  "<HomeBrandHealthCheck />",
+  "<V4RecognitionScene />",
   "<V4HiddenCostScene />",
-  'data-home-v4-chapter="evidence"',
+  'id="foundation"',
   'data-home-v4-chapter="paths"',
-  'data-home-v4-chapter="process"',
+  'id="process"',
+  'id="evidence"',
+  'id="tatva"',
   'data-home-v4-chapter="studio"',
-  'data-home-v4-chapter="decision"',
-  'data-home-v4-chapter="invitation"',
+  'id="decision"',
+  'id="invitation"',
 ];
 
 let previous = -1;
 for (const marker of sequence) {
-  const index = source.indexOf(marker);
+  const index = experience.indexOf(marker);
   assert(index > previous, `Homepage chapter order is missing or drifted at ${marker}.`);
   previous = index;
 }
 
-assert(source.includes("<HomeV4SceneRhythm />"), "Homepage chapters have lost their shared arrival rhythm.");
-assert(!source.includes("<HomeV4SeamDirector />"), "Homepage restored a decorative seam runtime between chapters.");
-assert(!source.includes("<SceneHandoff "), "Homepage restored a layout-bearing handoff between chapters.");
-
-for (const removed of [
-  "V4RecognitionScene",
-  "BrandFoundationScene",
-  "TatvaSystemLab",
-  "HomeInsightsPreview",
-  "HomeV4ProcessTempo",
-  "HomeV4ScrollCamera",
-  "HomeV4HeaderDirector",
+assert(
+  (experience.match(/<SceneHandoff motif=/g) || []).length === 10,
+  "Every homepage chapter transition must keep one quiet handoff.",
+);
+for (const runtime of [
+  "<HomeV4MediaDirector />",
+  "<HomeV4HeaderDirector />",
+  "<HomeV4ProcessTempo />",
+  "<LivingCursor />",
+  "<GuidedView />",
+  "<HomePacingDirector />",
 ]) {
-  assert(!source.includes(removed), `${removed} restored a removed chapter or competing runtime.`);
+  assert(experience.includes(runtime), `Homepage runtime is missing ${runtime}.`);
 }
 
 for (const marker of [
-  "<SectionJumpNav",
-  "hideOnFirst",
-  "hideOnLast",
-  'desktopMode="rail"',
-  'tone="light"',
-  "guidedMobile",
-  "continuousProgress",
-  'home-v4-experience-upgrade.css',
-  'home-v4-scene-rhythm.css',
+  'href="#recognition"',
+  "Find the gap in your brand",
+  'href="#evidence"',
+  "See recorded proof",
+  "Audience psychology · brand systems",
+  "Strategy led directly by Suman",
 ]) {
-  assert(pageSource.includes(marker), `Homepage wayfinding is missing ${marker}.`);
+  assert(scenes.includes(marker), `Opening decision path is missing ${marker}.`);
 }
 
-assert(
-  pageSource.indexOf('home-v4-scene-rhythm.css') >
-    pageSource.indexOf('home-v4-homepage-reconstruction.css'),
-  "Homepage arrival rhythm must load after the shared layout owner.",
-);
-
-assert(
-  mountedChapterSource.includes("3 choices · about 30 seconds · instant direction"),
-  "Homepage diagnostic does not explain its effort and immediate value.",
-);
-
-assert(
-  !pageSource.includes('showActiveLabel={false}'),
-  "Homepage hides the current chapter name from its desktop rail.",
-);
-
-for (const marker of [
-  "activeItem?.label",
-  "dismissFromKeyboard",
-  "dismissFromOutside",
-  "data-section-jump-tone",
-  "data-section-jump-progress",
-  "data-section-jump-yielding",
-  "data-section-jump-desktop-yielding",
-  "mobileYielding",
-  "IntersectionObserver",
-  "document.activeElement",
-  "focusMobileChapter",
-  "focusMobileDestination",
-  "focusDesktopChapter",
-  "chooseMobile",
-  "data-section-jump-moving",
-  'data-section-jump-travel-cue="one-shot"',
-  "Moving to chapter",
-  'behavior: prefersReducedMotion ? "auto" : "smooth"',
-  "window.history.pushState",
-  'role="status"',
-  "AnimatePresence",
-  'data-section-jump-mobile-menu="true"',
-  'data-section-jump-menu-summary="true"',
-  "max-height: 620px",
-  "Continue to chapter",
-  "scrollIntoView",
-  "showActiveLabel",
-  "data-section-jump-progress-mode",
-  "var(--home-page-progress",
-  "mobileDisplayProgress / 100",
-  'willChange: continuousProgress ? "transform"',
+for (const staleInstruction of [
+  "The page is alive before you touch it",
+  "Watch the conditions change, or choose the one that sounds familiar.",
+  "Open the evidence",
 ]) {
-  assert(jumpNavSource.includes(marker), `Homepage wayfinding interaction is missing ${marker}.`);
+  assert(!scenes.includes(staleInstruction), `Homepage restored competing instruction copy: ${staleInstruction}`);
 }
 
-assert(
-  (mountedChapterSource.match(/data-section-jump-yield="true"/g) || []).length === 7,
-  "Every intermediate homepage chapter must expose one primary action that can dismiss the mobile guide.",
-);
+assert((scenes.match(/<h1\b/g) || []).length === 1, "Homepage opening must contain exactly one h1.");
+for (const mediaMarker of ["muted", "autoPlay", "loop", "playsInline"]) {
+  assert(scenes.includes(mediaMarker), `Homepage films are missing ${mediaMarker}.`);
+}
+assert(interfaceSource.includes("useHydratedReducedMotion"), "Homepage controls ignore reduced motion.");
+assert(interfaceSource.includes('aria-label="Guided homepage controls"'), "Guided journey has no accessible name.");
+assert(interfaceSource.includes('aria-pressed={mode === "guided"}'), "Guided journey does not expose its state.");
+assert(mediaDirector.includes("IntersectionObserver"), "Homepage media no longer follows viewport admission.");
 
+assert(page.includes('import "./home-v4-refinement.css";'), "Homepage refinement layer is not mounted.");
 assert(
-  !jumpNavSource.includes("repeat: mobileTargetHref ? Infinity"),
-  "Compact chapter travel has returned to a repetitive pulse instead of one directional response.",
+  page.indexOf('home-v4-refinement.css') > page.indexOf('home-v4-screen-fit.css'),
+  "Homepage refinement must load after the restored screen-fit layer.",
 );
-
-assert(
-  openingSource.includes('href="#brand-diagnostic"') && openingSource.includes("Diagnose my brand"),
-  "Opening no longer gives the interactive diagnosis a clear first-screen entry.",
-);
-assert(
-  openingSource.includes('href="#evidence"') && openingSource.includes("Inspect the client evidence"),
-  "Opening no longer keeps verified evidence one action away.",
-);
-
-for (const retiredStylesheet of [
-  "home-v4-health.css",
-  "home-v4-decision-depth.css",
-  "home-v4-invitation-depth.css",
-  "home-v4-screen-fit.css",
-  "home-v4-seamless-scenes.css",
-  "home-v4-continuous-fit.css",
+for (const cssMarker of [
+  "text-wrap: balance",
+  ":focus-visible",
+  'data-guide-hint="visible"',
+  "@media (max-width: 560px)",
+  "@media (prefers-reduced-motion: reduce)",
 ]) {
-  assert(
-    !pageSource.includes(retiredStylesheet),
-    `Retired homepage stylesheet restored: ${retiredStylesheet}.`,
-  );
+  assert(refinement.includes(cssMarker), `Homepage refinement is missing ${cssMarker}.`);
 }
+assert(!/\b(?:click here|learn more)\b/i.test(scenes), "Homepage contains a generic action label.");
 
-for (const href of [
-  "#opening",
-  "#brand-diagnostic",
-  "#cost",
-  "#evidence",
-  "#paths",
-  "#process",
-  "#studio",
-  "#decision",
-  "#invitation",
-]) {
-  assert(pageSource.includes(`href: "${href}"`), `Homepage wayfinding is missing ${href}.`);
-}
-
-for (const [index, marker] of [
-  'data-home-chapter="opening"',
-  "02 · Brand diagnostic",
-  "<span>03</span>",
-  "04 · Selected work",
-  "<span>05</span>",
-  "06 · The method",
-  "07 · The thinking behind the work",
-  "08 · Before we work together",
-  "09 · Begin",
-].entries()) {
-  assert(
-    mountedChapterSources.some((chapter) => chapter.includes(marker)),
-    `Visible chapter ${String(index + 1).padStart(2, "0")} is missing its canonical label.`,
-  );
-}
-
-console.log("Homepage conversion sequence gate passed: one focused nine-chapter journey verified.");
+console.log("Homepage source gate passed: eleven ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");

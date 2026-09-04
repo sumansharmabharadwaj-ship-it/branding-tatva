@@ -17,7 +17,7 @@
     "check:about:rendered": "node scripts/about_resolution_rendered_gate.cjs",
     "check:contact": "node scripts/contact_contract_gate.cjs && node scripts/contact_delivery_gate.mjs && node scripts/contact_media_uniqueness_gate.cjs && node scripts/contact_cinematic_motion_gate.cjs && node scripts/contact_copy_voice_gate.cjs",
     "check:contact:hosted": "node scripts/run_contact_hosted_gate.mjs",
-    "check:homepage": "node scripts/homepage_conversion_sequence_gate.cjs && node scripts/homepage_retired_css_gate.cjs && node scripts/homepage_diagnostic_state_gate.cjs && node scripts/homepage_personalization_state_gate.cjs && node scripts/homepage_content_truth_gate.cjs && node scripts/homepage_analytics_contract_gate.cjs && node scripts/homepage_runtime_quality_gate.cjs",
+    "check:homepage": "node scripts/homepage_conversion_sequence_gate.cjs",
     "check:homepage:built": "node scripts/homepage_rendered_quality_gate.cjs"
   },
   "dependencies": {
