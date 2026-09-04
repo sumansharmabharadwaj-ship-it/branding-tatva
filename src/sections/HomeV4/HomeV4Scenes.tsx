@@ -182,8 +182,8 @@ export function V4OpeningScene() {
 
       <div className="home-v4-opening__shell">
         <div className="home-v4-opening__topline">
-          <span>Brand strategy · direct authorship</span>
-          <span>The page is alive before you touch it</span>
+          <span>Audience psychology · brand systems</span>
+          <span>Strategy led directly by Suman</span>
         </div>
 
         <div className="home-v4-opening__copy">
@@ -193,7 +193,7 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.62, delay: 0.12, ease: EASE }}
           >
-            Psychology reads the tension. Language gives it form.
+            Psychology finds the tension. Strategy gives it shape.
           </motion.p>
 
           <h1 id="home-v4-opening-title">
@@ -219,7 +219,7 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.48, ease: EASE }}
           >
-            Branding Tatva decides the pattern people should recognise, then carries that decision through position, identity, language, website, and market behaviour.
+            Branding Tatva turns audience tension into a position, language, identity, and market system people can recognise.
           </motion.p>
 
           <motion.div
@@ -234,7 +234,7 @@ export function V4OpeningScene() {
               data-magnetic
               data-cursor-label="inspect"
             >
-              See what your brand is signalling <ArrowDownRight size={15} />
+              Find the gap in your brand <ArrowDownRight size={15} />
             </Link>
             <Link
               href="#evidence"
@@ -242,7 +242,7 @@ export function V4OpeningScene() {
               data-magnetic
               data-cursor-label="proof"
             >
-              Open the evidence <ArrowUpRight size={15} />
+              See recorded proof <ArrowUpRight size={15} />
             </Link>
           </motion.div>
         </div>
@@ -253,9 +253,9 @@ export function V4OpeningScene() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: prefersReducedMotion ? 0 : 0.72, delay: 0.52, ease: EASE }}
         >
-          <span>Recorded outcome</span>
+          <span>Recorded result</span>
           <strong>0.71 → 2.81%</strong>
-          <p>engagement rate in eight weeks, while the account posted less</p>
+          <p>engagement in eight weeks, with fewer posts</p>
           <i aria-hidden="true" />
         </motion.aside>
 
@@ -345,7 +345,7 @@ export function V4RecognitionScene() {
             </h2>
           </div>
           <span>
-            Watch the conditions change, or choose the one that sounds familiar.
+            Three familiar symptoms. One strategic decision underneath.
           </span>
         </header>
 
@@ -371,7 +371,7 @@ export function V4RecognitionScene() {
             </AnimatePresence>
 
             <Link href="#cost" className="home-v4-text-link" data-magnetic data-cursor-label="follow">
-              See what the drift quietly costs <span aria-hidden="true">↘</span>
+              See what inconsistency is costing <span aria-hidden="true">↘</span>
             </Link>
           </div>
 
@@ -620,17 +620,17 @@ export function V4HiddenCostScene() {
                 })}
               </svg>
               <p>
-                The gap between the two lines is the price of reintroducing the business.
+                Every reset spends attention without building memory.
               </p>
             </motion.div>
           </div>
 
           <div className="home-v4-cost__footer">
             <p>
-              A stable foundation does not make marketing quieter. It lets each signal remember the one before it.
+              A stable foundation lets every signal strengthen the one before it.
             </p>
             <Link href="#foundation" className="home-v4-button home-v4-button--sand" data-magnetic data-cursor-label="foundation">
-              Inspect the foundation <ArrowDownRight size={15} />
+              See the decision architecture <ArrowDownRight size={15} />
             </Link>
           </div>
         </div>
