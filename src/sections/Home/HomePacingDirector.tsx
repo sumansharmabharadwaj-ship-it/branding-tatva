@@ -27,6 +27,7 @@ export function HomePacingDirector() {
     let mutationObserver: MutationObserver | null = null;
     let layoutObserver: ResizeObserver | null = null;
     let motionFrame = 0;
+    let settleTimer = 0;
     let previousScrollY = window.scrollY;
     let smoothedVelocity = 0;
 
@@ -66,6 +67,13 @@ export function HomePacingDirector() {
     function scheduleMotionState() {
       if (motionFrame) return;
       motionFrame = window.requestAnimationFrame(publishMotionState);
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => {
+        root.dataset.homeMotion = "idle";
+        delete root.dataset.homeScrollDirection;
+        smoothedVelocity = 0;
+        root.style.setProperty("--home-scroll-velocity", "0");
+      }, 160);
     }
 
     sectionObserver = new IntersectionObserver(
@@ -129,6 +137,7 @@ export function HomePacingDirector() {
       sectionObserver?.disconnect();
       layoutObserver?.disconnect();
       window.cancelAnimationFrame(motionFrame);
+      window.clearTimeout(settleTimer);
       window.removeEventListener("scroll", scheduleMotionState);
       window.removeEventListener("resize", scheduleMotionState);
       reducedMotion.removeEventListener("change", scheduleMotionState);
