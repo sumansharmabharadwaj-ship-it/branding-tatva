@@ -100,12 +100,13 @@ export function V4OpeningScene() {
         />
         <motion.span
           className="home-v4-opening__camera"
+          initial={prefersReducedMotion ? false : { scale: 1.03, x: 0, y: 0 }}
           animate={
             prefersReducedMotion || !inView
               ? undefined
-              : { scale: [1.03, 1.105, 1.03], x: [0, -10, 0], y: [0, -4, 0] }
+              : { scale: 1.095, x: -10, y: -4 }
           }
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 14, ease: "easeInOut" }}
         />
         <span className="home-v4-opening__wash" />
       </div>
@@ -113,22 +114,24 @@ export function V4OpeningScene() {
       <motion.span
         aria-hidden="true"
         className="home-v4-opening__light home-v4-opening__light--one"
+        initial={prefersReducedMotion ? false : { x: "-18%", opacity: 0.18 }}
         animate={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
-            : { x: ["-18%", "28%", "-18%"], opacity: [0.18, 0.56, 0.18] }
+            : { x: "28%", opacity: 0.42 }
         }
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 10, ease: "easeInOut" }}
       />
       <motion.span
         aria-hidden="true"
         className="home-v4-opening__light home-v4-opening__light--two"
+        initial={prefersReducedMotion ? false : { x: "12%", opacity: 0.1 }}
         animate={
-          prefersReducedMotion
+          prefersReducedMotion || !inView
             ? undefined
-            : { x: ["12%", "-24%", "12%"], opacity: [0.1, 0.42, 0.1] }
+            : { x: "-24%", opacity: 0.34 }
         }
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 12, ease: "easeInOut" }}
       />
 
       <div className="home-v4-opening__signal" aria-hidden="true">
@@ -140,12 +143,15 @@ export function V4OpeningScene() {
             strokeWidth="1.4"
             strokeLinecap="round"
             pathLength="1"
+            initial={prefersReducedMotion ? false : { pathLength: 0.12, opacity: 0.24 }}
             animate={
               prefersReducedMotion
                 ? { pathLength: 1, opacity: 0.6 }
-                : { pathLength: [0.12, 1, 0.12], opacity: [0.24, 0.9, 0.24] }
+                : inView
+                  ? { pathLength: 1, opacity: 0.82 }
+                  : undefined
             }
-            transition={{ duration: 6.8, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 4.8, ease: EASE }}
           />
           {[
             [72, 294],
@@ -160,17 +166,19 @@ export function V4OpeningScene() {
               cy={cy}
               r="4"
               fill={index === 4 ? "#F4EFE6" : "#D4B99A"}
+              initial={prefersReducedMotion ? false : { scale: 0.7, opacity: 0.35 }}
               animate={
                 prefersReducedMotion
                   ? undefined
-                  : { scale: [0.7, 1.45, 0.7], opacity: [0.35, 1, 0.35] }
+                  : inView
+                    ? { scale: 1, opacity: index === 4 ? 1 : 0.76 }
+                    : undefined
               }
               style={{ transformOrigin: `${cx}px ${cy}px` }}
               transition={{
-                duration: 3.2 + index * 0.35,
+                duration: 0.8,
                 delay: index * 0.24,
-                repeat: Infinity,
-                ease: "easeInOut",
+                ease: EASE,
               }}
             />
           ))}
@@ -274,13 +282,17 @@ export function V4RecognitionScene() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.34 });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectionDirection, setSelectionDirection] = useState<"forward" | "backward">("forward");
   const active = RECOGNITION_STATES[activeIndex];
 
   useEffect(() => {
     if (!inView || prefersReducedMotion) return;
+    const autoplay = window.matchMedia("(min-width: 821px) and (hover: hover) and (pointer: fine)");
+    if (!autoplay.matches) return;
 
     const timer = window.setInterval(() => {
       if (document.hidden || Date.now() < holdUntilRef.current) return;
+      setSelectionDirection("forward");
       setActiveIndex((current) => (current + 1) % RECOGNITION_STATES.length);
     }, 4300);
 
@@ -289,6 +301,8 @@ export function V4RecognitionScene() {
 
   function choose(index: number) {
     holdUntilRef.current = Date.now() + 11000;
+    if (index === activeIndex) return;
+    setSelectionDirection(index > activeIndex ? "forward" : "backward");
     setActiveIndex(index);
   }
 
@@ -328,12 +342,13 @@ export function V4RecognitionScene() {
       <motion.div
         className="home-v4-recognition__reflection"
         aria-hidden="true"
+        initial={prefersReducedMotion ? false : { x: "-8%", opacity: 0.18 }}
         animate={
           prefersReducedMotion || !inView
             ? undefined
-            : { x: ["-8%", "8%", "-8%"], opacity: [0.18, 0.5, 0.18] }
+            : { x: "8%", opacity: 0.42 }
         }
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 7.5, ease: "easeInOut" }}
       />
 
       <div className="home-v4-recognition__shell">
@@ -351,13 +366,21 @@ export function V4RecognitionScene() {
 
         <div className="home-v4-recognition__stage">
           <div className="home-v4-recognition__copy" aria-live="polite">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={active.number}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -12 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
+                initial={
+                  prefersReducedMotion
+                    ? false
+                    : { opacity: 0, x: selectionDirection === "forward" ? 22 : -22 }
+                }
+                animate={{ opacity: 1, x: 0 }}
+                exit={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: 0, x: selectionDirection === "forward" ? -16 : 16 }
+                }
+                transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
               >
                 <p className="home-v4-recognition__label">{active.label}</p>
                 <h3>{active.headline}</h3>
@@ -415,13 +438,14 @@ export function V4RecognitionScene() {
                 fill="rgba(18,22,25,.7)"
                 stroke={active.accent}
                 strokeWidth="1.6"
+                initial={prefersReducedMotion ? false : { scale: 0.94, opacity: 0.8 }}
                 animate={
                   prefersReducedMotion || !inView
                     ? undefined
-                    : { scale: [0.94, 1.08, 0.94], opacity: [0.8, 1, 0.8] }
+                    : { scale: 1, opacity: 1 }
                 }
                 style={{ transformOrigin: "310px 258px" }}
-                transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 0.72, ease: EASE }}
               />
             </svg>
 

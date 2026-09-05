@@ -161,6 +161,79 @@
   }
 }
 
+/* The Recognition CTA should arrive as a complete composition on standard
+   desktop and laptop screens. Keep the same content and geometry, but let the
+   headline, decision card, and three-condition map share the visible frame. */
+@media (min-width: 1121px) and (max-height: 980px) {
+  .home-v4-recognition,
+  .home-v4-recognition__shell {
+    min-height: calc(100svh - clamp(4.75rem, 9svh, 6rem));
+  }
+
+  .home-v4-recognition__shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    align-content: center;
+    padding-top: clamp(4.25rem, 7.5svh, 5rem);
+    padding-bottom: clamp(1.5rem, 3svh, 2rem);
+  }
+
+  .home-v4-recognition__header h2 {
+    max-width: 16ch;
+    font-size: clamp(3rem, min(4.35vw, 6.5svh), 4.7rem);
+  }
+
+  .home-v4-recognition__stage {
+    gap: clamp(1.8rem, 4vw, 4rem);
+    margin-top: clamp(1.2rem, 2.6svh, 1.7rem);
+  }
+
+  .home-v4-recognition__copy,
+  .home-v4-recognition__diagram {
+    height: min(43svh, 25rem);
+    min-height: 0;
+  }
+
+  .home-v4-recognition__copy {
+    padding: clamp(1.1rem, 1.9vw, 1.4rem);
+  }
+
+  .home-v4-recognition__copy h3 {
+    margin-top: 0.7rem;
+    font-size: clamp(2.1rem, min(3.35vw, 5.4svh), 3.2rem);
+  }
+
+  .home-v4-recognition__body {
+    margin-top: 0.8rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .home-v4-recognition__answer {
+    margin-top: 0.85rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .home-v4-recognition__answer strong {
+    margin-top: 0.3rem;
+    font-size: 1.5rem;
+  }
+
+  .home-v4-recognition__answer p {
+    margin-top: 0.3rem;
+    font-size: 0.68rem;
+  }
+
+  .home-v4-recognition__copy .home-v4-text-link {
+    margin-top: 0.85rem;
+  }
+
+  .home-v4-recognition__diagram {
+    width: min(100%, 34rem);
+    aspect-ratio: auto;
+  }
+}
+
 /* Keep the information-rich two-column scenes intact on landscape tablets and
    small laptops. The old 1120px breakpoint stacked them into a page-and-a-half
    even when the viewport had enough horizontal room. */
