@@ -10,6 +10,13 @@
 }
 
 @media (min-width: 821px) {
+  /* These held chapters already reserve clear space for the fixed header.
+     Landing them flush keeps their complete first frame inside the viewport. */
+  .home-v4 #cost,
+  .home-v4 #foundation {
+    scroll-margin-top: 0;
+  }
+
   /* These chapters previously carried 108–112svh minimums. The extra strip
      exposed the next chapter without adding a new narrative beat. Content can
      still grow naturally whenever it genuinely needs more than one screen. */
