@@ -146,6 +146,13 @@ assert(
   "The About chapter navigator and cinematic thread no longer share their per-frame scene measurements.",
 );
 assert(
+  runtime.includes("publishedChapterRef.current !== displayedChapter") &&
+    runtime.includes("publishedNavigatorActiveRef.current !== active") &&
+    runtime.includes("publishedNavigatorToneRef.current !== tone") &&
+    runtime.includes("publishedChapterRef.current = index"),
+  "The About navigator can republish unchanged React state throughout a scroll gesture.",
+);
+assert(
   runtime.includes('href={`#${chapter.id}`}') && runtime.includes("event.preventDefault();"),
   "Desktop About chapters no longer expose native hash links before cinematic enhancement.",
 );

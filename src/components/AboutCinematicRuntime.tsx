@@ -36,6 +36,9 @@ export function AboutCinematicRuntime() {
   const programmaticChapterRef = useRef<number | null>(null);
   const programmaticChapterTimerRef = useRef<number | null>(null);
   const sceneMeasurementsRef = useRef<SceneMeasurements | null>(null);
+  const publishedChapterRef = useRef(0);
+  const publishedNavigatorActiveRef = useRef(false);
+  const publishedNavigatorToneRef = useRef("dark");
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const lenis = useLenis();
   const [activeChapter, setActiveChapter] = useState(0);
@@ -57,6 +60,7 @@ export function AboutCinematicRuntime() {
 
   const holdProgrammaticChapter = useCallback((index: number, settleAfterMs: number) => {
     programmaticChapterRef.current = index;
+    publishedChapterRef.current = index;
     setActiveChapter(index);
 
     if (programmaticChapterTimerRef.current !== null) {
@@ -129,9 +133,19 @@ export function AboutCinematicRuntime() {
       runtime.style.setProperty("--navigator-progress", progress.toFixed(4));
       runtime.dataset.navigatorActive = String(active);
       runtime.dataset.navigatorTone = tone;
-      setActiveChapter(displayedChapter);
-      setNavigatorActive(active);
-      setNavigatorTone(tone);
+
+      if (publishedChapterRef.current !== displayedChapter) {
+        publishedChapterRef.current = displayedChapter;
+        setActiveChapter(displayedChapter);
+      }
+      if (publishedNavigatorActiveRef.current !== active) {
+        publishedNavigatorActiveRef.current = active;
+        setNavigatorActive(active);
+      }
+      if (publishedNavigatorToneRef.current !== tone) {
+        publishedNavigatorToneRef.current = tone;
+        setNavigatorTone(tone);
+      }
     };
 
     const requestUpdate = () => {
