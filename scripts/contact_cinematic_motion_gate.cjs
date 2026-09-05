@@ -69,7 +69,8 @@ requireText(gratitude, "COMPLETION_SETTLE_MS", "gratitude completion no longer p
 requireText(gratitude, "SCROLL_RECEIVE_THRESHOLDS", "gratitude no longer unfolds through native scroll");
 requireText(gratitude, 'useMotionValueEvent(progress, "change"', "gratitude scroll sequence is missing");
 requireText(gratitude, "data-contact-gratitude-receipt", "gratitude scroll receipt is no longer visible");
-requireText(gratitude, "latestReceivedIndex", "gratitude response no longer follows the received sequence");
+requireText(gratitude, "lastReceivedNote", "gratitude response no longer follows the received sequence");
+requireText(gratitude, "visitedNotesRef", "gratitude response no longer preserves receipt order");
 requireText(gratitude, 'aria-live={activeNote === null ? "off" : "polite"}', "gratitude scroll must not create unsolicited live announcements");
 requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
 requireText(gratitude, 'data-contact-gratitude-receipt="activation"', "gratitude notes no longer require deliberate activation");
@@ -79,7 +80,7 @@ requireText(gratitude, 'event.key === "ArrowDown"', "gratitude arrow-key choreog
 requireText(gratitude, "selectedNote", "gratitude click and touch selection no longer persists");
 requirePattern(
   gratitude,
-  /const handleNoteSelect[\s\S]*?setVisitedNotes\(\(current\) => current \| \(1 << index\)\)/,
+  /const handleNoteSelect[\s\S]*?visitedNotesRef\.current \| \(1 << index\)[\s\S]*?setVisitedNotes\(nextVisitedNotes\)/,
   "gratitude notes can be received without deliberate selection",
 );
 requireText(backgroundVideo, "loop = true", "background films must keep a safe default loop contract");

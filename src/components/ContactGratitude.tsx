@@ -183,9 +183,11 @@ function GratitudeNote({
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
   const noteRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const visitedNotesRef = useRef(0);
   const [activeNote, setActiveNote] = useState<number | null>(null);
   const [selectedNote, setSelectedNote] = useState<number | null>(null);
   const [visitedNotes, setVisitedNotes] = useState(0);
+  const [lastReceivedNote, setLastReceivedNote] = useState<number | null>(null);
   const [completionSettled, setCompletionSettled] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -212,9 +214,18 @@ export function ContactGratitude() {
       0,
     );
 
-    if (receivedFromScroll !== 0) {
-      setVisitedNotes((current) => current | receivedFromScroll);
-    }
+    const newlyReceived = receivedFromScroll & ~visitedNotesRef.current;
+    if (newlyReceived === 0) return;
+
+    const nextVisitedNotes = visitedNotesRef.current | newlyReceived;
+    visitedNotesRef.current = nextVisitedNotes;
+    setVisitedNotes(nextVisitedNotes);
+    setLastReceivedNote(
+      NOTES.reduce(
+        (latest, _note, index) => ((newlyReceived & (1 << index)) === 0 ? latest : index),
+        0,
+      ),
+    );
   });
 
   const thankX = useTransform(progress, [0, 0.34, 0.76, 1], [-72, 0, 0, 18]);
@@ -237,10 +248,6 @@ export function ContactGratitude() {
     (count, _note, index) => count + ((visitedNotes & (1 << index)) === 0 ? 0 : 1),
     0,
   );
-  const latestReceivedIndex = NOTES.reduce(
-    (latest, _note, index) => ((visitedNotes & (1 << index)) === 0 ? latest : index),
-    -1,
-  );
   const warmthOpacity =
     0.06 +
     visitedCount * 0.025 +
@@ -250,9 +257,9 @@ export function ContactGratitude() {
     activeNote === null
       ? allNotesVisited
         ? RESPONSES.length - 1
-        : latestReceivedIndex < 0
+        : lastReceivedNote === null
           ? 0
-          : latestReceivedIndex + 1
+          : lastReceivedNote + 1
       : activeNote + 1;
   const activeResponse = RESPONSES[responseIndex];
 
@@ -279,7 +286,10 @@ export function ContactGratitude() {
   const handleNoteSelect = useCallback(
     (index: number) => {
       const nextSelectedNote = selectedNote === index ? null : index;
-      setVisitedNotes((current) => current | (1 << index));
+      const nextVisitedNotes = visitedNotesRef.current | (1 << index);
+      visitedNotesRef.current = nextVisitedNotes;
+      setVisitedNotes(nextVisitedNotes);
+      setLastReceivedNote(index);
       setSelectedNote(nextSelectedNote);
       handleActiveNoteChange(nextSelectedNote);
     },
