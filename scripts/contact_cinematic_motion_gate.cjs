@@ -66,6 +66,9 @@ requireText(gratitude, "data-contact-gratitude-statement", "gratitude closing st
 requireText(gratitude, "data-contact-gratitude-complete", "gratitude completion state is missing");
 requireText(gratitude, "data-contact-gratitude-settled", "gratitude completion no longer resolves into a resting state");
 requireText(gratitude, "COMPLETION_SETTLE_MS", "gratitude completion no longer pauses before resolving");
+requireText(gratitude, "SCROLL_RECEIVE_THRESHOLDS", "gratitude no longer unfolds through native scroll");
+requireText(gratitude, 'useMotionValueEvent(progress, "change"', "gratitude scroll sequence is missing");
+requireText(gratitude, "data-contact-gratitude-receipt", "gratitude scroll receipt is no longer visible");
 requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
 requireText(gratitude, "data-contact-gratitude-next-ready", "gratitude completion no longer hands off to the next step");
 requireText(gratitude, "data-contact-gratitude-primary", "gratitude primary route is no longer addressable");

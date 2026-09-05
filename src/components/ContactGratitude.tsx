@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   motion,
+  useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
@@ -51,6 +52,7 @@ const COMPLETE_RESPONSE = "That is enough for a precise first conversation.";
 const RESPONSES = [DEFAULT_RESPONSE, ...NOTES.map((note) => note.response), COMPLETE_RESPONSE];
 const ALL_NOTES_VISITED = (1 << NOTES.length) - 1;
 const COMPLETION_SETTLE_MS = 920;
+const SCROLL_RECEIVE_THRESHOLDS = [0.28, 0.42, 0.56, 0.7] as const;
 
 type GratitudeNoteProps = {
   note: GratitudeNote;
@@ -137,6 +139,17 @@ function GratitudeNote({
       />
       <motion.span
         aria-hidden="true"
+        data-contact-gratitude-receipt
+        className="pointer-events-none absolute inset-y-2 left-0 w-[46%] origin-left bg-gradient-to-r from-sandstone/20 to-transparent"
+        initial={false}
+        animate={{
+          opacity: visited && !active ? 0.72 : 0,
+          scaleX: visited ? 1 : 0,
+        }}
+        transition={{ duration: reducedMotion ? 0 : 0.62, ease: EASE_AIR }}
+      />
+      <motion.span
+        aria-hidden="true"
         className="absolute inset-y-0 left-0 w-px origin-top bg-sandstone"
         initial={false}
         animate={{ scaleY: active || visited ? 1 : 0 }}
@@ -182,6 +195,25 @@ export function ContactGratitude() {
     stiffness: 108,
     damping: 27,
     mass: 0.36,
+  });
+
+  /* Parker's strongest interaction idea is that travelling through a scene
+     advances its story without asking for a click. Receive each
+     acknowledgement as the closing landscape opens, while keeping pointer,
+     touch and keyboard inspection available. A backwards scroll never erases
+     what the visitor has already received. */
+  useMotionValueEvent(progress, "change", (currentProgress) => {
+    if (reducedMotion) return;
+
+    const receivedFromScroll = SCROLL_RECEIVE_THRESHOLDS.reduce(
+      (mask, threshold, index) =>
+        currentProgress >= threshold ? mask | (1 << index) : mask,
+      0,
+    );
+
+    if (receivedFromScroll !== 0) {
+      setVisitedNotes((current) => current | receivedFromScroll);
+    }
   });
 
   const thankX = useTransform(progress, [0, 0.34, 0.76, 1], [-72, 0, 0, 18]);
