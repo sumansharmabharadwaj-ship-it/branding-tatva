@@ -122,7 +122,7 @@ function GratitudeNote({
       }}
       data-contact-gratitude-note
       data-contact-gratitude-visited={visited ? "true" : undefined}
-      data-cursor-label={selected ? "Close note" : "Receive note"}
+      data-cursor-label={selected ? "Close note" : visited ? "Reopen note" : "Receive note"}
       className="group relative grid min-h-16 w-full grid-cols-[1.7rem_1fr] items-center gap-2 overflow-hidden px-3 py-3 text-left text-ivory focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:min-h-[4.5rem] sm:grid-cols-[2.25rem_1fr_auto] sm:gap-3 sm:px-4 lg:min-h-[5.35rem] lg:border-t lg:border-white/18 lg:px-1 lg:last:border-b"
       initial={false}
       animate={{ color: active ? "rgb(246,242,234)" : "rgba(246,242,234,0.82)" }}
@@ -177,7 +177,8 @@ function GratitudeNote({
 /**
  * Contact closes with a direct acknowledgement rather than a reward loop.
  * The statement assembles with native scroll, the four words respond to
- * pointer, touch, and keyboard input, and both onward routes remain available.
+ * pointer and focus preview each note, while click, touch, Enter, or Space
+ * deliberately receives it. Both onward routes remain available throughout.
  */
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -267,14 +268,12 @@ export function ContactGratitude() {
 
   const handleActiveNoteChange = useCallback((index: number | null) => {
     setActiveNote(index);
-    if (index !== null) {
-      setVisitedNotes((current) => current | (1 << index));
-    }
   }, []);
 
   const handleNoteSelect = useCallback(
     (index: number) => {
       const nextSelectedNote = selectedNote === index ? null : index;
+      setVisitedNotes((current) => current | (1 << index));
       setSelectedNote(nextSelectedNote);
       handleActiveNoteChange(nextSelectedNote);
     },
@@ -478,6 +477,7 @@ export function ContactGratitude() {
             <div
               data-contact-gratitude-notes
               data-contact-gratitude-flow="continuous"
+              data-contact-gratitude-receipt="activation"
               onPointerLeave={(event) => {
                 const focusedInside =
                   document.activeElement instanceof Node &&

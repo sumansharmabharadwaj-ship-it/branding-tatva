@@ -70,10 +70,16 @@ requireText(gratitude, "SCROLL_RECEIVE_THRESHOLDS", "gratitude no longer unfolds
 requireText(gratitude, 'useMotionValueEvent(progress, "change"', "gratitude scroll sequence is missing");
 requireText(gratitude, "data-contact-gratitude-receipt", "gratitude scroll receipt is no longer visible");
 requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
+requireText(gratitude, 'data-contact-gratitude-receipt="activation"', "gratitude notes no longer require deliberate activation");
 requireText(gratitude, "data-contact-gratitude-next-ready", "gratitude completion no longer hands off to the next step");
 requireText(gratitude, "data-contact-gratitude-primary", "gratitude primary route is no longer addressable");
 requireText(gratitude, 'event.key === "ArrowDown"', "gratitude arrow-key choreography is missing");
 requireText(gratitude, "selectedNote", "gratitude click and touch selection no longer persists");
+requirePattern(
+  gratitude,
+  /const handleNoteSelect[\s\S]*?setVisitedNotes\(\(current\) => current \| \(1 << index\)\)/,
+  "gratitude notes can be received without deliberate selection",
+);
 requireText(backgroundVideo, "loop = true", "background films must keep a safe default loop contract");
 requireText(backgroundVideo, "loop={loop}", "background films can no longer hold their final frame");
 requireText(page, "loop={false}", "gratitude film must settle instead of exposing its loop boundary");
