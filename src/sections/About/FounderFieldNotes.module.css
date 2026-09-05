@@ -67,6 +67,8 @@
 .desktopComposition {
   position: relative;
   display: grid;
+  min-width: 0;
+  max-width: 100%;
   min-height: 0;
   padding-block: clamp(0.55rem, 1.25svh, 1rem);
   grid-template-columns: minmax(10.5rem, 0.42fr) minmax(19rem, 0.82fr) minmax(23rem, 1fr);
@@ -271,19 +273,28 @@
 }
 
 @media (min-width: 901px) and (max-height: 760px) {
-  .sticky { padding-top: 4.7rem; padding-bottom: 0.9rem; }
+  .sticky { padding-top: 4.15rem; padding-bottom: 0.65rem; }
+  .header { gap: 2rem; }
+  .headerAside { gap: 0.42rem; }
+  .headerAside > p:first-child { max-width: 52ch; font-size: 0.7rem; line-height: 1.38; }
+  .stageReadout { padding-top: 0.4rem; }
   .header h2 { font-size: clamp(2.15rem, min(3.7vw, 5.8svh), 3.75rem); }
-  .desktopComposition { padding-block: 0.45rem; }
-  .fieldRail button { min-height: 3.75rem; }
-  .portraitStage { min-height: 19.5rem; }
-  .portraitCamera { width: min(76%, 14.8rem); }
+  .desktopComposition {
+    padding-block: 0.3rem;
+    grid-template-columns: minmax(9rem, 0.42fr) minmax(16rem, 0.82fr) minmax(19rem, 1fr);
+    gap: clamp(0.85rem, 2vw, 1.6rem);
+  }
+  .fieldRail button { min-height: 3.25rem; padding-block: 0.5rem; }
+  .portraitStage { min-height: 18rem; }
+  .portraitCamera { width: min(72%, 13.5rem); }
+  .liveMargin { top: -1.4rem; width: min(9.25rem, 46%); padding: 0.62rem 0.72rem; }
   .recordSlot,
-  .recordCard { min-height: 19rem; }
-  .recordCard { padding: 1rem 1.15rem; }
-  .recordCard h3 { margin-top: 0.65rem; font-size: clamp(1.65rem, min(2.55vw, 3.9svh), 2.65rem); }
-  .credential { margin-top: 0.65rem; padding-block: 0.6rem; }
-  .application { padding-top: 0.65rem; }
-  .recordCard footer { margin-top: 0.65rem; padding-top: 0.55rem; }
+  .recordCard { min-height: 18rem; }
+  .recordCard { padding: 0.82rem 0.95rem; }
+  .recordCard h3 { margin-top: 0.48rem; font-size: clamp(1.45rem, min(2.25vw, 3.55svh), 2.3rem); }
+  .credential { margin-top: 0.5rem; padding-block: 0.46rem; }
+  .application { padding-top: 0.5rem; }
+  .recordCard footer { margin-top: 0.5rem; padding-top: 0.45rem; }
   .workingNote p { display: none; }
   .hireLine p { display: none; }
 }

@@ -266,7 +266,7 @@ export function FounderFieldNotes() {
               <strong>One practice led directly by Suman</strong>
             </motion.div>
 
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="sync" initial={false}>
               <motion.aside
                 key={active.margin}
                 className={styles.liveMargin}
@@ -282,13 +282,15 @@ export function FounderFieldNotes() {
             </AnimatePresence>
           </div>
 
-          <div className={styles.recordSlot}>
-            <AnimatePresence mode="wait" initial={false}>
+          <div
+            id="founder-origin-panel"
+            className={styles.recordSlot}
+            role="tabpanel"
+            aria-labelledby={`origin-field-${activeIndex}`}
+          >
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.article
                 key={active.field}
-                id="founder-origin-panel"
-                role="tabpanel"
-                aria-labelledby={`origin-field-${activeIndex}`}
                 className={styles.recordCard}
                 initial={prefersReducedMotion ? false : { opacity: 0, x: 32, clipPath: "inset(0 0 0 14%)" }}
                 animate={{ opacity: 1, x: 0, clipPath: "inset(0 0 0 0%)" }}

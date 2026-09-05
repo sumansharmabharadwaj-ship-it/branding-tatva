@@ -196,7 +196,7 @@ export function WorkingDirectly() {
                 role="tabpanel"
                 aria-labelledby={`direct-stage-${sequence.activeIndex}`}
               >
-                <AnimatePresence mode="wait" initial={false}>
+                <AnimatePresence mode="popLayout" initial={false}>
                   <motion.div
                     key={active.label}
                     className={styles.activeRecord}

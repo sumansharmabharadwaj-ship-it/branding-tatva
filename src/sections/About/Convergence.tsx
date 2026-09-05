@@ -158,7 +158,7 @@ export function Convergence() {
             </h2>
           </div>
           <div className={styles.headerAside}>
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.p
                 key={activeStage.number}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}

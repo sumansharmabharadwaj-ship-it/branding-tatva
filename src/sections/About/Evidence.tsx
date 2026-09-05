@@ -98,7 +98,7 @@ export function Evidence() {
                 role="tabpanel"
                 aria-labelledby={`evidence-case-${sequence.activeIndex}`}
               >
-                <AnimatePresence mode="wait" initial={false}>
+                <AnimatePresence mode="popLayout" initial={false}>
                   <motion.div key={active.slug} className={styles.pathInner} initial={prefersReducedMotion ? false : { opacity: 0, x: 28 }} animate={{ opacity: 1, x: 0 }} exit={prefersReducedMotion ? undefined : { opacity: 0, x: -18 }} transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}>
                     <p className={styles.recordBasis}><span>Evidence class</span><strong>{active.evidenceType}</strong><em>{active.basis}</em></p>
                     <div className={styles.pathChain}>

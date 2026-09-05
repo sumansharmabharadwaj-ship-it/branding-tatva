@@ -203,7 +203,7 @@ export function PointOfView() {
                       <span key={stage.lens} data-active={index === activeIndex}>{stage.lens}</span>
                     ))}
                   </div>
-                  <AnimatePresence mode="wait" initial={false} custom={transitionDirection}>
+                  <AnimatePresence mode="sync" initial={false} custom={transitionDirection}>
                     <motion.div
                       key={active.lens}
                       className={styles.signalStage}
@@ -227,7 +227,7 @@ export function PointOfView() {
             </div>
 
             <div id="recognition-panel" className={styles.recordSlot} role="tabpanel" aria-labelledby={`recognition-stage-${activeIndex}`}>
-              <AnimatePresence mode="wait" initial={false} custom={transitionDirection}>
+              <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
                 <motion.article
                   key={active.lens}
                   className={styles.record}

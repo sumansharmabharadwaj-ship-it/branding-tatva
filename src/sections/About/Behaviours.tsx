@@ -189,7 +189,7 @@ export function Behaviours() {
                 role="tabpanel"
                 aria-labelledby={`standard-gate-${activeIndex}`}
               >
-                <AnimatePresence mode="wait" initial={false}>
+                <AnimatePresence mode="popLayout" initial={false}>
                   <motion.article
                     key={active.title}
                     initial={prefersReducedMotion ? false : { opacity: 0, clipPath: "inset(0 100% 0 0)", x: 20 }}

@@ -163,7 +163,7 @@ export function BrandSignalAtlas() {
             </h2>
           </div>
           <div className={styles.headerAside}>
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.p
                 key={stage.number}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
@@ -227,13 +227,15 @@ export function BrandSignalAtlas() {
             </div>
           </div>
 
-          <div className={styles.recordSlot}>
-            <AnimatePresence mode="wait" initial={false}>
+          <div
+            id="brand-surface-panel"
+            className={styles.recordSlot}
+            role="tabpanel"
+            aria-labelledby={`brand-surface-${selectedSurface}`}
+          >
+            <AnimatePresence mode="popLayout" initial={false}>
               <motion.article
                 key={surface.label}
-                id="brand-surface-panel"
-                role="tabpanel"
-                aria-labelledby={`brand-surface-${selectedSurface}`}
                 className={styles.record}
                 initial={prefersReducedMotion ? false : { opacity: 0, x: 34, clipPath: "inset(0 0 0 14%)" }}
                 animate={{ opacity: 1, x: 0, clipPath: "inset(0 0 0 0%)" }}
@@ -285,18 +287,21 @@ export function BrandSignalAtlas() {
             })}
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.article
-              key={`touch-${surface.label}`}
-              id="touch-brand-surface-panel"
-              role="tabpanel"
-              aria-labelledby={`touch-brand-surface-${selectedSurface}`}
-              className={styles.touchRecord}
-              initial={prefersReducedMotion ? false : { opacity: 0, clipPath: "inset(0 12% 0 0)" }}
-              animate={{ opacity: 1, clipPath: "inset(0 0 0 0)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, clipPath: "inset(0 0 0 12%)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
-            >
+          <div
+            id="touch-brand-surface-panel"
+            className={styles.touchRecordSlot}
+            role="tabpanel"
+            aria-labelledby={`touch-brand-surface-${selectedSurface}`}
+          >
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.article
+                key={`touch-${surface.label}`}
+                className={styles.touchRecord}
+                initial={prefersReducedMotion ? false : { opacity: 0, clipPath: "inset(0 12% 0 0)" }}
+                animate={{ opacity: 1, clipPath: "inset(0 0 0 0)" }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, clipPath: "inset(0 0 0 12%)" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+              >
               <div className={styles.touchRecordIndex}>
                 <span><ActiveIcon size={18} aria-hidden="true" /></span>
                 <small>{surface.number} / 04 · {surface.short}</small>
@@ -307,8 +312,9 @@ export function BrandSignalAtlas() {
                 <small>Use check</small>
                 <strong>{surface.test}</strong>
               </div>
-            </motion.article>
-          </AnimatePresence>
+              </motion.article>
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className={styles.staticAtlas}>

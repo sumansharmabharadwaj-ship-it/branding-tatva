@@ -59,6 +59,8 @@
 .interactiveExperience {
   position: relative;
   display: grid;
+  min-width: 0;
+  max-width: 100%;
   min-height: 0;
   padding-block: clamp(0.85rem, 2svh, 1.55rem);
   grid-template-columns: minmax(9.5rem, 0.38fr) minmax(22rem, 1.12fr) minmax(20rem, 0.86fr);
@@ -358,14 +360,23 @@
   .root { padding-top: 4.9rem; padding-bottom: 0.9rem; }
   .header h2 { font-size: clamp(2.1rem, min(3.65vw, 5.55svh), 3.75rem); }
   .interactiveExperience { padding-block: 0.55rem; }
-  .stageRail button { min-height: 4.65rem; }
+  .stageRail button { min-height: 3.9rem; padding-block: 0.58rem; }
   .filmCamera,
-  .recordSlot { min-height: 19rem; }
-  .record { padding: 1rem; }
-  .record h3 { font-size: clamp(1.5rem, min(2.35vw, 3.55svh), 2.45rem); }
-  .record dl { margin-top: 0.65rem; }
-  .proofRecord { padding-top: 0.65rem; }
-  .record > a { margin-top: 0.6rem; }
+  .recordSlot { min-height: 17.5rem; }
+  .signalStage { inset: 12% 8% 18%; }
+  .signalStage > p { margin-top: 0.45rem; font-size: clamp(1.08rem, 1.6vw, 1.35rem); }
+  .signalStage > div { margin-top: 0.75rem; }
+  .signalStage > div strong { font-size: clamp(2.8rem, 5vw, 4.7rem); }
+  .frameShift { right: 0.72rem; bottom: 0.72rem; left: 0.72rem; padding: 0.58rem 0.68rem; }
+  .record { padding: 0.82rem 0.9rem; }
+  .record h3 { margin-top: 0.45rem; font-size: clamp(1.35rem, min(2.1vw, 3.25svh), 2.15rem); }
+  .record dl { margin-top: 0.48rem; }
+  .record dd { margin-top: 0.22rem; font-size: 0.66rem; line-height: 1.38; }
+  .proofRecord { padding-top: 0.48rem; }
+  .proofRecord p { margin-top: 0.28rem; font-size: 0.68rem; line-height: 1.4; }
+  .proofRecord small { margin-top: 0.3rem; }
+  .record > a { margin-top: 0.42rem; }
+  .recognitionLine { gap: 0.5rem; font-size: 0.52rem; }
 }
 
 @media (min-width: 981px) {
