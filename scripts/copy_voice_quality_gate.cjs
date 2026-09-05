@@ -247,9 +247,6 @@ function shouldInspect(node, text) {
     return false;
   }
 
-  // CSS function values are implementation tokens, not authored interface copy.
-  if (/^(?:calc|min|max|clamp|var|env)\(/i.test(clean)) return false;
-
   if (/\s/.test(clean)) return true;
   return /[—–]/.test(clean) || STOCK_PATTERNS.some((pattern) => pattern.test(clean));
 }

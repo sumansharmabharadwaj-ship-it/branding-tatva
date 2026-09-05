@@ -501,19 +501,19 @@ export default function InsightsPage() {
             <div className="insights-audit-scene__frame">
               <div className="insights-audit-scene__film relative min-h-80 bg-soil">
                 <BackgroundVideo
-                  video="/videos/generated/insights-v3/brand-audit-signal-fracture-diagnosis.mp4"
-                  poster="/images/generated/insights-v3/brand-audit-signal-fracture-diagnosis.webp"
+                  video="/videos/generated/insights-v2/page-evidence-audit.mp4"
+                  poster="/images/generated/insights-v2/page-evidence-audit.webp"
                   imagePosition="center"
                   playbackRate={0.86}
                   posterPriority={false}
                 />
-                <div className="absolute inset-0 bg-soil/20" />
+                <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-soil/20 to-transparent" />
                 <div className="insights-audit-scene__film-copy absolute inset-x-0 bottom-0 p-7 text-ivory sm:p-9">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">
                     Before the redesign
                   </p>
                   <p className="mt-3 max-w-md font-display text-3xl leading-tight">
-                    Five checks. One first decision.
+                    Find what is failing before paying to redesign it.
                   </p>
                 </div>
               </div>
@@ -522,11 +522,12 @@ export default function InsightsPage() {
                   Audit worksheet
                 </p>
                 <h2 className="mt-4 max-w-xl font-display text-display-sm font-normal text-soil">
-                  Find where buyer confidence breaks.
+                  Review position, message, identity, experience, and memory before
+                  choosing what to rebuild.
                 </h2>
                 <p className="mt-5 max-w-xl text-base leading-7 text-foreground-secondary">
-                  Review position, message, identity, experience, and memory together.
-                  Then follow the weakest signal to the first decision.
+                  Look at the five areas together. The weakest answer shows where to
+                  investigate first and which evidence to collect.
                 </p>
 
                 <InsightsEvidenceLedger layers={evidenceLayers} />

@@ -432,13 +432,12 @@ assert(
 );
 assert(
   convergence.includes('<AboutSignalField3D mode="synthesis" stage={stage} pair={inspectedPair} />') &&
-    convergence.includes('from "next/image"') &&
-    convergence.includes('/images/generated/bt-about-psychology-literature-v2.webp') &&
+    !convergence.includes('from "next/image"') &&
     signalField.includes('mode === "recognition"') &&
     signalField.includes("synthesisSignal") &&
     convergence.includes("One position the whole brand can carry.") &&
     convergence.includes("A sharper decision your team can use."),
-  "The synthesis chapter lost its folio image, animated convergence field, or explicit hiring payoff.",
+  "The synthesis chapter lost its image-free 3D convergence field or its explicit hiring payoff.",
 );
 
 assert(
