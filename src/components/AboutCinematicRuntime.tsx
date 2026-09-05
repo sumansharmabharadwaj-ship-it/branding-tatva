@@ -20,6 +20,7 @@ const CHAPTERS = [
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const THREAD_ACTIVE_FRAME_MS = 32;
 const THREAD_IDLE_FRAME_MS = 64;
+const MANUAL_SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
 
 export function AboutCinematicRuntime() {
   const runtimeRef = useRef<HTMLDivElement>(null);
@@ -35,6 +36,18 @@ export function AboutCinematicRuntime() {
   const [navigatorTone, setNavigatorTone] = useState("dark");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const releaseProgrammaticChapter = useCallback(() => {
+    if (programmaticChapterRef.current === null && programmaticChapterTimerRef.current === null) return;
+
+    programmaticChapterRef.current = null;
+    if (programmaticChapterTimerRef.current !== null) {
+      window.clearTimeout(programmaticChapterTimerRef.current);
+      programmaticChapterTimerRef.current = null;
+    }
+
+    window.requestAnimationFrame(() => window.dispatchEvent(new Event("scroll")));
+  }, []);
+
   const holdProgrammaticChapter = useCallback((index: number, settleAfterMs: number) => {
     programmaticChapterRef.current = index;
     setActiveChapter(index);
@@ -43,12 +56,8 @@ export function AboutCinematicRuntime() {
       window.clearTimeout(programmaticChapterTimerRef.current);
     }
 
-    programmaticChapterTimerRef.current = window.setTimeout(() => {
-      programmaticChapterRef.current = null;
-      programmaticChapterTimerRef.current = null;
-      window.dispatchEvent(new Event("scroll"));
-    }, settleAfterMs);
-  }, []);
+    programmaticChapterTimerRef.current = window.setTimeout(releaseProgrammaticChapter, settleAfterMs);
+  }, [releaseProgrammaticChapter]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -158,6 +167,33 @@ export function AboutCinematicRuntime() {
     window.addEventListener("popstate", restoreChapterFromHistory);
     return () => window.removeEventListener("popstate", restoreChapterFromHistory);
   }, [holdProgrammaticChapter, lenis, reducedMotion]);
+
+  useEffect(() => {
+    function releaseFromPointerIntent(event: Event) {
+      if (event.target instanceof Element && event.target.closest("[data-about-chapter-navigation]")) return;
+      releaseProgrammaticChapter();
+    }
+
+    function releaseFromKeyboardIntent(event: KeyboardEvent) {
+      if (!MANUAL_SCROLL_KEYS.has(event.key)) return;
+      if (event.target instanceof Element && event.target.closest("[data-about-chapter-navigation]")) return;
+      releaseProgrammaticChapter();
+    }
+
+    window.addEventListener("wheel", releaseFromPointerIntent, { passive: true });
+    window.addEventListener("touchstart", releaseFromPointerIntent, { passive: true });
+    window.addEventListener("pointerdown", releaseFromPointerIntent, { passive: true });
+    window.addEventListener("keydown", releaseFromKeyboardIntent);
+    window.addEventListener("scrollend", releaseProgrammaticChapter);
+
+    return () => {
+      window.removeEventListener("wheel", releaseFromPointerIntent);
+      window.removeEventListener("touchstart", releaseFromPointerIntent);
+      window.removeEventListener("pointerdown", releaseFromPointerIntent);
+      window.removeEventListener("keydown", releaseFromKeyboardIntent);
+      window.removeEventListener("scrollend", releaseProgrammaticChapter);
+    };
+  }, [releaseProgrammaticChapter]);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -600,6 +636,7 @@ export function AboutCinematicRuntime() {
       <div className={styles.velocityVeil} aria-hidden="true" />
       <nav
         className={styles.chapterSpine}
+        data-about-chapter-navigation
         aria-label="About page chapters"
         aria-hidden={!navigatorActive}
         data-tone={navigatorTone}
@@ -636,6 +673,7 @@ export function AboutCinematicRuntime() {
       <nav
         ref={mobileControlsRef}
         className={styles.mobileChapterControls}
+        data-about-chapter-navigation
         data-about-mobile-chapter-controls
         aria-label="Move through About page chapters"
         aria-hidden={!mobileNavigatorActive}

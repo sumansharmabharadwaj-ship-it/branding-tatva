@@ -126,6 +126,14 @@ assert(
   "Compact About controls can repeat or skip a chapter while a smooth chapter move is settling.",
 );
 assert(
+  (runtime.match(/data-about-chapter-navigation/g) || []).length >= 2 &&
+    runtime.includes('window.addEventListener("scrollend", releaseProgrammaticChapter)') &&
+    runtime.includes('window.addEventListener("wheel", releaseFromPointerIntent, { passive: true })') &&
+    runtime.includes('window.addEventListener("touchstart", releaseFromPointerIntent, { passive: true })') &&
+    runtime.includes("MANUAL_SCROLL_KEYS.has(event.key)"),
+  "About chapter motion can trap manual pointer, touch, or keyboard scroll intent.",
+);
+assert(
   (runtime.match(/if \(!cameraReady\.matches\) return;/g) || []).length === 1 &&
     !/requestRender\(\);\s*requestRender\(\);/.test(runtime),
   "The About pointer runtime is scheduling redundant animation work.",
