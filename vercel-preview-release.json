@@ -1,5 +1,5 @@
 {
   "purpose": "Controls deliberate Vercel previews for august-8-isolated",
-  "release": 73,
+  "release": 74,
   "instructions": "Increment release in the same commit as [deploy] and [release:N] only when one preview is intentionally requested. Ordinary branch pushes never deploy."
 }
