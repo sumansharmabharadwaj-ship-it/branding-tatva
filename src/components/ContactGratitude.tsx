@@ -237,6 +237,10 @@ export function ContactGratitude() {
     (count, _note, index) => count + ((visitedNotes & (1 << index)) === 0 ? 0 : 1),
     0,
   );
+  const latestReceivedIndex = NOTES.reduce(
+    (latest, _note, index) => ((visitedNotes & (1 << index)) === 0 ? latest : index),
+    -1,
+  );
   const warmthOpacity =
     0.06 +
     visitedCount * 0.025 +
@@ -246,7 +250,9 @@ export function ContactGratitude() {
     activeNote === null
       ? allNotesVisited
         ? RESPONSES.length - 1
-        : 0
+        : latestReceivedIndex < 0
+          ? 0
+          : latestReceivedIndex + 1
       : activeNote + 1;
   const activeResponse = RESPONSES[responseIndex];
 
@@ -515,7 +521,11 @@ export function ContactGratitude() {
               data-contact-gratitude-response
               className="relative mt-4 min-h-[4.25rem] overflow-hidden border-l border-sandstone/48 pl-4 font-display text-lg italic leading-snug text-sandstone sm:min-h-[3.5rem] sm:text-xl"
             >
-              <p className="sr-only" aria-live="polite" aria-atomic="true">
+              <p
+                className="sr-only"
+                aria-live={activeNote === null ? "off" : "polite"}
+                aria-atomic="true"
+              >
                 {activeResponse}
               </p>
               {RESPONSES.map((response, index) => {
