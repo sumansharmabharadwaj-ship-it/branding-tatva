@@ -64,6 +64,8 @@ requireText(pathways, "data-contact-pathway-shot", "pathway shot boundary is mis
 requireText(gratitude, "data-contact-gratitude-ledger", "gratitude acknowledgement ledger is missing");
 requireText(gratitude, "data-contact-gratitude-statement", "gratitude closing statement is missing");
 requireText(gratitude, "data-contact-gratitude-complete", "gratitude completion state is missing");
+requireText(gratitude, "data-contact-gratitude-settled", "gratitude completion no longer resolves into a resting state");
+requireText(gratitude, "COMPLETION_SETTLE_MS", "gratitude completion no longer pauses before resolving");
 requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
 requireText(gratitude, 'event.key === "ArrowDown"', "gratitude arrow-key choreography is missing");
 requireText(gratitude, "selectedNote", "gratitude click and touch selection no longer persists");

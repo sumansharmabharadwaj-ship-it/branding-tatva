@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useRef,
   useState,
   type KeyboardEvent,
@@ -49,6 +50,7 @@ const DEFAULT_RESPONSE =
 const COMPLETE_RESPONSE = "That is enough for a precise first conversation.";
 const RESPONSES = [DEFAULT_RESPONSE, ...NOTES.map((note) => note.response), COMPLETE_RESPONSE];
 const ALL_NOTES_VISITED = (1 << NOTES.length) - 1;
+const COMPLETION_SETTLE_MS = 920;
 
 type GratitudeNoteProps = {
   note: GratitudeNote;
@@ -170,6 +172,7 @@ export function ContactGratitude() {
   const [activeNote, setActiveNote] = useState<number | null>(null);
   const [selectedNote, setSelectedNote] = useState<number | null>(null);
   const [visitedNotes, setVisitedNotes] = useState(0);
+  const [completionSettled, setCompletionSettled] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({
     target: sceneRef,
@@ -201,7 +204,11 @@ export function ContactGratitude() {
     (count, _note, index) => count + ((visitedNotes & (1 << index)) === 0 ? 0 : 1),
     0,
   );
-  const warmthOpacity = 0.06 + visitedCount * 0.025 + (activeNote === null ? 0 : 0.025);
+  const warmthOpacity =
+    0.06 +
+    visitedCount * 0.025 +
+    (activeNote === null ? 0 : 0.025) +
+    (completionSettled ? 0.035 : 0);
   const responseIndex =
     activeNote === null
       ? allNotesVisited
@@ -209,6 +216,22 @@ export function ContactGratitude() {
         : 0
       : activeNote + 1;
   const activeResponse = RESPONSES[responseIndex];
+
+  useEffect(() => {
+    if (!allNotesVisited || completionSettled) return;
+
+    const settleCompletion = () => {
+      setSelectedNote(null);
+      setActiveNote(null);
+      setCompletionSettled(true);
+    };
+
+    const timer = window.setTimeout(
+      settleCompletion,
+      reducedMotion ? 0 : COMPLETION_SETTLE_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [allNotesVisited, completionSettled, reducedMotion]);
 
   const handleActiveNoteChange = useCallback((index: number | null) => {
     setActiveNote(index);
@@ -267,6 +290,7 @@ export function ContactGratitude() {
       ref={sceneRef}
       data-contact-gratitude
       data-contact-gratitude-complete={allNotesVisited ? "true" : undefined}
+      data-contact-gratitude-settled={completionSettled ? "true" : undefined}
       data-contact-gratitude-active={activeNote === null ? undefined : "true"}
       onPointerDown={handleScenePointerDown}
       onKeyDown={handleSceneKeyDown}
@@ -401,9 +425,19 @@ export function ContactGratitude() {
                   A useful first conversation begins here.
                 </p>
               </div>
-              <span className="hidden pb-1 text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/60 sm:block">
-                four acknowledgements
-              </span>
+              <motion.span
+                aria-hidden="true"
+                data-contact-gratitude-ledger-status
+                className="hidden pb-1 text-right text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/60 sm:block"
+                initial={false}
+                animate={{
+                  opacity: completionSettled ? 1 : 0.6,
+                  y: completionSettled ? 0 : 2,
+                }}
+                transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE_AIR }}
+              >
+                {completionSettled ? "enough to begin" : "four acknowledgements"}
+              </motion.span>
             </div>
 
             <div
@@ -483,7 +517,9 @@ export function ContactGratitude() {
               aria-valuenow={visitedCount}
               aria-valuetext={
                 allNotesVisited
-                  ? "All four acknowledgements received"
+                  ? completionSettled
+                    ? "All four acknowledgements received. Enough to begin."
+                    : "All four acknowledgements received"
                   : `${visitedCount} of ${NOTES.length} acknowledgements received`
               }
               className="mt-3 grid grid-cols-[1fr_auto] items-center gap-4"
@@ -500,9 +536,16 @@ export function ContactGratitude() {
                   transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE_AIR }}
                 />
               </motion.span>
-              <span aria-hidden="true" className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-ivory/64">
-                0{visitedCount} / 04 received
-              </span>
+              <motion.span
+                aria-hidden="true"
+                data-contact-gratitude-progress-label
+                className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-ivory/64"
+                initial={false}
+                animate={{ color: completionSettled ? "rgba(224, 190, 139, 0.96)" : "rgba(246, 242, 234, 0.64)" }}
+                transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE_AIR }}
+              >
+                {completionSettled ? "04 / 04 · enough" : `0${visitedCount} / 04 received`}
+              </motion.span>
             </div>
           </motion.div>
         </div>

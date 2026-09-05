@@ -50,7 +50,36 @@
 }
 
 [data-contact-film] [data-contact-gratitude-ledger] {
+  position: relative;
+  isolation: isolate;
   text-shadow: 0 2px 22px rgba(8, 14, 9, 0.36);
+}
+
+[data-contact-film] [data-contact-gratitude-ledger]::before {
+  content: "";
+  position: absolute;
+  inset: -12% -10% -16%;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 2.5rem;
+  background: radial-gradient(
+    ellipse at 52% 64%,
+    rgba(224, 190, 139, 0.22) 0%,
+    rgba(196, 165, 122, 0.08) 34%,
+    transparent 72%
+  );
+  opacity: 0;
+  transform: scale(0.88);
+  transition:
+    opacity 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-contact-film]
+  [data-contact-gratitude-settled="true"]
+  [data-contact-gratitude-ledger]::before {
+  opacity: 0.82;
+  transform: scale(1);
 }
 
 [data-contact-film] [data-contact-gratitude-note] {
@@ -1587,6 +1616,11 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude] * {
   animation: none !important;
 }
 
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-ledger]::before {
+  transition: none !important;
+  transform: none !important;
+}
+
 html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card]::before,
 html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card]::after,
 html[data-motion="reduced"] [data-contact-film] [data-contact-form-completion]::before,
@@ -1642,6 +1676,11 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
 
   [data-contact-film] [data-contact-gratitude] * {
     animation: none !important;
+  }
+
+  [data-contact-film] [data-contact-gratitude-ledger]::before {
+    transition: none !important;
+    transform: none !important;
   }
 
   [data-contact-film] [data-contact-booking-card]::before,
