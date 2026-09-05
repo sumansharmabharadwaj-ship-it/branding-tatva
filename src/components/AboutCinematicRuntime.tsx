@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { Check, ChevronDown, ChevronUp, ListTree } from "lucide-react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -26,6 +26,8 @@ export function AboutCinematicRuntime() {
   const threadRef = useRef<HTMLCanvasElement>(null);
   const mobileControlsRef = useRef<HTMLElement>(null);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const programmaticChapterRef = useRef<number | null>(null);
+  const programmaticChapterTimerRef = useRef<number | null>(null);
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const lenis = useLenis();
   const [activeChapter, setActiveChapter] = useState(0);
@@ -33,10 +35,28 @@ export function AboutCinematicRuntime() {
   const [navigatorTone, setNavigatorTone] = useState("dark");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const holdProgrammaticChapter = useCallback((index: number, settleAfterMs: number) => {
+    programmaticChapterRef.current = index;
+    setActiveChapter(index);
+
+    if (programmaticChapterTimerRef.current !== null) {
+      window.clearTimeout(programmaticChapterTimerRef.current);
+    }
+
+    programmaticChapterTimerRef.current = window.setTimeout(() => {
+      programmaticChapterRef.current = null;
+      programmaticChapterTimerRef.current = null;
+      window.dispatchEvent(new Event("scroll"));
+    }, settleAfterMs);
+  }, []);
+
   useEffect(() => {
     const root = document.documentElement;
     root.dataset.aboutFilm = "true";
     return () => {
+      if (programmaticChapterTimerRef.current !== null) {
+        window.clearTimeout(programmaticChapterTimerRef.current);
+      }
       delete root.dataset.aboutFilm;
     };
   }, []);
@@ -72,6 +92,15 @@ export function AboutCinematicRuntime() {
       const progress = clamp((window.scrollY - firstTop) / runway);
       const active = firstRect.top <= viewportHeight * 0.82 && finalRect.bottom >= viewportHeight * 0.18;
       const tone = scenes[nextActive].dataset.sceneTone ?? "dark";
+      const requestedChapter = programmaticChapterRef.current;
+
+      if (requestedChapter === nextActive && programmaticChapterTimerRef.current !== null) {
+        window.clearTimeout(programmaticChapterTimerRef.current);
+        programmaticChapterTimerRef.current = null;
+        programmaticChapterRef.current = null;
+      }
+
+      const displayedChapter = programmaticChapterRef.current ?? nextActive;
 
       scenes.forEach((scene, index) => {
         scene.dataset.sceneActive = String(index === nextActive);
@@ -79,7 +108,7 @@ export function AboutCinematicRuntime() {
       runtime.style.setProperty("--navigator-progress", progress.toFixed(4));
       runtime.dataset.navigatorActive = String(active);
       runtime.dataset.navigatorTone = tone;
-      setActiveChapter(nextActive);
+      setActiveChapter(displayedChapter);
       setNavigatorActive(active);
       setNavigatorTone(tone);
     };
@@ -108,7 +137,7 @@ export function AboutCinematicRuntime() {
 
       const target = document.getElementById(CHAPTERS[index].id);
       if (!target) return;
-      setActiveChapter(index);
+      holdProgrammaticChapter(index, reducedMotion ? 80 : 920);
 
       window.requestAnimationFrame(() => {
         if (lenis && !reducedMotion) {
@@ -128,7 +157,7 @@ export function AboutCinematicRuntime() {
 
     window.addEventListener("popstate", restoreChapterFromHistory);
     return () => window.removeEventListener("popstate", restoreChapterFromHistory);
-  }, [lenis, reducedMotion]);
+  }, [holdProgrammaticChapter, lenis, reducedMotion]);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -168,6 +197,7 @@ export function AboutCinematicRuntime() {
     const target = document.getElementById(chapter.id);
     if (!target) return;
     setMobileMenuOpen(false);
+    holdProgrammaticChapter(index, reducedMotion ? 80 : 1100);
 
     const nextHash = `#${chapter.id}`;
     if (window.location.hash !== nextHash) {
@@ -643,7 +673,7 @@ export function AboutCinematicRuntime() {
           aria-label="Previous About chapter"
           disabled={activeChapter === 0}
           tabIndex={mobileNavigatorActive ? 0 : -1}
-          onClick={() => goToChapter(activeChapter - 1)}
+          onClick={() => goToChapter((programmaticChapterRef.current ?? activeChapter) - 1)}
         >
           <ChevronUp size={16} aria-hidden="true" />
         </button>
@@ -670,7 +700,10 @@ export function AboutCinematicRuntime() {
           aria-label={activeChapter === CHAPTERS.length - 1 ? "About story complete" : "Next About chapter"}
           disabled={activeChapter === CHAPTERS.length - 1}
           tabIndex={mobileNavigatorActive ? 0 : -1}
-          onClick={() => goToChapter(activeChapter + 1, activeChapter === CHAPTERS.length - 2)}
+          onClick={() => {
+            const currentChapter = programmaticChapterRef.current ?? activeChapter;
+            goToChapter(currentChapter + 1, currentChapter === CHAPTERS.length - 2);
+          }}
         >
           {activeChapter === CHAPTERS.length - 1
             ? <Check size={16} aria-hidden="true" />

@@ -120,6 +120,17 @@ assert(
   "Explicit About chapter journeys no longer create a browser-history entry.",
 );
 assert(
+  runtime.includes("programmaticChapterRef.current = index") &&
+    runtime.includes("const displayedChapter = programmaticChapterRef.current ?? nextActive") &&
+    runtime.includes("const currentChapter = programmaticChapterRef.current ?? activeChapter"),
+  "Compact About controls can repeat or skip a chapter while a smooth chapter move is settling.",
+);
+assert(
+  (runtime.match(/if \(!cameraReady\.matches\) return;/g) || []).length === 1 &&
+    !/requestRender\(\);\s*requestRender\(\);/.test(runtime),
+  "The About pointer runtime is scheduling redundant animation work.",
+);
+assert(
   runtime.includes('href={`#${chapter.id}`}') && runtime.includes("event.preventDefault();"),
   "Desktop About chapters no longer expose native hash links before cinematic enhancement.",
 );
