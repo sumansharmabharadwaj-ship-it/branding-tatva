@@ -371,6 +371,7 @@ export function ContactGratitude() {
 
             <motion.div
               data-contact-gratitude-next
+              data-contact-gratitude-next-ready={completionSettled ? "true" : undefined}
               aria-hidden="false"
               className="mt-6 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap"
               style={
@@ -383,13 +384,15 @@ export function ContactGratitude() {
                 href="#call"
                 event="contact_route_selected"
                 eventProps={{ source: "contact_gratitude", route: "booking" }}
+                data-contact-gratitude-primary
                 data-cursor-label="Book the conversation"
                 className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-ivory px-5 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ivory"
               >
-                Bring it to a 30 minute call
+                <span className="relative z-10">Bring it to a 30 minute call</span>
                 <ArrowRight
                   aria-hidden="true"
-                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                  data-contact-gratitude-primary-arrow
+                  className="relative z-10 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
                   strokeWidth={1.6}
                 />
               </TrackedLink>

@@ -67,6 +67,8 @@ requireText(gratitude, "data-contact-gratitude-complete", "gratitude completion 
 requireText(gratitude, "data-contact-gratitude-settled", "gratitude completion no longer resolves into a resting state");
 requireText(gratitude, "COMPLETION_SETTLE_MS", "gratitude completion no longer pauses before resolving");
 requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
+requireText(gratitude, "data-contact-gratitude-next-ready", "gratitude completion no longer hands off to the next step");
+requireText(gratitude, "data-contact-gratitude-primary", "gratitude primary route is no longer addressable");
 requireText(gratitude, 'event.key === "ArrowDown"', "gratitude arrow-key choreography is missing");
 requireText(gratitude, "selectedNote", "gratitude click and touch selection no longer persists");
 requireText(backgroundVideo, "loop = true", "background films must keep a safe default loop contract");
@@ -86,6 +88,7 @@ const cssContracts = [
   ["contact-signal-reveal", "hero signal no longer resolves once"],
   ["contact-pathway-splice", "pathway light splice is missing"],
   ["contact-footer-afterglow", "closing afterglow is missing"],
+  ['data-contact-gratitude-next-ready="true"', "gratitude completion handoff styling is missing"],
   ['html[data-motion="reduced"]', "explicit reduced-motion styling is missing"],
   ["@media (prefers-reduced-motion: reduce)", "system reduced-motion styling is missing"],
   ["@media (max-width: 359px)", "ultra-narrow phone protection is missing"],

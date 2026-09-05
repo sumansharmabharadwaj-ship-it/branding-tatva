@@ -86,6 +86,72 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* The fourth acknowledgement hands its warmth to the practical next step.
+   The sweep runs once because it is driven by the settled state, then leaves
+   the booking route in a clear resting state instead of pulsing for attention. */
+[data-contact-film] [data-contact-gratitude-primary] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(224, 190, 139, 0),
+    0 12px 38px rgba(22, 17, 13, 0);
+  transition:
+    transform 0.3s ease,
+    background-color 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.82s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-contact-film] [data-contact-gratitude-primary]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 12%,
+    rgba(255, 248, 232, 0.14) 38%,
+    rgba(255, 248, 232, 0.68) 50%,
+    rgba(255, 248, 232, 0.12) 62%,
+    transparent 88%
+  );
+  opacity: 0;
+  transform: translate3d(-112%, 0, 0);
+  transition:
+    opacity 0.18s ease,
+    transform 0.94s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-contact-film]
+  [data-contact-gratitude-next-ready="true"]
+  [data-contact-gratitude-primary] {
+  background-color: rgb(224, 190, 139);
+  box-shadow:
+    0 0 0 1px rgba(246, 221, 180, 0.28),
+    0 12px 38px rgba(22, 17, 13, 0.18);
+}
+
+[data-contact-film]
+  [data-contact-gratitude-next-ready="true"]
+  [data-contact-gratitude-primary]::before {
+  opacity: 1;
+  transform: translate3d(112%, 0, 0);
+}
+
+[data-contact-film]
+  [data-contact-gratitude-next-ready="true"]
+  [data-contact-gratitude-primary-arrow] {
+  transform: translateX(0.2rem);
+}
+
+[data-contact-film]
+  [data-contact-gratitude-next-ready="true"]
+  [data-contact-gratitude-primary]:hover
+  [data-contact-gratitude-primary-arrow] {
+  transform: translateX(0.45rem);
+}
+
 @supports selector(section:has(*)) {
   [data-contact-film]
     [data-contact-scene="afterglow"]:has([data-contact-gratitude-active="true"])
@@ -1621,6 +1687,14 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-ledger]:
   transform: none !important;
 }
 
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-primary] {
+  transition: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-primary]::before {
+  display: none;
+}
+
 html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card]::before,
 html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card]::after,
 html[data-motion="reduced"] [data-contact-film] [data-contact-form-completion]::before,
@@ -1681,6 +1755,14 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   [data-contact-film] [data-contact-gratitude-ledger]::before {
     transition: none !important;
     transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-gratitude-primary] {
+    transition: none !important;
+  }
+
+  [data-contact-film] [data-contact-gratitude-primary]::before {
+    display: none;
   }
 
   [data-contact-film] [data-contact-booking-card]::before,
