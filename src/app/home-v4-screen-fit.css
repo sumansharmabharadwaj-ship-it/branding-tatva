@@ -43,6 +43,65 @@
     height: 160svh;
     min-height: 68rem;
   }
+
+  /* Hidden cost is a held chapter, not a tall card stack. Constrain the
+     authored frame to one viewport and let its chart consume the flexible
+     middle row; the outer section alone owns the four-state scroll travel. */
+  .home-v4-cost__sticky,
+  .home-v4-cost__shell {
+    height: 100svh;
+    min-height: 100svh;
+    max-height: 100svh;
+  }
+
+  .home-v4-cost__shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    justify-content: stretch;
+    padding-top: clamp(4.75rem, 8svh, 5.6rem);
+    padding-bottom: clamp(1.3rem, 2.5svh, 2rem);
+  }
+
+  .home-v4-cost__shell > header {
+    align-self: end;
+  }
+
+  .home-v4-cost__shell > header h2 {
+    max-width: 19ch;
+    margin-top: 0.7rem;
+    font-size: clamp(2.65rem, min(4.1vw, 6.6svh), 4.9rem);
+  }
+
+  .home-v4-cost__stage {
+    min-height: 0;
+    margin-top: clamp(1.1rem, 2.3svh, 1.65rem);
+  }
+
+  .home-v4-cost__stage > article,
+  .home-v4-cost__diagram {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .home-v4-cost__diagram {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .home-v4-cost__diagram svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin-top: 0.2rem;
+  }
+
+  .home-v4-cost__diagram > p {
+    margin-top: 0.2rem;
+  }
+
+  .home-v4-cost__footer {
+    margin-top: clamp(0.7rem, 1.5svh, 1rem);
+  }
 }
 
 /* Short laptops are where a cinematic layout most easily turns into cropped
