@@ -582,6 +582,7 @@ export function SectionJumpNav({
           )}
           <motion.span
             key={mobileDisplayItem?.href ?? "sections"}
+            data-section-jump-mobile-label="true"
             className="flex min-w-0 items-center gap-2 leading-none"
             aria-hidden="true"
             initial={prefersReducedMotion ? false : { opacity: 0, y: 3 }}
@@ -602,7 +603,11 @@ export function SectionJumpNav({
               / {String(navigationItems.length).padStart(2, "0")}
             </span>
           </motion.span>
-          <span aria-hidden="true" className="ml-0.5 flex h-4 w-4 items-center justify-center text-terracotta">
+          <span
+            aria-hidden="true"
+            data-section-jump-mobile-icon="true"
+            className="ml-0.5 flex h-4 w-4 items-center justify-center text-terracotta"
+          >
             {mobileTargetHref ? (
               <ArrowDownRight size={15} strokeWidth={1.8} />
             ) : mobileOpen ? (

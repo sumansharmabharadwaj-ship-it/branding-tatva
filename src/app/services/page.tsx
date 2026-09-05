@@ -475,7 +475,7 @@ export default async function ServicesPage() {
             camera assembles its five layers during entry, discovery, and
             resolution, so the chapter keeps its teaching sequence without
             holding the visitor inside a long sticky runway. */}
-        <section id="authority" className="relative scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="authority" className="relative" style={{ backgroundColor: MOOD.charcoal }}>
           <PinnedBrandBuild />
           <SceneHandoff color="#191B16" />
         </section>
@@ -488,7 +488,7 @@ export default async function ServicesPage() {
         <section
           id="education"
           data-services-scene="education"
-          className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
+          className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
           style={{ backgroundColor: "#F2EBDD" }}
         >
           <div data-perception-ambient-film="true" aria-hidden="true" className="absolute inset-0">

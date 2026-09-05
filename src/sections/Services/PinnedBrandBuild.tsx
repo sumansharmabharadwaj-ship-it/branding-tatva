@@ -2,11 +2,13 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 import Link from "next/link";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
+import { motionTokens } from "@/lib/motionTokens";
 import { elements } from "@/data/elements";
 import { packages } from "@/data/services";
 import { MobileAuthorityDeck, type AuthorityLayer } from "@/sections/Services/MobileAuthorityDeck";
@@ -271,9 +273,19 @@ export function PinnedBrandBuild() {
                     aria-live="polite"
                   >
                     <span className="text-ivory/40">Layer in focus</span>
-                    <span className="ml-2 text-sandstone">
+                    <motion.span
+                      key={inspectedLayer === null ? "system" : LAYERS[inspectedLayer]?.slug}
+                      className="ml-2 inline-block text-sandstone"
+                      initial={prefersReducedMotion ? false : { opacity: 0, y: 3 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0 }
+                          : { duration: motionTokens.durationFast, ease: motionTokens.easeOrganic }
+                      }
+                    >
                       {inspectedLayer === null ? "Entire brand system" : LAYERS[inspectedLayer]?.label}
-                    </span>
+                    </motion.span>
                   </p>
                 </div>
                 <svg aria-hidden="true" viewBox="0 0 400 80" className="mt-2 h-14 w-full max-w-lg" fill="none">

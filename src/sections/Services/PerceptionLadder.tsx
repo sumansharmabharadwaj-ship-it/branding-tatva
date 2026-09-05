@@ -286,21 +286,49 @@ export function PerceptionLadder() {
               </div>
 
               <div data-perception-evidence-grid="true" className="grid gap-0 sm:grid-cols-3">
-                <div data-perception-detail="decision">
+                <motion.div
+                  data-perception-detail="decision"
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : 0.38,
+                    delay: prefersReducedMotion ? 0 : 0.08,
+                    ease: EASE,
+                  }}
+                >
                   <Compass aria-hidden="true" strokeWidth={1.45} />
                   <p>What to decide next</p>
                   <p>{activeRung.decision}</p>
-                </div>
-                <div data-perception-detail="evidence">
+                </motion.div>
+                <motion.div
+                  data-perception-detail="evidence"
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : 0.38,
+                    delay: prefersReducedMotion ? 0 : 0.14,
+                    ease: EASE,
+                  }}
+                >
                   <FileText aria-hidden="true" strokeWidth={1.45} />
                   <p>Evidence to collect</p>
                   <p>{activeRung.evidence}</p>
-                </div>
-                <div data-perception-detail="system" data-perception-system-result="true">
+                </motion.div>
+                <motion.div
+                  data-perception-detail="system"
+                  data-perception-system-result="true"
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : 0.38,
+                    delay: prefersReducedMotion ? 0 : 0.2,
+                    ease: EASE,
+                  }}
+                >
                   <Sprout aria-hidden="true" strokeWidth={1.45} />
                   <p>System to build</p>
                   <p>{activeRung.system}</p>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </AnimatePresence>
@@ -309,6 +337,7 @@ export function PerceptionLadder() {
         <a
           href="#audit"
           data-perception-audit-action="true"
+          data-section-jump-yield="true"
           className="group relative mt-8 grid min-h-16 items-center gap-4 border border-[#CFC4B0]/85 bg-[rgba(250,247,239,0.88)] px-4 py-3 text-[#24372C] shadow-[0_18px_54px_rgba(65,56,43,0.09)] backdrop-blur-sm sm:grid-cols-[auto_1fr_auto] sm:rounded-2xl sm:px-6"
         >
           <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#819076] bg-[#748266] text-[#FCFAF6] transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden="true">

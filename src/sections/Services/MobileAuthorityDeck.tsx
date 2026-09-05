@@ -24,13 +24,19 @@ export function MobileAuthorityDeck({
   wavePath: string;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [transitionDirection, setTransitionDirection] = useState(1);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activeLayer = layers[activeIndex] ?? layers[0];
 
   function selectLayer(index: number, focus = false, source = "tab") {
     const nextIndex = (index + layers.length) % layers.length;
-    setActiveIndex(nextIndex);
+    if (nextIndex !== activeIndex) {
+      const direction =
+        source === "previous" ? -1 : source === "next" ? 1 : index > activeIndex ? 1 : -1;
+      setTransitionDirection(direction);
+      setActiveIndex(nextIndex);
+    }
     if (focus) requestAnimationFrame(() => tabRefs.current[nextIndex]?.focus());
     track("capability_selected", {
       page: "services",
@@ -148,20 +154,36 @@ export function MobileAuthorityDeck({
           const selected = activeIndex === index;
           return (
             <motion.section
-              key={layer.slug}
+              key={`${layer.slug}-${selected ? `active-${transitionDirection}` : "idle"}`}
               id={`authority-layer-panel-${layer.slug}`}
               role="tabpanel"
               aria-labelledby={`authority-layer-tab-${layer.slug}`}
               hidden={!selected}
               data-authority-layer-panel="true"
               data-authority-layer={layer.slug}
-              initial={false}
-              animate={
-                selected
-                  ? { opacity: 1, clipPath: "inset(0% 0 0% 0 round 1rem)", filter: "blur(0px)" }
-                  : { opacity: 0, clipPath: "inset(0 0 72% 0 round 1rem)", filter: "blur(4px)" }
+              initial={
+                selected && !prefersReducedMotion
+                  ? {
+                      opacity: 0,
+                      x: transitionDirection * motionTokens.distanceSmall,
+                      clipPath: "inset(0 0 12% 0 round 1rem)",
+                      filter: `blur(${motionTokens.blurSmall}px)`,
+                    }
+                  : false
               }
-              transition={prefersReducedMotion ? { duration: 0 } : { duration: motionTokens.durationBase }}
+              animate={{
+                opacity: selected ? 1 : 0,
+                x: 0,
+                clipPath: selected
+                  ? "inset(0% 0 0% 0 round 1rem)"
+                  : "inset(0 0 12% 0 round 1rem)",
+                filter: selected ? "blur(0px)" : `blur(${motionTokens.blurSmall}px)`,
+              }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { duration: 0.42, ease: motionTokens.easeOrganic }
+              }
               className="rounded-2xl border border-ivory/12 bg-[rgba(10,13,15,0.58)] p-5 backdrop-blur-md"
               style={{ borderTopColor: layer.color }}
             >
