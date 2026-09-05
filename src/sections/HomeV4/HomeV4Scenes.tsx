@@ -487,6 +487,7 @@ export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const previousIndexRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const [isCompactViewport, setIsCompactViewport] = useState(false);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
@@ -499,7 +500,23 @@ export function V4HiddenCostScene() {
   const diagramRotate = useTransform(scrollYProgress, [0, 1], [-2, 2]);
   const active = COST_STAGES[activeIndex];
 
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 820px)");
+    const syncViewport = () => {
+      setIsCompactViewport(query.matches);
+      if (!query.matches) return;
+      previousIndexRef.current = 0;
+      setSelectionDirection("forward");
+      setActiveIndex(0);
+    };
+
+    syncViewport();
+    query.addEventListener("change", syncViewport);
+    return () => query.removeEventListener("change", syncViewport);
+  }, []);
+
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    if (isCompactViewport) return;
     const next = Math.min(COST_STAGES.length - 1, Math.floor(progress * COST_STAGES.length));
     if (next === previousIndexRef.current) return;
     setSelectionDirection(next > previousIndexRef.current ? "forward" : "backward");
@@ -515,6 +532,14 @@ export function V4HiddenCostScene() {
     () => "M42 276 C150 270 218 262 304 248 C392 234 480 222 584 210",
     [],
   );
+  const diagramProgress = (activeIndex + 1) / COST_STAGES.length;
+
+  const chooseCostStage = (index: number) => {
+    if (index === previousIndexRef.current) return;
+    setSelectionDirection(index > previousIndexRef.current ? "forward" : "backward");
+    previousIndexRef.current = index;
+    setActiveIndex(index);
+  };
 
   return (
     <section
@@ -554,6 +579,21 @@ export function V4HiddenCostScene() {
               Marketing becomes expensive when the brand underneath it <em>keeps changing shape.</em>
             </h2>
           </motion.header>
+
+          <div className="home-v4-cost__steps" role="group" aria-label="Choose a hidden cost stage">
+            {COST_STAGES.map((stage, index) => (
+              <button
+                key={stage.number}
+                type="button"
+                aria-label={`Show stage ${stage.number}: ${stage.title}`}
+                aria-pressed={index === activeIndex}
+                onClick={() => chooseCostStage(index)}
+              >
+                <span>{stage.number}</span>
+                <i aria-hidden="true" />
+              </button>
+            ))}
+          </div>
 
           <div className="home-v4-cost__stage">
             <AnimatePresence mode="popLayout" initial={false}>
@@ -622,7 +662,18 @@ export function V4HiddenCostScene() {
                   strokeWidth="2.3"
                   strokeLinecap="round"
                   pathLength="1"
-                  style={{ pathLength: prefersReducedMotion ? 1 : scrollYProgress }}
+                  initial={false}
+                  animate={
+                    prefersReducedMotion || isCompactViewport
+                      ? { pathLength: prefersReducedMotion ? 1 : diagramProgress }
+                      : undefined
+                  }
+                  style={
+                    prefersReducedMotion || isCompactViewport
+                      ? undefined
+                      : { pathLength: scrollYProgress }
+                  }
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
                 />
                 <path d={memoryPath} fill="none" stroke="rgba(125,155,175,.18)" strokeWidth="10" strokeLinecap="round" />
                 <motion.path
@@ -632,7 +683,18 @@ export function V4HiddenCostScene() {
                   strokeWidth="2.3"
                   strokeLinecap="round"
                   pathLength="1"
-                  style={{ pathLength: prefersReducedMotion ? 1 : scrollYProgress }}
+                  initial={false}
+                  animate={
+                    prefersReducedMotion || isCompactViewport
+                      ? { pathLength: prefersReducedMotion ? 1 : diagramProgress }
+                      : undefined
+                  }
+                  style={
+                    prefersReducedMotion || isCompactViewport
+                      ? undefined
+                      : { pathLength: scrollYProgress }
+                  }
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
                 />
 
                 {COST_STAGES.map((stage, index) => {
@@ -641,22 +703,27 @@ export function V4HiddenCostScene() {
                   const memoryY = [270, 258, 236, 214][index];
                   const reached = index <= activeIndex;
                   return (
-                    <g key={stage.number} opacity={reached ? 1 : 0.24}>
+                    <motion.g
+                      key={stage.number}
+                      initial={false}
+                      animate={{ opacity: reached ? 1 : 0.24 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: EASE }}
+                    >
                       <motion.circle
                         cx={x}
                         cy={effortY}
                         r="6"
                         fill="#C77752"
-                        animate={
-                          reached && !prefersReducedMotion
-                            ? { scale: [0.82, 1.35, 0.82], opacity: [0.58, 1, 0.58] }
-                            : undefined
-                        }
+                        initial={false}
+                        animate={{
+                          scale: reached ? (index === activeIndex ? 1.22 : 1) : 0.82,
+                          opacity: reached ? 1 : 0.42,
+                        }}
                         style={{ transformOrigin: `${x}px ${effortY}px` }}
-                        transition={{ duration: 2.6, delay: index * 0.2, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
                       />
                       <circle cx={x} cy={memoryY} r="4.5" fill="#7D9BAF" />
-                    </g>
+                    </motion.g>
                   );
                 })}
               </svg>

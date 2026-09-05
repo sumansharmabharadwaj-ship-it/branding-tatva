@@ -37,11 +37,11 @@
   }
 
   /* Four cost states now unfold over a denser held scene. Each state still has
-     a clear scroll interval, while the visitor travels roughly one quarter
-     less distance than the previous 195svh / 82rem version. */
+     a clear scroll interval, while the camera reaches the foundation before
+     the held image begins to feel like an extra chapter. */
   .home-v4-cost {
-    height: 175svh;
-    min-height: 72rem;
+    height: 160svh;
+    min-height: 68rem;
   }
 }
 
@@ -113,8 +113,8 @@
   }
 
   .home-v4-cost {
-    height: 168svh;
-    min-height: 66rem;
+    height: 164svh;
+    min-height: 64rem;
   }
 
   .home-v4-cost__shell {
@@ -275,6 +275,68 @@
   .home-v4-opening__shell {
     padding-bottom: max(4.6rem, calc(2.8rem + env(safe-area-inset-bottom, 0px)));
   }
+
+  /* Touch screens use explicit stage controls because the cost scene returns
+     to document flow here. Every idea stays reachable without asking a phone
+     scroll to control content that has already moved out of the viewport. */
+  .home-v4-cost__steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.45rem;
+    margin-top: 1.35rem;
+  }
+
+  .home-v4-cost__steps button {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 2.75rem;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(244, 239, 230, 0.13);
+    border-radius: 999px;
+    background: rgba(10, 18, 23, 0.5);
+    color: rgba(244, 239, 230, 0.52);
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+  }
+
+  .home-v4-cost__steps button > span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-v4-cost__steps button > i {
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    background: #d69a72;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-v4-cost__steps button[aria-pressed="true"] {
+    border-color: rgba(214, 154, 114, 0.58);
+    background: rgba(214, 154, 114, 0.1);
+    color: #f4efe6;
+  }
+
+  .home-v4-cost__steps button[aria-pressed="true"] > i {
+    transform: scaleX(1);
+  }
+
+  .home-v4-cost__stage {
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+}
+
+@media (min-width: 821px) {
+  .home-v4-cost__steps {
+    display: none;
+  }
 }
 
 @media (max-width: 560px) {
@@ -317,7 +379,7 @@
     }
 
     .home-v4-cost {
-      height: 175vh;
+      height: 160vh;
     }
   }
 }
