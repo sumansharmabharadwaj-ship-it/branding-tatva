@@ -139,6 +139,13 @@ assert(
   "The About pointer runtime is scheduling redundant animation work.",
 );
 assert(
+  runtime.includes("sceneMeasurementsRef.current = {") &&
+    runtime.includes("cachedMeasurements.scrollY === currentScrollY") &&
+    runtime.includes("cachedMeasurements.viewportHeight === viewportHeight") &&
+    runtime.includes("? cachedMeasurements.sceneRects"),
+  "The About chapter navigator and cinematic thread no longer share their per-frame scene measurements.",
+);
+assert(
   runtime.includes('href={`#${chapter.id}`}') && runtime.includes("event.preventDefault();"),
   "Desktop About chapters no longer expose native hash links before cinematic enhancement.",
 );
@@ -226,7 +233,7 @@ assert(
   "The living About thread can monopolise every display frame while the visitor is reading.",
 );
 assert(
-  (runtime.match(/const sceneRects = scenes\.map\(\(scene\) => scene\.getBoundingClientRect\(\)\);/g) || []).length === 2 &&
+  (runtime.match(/const sceneRects = scenes\.map\(\(scene\) => scene\.getBoundingClientRect\(\)\);/g) || []).length === 1 &&
     runtime.includes("const firstSceneTop = currentScrollY + sceneRects[0].top;") &&
     runtime.includes("const finalSceneBottom = currentScrollY + sceneRects[sceneRects.length - 1].bottom;") &&
     !runtime.includes(".offsetTop") &&

@@ -22,6 +22,12 @@ const THREAD_ACTIVE_FRAME_MS = 32;
 const THREAD_IDLE_FRAME_MS = 64;
 const MANUAL_SCROLL_KEYS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]);
 
+type SceneMeasurements = {
+  viewportHeight: number;
+  scrollY: number;
+  sceneRects: DOMRect[];
+};
+
 export function AboutCinematicRuntime() {
   const runtimeRef = useRef<HTMLDivElement>(null);
   const threadRef = useRef<HTMLCanvasElement>(null);
@@ -29,6 +35,7 @@ export function AboutCinematicRuntime() {
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
   const programmaticChapterRef = useRef<number | null>(null);
   const programmaticChapterTimerRef = useRef<number | null>(null);
+  const sceneMeasurementsRef = useRef<SceneMeasurements | null>(null);
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const lenis = useLenis();
   const [activeChapter, setActiveChapter] = useState(0);
@@ -81,6 +88,11 @@ export function AboutCinematicRuntime() {
       frame = 0;
       const viewportHeight = Math.max(window.innerHeight, 1);
       const sceneRects = scenes.map((scene) => scene.getBoundingClientRect());
+      sceneMeasurementsRef.current = {
+        viewportHeight,
+        scrollY: window.scrollY,
+        sceneRects,
+      };
       let strongestFocus = -1;
       let nextActive = 0;
 
@@ -135,6 +147,7 @@ export function AboutCinematicRuntime() {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
+      sceneMeasurementsRef.current = null;
       scenes.forEach((scene) => delete scene.dataset.sceneActive);
     };
   }, []);
@@ -463,7 +476,13 @@ export function AboutCinematicRuntime() {
 
       if (layoutDirty || scrollChanged) {
         layoutDirty = false;
-        const sceneRects = scenes.map((scene) => scene.getBoundingClientRect());
+        const cachedMeasurements = sceneMeasurementsRef.current;
+        const sceneRects = cachedMeasurements &&
+          cachedMeasurements.scrollY === currentScrollY &&
+          cachedMeasurements.viewportHeight === viewportHeight &&
+          cachedMeasurements.sceneRects.length === scenes.length
+          ? cachedMeasurements.sceneRects
+          : scenes.map((scene) => scene.getBoundingClientRect());
         const firstSceneTop = currentScrollY + sceneRects[0].top;
         if (currentScrollY >= firstSceneTop - 2) {
           document.documentElement.dataset.aboutFilmSnap = "true";
