@@ -277,6 +277,23 @@
   }
 }
 
+@media (max-width: 560px) {
+  /* The tall tap-led condition map must not establish the grid's intrinsic
+     width. Let height grow independently so copy never slips past the phone
+     viewport. */
+  .home-v4-recognition__stage,
+  .home-v4-recognition__copy,
+  .home-v4-recognition__diagram {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .home-v4-recognition__diagram {
+    aspect-ratio: auto;
+  }
+}
+
 @supports not (height: 1svh) {
   @media (min-width: 821px) {
     .home-v4-recognition,
