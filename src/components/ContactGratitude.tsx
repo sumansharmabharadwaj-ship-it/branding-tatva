@@ -188,6 +188,7 @@ export function ContactGratitude() {
   const [selectedNote, setSelectedNote] = useState<number | null>(null);
   const [visitedNotes, setVisitedNotes] = useState(0);
   const [lastReceivedNote, setLastReceivedNote] = useState<number | null>(null);
+  const [announcedResponse, setAnnouncedResponse] = useState("");
   const [completionSettled, setCompletionSettled] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -290,6 +291,7 @@ export function ContactGratitude() {
       visitedNotesRef.current = nextVisitedNotes;
       setVisitedNotes(nextVisitedNotes);
       setLastReceivedNote(index);
+      setAnnouncedResponse(nextSelectedNote === null ? "" : NOTES[index].response);
       setSelectedNote(nextSelectedNote);
       handleActiveNoteChange(nextSelectedNote);
     },
@@ -531,12 +533,8 @@ export function ContactGratitude() {
               data-contact-gratitude-response
               className="relative mt-4 min-h-[4.25rem] overflow-hidden border-l border-sandstone/48 pl-4 font-display text-lg italic leading-snug text-sandstone sm:min-h-[3.5rem] sm:text-xl"
             >
-              <p
-                className="sr-only"
-                aria-live={activeNote === null ? "off" : "polite"}
-                aria-atomic="true"
-              >
-                {activeResponse}
+              <p className="sr-only" aria-live="polite" aria-atomic="true">
+                {announcedResponse}
               </p>
               {RESPONSES.map((response, index) => {
                 const active = index === responseIndex;
