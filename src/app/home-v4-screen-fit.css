@@ -298,6 +298,127 @@
     width: min(100%, 34rem);
     aspect-ratio: auto;
   }
+
+  /* Three Paths is a decision scene, so its entire sequence should be visible
+     before the visitor chooses. Let the map own the flexible middle row and
+     keep all three choices plus the fallback link inside the same frame. */
+  .home-v4-chapter--paths .paths-cinematic,
+  .home-v4-chapter--paths .paths-cinematic__shell {
+    height: 100svh;
+    min-height: 100svh;
+    max-height: 100svh;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    padding-top: clamp(4.65rem, 8svh, 5.25rem);
+    padding-bottom: clamp(1.1rem, 2.2svh, 1.5rem);
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__header {
+    grid-template-columns: minmax(0, 1.24fr) minmax(18rem, 0.76fr);
+    gap: clamp(2rem, 4.5vw, 4.75rem);
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__header h2 {
+    max-width: none;
+    margin-top: 0.55rem;
+    font-size: clamp(3rem, min(4.2vw, 6.4svh), 3.75rem);
+    line-height: 0.91;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__intro p {
+    font-size: 0.84rem;
+    line-height: 1.55;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__intro span {
+    margin-top: 0.65rem;
+    font-size: 0.56rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__stage {
+    min-height: 0;
+    margin-top: clamp(0.9rem, 1.8svh, 1.25rem);
+  }
+
+  .home-v4-chapter--paths :is(.paths-cinematic__map, .paths-cinematic__focus) {
+    height: 100%;
+    min-height: 0;
+    border-radius: 1.35rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__map {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    padding: clamp(1rem, 1.55vw, 1.35rem);
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__map svg {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin-top: 0;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__focus {
+    padding: clamp(1rem, 1.6vw, 1.35rem);
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__focus > p:first-of-type {
+    margin-top: clamp(0.8rem, 1.8svh, 1.15rem);
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__focus h3 {
+    margin-top: 0.45rem;
+    font-size: clamp(2rem, min(2.65vw, 4.5svh), 2.75rem);
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__focus-body {
+    margin-top: 0.7rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__focus-result {
+    padding-top: 0.75rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__focus-result strong {
+    margin-top: 0.3rem;
+    font-size: 1.1rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__focus > a {
+    min-height: 2.55rem;
+    margin-top: 0.7rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__choices {
+    margin-top: clamp(0.55rem, 1.1svh, 0.75rem);
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__choices button {
+    min-height: 5.45rem;
+    padding: 0.75rem 1rem 0.9rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__choices button > strong {
+    margin-top: 0.35rem;
+    font-size: clamp(1.1rem, 1.45vw, 1.35rem);
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__choices button > p {
+    margin-top: 0.3rem;
+    font-size: 0.62rem;
+    line-height: 1.35;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__footer {
+    justify-content: flex-start;
+    margin-top: clamp(0.55rem, 1.15svh, 0.8rem);
+  }
 }
 
 /* Keep the information-rich two-column scenes intact on landscape tablets and
@@ -402,6 +523,42 @@
 @media (min-width: 821px) {
   .home-v4-cost__steps {
     display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  /* The path selector is a control, not three more article cards. Compact it
+     into a clear tap rail so the chosen recommendation stays close to the
+     alternatives on a phone. */
+  .home-v4-chapter--paths .paths-cinematic__choices {
+    gap: 0.55rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__choices button {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    min-height: 4.65rem;
+    align-content: center;
+    column-gap: 0.75rem;
+    padding: 0.72rem 0.9rem 0.82rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__choices button > span {
+    grid-row: 1 / 3;
+    align-self: start;
+    padding-top: 0.12rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__choices button > strong {
+    margin-top: 0;
+    font-size: 1.12rem;
+  }
+
+  .home-v4-chapter--paths .paths-cinematic__choices button > p {
+    margin-top: 0.18rem;
+    font-size: 0.62rem;
+    line-height: 1.35;
   }
 }
 

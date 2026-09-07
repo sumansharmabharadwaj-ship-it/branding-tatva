@@ -65,13 +65,17 @@ export function PathsCinematicChapter() {
     margin: "8% 0px -12% 0px",
   });
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectionDirection, setSelectionDirection] = useState<"forward" | "backward">("forward");
   const active = PATHS[activeIndex];
 
   useEffect(() => {
     if (!inView || prefersReducedMotion) return;
+    const autoplay = window.matchMedia("(min-width: 821px) and (hover: hover) and (pointer: fine)");
+    if (!autoplay.matches) return;
 
     const timer = window.setInterval(() => {
       if (document.hidden || Date.now() < holdUntilRef.current) return;
+      setSelectionDirection("forward");
       setActiveIndex((current) => (current + 1) % PATHS.length);
     }, AUTO_ADVANCE_MS);
 
@@ -80,6 +84,8 @@ export function PathsCinematicChapter() {
 
   function choose(index: number, hold = MANUAL_HOLD_MS) {
     holdUntilRef.current = Date.now() + hold;
+    if (index === activeIndex) return;
+    setSelectionDirection(index > activeIndex ? "forward" : "backward");
     setActiveIndex(index);
   }
 
@@ -174,17 +180,16 @@ export function PathsCinematicChapter() {
                       strokeWidth={selected ? 2.4 : 1.2}
                       strokeLinecap="round"
                       strokeDasharray="6 11"
+                      initial={false}
                       animate={
-                        selected && inView && !prefersReducedMotion
-                          ? { strokeDashoffset: [0, -34] }
-                          : { strokeDashoffset: 0 }
+                        selected && inView
+                          ? { pathLength: 1, opacity: 0.96 }
+                          : { pathLength: 0.2, opacity: 0.16 }
                       }
                       transition={{
-                        duration: selected ? 1.05 : 2.5,
-                        repeat: Infinity,
-                        ease: "linear",
+                        duration: prefersReducedMotion ? 0 : selected ? 0.82 : 0.34,
+                        ease: EASE,
                       }}
-                      opacity={selected ? 0.96 : 0.16}
                     />
                   </g>
                 );
@@ -200,13 +205,14 @@ export function PathsCinematicChapter() {
                       cy={ENTRY_Y[index]}
                       r={selected ? 8 : 5}
                       fill={path.tint}
+                      initial={false}
                       animate={
-                        selected && inView && !prefersReducedMotion
-                          ? { scale: [0.78, 1.3, 0.78], opacity: [0.65, 1, 0.65] }
-                          : { scale: 1 }
+                        selected && inView
+                          ? { scale: 1, opacity: 1 }
+                          : { scale: 0.78, opacity: 0.42 }
                       }
                       style={{ transformOrigin: center }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}
                     />
                     <text
                       x="90"
@@ -244,19 +250,17 @@ export function PathsCinematicChapter() {
               })}
 
               <motion.circle
+                key={active.number}
                 cx="680"
                 cy="160"
                 r="32"
                 fill="none"
                 stroke={active.tint}
                 strokeWidth="1.4"
-                animate={
-                  inView && !prefersReducedMotion
-                    ? { scale: [0.88, 1.14, 0.88], opacity: [0.38, 0.72, 0.38] }
-                    : { scale: 1 }
-                }
+                initial={prefersReducedMotion ? false : { scale: 0.88, opacity: 0.38 }}
+                animate={inView ? { scale: 1, opacity: 0.72 } : { scale: 0.88, opacity: 0.38 }}
                 style={{ transformOrigin: "680px 160px" }}
-                transition={{ duration: 3.1, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: EASE }}
               />
               <circle cx="680" cy="160" r="8" fill={active.tint} />
               <text x="720" y="151" className="paths-cinematic__svg-result">
@@ -276,14 +280,25 @@ export function PathsCinematicChapter() {
             </div>
           </div>
 
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.article
               key={active.number}
+              id="paths-cinematic-panel"
+              role="tabpanel"
+              aria-labelledby={`paths-cinematic-tab-${active.number}`}
               className="paths-cinematic__focus"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 14, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(3px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.46, ease: EASE }}
+              initial={
+                prefersReducedMotion
+                  ? false
+                  : { opacity: 0, x: selectionDirection === "forward" ? 20 : -20 }
+              }
+              animate={{ opacity: 1, x: 0 }}
+              exit={
+                prefersReducedMotion
+                  ? undefined
+                  : { opacity: 0, x: selectionDirection === "forward" ? -14 : 14 }
+              }
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
               aria-live="polite"
             >
               <div className="paths-cinematic__focus-topline">
@@ -310,12 +325,30 @@ export function PathsCinematicChapter() {
             return (
               <button
                 key={path.number}
+                id={`paths-cinematic-tab-${path.number}`}
                 type="button"
                 role="tab"
                 aria-selected={selected}
+                aria-controls="paths-cinematic-panel"
+                tabIndex={selected ? 0 : -1}
                 onClick={() => choose(index)}
                 onPointerEnter={() => choose(index, HOVER_HOLD_MS)}
                 onFocus={() => choose(index)}
+                onKeyDown={(event) => {
+                  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+                  event.preventDefault();
+                  const nextIndex =
+                    event.key === "Home"
+                      ? 0
+                      : event.key === "End"
+                        ? PATHS.length - 1
+                        : event.key === "ArrowRight"
+                          ? (index + 1) % PATHS.length
+                          : (index - 1 + PATHS.length) % PATHS.length;
+                  choose(nextIndex);
+                  const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>("[role='tab']");
+                  buttons?.[nextIndex]?.focus();
+                }}
                 className={selected ? "is-active" : undefined}
                 style={{ "--path-tint": path.tint } as CSSProperties}
               >
@@ -324,6 +357,7 @@ export function PathsCinematicChapter() {
                 <p>{path.eyebrow}</p>
                 <i aria-hidden="true">
                   <b
+                    key={`${path.number}-${active.number}`}
                     style={{
                       animationDuration: `${AUTO_ADVANCE_MS}ms`,
                       animationPlayState:
