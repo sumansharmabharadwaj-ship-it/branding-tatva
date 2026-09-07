@@ -37,8 +37,9 @@ export function AboutCinematicRuntime() {
   const programmaticChapterTimerRef = useRef<number | null>(null);
   const sceneMeasurementsRef = useRef<SceneMeasurements | null>(null);
   const publishedChapterRef = useRef(0);
-  const publishedNavigatorActiveRef = useRef(false);
-  const publishedNavigatorToneRef = useRef("dark");
+  const publishedSceneRef = useRef(-1);
+  const publishedNavigatorActiveRef = useRef<boolean | null>(null);
+  const publishedNavigatorToneRef = useRef<string | null>(null);
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const lenis = useLenis();
   const [activeChapter, setActiveChapter] = useState(0);
@@ -127,22 +128,31 @@ export function AboutCinematicRuntime() {
 
       const displayedChapter = programmaticChapterRef.current ?? nextActive;
 
-      scenes.forEach((scene, index) => {
-        scene.dataset.sceneActive = String(index === nextActive);
-      });
+      if (publishedSceneRef.current !== nextActive) {
+        const previousScene = publishedSceneRef.current;
+        if (previousScene < 0) {
+          scenes.forEach((scene, index) => {
+            scene.dataset.sceneActive = String(index === nextActive);
+          });
+        } else {
+          scenes[previousScene].dataset.sceneActive = "false";
+          scenes[nextActive].dataset.sceneActive = "true";
+        }
+        publishedSceneRef.current = nextActive;
+      }
       runtime.style.setProperty("--navigator-progress", progress.toFixed(4));
-      runtime.dataset.navigatorActive = String(active);
-      runtime.dataset.navigatorTone = tone;
 
       if (publishedChapterRef.current !== displayedChapter) {
         publishedChapterRef.current = displayedChapter;
         setActiveChapter(displayedChapter);
       }
       if (publishedNavigatorActiveRef.current !== active) {
+        runtime.dataset.navigatorActive = String(active);
         publishedNavigatorActiveRef.current = active;
         setNavigatorActive(active);
       }
       if (publishedNavigatorToneRef.current !== tone) {
+        runtime.dataset.navigatorTone = tone;
         publishedNavigatorToneRef.current = tone;
         setNavigatorTone(tone);
       }
@@ -162,6 +172,7 @@ export function AboutCinematicRuntime() {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
       sceneMeasurementsRef.current = null;
+      publishedSceneRef.current = -1;
       scenes.forEach((scene) => delete scene.dataset.sceneActive);
     };
   }, []);

@@ -153,6 +153,15 @@ assert(
   "The About navigator can republish unchanged React state throughout a scroll gesture.",
 );
 assert(
+  runtime.includes("publishedSceneRef.current !== nextActive") &&
+    runtime.includes('scenes[previousScene].dataset.sceneActive = "false"') &&
+    runtime.includes('scenes[nextActive].dataset.sceneActive = "true"') &&
+    runtime.includes("publishedSceneRef.current = -1") &&
+    runtime.includes("runtime.dataset.navigatorActive = String(active)") &&
+    runtime.includes("runtime.dataset.navigatorTone = tone"),
+  "The About navigator can rewrite unchanged scene and tone attributes on every scroll frame.",
+);
+assert(
   runtime.includes('href={`#${chapter.id}`}') && runtime.includes("event.preventDefault();"),
   "Desktop About chapters no longer expose native hash links before cinematic enhancement.",
 );
