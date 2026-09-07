@@ -249,6 +249,15 @@ assert(
   "The living About thread can monopolise every display frame while the visitor is reading.",
 );
 assert(
+  runtime.includes("const sceneStyleSnapshots = scenes.map(() => ({") &&
+    runtime.includes("snapshot.progress !== progressValue") &&
+    runtime.includes("snapshot.focus !== focusValue") &&
+    runtime.includes("snapshot.enter !== enterValue") &&
+    runtime.includes("snapshot.exit !== exitValue") &&
+    runtime.includes("snapshot.phase !== phase"),
+  "The About film can republish unchanged per-scene motion values throughout a scroll gesture.",
+);
+assert(
   (runtime.match(/const sceneRects = scenes\.map\(\(scene\) => scene\.getBoundingClientRect\(\)\);/g) || []).length === 1 &&
     runtime.includes("const firstSceneTop = currentScrollY + sceneRects[0].top;") &&
     runtime.includes("const finalSceneBottom = currentScrollY + sceneRects[sceneRects.length - 1].bottom;") &&

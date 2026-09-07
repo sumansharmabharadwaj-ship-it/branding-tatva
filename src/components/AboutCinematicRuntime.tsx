@@ -351,6 +351,13 @@ export function AboutCinematicRuntime() {
     let previousThreadTone = activeTone;
     let lastThreadPaintAt = Number.NEGATIVE_INFINITY;
     let threadPaintDirty = true;
+    const sceneStyleSnapshots = scenes.map(() => ({
+      progress: "",
+      focus: "",
+      enter: "",
+      exit: "",
+      phase: "",
+    }));
 
     const resizeThread = () => {
       canvasWidth = window.innerWidth;
@@ -531,12 +538,32 @@ export function AboutCinematicRuntime() {
               : progress < 0.76
                 ? "discovery"
                 : "resolution";
+          const snapshot = sceneStyleSnapshots[index];
+          const progressValue = progress.toFixed(4);
+          const focusValue = focus.toFixed(4);
+          const enterValue = enter.toFixed(4);
+          const exitValue = exit.toFixed(4);
 
-          scene.style.setProperty("--scene-progress", progress.toFixed(4));
-          scene.style.setProperty("--scene-focus", focus.toFixed(4));
-          scene.style.setProperty("--scene-enter", enter.toFixed(4));
-          scene.style.setProperty("--scene-exit", exit.toFixed(4));
-          scene.dataset.scenePhase = phase;
+          if (snapshot.progress !== progressValue) {
+            scene.style.setProperty("--scene-progress", progressValue);
+            snapshot.progress = progressValue;
+          }
+          if (snapshot.focus !== focusValue) {
+            scene.style.setProperty("--scene-focus", focusValue);
+            snapshot.focus = focusValue;
+          }
+          if (snapshot.enter !== enterValue) {
+            scene.style.setProperty("--scene-enter", enterValue);
+            snapshot.enter = enterValue;
+          }
+          if (snapshot.exit !== exitValue) {
+            scene.style.setProperty("--scene-exit", exitValue);
+            snapshot.exit = exitValue;
+          }
+          if (snapshot.phase !== phase) {
+            scene.dataset.scenePhase = phase;
+            snapshot.phase = phase;
+          }
 
           if (focus > strongestFocus) {
             strongestFocus = focus;
