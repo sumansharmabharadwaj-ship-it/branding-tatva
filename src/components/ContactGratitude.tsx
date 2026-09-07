@@ -52,7 +52,11 @@ const COMPLETE_RESPONSE = "That is enough for a precise first conversation.";
 const RESPONSES = [DEFAULT_RESPONSE, ...NOTES.map((note) => note.response), COMPLETE_RESPONSE];
 const ALL_NOTES_VISITED = (1 << NOTES.length) - 1;
 const COMPLETION_SETTLE_MS = 920;
-const SCROLL_RECEIVE_THRESHOLDS = [0.28, 0.42, 0.56, 0.7] as const;
+/* The final scene sits directly above the compact footer, so its usable
+   progress tops out a little above 0.54 on a desktop viewport. Keep the last
+   beat inside that real range: every acknowledgement can resolve through
+   natural scrolling instead of requiring a click to finish the sequence. */
+const SCROLL_RECEIVE_THRESHOLDS = [0.24, 0.34, 0.44, 0.52] as const;
 
 type GratitudeNoteProps = {
   note: GratitudeNote;
@@ -221,12 +225,11 @@ export function ContactGratitude() {
     const nextVisitedNotes = visitedNotesRef.current | newlyReceived;
     visitedNotesRef.current = nextVisitedNotes;
     setVisitedNotes(nextVisitedNotes);
-    setLastReceivedNote(
-      NOTES.reduce(
-        (latest, _note, index) => ((newlyReceived & (1 << index)) === 0 ? latest : index),
-        0,
-      ),
+    const latestReceivedNote = NOTES.reduce(
+      (latest, _note, index) => ((newlyReceived & (1 << index)) === 0 ? latest : index),
+      0,
     );
+    setLastReceivedNote(latestReceivedNote);
   });
 
   const thankX = useTransform(progress, [0, 0.34, 0.76, 1], [-72, 0, 0, 18]);
@@ -245,6 +248,8 @@ export function ContactGratitude() {
   const nextOpacity = useTransform(progress, [0.22, 0.46, 0.94, 1], [0, 1, 1, 0.82]);
 
   const allNotesVisited = visitedNotes === ALL_NOTES_VISITED;
+  const sequenceFocusNote = completionSettled ? null : lastReceivedNote;
+  const visualActiveNote = activeNote ?? sequenceFocusNote;
   const visitedCount = NOTES.reduce(
     (count, _note, index) => count + ((visitedNotes & (1 << index)) === 0 ? 0 : 1),
     0,
@@ -252,7 +257,7 @@ export function ContactGratitude() {
   const warmthOpacity =
     0.06 +
     visitedCount * 0.025 +
-    (activeNote === null ? 0 : 0.025) +
+    (visualActiveNote === null ? 0 : 0.025) +
     (completionSettled ? 0.035 : 0);
   const responseIndex =
     activeNote === null
@@ -341,6 +346,9 @@ export function ContactGratitude() {
       data-contact-gratitude-complete={allNotesVisited ? "true" : undefined}
       data-contact-gratitude-settled={completionSettled ? "true" : undefined}
       data-contact-gratitude-active={activeNote === null ? undefined : "true"}
+      data-contact-gratitude-sequence-focus={
+        sequenceFocusNote === null ? undefined : String(sequenceFocusNote + 1)
+      }
       onPointerDown={handleScenePointerDown}
       onKeyDown={handleSceneKeyDown}
       className="relative flex min-h-[100svh] w-full items-center py-10 sm:py-14"
@@ -513,7 +521,7 @@ export function ContactGratitude() {
                   note={note}
                   index={index}
                   progress={progress}
-                  activeNote={activeNote}
+                  activeNote={visualActiveNote}
                   selected={selectedNote === index}
                   visited={(visitedNotes & (1 << index)) !== 0}
                   reducedMotion={reducedMotion}

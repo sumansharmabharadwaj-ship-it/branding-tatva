@@ -1,3 +1,69 @@
+# Design QA: Contact gratitude sequence · 2026-09-07
+
+## Findings
+
+- No actionable P0, P1, or P2 mismatch remains. The closing scene now borrows Parker's legible staged progression without copying its palette, type, shapes, or product imagery.
+- [P3] Direct hash navigation enters late enough in the scene to receive the first three acknowledgements during the spring settle. This is intentional: it preserves useful context for visitors arriving at `#thanks`, while a short onward scroll still owns the fourth beat and final resolve.
+
+## Target and evidence
+
+- Source visual truth path: `https://heyparker.ai/?utm_source=chatgpt.com`, captured in the cloud browser at its Step 2 scroll state.
+- Implementation screenshot path: cloud-browser capture of `/contact?qa=visual-compare#thanks` at the receiving state. The browser-produced capture was inspected inline and was not persisted as a repository artifact.
+- Combined comparison: the Parker source capture and Branding Tatva implementation capture were emitted together in one browser comparison call and reviewed at the same viewport.
+- Source pixels: `1348 × 926`; implementation pixels: `1348 × 926`.
+- CSS viewport: `1363 × 936`; device pixel ratio: `1` for both captures. The browser capture excludes scrollbar pixels.
+- State: Parker Step 2 content; Branding Tatva acknowledgement 2 of 4, full motion. These are intentionally different products and content states, so the comparison is limited to progression hierarchy, focal control, and scroll rhythm rather than visual cloning.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P2 | The gratitude ledger recorded received notes, but did not keep one acknowledgement visually in focus with its response. | Derived a single sequence focus from the latest received note, while pointer and keyboard inspection retain precedence. The browser capture shows acknowledgement 2 highlighted with the matching curiosity response. |
+| 2 | P2 | The original third and fourth thresholds (`0.56`, `0.70`) exceeded the scene's measured maximum natural progress (`0.5446`) because the section sits directly above a compact footer. The scroll story could therefore stop at 2 of 4. | Moved the four beats to `0.24`, `0.34`, `0.44`, and `0.52`. Browser verification reached `04 / 04 · enough`, cleared sequence focus, exposed the resolved response, and warmed the primary CTA after the existing 920 ms hold. |
+| 3 | P2 | Extending the manual-inspection media wash to scroll focus made the meadow materially too dark. | Removed that wash override. The final receiving and resolved captures retain the luminous landscape and the established text contrast. |
+
+## Required fidelity surfaces
+
+- Fonts and typography: Branding Tatva's display serif, supporting sans, optical italic response, and tracked micro-labels remain unchanged. The reference contributes sequence logic only.
+- Spacing and layout rhythm: the existing two-column desktop composition, large gratitude statement, ledger proportions, CTA row, and floating chapter rail remain intact. The focus travels within the ledger without moving its geometry.
+- Colors and visual tokens: ivory, soil, sandstone, translucent borders, and meadow exposure remain within the current Contact-page palette. No Parker color or border treatment was imported.
+- Image quality and asset fidelity: the existing project-owned gratitude film and poster remain unchanged and uncropped by this pass. No placeholder, synthetic illustration, or code-drawn asset was introduced.
+- Copy and content: all gratitude copy, acknowledgement labels, responses, founder-led CTA, field-notes route, and protected opening section remain unchanged.
+- Interaction and accessibility: natural scroll now completes all four beats; mouse/touch activation, persistent selection, Arrow-key navigation, Escape, progress semantics, activation-only live announcements, and reduced-motion manual reading all remain functional.
+
+## Focused comparison evidence
+
+- A focused region comparison was necessary because the meaningful fidelity target is the relationship between Parker's active step tab and content panel, and Branding Tatva's active acknowledgement and response—not the two pages' unrelated imagery or copy.
+- Parker presents one strong active step within a persistent sequence header. Branding Tatva now mirrors that attention model with one highlighted ledger row, the matching response directly below, and previously received rows left as quieter history.
+- The fourth acknowledgement remains visible for 920 ms before the final sentence replaces it, preserving a readable last beat rather than jumping immediately to completion.
+
+## Verification
+
+- Natural scroll: direct `#thanks` arrival resolved to acknowledgement 3 of 4; `End` completed acknowledgement 4, then produced `data-contact-gratitude-settled="true"`, response phase `resolved`, no remaining sequence focus, and `04 / 04 · enough`.
+- Manual reading: clicking acknowledgement 1 set the inspection phase, selected state, readable response, and polite activation announcement.
+- Keyboard: `ArrowDown` moved focus and response to acknowledgement 2; `Escape` restored the resolved final state.
+- Reduced motion: the site control set `html[data-motion="reduced"]`; no acknowledgement was auto-received, while deliberate activation of acknowledgement 4 still exposed its response. Full motion was restored afterward.
+- Browser console: no application-origin errors or warnings. Extension-only browser metadata errors were excluded.
+- Production build: passed; all 79 static pages generated and `/contact` typechecked successfully.
+
+## Implementation checklist
+
+- [x] Make one received acknowledgement the visual focus at a time.
+- [x] Keep manual pointer, touch, and keyboard inspection authoritative.
+- [x] Finish all four scroll beats inside the measured usable range.
+- [x] Preserve the final-response hold and finite CTA warmth handoff.
+- [x] Verify full motion, reduced motion, keyboard, activation announcements, console health, and production build.
+
+## Follow-up polish
+
+- [P3] If a later page-wide pass adds more space below the gratitude scene, the beat thresholds can be spread farther apart without changing the interaction contract.
+
+## Final result
+
+final result: passed
+
+---
+
 # Design QA: Services Memory Horizon · 2026-09-04
 
 ## Findings

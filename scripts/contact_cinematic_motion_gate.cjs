@@ -67,10 +67,28 @@ requireText(gratitude, "data-contact-gratitude-complete", "gratitude completion 
 requireText(gratitude, "data-contact-gratitude-settled", "gratitude completion no longer resolves into a resting state");
 requireText(gratitude, "COMPLETION_SETTLE_MS", "gratitude completion no longer pauses before resolving");
 requireText(gratitude, "SCROLL_RECEIVE_THRESHOLDS", "gratitude no longer unfolds through native scroll");
+requireText(
+  gratitude,
+  "const SCROLL_RECEIVE_THRESHOLDS = [0.24, 0.34, 0.44, 0.52] as const;",
+  "gratitude scroll thresholds no longer finish inside the closing scene's usable range",
+);
 requireText(gratitude, 'useMotionValueEvent(progress, "change"', "gratitude scroll sequence is missing");
 requireText(gratitude, "data-contact-gratitude-receipt", "gratitude scroll receipt is no longer visible");
 requireText(gratitude, "lastReceivedNote", "gratitude response no longer follows the received sequence");
 requireText(gratitude, "visitedNotesRef", "gratitude response no longer preserves receipt order");
+requireText(gratitude, "sequenceFocusNote", "gratitude sequence no longer carries one acknowledgement into focus");
+requireText(gratitude, "visualActiveNote", "gratitude manual and scroll focus no longer share one visual state");
+requireText(gratitude, "data-contact-gratitude-sequence-focus", "gratitude sequence focus is no longer inspectable");
+requirePattern(
+  gratitude,
+  /const sequenceFocusNote = completionSettled \? null : lastReceivedNote;\s*const visualActiveNote = activeNote \?\? sequenceFocusNote;/,
+  "gratitude sequence focus no longer follows the latest acknowledgement until settling",
+);
+requirePattern(
+  gratitude,
+  /data-contact-gratitude-sequence-focus=\{[\s\S]*?sequenceFocusNote === null[\s\S]*?String\(sequenceFocusNote \+ 1\)/,
+  "gratitude sequence focus state is no longer exposed on the closing scene",
+);
 requireText(gratitude, "data-contact-gratitude-response-phase", "gratitude response phases are no longer inspectable");
 requirePattern(
   gratitude,
