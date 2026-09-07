@@ -163,7 +163,7 @@ export function Header({ transparent = false }: HeaderProps) {
     : pathname.startsWith("/about") ? "#795A43"
     : "#C6A97A";
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
-  const highlightedRoute = focusedRoute ?? hoveredRoute ?? headerNavigation.find((item) => isActive(item.href))?.href;
+  const highlightedRoute = hoveredRoute ?? focusedRoute ?? headerNavigation.find((item) => isActive(item.href))?.href;
 
   return (
     <>
@@ -218,8 +218,15 @@ export function Header({ transparent = false }: HeaderProps) {
                         onPointerEnter={(event) => {
                           if (event.pointerType === "mouse") setHoveredRoute(item.href);
                         }}
+                        onPointerMove={(event) => {
+                          // A mouse can stay over this link while Tab moves
+                          // focus elsewhere. Resume its preview on movement.
+                          if (event.pointerType === "mouse" && hoveredRoute !== item.href) setHoveredRoute(item.href);
+                        }}
                         onFocus={(event) => {
-                          if (event.currentTarget.matches(":focus-visible")) setFocusedRoute(item.href);
+                          const keyboardFocus = event.currentTarget.matches(":focus-visible");
+                          setFocusedRoute(keyboardFocus ? item.href : null);
+                          if (keyboardFocus) setHoveredRoute(null);
                         }}
                         className="site-header__route"
                       >
