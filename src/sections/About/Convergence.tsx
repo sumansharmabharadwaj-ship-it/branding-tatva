@@ -2,15 +2,12 @@
 
 import Link from "next/link";
 import {
-  useEffect,
   useRef,
   useState,
   type KeyboardEvent,
-  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ArrowRight, BookOpenText, Brain } from "lucide-react";
-import { AboutSignalField3D } from "@/components/AboutSignalField3D";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./Convergence.module.css";
@@ -50,32 +47,32 @@ const PAIRINGS = [
 ] as const;
 
 const OUTPUTS = [
-  { label: "Positioning", line: "A place in the market buyers can understand." },
-  { label: "Language", line: "Phrases your team can actually repeat." },
-  { label: "Recognition", line: "A pattern your audience can meet again." },
+  { label: "Positioning", line: "Where you belong, in plain language." },
+  { label: "Language", line: "Words the whole team can use." },
+  { label: "Recognition", line: "A pattern the audience can recognise." },
 ] as const;
 
 const STAGES = [
   {
     number: "01",
     label: "Read",
-    cue: "I look past the brief to find what makes the choice feel uncertain.",
-    centreLabel: "Buyer tension",
-    centreLine: "What makes the choice feel uncertain.",
+    cue: "I find the hesitation hiding behind the brief.",
+    centreLabel: "Buyer hesitation",
+    centreLine: "The moment confidence breaks.",
   },
   {
     number: "02",
     label: "Connect",
-    cue: "I connect what people notice with language that can carry the meaning.",
+    cue: "I connect the behaviour to language the market can hold.",
     centreLabel: "Synthesis",
-    centreLine: "Observation becomes a point of view.",
+    centreLine: "Evidence becomes a position.",
   },
   {
     number: "03",
     label: "Carry",
-    cue: "You leave with one position that guides what the brand says and shows.",
+    cue: "Your team leaves with one thought that governs every expression.",
     centreLabel: "Usable position",
-    centreLine: "One clear thought the whole brand can carry.",
+    centreLine: "One thought. Every expression.",
   },
 ] as const;
 
@@ -83,7 +80,6 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function Convergence() {
   const sectionRef = useRef<HTMLElement>(null);
-  const pointerFrameRef = useRef(0);
   const [inspectedPair, setInspectedPair] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -12% 0px" });
@@ -96,32 +92,6 @@ export function Convergence() {
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
   const activePair = PAIRINGS[inspectedPair];
-
-  useEffect(() => () => window.cancelAnimationFrame(pointerFrameRef.current), []);
-
-  function onPointerMove(event: ReactPointerEvent<HTMLElement>) {
-    if (prefersReducedMotion || event.pointerType === "touch") return;
-    const node = sectionRef.current;
-    if (!node) return;
-    const bounds = node.getBoundingClientRect();
-    const x = ((event.clientX - bounds.left) / Math.max(bounds.width, 1) - 0.5) * 2;
-    const y = ((event.clientY - bounds.top) / Math.max(bounds.height, 1) - 0.5) * 2;
-    window.cancelAnimationFrame(pointerFrameRef.current);
-    pointerFrameRef.current = window.requestAnimationFrame(() => {
-      node.style.setProperty("--convergence-pointer-x", x.toFixed(3));
-      node.style.setProperty("--convergence-pointer-y", y.toFixed(3));
-    });
-  }
-
-  function resetPointer() {
-    const node = sectionRef.current;
-    if (!node) return;
-    window.cancelAnimationFrame(pointerFrameRef.current);
-    pointerFrameRef.current = window.requestAnimationFrame(() => {
-      node.style.setProperty("--convergence-pointer-x", "0");
-      node.style.setProperty("--convergence-pointer-y", "0");
-    });
-  }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -145,8 +115,6 @@ export function Convergence() {
       data-convergence-stage={activeStage.number}
       data-convergence-pair={inspectedPair + 1}
       aria-labelledby="convergence-title"
-      onPointerMove={onPointerMove}
-      onPointerLeave={resetPointer}
     >
       <div className={styles.shell}>
         <header className={styles.header}>
@@ -190,7 +158,7 @@ export function Convergence() {
             className={`${styles.discipline} ${styles.psychology}`}
             aria-hidden="true"
             animate={{
-              x: stage === 0 ? "-1.8vw" : stage === 1 ? "0vw" : "4.5vw",
+              x: stage === 0 ? "-1vw" : stage === 1 ? "0vw" : "2.5vw",
               opacity: stage === 2 ? 0.28 : 1,
             }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: EASE }}
@@ -234,18 +202,39 @@ export function Convergence() {
 
             <motion.figure
               className={styles.signalCore}
+              data-register-stage={activeStage.number}
               animate={{
-                scale: stage === 0 ? 0.86 : stage === 1 ? 1 : 0.92,
-                rotateX: stage === 0 ? 7 : stage === 1 ? 0 : -5,
-                rotateY: stage === 0 ? -8 : stage === 1 ? 0 : 7,
-                rotateZ: stage === 0 ? -3 : stage === 1 ? 0 : 2,
-                y: stage === 2 ? 8 : 0,
+                scale: stage === 0 ? 0.96 : stage === 1 ? 1 : 0.97,
+                y: stage === 0 ? 8 : stage === 2 ? -6 : 0,
                 opacity: stage === 2 ? 0.38 : 1,
               }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.78, ease: EASE }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
             >
               <div className={styles.folioImage} aria-hidden="true">
-                <AboutSignalField3D mode="synthesis" stage={stage} pair={inspectedPair} />
+                <div className={styles.decisionRegister}>
+                  <div className={styles.registerHead}>
+                    <span>Behaviour</span>
+                    <span>Language</span>
+                  </div>
+                  <div className={styles.registerTerms}>
+                    <strong>
+                      {stage === 1 ? activePair.human : stage === 0 ? "Observe" : "Position"}
+                    </strong>
+                    <i />
+                    <strong>
+                      {stage === 1 ? activePair.language : stage === 0 ? "Interpret" : "Express"}
+                    </strong>
+                  </div>
+                  <div className={styles.registerMeasure}>
+                    <span />
+                  </div>
+                  <div className={styles.registerResult}>
+                    <small>{stage === 1 ? "Resolved as" : "Decision state"}</small>
+                    <strong>
+                      {stage === 1 ? activePair.result : stage === 0 ? "Tension" : "Direction"}
+                    </strong>
+                  </div>
+                </div>
               </div>
               <figcaption className={styles.folioCopy}>
                 <span>{activeStage.number} / 03</span>
@@ -289,7 +278,7 @@ export function Convergence() {
             className={`${styles.discipline} ${styles.literature}`}
             aria-hidden="true"
             animate={{
-              x: stage === 0 ? "1.8vw" : stage === 1 ? "0vw" : "-4.5vw",
+              x: stage === 0 ? "1vw" : stage === 1 ? "0vw" : "-2.5vw",
               opacity: stage === 2 ? 0.28 : 1,
             }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: EASE }}

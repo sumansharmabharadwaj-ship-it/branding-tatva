@@ -1,6 +1,4 @@
 .section {
-  --convergence-pointer-x: 0;
-  --convergence-pointer-y: 0;
   --convergence-navigation-gutter: clamp(4.75rem, 8vw, 7rem);
   position: relative;
   min-height: 100svh;
@@ -18,8 +16,6 @@
     radial-gradient(circle at 88% 20%, rgba(150, 91, 67, 0.1), transparent 24%),
     rgba(238, 231, 219, 0.92);
   content: "";
-  transform: translate3d(calc(var(--convergence-pointer-x) * -5px), calc(var(--convergence-pointer-y) * -4px), 0) scale(1.015);
-  transition: transform 220ms ease-out;
 }
 
 .shell {
@@ -204,8 +200,6 @@
   display: grid;
   min-height: clamp(19rem, 42svh, 25.5rem);
   place-items: center;
-  transform: translate3d(calc(var(--convergence-pointer-x) * 5px), calc(var(--convergence-pointer-y) * 4px), 0);
-  transition: transform 180ms ease-out;
 }
 
 .threadField { position: absolute; inset: 7% -13%; }
@@ -290,18 +284,17 @@
   z-index: 2;
   display: grid;
   width: clamp(17rem, 24vw, 22rem);
-  aspect-ratio: 0.9;
+  aspect-ratio: 0.92;
   margin: 0;
   padding: 0.58rem;
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 0.7rem;
   border: 1px solid rgba(150, 91, 67, 0.28);
-  border-radius: 0.38rem 0.38rem 1.45rem 0.38rem;
-  background: #f6efe3;
-  box-shadow: 0 26px 72px rgba(67, 54, 42, 0.18), inset 0 0 44px rgba(101, 120, 95, 0.1);
+  border-radius: 0.22rem;
+  background: #f7f1e7;
+  box-shadow: 0 24px 62px rgba(67, 54, 42, 0.14);
   color: #965b43;
   text-align: left;
-  transform-style: preserve-3d;
   pointer-events: none;
   will-change: transform;
 }
@@ -310,12 +303,88 @@
   position: relative;
   min-height: 0;
   overflow: hidden;
-  border-radius: 0.32rem 0.32rem 1rem 0.32rem;
-  background: #e8dfd0;
-  transform: translateZ(1.2rem);
+  border: 1px solid rgba(43, 41, 36, 0.11);
+  border-radius: 0.12rem;
+  background: linear-gradient(145deg, rgba(250, 247, 239, 0.9), rgba(228, 218, 203, 0.72));
 }
 
-.folioCopy { display: grid; min-height: 5.15rem; align-content: start; gap: 0.18rem; transform: translateZ(1.5rem); }
+.decisionRegister {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  padding: clamp(1rem, 1.8vw, 1.45rem);
+  grid-template-rows: auto 1fr auto auto;
+  color: #2b2924;
+}
+
+.registerHead {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(43, 41, 36, 0.48);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.registerTerms {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.registerTerms strong {
+  color: #80503c;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1;
+  transition: color 420ms ease, transform 580ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.registerTerms strong:last-child { color: #5f6c58; text-align: right; }
+.registerTerms i { position: relative; height: 1px; background: rgba(43, 41, 36, 0.22); }
+.registerTerms i::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.42rem;
+  height: 0.42rem;
+  border: 1px solid rgba(43, 41, 36, 0.4);
+  border-radius: 50%;
+  background: #f3ecdf;
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.registerMeasure {
+  position: relative;
+  height: 1px;
+  background: rgba(43, 41, 36, 0.14);
+}
+
+.registerMeasure span {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: 0;
+  width: 34%;
+  background: #965b43;
+  transform-origin: left;
+  transition: width 680ms cubic-bezier(0.22, 1, 0.36, 1), background-color 420ms ease;
+}
+
+.signalCore[data-register-stage="02"] .registerMeasure span { width: 66%; }
+.signalCore[data-register-stage="03"] .registerMeasure span { width: 100%; background: #65725d; }
+.signalCore[data-register-stage="02"] .registerTerms strong:first-child { transform: translateX(0.2rem); }
+.signalCore[data-register-stage="02"] .registerTerms strong:last-child { transform: translateX(-0.2rem); }
+
+.registerResult { display: flex; padding-top: 0.75rem; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.registerResult small { color: rgba(43, 41, 36, 0.48); }
+.registerResult strong { color: #2b2924; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.2rem, 2.1vw, 1.85rem); font-weight: 400; line-height: 1; }
+
+.folioCopy { display: grid; min-height: 5.15rem; align-content: start; gap: 0.18rem; }
 .folioCopy > span { color: rgba(43, 41, 36, 0.48); font-size: 0.54rem; font-weight: 700; letter-spacing: 0.16em; }
 .signalCore small {
   font-size: 0.58rem;
@@ -393,7 +462,7 @@
 .mobileSynthesis { display: none; }
 
 @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
-  .section { height: 132svh; min-height: 132svh; }
+  .section { height: 190svh; min-height: 190svh; }
   .shell { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
 }
 
@@ -461,7 +530,9 @@
   .thread,
   .thread span,
   .tabs button,
-  .tabs button i { transition: none; }
+  .tabs button i,
+  .registerTerms strong,
+  .registerMeasure span { transition: none; }
 }
 
 @media (min-width: 901px) and (max-height: 760px) {

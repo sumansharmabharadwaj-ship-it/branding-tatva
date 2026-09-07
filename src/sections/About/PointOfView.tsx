@@ -5,12 +5,10 @@ import {
   useEffect,
   useRef,
   type KeyboardEvent,
-  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { AnimatePresence, motion, useInView, useTransform } from "framer-motion";
 import { ArrowUpRight, Eye, Quote, Repeat2 } from "lucide-react";
 import { Container } from "@/components/Container";
-import { AboutSignalField3D } from "@/components/AboutSignalField3D";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./PointOfView.module.css";
@@ -20,8 +18,8 @@ const STAGES = [
     number: "01",
     verb: "See",
     lens: "Category",
-    question: "What are people assuming this brand is?",
-    decision: "Reset the frame before adding persuasion.",
+    question: "What category are people placing you in?",
+    decision: "Correct the frame before asking for preference.",
     proof:
       "HerbalCart shifted from an inherited herbal frame toward modern wellness led by supplements.",
     recordType: "Documented perception reset",
@@ -29,15 +27,15 @@ const STAGES = [
     slug: "herbalcart",
     from: "Inherited frame",
     to: "Intended category",
-    outcome: "People understand where you belong.",
+    outcome: "They know where you belong.",
     icon: Eye,
   },
   {
     number: "02",
     verb: "Name",
     lens: "Value",
-    question: "Which words are carrying the advantage?",
-    decision: "Choose the value frame before writing the campaign.",
+    question: "What makes the offer worth choosing?",
+    decision: "Name the advantage before writing the campaign.",
     proof:
       "MyShopInEurope built its position around craft and origin instead of marketplace language led by price.",
     recordType: "Documented brand foundation",
@@ -45,15 +43,15 @@ const STAGES = [
     slug: "myshopineurope",
     from: "Access and price",
     to: "Craft and origin",
-    outcome: "They can name why you matter.",
+    outcome: "They know why you matter.",
     icon: Quote,
   },
   {
     number: "03",
     verb: "Return",
     lens: "Memory",
-    question: "Which useful idea deserves to return?",
-    decision: "Protect the useful idea from constant reinvention.",
+    question: "What should stay familiar every time?",
+    decision: "Keep one useful idea consistent enough to be remembered.",
     proof:
       "Dr. Haley Nutrition posted 48% less and earned 104% more followers per post.",
     recordType: "Measured performance · December 2025 to January 2026",
@@ -61,7 +59,7 @@ const STAGES = [
     slug: "dr-haley-nutrition",
     from: "Cadence led by volume",
     to: "Pattern led by quality",
-    outcome: "The useful idea stays with them.",
+    outcome: "They remember what to return to.",
     icon: Repeat2,
   },
 ] as const;
@@ -70,7 +68,6 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function PointOfView() {
   const storyRef = useRef<HTMLDivElement>(null);
-  const pointerFrameRef = useRef(0);
   const previousIndexRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(storyRef, { amount: 0.16, margin: "8% 0px -12% 0px" });
@@ -83,39 +80,12 @@ export function PointOfView() {
   const activeIndex = prefersReducedMotion ? STAGES.length - 1 : sequence.activeIndex;
   const active = STAGES[activeIndex];
   const transitionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
-  const filmY = useTransform(sequence.scrollYProgress, [0, 1], ["2.4%", "-2.4%"]);
-  const filmScale = useTransform(sequence.scrollYProgress, [0, 0.5, 1], [1.045, 1.015, 0.99]);
+  const filmY = useTransform(sequence.scrollYProgress, [0, 1], ["1.2%", "-1.2%"]);
+  const filmScale = useTransform(sequence.scrollYProgress, [0, 0.5, 1], [1.02, 1, 0.99]);
 
   useEffect(() => {
     previousIndexRef.current = activeIndex;
   }, [activeIndex]);
-
-  useEffect(() => () => window.cancelAnimationFrame(pointerFrameRef.current), []);
-
-  function updatePointer(event: ReactPointerEvent<HTMLDivElement>) {
-    if (prefersReducedMotion || event.pointerType === "touch") return;
-    const node = storyRef.current;
-    if (!node) return;
-    const { left, top, width, height } = node.getBoundingClientRect();
-    const x = ((event.clientX - left) / Math.max(width, 1) - 0.5) * 2;
-    const y = ((event.clientY - top) / Math.max(height, 1) - 0.5) * 2;
-
-    window.cancelAnimationFrame(pointerFrameRef.current);
-    pointerFrameRef.current = window.requestAnimationFrame(() => {
-      node.style.setProperty("--recognition-pointer-x", x.toFixed(3));
-      node.style.setProperty("--recognition-pointer-y", y.toFixed(3));
-    });
-  }
-
-  function resetPointer() {
-    const node = storyRef.current;
-    if (!node) return;
-    window.cancelAnimationFrame(pointerFrameRef.current);
-    pointerFrameRef.current = window.requestAnimationFrame(() => {
-      node.style.setProperty("--recognition-pointer-x", "0");
-      node.style.setProperty("--recognition-pointer-y", "0");
-    });
-  }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -136,8 +106,6 @@ export function PointOfView() {
       className={styles.scrollStory}
       data-scroll-story="about-philosophy"
       data-recognition-stage={activeIndex + 1}
-      onPointerMove={updatePointer}
-      onPointerLeave={resetPointer}
     >
       <Container className={styles.shell}>
         <section className={styles.root} aria-labelledby="philosophy-title">
@@ -149,8 +117,8 @@ export function PointOfView() {
               </h2>
             </div>
             <p>
-              I read those three decisions in sequence. First the category, then the value, then the
-              pattern worth returning to. That is how a brand becomes easier to choose.
+              I read those decisions in order: where you belong, why you matter, and what should
+              return. The work becomes easier to choose.
             </p>
           </header>
 
@@ -196,25 +164,58 @@ export function PointOfView() {
               >
                 <div className={styles.recognitionChamber}>
                   <div className={styles.evidenceFilm}>
-                    <AboutSignalField3D mode="recognition" stage={activeIndex} />
+                    <div className={styles.decisionLedger}>
+                      <span className={styles.ledgerFocus} />
+                      <span className={styles.ledgerCursor} />
+                      <div className={styles.ledgerRows}>
+                        {STAGES.map((stage, index) => (
+                          <span key={stage.lens} data-active={index === activeIndex}>
+                            <small>{stage.number}</small>
+                            <strong>{stage.verb}</strong>
+                            <i>{stage.lens}</i>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                   <div className={styles.ambientSequence}>
                     {STAGES.map((stage, index) => (
-                      <span key={stage.lens} data-active={index === activeIndex}>{stage.lens}</span>
+                      <span key={stage.lens} data-active={index === activeIndex}>
+                        {stage.lens}
+                      </span>
                     ))}
                   </div>
                   <AnimatePresence mode="sync" initial={false} custom={transitionDirection}>
                     <motion.div
                       key={active.lens}
                       className={styles.signalStage}
-                      initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.08, filter: "blur(9px)" }}
-                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                      exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.94, filter: "blur(7px)" }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.66, ease: EASE }}
+                      initial={
+                        prefersReducedMotion
+                          ? false
+                          : {
+                              opacity: 0,
+                              y: transitionDirection * 18,
+                              clipPath: "inset(10% 0 10% 0)",
+                            }
+                      }
+                      animate={{ opacity: 1, y: 0, clipPath: "inset(0% 0 0% 0)" }}
+                      exit={
+                        prefersReducedMotion
+                          ? undefined
+                          : {
+                              opacity: 0,
+                              y: transitionDirection * -14,
+                              clipPath: "inset(8% 0 8% 0)",
+                            }
+                      }
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}
                     >
                       <small>The mind asks</small>
                       <p>{active.question}</p>
-                      <div><span>{active.verb}</span><strong>{active.lens}</strong></div>
+                      <div>
+                        <span>{active.verb}</span>
+                        <strong>{active.lens}</strong>
+                      </div>
                     </motion.div>
                   </AnimatePresence>
                   <div className={styles.frameShift}>

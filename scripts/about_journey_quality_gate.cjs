@@ -29,7 +29,6 @@ const origin = read("src/sections/About/FounderFieldNotes.tsx");
 const atlas = read("src/sections/About/BrandSignalAtlas.tsx");
 const pointOfView = read("src/sections/About/PointOfView.tsx");
 const convergence = read("src/sections/About/Convergence.tsx");
-const signalField = read("src/components/AboutSignalField3D.tsx");
 const evidence = read("src/sections/About/Evidence.tsx");
 const standards = read("src/sections/About/Behaviours.tsx");
 const workingDirectly = read("src/sections/About/WorkingDirectly.tsx");
@@ -282,7 +281,8 @@ assert(
   "The persistent About header can expose a low-contrast booking action over its ivory surface.",
 );
 assert(
-  /data-scene-active="false"[^}]*\.frameShift i\s*\{[^}]*animation-play-state:\s*paused;/.test(pointOfViewStyles) &&
+  !pointOfViewStyles.includes("@keyframes resolveLine") &&
+    pointOfViewStyles.includes('.scrollStory[data-recognition-stage="3"] .frameShift i { transform: scaleX(1); }') &&
     !convergenceStyles.includes("animation:") &&
     /data-scene-active="false"[^}]*\.core::before\s*\{[^}]*animation-play-state:\s*paused;/.test(atlasStyles),
   "Off-screen About chapters can keep their ambient CSS loops running.",
@@ -295,19 +295,20 @@ assert(
 );
 assert(
   pointOfView.includes("Suman&apos;s point of view") &&
-    pointOfView.includes("That is how a brand becomes easier to choose.") &&
-    pointOfView.includes("People understand where you belong.") &&
-    pointOfView.includes("They can name why you matter.") &&
-    pointOfView.includes("The useful idea stays with them."),
+    pointOfView.includes("The work becomes easier to choose.") &&
+    pointOfView.includes("They know where you belong.") &&
+    pointOfView.includes("They know why you matter.") &&
+    pointOfView.includes("They remember what to return to."),
   "Suman's point of view no longer resolves its three buyer decisions into a hiring outcome.",
 );
 assert(
-  pointOfView.includes('<AboutSignalField3D mode="recognition" stage={activeIndex} />') &&
+  !pointOfView.includes("AboutSignalField3D") &&
     !pointOfView.includes('from "next/image"') &&
-    !pointOfView.includes("src={active.image}") &&
-    signalField.includes('await import("three")') &&
-    signalField.includes('data-about-signal-canvas'),
-  "The point-of-view sequence lost its image-free, lazily loaded 3D recognition field.",
+    pointOfView.includes("styles.decisionLedger") &&
+    pointOfView.includes("styles.ledgerFocus") &&
+    pointOfViewStyles.includes('.scrollStory[data-recognition-stage="3"] .ledgerCursor') &&
+    pointOfViewStyles.includes(".scrollStory { height: 190svh; }"),
+  "The point-of-view sequence lost its restrained editorial ledger or deliberate scroll runway.",
 );
 assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
@@ -482,13 +483,15 @@ assert(
   "The centre seal can block the interactive Synthesis pairings.",
 );
 assert(
-  convergence.includes('<AboutSignalField3D mode="synthesis" stage={stage} pair={inspectedPair} />') &&
+  !convergence.includes("AboutSignalField3D") &&
     !convergence.includes('from "next/image"') &&
-    signalField.includes('mode === "recognition"') &&
-    signalField.includes("synthesisSignal") &&
+    convergence.includes("styles.decisionRegister") &&
+    convergence.includes('data-register-stage={activeStage.number}') &&
+    convergenceStyles.includes('.signalCore[data-register-stage="03"] .registerMeasure span') &&
+    convergenceStyles.includes(".section { height: 190svh; min-height: 190svh; }") &&
     convergence.includes("One position the whole brand can carry.") &&
     convergence.includes("A sharper decision your team can use."),
-  "The synthesis chapter lost its image-free 3D convergence field or its explicit hiring payoff.",
+  "The synthesis chapter lost its editorial decision register, deliberate scroll runway, or explicit hiring payoff.",
 );
 
 assert(
