@@ -71,6 +71,12 @@ requireText(gratitude, 'useMotionValueEvent(progress, "change"', "gratitude scro
 requireText(gratitude, "data-contact-gratitude-receipt", "gratitude scroll receipt is no longer visible");
 requireText(gratitude, "lastReceivedNote", "gratitude response no longer follows the received sequence");
 requireText(gratitude, "visitedNotesRef", "gratitude response no longer preserves receipt order");
+requireText(gratitude, "data-contact-gratitude-response-phase", "gratitude response phases are no longer inspectable");
+requirePattern(
+  gratitude,
+  /const responseIndex =[\s\S]*?completionSettled[\s\S]*?RESPONSES\.length - 1/,
+  "gratitude resolves before the final acknowledgement has time to land",
+);
 requireText(gratitude, "announcedResponse", "gratitude activation announcement is missing");
 requirePattern(
   gratitude,
@@ -79,7 +85,7 @@ requirePattern(
 );
 requireText(gratitude, 'setAnnouncedResponse(nextSelectedNote === null ? "" : NOTES[index].response)', "gratitude hover and scroll must not create unsolicited live announcements");
 requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
-requireText(gratitude, 'data-contact-gratitude-receipt="activation"', "gratitude notes no longer require deliberate activation");
+requireText(gratitude, 'data-contact-gratitude-receipt="scroll-or-activation"', "gratitude receipt no longer supports scroll and deliberate inspection");
 requireText(gratitude, "data-contact-gratitude-next-ready", "gratitude completion no longer hands off to the next step");
 requireText(gratitude, "data-contact-gratitude-primary", "gratitude primary route is no longer addressable");
 requireText(gratitude, 'event.key === "ArrowDown"', "gratitude arrow-key choreography is missing");
@@ -87,7 +93,7 @@ requireText(gratitude, "selectedNote", "gratitude click and touch selection no l
 requirePattern(
   gratitude,
   /const handleNoteSelect[\s\S]*?visitedNotesRef\.current \| \(1 << index\)[\s\S]*?setVisitedNotes\(nextVisitedNotes\)/,
-  "gratitude notes can be received without deliberate selection",
+  "manual gratitude receipt no longer shares the ordered state",
 );
 requireText(backgroundVideo, "loop = true", "background films must keep a safe default loop contract");
 requireText(backgroundVideo, "loop={loop}", "background films can no longer hold their final frame");

@@ -176,9 +176,9 @@ function GratitudeNote({
 
 /**
  * Contact closes with a direct acknowledgement rather than a reward loop.
- * The statement assembles with native scroll, the four words respond to
- * pointer and focus preview each note, while click, touch, Enter, or Space
- * deliberately receives it. Both onward routes remain available throughout.
+ * The statement assembles with native scroll, the four words are received in
+ * sequence, and pointer, touch, or keyboard can hold one response for closer
+ * reading. Both onward routes remain available throughout.
  */
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -256,7 +256,7 @@ export function ContactGratitude() {
     (completionSettled ? 0.035 : 0);
   const responseIndex =
     activeNote === null
-      ? allNotesVisited
+      ? completionSettled
         ? RESPONSES.length - 1
         : lastReceivedNote === null
           ? 0
@@ -495,7 +495,7 @@ export function ContactGratitude() {
             <div
               data-contact-gratitude-notes
               data-contact-gratitude-flow="continuous"
-              data-contact-gratitude-receipt="activation"
+              data-contact-gratitude-receipt="scroll-or-activation"
               onPointerLeave={(event) => {
                 const focusedInside =
                   document.activeElement instanceof Node &&
@@ -531,6 +531,15 @@ export function ContactGratitude() {
             <div
               id="contact-gratitude-response"
               data-contact-gratitude-response
+              data-contact-gratitude-response-phase={
+                activeNote !== null
+                  ? "inspection"
+                  : completionSettled
+                    ? "resolved"
+                    : lastReceivedNote === null
+                      ? "opening"
+                      : "receiving"
+              }
               className="relative mt-4 min-h-[4.25rem] overflow-hidden border-l border-sandstone/48 pl-4 font-display text-lg italic leading-snug text-sandstone sm:min-h-[3.5rem] sm:text-xl"
             >
               <p className="sr-only" aria-live="off">
