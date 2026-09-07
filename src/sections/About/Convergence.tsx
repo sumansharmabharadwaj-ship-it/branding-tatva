@@ -92,6 +92,9 @@ export function Convergence() {
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
   const activePair = PAIRINGS[inspectedPair];
+  const registerLeft = stage === 1 ? activePair.human : stage === 0 ? "Observe" : "Position";
+  const registerRight = stage === 1 ? activePair.language : stage === 0 ? "Interpret" : "Express";
+  const registerResult = stage === 1 ? activePair.result : stage === 0 ? "Tension" : "Direction";
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -217,22 +220,46 @@ export function Convergence() {
                     <span>Language</span>
                   </div>
                   <div className={styles.registerTerms}>
-                    <strong>
-                      {stage === 1 ? activePair.human : stage === 0 ? "Observe" : "Position"}
-                    </strong>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      <motion.strong
+                        key={registerLeft}
+                        initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={prefersReducedMotion ? undefined : { opacity: 0, y: -4 }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
+                      >
+                        {registerLeft}
+                      </motion.strong>
+                    </AnimatePresence>
                     <i />
-                    <strong>
-                      {stage === 1 ? activePair.language : stage === 0 ? "Interpret" : "Express"}
-                    </strong>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      <motion.strong
+                        key={registerRight}
+                        initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={prefersReducedMotion ? undefined : { opacity: 0, y: -4 }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
+                      >
+                        {registerRight}
+                      </motion.strong>
+                    </AnimatePresence>
                   </div>
                   <div className={styles.registerMeasure}>
                     <span />
                   </div>
                   <div className={styles.registerResult}>
                     <small>{stage === 1 ? "Resolved as" : "Decision state"}</small>
-                    <strong>
-                      {stage === 1 ? activePair.result : stage === 0 ? "Tension" : "Direction"}
-                    </strong>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      <motion.strong
+                        key={registerResult}
+                        initial={prefersReducedMotion ? false : { opacity: 0, x: 8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={prefersReducedMotion ? undefined : { opacity: 0, x: -6 }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
+                      >
+                        {registerResult}
+                      </motion.strong>
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>
