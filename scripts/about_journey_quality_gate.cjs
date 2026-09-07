@@ -391,7 +391,6 @@ assert(
 
 const protectedPointOfViewType = [
   [".stageRail small", 0.58],
-  [".ambientSequence", 0.58],
   [".signalStage > small", 0.58],
   [".signalStage > div span", 0.58],
   [".recordKicker", 0.58],
@@ -457,7 +456,7 @@ const protectedConvergenceType = [
   [".discipline li span", 0.58],
   [".thread button small", 0.58],
   [".thread button strong", 0.58],
-  [".signalCore small", 0.58],
+  [".folioCopy > small", 0.58],
   [".outputs span", 0.58],
   [".outputs p", 0.7],
   [".tabs button span", 0.58],

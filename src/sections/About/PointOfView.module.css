@@ -215,25 +215,9 @@
 .scrollStory[data-recognition-stage="2"] .ledgerCursor { left: 50%; }
 .scrollStory[data-recognition-stage="3"] .ledgerCursor { left: 72%; }
 
-.ambientSequence {
-  position: absolute;
-  inset: 1rem 1.15rem auto;
-  z-index: 2;
-  display: flex;
-  justify-content: space-between;
-  color: rgba(244, 239, 230, 0.2);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.ambientSequence span { transition: color 420ms ease, transform 560ms cubic-bezier(0.22, 1, 0.36, 1); }
-.ambientSequence span[data-active="true"] { color: #d4b99a; transform: translateY(0.18rem); }
-
 .signalStage {
   position: absolute;
-  inset: 14% 10% 20%;
+  inset: 11% 10% 20%;
   z-index: 2;
   display: grid;
   align-content: center;

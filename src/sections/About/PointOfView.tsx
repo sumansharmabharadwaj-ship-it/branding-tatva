@@ -178,13 +178,6 @@ export function PointOfView() {
                       </div>
                     </div>
                   </div>
-                  <div className={styles.ambientSequence}>
-                    {STAGES.map((stage, index) => (
-                      <span key={stage.lens} data-active={index === activeIndex}>
-                        {stage.lens}
-                      </span>
-                    ))}
-                  </div>
                   <AnimatePresence mode="sync" initial={false} custom={transitionDirection}>
                     <motion.div
                       key={active.lens}
