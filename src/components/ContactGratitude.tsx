@@ -533,6 +533,9 @@ export function ContactGratitude() {
               data-contact-gratitude-response
               className="relative mt-4 min-h-[4.25rem] overflow-hidden border-l border-sandstone/48 pl-4 font-display text-lg italic leading-snug text-sandstone sm:min-h-[3.5rem] sm:text-xl"
             >
+              <p className="sr-only" aria-live="off">
+                {activeResponse}
+              </p>
               <p className="sr-only" aria-live="polite" aria-atomic="true">
                 {announcedResponse}
               </p>

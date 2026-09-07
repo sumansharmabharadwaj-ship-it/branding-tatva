@@ -72,6 +72,11 @@ requireText(gratitude, "data-contact-gratitude-receipt", "gratitude scroll recei
 requireText(gratitude, "lastReceivedNote", "gratitude response no longer follows the received sequence");
 requireText(gratitude, "visitedNotesRef", "gratitude response no longer preserves receipt order");
 requireText(gratitude, "announcedResponse", "gratitude activation announcement is missing");
+requirePattern(
+  gratitude,
+  /<p className="sr-only" aria-live="off">\s*\{activeResponse\}/,
+  "gratitude current response must remain readable without an unsolicited announcement",
+);
 requireText(gratitude, 'setAnnouncedResponse(nextSelectedNote === null ? "" : NOTES[index].response)', "gratitude hover and scroll must not create unsolicited live announcements");
 requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
 requireText(gratitude, 'data-contact-gratitude-receipt="activation"', "gratitude notes no longer require deliberate activation");
