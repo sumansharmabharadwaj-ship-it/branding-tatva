@@ -55,7 +55,7 @@ export function ContactPathwayFilm({
     <motion.figure
       data-contact-pathway-film
       data-contact-pathway-camera={camera}
-      className="absolute inset-x-0 top-0 h-[5.5rem] overflow-hidden rounded-[1.15rem] border border-white/50 bg-soil shadow-[0_18px_42px_rgba(38,31,23,0.16)] sm:bottom-0 sm:left-auto sm:right-0 sm:h-auto sm:w-[34%] sm:rounded-[1.4rem]"
+      className="relative m-0 w-full min-w-0 self-center overflow-hidden rounded-2xl bg-soil"
       onPointerEnter={(event) => {
         if (event.pointerType === "mouse") setIsHovering(true);
       }}
@@ -69,7 +69,7 @@ export function ContactPathwayFilm({
       {livingStill ? (
         <LivingImage
           src={poster}
-          sizes="(min-width: 640px) 24vw, calc(100vw - 4rem)"
+          sizes="(min-width: 1024px) 28vw, (min-width: 640px) 42vw, calc(100vw - 5rem)"
           imagePosition={imagePosition}
           intensity="subtle"
         />
@@ -78,7 +78,7 @@ export function ContactPathwayFilm({
           src={poster}
           alt=""
           fill
-          sizes="(min-width: 640px) 24vw, calc(100vw - 4rem)"
+          sizes="(min-width: 1024px) 28vw, (min-width: 640px) 42vw, calc(100vw - 5rem)"
           style={{ objectFit: "cover", objectPosition: imagePosition }}
         />
       )}
@@ -101,19 +101,15 @@ export function ContactPathwayFilm({
 
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(24,27,22,0.06)_18%,rgba(24,27,22,0.72)_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(24,27,22,0.72)_100%)]"
       />
       <div
         aria-hidden="true"
         className="contact-pathway-film-glint absolute inset-y-0 left-[-35%] w-[42%] rotate-[11deg] bg-gradient-to-r from-transparent via-white/18 to-transparent"
       />
 
-      <figcaption className="absolute inset-x-3 bottom-2.5 flex items-center justify-between gap-2 text-[0.54rem] font-medium uppercase tracking-[0.14em] text-ivory/84 sm:inset-x-4 sm:bottom-4 sm:text-[0.58rem] sm:tracking-[0.17em]">
-        <span>{caption}</span>
-        <span aria-hidden="true" className="flex items-center gap-1.5 text-ivory/55">
-          <span className="h-1.5 w-1.5 rounded-full bg-sandstone shadow-[0_0_12px_rgba(212,185,154,0.8)]" />
-          {livingStill ? "scene" : "film"}
-        </span>
+      <figcaption className="absolute inset-x-4 bottom-3 text-[0.65rem] font-medium leading-relaxed tracking-[0.03em] text-ivory sm:bottom-4">
+        {caption}
       </figcaption>
     </motion.figure>
   );

@@ -397,8 +397,40 @@
   animation-delay: 1.38s;
 }
 
+[data-contact-film] [data-contact-pathways-card] {
+  container: contact-pathways / inline-size;
+}
+
+/* Content participates in layout: longer route copy must never disappear
+   behind the card edge. Crossfading shots share a grid cell, not a fixed box. */
+[data-contact-film] [data-contact-pathway-shot] {
+  align-content: start;
+}
+
 [data-contact-film] [data-contact-pathway-film] {
+  aspect-ratio: 16 / 9;
   transform-origin: 50% 50%;
+}
+
+/* Respond to the card's available width, not just the viewport. The former
+   nested 34% strip squeezed both the subject and its caption on laptops. */
+@container contact-pathways (min-width: 34rem) {
+  [data-contact-film] [data-contact-pathway-shot] {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
+    column-gap: 1.5rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-copy] {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  [data-contact-film] [data-contact-pathway-film] {
+    grid-column: 2;
+    grid-row: 1;
+    aspect-ratio: 4 / 3;
+  }
 }
 
 [data-contact-film] .contact-pathway-film-video {
@@ -955,15 +987,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 
   [data-contact-film] [data-contact-pathways-heading] {
-    font-size: clamp(2.15rem, 4.3vw, 3.45rem);
-  }
-
-  [data-contact-film] [data-contact-pathway-panel] {
-    min-height: 24rem;
-  }
-
-  [data-contact-film] [data-contact-pathway-panel] > div {
-    inset: 1.75rem;
+    font-size: clamp(2.15rem, 3.3vw, 3rem);
   }
 
   [data-contact-film] [data-contact-write-heading] {
@@ -1028,12 +1052,6 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
     padding-bottom: 1.35rem;
   }
 
-  [data-contact-film] [data-contact-pathways-grid] {
-    grid-template-columns: 0.72fr 1.28fr;
-    align-items: center;
-    gap: 1.75rem;
-  }
-
   [data-contact-film] .contact-write-layout {
     grid-template-columns: 0.78fr 1.22fr;
     align-items: center;
@@ -1048,14 +1066,6 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 
   [data-contact-film] [data-contact-pathways-heading] {
     font-size: clamp(2rem, 4.7vw, 2.75rem);
-  }
-
-  [data-contact-film] [data-contact-pathway-panel] {
-    min-height: 22rem;
-  }
-
-  [data-contact-film] [data-contact-pathway-panel] > div {
-    inset: 1.5rem;
   }
 
   [data-contact-film] [data-contact-write-heading],
@@ -1405,9 +1415,8 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 }
 
-/* Short phones keep the entire route decision in one composed frame. The
-   descriptive paragraph above the card is redundant once the three labelled
-   routes are visible, so the card—not a nested scroll area—gets the space. */
+/* Short phones reduce repeated intro copy. Route content keeps its natural
+   height so larger text and longer choices remain reachable by page scroll. */
 @media (max-width: 639px) and (max-height: 820px) {
   [data-contact-film] .contact-hero-film {
     min-height: 100svh !important;
@@ -1505,20 +1514,15 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 
   [data-contact-film] [data-contact-pathway-panel] {
-    min-height: 23rem;
+    padding: 0.75rem;
   }
 
-  [data-contact-film] [data-contact-pathway-panel] > [data-contact-pathway-shot] {
-    inset: 0.75rem;
+  [data-contact-film] [data-contact-pathway-shot] {
+    gap: 1rem;
   }
 
   [data-contact-film] [data-contact-pathway-film] {
-    height: 4.75rem;
     border-radius: 0.95rem;
-  }
-
-  [data-contact-film] [data-contact-pathway-shot] > div {
-    padding-top: 5.55rem;
   }
 
   [data-contact-film] [data-contact-pathway-title] {

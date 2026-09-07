@@ -173,7 +173,7 @@ function PathwayHandoff({
     <div data-contact-pathway-handoff className="mt-auto pt-4 sm:pt-7">
       <div
         role="img"
-        className="grid grid-cols-[auto_minmax(1rem,1fr)_auto_minmax(1rem,1fr)_auto] items-center gap-2 sm:gap-3"
+        className="grid grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-2 sm:gap-3"
         aria-label={`${pathway.label} carries the issue you bring toward the decision you need.`}
       >
         <span aria-hidden="true" className="text-[0.56rem] font-medium uppercase tracking-[0.15em] text-soil/42 sm:text-[0.62rem]">
@@ -357,7 +357,7 @@ export function ContactPathways() {
   return (
     <div ref={sceneRef} className="w-full">
       <Container className="contact-pathways-layout relative flex min-h-[100svh] items-center py-7 sm:py-14">
-        <div data-contact-pathways-grid className="grid w-full gap-5 sm:gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-14">
+        <div data-contact-pathways-grid className="grid w-full min-w-0 gap-5 sm:gap-8 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,1.4fr)] lg:items-center lg:gap-10">
           <div data-contact-pathways-intro className="max-w-md">
             <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/65">
               Choose how to reach Suman
@@ -367,20 +367,20 @@ export function ContactPathways() {
               data-contact-pathways-heading
               lines={["Match the route", "to the decision", "in front of you."]}
               resolveClassName="text-clay"
-              className="mt-3 font-display text-[clamp(2rem,8.7vw,2.55rem)] font-normal leading-[0.98] text-soil sm:mt-4 sm:text-[clamp(2.35rem,4.7vw,4.5rem)]"
+              className="mt-3 font-display text-[clamp(2rem,8.7vw,2.55rem)] font-normal leading-[0.98] text-soil sm:mt-4 sm:text-[clamp(2.35rem,4.7vw,4.5rem)] lg:text-[clamp(2.15rem,3.3vw,3rem)]"
             />
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-soil/70 sm:mt-5 sm:text-base">
               Reserve time, speak now, or write first. Every route reaches the person who would lead the work.
             </p>
           </div>
 
-          <div data-contact-pathways-card className="overflow-hidden rounded-[1.5rem] border border-white/55 bg-[#F6F2EA]/72 shadow-[0_28px_90px_rgba(42,35,26,0.16)] backdrop-blur-3xl sm:rounded-[1.75rem]">
-            <div className="grid lg:grid-cols-[0.76fr_1.24fr]">
+          <div data-contact-pathways-card className="min-w-0 overflow-hidden rounded-[1.5rem] border border-white/55 bg-[#F6F2EA]/90 shadow-[0_28px_90px_rgba(42,35,26,0.12)] backdrop-blur-3xl sm:rounded-[1.75rem]">
+            <div className="grid min-w-0">
               <div
                 role="tablist"
                 aria-label="Ways to contact Branding Tatva"
                 data-contact-pathway-tabs
-                className="grid grid-cols-3 gap-1.5 border-b border-soil/10 p-2.5 sm:gap-2 sm:p-3 lg:flex lg:flex-col lg:border-b-0 lg:border-r lg:p-4"
+                className="grid grid-cols-3 gap-1.5 border-b border-soil/10 p-2.5 sm:gap-2 sm:p-3"
               >
                 {pathways.map((pathway, index) => {
                   const selected = pathway.id === active.id;
@@ -402,7 +402,7 @@ export function ContactPathways() {
                       onMouseEnter={() => choose(index)}
                       onKeyDown={(event) => handleTabKeyDown(index, event)}
                       data-cursor-label={pathway.label}
-                      className={`group relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1.5 py-1.5 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-[5.5rem] sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2 lg:min-h-0 lg:flex-none lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:py-4 lg:text-left ${
+                      className={`group relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1.5 py-1.5 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-[5.5rem] sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2 ${
                         selected ? "text-ivory" : "text-soil hover:bg-white/55"
                       }`}
                     >
@@ -446,7 +446,7 @@ export function ContactPathways() {
                 onPointerUp={handlePanelPointerUp}
                 onPointerCancel={cancelPanelGesture}
                 onLostPointerCapture={cancelPanelGesture}
-                className="relative min-h-[24rem] touch-pan-y p-4 sm:min-h-[27rem] sm:p-9 lg:min-h-[28rem] lg:p-10"
+                className="relative grid min-w-0 touch-pan-y p-4 sm:p-6 lg:p-7"
                 style={prefersReducedMotion ? undefined : { x: touchDragXSmooth }}
               >
                 <AnimatePresence initial={false} custom={direction} mode="sync">
@@ -460,11 +460,11 @@ export function ContactPathways() {
                     exit={prefersReducedMotion ? undefined : "exit"}
                     transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE_AIR }}
                     style={{ transformOrigin: "50% 50%" }}
-                    className="absolute inset-4 flex flex-col sm:inset-9 lg:inset-10"
+                    className="relative grid min-w-0 gap-5 [grid-area:1/1]"
                   >
                   <ContactPathwayFilm key={active.id} {...active.film} />
 
-                  <div className="relative z-10 flex min-h-full flex-col pt-[6.75rem] sm:pr-[39%] sm:pt-0">
+                  <div data-contact-pathway-copy className="relative z-10 flex min-w-0 flex-col">
                     <div className="flex items-center justify-between">
                       <span className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-clay">
                         {active.label}
@@ -474,7 +474,7 @@ export function ContactPathways() {
                       </span>
                     </div>
 
-                    <p data-contact-pathway-title className="mt-4 max-w-xl font-display text-[clamp(1.65rem,7.2vw,2.2rem)] font-normal leading-[1.02] text-soil sm:mt-7 sm:text-[clamp(1.85rem,3.2vw,2.75rem)]">
+                    <p data-contact-pathway-title className="mt-3 max-w-xl font-display text-[clamp(1.65rem,7.2vw,2.2rem)] font-normal leading-[1.06] text-soil sm:mt-4 sm:text-[clamp(1.85rem,2.7vw,2.35rem)]">
                       {active.title}
                     </p>
                     <p data-contact-pathway-description className="mt-3 max-w-lg text-[0.78rem] leading-relaxed text-soil/68 sm:mt-4 sm:text-sm lg:text-base">
