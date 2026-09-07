@@ -17,6 +17,8 @@
 }
 
 .site-header__route {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -28,12 +30,20 @@
   font-weight: 500;
   line-height: 1.25;
   white-space: nowrap;
-  transition: color 180ms ease, background-color 180ms ease;
+  transition: color 180ms ease;
 }
 
-.site-header__route[aria-current="page"] {
-  background: #e4dccb;
+.site-header__route[data-highlighted="true"] {
   color: #332e26;
+}
+
+.site-header__route-highlight {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: #e4dccb;
+  pointer-events: none;
 }
 
 .site-header__cta {
@@ -64,11 +74,6 @@
 }
 
 @media (hover: hover) {
-  .site-header__route:hover {
-    background: #e9e2d4;
-    color: #332e26;
-  }
-
   .site-header__cta:hover {
     border-color: #3d392b;
     background: #3d392b;

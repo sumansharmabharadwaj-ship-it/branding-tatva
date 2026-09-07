@@ -44,6 +44,8 @@ export function Header({ transparent = false }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [barHidden, setBarHidden] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
+  const [hoveredRoute, setHoveredRoute] = useState<string | null>(null);
+  const [focusedRoute, setFocusedRoute] = useState<string | null>(null);
   const lastScrollRef = useRef(0);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
@@ -135,6 +137,8 @@ export function Header({ transparent = false }: HeaderProps) {
 
   useEffect(() => {
     setOpen(false);
+    setHoveredRoute(null);
+    setFocusedRoute(null);
   }, [pathname, transparent]);
 
   useEffect(() => {
@@ -159,6 +163,7 @@ export function Header({ transparent = false }: HeaderProps) {
     : pathname.startsWith("/about") ? "#795A43"
     : "#C6A97A";
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  const highlightedRoute = focusedRoute ?? hoveredRoute ?? headerNavigation.find((item) => isActive(item.href))?.href;
 
   return (
     <>
@@ -192,7 +197,14 @@ export function Header({ transparent = false }: HeaderProps) {
             </Link>
 
             <div className="site-header__actions flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-5">
-              <nav aria-label="Primary" className="site-header__desktop-nav">
+              <nav
+                aria-label="Primary"
+                className="site-header__desktop-nav"
+                onPointerLeave={() => setHoveredRoute(null)}
+                onBlurCapture={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) setFocusedRoute(null);
+                }}
+              >
                 {headerNavigation
                   .filter((item) => item.href !== "/" && item.href !== "/contact")
                   .map((item) => {
@@ -202,8 +214,23 @@ export function Header({ transparent = false }: HeaderProps) {
                         key={item.href}
                         href={item.href}
                         aria-current={active ? "page" : undefined}
+                        data-highlighted={highlightedRoute === item.href}
+                        onPointerEnter={(event) => {
+                          if (event.pointerType === "mouse") setHoveredRoute(item.href);
+                        }}
+                        onFocus={(event) => {
+                          if (event.currentTarget.matches(":focus-visible")) setFocusedRoute(item.href);
+                        }}
                         className="site-header__route"
                       >
+                        {highlightedRoute === item.href && (
+                          <motion.span
+                            aria-hidden="true"
+                            className="site-header__route-highlight"
+                            layoutId={prefersReducedMotion ? undefined : "header-route-highlight"}
+                            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                          />
+                        )}
                         {item.label}
                       </Link>
                     );
