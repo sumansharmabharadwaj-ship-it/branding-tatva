@@ -29,18 +29,21 @@ import {
   barVariants,
 } from "./animations";
 
-// A compact, floating pill instead of a full-width bar: the wordmark stays
-// the only permanent fixture (dead center, so it reads the same whether
-// the CTA or menu button is present), everything else — every nav link,
-// on every breakpoint — lives behind one hamburger toggle. Less chrome
-// competing with whatever hero sits underneath it. Hides on scroll-down
-// and reveals on scroll-up, so it gets out of the way while reading but
-// is always one upward flick away.
+// Keep the short route names visible in the desktop pill. The same labels
+// carry into the mobile menu, while page headings and footer copy retain
+// their full descriptions.
+const headerNavigation = navigation.map((item) => ({
+  ...item,
+  label: item.href === "/about" ? "The Strategist"
+    : item.href === "/services" ? "The Strategy"
+    : item.label,
+}));
 
 export function Header({ transparent = false }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [barHidden, setBarHidden] = useState(false);
+  const [focusWithin, setFocusWithin] = useState(false);
   const lastScrollRef = useRef(0);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
@@ -134,7 +137,20 @@ export function Header({ transparent = false }: HeaderProps) {
     setOpen(false);
   }, [pathname, transparent]);
 
-  const isBarHidden = barHidden && !open;
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 60rem)");
+    function closeDesktopMenu() {
+      if (!desktop.matches) return;
+      if (menuRef.current?.contains(document.activeElement) || document.activeElement === menuButtonRef.current) {
+        document.querySelector<HTMLElement>(".site-header__desktop-nav a")?.focus();
+      }
+      setOpen(false);
+    }
+    desktop.addEventListener("change", closeDesktopMenu);
+    return () => desktop.removeEventListener("change", closeDesktopMenu);
+  }, []);
+
+  const isBarHidden = barHidden && !open && !focusWithin;
   const accent =
     pathname.startsWith("/services") ? "#8FAE83"
     : pathname.startsWith("/work") ? "#D4B99A"
@@ -148,18 +164,22 @@ export function Header({ transparent = false }: HeaderProps) {
     <>
       <motion.header
         data-site-header
+        onFocusCapture={() => setFocusWithin(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setFocusWithin(false);
+        }}
         variants={barVariants}
         animate={isBarHidden ? "hidden" : "visible"}
         transition={prefersReducedMotion ? { duration: 0 } : BAR_TRANSITION}
         className="site-header fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
-        <div className="relative w-full max-w-4xl lg:max-w-5xl">
+        <div className="site-header__shell relative w-full">
           <div
             className={`site-header__bar flex w-full items-center justify-between gap-4 rounded-full border border-soil/10 px-4 py-2.5 shadow-elevation-md backdrop-blur-md transition-colors duration-500 sm:px-6 sm:py-3 ${
               scrolled ? "bg-[#f4efe6]/94" : "bg-[#f4efe6]/84"
             }`}
           >
-            <Link href="/" className="site-header__brand flex min-w-0 shrink-0 items-center gap-3">
+            <Link href="/" aria-label="Branding Tatva home" className="site-header__brand flex min-w-0 shrink-0 items-center gap-3">
               <LogoMark size={32} className="shrink-0" />
               <span aria-hidden="true" className="site-header__divider hidden h-6 w-px bg-soil/20 min-[360px]:block" />
               {/* Logo owns an inline-flex display internally, so the
@@ -172,12 +192,8 @@ export function Header({ transparent = false }: HeaderProps) {
             </Link>
 
             <div className="site-header__actions flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-5">
-              {/* The complete label set needs a genuinely wide canvas. At
-                  laptop widths the CTA and always-available menu preserve
-                  every route without compressing the wordmark or allowing
-                  Brand Strategy & Systems to collide with its neighbours. */}
-              <nav aria-label="Primary" className="hidden items-center gap-7 2xl:flex">
-                {navigation
+              <nav aria-label="Primary" className="site-header__desktop-nav">
+                {headerNavigation
                   .filter((item) => item.href !== "/" && item.href !== "/contact")
                   .map((item) => {
                     const active = isActive(item.href);
@@ -186,28 +202,17 @@ export function Header({ transparent = false }: HeaderProps) {
                         key={item.href}
                         href={item.href}
                         aria-current={active ? "page" : undefined}
-                        className={`relative whitespace-nowrap text-[0.72rem] font-medium uppercase tracking-[0.18em] transition-colors duration-300 ${
-                          active ? "" : "text-soil/72 hover:text-soil"
-                        }`}
-                        style={active ? { color: accent } : undefined}
+                        className="site-header__route"
                       >
                         {item.label}
-                        {active && (
-                          <span
-                            aria-hidden="true"
-                            className="absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full"
-                            style={{ backgroundColor: accent }}
-                          />
-                        )}
                       </Link>
                     );
                   })}
               </nav>
-              <span aria-hidden="true" className="hidden h-6 w-px bg-soil/20 2xl:block" />
               <Link
                 href="/contact"
-                className="group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 text-[0.68rem] font-medium uppercase tracking-[0.16em] transition-colors duration-300 sm:inline-flex"
-                style={{ borderColor: `${accent}c0`, color: accent }}
+                aria-current={isActive("/contact") ? "page" : undefined}
+                className="site-header__cta group hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-5 py-2 sm:inline-flex"
               >
                 Talk with Suman
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
@@ -285,7 +290,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 aria-label="Primary"
               >
                 <motion.ul variants={prefersReducedMotion ? undefined : navListVariants} className="flex flex-col">
-                  {navigation.map((item) => (
+                  {headerNavigation.map((item) => (
                     <motion.li
                       key={item.href}
                       variants={prefersReducedMotion ? undefined : navItemVariants}
@@ -293,6 +298,7 @@ export function Header({ transparent = false }: HeaderProps) {
                     >
                       <Link
                         href={item.href}
+                        aria-current={isActive(item.href) ? "page" : undefined}
                         onClick={() => setOpen(false)}
                         className="block min-h-12 rounded-2xl px-4 py-3 text-center font-display text-xl text-soil/80 transition-colors hover:bg-soil/[0.05] hover:text-clay focus-visible:bg-soil/[0.05] focus-visible:text-clay"
                       >

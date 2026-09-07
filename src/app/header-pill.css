@@ -1,0 +1,110 @@
+/* The compact route pill keeps the studio identity and destination names
+   together, with enough room for ordinary laptop widths. */
+.site-header__shell {
+  max-width: 40rem;
+}
+
+.site-header__bar {
+  gap: 1rem;
+  padding: 0.5rem 0.75rem 0.5rem 1.125rem;
+  box-shadow: 0 4px 20px rgb(43 37 28 / 9%);
+}
+
+.site-header__desktop-nav {
+  display: none;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.site-header__route {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 999px;
+  color: #4b4438;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.site-header__route[aria-current="page"] {
+  background: #e4dccb;
+  color: #332e26;
+}
+
+.site-header__cta {
+  min-height: 2.75rem;
+  padding-inline: 1.125rem;
+  border-color: #514d3c;
+  background: #514d3c;
+  color: #fffaf0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.site-header__brand,
+.site-header__ambient button {
+  min-height: 2.75rem;
+}
+
+.site-header :is(a, button):focus-visible {
+  outline: 2px solid #514d3c;
+  outline-offset: 3px;
+}
+
+.site-header__menu-panel a[aria-current="page"] {
+  background: #e4dccb;
+  color: #332e26;
+}
+
+@media (hover: hover) {
+  .site-header__route:hover {
+    background: #e9e2d4;
+    color: #332e26;
+  }
+
+  .site-header__cta:hover {
+    border-color: #3d392b;
+    background: #3d392b;
+  }
+}
+
+@media (min-width: 60rem) {
+  .site-header__shell {
+    width: max-content;
+    max-width: 100%;
+  }
+
+  .site-header__actions {
+    gap: 0.5rem;
+  }
+
+  .site-header__desktop-nav {
+    display: flex;
+  }
+
+  .site-header__menu-button {
+    display: none;
+  }
+}
+
+/* Keyboard focus must bring the pill back even when the homepage's
+   additional scroll director has moved it above the viewport. */
+html.home-v4-mounted header[data-site-header]:focus-within {
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__bar,
+  .site-header__route,
+  .site-header__cta,
+  .site-header__cta span {
+    transition: none;
+  }
+}
