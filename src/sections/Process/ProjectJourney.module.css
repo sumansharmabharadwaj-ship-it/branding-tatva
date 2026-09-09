@@ -103,3 +103,15 @@
     overflow: clip;
   }
 }
+:global(html[data-motion="reduced"]) .journey {
+  height: auto;
+  min-height: 100svh;
+  overflow: hidden;
+}
+:global(html[data-motion="reduced"]) .shell {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 100svh;
+  overflow: visible;
+}
