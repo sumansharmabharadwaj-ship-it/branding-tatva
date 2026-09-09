@@ -92,6 +92,7 @@ export function Convergence() {
   const readProgress = useTransform(visualizer.scrollYProgress, [0, 1 / 3], [0, 1]);
   const connectProgress = useTransform(visualizer.scrollYProgress, [1 / 3, 2 / 3], [0, 1]);
   const carryProgress = useTransform(visualizer.scrollYProgress, [2 / 3, 1], [0, 1]);
+  const registerProgress = useTransform(visualizer.scrollYProgress, [0, 1], [0.34, 1]);
   const stageProgress = [readProgress, connectProgress, carryProgress] as const;
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
@@ -249,7 +250,9 @@ export function Convergence() {
                     </AnimatePresence>
                   </div>
                   <div className={styles.registerMeasure}>
-                    <span />
+                    <motion.span
+                      style={prefersReducedMotion ? undefined : { scaleX: registerProgress }}
+                    />
                   </div>
                   <div className={styles.registerResult}>
                     <small>{stage === 1 ? "Resolved as" : "Decision state"}</small>

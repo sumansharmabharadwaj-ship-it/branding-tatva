@@ -82,6 +82,9 @@ export function PointOfView() {
   const transitionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
   const filmY = useTransform(sequence.scrollYProgress, [0, 1], ["1.2%", "-1.2%"]);
   const filmScale = useTransform(sequence.scrollYProgress, [0, 0.5, 1], [1.02, 1, 0.99]);
+  const ledgerFocusY = useTransform(sequence.scrollYProgress, [0, 1], ["0%", "200%"]);
+  const ledgerCursorX = useTransform(sequence.scrollYProgress, [0, 1], ["28%", "72%"]);
+  const frameShiftProgress = useTransform(sequence.scrollYProgress, [0, 1], [0.34, 1]);
   const categoryProgress = useTransform(sequence.scrollYProgress, [0, 1 / 3], [0, 1]);
   const valueProgress = useTransform(sequence.scrollYProgress, [1 / 3, 2 / 3], [0, 1]);
   const memoryProgress = useTransform(sequence.scrollYProgress, [2 / 3, 1], [0, 1]);
@@ -172,8 +175,14 @@ export function PointOfView() {
                 <div className={styles.recognitionChamber}>
                   <div className={styles.evidenceFilm}>
                     <div className={styles.decisionLedger}>
-                      <span className={styles.ledgerFocus} />
-                      <span className={styles.ledgerCursor} />
+                      <motion.span
+                        className={styles.ledgerFocus}
+                        style={prefersReducedMotion ? undefined : { y: ledgerFocusY }}
+                      />
+                      <motion.span
+                        className={styles.ledgerCursor}
+                        style={prefersReducedMotion ? undefined : { left: ledgerCursorX }}
+                      />
                       <div className={styles.ledgerRows}>
                         {STAGES.map((stage, index) => (
                           <span key={stage.lens} data-active={index === activeIndex}>
@@ -220,7 +229,9 @@ export function PointOfView() {
                   </AnimatePresence>
                   <div className={styles.frameShift}>
                     <span>{active.from}</span>
-                    <i />
+                    <motion.i
+                      style={prefersReducedMotion ? undefined : { scaleX: frameShiftProgress }}
+                    />
                     <strong>{active.to}</strong>
                   </div>
                 </div>

@@ -320,6 +320,14 @@ assert(
   "The About stage rails no longer report continuous physical scroll progress.",
 );
 assert(
+  convergence.includes("const registerProgress = useTransform") &&
+    convergence.includes("scaleX: registerProgress") &&
+    pointOfView.includes("const ledgerFocusY = useTransform") &&
+    pointOfView.includes("const ledgerCursorX = useTransform") &&
+    pointOfView.includes("scaleX: frameShiftProgress"),
+  "The About editorial indicators no longer move continuously with the physical scroll position.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),
