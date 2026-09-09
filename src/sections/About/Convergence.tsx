@@ -141,6 +141,10 @@ export function Convergence() {
     SCROLL_BEATS,
     [1, 1, 1, 1, 0.38, 0.38],
   );
+  const outcomeOpacity = useTransform(pacedScrollProgress, [0.69, 0.8], [0, 1]);
+  const outcomeY = useTransform(pacedScrollProgress, [0.69, 0.8], [10, 0]);
+  const outputsOpacity = useTransform(pacedScrollProgress, [0.76, 0.92], [0, 1]);
+  const outputsY = useTransform(pacedScrollProgress, [0.76, 0.92], [14, 0]);
   const stageProgress = [readProgress, connectProgress, carryProgress] as const;
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
@@ -388,25 +392,22 @@ export function Convergence() {
             <div className={styles.outputs}>
               <motion.p
                 className={styles.outcomeStatement}
-                initial={false}
-                animate={{ opacity: stage === 2 ? 1 : 0, y: stage === 2 ? 0 : 10 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
+                style={
+                  prefersReducedMotion
+                    ? { opacity: 1, y: 0 }
+                    : { opacity: outcomeOpacity, y: outcomeY }
+                }
               >
                 One position the whole brand can carry.
               </motion.p>
               {OUTPUTS.map((output, index) => (
                 <motion.div
                   key={output.label}
-                  initial={false}
-                  animate={{
-                    opacity: stage === 2 ? 1 : 0,
-                    y: stage === 2 ? 0 : 14,
-                  }}
-                  transition={{
-                    duration: prefersReducedMotion ? 0 : 0.48,
-                    delay: prefersReducedMotion ? 0 : index * 0.06,
-                    ease: EASE,
-                  }}
+                  style={
+                    prefersReducedMotion
+                      ? { opacity: 1, y: 0 }
+                      : { opacity: outputsOpacity, y: outputsY }
+                  }
                 >
                   <span>0{index + 1}</span>
                   <strong>{output.label}</strong>
