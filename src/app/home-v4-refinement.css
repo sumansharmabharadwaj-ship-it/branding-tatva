@@ -114,6 +114,99 @@ body:has(.home-v4) .consent-notice[data-consent-compact="true"] .consent-notice_
   }
 }
 
+/* Keep the complete Evidence decision visible as one desktop camera plate.
+   The scene keeps its authored grid and content; only its vertical rhythm
+   compresses enough for the proof object and project index to share a frame. */
+@media (min-width: 1181px) and (min-height: 760px) {
+  .home-v4 #evidence,
+  .home-v4 #evidence > .evidence-cinematic {
+    height: 100svh !important;
+    min-height: 100svh !important;
+  }
+
+  .home-v4 #evidence {
+    scroll-margin-top: 0;
+  }
+
+  .home-v4 #evidence > .evidence-cinematic {
+    box-sizing: border-box;
+    padding-block: clamp(4.4rem, 6.5svh, 5.5rem) 1rem !important;
+    overflow: clip !important;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__shell {
+    position: relative !important;
+    top: auto !important;
+    display: grid !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    justify-content: initial !important;
+    padding-block: 0 !important;
+    overflow: clip !important;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    row-gap: clamp(0.65rem, 1.45svh, 0.9rem);
+  }
+
+  .home-v4 #evidence .evidence-cinematic__header {
+    gap: clamp(2rem, 4vw, 4.2rem);
+  }
+
+  .home-v4 #evidence .evidence-cinematic__header h2 {
+    font-size: clamp(3rem, min(4.5vw, 7svh), 4.65rem);
+  }
+
+  .home-v4 #evidence .evidence-cinematic__stage {
+    min-height: 0;
+    margin-top: 0;
+  }
+
+  .home-v4 #evidence :is(.evidence-cinematic__media, .evidence-cinematic__dossier) {
+    min-height: 0;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__media-copy {
+    bottom: clamp(5.7rem, 9svh, 7.2rem);
+  }
+
+  .home-v4 #evidence .evidence-cinematic__media-copy strong {
+    font-size: clamp(2.8rem, min(5vw, 7.5svh), 5.5rem);
+  }
+
+  .home-v4 #evidence .evidence-cinematic__dossier {
+    padding: clamp(1.15rem, 2svh, 1.75rem);
+  }
+
+  .home-v4 #evidence .evidence-cinematic__trail-step {
+    min-height: 0;
+    padding-block: clamp(0.72rem, 1.35svh, 1.05rem);
+  }
+
+  .home-v4 #evidence .evidence-cinematic__trail-step p {
+    margin-top: 0.5rem;
+    font-size: clamp(1rem, min(1.35vw, 2.2svh), 1.3rem);
+  }
+
+  .home-v4 #evidence .evidence-cinematic__dossier-footer {
+    padding-top: 0.75rem;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__dossier-footer p {
+    display: none;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__dossier-footer a {
+    margin-top: 0;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__index {
+    margin-top: 0;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__index button {
+    min-height: clamp(4.7rem, 8.6svh, 5.4rem);
+  }
+}
+
 @media (max-width: 560px) {
   .home-v4-opening__actions {
     gap: 0.45rem;

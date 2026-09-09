@@ -7,6 +7,8 @@ const experience = read("src/sections/HomeV4/HomeV4Experience.tsx");
 const scenes = read("src/sections/HomeV4/HomeV4Scenes.tsx");
 const interfaceSource = read("src/sections/HomeV4/HomeV4Interface.tsx");
 const mediaDirector = read("src/sections/HomeV4/HomeV4MediaDirector.tsx");
+const evidenceWall = read("src/sections/Home/EvidenceWall.tsx");
+const evidenceDepth = read("src/app/home-v4-evidence-depth.css");
 const page = read("src/app/page.tsx");
 const refinement = read("src/app/home-v4-refinement.css");
 const consentManager = read("src/components/ConsentManager.tsx");
@@ -43,13 +45,13 @@ assert(
 for (const runtime of [
   "<HomeV4MediaDirector />",
   "<HomeV4HeaderDirector />",
+  "<HomeV4ProcessTempo />",
   "<LivingCursor />",
   "<GuidedView />",
   "<HomePacingDirector />",
 ]) {
   assert(experience.includes(runtime), `Homepage runtime is missing ${runtime}.`);
 }
-assert(!experience.includes("HomeV4ProcessTempo"), "The working method must keep the visitor's chosen stage instead of restoring automatic selection.");
 
 for (const marker of [
   'href="#recognition"',
@@ -78,6 +80,22 @@ assert(interfaceSource.includes("useHydratedReducedMotion"), "Homepage controls 
 assert(interfaceSource.includes('aria-label="Guided homepage controls"'), "Guided journey has no accessible name.");
 assert(interfaceSource.includes('aria-pressed={mode === "guided"}'), "Guided journey does not expose its state.");
 assert(mediaDirector.includes("IntersectionObserver"), "Homepage media no longer follows viewport admission.");
+assert(
+  evidenceWall.includes('exit={prefersReducedMotion ? undefined : { opacity: 0.78'),
+  "Evidence media transition can fall through to a blank project frame.",
+);
+assert(
+  evidenceWall.includes('exit={prefersReducedMotion ? undefined : { opacity: 0.8'),
+  "Evidence dossier transition can fall through to a blank decision record.",
+);
+assert(
+  (evidenceWall.match(/<AnimatePresence mode="sync" initial=\{false\}>/g) || []).length === 2,
+  "Evidence media and dossier must crossfade concurrently without a wait-mode blank gap.",
+);
+assert(
+  evidenceDepth.includes("grid-column: 1;") && evidenceDepth.includes("grid-column: 2;"),
+  "Evidence crossfade layers must share stable grid cells while both files are mounted.",
+);
 
 assert(page.includes('import "./home-v4-refinement.css";'), "Homepage refinement layer is not mounted.");
 assert(
@@ -88,6 +106,11 @@ for (const cssMarker of [
   "text-wrap: balance",
   ":focus-visible",
   'data-guide-hint="visible"',
+  ".home-v4 #evidence .evidence-cinematic__shell",
+  "grid-template-rows: auto auto minmax(0, 1fr)",
+  "position: relative !important",
+  "padding-block: 0 !important",
+  "overflow: clip !important",
   "@media (max-width: 560px)",
   "@media (prefers-reduced-motion: reduce)",
 ]) {

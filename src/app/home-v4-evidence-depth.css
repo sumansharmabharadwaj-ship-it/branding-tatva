@@ -147,6 +147,8 @@
 }
 
 .evidence-cinematic__media {
+  grid-column: 1;
+  grid-row: 1;
   background: #181510;
 }
 
@@ -307,6 +309,8 @@
 }
 
 .evidence-cinematic__dossier {
+  grid-column: 2;
+  grid-row: 1;
   display: flex;
   flex-direction: column;
   padding: clamp(1.3rem, 2.6vw, 2.35rem);
@@ -538,7 +542,14 @@
     min-height: 39rem;
   }
 
+  .evidence-cinematic__media {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
   .evidence-cinematic__dossier {
+    grid-column: 1;
+    grid-row: 2;
     min-height: auto;
   }
 

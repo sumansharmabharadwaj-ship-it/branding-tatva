@@ -125,7 +125,6 @@ final result: passed
 ## Final result
 
 final result: passed
-
 ---
 
 # Design QA: Services Memory Horizon · 2026-09-04
@@ -2071,5 +2070,95 @@ The existing site-owned scene navigator, privacy control, progress rule, and fol
 ## Remaining polish
 
 - P3: the site-owned scene and consent controls overlap the far-right edge at this viewport; the article text and primary diagram content remain unobstructed.
+
+final result: passed
+
+---
+
+# Branding Tatva Evidence Motion QA
+
+## Comparison target
+
+- Source visual truth: https://heyparker.ai/#how-it-works
+- Source capture: `cloud-browser://parker/how-it-works/held-camera-stage`
+- Rendered implementation: `cloud-browser://branding-tatva/home/evidence`
+- Implementation screenshot: `cloud-browser://branding-tatva/home/evidence/final-viewport-capture`
+- Viewport: 1363 × 936 CSS px
+- Source pixels: 1363 × 936
+- Implementation pixels: 1363 × 936
+- Device pixel ratio: 1 for both captures; no density normalization required
+- State: Parker Step 1 → Step 2 overlap; Branding Tatva Evidence aligned to section start, with the first and second manual project states exercised
+
+The reference is a motion-and-pacing target, not a visual-cloning target. Branding Tatva intentionally keeps its own typography, palette, copy, photography, navigation, and information architecture.
+
+## Findings
+
+- No actionable P0, P1, or P2 findings remain.
+- The final 1363 × 936 implementation capture keeps the Evidence heading, proof image, decision record, and five-project index inside one 936 px camera plate.
+- Project changes use concurrent media and dossier crossfades in stable grid cells. No wait-mode unmount gap remains.
+- The Evidence-to-Tatvas splice resolves through a 49.06 px charcoal-to-deep-green constellation handoff. It overlaps the Tatvas chapter by 1 px, so no page background or blank strip can appear between scenes.
+
+## Required fidelity surfaces
+
+- Fonts and typography: Branding Tatva's existing display serif, body sans, hierarchy, optical weights, line height, letter spacing, and wrapping are preserved. The desktop Evidence heading resolves to 61.335 px at this viewport and remains fully visible.
+- Spacing and layout rhythm: The section and nested cinematic scene resolve to a single 936 px frame. Header is 69.9–264.4 px, project index 278–365.3 px, and stage 378.8–919.5 px. No persistent control or project selector is clipped.
+- Colors and visual tokens: Existing charcoal, ivory, moss, and per-project accent tokens remain unchanged. Crossfade opacity floors preserve continuity without introducing a black or white flash.
+- Image quality and asset fidelity: Existing project photography and video sources are retained with their authored crops, contrast, and overlays. No placeholder, CSS drawing, custom SVG substitute, or low-quality replacement was introduced.
+- Copy and content: Existing Evidence headline, project labels, outcome metrics, decision records, and action labels are unchanged.
+- Icons and controls: Existing brand mark, navigation, sound control, project actions, project tabs, selected state, and focus semantics remain intact.
+- Accessibility and motion: Tabs retain semantic roles, roving keyboard focus, `aria-selected`, and a labelled tab panel. Reduced-motion behavior remains owned by the existing hydrated preference hook.
+- Responsiveness: The one-screen compression is limited to desktop viewports at least 1181 × 760. The concurrent layers receive explicit single-column grid rows below 1181 px so the existing tablet/mobile document flow is preserved.
+
+## Full-view comparison evidence
+
+The source and implementation were captured together at 1363 × 936. Parker's useful behavior is a sustained visual chapter with a compact persistent header and one dominant idea held in place. Branding Tatva now applies that same pacing principle to its own Evidence content: the section is one deliberate camera plate, while proof and project states change inside it. Visual appearance intentionally differs because Parker is not the branding or layout reference.
+
+## Focused region comparison evidence
+
+The focused region was the complete Evidence instrument: heading, media proof, decision dossier, and project index. It was compared against Parker's held “How it works” chapter rather than small decorative details because the requested fidelity target was pacing, scene continuity, and viewport composition. Typography, imagery, actions, and selector labels were still inspected at readable size in the 1363 × 936 capture.
+
+## Primary interactions tested
+
+- Manual selection changed the selected tab to MyShopInEurope and updated both media copy and the decision record.
+- The natural click kept `scrollY` at 7157 and the Evidence section at −0.48 px while the selected project changed.
+- Arrow-key navigation advanced focus and selection together to Executive Springboard.
+- “Inspect the project file” and the project-specific case link remain visible in the active media panel.
+
+## Comparison history
+
+1. Earlier P1 — blank transition during project changes.
+   - Evidence: the previous wait-mode project swap could briefly unmount the outgoing state before the next one was visible.
+   - Fix: changed both handoffs to concurrent `mode="sync"` transitions and pinned outgoing/incoming media and dossier layers to the same responsive grid cells.
+   - Post-fix evidence: source gate verifies both concurrent handoffs, non-zero exit opacity floors, and stable grid ownership; manual project changes retain visible media and dossier content.
+
+2. Earlier P2 — legacy sticky runway overrode the intended one-screen Evidence frame.
+   - Evidence: a stale preview measured the scene at 1421.8 px inside a 936 px viewport, with a block shell and the proof stage extending below the fold.
+   - Fix: the final refinement layer explicitly owns section height, nested scene height, shell positioning, grid display, and the remote chooser-before-stage order.
+   - Post-fix evidence: the fresh production preview measures the scene at 936 px, with `grid-template-rows: 194.5px 87.28px 540.7px` and the stage ending at 919.5 px.
+
+3. Final P2 — a scripted focus change could scroll the clipped Evidence plate internally.
+   - Evidence: the plate acquired an internal `scrollTop` after a locator-driven case selection, cropping the heading even though the outer section remained aligned.
+   - Fix: changed the desktop plate and shell from scroll-container `overflow: hidden` behavior to non-scroll-container `overflow: clip` in the final refinement layer.
+   - Post-fix evidence: the fresh production preview kept the plate at `scrollTop: 0`; a natural coordinate click selected MyShopInEurope while the section stayed at −0.48 px and `scrollY` stayed at 7157.
+
+4. Final handoff check — Evidence could not end in a blank separator before the Five Tatvas scene.
+   - Evidence: the live handoff measured 49.06 px high, from Evidence bottom 214.52 px to Tatvas top 262.58 px in the transition viewport.
+   - Fix: preserved the existing constellation veil and confirmed its dark charcoal-to-green gradient rather than introducing a new separator or page-colored gap.
+   - Post-fix evidence: the handoff bottom and Tatvas top overlap by 1 px; computed backgrounds resolve continuously from `rgb(23, 19, 16)` to `rgb(13, 21, 20)`.
+
+## Implementation checklist
+
+- [x] Preserve approved homepage structure, opening, imagery, copy, and compact strategist header.
+- [x] Keep Evidence within one desktop viewport.
+- [x] Remove the blank/boomerang transition gap.
+- [x] Verify manual and keyboard project changes.
+- [x] Verify manual selection does not move or internally scroll the camera plate.
+- [x] Verify the Evidence-to-Tatvas handoff has no blank strip.
+- [x] Verify source and rendered homepage quality gates.
+- [x] Verify final browser geometry at 1363 × 936.
+
+## Follow-up polish
+
+- P3: A physical iOS Safari motion pass would still be useful before the next public release, although the desktop-only compression does not alter the existing small-screen flow.
 
 final result: passed

@@ -4,7 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { Container } from "@/components/Container";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import {
@@ -240,7 +240,15 @@ export function EvidenceWall() {
           tabIndex={0}
           className="evidence-cinematic__stage"
         >
-          <article className="evidence-cinematic__media">
+          <AnimatePresence mode="sync" initial={false}>
+          <motion.article
+            key={`media-${activeProject.slug}`}
+            className="evidence-cinematic__media"
+            initial={prefersReducedMotion ? false : { opacity: 0.78, scale: 1.014, filter: "blur(1px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0.78, scale: 1.006, filter: "blur(1px)" }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
+          >
             <div className="evidence-cinematic__media-layer">
               {activeProject.cardImage && (
                 <Image
@@ -294,14 +302,17 @@ export function EvidenceWall() {
                 {ACTION[activeProject.slug] ?? "View the case"} <span aria-hidden="true">→</span>
               </Link>
             </div>
-          </article>
+          </motion.article>
+          </AnimatePresence>
 
+          <AnimatePresence mode="sync" initial={false}>
           <motion.aside
             key={`trail-${activeProject.slug}`}
             className="evidence-cinematic__dossier"
-            initial={prefersReducedMotion ? false : { y: 8 }}
-            animate={{ y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+            initial={prefersReducedMotion ? false : { opacity: 0.8, y: 7, filter: "blur(1px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0.8, y: -4, filter: "blur(1px)" }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
           >
             <div className="evidence-cinematic__dossier-topline">
               <span>Decision record</span>
@@ -327,6 +338,7 @@ export function EvidenceWall() {
               <Link href="/work">Explore the full archive <span aria-hidden="true">→</span></Link>
             </div>
           </motion.aside>
+          </AnimatePresence>
         </div>
       </Container>
 
