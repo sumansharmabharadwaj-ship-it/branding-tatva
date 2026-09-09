@@ -49,6 +49,12 @@
   text-shadow: 0 2px 24px rgba(10, 16, 11, 0.32);
 }
 
+/* Keyboard focus takes precedence over the entrance animation. */
+[data-contact-film] [data-contact-gratitude-next]:focus-within {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 [data-contact-film] [data-contact-gratitude-ledger] {
   position: relative;
   isolation: isolate;

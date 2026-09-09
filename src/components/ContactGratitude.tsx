@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
 } from "react";
@@ -191,6 +192,8 @@ function GratitudeNote({
  */
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
+  const statementRef = useRef<HTMLDivElement>(null);
+  const nextRef = useRef<HTMLDivElement>(null);
   const noteRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const visitedNotesRef = useRef(0);
   const [activeNote, setActiveNote] = useState<number | null>(null);
@@ -206,6 +209,26 @@ export function ContactGratitude() {
     offset: ["start end", "end start"],
   });
   const progress = useSpring(scrollYProgress, {
+    stiffness: 108,
+    damping: 27,
+    mass: 0.36,
+  });
+  // In a stacked layout the section can be taller than the viewport. Reveal
+  // reading content as it enters the frame, independent of the scene's height.
+  const { scrollYProgress: statementScrollProgress } = useScroll({
+    target: statementRef,
+    offset: ["start 95%", "start 70%"],
+  });
+  const { scrollYProgress: nextScrollProgress } = useScroll({
+    target: nextRef,
+    offset: ["start 95%", "start 75%"],
+  });
+  const statementProgress = useSpring(statementScrollProgress, {
+    stiffness: 108,
+    damping: 27,
+    mass: 0.36,
+  });
+  const nextProgress = useSpring(nextScrollProgress, {
     stiffness: 108,
     damping: 27,
     mass: 0.36,
@@ -245,17 +268,17 @@ export function ContactGratitude() {
   const resolveY = useTransform(progress, [0.12, 0.44, 0.82, 1], [30, 0, 0, -10]);
   const resolveOpacity = useTransform(progress, [0.12, 0.4, 0.9, 1], [0.24, 1, 1, 0.76]);
   const copyClip = useTransform(
-    progress,
-    [0.18, 0.48, 0.84, 1],
-    ["inset(0 100% 0 0%)", "inset(0 0% 0 0%)", "inset(0 0% 0 0%)", "inset(0 10% 0 0%)"],
+    statementProgress,
+    [0, 1],
+    ["inset(0 100% 0 0%)", "inset(0 0% 0 0%)"],
   );
   const signalScale = useTransform(
     progress,
     [0.1, SCROLL_RECEIVE_THRESHOLDS[NOTES.length - 1]],
     [0, 1],
   );
-  const nextY = useTransform(progress, [0.22, 0.5, 0.9, 1], [22, 0, 0, -4]);
-  const nextOpacity = useTransform(progress, [0.22, 0.46, 0.94, 1], [0, 1, 1, 0.82]);
+  const nextY = useTransform(nextProgress, [0, 1], [22, 0]);
+  const nextOpacity = useTransform(nextProgress, [0, 1], [0, 1]);
 
   const allNotesVisited = visitedNotes === ALL_NOTES_VISITED;
   const sequenceFocusNote = completionSettled ? null : lastReceivedNote;
@@ -360,6 +383,34 @@ export function ContactGratitude() {
     }
   }
 
+  function handleNextActionFocus(event: FocusEvent<HTMLDivElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLAnchorElement) || !target.matches(":focus-visible")) return;
+
+    // Let the browser finish its focus scroll, then account for the fixed
+    // header. A short viewport can otherwise leave the preceding action hidden.
+    window.requestAnimationFrame(() => {
+      if (!target.isConnected || document.activeElement !== target) return;
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      const header = document.querySelector<HTMLElement>("[data-site-header]");
+      // Upward focus scrolling can bring a hidden header back into view.
+      const headerBottom = header
+        ? Math.max(header.offsetHeight, header.getBoundingClientRect().bottom)
+        : 0;
+      const safeTop = Math.max(viewportTop, headerBottom) + 12;
+      const safeBottom = viewportTop + (viewport?.height ?? window.innerHeight) - 12;
+      const rect = target.getBoundingClientRect();
+      const delta = rect.top < safeTop
+        ? rect.top - safeTop
+        : rect.bottom > safeBottom
+          ? rect.bottom - safeBottom
+          : 0;
+
+      if (Math.abs(delta) > 1) window.scrollBy({ top: delta, behavior: "auto" });
+    });
+  }
+
   return (
     <div
       ref={sceneRef}
@@ -438,6 +489,7 @@ export function ContactGratitude() {
             </h2>
 
             <motion.div
+              ref={statementRef}
               data-contact-gratitude-statement
               className="mt-5 max-w-xl border-l border-sandstone/48 pl-4 sm:mt-7 sm:pl-5"
               style={reducedMotion ? undefined : { clipPath: copyClip, willChange: "clip-path" }}
@@ -448,6 +500,8 @@ export function ContactGratitude() {
             </motion.div>
 
             <motion.div
+              ref={nextRef}
+              onFocusCapture={handleNextActionFocus}
               data-contact-gratitude-next
               data-contact-gratitude-next-ready={completionSettled ? "true" : undefined}
               aria-hidden="false"
