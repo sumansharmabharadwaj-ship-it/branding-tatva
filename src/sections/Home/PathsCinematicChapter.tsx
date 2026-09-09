@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { packages } from "@/data/services";
 import {
   isServicesSituation,
@@ -57,11 +59,23 @@ const PATHS = [
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function PathsCinematicChapter() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
-  const selectionDirectionRef = useRef(0);
+  const previousIndexRef = useRef(0);
   const selectionId = useId();
-  const reducedMotion = useHydratedReducedMotion();
+  const reducedMotion = Boolean(useHydratedReducedMotion());
+  const cinematicMotion = useMediaQuery(
+    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+  );
+  const sceneInView = useInView(sectionRef, { amount: 0.08 });
+  const visualizer = useScrollDrivenVisualizer({
+    count: PATHS.length,
+    target: sectionRef,
+    enabled: cinematicMotion && sceneInView,
+    reducedMotion,
+  });
+  const { activeIndex, choose: chooseVisualState, preview, releasePreview } = visualizer;
+  const selectionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
   const active = PATHS[activeIndex];
   const packageSlug = SITUATION_TO_PACKAGE[active.situation];
   const offering = packages.find((item) => item.slug === packageSlug)!;
@@ -69,8 +83,7 @@ export function PathsCinematicChapter() {
   useEffect(() => {
     function restore(saved: ServicesSituationId | null) {
       const index = PATHS.findIndex((path) => path.situation === saved);
-      selectionDirectionRef.current = 0;
-      setActiveIndex(index >= 0 ? index : 0);
+      chooseVisualState(index >= 0 ? index : 0);
     }
     function sync() {
       try {
@@ -99,11 +112,14 @@ export function PathsCinematicChapter() {
       window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, clear);
       window.removeEventListener("storage", onStorage);
     };
-  }, []);
+  }, [chooseVisualState]);
+
+  useEffect(() => {
+    previousIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   function choose(index: number) {
-    selectionDirectionRef.current = Math.sign(index - activeIndex);
-    setActiveIndex(index);
+    chooseVisualState(index);
     publishServicesSituation(PATHS[index].situation, "home_paths");
   }
 
@@ -120,23 +136,27 @@ export function PathsCinematicChapter() {
 
   return (
     <section
+      ref={sectionRef}
       id="paths"
       data-home-chapter="paths"
       data-home-section="paths"
       data-cursor-world="light"
+      data-scroll-story="paths"
+      data-path-state={activeIndex}
       className={styles.paths}
       aria-labelledby="paths-cinematic-title"
     >
-      <div className={styles.film} aria-hidden="true">
-        <BackgroundVideo
-          video="/videos/higgsfield-mountain-mist.mp4"
-          poster="/images/higgsfield-mountain-mist-poster.jpg"
-          managedByHomepage
-          loop={false}
-        />
-      </div>
-      <div className={styles.frame}>
-        <header className={styles.header}>
+      <div className={styles.scene}>
+        <div className={styles.film} aria-hidden="true">
+          <BackgroundVideo
+            video="/videos/higgsfield-mountain-mist.mp4"
+            poster="/images/higgsfield-mountain-mist-poster.jpg"
+            managedByHomepage
+            loop={false}
+          />
+        </div>
+        <div className={styles.frame}>
+          <header className={styles.header}>
           <div>
             <p className={styles.eyebrow}>Three ways to work together</p>
             <h2 id="paths-cinematic-title">Start with where <em>the business stands.</em></h2>
@@ -145,7 +165,7 @@ export function PathsCinematicChapter() {
             A first identity, a changed position, or work that needs a consistent hand.
             The starting point shapes the scope.
           </p>
-        </header>
+          </header>
 
         <div className={styles.tabs} role="tablist" aria-label="Choose a brand path">
           {PATHS.map((path, index) => (
@@ -159,6 +179,12 @@ export function PathsCinematicChapter() {
               aria-controls="home-path-panel"
               tabIndex={index === activeIndex ? 0 : -1}
               onClick={() => choose(index)}
+              onPointerEnter={() => preview(index)}
+              onPointerLeave={(event) => {
+                if (document.activeElement !== event.currentTarget) releasePreview();
+              }}
+              onFocus={() => preview(index)}
+              onBlur={releasePreview}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={styles.tab}
             >
@@ -187,7 +213,7 @@ export function PathsCinematicChapter() {
           <motion.div
             key={active.situation}
             className={styles.detail}
-            initial={reducedMotion ? false : { x: selectionDirectionRef.current * 12 }}
+            initial={reducedMotion ? false : { x: selectionDirection * 12 }}
             animate={{ x: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE }}
           >
@@ -226,6 +252,7 @@ export function PathsCinematicChapter() {
             Start with the recognition audit <ArrowRight size={17} aria-hidden="true" />
           </Link>
         </footer>
+        </div>
       </div>
     </section>
   );

@@ -2,8 +2,9 @@
   position: relative; isolation: isolate; min-height: 100svh;
   background: #eae1d2; color: #342f27;
 }
+.scene { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; }
 .film { position: absolute; inset: 0; z-index: -1; overflow: hidden; opacity: .2; pointer-events: none; }
-.paths::before {
+.scene::before {
   content: ""; position: absolute; z-index: 0; inset: 0; pointer-events: none;
   background: linear-gradient(105deg, #eae1d2 10%, rgb(234 225 210 / 85%) 55%, rgb(234 225 210 / 45%));
 }
@@ -84,6 +85,11 @@
   text-decoration: underline; text-decoration-color: rgb(112 72 47 / 35%); text-underline-offset: .3em;
 }
 .paths :is(a,button,[role="tabpanel"]):focus-visible { outline: 2px solid #805239; outline-offset: 5px; }
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
+  .paths { height: 200svh; min-height: 200svh; overflow: clip; }
+  .scene { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
+  .frame { height: 100svh; min-height: 100svh; }
+}
 @media (max-width: 900px) {
   .header, .detail { gap: 2rem; grid-template-columns: 1fr 1fr; }
   .scope { padding-left: 2rem; }
@@ -106,5 +112,9 @@
   .footer { display: block; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .paths { height: auto; min-height: 100svh; }
+  .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
   .action, .action svg, .footer svg { transition: none; }
 }
+:global(html[data-motion="reduced"]) .paths { height: auto; min-height: 100svh; }
+:global(html[data-motion="reduced"]) .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
