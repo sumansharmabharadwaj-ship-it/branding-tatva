@@ -402,6 +402,8 @@ assert(
 assert(
   convergence.includes("const outcomeGroupOpacity = useTransform") &&
     convergence.includes("const outcomeGroupClipPath = useTransform") &&
+    convergence.includes("[0.69, 0.76, 0.84]") &&
+    convergence.includes('["inset(0 50% 0 50%)", "inset(0 0% 0 0%)"]') &&
     convergence.includes("opacity: outcomeGroupOpacity") &&
     convergence.includes("clipPath: outcomeGroupClipPath") &&
     !convergence.includes("delay: prefersReducedMotion ? 0 : index * 0.06"),
@@ -411,6 +413,7 @@ assert(
   convergence.includes("const threadFieldOpacity = useTransform") &&
     convergence.includes("const threadFieldScale = useTransform") &&
     convergence.includes("const threadFieldClipPath = useTransform") &&
+    convergence.includes('"inset(0 49% 0 49%)"') &&
     convergence.includes("opacity: threadFieldOpacity") &&
     convergence.includes("scaleX: threadFieldScale") &&
     convergence.includes("clipPath: threadFieldClipPath"),

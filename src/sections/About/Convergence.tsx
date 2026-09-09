@@ -171,7 +171,7 @@ export function Convergence() {
   const threadFieldOpacity = useTransform(
     pacedScrollProgress,
     SCROLL_BEATS,
-    [0.22, 0.22, 1, 1, 0.18, 0.18],
+    [0.22, 0.22, 1, 1, 0.12, 0.12],
   );
   const threadFieldScale = useTransform(
     pacedScrollProgress,
@@ -186,14 +186,14 @@ export function Convergence() {
       "inset(0 42% 0 42%)",
       "inset(0 0% 0 0%)",
       "inset(0 0% 0 0%)",
-      "inset(0 42% 0 42%)",
-      "inset(0 42% 0 42%)",
+      "inset(0 49% 0 49%)",
+      "inset(0 49% 0 49%)",
     ],
   );
   const threadLineScale = useTransform(
     pacedScrollProgress,
     SCROLL_BEATS,
-    [0.22, 0.22, 1, 1, 0.58, 0.58],
+    [0.22, 0.22, 1, 1, 0.08, 0.08],
   );
   const topThreadY = useTransform(
     pacedScrollProgress,
@@ -215,11 +215,15 @@ export function Convergence() {
     SCROLL_BEATS,
     [0, 0, 88, 88, 0, 0],
   );
-  const outcomeGroupOpacity = useTransform(pacedScrollProgress, [0.69, 0.82], [0, 1]);
+  const outcomeGroupOpacity = useTransform(
+    pacedScrollProgress,
+    [0.69, 0.76, 0.84],
+    [0, 0.65, 1],
+  );
   const outcomeGroupClipPath = useTransform(
     pacedScrollProgress,
-    [0.69, 0.9],
-    ["inset(0 0 16% 0)", "inset(0 0 0% 0)"],
+    [0.69, 0.84],
+    ["inset(0 50% 0 50%)", "inset(0 0% 0 0%)"],
   );
   const stageProgress = [readProgress, connectProgress, carryProgress] as const;
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
