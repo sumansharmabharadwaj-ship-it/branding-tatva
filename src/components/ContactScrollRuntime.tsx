@@ -4,6 +4,8 @@ import { useEffect } from "react";
 
 const CAMERA_QUERY = "(min-width: 941px) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 const SCROLL_KEYS = new Set([
+  // Focus navigation can scroll a control into view; it also owns the viewport.
+  "Tab",
   "ArrowDown",
   "ArrowUp",
   "PageDown",
