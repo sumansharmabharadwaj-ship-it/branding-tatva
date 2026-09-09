@@ -99,12 +99,12 @@
   display: inline-flex; align-items: center; justify-content: space-between;
   gap: 1.5rem; max-width: 100%; min-height: 3.5rem; margin-top: .6rem;
   padding: 1rem 1.5rem; border: 1px solid #514936; border-radius: 999px;
-  background: #514936; color: #fff9ed; font-size: .95rem; font-weight: 500;
+  background: #514936; color: #fff9ed; font-size: 1rem; font-weight: 500;
   line-height: 1.4; transition: background-color 220ms ease, transform 220ms ease;
 }
 .bookButton svg { flex: 0 0 auto; transition: transform 220ms ease; }
-.bookButton:hover { background: #3b3629; }
-.bookButton:hover svg { transform: translateX(4px); }
+.bookButton:is(:hover, :focus-visible) { background: #3b3629; }
+.bookButton:is(:hover, :focus-visible) svg { transform: translateX(4px); }
 .preparation {
   max-width: 37ch; margin: 1rem 0 1.5rem; color: #514b40;
   font-size: .875rem; line-height: 1.6;
@@ -115,7 +115,7 @@
   gap: .5rem 1rem; padding-bottom: 1.5rem;
 }
 .conversationTopline span:first-child {
-  font-size: .75rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  font-size: .875rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
 }
 .conversationTopline span:last-child {
   display: inline-flex; align-items: center; gap: .4rem; font-size: .875rem; color: #855035;
@@ -159,7 +159,7 @@
   .auditNote { display: block; }
   .invitationCopy h2 { max-width: 15ch; font-size: clamp(2.8rem, 10.7vw, 3.8rem); }
   .invitationCopy .lede { margin-top: 1.2rem; }
-  .bookButton { width: 100%; padding-inline: 1.15rem; font-size: .9rem; gap: .7rem; }
+  .bookButton { width: 100%; padding-inline: 1.15rem; gap: .7rem; }
   .preparation { margin-bottom: .7rem; }
   .conversation li { padding-block: 1.15rem; }
   .invitationMedia { opacity: .18; }
@@ -203,18 +203,24 @@
   }
 
   :global(html:not([data-motion="reduced"])) .conversation li {
-    opacity: .58;
-    transform: translateX(0);
-    transition:
-      opacity 420ms cubic-bezier(.22,1,.36,1),
-      transform 420ms cubic-bezier(.22,1,.36,1),
-      border-color 420ms ease;
+    position: relative;
   }
 
-  :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] {
-    opacity: 1;
-    transform: translateX(-.45rem);
-    border-top-color: #98623f;
+  /* Follow the conversation with a rule while every sentence stays readable. */
+  :global(html:not([data-motion="reduced"])) .conversation li::before {
+    content: "";
+    position: absolute;
+    inset: -1px 0 auto;
+    height: 1px;
+    background: #98623f;
+    pointer-events: none;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 420ms cubic-bezier(.22,1,.36,1);
+  }
+
+  :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"]::before {
+    transform: scaleX(1);
   }
 
   :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] .stepNumber {
