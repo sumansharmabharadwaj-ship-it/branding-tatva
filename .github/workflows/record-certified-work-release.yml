@@ -74,7 +74,7 @@ jobs:
           ## Release boundary
 
           This certifies the Work application source on the permanent **preview** alias. It does not promote or modify production. Production remains held for Suman's explicit visual approval.
-MD
+          MD
 
           mkdir -p src/app/work
           cat > src/app/work/hosted-certification-2026-08-07.ts <<'TS'

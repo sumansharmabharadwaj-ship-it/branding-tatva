@@ -77,7 +77,7 @@ jobs:
           ## Release boundary
 
           This certifies the non-destructive Contact and booking-entry experience on the permanent **preview** alias. It does not modify production or create real external records.
-MD
+          MD
 
           mkdir -p src/app/contact
           cat > src/app/contact/hosted-certification-2026-08-07.ts <<'TS'

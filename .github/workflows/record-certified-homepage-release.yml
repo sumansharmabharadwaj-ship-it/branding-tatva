@@ -74,7 +74,7 @@ jobs:
           ## Release boundary
 
           This certifies the functional Homepage V4 experience on the permanent **preview** alias. It does not promote or modify production.
-MD
+          MD
 
           cat > src/app/homepage-hosted-certification-2026-08-07.ts <<'TS'
           // Deployable marker published only after the canonical Homepage V4

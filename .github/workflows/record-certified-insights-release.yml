@@ -68,7 +68,7 @@ jobs:
           ## Release boundary
 
           This certifies the Insights application source on the permanent **preview** alias. It does not promote or modify the production deployment. Production remains held for Suman's explicit visual approval.
-MD
+          MD
 
           python <<'PY'
           from pathlib import Path
