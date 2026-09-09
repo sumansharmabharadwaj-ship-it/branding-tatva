@@ -19,7 +19,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { Container } from "@/components/Container";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -64,6 +64,34 @@ const REVISIT_EXIT_PROGRESS = 0.485;
    natural scrolling instead of requiring a click to finish the sequence. */
 const SCROLL_RECEIVE_THRESHOLDS = [0.24, 0.34, 0.44, 0.52] as const;
 
+function GratitudeWord({
+  word,
+  index,
+  progress,
+  reducedMotion,
+}: {
+  word: string;
+  index: number;
+  progress: MotionValue<number>;
+  reducedMotion: boolean;
+}) {
+  const start = 0.12 + index * 0.065;
+  const y = useTransform(progress, [start, start + 0.46], ["0.65em", "0em"]);
+  const opacity = useTransform(progress, [start, start + 0.38], [0.18, 1]);
+
+  return (
+    <span className="inline-block overflow-hidden pb-[0.12em] align-top">
+      <motion.span
+        data-contact-gratitude-word
+        className="inline-block"
+        style={reducedMotion ? { y: 0, opacity: 1 } : { y, opacity }}
+      >
+        {word}
+      </motion.span>
+    </span>
+  );
+}
+
 type GratitudeNoteProps = {
   note: GratitudeNote;
   index: number;
@@ -103,6 +131,7 @@ function GratitudeNote({
   );
   const active = activeNote === index;
   const noteState = visited && !active ? ", already received" : "";
+  const status = selected ? "close" : active ? "reading" : visited ? "received" : "open";
 
   return (
     <motion.button
@@ -180,8 +209,27 @@ function GratitudeNote({
         animate={{ scaleY: active || visited ? 1 : 0 }}
         transition={{ duration: reducedMotion ? 0 : 0.44, ease: EASE_AIR }}
       />
-      <span className="relative text-[0.625rem] font-medium tracking-[0.18em] text-sandstone sm:text-[0.6875rem]">
-        0{index + 1}
+      <span
+        aria-hidden="true"
+        data-contact-gratitude-receipt-mark
+        className="relative grid h-6 w-6 place-items-center overflow-hidden text-[0.625rem] font-medium tracking-[0.12em] text-sandstone sm:text-[0.6875rem]"
+      >
+        <motion.span
+          className="[grid-area:1/1]"
+          initial={false}
+          animate={{ y: visited ? -20 : 0, opacity: visited ? 0 : 1 }}
+          transition={{ duration: reducedMotion ? 0 : 0.38, ease: EASE_AIR }}
+        >
+          0{index + 1}
+        </motion.span>
+        <motion.span
+          className="[grid-area:1/1]"
+          initial={false}
+          animate={{ y: visited ? 0 : 20, opacity: visited ? 1 : 0 }}
+          transition={{ duration: reducedMotion ? 0 : 0.48, ease: EASE_AIR }}
+        >
+          <Check className="h-3.5 w-3.5" strokeWidth={1.6} />
+        </motion.span>
       </span>
       <span
         data-contact-gratitude-note-label
@@ -189,15 +237,25 @@ function GratitudeNote({
       >
         {note.label}
       </span>
-      <motion.span
+      <span
         aria-hidden="true"
-        className="relative hidden text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-sandstone sm:block"
-        initial={false}
-        animate={{ x: active ? 0 : -3 }}
-        transition={{ duration: reducedMotion ? 0 : 0.3, ease: EASE_AIR }}
+        data-contact-gratitude-note-status
+        className="relative hidden overflow-hidden text-right text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-sandstone sm:grid"
       >
-        {visited ? "received" : "open"}
-      </motion.span>
+        <span className="invisible [grid-area:1/1]">received</span>
+        <AnimatePresence initial={false} mode="wait">
+          <motion.span
+            key={status}
+            className="block [grid-area:1/1]"
+            initial={reducedMotion ? false : { y: 8, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={reducedMotion ? undefined : { y: -8, opacity: 0 }}
+            transition={{ duration: reducedMotion ? 0 : 0.2, ease: EASE_AIR }}
+          >
+            {status}
+          </motion.span>
+        </AnimatePresence>
+      </span>
     </motion.button>
   );
 }
@@ -210,6 +268,7 @@ function GratitudeNote({
  */
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const ledgerRef = useRef<HTMLDivElement>(null);
   const statementRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLDivElement>(null);
@@ -264,6 +323,17 @@ export function ContactGratitude() {
     mass: 0.36,
   });
   const nextProgress = useSpring(nextScrollProgress, {
+    stiffness: 108,
+    damping: 27,
+    mass: 0.36,
+  });
+  // The heading has its own arrival window so the word reveal completes
+  // while it is being read, even when the mobile section spans several screens.
+  const { scrollYProgress: headingScrollProgress } = useScroll({
+    target: headingRef,
+    offset: ["start 94%", "start 56%"],
+  });
+  const headingProgress = useSpring(headingScrollProgress, {
     stiffness: 108,
     damping: 27,
     mass: 0.36,
@@ -323,10 +393,10 @@ export function ContactGratitude() {
     }
   });
 
-  const thankX = useTransform(progress, [0, 0.34, 0.76, 1], [-72, 0, 0, 18]);
-  const thankRotate = useTransform(progress, [0, 0.34, 0.76, 1], [-2.4, 0, 0, 0.8]);
-  const youX = useTransform(progress, [0, 0.34, 0.76, 1], [72, 0, 0, -18]);
-  const youRotate = useTransform(progress, [0, 0.34, 0.76, 1], [2.4, 0, 0, -0.8]);
+  const thankX = useTransform(headingProgress, [0, 0.72], [-36, 0]);
+  const thankRotate = useTransform(headingProgress, [0, 0.72], [-1.5, 0]);
+  const youX = useTransform(headingProgress, [0.08, 0.8], [36, 0]);
+  const youRotate = useTransform(headingProgress, [0.08, 0.8], [1.5, 0]);
   const resolveY = useTransform(progress, [0.12, 0.44, 0.82, 1], [30, 0, 0, -10]);
   const resolveOpacity = useTransform(progress, [0.12, 0.4, 0.9, 1], [0.24, 1, 1, 0.76]);
   const copyClip = useTransform(
@@ -513,7 +583,7 @@ export function ContactGratitude() {
       <Container className="relative z-10 w-full">
         <div
           data-contact-gratitude-layout
-          className="grid items-center gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(22rem,0.72fr)] lg:gap-[clamp(4rem,8vw,9rem)]"
+          className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(22rem,0.72fr)] lg:gap-[clamp(3rem,6vw,7rem)]"
         >
           <div data-contact-gratitude-copy className="min-w-0 max-w-[48rem]">
             <p className="text-[0.64rem] font-medium uppercase tracking-[0.26em] text-sandstone sm:text-[0.68rem]">
@@ -521,6 +591,7 @@ export function ContactGratitude() {
             </p>
 
             <h2
+              ref={headingRef}
               id="contact-gratitude-heading"
               aria-label="Thank you for staying with the question."
               data-contact-gratitude-heading
@@ -528,7 +599,7 @@ export function ContactGratitude() {
             >
               <span
                 aria-hidden="true"
-                className="flex gap-[0.16em] overflow-hidden text-[clamp(3.5rem,18vw,4.6rem)] leading-[0.76] tracking-[-0.045em] sm:text-[clamp(4.6rem,10.6vw,9.5rem)]"
+                className="flex gap-[0.16em] overflow-hidden pb-[0.08em] text-[clamp(3.5rem,18vw,4.6rem)] leading-[0.84] tracking-[-0.045em] sm:text-[clamp(4.6rem,10.2vw,9rem)]"
               >
                 <motion.span
                   className="block"
@@ -551,17 +622,22 @@ export function ContactGratitude() {
                   you.
                 </motion.span>
               </span>
-              <motion.span
+              <span
                 aria-hidden="true"
-                className="mt-4 block max-w-[11.5em] text-[clamp(2rem,4.5vw,4.5rem)] leading-[0.94] tracking-[-0.025em] text-ivory/94"
-                style={
-                  reducedMotion
-                    ? { y: 0, opacity: 1 }
-                    : { y: resolveY, opacity: resolveOpacity, willChange: "transform, opacity" }
-                }
+                className="mt-3 block max-w-[11.5em] text-[clamp(2rem,4.2vw,4.15rem)] leading-[1.02] tracking-[-0.025em] text-ivory/94"
               >
-                for staying with the question.
-              </motion.span>
+                {"for staying with the question.".split(" ").map((word, index) => (
+                  <span key={word}>
+                    {index > 0 ? " " : null}
+                    <GratitudeWord
+                      word={word}
+                      index={index}
+                      progress={headingProgress}
+                      reducedMotion={reducedMotion}
+                    />
+                  </span>
+                ))}
+              </span>
             </h2>
 
             <motion.div

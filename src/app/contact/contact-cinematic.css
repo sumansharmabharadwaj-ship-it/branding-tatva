@@ -105,7 +105,26 @@
 
 [data-contact-film] [data-contact-gratitude-note] {
   -webkit-tap-highlight-color: transparent;
-  transition: box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* A held note keeps a warm edge after the pointer leaves. This is distinct
+   from the travelling scroll highlight and remains visible on touch screens. */
+[data-contact-film] [data-contact-gratitude-note][aria-pressed="true"] {
+  background-color: rgba(224, 190, 139, 0.1);
+  border-color: rgba(224, 190, 139, 0.5);
+  box-shadow: inset 3px 0 0 rgba(224, 190, 139, 0.88);
+}
+
+[data-contact-film] [data-contact-gratitude-note-status] {
+  line-height: 1.6;
+}
+
+[data-contact-film] [data-contact-gratitude-receipt-mark] {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Keep keyboard focus unmistakable without drawing a heavy box around the
@@ -140,10 +159,14 @@
 }
 
 @media (min-width: 1024px) {
+  [data-contact-film] [data-contact-gratitude-note] {
+    padding-inline: 0.65rem;
+  }
+
   [data-contact-film]
     [data-contact-gratitude-note-active="true"]
     [data-contact-gratitude-note-label] {
-    transform: translateX(0.35rem);
+    transform: translateX(0.2rem);
   }
 }
 
