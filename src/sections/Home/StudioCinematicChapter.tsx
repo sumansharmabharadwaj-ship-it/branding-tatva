@@ -2,10 +2,11 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const DISCIPLINES = [
   {
@@ -61,6 +62,7 @@ const DISCIPLINES = [
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function StudioCinematicChapter() {
+  const lenis = useLenis();
   const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
@@ -70,7 +72,14 @@ export function StudioCinematicChapter() {
   const portraitY = useTransform(scrollYProgress, [0, 1], [12, -12]);
   const portraitScale = useTransform(scrollYProgress, [0, 1], [1.01, 1.055]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const selectionRef = useRef({ index: 0, direction: 0 });
   const active = DISCIPLINES[activeIndex];
+
+  const select = useCallback((index: number) => {
+    if (index === selectionRef.current.index) return;
+    selectionRef.current = { index, direction: Math.sign(index - selectionRef.current.index) };
+    setActiveIndex(index);
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -100,7 +109,7 @@ export function StudioCinematicChapter() {
       );
 
       grid?.style.setProperty("--studio-scroll-progress", progress.toFixed(4));
-      setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+      select(nextIndex);
     }
 
     function schedule() {
@@ -120,7 +129,7 @@ export function StudioCinematicChapter() {
       desktopStory.removeEventListener("change", schedule);
       grid.style.removeProperty("--studio-scroll-progress");
     };
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, select]);
 
   function choose(index: number) {
     const section = sectionRef.current;
@@ -130,13 +139,17 @@ export function StudioCinematicChapter() {
 
     if (section && desktopStory.matches && !prefersReducedMotion) {
       const bounds = section.getBoundingClientRect();
-      const runway = Math.max(1, bounds.height - window.innerHeight);
-      const sectionTop = window.scrollY + bounds.top;
-      const progress = (index + 0.5) / DISCIPLINES.length;
-      window.scrollTo({ top: sectionTop + runway * progress, behavior: "smooth" });
+      const runway = Math.max(0, bounds.height - window.innerHeight);
+      if (runway > 0) {
+        // Align the held frame directly so a choice never displays the
+        // intervening disciplines while the browser catches up.
+        const top = window.scrollY + bounds.top + runway * ((index + 0.5) / DISCIPLINES.length);
+        if (lenis) lenis.scrollTo(top, { immediate: true });
+        else window.scrollTo({ top, behavior: "instant" });
+      }
     }
 
-    setActiveIndex(index);
+    select(index);
   }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -147,7 +160,7 @@ export function StudioCinematicChapter() {
       : event.key === "ArrowRight" ? (index + 1) % DISCIPLINES.length
       : (index - 1 + DISCIPLINES.length) % DISCIPLINES.length;
     choose(next);
-    tabsRef.current[next]?.focus();
+    tabsRef.current[next]?.focus({ preventScroll: true });
   }
 
   return (
@@ -166,9 +179,18 @@ export function StudioCinematicChapter() {
 
       <div ref={gridRef} className="studio-cinematic__grid">
         <div className="studio-cinematic__media" aria-hidden="true">
-          <div className="studio-cinematic__media-layer" key={active.video}>
-            <BackgroundVideo video={active.video} poster={active.poster} managedByHomepage loop={false} />
-          </div>
+          <AnimatePresence mode="sync" initial={false}>
+            <motion.div
+              className="studio-cinematic__media-layer"
+              key={active.video}
+              initial={prefersReducedMotion ? false : { opacity: 0.82 }}
+              animate={{ opacity: 1 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0.78 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
+            >
+              <BackgroundVideo video={active.video} poster={active.poster} managedByHomepage loop={false} />
+            </motion.div>
+          </AnimatePresence>
           <div className="studio-cinematic__media-wash" />
           <div className="studio-cinematic__media-content">
             <div className="studio-cinematic__media-topline">
@@ -227,8 +249,8 @@ export function StudioCinematicChapter() {
           >
             <motion.div
               key={active.number}
-              initial={prefersReducedMotion ? false : { y: 8 }}
-              animate={{ y: 0 }}
+              initial={prefersReducedMotion ? false : { x: selectionRef.current.direction * 10 }}
+              animate={{ x: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
             >
               <p className="studio-cinematic__credential">{active.eyebrow}</p>

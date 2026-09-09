@@ -195,7 +195,7 @@
   max-width: 50ch;
   margin-top: 1.3rem;
   color: rgba(244, 239, 230, 0.69);
-  font-size: clamp(0.94rem, 1.1vw, 1.08rem);
+  font-size: clamp(1rem, 1.1vw, 1.08rem);
   line-height: 1.75;
 }
 
@@ -241,7 +241,7 @@
 .studio-cinematic__credential {
   margin: 0;
   color: #d4b99a;
-  font-size: .7rem;
+  font-size: .8125rem;
   line-height: 1.5;
   letter-spacing: .06em;
 }
@@ -275,6 +275,7 @@
 .studio-cinematic__panel-copy {
   max-width: 47rem;
   color: rgba(244, 239, 230, 0.7);
+  font-size: 1rem;
 }
 
 .studio-cinematic__result {
@@ -282,7 +283,9 @@
 }
 
 .studio-cinematic__result span {
-  color: rgba(244, 239, 230, 0.45);
+  color: rgba(244, 239, 230, 0.75);
+  font-size: .8125rem;
+  letter-spacing: .08em;
 }
 
 .studio-cinematic__result strong {
@@ -307,8 +310,14 @@
   color: var(--studio-accent);
 }
 
+.studio-cinematic__proof small {
+  font-size: .8125rem;
+  letter-spacing: .08em;
+}
+
 .studio-cinematic__proof strong {
   color: rgba(244, 239, 230, 0.69);
+  font-size: .875rem;
 }
 
 .studio-cinematic__footer {
@@ -322,7 +331,8 @@
 }
 
 .studio-cinematic__footer p {
-  color: rgba(244, 239, 230, 0.5);
+  color: rgba(244, 239, 230, 0.75);
+  font-size: .875rem;
 }
 
 .studio-cinematic__portrait {
@@ -500,11 +510,11 @@
 
   .studio-cinematic__lede {
     max-width: 100%;
-    font-size: 0.92rem;
+    font-size: 1rem;
   }
 
   .studio-cinematic__chooser { gap: .1rem; padding: .2rem; }
-  .studio-cinematic__chooser button { padding-inline: .25rem; font-size: .75rem; }
+  .studio-cinematic__chooser button { padding-inline: .25rem; font-size: .875rem; }
 
   .studio-cinematic__panel {
     max-width: 100%;
@@ -575,14 +585,6 @@
     box-sizing: border-box;
   }
 
-  .studio-cinematic__media-layer {
-    animation: studio-scroll-cut 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .studio-cinematic__panel > div {
-    animation: studio-scroll-copy 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
   .studio-cinematic__media-topline::after {
     content: "";
     position: absolute;
@@ -597,14 +599,4 @@
     );
     box-shadow: 0 0 18px color-mix(in srgb, var(--studio-accent) 25%, transparent);
   }
-}
-
-@keyframes studio-scroll-cut {
-  from { opacity: 0.36; transform: scale(1.035); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes studio-scroll-copy {
-  from { opacity: 0; transform: translateY(0.6rem); }
-  to { opacity: 1; transform: translateY(0); }
 }
