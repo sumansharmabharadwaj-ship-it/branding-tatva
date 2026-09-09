@@ -66,6 +66,7 @@ const STAGES = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1];
+const STAGE_CUTS = [0, 0.28, 0.32, 0.35, 0.39, 0.61, 0.65, 0.68, 0.72, 1];
 const HORIZONTAL_SWAP = {
   enter: (direction: number) => ({ opacity: 0, x: direction * 8 }),
   active: { opacity: 1, x: 0 },
@@ -112,6 +113,16 @@ export function PointOfView() {
     pacedScrollProgress,
     SCROLL_BEATS,
     [0.86, 0.86, 1, 1, 0.9, 0.9],
+  );
+  const stageContentOpacity = useTransform(
+    pacedScrollProgress,
+    STAGE_CUTS,
+    [1, 1, 0.08, 0.08, 1, 1, 0.08, 0.08, 1, 1],
+  );
+  const stageContentScale = useTransform(
+    pacedScrollProgress,
+    STAGE_CUTS,
+    [1, 1, 0.985, 0.985, 1, 1, 0.985, 0.985, 1, 1],
   );
   const ledgerFocusY = useTransform(
     pacedScrollProgress,
@@ -258,21 +269,24 @@ export function PointOfView() {
                     <motion.div
                       key={active.lens}
                       className={styles.signalStage}
+                      style={
+                        prefersReducedMotion
+                          ? undefined
+                          : { opacity: stageContentOpacity, scale: stageContentScale }
+                      }
                       initial={
                         prefersReducedMotion
                           ? false
                           : {
-                              opacity: 0,
                               y: transitionDirection * 18,
                               clipPath: "inset(10% 0 10% 0)",
                             }
                       }
-                      animate={{ opacity: 1, y: 0, clipPath: "inset(0% 0 0% 0)" }}
+                      animate={{ y: 0, clipPath: "inset(0% 0 0% 0)" }}
                       exit={
                         prefersReducedMotion
                           ? undefined
                           : {
-                              opacity: 0,
                               y: transitionDirection * -14,
                               clipPath: "inset(8% 0 8% 0)",
                             }
@@ -334,9 +348,14 @@ export function PointOfView() {
                   key={active.lens}
                   className={styles.record}
                   custom={transitionDirection}
-                  initial={prefersReducedMotion ? false : { opacity: 0, x: transitionDirection * 24, clipPath: "inset(0 0 0 9%)" }}
-                  animate={{ opacity: 1, x: 0, clipPath: "inset(0 0 0 0%)" }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, x: transitionDirection * -16, clipPath: "inset(0 9% 0 0)" }}
+                  style={
+                    prefersReducedMotion
+                      ? undefined
+                      : { opacity: stageContentOpacity, scale: stageContentScale }
+                  }
+                  initial={prefersReducedMotion ? false : { x: transitionDirection * 24, clipPath: "inset(0 0 0 9%)" }}
+                  animate={{ x: 0, clipPath: "inset(0 0 0 0%)" }}
+                  exit={prefersReducedMotion ? undefined : { x: transitionDirection * -16, clipPath: "inset(0 9% 0 0)" }}
                   transition={{ duration: prefersReducedMotion ? 0 : 0.48, ease: EASE }}
                 >
                   <p className={styles.recordKicker}>{active.number} · {active.verb} through {active.lens.toLowerCase()}</p>

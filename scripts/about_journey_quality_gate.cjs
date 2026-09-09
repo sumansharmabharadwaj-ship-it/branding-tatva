@@ -370,6 +370,14 @@ assert(
   "The recognition evidence surfaces no longer move as one scroll-controlled camera composition.",
 );
 assert(
+  pointOfView.includes("const STAGE_CUTS = [0, 0.28, 0.32, 0.35, 0.39, 0.61, 0.65, 0.68, 0.72, 1]") &&
+    pointOfView.includes("const stageContentOpacity = useTransform") &&
+    pointOfView.includes("const stageContentScale = useTransform") &&
+    pointOfView.includes("opacity: stageContentOpacity, scale: stageContentScale") &&
+    !pointOfView.includes('animate={{ opacity: 1, y: 0, clipPath: "inset(0% 0 0% 0)" }}'),
+  "The recognition stage changes no longer pass through a scroll-controlled focus gate.",
+);
+assert(
   convergence.includes("const psychologyX = useTransform") &&
     convergence.includes("const literatureX = useTransform") &&
     convergence.includes("const disciplineOpacity = useTransform") &&
