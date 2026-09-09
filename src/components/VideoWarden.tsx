@@ -52,7 +52,12 @@ export function VideoWarden() {
         return;
       }
 
+      // A project file occupies the browser's top layer. Its background
+      // page still has visible geometry, so geometry alone cannot decide
+      // which film belongs to the reader's current view.
+      const projectFile = document.querySelector<HTMLDialogElement>("dialog[data-project-file][open]");
       const candidates = governed
+        .filter((video) => !projectFile || projectFile.contains(video))
         // Geometry is deliberately sampled once per video. The previous
         // ranking path called getBoundingClientRect for visibility, coverage,
         // and distance independently, multiplying layout reads during scroll.
@@ -158,7 +163,7 @@ export function VideoWarden() {
       });
       schedule();
     });
-    mutations.observe(document.body, { childList: true, subtree: true });
+    mutations.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["open"] });
 
     // A video component may start itself after arbitration ran. Enforce the
     // budget immediately on play so adjacent scenes never share even one

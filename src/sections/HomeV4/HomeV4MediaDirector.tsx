@@ -63,8 +63,9 @@ export function HomeV4MediaDirector() {
     }
 
     function syncAll() {
+      const projectFile = homeRoot.querySelector<HTMLDialogElement>("dialog[data-project-file][open]");
       const candidates = [...visibleRatios.entries()]
-        .filter(([video, ratio]) => video.isConnected && ratio > 0)
+        .filter(([video, ratio]) => video.isConnected && ratio > 0 && (!projectFile || projectFile.contains(video)))
         .sort(([videoA, ratioA], [videoB, ratioB]) => {
           if (Math.abs(ratioA - ratioB) > 0.04) return ratioB - ratioA;
           return distanceFromViewportCentre(videoA) - distanceFromViewportCentre(videoB);
@@ -144,7 +145,7 @@ export function HomeV4MediaDirector() {
       });
       syncAll();
     });
-    mutationObserver.observe(homeRoot, { childList: true, subtree: true });
+    mutationObserver.observe(homeRoot, { childList: true, subtree: true, attributes: true, attributeFilter: ["open"] });
 
     function onVisibilityChange() {
       syncAll();
