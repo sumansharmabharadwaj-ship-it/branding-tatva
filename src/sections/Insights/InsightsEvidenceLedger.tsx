@@ -9,7 +9,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Check, Plus } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement } from "@/data/insights";
@@ -58,6 +58,43 @@ const THREAD_COLORS: Record<InsightElement, string> = {
   air: "#A8B68F",
   space: "#D09A89",
 };
+
+function WorksheetMarkIcon({
+  marked,
+  reducedMotion,
+  openIcon = "plus",
+}: {
+  marked: boolean;
+  reducedMotion: boolean;
+  openIcon?: "plus" | "arrow";
+}) {
+  const openPath = openIcon === "plus" ? "M12 5v14M5 12h14" : "M5 12h14M12 5l7 7-7 7";
+  const checkPath = "m5 12 4 4L19 6";
+
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {reducedMotion ? <path d={marked ? checkPath : openPath} /> : (
+        <>
+          <motion.path
+            d={openPath}
+            initial={false}
+            animate={{ opacity: marked ? 0 : 1 }}
+            transition={{ duration: 0.14 }}
+          />
+          <motion.path
+            d={checkPath}
+            initial={false}
+            animate={{ pathLength: marked ? 1 : 0, opacity: marked ? 1 : 0 }}
+            transition={{
+              pathLength: { duration: marked ? 0.32 : 0.18, ease: [0.22, 1, 0.36, 1] },
+              opacity: { duration: 0.14 },
+            }}
+          />
+        </>
+      )}
+    </svg>
+  );
+}
 
 export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) {
   const selectionId = useId();
@@ -368,7 +405,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               <span className="insights-worksheet__number">0{index + 1}</span>
               <span className="insights-worksheet__area-name">{layer.name}</span>
               <span className="insights-worksheet__area-icon" data-marked={marked} aria-hidden="true">
-                {marked ? <Check /> : <ArrowRight />}
+                <WorksheetMarkIcon marked={marked} reducedMotion={prefersReducedMotion} openIcon="arrow" />
               </span>
               {marked ? <span className="sr-only">Marked for review</span> : null}
             </button>
@@ -425,16 +462,9 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={() => toggleLayer(layer.slug, index)}
               >
-                <motion.span
-                  key={marked ? "marked" : "open"}
-                  className="insights-worksheet__mark-icon"
-                  initial={prefersReducedMotion || !selected ? false : { scale: 0.65, rotate: -35 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  aria-hidden="true"
-                >
-                  {marked ? <Check /> : <Plus />}
-                </motion.span>
+                <span className="insights-worksheet__mark-icon" aria-hidden="true">
+                  <WorksheetMarkIcon marked={marked} reducedMotion={prefersReducedMotion} />
+                </span>
                 <span>{marked ? "Marked for review" : "Mark for review"}</span>
               </motion.button>
               <motion.button
@@ -471,6 +501,15 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 onClick={() => openLayer(layers.indexOf(layer))}
               >
                 <Check aria-hidden="true" />{layer.name}
+                {layer.slug === focusedLayer.slug ? (
+                  <motion.span
+                    className="insights-worksheet__review-selection"
+                    aria-hidden="true"
+                    layoutId={prefersReducedMotion ? undefined : `${selectionId}-review`}
+                    initial={false}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                ) : null}
               </motion.button>
             ))}
           </AnimatePresence>
