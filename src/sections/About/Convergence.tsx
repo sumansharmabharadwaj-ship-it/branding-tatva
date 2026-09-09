@@ -142,12 +142,12 @@ export function Convergence() {
     SCROLL_BEATS,
     [1, 1, 1, 1, 0.38, 0.38],
   );
-  const registerContentOpacity = useTransform(
+  const stageContentOpacity = useTransform(
     pacedScrollProgress,
     STAGE_CUTS,
     [1, 1, 0.08, 0.08, 1, 1, 0.08, 0.08, 1, 1],
   );
-  const registerContentScale = useTransform(
+  const stageContentScale = useTransform(
     pacedScrollProgress,
     STAGE_CUTS,
     [1, 1, 0.985, 0.985, 1, 1, 0.985, 0.985, 1, 1],
@@ -247,7 +247,14 @@ export function Convergence() {
               I read the decision <em>before I write the line.</em>
             </h2>
           </div>
-          <div className={styles.headerAside}>
+          <motion.div
+            className={styles.headerAside}
+            style={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: stageContentOpacity, scale: stageContentScale }
+            }
+          >
             <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
               <motion.p
                 key={activeStage.number}
@@ -265,7 +272,7 @@ export function Convergence() {
               <span>{activeStage.label}</span>
               <strong>{activeStage.number} / 03</strong>
             </p>
-          </div>
+          </motion.div>
         </header>
 
         <div
@@ -379,7 +386,7 @@ export function Convergence() {
                   style={
                     prefersReducedMotion
                       ? undefined
-                      : { opacity: registerContentOpacity, scale: registerContentScale }
+                      : { opacity: stageContentOpacity, scale: stageContentScale }
                   }
                 >
                   <div className={styles.registerHead}>
@@ -455,7 +462,7 @@ export function Convergence() {
                 style={
                   prefersReducedMotion
                     ? undefined
-                    : { opacity: registerContentOpacity, scale: registerContentScale }
+                    : { opacity: stageContentOpacity, scale: stageContentScale }
                 }
               >
                 <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>

@@ -57,7 +57,7 @@
 }
 
 .header h2 em { color: #65725d; font-weight: 400; }
-.headerAside { display: grid; min-height: 5rem; align-content: end; gap: 0.8rem; }
+.headerAside { display: grid; min-height: 5rem; align-content: end; gap: 0.8rem; will-change: opacity, transform; }
 .headerAside > p:first-child {
   max-width: 42ch;
   margin: 0;
