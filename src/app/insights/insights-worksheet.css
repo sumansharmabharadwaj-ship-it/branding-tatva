@@ -304,6 +304,9 @@ html:has(.insights-worksheet:focus-within) {
 }
 
 .insights-worksheet__mark-icon { display: inline-flex; flex: 0 0 auto; }
+.insights-worksheet__mark-copy { display: inline-grid; grid-template-columns: minmax(0, 1fr); min-width: 0; overflow: hidden; }
+/* Both labels size the same slot so marking a check cannot move its neighbour. */
+.insights-worksheet__mark-copy > span { grid-area: 1 / 1; }
 
 .insights-worksheet__next {
   display: inline-flex;

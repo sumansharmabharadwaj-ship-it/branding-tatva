@@ -612,6 +612,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               <motion.button
                 type="button"
                 className="insights-worksheet__mark"
+                aria-label="Mark for review"
                 aria-pressed={marked}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={() => toggleLayer(layer.slug, index)}
@@ -619,7 +620,27 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 <span className="insights-worksheet__mark-icon" aria-hidden="true">
                   <WorksheetMarkIcon marked={marked} reducedMotion={prefersReducedMotion} />
                 </span>
-                <span>{marked ? "Marked for review" : "Mark for review"}</span>
+                <span className="insights-worksheet__mark-copy" aria-hidden="true">
+                  {["Mark for review", "Marked for review"].map((label, labelIndex) => {
+                    const active = marked === (labelIndex === 1);
+                    return (
+                      <motion.span
+                        key={label}
+                        initial={false}
+                        animate={{
+                          opacity: active ? 1 : 0,
+                          y: prefersReducedMotion || active ? 0 : labelIndex === 1 ? 6 : -6,
+                        }}
+                        transition={{
+                          opacity: { duration: prefersReducedMotion ? 0 : active ? 0.18 : 0.1, delay: prefersReducedMotion || !active ? 0 : 0.08 },
+                          y: { duration: prefersReducedMotion ? 0 : 0.24, ease: [0.22, 1, 0.36, 1] },
+                        }}
+                      >
+                        {label}
+                      </motion.span>
+                    );
+                  })}
+                </span>
               </motion.button>
               <motion.button
                 type="button"
