@@ -9,7 +9,7 @@ on:
 
 permissions:
   contents: write
-  statuses: read
+  statuses: write
 
 concurrency:
   group: deploy-one-controlled-august-preview
@@ -49,6 +49,19 @@ jobs:
 
           echo "source_sha=${source_sha}" >> "$GITHUB_OUTPUT"
           echo "release=${release}" >> "$GITHUB_OUTPUT"
+
+      - name: Report preview request on the release source
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createCommitStatus({
+              ...context.repo,
+              sha: context.sha,
+              context: 'Controlled preview',
+              state: 'pending',
+              description: 'Waiting for the controlled preview trigger and Vercel result.',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
 
       - name: Enable one Git integrated preview
         id: enable
@@ -91,6 +104,7 @@ jobs:
         shell: bash
         env:
           ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
+          SOURCE_SHA: ${{ steps.release.outputs.source_sha }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
@@ -107,11 +121,17 @@ jobs:
             target_url="$(node -e 'const x=require("/tmp/vercel-commit-status.json"); const s=x.statuses?.find((item)=>item.context==="Vercel"); process.stdout.write(s?.target_url || "")')"
             echo "Vercel status for ${ENABLE_SHA}: ${state}"
 
+            if [ "$state" = "success" ] || [ "$state" = "failure" ] || [ "$state" = "error" ]; then
+              echo "vercel_state=${state}" >> "$GITHUB_OUTPUT"
+              echo "target_url=${target_url}" >> "$GITHUB_OUTPUT"
+            fi
+
             if [ "$state" = "success" ]; then
               {
                 echo "## Controlled august preview"
                 echo
-                echo "- Source: \`${ENABLE_SHA}\`"
+                echo "- Release source: \`${SOURCE_SHA}\`"
+                echo "- Deployment trigger: \`${ENABLE_SHA}\`"
                 echo "- Inspector: ${target_url}"
                 echo "- Branch alias: https://branding-tatva-git-august-8-isolated-suman22.vercel.app/"
                 echo "- Target: preview only"
@@ -166,3 +186,32 @@ jobs:
 
           echo "Could not return august-8-isolated to controlled deployment mode." >&2
           exit 1
+
+      - name: Report preview result on the release source
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          VERCEL_STATE: ${{ steps.wait.outputs.vercel_state }}
+          VERCEL_URL: ${{ steps.wait.outputs.target_url }}
+          ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
+        with:
+          script: |
+            const observed = process.env.VERCEL_STATE;
+            const state = ['success', 'failure', 'error'].includes(observed) ? observed : 'error';
+            const trigger = process.env.ENABLE_SHA;
+            const description = observed === 'success'
+              ? `Preview ready; deployment trigger ${trigger.slice(0, 8)}.`
+              : observed === 'failure' || observed === 'error'
+                ? `Vercel reported ${observed}; trigger ${trigger.slice(0, 8)}.`
+                : trigger
+                  ? 'Preview result unconfirmed: status polling failed, timed out, or was cancelled.'
+                  : 'Preview request failed before a deployment trigger was recorded.';
+            await github.rest.repos.createCommitStatus({
+              ...context.repo,
+              sha: context.sha,
+              context: 'Controlled preview',
+              state,
+              description,
+              target_url: process.env.VERCEL_URL ||
+                `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
