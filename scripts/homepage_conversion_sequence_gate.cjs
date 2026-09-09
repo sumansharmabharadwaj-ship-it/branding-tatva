@@ -127,5 +127,17 @@ assert(
     refinement.includes("left: auto !important"),
   "The scrolled homepage privacy control does not dock into its compact safe area.",
 );
+assert(
+  refinement.includes(
+    'html[data-consent-banner-compact="true"]',
+  ) && refinement.includes("margin-right: 4rem"),
+  "The short-laptop cost action does not reserve room for the compact privacy control.",
+);
+assert(
+  refinement.includes("@media (min-width: 561px) and (max-width: 820px)") &&
+    refinement.includes("min-width: 5.25rem") &&
+    refinement.includes(".home-v4-guide__status"),
+  "The 200%-zoom homepage guide can still expand across the reading area.",
+);
 
 console.log("Homepage source gate passed: eleven ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");
