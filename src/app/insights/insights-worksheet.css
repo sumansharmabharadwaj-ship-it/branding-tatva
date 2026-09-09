@@ -98,22 +98,31 @@ html:has(.insights-worksheet:focus-within) {
   display: flex;
   flex: 0 0 auto;
   gap: 0.3rem;
+  padding-bottom: 4px;
 }
 
 .insights-worksheet__marks i {
+  position: relative;
   display: block;
-  overflow: hidden;
   width: 1.25rem;
   height: 3px;
   background: var(--worksheet-rule);
 }
 
-.insights-worksheet__marks i > span {
+.insights-worksheet__mark-fill {
   display: block;
   width: 100%;
   height: 100%;
   background: var(--worksheet-clay);
   transform-origin: left;
+}
+
+.insights-worksheet__check-position {
+  position: absolute;
+  inset: auto 0 -4px;
+  height: 1px;
+  background: var(--worksheet-ink);
+  pointer-events: none;
 }
 
 .insights-worksheet__areas {

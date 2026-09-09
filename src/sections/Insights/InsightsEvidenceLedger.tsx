@@ -241,10 +241,15 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       ? `From your reading: ${intentLayer.name}`
       : "Choose an area to begin";
   const revealVariants = {
-    enter: { opacity: 0, x: selectionDirection * 14 },
+    enter: {
+      opacity: 0,
+      x: usesHorizontalRail ? selectionDirection * 16 : 0,
+      y: usesHorizontalRail ? 0 : selectionDirection * 12,
+    },
     settled: {
       opacity: 1,
       x: 0,
+      y: 0,
       transition: { duration: prefersReducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] as const },
     },
   };
@@ -416,13 +421,22 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       <div className="insights-worksheet__status">
         <span aria-live="polite">{statusLabel}</span>
         <div className="insights-worksheet__marks" aria-hidden="true">
-          {layers.map((layer) => (
+          {layers.map((layer, index) => (
             <i key={layer.slug} data-marked={markedSlugs.includes(layer.slug)}>
               <motion.span
+                className="insights-worksheet__mark-fill"
                 initial={false}
                 animate={{ scaleX: markedSlugs.includes(layer.slug) ? 1 : 0 }}
                 transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
               />
+              {index === focusedIndex ? (
+                <motion.span
+                  className="insights-worksheet__check-position"
+                  layoutId={prefersReducedMotion ? undefined : `${selectionId}-position`}
+                  initial={false}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+                />
+              ) : null}
             </i>
           ))}
         </div>
@@ -490,17 +504,17 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
             tabIndex={selected ? 0 : -1}
             className="insights-worksheet__panel"
           >
-            <div className="insights-worksheet__panel-label">
-              <ElementGlyph slug={layer.element} className="h-5 w-5" strokeWidth={1.35} />
-              <span>Check 0{index + 1} / {layer.name}</span>
-            </div>
             <motion.div
               key={`${layer.slug}-${selected ? "active" : "idle"}`}
               initial={prefersReducedMotion || !selected ? false : "enter"}
               animate="settled"
-              variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.065 } } }}
+              variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.045 } } }}
               className="insights-worksheet__answer"
             >
+              <motion.div variants={revealVariants} className="insights-worksheet__panel-label">
+                <ElementGlyph slug={layer.element} className="h-5 w-5" strokeWidth={1.35} />
+                <span>Check 0{index + 1} / {layer.name}</span>
+              </motion.div>
               <motion.h3 variants={revealVariants}>{layer.question}</motion.h3>
               <motion.p variants={revealVariants} className="insights-worksheet__signal">{layer.signal}</motion.p>
               <div className="insights-worksheet__evidence">
