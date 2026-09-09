@@ -5,6 +5,7 @@
 .questionMedia, .invitationMedia {
   position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
 }
+.invitationMediaCamera { position: absolute; inset: 0; }
 .questionMedia { opacity: .15; }
 .invitationMedia { opacity: .32; }
 .questions::before, .invitation::before {
@@ -163,6 +164,16 @@
    holds while the visitor's scroll moves through the three agenda steps.
    Touch, compact, and reduced-motion contexts keep the original document flow. */
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :global(html:not([data-motion="reduced"])) .questionMedia,
+  :global(html:not([data-motion="reduced"])) .questionFrame,
+  :global(html:not([data-motion="reduced"])) .invitationMediaCamera {
+    will-change: transform;
+  }
+
+  :global(html:not([data-motion="reduced"])) .questionFrame {
+    transform-origin: center top;
+  }
+
   :global(html:not([data-motion="reduced"])) .invitation {
     height: 210svh;
     min-height: 210svh;

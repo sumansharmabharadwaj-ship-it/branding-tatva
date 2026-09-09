@@ -6,6 +6,7 @@ import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-mot
 import { ArrowRight, Clock3 } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { consultation } from "@/data/site";
 import { HOME_TO_SERVICES_SITUATION, servicesContactHrefForSituation } from "@/lib/servicesJourney";
 import styles from "./HomeConversation.module.css";
@@ -60,6 +61,9 @@ export function FinalInvitation() {
   const [situation, setSituation] = useState<Situation>("default");
   const [activeStep, setActiveStep] = useState(0);
   const reducedMotion = useHydratedReducedMotion();
+  const cinematicMotion = useMediaQuery(
+    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+  );
   const { scrollYProgress: entranceProgress } = useScroll({
     target: rootRef,
     offset: ["start end", "end end"],
@@ -69,6 +73,8 @@ export function FinalInvitation() {
     offset: ["start start", "end end"],
   });
   const lineProgress = useTransform(entranceProgress, [0.1, 0.9], [0, 1]);
+  const mediaScale = useTransform(storyProgress, [0, 0.52, 1], [1.05, 1.025, 1]);
+  const mediaX = useTransform(storyProgress, [0, 0.52, 1], ["0.8%", "0.25%", "0%"]);
 
   useMotionValueEvent(storyProgress, "change", (progress) => {
     const desktopStory = window.matchMedia(
@@ -115,12 +121,20 @@ export function FinalInvitation() {
       data-invitation-step={activeStep + 1}
     >
       <div className={styles.invitationMedia} aria-hidden="true">
-        <BackgroundVideo
-          video="/videos/higgsfield-silver-tide.mp4"
-          poster="/images/higgsfield-silver-tide-poster.jpg"
-          imagePosition="50% 18%"
-          loop={false}
-        />
+        <motion.div
+          className={styles.invitationMediaCamera}
+          style={{
+            scale: cinematicMotion && !reducedMotion ? mediaScale : 1,
+            x: cinematicMotion && !reducedMotion ? mediaX : 0,
+          }}
+        >
+          <BackgroundVideo
+            video="/videos/higgsfield-silver-tide.mp4"
+            poster="/images/higgsfield-silver-tide-poster.jpg"
+            imagePosition="50% 18%"
+            loop={false}
+          />
+        </motion.div>
       </div>
       <div className={styles.invitationFrame}>
         <motion.div className={styles.invitationRule} style={{ scaleX: reducedMotion ? 1 : lineProgress }} aria-hidden="true" />

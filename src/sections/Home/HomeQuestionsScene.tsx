@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, Plus } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { faqs } from "@/data/faqs";
 import styles from "./HomeConversation.module.css";
 
@@ -23,19 +24,40 @@ const QUESTIONS = QUESTION_ORDER.flatMap((question) =>
 );
 
 export function HomeQuestionsScene() {
+  const rootRef = useRef<HTMLElement>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const reducedMotion = useHydratedReducedMotion();
+  const cinematicMotion = useMediaQuery(
+    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+  );
+  const { scrollYProgress } = useScroll({
+    target: rootRef,
+    offset: ["start start", "end start"],
+  });
+  const mediaScale = useTransform(scrollYProgress, [0, 0.68, 1], [1, 1, 1.035]);
+  const frameY = useTransform(scrollYProgress, [0, 0.68, 1], [0, 0, -18]);
+  const frameScale = useTransform(scrollYProgress, [0, 0.68, 1], [1, 1, 0.985]);
 
   return (
-    <section className={styles.questions} data-cursor-world="light" aria-labelledby="home-questions-title">
-      <div className={styles.questionMedia} aria-hidden="true">
+    <section ref={rootRef} className={styles.questions} data-cursor-world="light" aria-labelledby="home-questions-title">
+      <motion.div
+        className={styles.questionMedia}
+        style={{ scale: cinematicMotion && !reducedMotion ? mediaScale : 1 }}
+        aria-hidden="true"
+      >
         <BackgroundVideo
           video="/videos/pexels-golden-fog-sea.mp4"
           videoWebm="/videos/pexels-golden-fog-sea.webm"
           poster="/images/pexels-golden-fog-sea-poster.jpg"
         />
-      </div>
-      <div className={styles.questionFrame}>
+      </motion.div>
+      <motion.div
+        className={styles.questionFrame}
+        style={{
+          y: cinematicMotion && !reducedMotion ? frameY : 0,
+          scale: cinematicMotion && !reducedMotion ? frameScale : 1,
+        }}
+      >
         <header className={styles.questionIntro}>
           <p className={styles.eyebrow}>Before we work together</p>
           <h2 id="home-questions-title">Know what you’re <em>saying yes to.</em></h2>
@@ -96,7 +118,7 @@ export function HomeQuestionsScene() {
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
