@@ -2,7 +2,7 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
-import { Compass, Hand, Pause, Play } from "lucide-react";
+import { Compass, Hand, Pause, Play, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import {
@@ -41,7 +41,8 @@ export function GuidedView() {
   const guideRef = useRef<HTMLDivElement>(null);
   const chaptersRef = useRef<HTMLElement[]>([]);
   const guidedScrollRef = useRef(false);
-  const releaseTimerRef = useRef(0);
+  const modeRef = useRef<GuideMode>("manual");
+  const advanceTimerRef = useRef(0);
   const progressFrameRef = useRef(0);
   const hintTimerRef = useRef(0);
 
@@ -58,6 +59,24 @@ export function GuidedView() {
     setHintVisible(false);
   }, []);
 
+  const stopGuidedMotion = useCallback(() => {
+    window.clearTimeout(advanceTimerRef.current);
+    window.cancelAnimationFrame(progressFrameRef.current);
+    guideRef.current?.style.setProperty("--guide-progress", "0deg");
+
+    if (guidedScrollRef.current) {
+      if (lenis) lenis.scrollTo(window.scrollY, { immediate: true });
+      else window.scrollTo({ top: window.scrollY, left: window.scrollX, behavior: "instant" });
+      guidedScrollRef.current = false;
+    }
+  }, [lenis]);
+
+  const changeMode = useCallback((next: GuideMode) => {
+    modeRef.current = next;
+    if (next !== "guided") stopGuidedMotion();
+    setMode(next);
+  }, [stopGuidedMotion]);
+
   const scrollToChapter = useCallback(
     (index: number) => {
       const chapters = resolveChapters();
@@ -65,12 +84,13 @@ export function GuidedView() {
       if (!target) return;
 
       guidedScrollRef.current = true;
-      window.clearTimeout(releaseTimerRef.current);
+      window.clearTimeout(advanceTimerRef.current);
 
-      if (lenis) {
+      if (lenis && !prefersReducedMotion) {
         lenis.scrollTo(target, {
           duration: 0.82,
           easing: (value: number) => 1 - Math.pow(1 - value, 4),
+          onComplete: () => { guidedScrollRef.current = false; },
         });
       } else {
         target.scrollIntoView({
@@ -78,10 +98,6 @@ export function GuidedView() {
           block: "start",
         });
       }
-
-      releaseTimerRef.current = window.setTimeout(() => {
-        guidedScrollRef.current = false;
-      }, 1050);
     },
     [lenis, prefersReducedMotion, resolveChapters],
   );
@@ -97,8 +113,8 @@ export function GuidedView() {
           ratios.set(entry.target as HTMLElement, entry.intersectionRatio);
         });
 
-        let nextIndex = 0;
-        let bestRatio = -1;
+        let nextIndex = -1;
+        let bestRatio = 0;
         chapters.forEach((chapter, index) => {
           const ratio = ratios.get(chapter) ?? 0;
           if (ratio > bestRatio) {
@@ -106,7 +122,14 @@ export function GuidedView() {
             nextIndex = index;
           }
         });
-        setActiveIndex(nextIndex);
+        // Between scenes and below the final chapter, keep the last reading
+        // position. An empty observer window is not a return to the opening.
+        if (nextIndex >= 0) {
+          setActiveIndex(nextIndex);
+        } else if (chapters[chapters.length - 1].getBoundingClientRect().bottom <= window.innerHeight * 0.2) {
+          // A direct jump to the footer can skip every intersection threshold.
+          setActiveIndex(chapters.length - 1);
+        }
       },
       {
         rootMargin: "-20% 0px -26% 0px",
@@ -130,14 +153,18 @@ export function GuidedView() {
   );
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion) {
+      dismissHint();
+      changeMode("manual");
+      return;
+    }
     const eligible = window.matchMedia("(min-width: 821px) and (pointer: fine)");
 
     function syncHint() {
       window.clearTimeout(hintTimerRef.current);
       if (!eligible.matches) {
         setHintVisible(false);
-        setMode("manual");
+        changeMode("manual");
         return;
       }
 
@@ -153,7 +180,7 @@ export function GuidedView() {
       eligible.removeEventListener("change", syncHint);
       window.clearTimeout(hintTimerRef.current);
     };
-  }, [prefersReducedMotion]);
+  }, [changeMode, dismissHint, prefersReducedMotion]);
 
   useEffect(() => {
     if (activeIndex > 0) dismissHint();
@@ -171,7 +198,7 @@ export function GuidedView() {
     const chapters = resolveChapters();
     const nextIndex = activeIndex + 1;
     if (nextIndex >= chapters.length) {
-      setMode("paused");
+      changeMode("paused");
       return;
     }
 
@@ -185,27 +212,37 @@ export function GuidedView() {
     }
 
     progressFrameRef.current = window.requestAnimationFrame(tick);
-    const timer = window.setTimeout(() => {
-      if (document.hidden || mode !== "guided") return;
+    advanceTimerRef.current = window.setTimeout(() => {
+      if (document.hidden || modeRef.current !== "guided") return;
       scrollToChapter(nextIndex);
     }, duration);
 
     return () => {
-      window.clearTimeout(timer);
+      window.clearTimeout(advanceTimerRef.current);
       window.cancelAnimationFrame(progressFrameRef.current);
     };
-  }, [activeIndex, mode, prefersReducedMotion, resolveChapters, scrollToChapter]);
+  }, [activeIndex, changeMode, mode, prefersReducedMotion, resolveChapters, scrollToChapter]);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
 
     function takeControl(event: Event) {
-      if (guidedScrollRef.current) return;
       const target = event.target;
-      if (target instanceof Element && target.closest("[data-guided-controls]")) return;
+      const navigationKey = event instanceof KeyboardEvent &&
+        ["Escape", "ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End"].includes(event.key);
+      if (event.type !== "wheel" && !navigationKey &&
+        target instanceof Element && target.closest("[data-guided-controls]")) return;
 
       dismissHint();
-      setMode("manual");
+      changeMode("manual");
+    }
+
+    function onVisibilityChange() {
+      if (document.hidden && modeRef.current === "guided") changeMode("paused");
+    }
+
+    function onScrollEnd() {
+      guidedScrollRef.current = false;
     }
 
     const options: AddEventListenerOptions = { passive: true };
@@ -213,17 +250,23 @@ export function GuidedView() {
     window.addEventListener("touchstart", takeControl, options);
     window.addEventListener("pointerdown", takeControl, options);
     window.addEventListener("keydown", takeControl);
+    window.addEventListener("focusin", takeControl);
+    window.addEventListener("scrollend", onScrollEnd);
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       window.removeEventListener("wheel", takeControl);
       window.removeEventListener("touchstart", takeControl);
       window.removeEventListener("pointerdown", takeControl);
       window.removeEventListener("keydown", takeControl);
-      window.clearTimeout(releaseTimerRef.current);
+      window.removeEventListener("focusin", takeControl);
+      window.removeEventListener("scrollend", onScrollEnd);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      stopGuidedMotion();
       window.clearTimeout(hintTimerRef.current);
       window.cancelAnimationFrame(progressFrameRef.current);
     };
-  }, [dismissHint, prefersReducedMotion]);
+  }, [changeMode, dismissHint, prefersReducedMotion, stopGuidedMotion]);
 
   if (prefersReducedMotion) return null;
 
@@ -282,21 +325,28 @@ export function GuidedView() {
         type="button"
         onClick={() => {
           dismissHint();
-          setMode((current) => (current === "guided" ? "paused" : "guided"));
+          if (mode === "guided") {
+            changeMode("paused");
+          } else if (atFinalChapter) {
+            changeMode("manual");
+            scrollToChapter(0);
+          } else {
+            changeMode("guided");
+          }
         }}
-        aria-label={mode === "guided" ? "Pause guided journey" : "Play guided journey"}
+        aria-label={mode === "guided" ? "Pause guided journey" : atFinalChapter ? "Return to beginning" : "Play guided journey"}
         aria-pressed={mode === "guided"}
         data-cursor-label={mode === "guided" ? "pause journey" : "play journey"}
-        title={mode === "guided" ? "Pause guided journey" : "Play guided journey"}
+        title={mode === "guided" ? "Pause guided journey" : atFinalChapter ? "Return to beginning" : "Play guided journey"}
       >
-        {mode === "guided" ? <Pause size={13} /> : <Play size={13} />}
+        {mode === "guided" ? <Pause size={13} /> : atFinalChapter ? <RotateCcw size={13} /> : <Play size={13} />}
       </button>
 
       <button
         type="button"
         onClick={() => {
           dismissHint();
-          setMode("manual");
+          changeMode("manual");
         }}
         aria-label="Explore the homepage manually"
         aria-pressed={mode === "manual"}

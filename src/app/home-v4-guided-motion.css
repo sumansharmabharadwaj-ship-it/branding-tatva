@@ -110,7 +110,7 @@ html[data-home-guide-mode="paused"] .home-v4 *::after {
 @media (min-width: 821px) and (pointer: fine) {
   /* The first quiet beat explains the special feature. It then folds into a
      scene counter so it never sits over the work like a permanent toolbar. */
-  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) {
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) {
     width: auto;
     min-width: min(23rem, calc(100vw - 2rem));
     justify-content: flex-start;
@@ -118,12 +118,12 @@ html[data-home-guide-mode="paused"] .home-v4 *::after {
     padding: 0.42rem 0.48rem 0.42rem 0.65rem;
   }
 
-  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__signal,
-  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) > button:last-child {
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__signal,
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) > button:last-child {
     display: grid;
   }
 
-  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy {
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy {
     display: grid;
     width: auto;
     min-width: 14.4rem;
@@ -133,20 +133,20 @@ html[data-home-guide-mode="paused"] .home-v4 *::after {
     gap: 0.8rem;
   }
 
-  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy small {
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy small {
     display: block;
   }
 
-  .home-v4-guide[data-guide-hint="visible"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__status {
+  .home-v4-guide[data-guide-hint="visible"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__status {
     display: grid;
   }
 
-  .home-v4-guide[data-guide-hint="hidden"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) {
+  .home-v4-guide[data-guide-hint="hidden"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) {
     width: 5.7rem;
     min-width: 5.7rem;
   }
 
-  .home-v4-guide[data-guide-hint="hidden"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy {
+  .home-v4-guide[data-guide-hint="hidden"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy {
     width: 2.6rem;
     min-width: 2.6rem;
     flex: 0 0 2.6rem;
@@ -154,11 +154,11 @@ html[data-home-guide-mode="paused"] .home-v4 *::after {
     gap: 0;
   }
 
-  .home-v4-guide[data-guide-hint="hidden"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__status {
+  .home-v4-guide[data-guide-hint="hidden"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__status {
     display: none;
   }
 
-  .home-v4-guide[data-guide-hint="hidden"]:not(:hover):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy strong {
+  .home-v4-guide[data-guide-hint="hidden"]:not(:hover):not(:focus-within):has(> button:first-of-type[aria-pressed="false"]) .home-v4-guide__copy strong {
     justify-self: end;
   }
 }
