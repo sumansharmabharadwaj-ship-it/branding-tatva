@@ -116,6 +116,55 @@ const WorksheetReviewItem = forwardRef<HTMLButtonElement, {
   );
 });
 
+const WorksheetServiceLink = forwardRef<HTMLDivElement, {
+  layer: EvidenceLayer;
+  serviceNames: string[];
+  readerPath: string;
+  reducedMotion: boolean;
+}>(function WorksheetServiceLink({ layer, serviceNames, readerPath, reducedMotion }, ref) {
+  const isPresent = useIsPresent();
+
+  return (
+    <motion.div
+      ref={ref}
+      className="insights-worksheet__service-slot"
+      layout={reducedMotion ? false : "position"}
+      aria-hidden={!isPresent}
+      inert={!isPresent}
+      initial={false}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: reducedMotion ? 0 : -4 }}
+      transition={{ duration: reducedMotion ? 0 : 0.18, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <TrackedLink
+        href={`/services#package-${layer.service.slug}`}
+        aria-label={`Explore ${layer.service.name}`}
+        tabIndex={isPresent ? undefined : -1}
+        event="contextual_cta_clicked"
+        eventProps={{ source: "insights_evidence_ledger", route: layer.service.slug, layer: layer.slug, reader_path: readerPath }}
+      >
+        <span className="insights-worksheet__service-copy" aria-hidden="true">
+          {/* Reserve the longest service label at each available width. */}
+          {serviceNames.map((name) => (
+            <span key={name} className="insights-worksheet__service-measure">
+              Explore {name}<ArrowUpRight />
+            </span>
+          ))}
+          <motion.span
+            key={layer.service.slug}
+            className="insights-worksheet__service-label"
+            initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+          >
+            Explore {layer.service.name}<ArrowUpRight />
+          </motion.span>
+        </span>
+      </TrackedLink>
+    </motion.div>
+  );
+});
+
 function WorksheetMarkIcon({
   marked,
   reducedMotion,
@@ -685,41 +734,32 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
           </AnimatePresence>
         </div>
         <div className="insights-worksheet__links">
-          {suggestedLayer ? (
-            <TrackedLink
-              href={`/services#package-${suggestedLayer.service.slug}`}
-              aria-label={`Explore ${suggestedLayer.service.name}`}
-              event="contextual_cta_clicked"
-              eventProps={{ source: "insights_evidence_ledger", route: suggestedLayer.service.slug, layer: suggestedLayer.slug, reader_path: readerIntent?.topicSlug ?? "none" }}
+          <AnimatePresence initial={false} mode="popLayout">
+            {suggestedLayer ? (
+              <WorksheetServiceLink
+                key="service"
+                layer={suggestedLayer}
+                serviceNames={serviceNames}
+                readerPath={readerIntent?.topicSlug ?? "none"}
+                reducedMotion={prefersReducedMotion}
+              />
+            ) : null}
+            <motion.div
+              key="checklist"
+              className="insights-worksheet__checklist-slot"
+              layout={prefersReducedMotion ? false : "position"}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span className="insights-worksheet__service-copy" aria-hidden="true">
-                {/* Keep this link's space steady as its recommendation changes,
-                    including when the footer wraps on a phone or at larger text sizes. */}
-                {serviceNames.map((name) => (
-                  <span key={name} className="insights-worksheet__service-measure">
-                    Explore {name}<ArrowUpRight />
-                  </span>
-                ))}
-                <motion.span
-                  key={suggestedLayer.service.slug}
-                  className="insights-worksheet__service-label"
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  Explore {suggestedLayer.service.name}<ArrowUpRight />
-                </motion.span>
-              </span>
-            </TrackedLink>
-          ) : null}
-          <TrackedLink
-            href="/insights/brand-audit-checklist-before-rebrand"
-            className="insights-worksheet__checklist"
-            event="contextual_cta_clicked"
-            eventProps={{ source: "insights_evidence_ledger", route: "audit_checklist", layer: suggestedLayer?.slug ?? "unselected", reader_path: readerIntent?.topicSlug ?? "none" }}
-          >
-            Read the full checklist<ArrowUpRight aria-hidden="true" />
-          </TrackedLink>
+              <TrackedLink
+                href="/insights/brand-audit-checklist-before-rebrand"
+                className="insights-worksheet__checklist"
+                event="contextual_cta_clicked"
+                eventProps={{ source: "insights_evidence_ledger", route: "audit_checklist", layer: suggestedLayer?.slug ?? "unselected", reader_path: readerIntent?.topicSlug ?? "none" }}
+              >
+                Read the full checklist<ArrowUpRight aria-hidden="true" />
+              </TrackedLink>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </footer>
     </div>
