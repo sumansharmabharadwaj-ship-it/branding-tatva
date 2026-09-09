@@ -4,7 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView, useIsPresent, type HTMLMotionProps } from "framer-motion";
 import { Container } from "@/components/Container";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import {
@@ -70,6 +70,30 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+function EvidenceMedia(props: HTMLMotionProps<"article">) {
+  const isPresent = useIsPresent();
+  return (
+    <motion.article
+      {...props}
+      inert={!isPresent}
+      aria-hidden={!isPresent}
+      style={{ ...props.style, pointerEvents: isPresent ? props.style?.pointerEvents : "none" }}
+    />
+  );
+}
+
+function EvidenceDossier(props: HTMLMotionProps<"aside">) {
+  const isPresent = useIsPresent();
+  return (
+    <motion.aside
+      {...props}
+      inert={!isPresent}
+      aria-hidden={!isPresent}
+      style={{ ...props.style, pointerEvents: isPresent ? props.style?.pointerEvents : "none" }}
+    />
+  );
+}
 
 function trailFor(project: Project) {
   return (
@@ -241,7 +265,7 @@ export function EvidenceWall() {
           className="evidence-cinematic__stage"
         >
           <AnimatePresence mode="sync" initial={false}>
-          <motion.article
+          <EvidenceMedia
             key={`media-${activeProject.slug}`}
             className="evidence-cinematic__media"
             initial={prefersReducedMotion ? false : { opacity: 0.78, scale: 1.014, filter: "blur(1px)" }}
@@ -302,11 +326,11 @@ export function EvidenceWall() {
                 {ACTION[activeProject.slug] ?? "View the case"} <span aria-hidden="true">→</span>
               </Link>
             </div>
-          </motion.article>
+          </EvidenceMedia>
           </AnimatePresence>
 
           <AnimatePresence mode="sync" initial={false}>
-          <motion.aside
+          <EvidenceDossier
             key={`trail-${activeProject.slug}`}
             className="evidence-cinematic__dossier"
             initial={prefersReducedMotion ? false : { opacity: 0.8, y: 7, filter: "blur(1px)" }}
@@ -337,7 +361,7 @@ export function EvidenceWall() {
               <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
               <Link href="/work">Explore the full archive <span aria-hidden="true">→</span></Link>
             </div>
-          </motion.aside>
+          </EvidenceDossier>
           </AnimatePresence>
         </div>
       </Container>
