@@ -645,6 +645,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       {layers.map((layer, index) => {
         const selected = index === focusedIndex;
         const marked = markedSlugs.includes(layer.slug);
+        const nextLayer = layers[(index + 1) % layers.length];
         return (
           <div
             key={layer.slug}
@@ -720,11 +721,29 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               <motion.button
                 type="button"
                 className="insights-worksheet__next"
-                aria-label={`${index === layers.length - 1 ? "First" : "Next"} check: ${layers[(index + 1) % layers.length].name}`}
+                aria-label={`${index === layers.length - 1 ? "First" : "Next"} check: ${nextLayer.name}`}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={() => openLayer((index + 1) % layers.length, 1)}
               >
-                {index === layers.length - 1 ? "First check" : "Next check"}
+                <span className="insights-worksheet__next-copy" aria-hidden="true">
+                  <span className="insights-worksheet__next-label">
+                    {index === layers.length - 1 ? "First check" : "Next check"}
+                  </span>
+                  <span className="insights-worksheet__next-name">
+                    {/* Reserve every destination so the controls keep their position. */}
+                    {layers.map((destination) => (
+                      <span key={destination.slug} className="insights-worksheet__next-measure">{destination.name}</span>
+                    ))}
+                    <motion.span
+                      key={`${layer.slug}-${selected ? "active" : "idle"}`}
+                      initial={prefersReducedMotion || !selected ? false : { opacity: 0, x: selectionDirection * 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.32, delay: prefersReducedMotion ? 0 : 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      {nextLayer.name}
+                    </motion.span>
+                  </span>
+                </span>
                 <ArrowRight aria-hidden="true" />
               </motion.button>
             </div>
