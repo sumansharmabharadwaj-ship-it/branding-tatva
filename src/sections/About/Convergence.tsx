@@ -288,7 +288,19 @@ export function Convergence() {
                     />
                   </div>
                   <div className={styles.registerResult}>
-                    <small>{stage === 1 ? "Resolved as" : "Decision state"}</small>
+                    <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
+                      <motion.small
+                        key={stage === 1 ? "resolved" : "decision"}
+                        custom={transitionDirection}
+                        variants={VERTICAL_SWAP}
+                        initial={prefersReducedMotion ? false : "enter"}
+                        animate="active"
+                        exit={prefersReducedMotion ? undefined : "exit"}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.34, ease: EASE }}
+                      >
+                        {stage === 1 ? "Resolved as" : "Decision state"}
+                      </motion.small>
+                    </AnimatePresence>
                     <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
                       <motion.strong
                         key={registerResult}
@@ -306,9 +318,45 @@ export function Convergence() {
                 </div>
               </div>
               <figcaption className={styles.folioCopy}>
-                <span>{activeStage.number} / 03</span>
-                <small>{stage === 1 ? activePair.result : activeStage.centreLabel}</small>
-                <strong>{stage === 1 ? activePair.coreLine : activeStage.centreLine}</strong>
+                <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
+                  <motion.span
+                    key={activeStage.number}
+                    custom={transitionDirection}
+                    variants={VERTICAL_SWAP}
+                    initial={prefersReducedMotion ? false : "enter"}
+                    animate="active"
+                    exit={prefersReducedMotion ? undefined : "exit"}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+                  >
+                    {activeStage.number} / 03
+                  </motion.span>
+                </AnimatePresence>
+                <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
+                  <motion.small
+                    key={stage === 1 ? activePair.result : activeStage.centreLabel}
+                    custom={transitionDirection}
+                    variants={VERTICAL_SWAP}
+                    initial={prefersReducedMotion ? false : "enter"}
+                    animate="active"
+                    exit={prefersReducedMotion ? undefined : "exit"}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.34, ease: EASE }}
+                  >
+                    {stage === 1 ? activePair.result : activeStage.centreLabel}
+                  </motion.small>
+                </AnimatePresence>
+                <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
+                  <motion.strong
+                    key={stage === 1 ? activePair.coreLine : activeStage.centreLine}
+                    custom={transitionDirection}
+                    variants={VERTICAL_SWAP}
+                    initial={prefersReducedMotion ? false : "enter"}
+                    animate="active"
+                    exit={prefersReducedMotion ? undefined : "exit"}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
+                  >
+                    {stage === 1 ? activePair.coreLine : activeStage.centreLine}
+                  </motion.strong>
+                </AnimatePresence>
               </figcaption>
             </motion.figure>
 

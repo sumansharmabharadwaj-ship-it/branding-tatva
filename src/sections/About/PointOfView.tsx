@@ -66,6 +66,11 @@ const STAGES = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1];
+const HORIZONTAL_SWAP = {
+  enter: (direction: number) => ({ opacity: 0, x: direction * 8 }),
+  active: { opacity: 1, x: 0 },
+  exit: (direction: number) => ({ opacity: 0, x: direction * -6 }),
+};
 
 export function PointOfView() {
   const storyRef = useRef<HTMLDivElement>(null);
@@ -246,11 +251,35 @@ export function PointOfView() {
                     </motion.div>
                   </AnimatePresence>
                   <div className={styles.frameShift}>
-                    <span>{active.from}</span>
+                    <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
+                      <motion.span
+                        key={active.from}
+                        custom={transitionDirection}
+                        variants={HORIZONTAL_SWAP}
+                        initial={prefersReducedMotion ? false : "enter"}
+                        animate="active"
+                        exit={prefersReducedMotion ? undefined : "exit"}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
+                      >
+                        {active.from}
+                      </motion.span>
+                    </AnimatePresence>
                     <motion.i
                       style={prefersReducedMotion ? undefined : { scaleX: frameShiftProgress }}
                     />
-                    <strong>{active.to}</strong>
+                    <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
+                      <motion.strong
+                        key={active.to}
+                        custom={transitionDirection}
+                        variants={HORIZONTAL_SWAP}
+                        initial={prefersReducedMotion ? false : "enter"}
+                        animate="active"
+                        exit={prefersReducedMotion ? undefined : "exit"}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
+                      >
+                        {active.to}
+                      </motion.strong>
+                    </AnimatePresence>
                   </div>
                 </div>
               </motion.div>

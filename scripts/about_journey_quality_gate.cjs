@@ -343,6 +343,15 @@ assert(
   "The convergence scene no longer reverses its editorial transitions with scroll direction.",
 );
 assert(
+  convergence.includes("<motion.small") &&
+    convergence.includes("<motion.span") &&
+    convergence.includes("key={stage === 1 ? activePair.coreLine : activeStage.centreLine}") &&
+    pointOfView.includes("const HORIZONTAL_SWAP") &&
+    pointOfView.includes("key={active.from}") &&
+    pointOfView.includes("key={active.to}"),
+  "The About centre readouts lost their synchronized direction-aware transitions.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),
