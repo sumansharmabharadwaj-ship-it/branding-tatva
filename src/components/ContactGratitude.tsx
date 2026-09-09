@@ -484,7 +484,7 @@ export function ContactGratitude() {
           data-contact-gratitude-layout
           className="grid items-center gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(22rem,0.72fr)] lg:gap-[clamp(4rem,8vw,9rem)]"
         >
-          <div data-contact-gratitude-copy className="max-w-[48rem]">
+          <div data-contact-gratitude-copy className="min-w-0 max-w-[48rem]">
             <p className="text-[0.64rem] font-medium uppercase tracking-[0.26em] text-sandstone sm:text-[0.68rem]">
               One last thought
             </p>
@@ -497,7 +497,7 @@ export function ContactGratitude() {
             >
               <span
                 aria-hidden="true"
-                className="flex gap-[0.16em] overflow-hidden text-[clamp(4.6rem,10.6vw,9.5rem)] leading-[0.76] tracking-[-0.045em]"
+                className="flex gap-[0.16em] overflow-hidden text-[clamp(3.5rem,18vw,4.6rem)] leading-[0.76] tracking-[-0.045em] sm:text-[clamp(4.6rem,10.6vw,9.5rem)]"
               >
                 <motion.span
                   className="block"
@@ -567,11 +567,11 @@ export function ContactGratitude() {
                 data-cursor-label="Book the conversation"
                 className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-ivory px-5 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ivory"
               >
-                <span className="relative z-10">Bring it to a 30 minute call</span>
+                <span className="relative z-10 text-balance text-center">Bring it to a 30 minute call</span>
                 <ArrowRight
                   aria-hidden="true"
                   data-contact-gratitude-primary-arrow
-                  className="relative z-10 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                  className="relative z-10 h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
                   strokeWidth={1.6}
                 />
               </TrackedLink>
