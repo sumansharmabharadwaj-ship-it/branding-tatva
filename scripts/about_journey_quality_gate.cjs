@@ -311,6 +311,15 @@ assert(
   "The point-of-view sequence lost its restrained editorial ledger or deliberate scroll runway.",
 );
 assert(
+  convergence.includes("const readProgress = useTransform") &&
+    convergence.includes("<motion.i") &&
+    pointOfView.includes("const categoryProgress = useTransform") &&
+    pointOfView.includes("<motion.b") &&
+    convergence.includes("style={prefersReducedMotion ? undefined : { scaleX: progress }}") &&
+    pointOfView.includes("style={prefersReducedMotion ? undefined : { scaleX: progress }}"),
+  "The About stage rails no longer report continuous physical scroll progress.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),

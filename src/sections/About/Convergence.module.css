@@ -457,7 +457,7 @@
 .tabs button[data-active="true"] { border-color: #965b43; color: #2b2924; }
 .tabs button span { margin-right: 0.65rem; color: #965b43; font-size: 0.58rem; letter-spacing: 0.14em; }
 .tabs button strong { font-family: var(--font-display), Georgia, serif; font-size: 0.98rem; font-weight: 400; }
-.tabs button i { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: #965b43; transform: scaleX(0); transform-origin: left; transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1); }
+.tabs button i { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: #965b43; transform: scaleX(0); transform-origin: left; transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
 .tabs button[data-active="true"] i { transform: scaleX(1); }
 .footer > a { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.8rem 0; color: #80503c; font-size: 0.7rem; font-weight: 650; white-space: nowrap; }
 .mobileSynthesis { display: none; }

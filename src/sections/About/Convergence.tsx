@@ -6,7 +6,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView, useTransform } from "framer-motion";
 import { ArrowRight, BookOpenText, Brain } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -89,6 +89,10 @@ export function Convergence() {
     enabled: inView,
     reducedMotion: prefersReducedMotion,
   });
+  const readProgress = useTransform(visualizer.scrollYProgress, [0, 1 / 3], [0, 1]);
+  const connectProgress = useTransform(visualizer.scrollYProgress, [1 / 3, 2 / 3], [0, 1]);
+  const carryProgress = useTransform(visualizer.scrollYProgress, [2 / 3, 1], [0, 1]);
+  const stageProgress = [readProgress, connectProgress, carryProgress] as const;
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
   const activePair = PAIRINGS[inspectedPair];
@@ -361,6 +365,7 @@ export function Convergence() {
           <div className={styles.tabs} role="tablist" aria-label="Choose a discipline combination">
             {STAGES.map((item, index) => {
               const selected = stage === index;
+              const progress = stageProgress[index];
               return (
                 <button
                   key={item.number}
@@ -381,7 +386,10 @@ export function Convergence() {
                 >
                   <span>{item.number}</span>
                   <strong>{item.label}</strong>
-                  <i aria-hidden="true" />
+                  <motion.i
+                    aria-hidden="true"
+                    style={prefersReducedMotion ? undefined : { scaleX: progress }}
+                  />
                 </button>
               );
             })}

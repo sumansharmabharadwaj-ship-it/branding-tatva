@@ -82,6 +82,10 @@ export function PointOfView() {
   const transitionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
   const filmY = useTransform(sequence.scrollYProgress, [0, 1], ["1.2%", "-1.2%"]);
   const filmScale = useTransform(sequence.scrollYProgress, [0, 0.5, 1], [1.02, 1, 0.99]);
+  const categoryProgress = useTransform(sequence.scrollYProgress, [0, 1 / 3], [0, 1]);
+  const valueProgress = useTransform(sequence.scrollYProgress, [1 / 3, 2 / 3], [0, 1]);
+  const memoryProgress = useTransform(sequence.scrollYProgress, [2 / 3, 1], [0, 1]);
+  const stageProgress = [categoryProgress, valueProgress, memoryProgress] as const;
 
   useEffect(() => {
     previousIndexRef.current = activeIndex;
@@ -128,6 +132,7 @@ export function PointOfView() {
                 const Icon = stage.icon;
                 const selected = activeIndex === index;
                 const resolved = index <= activeIndex;
+                const progress = stageProgress[index];
                 return (
                   <li key={stage.lens} role="presentation">
                     <button
@@ -150,7 +155,9 @@ export function PointOfView() {
                       <span><Icon size={15} aria-hidden="true" /></span>
                       <small>{stage.number} · {stage.verb}</small>
                       <strong>{stage.lens}</strong>
-                      <i aria-hidden="true"><b /></i>
+                      <i aria-hidden="true">
+                        <motion.b style={prefersReducedMotion ? undefined : { scaleX: progress }} />
+                      </i>
                     </button>
                   </li>
                 );

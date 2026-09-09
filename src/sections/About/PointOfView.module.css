@@ -117,7 +117,7 @@
 .stageRail small { color: #d4b99a; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
 .stageRail strong { font-family: var(--font-display), Georgia, serif; font-size: 1.12rem; font-weight: 400; line-height: 1; }
 .stageRail button i { position: absolute; right: 0; bottom: -1px; left: 0; height: 1px; overflow: hidden; background: rgba(244, 239, 230, 0.08); }
-.stageRail button b { display: block; width: 100%; height: 100%; background: #d4b99a; transform: scaleX(0); transform-origin: left; transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1); }
+.stageRail button b { display: block; width: 100%; height: 100%; background: #d4b99a; transform: scaleX(0); transform-origin: left; transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
 .stageRail button[data-resolved="true"] b { transform: scaleX(1); }
 
 .filmCamera {
