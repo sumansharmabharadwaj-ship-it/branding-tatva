@@ -213,7 +213,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     panelFocusFrameRef.current = window.requestAnimationFrame(() => {
       panelFocusFrameRef.current = null;
       const panel = panelRefs.current[index];
-      if (!panel || panel.hidden) return;
+      if (!panel || panel.inert) return;
 
       panel.focus({ preventScroll: true });
       const viewport = window.visualViewport;
@@ -376,78 +376,81 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         })}
       </motion.div>
 
-      {layers.map((layer, index) => (
-        <div
-          key={layer.slug}
-          ref={(node) => { panelRefs.current[index] = node; }}
-          role="tabpanel"
-          id={`worksheet-panel-${layer.slug}`}
-          aria-labelledby={`worksheet-tab-${layer.slug}`}
-          hidden={index !== focusedIndex}
-          tabIndex={0}
-          className="insights-worksheet__panel"
-        >
-          {index === focusedIndex ? (
-            <>
-              <div className="insights-worksheet__panel-label">
-                <ElementGlyph slug={layer.element} className="h-5 w-5" strokeWidth={1.35} />
-                <span>Check 0{index + 1} / {layer.name}</span>
+      {/* Shared grid sizing reserves room for the longest check at any width.
+          Inactive panels remain inert and hidden from view and assistive tech. */}
+      {layers.map((layer, index) => {
+        const selected = index === focusedIndex;
+        const marked = markedSlugs.includes(layer.slug);
+        return (
+          <div
+            key={layer.slug}
+            ref={(node) => { panelRefs.current[index] = node; }}
+            role="tabpanel"
+            id={`worksheet-panel-${layer.slug}`}
+            aria-labelledby={`worksheet-tab-${layer.slug}`}
+            aria-hidden={!selected}
+            inert={!selected}
+            tabIndex={selected ? 0 : -1}
+            className="insights-worksheet__panel"
+          >
+            <div className="insights-worksheet__panel-label">
+              <ElementGlyph slug={layer.element} className="h-5 w-5" strokeWidth={1.35} />
+              <span>Check 0{index + 1} / {layer.name}</span>
+            </div>
+            <motion.div
+              key={`${layer.slug}-${selected ? "active" : "idle"}`}
+              initial={prefersReducedMotion || !selected ? false : "enter"}
+              animate="settled"
+              variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.065 } } }}
+              className="insights-worksheet__answer"
+            >
+              <motion.h3 variants={revealVariants}>{layer.question}</motion.h3>
+              <motion.p variants={revealVariants} className="insights-worksheet__signal">{layer.signal}</motion.p>
+              <div className="insights-worksheet__evidence">
+                <motion.div variants={revealVariants}>
+                  <h4>Evidence to collect</h4>
+                  <ul>{layer.evidence.split(" · ").map((item) => <li key={item}>{item}</li>)}</ul>
+                </motion.div>
+                <motion.div variants={revealVariants}>
+                  <h4>First move</h4>
+                  <p>{layer.move}</p>
+                </motion.div>
               </div>
-              <motion.div
-                key={layer.slug}
-                initial={prefersReducedMotion ? false : "enter"}
-                animate="settled"
-                variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.065 } } }}
-                className="insights-worksheet__answer"
+            </motion.div>
+            <div className="insights-worksheet__actions">
+              <motion.button
+                type="button"
+                className="insights-worksheet__mark"
+                aria-pressed={marked}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                onClick={() => toggleLayer(layer.slug, index)}
               >
-                <motion.h3 variants={revealVariants}>{layer.question}</motion.h3>
-                <motion.p variants={revealVariants} className="insights-worksheet__signal">{layer.signal}</motion.p>
-                <div className="insights-worksheet__evidence">
-                  <motion.div variants={revealVariants}>
-                    <h4>Evidence to collect</h4>
-                    <ul>{layer.evidence.split(" · ").map((item) => <li key={item}>{item}</li>)}</ul>
-                  </motion.div>
-                  <motion.div variants={revealVariants}>
-                    <h4>First move</h4>
-                    <p>{layer.move}</p>
-                  </motion.div>
-                </div>
-              </motion.div>
-              <div className="insights-worksheet__actions">
-                <motion.button
-                  type="button"
-                  className="insights-worksheet__mark"
-                  aria-pressed={focusedIsMarked}
-                  whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                  onClick={() => toggleLayer(layer.slug, index)}
+                <motion.span
+                  key={marked ? "marked" : "open"}
+                  className="insights-worksheet__mark-icon"
+                  initial={prefersReducedMotion || !selected ? false : { scale: 0.65, rotate: -35 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  aria-hidden="true"
                 >
-                  <motion.span
-                    key={focusedIsMarked ? "marked" : "open"}
-                    className="insights-worksheet__mark-icon"
-                    initial={prefersReducedMotion ? false : { scale: 0.65, rotate: -35 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    aria-hidden="true"
-                  >
-                    {focusedIsMarked ? <Check /> : <Plus />}
-                  </motion.span>
-                  <span>{focusedIsMarked ? "Marked for review" : "Mark for review"}</span>
-                </motion.button>
-                <motion.button
-                  type="button"
-                  className="insights-worksheet__next"
-                  aria-label={`${index === layers.length - 1 ? "First" : "Next"} check: ${layers[(index + 1) % layers.length].name}`}
-                  whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                  onClick={() => openLayer((index + 1) % layers.length)}
-                >
-                  {index === layers.length - 1 ? "First check" : "Next check"}
-                  <ArrowRight aria-hidden="true" />
-                </motion.button>
-              </div>
-            </>
-          ) : null}
-        </div>
-      ))}
+                  {marked ? <Check /> : <Plus />}
+                </motion.span>
+                <span>{marked ? "Marked for review" : "Mark for review"}</span>
+              </motion.button>
+              <motion.button
+                type="button"
+                className="insights-worksheet__next"
+                aria-label={`${index === layers.length - 1 ? "First" : "Next"} check: ${layers[(index + 1) % layers.length].name}`}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                onClick={() => openLayer((index + 1) % layers.length)}
+              >
+                {index === layers.length - 1 ? "First check" : "Next check"}
+                <ArrowRight aria-hidden="true" />
+              </motion.button>
+            </div>
+          </div>
+        );
+      })}
 
       <footer className="insights-worksheet__footer">
         <div className="insights-worksheet__review" role="group" aria-label="Your review list">
@@ -480,7 +483,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               eventProps={{ source: "insights_evidence_ledger", route: suggestedLayer.service.slug, layer: suggestedLayer.slug, reader_path: readerIntent?.topicSlug ?? "none" }}
             >
               <motion.span
-                key={suggestedLayer.slug}
+                key={suggestedLayer.service.slug}
                 className="insights-worksheet__service-label"
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 3 }}
                 animate={{ opacity: 1, y: 0 }}

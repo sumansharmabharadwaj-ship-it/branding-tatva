@@ -194,7 +194,7 @@ html:has(.insights-worksheet:focus-within) {
   scroll-margin-bottom: 3rem;
 }
 
-.insights-worksheet__panel[hidden] { display: none; }
+.insights-worksheet__panel[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
 
 .insights-worksheet__panel-label {
   display: flex;
