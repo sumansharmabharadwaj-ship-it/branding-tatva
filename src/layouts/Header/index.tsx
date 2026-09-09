@@ -47,6 +47,8 @@ export function Header({ transparent = false }: HeaderProps) {
   const [hoveredRoute, setHoveredRoute] = useState<string | null>(null);
   const [focusedRoute, setFocusedRoute] = useState<string | null>(null);
   const lastScrollRef = useRef(0);
+  const desktopNavRef = useRef<HTMLElement>(null);
+  const navigationFocusRef = useRef<"desktop" | "menu-button" | null>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -143,15 +145,26 @@ export function Header({ transparent = false }: HeaderProps) {
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 60rem)");
-    function closeDesktopMenu() {
-      if (!desktop.matches) return;
-      if (menuRef.current?.contains(document.activeElement) || document.activeElement === menuButtonRef.current) {
-        document.querySelector<HTMLElement>(".site-header__desktop-nav a")?.focus();
+    function syncNavigationLayout() {
+      const activeElement = document.activeElement;
+      setHoveredRoute(null);
+      setFocusedRoute(null);
+
+      if (!desktop.matches) {
+        // Keep keyboard navigation on a visible control when links collapse.
+        if (desktopNavRef.current?.contains(activeElement) || navigationFocusRef.current === "desktop") {
+          menuButtonRef.current?.focus({ preventScroll: true });
+        }
+        return;
+      }
+
+      if (menuRef.current?.contains(activeElement) || activeElement === menuButtonRef.current || navigationFocusRef.current === "menu-button") {
+        desktopNavRef.current?.querySelector<HTMLElement>("a")?.focus({ preventScroll: true });
       }
       setOpen(false);
     }
-    desktop.addEventListener("change", closeDesktopMenu);
-    return () => desktop.removeEventListener("change", closeDesktopMenu);
+    desktop.addEventListener("change", syncNavigationLayout);
+    return () => desktop.removeEventListener("change", syncNavigationLayout);
   }, []);
 
   const isBarHidden = barHidden && !open && !focusWithin;
@@ -198,11 +211,18 @@ export function Header({ transparent = false }: HeaderProps) {
 
             <div className="site-header__actions flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-5">
               <nav
+                ref={desktopNavRef}
                 aria-label="Primary"
                 className="site-header__desktop-nav"
                 onPointerLeave={() => setHoveredRoute(null)}
+                onFocusCapture={() => { navigationFocusRef.current = "desktop"; }}
                 onBlurCapture={(event) => {
-                  if (!event.currentTarget.contains(event.relatedTarget)) setFocusedRoute(null);
+                  if (!event.currentTarget.contains(event.relatedTarget)) {
+                    setFocusedRoute(null);
+                    // Browsers can blur a hidden control before matchMedia
+                    // fires. Retain that focus only for the layout handoff.
+                    if (event.relatedTarget || event.currentTarget.getClientRects().length > 0) navigationFocusRef.current = null;
+                  }
                 }}
               >
                 {headerNavigation
@@ -258,6 +278,10 @@ export function Header({ transparent = false }: HeaderProps) {
               </span>
               <button
                 ref={menuButtonRef}
+                onFocus={() => { navigationFocusRef.current = "menu-button"; }}
+                onBlur={(event) => {
+                  if (event.relatedTarget || event.currentTarget.getClientRects().length > 0) navigationFocusRef.current = null;
+                }}
                 className="site-header__menu-button relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-500"
                 style={{ color: accent }}
                 aria-label={open ? "Close menu" : "Open menu"}
