@@ -97,6 +97,11 @@ requirePattern(
   /const signalScale = useTransform\(\s*progress,\s*\[0\.1, SCROLL_RECEIVE_THRESHOLDS\[NOTES\.length - 1\]\],\s*\[0, 1\],\s*\);/,
   "gratitude progress cue no longer completes with the fourth acknowledgement",
 );
+requirePattern(
+  gratitude,
+  /scaleX: allNotesVisited \? 1 : signalScale/,
+  "gratitude completion state no longer guarantees a full progress cue",
+);
 requireText(gratitude, "data-contact-gratitude-response-phase", "gratitude response phases are no longer inspectable");
 requirePattern(
   gratitude,

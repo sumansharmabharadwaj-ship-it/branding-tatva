@@ -20,9 +20,10 @@
 
 | Pass | Severity | Visible finding | Fix and post-fix evidence |
 | --- | --- | --- | --- |
-| 1 | P2 | The copy and label reached `04 / 04 · enough`, but the outer progress signal was still mapped to an unreachable `0.70` scene progress and stopped at approximately 74% width at the real page bottom. | The signal now reaches 100% at the fourth acknowledgement's real `0.52` threshold. Browser measurement at completion reported the outer and inner lines at the same `261.375 px` width with no residual scale transform. |
+| 1 | P2 | The copy and label reached `04 / 04 · enough`, but the outer progress signal was still mapped to an unreachable `0.70` scene progress and stopped at approximately 74% width at the real page bottom. | The signal now tracks the fourth acknowledgement's real `0.52` threshold and the completed semantic state explicitly owns the final 100% scale. |
 | 2 | P2 | Each acknowledgement created and removed its own independent row wash, so attention changed state but did not visibly travel through the ledger like Parker's persistent step focus. | One shared Framer Motion layout baton now transfers between rows. Browser sampling during Arrow-key movement found a translated mid-frame followed by a transform-free resting frame, with exactly one baton mounted in the destination note. |
 | 3 | P2 | A motion change could have competed with the existing response, receipt history, or completion hold. | Post-fix browser verification preserved the matching response phase, previous-note receipt treatment, 920 ms final hold, final baton removal, and CTA warmth handoff. |
+| 4 | P2 | Release 95 browser QA found that the spring could cross the fourth threshold to complete the sequence, then settle at `scaleX(0.952381)` when the deployed page's raw maximum progress was slightly lower. The label and line could still disagree by about 5%. | Once all four acknowledgements are received, the completion state now sets the outer signal to `1` directly. Scroll progress continues to own the approach; semantic completion owns the exact resting endpoint. |
 
 ## Required fidelity surfaces
 
@@ -39,7 +40,7 @@
 - Direct arrival: full motion resolved to acknowledgement 3, with exactly one baton inside `your candour` and the matching receiving state.
 - Shared focus: clicking acknowledgement 1 entered inspection; `ArrowDown` moved the baton to acknowledgement 2. A transition sample showed `translateY(-58.94px)` during handoff and `transform: none` at rest.
 - Completion: a final natural scroll produced `data-contact-gratitude-complete="true"`, `data-contact-gratitude-settled="true"`, no remaining sequence focus, no baton, and `04 / 04 · enough`.
-- Completion line: the outer and inner progress surfaces both measured `261.375 px` at rest, proving the visual cue now agrees with the semantic 4-of-4 state.
+- Completion line: local QA measured the outer and inner progress surfaces at the same `261.375 px` width. A release-95 production check then exposed a `0.952381` spring-rest edge case; the final completion-state override removes that residual scale before release 96.
 - Reduced motion: a clean direct local arrival in reduced mode showed zero automatically received acknowledgements, no sequence focus, and no baton; the control was then exercised between reduced and full motion without changing the motion contract.
 - Browser console: no application error overlay or failed application interaction appeared during the rendered QA path. The cloud browser's final read-only console query became unavailable after its local-URL policy changed; static typing, linting, motion contracts, and the production build all remained clean.
 - Production build: passed with Next.js `15.5.25`; all 79 static pages generated and `/contact` typechecked successfully.

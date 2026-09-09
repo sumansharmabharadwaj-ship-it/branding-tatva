@@ -610,7 +610,14 @@ export function ContactGratitude() {
               <motion.span
                 aria-hidden="true"
                 className="h-px overflow-hidden bg-ivory/18"
-                style={reducedMotion ? undefined : { scaleX: signalScale, transformOrigin: "0 50%" }}
+                style={
+                  reducedMotion
+                    ? undefined
+                    : {
+                        scaleX: allNotesVisited ? 1 : signalScale,
+                        transformOrigin: "0 50%",
+                      }
+                }
               >
                 <motion.span
                   className="block h-full origin-left bg-sandstone"
