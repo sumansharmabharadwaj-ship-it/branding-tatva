@@ -184,7 +184,14 @@ if (!contactGratitude.includes('role="progressbar"')) {
 if (!contactGratitude.includes('event.key === "Escape"')) {
   fail("Contact gratitude must let keyboard visitors close an active acknowledgement.");
 }
-if (!contactGratitude.includes("event.currentTarget.contains(document.activeElement)")) {
+const preservesFocusedGratitudeNote =
+  contactGratitude.includes("event.currentTarget.contains(document.activeElement)") ||
+  (contactGratitude.includes("focusedIndex = noteRefs.current.findIndex") &&
+    contactGratitude.includes("note === document.activeElement") &&
+    contactGratitude.includes("focusedIndex >= 0") &&
+    contactGratitude.includes(": selectedNote"));
+
+if (!preservesFocusedGratitudeNote) {
   fail("Contact gratitude hover must preserve keyboard focus across the acknowledgement group.");
 }
 if (!contactGratitude.includes('data-contact-gratitude-flow="continuous"')) {
