@@ -12,7 +12,7 @@
   color: #f4efe6;
 }
 
-.tatva-observatory::after,
+.tatva-observatory__stage::after,
 .tatva-pressure-lab::after {
   content: "";
   position: absolute;
@@ -256,7 +256,7 @@
 }
 
 @media (max-width: 640px) {
-  .tatva-observatory,
+  .tatva-observatory__stage,
   .tatva-pressure-lab {
     padding-block: 4.75rem;
   }
@@ -334,6 +334,63 @@
 @media (prefers-reduced-motion: reduce) {
   .tatva-observatory__film video {
     transform: none;
+  }
+}
+
+/* Parker-inspired chapter pacing: the visitor's scroll holds one composed
+   frame while each Tatva comes into focus. Short screens, touch devices and
+   reduced-motion users keep the original document flow. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
+  .tatva-observatory {
+    height: 300svh;
+    min-height: 300svh;
+    overflow: clip;
+  }
+
+  .tatva-observatory__stage {
+    --tatva-scroll-progress: 0;
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100svh;
+    min-height: 100svh;
+    box-sizing: border-box;
+    align-items: center;
+    padding-block: clamp(5.4rem, 8svh, 6.8rem) clamp(2.1rem, 4svh, 3.4rem);
+  }
+
+  .tatva-observatory__frame {
+    width: 100%;
+    transform: translate3d(0, calc((var(--tatva-scroll-progress) - 0.5) * -8px), 0);
+    transition: transform 160ms linear;
+  }
+
+  .tatva-observatory__film video {
+    transform: scale(calc(1.06 + var(--tatva-scroll-progress) * 0.065));
+    transform-origin: 58% 48%;
+    transition: transform 160ms linear;
+  }
+
+  .tatva-observatory__focus {
+    min-height: 12.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tatva-observatory {
+    height: auto;
+    min-height: auto;
+  }
+
+  .tatva-observatory__stage,
+  .tatva-observatory__frame,
+  .tatva-observatory__film video {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: auto;
+    transform: none;
+    transition: none;
   }
 }
 

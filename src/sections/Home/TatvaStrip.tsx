@@ -3,7 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
@@ -64,9 +64,57 @@ const TATVAS: Tatva[] = [
 export function TatvaStrip() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { amount: 0.18 });
   const [activeIndex, setActiveIndex] = useState(0);
   const active = TATVAS[activeIndex] ?? TATVAS[0];
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const frame = frameRef.current;
+    if (!section || !frame || prefersReducedMotion) return;
+
+    const desktopStory = window.matchMedia(
+      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
+    );
+    let frameRequest = 0;
+
+    function render() {
+      frameRequest = 0;
+      if (!desktopStory.matches) {
+        frame?.style.removeProperty("--tatva-scroll-progress");
+        return;
+      }
+
+      const bounds = section?.getBoundingClientRect();
+      if (!bounds) return;
+
+      const runway = Math.max(1, bounds.height - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, -bounds.top / runway));
+      const nextIndex = Math.min(TATVAS.length - 1, Math.floor(progress * TATVAS.length));
+
+      frame?.style.setProperty("--tatva-scroll-progress", progress.toFixed(4));
+      setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+    }
+
+    function schedule() {
+      if (frameRequest) return;
+      frameRequest = window.requestAnimationFrame(render);
+    }
+
+    render();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    desktopStory.addEventListener("change", schedule);
+
+    return () => {
+      if (frameRequest) window.cancelAnimationFrame(frameRequest);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      desktopStory.removeEventListener("change", schedule);
+      frame.style.removeProperty("--tatva-scroll-progress");
+    };
+  }, [prefersReducedMotion]);
 
   function choose(index: number) {
     setActiveIndex(index);
@@ -77,40 +125,44 @@ export function TatvaStrip() {
   return (
     <section
       ref={sectionRef}
-      className="tatva-observatory relative isolate overflow-hidden py-20 sm:py-28"
+      className="tatva-observatory relative isolate"
       style={{ backgroundColor: "#0D1514" }}
       aria-labelledby="tatva-framework-title"
     >
-      <div className="tatva-observatory__film" aria-hidden="true">
-        <video
-          src="/videos/higgsfield-confident-light.mp4"
-          poster="/images/higgsfield-confident-light-poster.jpg"
-          muted
-          autoPlay={!prefersReducedMotion}
-          loop
-          playsInline
-          preload={inView ? "metadata" : "none"}
-          data-home-playback-rate="1.2"
+      <div
+        ref={frameRef}
+        className="tatva-observatory__stage relative isolate overflow-hidden py-20 sm:py-28"
+      >
+        <div className="tatva-observatory__film" aria-hidden="true">
+          <video
+            src="/videos/higgsfield-confident-light.mp4"
+            poster="/images/higgsfield-confident-light-poster.jpg"
+            muted
+            autoPlay={!prefersReducedMotion}
+            loop
+            playsInline
+            preload={inView ? "metadata" : "none"}
+            data-home-playback-rate="1.2"
+          />
+          <span />
+        </div>
+
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-28 top-[18%] z-[2] h-80 w-80 rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(199,119,82,0.22), transparent 68%)" }}
+          animate={motionActive ? { x: [0, 44, 0], y: [0, 28, 0], scale: [1, 1.12, 1] } : undefined}
+          transition={motionActive ? { duration: 14, repeat: Infinity, ease: "easeInOut" } : undefined}
         />
-        <span />
-      </div>
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-28 bottom-[8%] z-[2] h-96 w-96 rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(82,117,111,0.24), transparent 68%)" }}
+          animate={motionActive ? { x: [0, -52, 0], y: [0, -24, 0], scale: [1.04, 0.94, 1.04] } : undefined}
+          transition={motionActive ? { duration: 17, repeat: Infinity, ease: "easeInOut" } : undefined}
+        />
 
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-28 top-[18%] z-[2] h-80 w-80 rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(199,119,82,0.22), transparent 68%)" }}
-        animate={motionActive ? { x: [0, 44, 0], y: [0, 28, 0], scale: [1, 1.12, 1] } : undefined}
-        transition={motionActive ? { duration: 14, repeat: Infinity, ease: "easeInOut" } : undefined}
-      />
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-28 bottom-[8%] z-[2] h-96 w-96 rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(82,117,111,0.24), transparent 68%)" }}
-        animate={motionActive ? { x: [0, -52, 0], y: [0, -24, 0], scale: [1.04, 0.94, 1.04] } : undefined}
-        transition={motionActive ? { duration: 17, repeat: Infinity, ease: "easeInOut" } : undefined}
-      />
-
-      <Container className="relative z-[3] max-w-[100rem]">
+        <Container className="tatva-observatory__frame relative z-[3] max-w-[100rem]">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,21rem)_1fr] lg:items-center lg:gap-16">
           <Reveal className="tatva-observatory__copy">
             <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: "#D4B99A" }}>
@@ -291,7 +343,8 @@ export function TatvaStrip() {
             </ol>
           </Reveal>
         </div>
-      </Container>
+        </Container>
+      </div>
     </section>
   );
 }
