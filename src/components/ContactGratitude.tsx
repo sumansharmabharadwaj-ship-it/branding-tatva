@@ -55,6 +55,8 @@ const COMPLETE_RESPONSE = "That is enough for a precise first conversation.";
 const RESPONSES = [DEFAULT_RESPONSE, ...NOTES.map((note) => note.response), COMPLETE_RESPONSE];
 const ALL_NOTES_VISITED = (1 << NOTES.length) - 1;
 const COMPLETION_SETTLE_MS = 920;
+const REVISIT_ENTER_PROGRESS = 0.455;
+const REVISIT_EXIT_PROGRESS = 0.485;
 /* The final scene sits directly above the compact footer, so its usable
    progress tops out a little above 0.54 on a desktop viewport. Keep the last
    beat inside that real range: every acknowledgement can resolve through
@@ -196,10 +198,13 @@ export function ContactGratitude() {
   const nextRef = useRef<HTMLDivElement>(null);
   const noteRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const visitedNotesRef = useRef(0);
+  const scrollFocusRef = useRef<number | null>(null);
   const [activeNote, setActiveNote] = useState<number | null>(null);
   const [selectedNote, setSelectedNote] = useState<number | null>(null);
   const [visitedNotes, setVisitedNotes] = useState(0);
   const [lastReceivedNote, setLastReceivedNote] = useState<number | null>(null);
+  const [scrollFocusNote, setScrollFocusNote] = useState<number | null>(null);
+  const [isRevisiting, setIsRevisiting] = useState(false);
   const [announcedResponse, setAnnouncedResponse] = useState("");
   const [completionSettled, setCompletionSettled] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
@@ -242,6 +247,20 @@ export function ContactGratitude() {
   useMotionValueEvent(progress, "change", (currentProgress) => {
     if (reducedMotion) return;
 
+    /* Receipt remains cumulative, but focus follows the visitor in both
+       directions. Scrolling back through the closing scene therefore returns
+       the shared baton and response to the earlier acknowledgement without
+       pretending that it was never received. */
+    const nextScrollFocus = SCROLL_RECEIVE_THRESHOLDS.reduce<number | null>(
+      (focus, threshold, index) => (currentProgress >= threshold ? index : focus),
+      null,
+    );
+
+    if (nextScrollFocus !== scrollFocusRef.current) {
+      scrollFocusRef.current = nextScrollFocus;
+      setScrollFocusNote(nextScrollFocus);
+    }
+
     const receivedFromScroll = SCROLL_RECEIVE_THRESHOLDS.reduce(
       (mask, threshold, index) =>
         currentProgress >= threshold ? mask | (1 << index) : mask,
@@ -259,6 +278,19 @@ export function ContactGratitude() {
       0,
     );
     setLastReceivedNote(latestReceivedNote);
+  });
+
+  /* The spring can briefly rebound below the fourth threshold after it has
+     completed. Use raw scroll progress and a small hysteresis window to tell
+     an intentional upward revisit from that visual rebound. */
+  useMotionValueEvent(scrollYProgress, "change", (currentProgress) => {
+    if (reducedMotion || !completionSettled) return;
+
+    if (currentProgress <= REVISIT_ENTER_PROGRESS) {
+      setIsRevisiting(true);
+    } else if (currentProgress >= REVISIT_EXIT_PROGRESS) {
+      setIsRevisiting(false);
+    }
   });
 
   const thankX = useTransform(progress, [0, 0.34, 0.76, 1], [-72, 0, 0, 18]);
@@ -281,7 +313,7 @@ export function ContactGratitude() {
   const nextOpacity = useTransform(nextProgress, [0, 1], [0, 1]);
 
   const allNotesVisited = visitedNotes === ALL_NOTES_VISITED;
-  const sequenceFocusNote = completionSettled ? null : lastReceivedNote;
+  const sequenceFocusNote = completionSettled && !isRevisiting ? null : scrollFocusNote;
   const visualActiveNote = activeNote ?? sequenceFocusNote;
   const visitedCount = NOTES.reduce(
     (count, _note, index) => count + ((visitedNotes & (1 << index)) === 0 ? 0 : 1),
@@ -294,11 +326,13 @@ export function ContactGratitude() {
     (completionSettled ? 0.035 : 0);
   const responseIndex =
     activeNote === null
-      ? completionSettled
-        ? RESPONSES.length - 1
-        : lastReceivedNote === null
-          ? 0
-          : lastReceivedNote + 1
+      ? sequenceFocusNote !== null
+        ? sequenceFocusNote + 1
+        : completionSettled
+          ? RESPONSES.length - 1
+          : lastReceivedNote === null
+            ? 0
+            : lastReceivedNote + 1
       : activeNote + 1;
   const activeResponse = RESPONSES[responseIndex];
 
@@ -308,6 +342,9 @@ export function ContactGratitude() {
     const settleCompletion = () => {
       // Completion belongs to the scroll sequence. A note opened by pointer,
       // touch or keyboard stays readable until the visitor leaves or closes it.
+      setIsRevisiting(
+        !reducedMotion && scrollYProgress.get() <= REVISIT_ENTER_PROGRESS,
+      );
       setCompletionSettled(true);
     };
 
@@ -316,7 +353,7 @@ export function ContactGratitude() {
       reducedMotion ? 0 : COMPLETION_SETTLE_MS,
     );
     return () => window.clearTimeout(timer);
-  }, [allNotesVisited, completionSettled, reducedMotion]);
+  }, [allNotesVisited, completionSettled, reducedMotion, scrollYProgress]);
 
   const handleActiveNoteChange = useCallback((index: number | null) => {
     setActiveNote(index);
@@ -332,8 +369,11 @@ export function ContactGratitude() {
       setAnnouncedResponse(nextSelectedNote === null ? "" : NOTES[index].response);
       setSelectedNote(nextSelectedNote);
       handleActiveNoteChange(nextSelectedNote);
+      if (nextSelectedNote === null && scrollYProgress.get() > REVISIT_ENTER_PROGRESS) {
+        setIsRevisiting(false);
+      }
     },
-    [handleActiveNoteChange, selectedNote],
+    [handleActiveNoteChange, scrollYProgress, selectedNote],
   );
 
   const handleNoteBlur = useCallback(() => {
@@ -380,6 +420,9 @@ export function ContactGratitude() {
     if (event.key === "Escape" && activeNote !== null) {
       setSelectedNote(null);
       setActiveNote(null);
+      if (scrollYProgress.get() > REVISIT_ENTER_PROGRESS) {
+        setIsRevisiting(false);
+      }
     }
   }
 
@@ -422,6 +465,7 @@ export function ContactGratitude() {
       data-contact-gratitude-sequence-focus={
         sequenceFocusNote === null ? undefined : String(sequenceFocusNote + 1)
       }
+      data-contact-gratitude-scroll-scrub="bidirectional"
       onClick={handleSceneClick}
       onKeyDown={handleSceneKeyDown}
       className="relative flex min-h-[100svh] w-full items-center py-10 sm:py-14"
@@ -629,7 +673,9 @@ export function ContactGratitude() {
               data-contact-gratitude-response-phase={
                 activeNote !== null
                   ? "inspection"
-                  : completionSettled
+                  : completionSettled && sequenceFocusNote !== null
+                    ? "revisiting"
+                    : completionSettled
                     ? "resolved"
                     : lastReceivedNote === null
                       ? "opening"

@@ -77,15 +77,20 @@ requireText(gratitude, "data-contact-gratitude-receipt", "gratitude scroll recei
 requireText(gratitude, "lastReceivedNote", "gratitude response no longer follows the received sequence");
 requireText(gratitude, "visitedNotesRef", "gratitude response no longer preserves receipt order");
 requireText(gratitude, "sequenceFocusNote", "gratitude sequence no longer carries one acknowledgement into focus");
+requireText(gratitude, "scrollFocusNote", "gratitude focus no longer follows reverse scrolling");
+requireText(gratitude, "REVISIT_ENTER_PROGRESS", "gratitude reverse scroll no longer has a stable re-entry threshold");
+requireText(gratitude, "REVISIT_EXIT_PROGRESS", "gratitude reverse scroll no longer has a stable resting threshold");
+requireText(gratitude, 'useMotionValueEvent(scrollYProgress, "change"', "gratitude reverse playback no longer follows raw scroll direction");
 requireText(gratitude, "visualActiveNote", "gratitude manual and scroll focus no longer share one visual state");
 requireText(gratitude, "data-contact-gratitude-sequence-focus", "gratitude sequence focus is no longer inspectable");
+requireText(gratitude, 'data-contact-gratitude-scroll-scrub="bidirectional"', "gratitude no longer declares its bidirectional scroll contract");
 requireText(gratitude, "LayoutGroup", "gratitude sequence no longer shares one moving focus treatment");
 requireText(gratitude, 'layoutId="contact-gratitude-focus-baton"', "gratitude focus no longer travels between acknowledgements");
 requireText(gratitude, "data-contact-gratitude-focus-baton", "gratitude focus baton is no longer inspectable");
 requirePattern(
   gratitude,
-  /const sequenceFocusNote = completionSettled \? null : lastReceivedNote;\s*const visualActiveNote = activeNote \?\? sequenceFocusNote;/,
-  "gratitude sequence focus no longer follows the latest acknowledgement until settling",
+  /const sequenceFocusNote = completionSettled && !isRevisiting \? null : scrollFocusNote;\s*const visualActiveNote = activeNote \?\? sequenceFocusNote;/,
+  "gratitude sequence focus no longer scrubs backwards while preserving the final resting state",
 );
 requirePattern(
   gratitude,
@@ -107,6 +112,11 @@ requirePattern(
   gratitude,
   /const responseIndex =[\s\S]*?completionSettled[\s\S]*?RESPONSES\.length - 1/,
   "gratitude resolves before the final acknowledgement has time to land",
+);
+requirePattern(
+  gratitude,
+  /setIsRevisiting\(\s*!reducedMotion && scrollYProgress\.get\(\) <= REVISIT_ENTER_PROGRESS,\s*\);\s*setCompletionSettled\(true\)/,
+  "gratitude completion no longer preserves an intentional reverse gesture during its final hold",
 );
 requireText(gratitude, "announcedResponse", "gratitude activation announcement is missing");
 requirePattern(
