@@ -1583,6 +1583,10 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   position: relative;
   isolation: isolate;
   overflow: clip;
+  /* Give wheel scrolling a reachable endpoint beyond the final scene.
+     Without it, proximity snapping can return to that scene's start before
+     the fourth acknowledgement has time to resolve. */
+  scroll-snap-align: end;
   margin-top: -1px;
   background: #27221e;
 }
