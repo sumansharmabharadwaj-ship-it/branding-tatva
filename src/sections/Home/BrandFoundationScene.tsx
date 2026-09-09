@@ -1,9 +1,10 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import styles from "./BrandFoundation.module.css";
 
@@ -48,13 +49,24 @@ export function BrandFoundationScene() {
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const previousIndexRef = useRef(0);
+  const visualizer = useScrollDrivenVisualizer({
+    count: FOUNDATION_LAYERS.length,
+    target: wrapperRef,
+    enabled: sceneInView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const activeIndex = visualizer.activeIndex;
+  const direction = activeIndex >= previousIndexRef.current ? 1 : -1;
   const active = FOUNDATION_LAYERS[activeIndex];
-  const { scrollYProgress } = useScroll({ target: wrapperRef, offset: ["start end", "end start"] });
+  const scrollYProgress = visualizer.scrollYProgress;
   const landscapeScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.1]);
   const landscapeY = useTransform(scrollYProgress, [0, 1], [14, -14]);
   const sunlightX = useTransform(scrollYProgress, [0, 1], ["-45%", "260%"]);
+
+  useEffect(() => {
+    previousIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   useEffect(() => {
     const videoAtEffectStart = videoRef.current;
@@ -76,9 +88,7 @@ export function BrandFoundationScene() {
   }, [prefersReducedMotion, sceneInView]);
 
   function choose(index: number) {
-    if (index === activeIndex) return;
-    setDirection(index > activeIndex ? 1 : -1);
-    setActiveIndex(index);
+    visualizer.choose(index);
   }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -94,7 +104,13 @@ export function BrandFoundationScene() {
   }
 
   return (
-    <section ref={wrapperRef} className={styles.section} aria-labelledby="brand-foundation-title">
+    <section
+      ref={wrapperRef}
+      className={styles.section}
+      aria-labelledby="brand-foundation-title"
+      data-scroll-story="foundation"
+      data-foundation-state={activeIndex}
+    >
       <div className={styles.scene}>
         <motion.div className={styles.landscape} data-foundation-landscape aria-hidden="true" style={{ scale: prefersReducedMotion ? 1 : landscapeScale, y: prefersReducedMotion ? 0 : landscapeY }}>
           <video
@@ -134,6 +150,12 @@ export function BrandFoundationScene() {
                   tabIndex={index === activeIndex ? 0 : -1}
                   className={styles.tab}
                   onClick={() => choose(index)}
+                  onPointerEnter={() => visualizer.preview(index)}
+                  onPointerLeave={(event) => {
+                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                  }}
+                  onFocus={() => visualizer.preview(index)}
+                  onBlur={visualizer.releasePreview}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                   data-cursor-label="explore"
                 >
