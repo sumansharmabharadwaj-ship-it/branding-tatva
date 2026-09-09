@@ -87,6 +87,8 @@ requireText(gratitude, 'data-contact-gratitude-scroll-scrub="bidirectional"', "g
 requireText(gratitude, "LayoutGroup", "gratitude sequence no longer shares one moving focus treatment");
 requireText(gratitude, 'layoutId="contact-gratitude-focus-baton"', "gratitude focus no longer travels between acknowledgements");
 requireText(gratitude, "data-contact-gratitude-focus-baton", "gratitude focus baton is no longer inspectable");
+requireText(gratitude, 'layoutId="contact-gratitude-reading-head"', "gratitude reading head no longer travels with the shared focus baton");
+requireText(gratitude, "data-contact-gratitude-reading-head", "gratitude travelling reading head is no longer inspectable");
 requireText(gratitude, 'data-contact-gratitude-scroll-spine="continuous"', "gratitude acknowledgements no longer share one continuous scroll spine");
 requireText(gratitude, "data-contact-gratitude-scroll-spine-settled", "gratitude scroll spine no longer settles before the final handoff");
 requireText(gratitude, "data-contact-gratitude-note-active", "gratitude active acknowledgement state is no longer inspectable");
@@ -134,6 +136,8 @@ requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude po
 requireText(gratitude, 'data-contact-gratitude-receipt="scroll-or-activation"', "gratitude receipt no longer supports scroll and deliberate inspection");
 requireText(gratitude, "data-contact-gratitude-next-ready", "gratitude completion no longer hands off to the next step");
 requireText(gratitude, "data-contact-gratitude-primary", "gratitude primary route is no longer addressable");
+requireText(gratitude, "data-contact-gratitude-progress-beat", "gratitude progress count no longer carries direction between acknowledgements");
+requireText(gratitude, '<AnimatePresence initial={false} mode="wait">', "gratitude progress count no longer resolves one beat before the next");
 requireText(gratitude, 'event.key === "ArrowDown"', "gratitude arrow-key choreography is missing");
 requireText(gratitude, "selectedNote", "gratitude click and touch selection no longer persists");
 requirePattern(
@@ -162,6 +166,8 @@ const cssContracts = [
   ["[data-contact-gratitude-note]:focus-visible", "gratitude keyboard focus no longer uses the calm inset treatment"],
   ["[data-contact-gratitude-scroll-spine]", "gratitude scroll spine no longer has reduced-motion protection"],
   ["[data-contact-gratitude-note-label]", "gratitude label motion and reduced-motion protection are missing"],
+  ["[data-contact-gratitude-reading-head]", "gratitude reading head styling or reduced-motion protection is missing"],
+  ["[data-contact-gratitude-progress-beat]", "gratitude progress beat lacks reduced-motion protection"],
   ['html[data-motion="reduced"]', "explicit reduced-motion styling is missing"],
   ["@media (prefers-reduced-motion: reduce)", "system reduced-motion styling is missing"],
   ["@media (max-width: 359px)", "ultra-narrow phone protection is missing"],

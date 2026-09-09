@@ -122,6 +122,23 @@
   transition: transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* A single editorial hairline travels with the shared focus baton. It gives
+   the scroll sequence a precise reading head without turning the ledger into
+   a stepper or adding another decorative object. */
+[data-contact-film] [data-contact-gratitude-reading-head] {
+  background: linear-gradient(
+    90deg,
+    rgba(224, 190, 139, 1) 0%,
+    rgba(224, 190, 139, 0.94) 58%,
+    rgba(224, 190, 139, 0) 100%
+  );
+  box-shadow: 0 0 12px rgba(224, 190, 139, 0.34);
+}
+
+[data-contact-film] [data-contact-gratitude-progress-label] {
+  line-height: 1.35;
+}
+
 @media (min-width: 1024px) {
   [data-contact-film]
     [data-contact-gratitude-note-active="true"]
@@ -1749,7 +1766,9 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-ledger]:
 }
 
 html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-scroll-spine],
-html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-note-label] {
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-note-label],
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-reading-head],
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-progress-beat] {
   transform: none !important;
 }
 
@@ -1824,7 +1843,9 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   }
 
   [data-contact-film] [data-contact-gratitude-scroll-spine],
-  [data-contact-film] [data-contact-gratitude-note-label] {
+  [data-contact-film] [data-contact-gratitude-note-label],
+  [data-contact-film] [data-contact-gratitude-reading-head],
+  [data-contact-film] [data-contact-gratitude-progress-beat] {
     transform: none !important;
   }
 

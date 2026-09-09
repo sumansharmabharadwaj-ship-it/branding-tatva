@@ -10,6 +10,7 @@ import {
   type MouseEvent,
 } from "react";
 import {
+  AnimatePresence,
   LayoutGroup,
   motion,
   useMotionValueEvent,
@@ -108,6 +109,7 @@ function GratitudeNote({
       ref={buttonRef}
       type="button"
       aria-label={`${selected ? "Close" : "Open"} acknowledgement for ${note.label}${noteState}`}
+      aria-current={active ? "step" : undefined}
       aria-pressed={selected}
       aria-controls="contact-gratitude-response"
       onClick={() => onSelect(index)}
@@ -141,14 +143,24 @@ function GratitudeNote({
       style={reducedMotion ? { y: 0, opacity: 1 } : { y, opacity, willChange: "transform, opacity" }}
     >
       {active ? (
-        <motion.span
-          layoutId="contact-gratitude-focus-baton"
-          aria-hidden="true"
-          data-contact-gratitude-focus-baton
-          className="absolute inset-0 bg-gradient-to-r from-sandstone/[0.16] via-ivory/[0.07] to-transparent"
-          initial={false}
-          transition={{ duration: reducedMotion ? 0 : 0.48, ease: EASE_AIR }}
-        />
+        <>
+          <motion.span
+            layoutId="contact-gratitude-focus-baton"
+            aria-hidden="true"
+            data-contact-gratitude-focus-baton
+            className="absolute inset-0 bg-gradient-to-r from-sandstone/[0.16] via-ivory/[0.07] to-transparent"
+            initial={false}
+            transition={{ duration: reducedMotion ? 0 : 0.48, ease: EASE_AIR }}
+          />
+          <motion.span
+            layoutId="contact-gratitude-reading-head"
+            aria-hidden="true"
+            data-contact-gratitude-reading-head
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] hidden h-px origin-left lg:block"
+            initial={false}
+            transition={{ duration: reducedMotion ? 0 : 0.48, ease: EASE_AIR }}
+          />
+        </>
       ) : null}
       <motion.span
         aria-hidden="true"
@@ -788,12 +800,24 @@ export function ContactGratitude() {
               <motion.span
                 aria-hidden="true"
                 data-contact-gratitude-progress-label
-                className="text-[0.625rem] font-medium uppercase tracking-[0.14em] text-ivory/90 sm:text-[0.6875rem]"
+                className="relative min-w-[8.75rem] overflow-hidden text-right text-[0.625rem] font-medium uppercase tracking-[0.14em] text-ivory/90 sm:text-[0.6875rem]"
                 initial={false}
                 animate={{ color: completionSettled ? "rgb(224, 190, 139)" : "rgba(246, 242, 234, 0.9)" }}
                 transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE_AIR }}
               >
-                {completionSettled ? "04 / 04 · enough" : `0${visitedCount} / 04 received`}
+                <AnimatePresence initial={false} mode="wait">
+                  <motion.span
+                    key={completionSettled ? "complete" : visitedCount}
+                    data-contact-gratitude-progress-beat
+                    className="block"
+                    initial={reducedMotion ? false : { y: 7, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={reducedMotion ? undefined : { y: -7, opacity: 0 }}
+                    transition={{ duration: reducedMotion ? 0 : 0.34, ease: EASE_AIR }}
+                  >
+                    {completionSettled ? "04 / 04 · enough" : `0${visitedCount} / 04 received`}
+                  </motion.span>
+                </AnimatePresence>
               </motion.span>
             </div>
           </motion.div>

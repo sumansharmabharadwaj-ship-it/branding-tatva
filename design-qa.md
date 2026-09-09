@@ -157,3 +157,64 @@ final result: passed
 - None required for this pass.
 
 final result: passed
+
+---
+
+## Contact gratitude reading-head handoff
+
+### Evidence
+
+- Source visual truth: `/tmp/contact-gratitude-reference-parker.png` in the cloud-browser runtime, captured from `https://heyparker.ai/?utm_source=chatgpt.com`.
+- Implementation screenshot: `/tmp/contact-gratitude-implementation.png` in the cloud-browser runtime, captured from the local Contact route at `#thanks`.
+- The source and implementation screenshots were emitted together in one comparison input before this review.
+- Source pixels: 1348 × 926. Implementation pixels: 1348 × 926.
+- CSS viewport: 1363 × 936 at DPR 1 for both captures; no density normalization was required.
+- Responsive evidence: 390 × 844 QA preset with a 375px document width, captured in the cloud browser.
+- Comparison state: Parker hero with its explicit scroll invitation; Branding Tatva gratitude sequence with `your candour` active and `03 / 04 received`. These are not content-equivalent screens: Parker is the motion-principle reference, while Branding Tatva's existing layout, copy, imagery, and visual system are intentionally preserved.
+
+### Findings
+
+- No actionable P0, P1, or P2 differences remain in the scoped gratitude refinement.
+- Fonts and typography: the existing Branding Tatva display and body families, weights, wrapping, small-cap tracking, and hierarchy are unchanged. The moving cue does not alter text metrics, and the progress counter keeps a stable width while its text transitions.
+- Spacing and layout rhythm: the split composition, ledger tracks, row heights, CTA placement, section height, and footer handoff remain unchanged. The 1px reading head sits exactly on the active row's lower edge and spans that row's width without displacing content.
+- Colors and visual tokens: the new cue reuses the sandstone and ivory tokens already present in the section. Its short glow remains subordinate to the primary CTA and disappears when the completion state settles.
+- Image quality and asset fidelity: the existing closing landscape and overlay treatment are unchanged; no substitute, generated, CSS-drawn, or inline-SVG assets were introduced.
+- Copy and content: all gratitude copy, acknowledgement labels, responses, progress language, and onward routes are preserved. `aria-current="step"` adds state semantics without changing visible copy.
+- Motion and interaction: the shared reading head follows scroll, pointer, and keyboard focus with one finite 0.48s handoff. The progress text uses one finite 0.34s directional beat. Neither effect loops. Completion removes the reading head, while an intentional reverse-scroll revisit restores the appropriate earlier row without erasing receipts.
+- Accessibility and responsiveness: ArrowDown moved focus and `aria-current` from the first to second acknowledgement; the reading head landed flush with the focused row. Reduced motion rendered the cue with `transform: none`. At 390px, the desktop-only head remains absent and the page has no horizontal overflow.
+
+### Full-view comparison evidence
+
+The paired 1348 × 926 input shows the relevant Parker principle clearly: one dominant visual path, an explicit invitation to scroll, and a finite change of attention. The implementation translates that principle into the existing acknowledgement ledger through a single travelling row edge and progressive counter, without importing Parker's cream palette, outlined navigation, device hero, typography, or composition.
+
+### Focused-region comparison evidence
+
+A separate crop was not required because the ledger occupies the right third of the implementation frame at readable size. Browser geometry confirmed the reading head and active row share the same 376.83px width and lower edge within 2px. Keyboard focus moved the cue from the third-row edge at approximately 571px to the second-row edge at approximately 485px after the finite transition.
+
+### Primary interactions tested
+
+- Scroll-created active state and `03 / 04 received` progress.
+- Keyboard ArrowDown handoff with focus and `aria-current="step"` on the next acknowledgement.
+- Full completion: complete and settled flags true, reading head removed, progress `04 / 04 · enough`, and next actions ready.
+- Reverse scroll: receipt count remained complete while sequence focus and the reading head returned to acknowledgement 02.
+- Reduced motion: component reported reduced mode; the active cue aligned to its row with no transform animation.
+- Mobile 390 × 844: two-column notes remained readable, the fourth label wrapped cleanly, and 375px document width stayed within the 390px viewport.
+- Console: no application-origin errors or warnings. One cloud-browser extension metadata error was excluded from app QA.
+
+### Comparison history
+
+- Pass 1: no actionable P0/P1/P2 differences. The reading head was visually subordinate, aligned to the active row, finite, and contained to desktop, so no visual correction iteration was required.
+
+### Implementation checklist
+
+- [x] Preserve the approved Branding Tatva composition, imagery, palette, type, and copy.
+- [x] Add one restrained scroll and keyboard focus handoff.
+- [x] Add a finite directional progress beat.
+- [x] Resolve the cue cleanly at completion and restore it on deliberate revisit.
+- [x] Verify reduced motion, mobile geometry, keyboard semantics, and console state.
+
+### Follow-up polish
+
+- None required for this pass.
+
+final result: passed
