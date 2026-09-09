@@ -79,6 +79,9 @@ requireText(gratitude, "visitedNotesRef", "gratitude response no longer preserve
 requireText(gratitude, "sequenceFocusNote", "gratitude sequence no longer carries one acknowledgement into focus");
 requireText(gratitude, "visualActiveNote", "gratitude manual and scroll focus no longer share one visual state");
 requireText(gratitude, "data-contact-gratitude-sequence-focus", "gratitude sequence focus is no longer inspectable");
+requireText(gratitude, "LayoutGroup", "gratitude sequence no longer shares one moving focus treatment");
+requireText(gratitude, 'layoutId="contact-gratitude-focus-baton"', "gratitude focus no longer travels between acknowledgements");
+requireText(gratitude, "data-contact-gratitude-focus-baton", "gratitude focus baton is no longer inspectable");
 requirePattern(
   gratitude,
   /const sequenceFocusNote = completionSettled \? null : lastReceivedNote;\s*const visualActiveNote = activeNote \?\? sequenceFocusNote;/,
@@ -88,6 +91,11 @@ requirePattern(
   gratitude,
   /data-contact-gratitude-sequence-focus=\{[\s\S]*?sequenceFocusNote === null[\s\S]*?String\(sequenceFocusNote \+ 1\)/,
   "gratitude sequence focus state is no longer exposed on the closing scene",
+);
+requirePattern(
+  gratitude,
+  /const signalScale = useTransform\(\s*progress,\s*\[0\.1, SCROLL_RECEIVE_THRESHOLDS\[NOTES\.length - 1\]\],\s*\[0, 1\],\s*\);/,
+  "gratitude progress cue no longer completes with the fourth acknowledgement",
 );
 requireText(gratitude, "data-contact-gratitude-response-phase", "gratitude response phases are no longer inspectable");
 requirePattern(

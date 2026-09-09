@@ -1,3 +1,66 @@
+# Design QA: Contact gratitude focus baton · 2026-09-09
+
+## Findings
+
+- No actionable P0, P1, or P2 mismatch remains. The gratitude close now follows Parker's useful motion principle—a persistent sequence with one travelling focal state—without importing Parker's layout, palette, typography, imagery, shapes, or copy.
+- [P3] Direct `#thanks` arrival still enters at acknowledgement 3 of 4 by design. This preserves the existing deep-link context while leaving one short natural-scroll beat before the settled response.
+
+## Target and evidence
+
+- Source visual truth path: the current production Contact gratitude chapter at `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/contact#thanks`, captured in the cloud browser before this edit at both acknowledgement 3 and the settled 4-of-4 state.
+- Motion reference path: `https://heyparker.ai/?utm_source=chatgpt.com`, captured in the cloud browser through its persistent three-step scroll sequence. The comparison is limited to focal continuity and finite progression.
+- Implementation screenshot path: cloud-browser capture of the rebuilt local `/contact#thanks` route at the settled state. The browser-produced capture was inspected inline and was not persisted as a repository artifact.
+- Full-view comparison evidence: current-production and rebuilt-local captures were reviewed at the same viewport and route state in the same QA session. The established two-column meadow composition is unchanged.
+- Focused comparison evidence: the ledger focus baton and the fine completion line were inspected separately because their motion and final scale are too small to judge reliably from the full scene alone.
+- Source pixels: `1348 × 926`; implementation pixels: `1348 × 926`.
+- CSS viewport: `1363 × 936`; device pixel ratio: `1`. Browser captures exclude the scrollbar pixels.
+- State: full motion; direct `#thanks` receiving state followed by natural-scroll completion and the existing 920 ms settle.
+
+## Comparison history
+
+| Pass | Severity | Visible finding | Fix and post-fix evidence |
+| --- | --- | --- | --- |
+| 1 | P2 | The copy and label reached `04 / 04 · enough`, but the outer progress signal was still mapped to an unreachable `0.70` scene progress and stopped at approximately 74% width at the real page bottom. | The signal now reaches 100% at the fourth acknowledgement's real `0.52` threshold. Browser measurement at completion reported the outer and inner lines at the same `261.375 px` width with no residual scale transform. |
+| 2 | P2 | Each acknowledgement created and removed its own independent row wash, so attention changed state but did not visibly travel through the ledger like Parker's persistent step focus. | One shared Framer Motion layout baton now transfers between rows. Browser sampling during Arrow-key movement found a translated mid-frame followed by a transform-free resting frame, with exactly one baton mounted in the destination note. |
+| 3 | P2 | A motion change could have competed with the existing response, receipt history, or completion hold. | Post-fix browser verification preserved the matching response phase, previous-note receipt treatment, 920 ms final hold, final baton removal, and CTA warmth handoff. |
+
+## Required fidelity surfaces
+
+- Fonts and typography: the established display serif, supporting sans, optical italic response, weights, sizes, line heights, tracking, wrapping, and text hierarchy are unchanged.
+- Spacing and layout rhythm: the meadow frame, protected opening, two-column gratitude composition, ledger dimensions, row heights, CTA row, footer, and floating chapter rail remain unchanged. The baton uses layout projection and does not reflow the ledger.
+- Colors and visual tokens: the existing ivory, soil, sandstone, translucent border, and luminous meadow treatments remain intact. The baton reuses the existing `ivory/9%` wash.
+- Image quality and asset fidelity: the existing project-owned gratitude film and poster remain unchanged, with no new placeholder, generated asset, custom icon, or code-drawn illustration.
+- Copy and content: all Branding Tatva gratitude copy, acknowledgement labels, responses, progress language, routes, and protected opening section remain unchanged.
+- Interaction and accessibility: native scrolling, mouse/touch activation, persistent selection, Arrow keys, Home/End, Escape, progress semantics, activation-only live announcements, focus treatment, and reduced-motion manual reading remain intact.
+- Viewport resilience: no geometry or breakpoint rule changed; the shared baton occupies the same absolute row bounds as the prior wash on desktop and the existing two-column note grid on small screens.
+
+## Verification
+
+- Direct arrival: full motion resolved to acknowledgement 3, with exactly one baton inside `your candour` and the matching receiving state.
+- Shared focus: clicking acknowledgement 1 entered inspection; `ArrowDown` moved the baton to acknowledgement 2. A transition sample showed `translateY(-58.94px)` during handoff and `transform: none` at rest.
+- Completion: a final natural scroll produced `data-contact-gratitude-complete="true"`, `data-contact-gratitude-settled="true"`, no remaining sequence focus, no baton, and `04 / 04 · enough`.
+- Completion line: the outer and inner progress surfaces both measured `261.375 px` at rest, proving the visual cue now agrees with the semantic 4-of-4 state.
+- Reduced motion: a clean direct local arrival in reduced mode showed zero automatically received acknowledgements, no sequence focus, and no baton; the control was then exercised between reduced and full motion without changing the motion contract.
+- Browser console: no application error overlay or failed application interaction appeared during the rendered QA path. The cloud browser's final read-only console query became unavailable after its local-URL policy changed; static typing, linting, motion contracts, and the production build all remained clean.
+- Production build: passed with Next.js `15.5.25`; all 79 static pages generated and `/contact` typechecked successfully.
+
+## Implementation checklist
+
+- [x] Tie the completion line to the real fourth acknowledgement threshold.
+- [x] Replace independent row fills with one shared travelling focus baton.
+- [x] Preserve manual inspection, receipt history, final hold, and CTA handoff.
+- [x] Verify direct arrival, keyboard movement, natural-scroll completion, reduced motion, and the production build.
+
+## Follow-up polish
+
+- [P3] If a future page-wide pass adds more physical scroll room below the gratitude scene, the four thresholds can be spread farther apart without changing this interaction contract.
+
+## Final result
+
+final result: passed
+
+---
+
 # Design QA: Contact gratitude sequence · 2026-09-07
 
 ## Findings

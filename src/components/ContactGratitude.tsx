@@ -9,6 +9,7 @@ import {
   type PointerEvent,
 } from "react";
 import {
+  LayoutGroup,
   motion,
   useMotionValueEvent,
   useScroll,
@@ -134,13 +135,16 @@ function GratitudeNote({
       whileTap={reducedMotion ? undefined : { scale: 0.985 }}
       style={reducedMotion ? undefined : { y, opacity, willChange: "transform, opacity" }}
     >
-      <motion.span
-        aria-hidden="true"
-        className="absolute inset-0 origin-left bg-ivory/[0.09]"
-        initial={false}
-        animate={{ scaleX: active ? 1 : 0 }}
-        transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE_AIR }}
-      />
+      {active ? (
+        <motion.span
+          layoutId="contact-gratitude-focus-baton"
+          aria-hidden="true"
+          data-contact-gratitude-focus-baton
+          className="absolute inset-0 bg-ivory/[0.09]"
+          initial={false}
+          transition={{ duration: reducedMotion ? 0 : 0.48, ease: EASE_AIR }}
+        />
+      ) : null}
       <motion.span
         aria-hidden="true"
         data-contact-gratitude-receipt
@@ -243,7 +247,11 @@ export function ContactGratitude() {
     [0.18, 0.48, 0.84, 1],
     ["inset(0 100% 0 0%)", "inset(0 0% 0 0%)", "inset(0 0% 0 0%)", "inset(0 10% 0 0%)"],
   );
-  const signalScale = useTransform(progress, [0.1, 0.7], [0, 1]);
+  const signalScale = useTransform(
+    progress,
+    [0.1, SCROLL_RECEIVE_THRESHOLDS[NOTES.length - 1]],
+    [0, 1],
+  );
   const nextY = useTransform(progress, [0.22, 0.5, 0.9, 1], [22, 0, 0, -4]);
   const nextOpacity = useTransform(progress, [0.22, 0.46, 0.94, 1], [0, 1, 1, 0.82]);
 
@@ -515,25 +523,27 @@ export function ContactGratitude() {
               }}
               className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-[1.35rem] border border-white/16 bg-white/12 backdrop-blur-xl sm:mt-5 lg:block lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent lg:backdrop-blur-none"
             >
-              {NOTES.map((note, index) => (
-                <GratitudeNote
-                  key={note.label}
-                  note={note}
-                  index={index}
-                  progress={progress}
-                  activeNote={visualActiveNote}
-                  selected={selectedNote === index}
-                  visited={(visitedNotes & (1 << index)) !== 0}
-                  reducedMotion={reducedMotion}
-                  buttonRef={(node) => {
-                    noteRefs.current[index] = node;
-                  }}
-                  onActiveNoteChange={handleActiveNoteChange}
-                  onBlurNote={handleNoteBlur}
-                  onNavigate={handleNoteNavigate}
-                  onSelect={handleNoteSelect}
-                />
-              ))}
+              <LayoutGroup id="contact-gratitude-notes">
+                {NOTES.map((note, index) => (
+                  <GratitudeNote
+                    key={note.label}
+                    note={note}
+                    index={index}
+                    progress={progress}
+                    activeNote={visualActiveNote}
+                    selected={selectedNote === index}
+                    visited={(visitedNotes & (1 << index)) !== 0}
+                    reducedMotion={reducedMotion}
+                    buttonRef={(node) => {
+                      noteRefs.current[index] = node;
+                    }}
+                    onActiveNoteChange={handleActiveNoteChange}
+                    onBlurNote={handleNoteBlur}
+                    onNavigate={handleNoteNavigate}
+                    onSelect={handleNoteSelect}
+                  />
+                ))}
+              </LayoutGroup>
             </div>
 
             <div
