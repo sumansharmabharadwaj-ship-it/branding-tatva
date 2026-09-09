@@ -201,11 +201,12 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       settleTimer = window.setTimeout(() => {
         settleTimer = null;
 
+        // Reading a worksheet check takes precedence over section alignment.
         const activeElement = document.activeElement;
         if (
           activeElement instanceof HTMLElement &&
           activeElement.matches(
-            "input, textarea, select, [contenteditable='true'], [role='dialog'] *",
+            "input, textarea, select, [contenteditable='true'], [role='dialog'] *, .insights-worksheet *",
           )
         ) {
           return;

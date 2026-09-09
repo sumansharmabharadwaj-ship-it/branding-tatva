@@ -15,6 +15,7 @@ import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement } from "@/data/insights";
 import { useCenteredRailSelection } from "@/hooks/useCenteredRailSelection";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   clearInsightsIntent,
   INSIGHTS_INTENT_CLEARED_EVENT,
@@ -69,7 +70,10 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   );
   const layerRailRef = useRef<HTMLDivElement>(null);
   const layerButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const panelFocusFrameRef = useRef<number | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const usesHorizontalRail = useMediaQuery("(max-width: 760px)");
   const focusedLayer = layers[focusedIndex];
   const markedCount = markedSlugs.length;
   const markedLayers = layers.filter((layer) => markedSlugs.includes(layer.slug));
@@ -150,6 +154,9 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     setReaderIntent(initialIntent);
 
     return () => {
+      if (panelFocusFrameRef.current !== null) {
+        window.cancelAnimationFrame(panelFocusFrameRef.current);
+      }
       window.removeEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
       window.removeEventListener(
         INSIGHTS_INTENT_CLEARED_EVENT,
@@ -196,7 +203,40 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
 
   function openLayer(index: number) {
     selectLayer(index);
-    layerButtonRefs.current[index]?.focus();
+    if (panelFocusFrameRef.current !== null) {
+      window.cancelAnimationFrame(panelFocusFrameRef.current);
+    }
+
+    // Wait for the selected panel to become visible, then hand keyboard and
+    // screen-reader focus to its content without a native focus-scroll jump.
+    panelFocusFrameRef.current = window.requestAnimationFrame(() => {
+      panelFocusFrameRef.current = null;
+      const panel = panelRefs.current[index];
+      if (!panel || panel.hidden) return;
+
+      panel.focus({ preventScroll: true });
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight);
+      const styles = window.getComputedStyle(panel);
+      const safeTop = viewportTop + Number.parseFloat(styles.scrollMarginTop);
+      const safeBottom = viewportBottom - Number.parseFloat(styles.scrollMarginBottom);
+      const question = panel.querySelector("h3");
+      if (!question) return;
+
+      // Leave an already readable question in place. On a phone, returning
+      // from the review list brings only the current check back into view.
+      if (
+        panel.getBoundingClientRect().top < safeTop ||
+        question.getBoundingClientRect().bottom > safeBottom
+      ) {
+        panel.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+      }
+    });
   }
 
   function toggleLayer(slug: string, index: number) {
@@ -296,6 +336,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         className="insights-worksheet__areas"
         role="tablist"
         aria-label="Brand areas to review"
+        aria-orientation={usesHorizontalRail ? "horizontal" : "vertical"}
       >
         {layers.map((layer, index) => {
           const selected = index === focusedIndex;
@@ -337,6 +378,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       {layers.map((layer, index) => (
         <div
           key={layer.slug}
+          ref={(node) => { panelRefs.current[index] = node; }}
           role="tabpanel"
           id={`worksheet-panel-${layer.slug}`}
           aria-labelledby={`worksheet-tab-${layer.slug}`}
