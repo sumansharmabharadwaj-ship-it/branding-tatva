@@ -131,6 +131,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const focusedLayer = layers[focusedIndex];
   const markedCount = markedSlugs.length;
   const markedLayers = layers.filter((layer) => markedSlugs.includes(layer.slug));
+  const serviceNames = [...new Set(layers.map((layer) => layer.service.name))];
 
   useCenteredRailSelection(
     layerRailRef,
@@ -628,18 +629,28 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
           {suggestedLayer ? (
             <TrackedLink
               href={`/services#package-${suggestedLayer.service.slug}`}
+              aria-label={`Explore ${suggestedLayer.service.name}`}
               event="contextual_cta_clicked"
               eventProps={{ source: "insights_evidence_ledger", route: suggestedLayer.service.slug, layer: suggestedLayer.slug, reader_path: readerIntent?.topicSlug ?? "none" }}
             >
-              <motion.span
-                key={suggestedLayer.service.slug}
-                className="insights-worksheet__service-label"
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 3 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
-              >
-                Explore {suggestedLayer.service.name}<ArrowUpRight aria-hidden="true" />
-              </motion.span>
+              <span className="insights-worksheet__service-copy" aria-hidden="true">
+                {/* Keep this link's space steady as its recommendation changes,
+                    including when the footer wraps on a phone or at larger text sizes. */}
+                {serviceNames.map((name) => (
+                  <span key={name} className="insights-worksheet__service-measure">
+                    Explore {name}<ArrowUpRight />
+                  </span>
+                ))}
+                <motion.span
+                  key={suggestedLayer.service.slug}
+                  className="insights-worksheet__service-label"
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  Explore {suggestedLayer.service.name}<ArrowUpRight />
+                </motion.span>
+              </span>
             </TrackedLink>
           ) : null}
           <TrackedLink
