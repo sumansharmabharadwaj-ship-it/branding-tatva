@@ -28,6 +28,7 @@ export function SparkCursor() {
     let labelHeight = 0;
     let pointerX = 0;
     let pointerY = 0;
+    let targetRefreshFrame: number | null = null;
 
     function positionLabel() {
       const edge = 12;
@@ -120,6 +121,22 @@ export function SparkCursor() {
       if (observedInteractiveTarget) syncInteractiveTarget(observedInteractiveTarget);
     });
 
+    function refreshAfterClick(event: MouseEvent) {
+      if (!active || event.detail === 0) return;
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      if (targetRefreshFrame !== null) window.cancelAnimationFrame(targetRefreshFrame);
+
+      // A tab action can replace the control beneath a stationary pointer.
+      // Let React commit the new panel before reading the visible target.
+      targetRefreshFrame = window.requestAnimationFrame(() => {
+        targetRefreshFrame = null;
+        if (!active) return;
+        syncInteractiveTarget(document.elementFromPoint(pointerX, pointerY));
+        positionLabel();
+      });
+    }
+
     function over(event: PointerEvent) {
       if (!active || !(event.target instanceof Element)) return;
       syncInteractiveTarget(event.target);
@@ -132,6 +149,10 @@ export function SparkCursor() {
         activeLabelCopy = "";
         observedInteractiveTarget = null;
         labelObserver.disconnect();
+        if (targetRefreshFrame !== null) {
+          window.cancelAnimationFrame(targetRefreshFrame);
+          targetRefreshFrame = null;
+        }
       }
     }
 
@@ -143,6 +164,7 @@ export function SparkCursor() {
     window.addEventListener("keydown", onKeyDown);
     document.addEventListener("pointerover", over, { passive: true });
     document.addEventListener("pointerout", out, { passive: true });
+    document.addEventListener("click", refreshAfterClick, { passive: true });
 
     return () => {
       finePointer.removeEventListener("change", sync);
@@ -152,6 +174,8 @@ export function SparkCursor() {
       window.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerover", over);
       document.removeEventListener("pointerout", out);
+      document.removeEventListener("click", refreshAfterClick);
+      if (targetRefreshFrame !== null) window.cancelAnimationFrame(targetRefreshFrame);
       labelObserver.disconnect();
       document.documentElement.classList.remove("sun-cursor-active");
     };
