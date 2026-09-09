@@ -2,10 +2,12 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import recognitionStyles from "./RecognitionChoices.module.css";
+import costStyles from "./HiddenCost.module.css";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -42,34 +44,21 @@ const RECOGNITION_STATES = [
   },
 ] as const;
 
-const COST_STAGES = [
+const BRAND_RESET_COSTS = [
   {
     number: "01",
-    title: "A campaign begins.",
-    body: "The audience is introduced to the business.",
-    effort: "18%",
-    memory: "10%",
+    title: "More explaining.",
+    body: "Each touchpoint makes a different promise. People need another explanation before they understand why they should choose you.",
   },
   {
     number: "02",
-    title: "The brand changes shape.",
-    body: "The next channel teaches a different expectation.",
-    effort: "46%",
-    memory: "15%",
+    title: "Work repeated.",
+    body: "Every brief reopens the language, look, and tone. The team remakes decisions that could have carried forward.",
   },
   {
     number: "03",
-    title: "Every channel relearns the company.",
-    body: "More content is spent explaining what should already feel familiar.",
-    effort: "78%",
-    memory: "21%",
-  },
-  {
-    number: "04",
-    title: "Marketing pays the introduction fee again.",
-    body: "Reach grows. Recognition barely compounds.",
-    effort: "100%",
-    memory: "28%",
+    title: "Recognition lost.",
+    body: "A campaign earns attention. A different identity next time makes the connection harder for people to recognise.",
   },
 ] as const;
 
@@ -408,61 +397,16 @@ export function V4RecognitionScene() {
 
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const previousIndexRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const [isCompactViewport, setIsCompactViewport] = useState(false);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [selectionDirection, setSelectionDirection] = useState<"forward" | "backward">("forward");
-  const mediaScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.14]);
-  const mediaY = useTransform(scrollYProgress, [0, 1], [0, -26]);
-  const copyY = useTransform(scrollYProgress, [0, 1], [18, -18]);
-  const diagramRotate = useTransform(scrollYProgress, [0, 1], [-2, 2]);
-  const active = COST_STAGES[activeIndex];
-
-  useEffect(() => {
-    const query = window.matchMedia("(max-width: 820px)");
-    const syncViewport = () => {
-      setIsCompactViewport(query.matches);
-      if (!query.matches) return;
-      previousIndexRef.current = 0;
-      setSelectionDirection("forward");
-      setActiveIndex(0);
-    };
-
-    syncViewport();
-    query.addEventListener("change", syncViewport);
-    return () => query.removeEventListener("change", syncViewport);
-  }, []);
-
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    if (isCompactViewport) return;
-    const next = Math.min(COST_STAGES.length - 1, Math.floor(progress * COST_STAGES.length));
-    if (next === previousIndexRef.current) return;
-    setSelectionDirection(next > previousIndexRef.current ? "forward" : "backward");
-    previousIndexRef.current = next;
-    setActiveIndex(next);
-  });
-
-  const effortPath = useMemo(
-    () => "M42 270 C140 260 168 242 236 212 C312 178 356 150 424 96 C480 50 530 35 584 26",
-    [],
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const mediaScale = useTransform(scrollYProgress, [0, 1], [1.12, 1.02]);
+  const mediaY = useTransform(scrollYProgress, [0, 1], [14, -14]);
+  const mediaFrame = useTransform(
+    scrollYProgress,
+    [0.12, 0.5],
+    ["inset(8% 12% 8% 12% round 2rem)", "inset(0% 0% 0% 0% round 1rem)"],
   );
-  const memoryPath = useMemo(
-    () => "M42 276 C150 270 218 262 304 248 C392 234 480 222 584 210",
-    [],
-  );
-  const diagramProgress = (activeIndex + 1) / COST_STAGES.length;
-
-  const chooseCostStage = (index: number) => {
-    if (index === previousIndexRef.current) return;
-    setSelectionDirection(index > previousIndexRef.current ? "forward" : "backward");
-    previousIndexRef.current = index;
-    setActiveIndex(index);
-  };
+  const lineProgress = useTransform(scrollYProgress, [0.2, 0.6], [0.08, 1]);
 
   return (
     <section
@@ -471,199 +415,47 @@ export function V4HiddenCostScene() {
       data-home-v4-chapter="cost"
       data-home-chapter="cost"
       data-home-section="cost"
-      data-cursor-world="dark"
-      className="home-v4-cost"
+      data-cursor-world="light"
+      className={costStyles.section}
       aria-labelledby="home-v4-cost-title"
     >
-      <div className="home-v4-cost__sticky">
-        <motion.div
-          className="home-v4-cost__media"
-          style={prefersReducedMotion ? undefined : { scale: mediaScale, y: mediaY }}
-          aria-hidden="true"
-        >
-          <video
-            muted
-            autoPlay
-            loop
-            playsInline
-            preload="metadata"
-            poster="/images/pexels-river-dawn-poster.jpg"
-          >
-            <source src="/videos/pexels-river-dawn.webm" type="video/webm" />
-            <source src="/videos/pexels-river-dawn.mp4" type="video/mp4" />
-          </video>
-          <span />
-        </motion.div>
-
-        <div className="home-v4-cost__shell">
-          <motion.header style={prefersReducedMotion ? undefined : { y: copyY }}>
-            <p>02 · The hidden cost</p>
-            <h2 id="home-v4-cost-title">
-              Marketing becomes expensive when the brand underneath it <em>keeps changing shape.</em>
-            </h2>
-          </motion.header>
-
-          <div className="home-v4-cost__steps" role="group" aria-label="Choose a hidden cost stage">
-            {COST_STAGES.map((stage, index) => (
-              <button
-                key={stage.number}
-                type="button"
-                aria-label={`Show stage ${stage.number}: ${stage.title}`}
-                aria-pressed={index === activeIndex}
-                onClick={() => chooseCostStage(index)}
-              >
-                <span>{stage.number}</span>
-                <i aria-hidden="true" />
-              </button>
-            ))}
-          </div>
-
-          <div className="home-v4-cost__stage">
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.article
-                key={active.number}
-                initial={
-                  prefersReducedMotion
-                    ? false
-                    : { opacity: 1, x: selectionDirection === "forward" ? 18 : -18 }
-                }
-                animate={{ opacity: 1, x: 0 }}
-                exit={
-                  prefersReducedMotion
-                    ? undefined
-                    : {
-                        opacity: 0,
-                        x: selectionDirection === "forward" ? -14 : 14,
-                        transition: { duration: 0 },
-                      }
-                }
-                transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
-                aria-live="polite"
-              >
-                <span>{active.number} / 04</span>
-                <h3>{active.title}</h3>
-                <p>{active.body}</p>
-                <dl>
-                  <div>
-                    <dt>Marketing effort</dt>
-                    <dd>{active.effort}</dd>
-                  </div>
-                  <div>
-                    <dt>Memory retained</dt>
-                    <dd>{active.memory}</dd>
-                  </div>
-                </dl>
-              </motion.article>
-            </AnimatePresence>
-
-            <motion.div
-              className="home-v4-cost__diagram"
-              style={prefersReducedMotion ? undefined : { rotate: diagramRotate }}
-              aria-label="Marketing effort rises faster than brand memory when the underlying brand keeps changing"
-            >
-              <div className="home-v4-cost__diagram-head">
-                <span>Effort</span>
-                <span>Recognition</span>
-              </div>
-              <svg viewBox="0 0 620 310" role="img">
-                {[0, 1, 2, 3].map((line) => (
-                  <line
-                    key={line}
-                    x1="40"
-                    x2="590"
-                    y1={42 + line * 74}
-                    y2={42 + line * 74}
-                    stroke="rgba(244,239,230,.08)"
-                    strokeWidth="1"
-                  />
-                ))}
-                <path d={effortPath} fill="none" stroke="rgba(199,119,82,.18)" strokeWidth="10" strokeLinecap="round" />
-                <motion.path
-                  d={effortPath}
-                  fill="none"
-                  stroke="#C77752"
-                  strokeWidth="2.3"
-                  strokeLinecap="round"
-                  pathLength="1"
-                  initial={false}
-                  animate={
-                    prefersReducedMotion || isCompactViewport
-                      ? { pathLength: prefersReducedMotion ? 1 : diagramProgress }
-                      : undefined
-                  }
-                  style={
-                    prefersReducedMotion || isCompactViewport
-                      ? undefined
-                      : { pathLength: scrollYProgress }
-                  }
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
-                />
-                <path d={memoryPath} fill="none" stroke="rgba(125,155,175,.18)" strokeWidth="10" strokeLinecap="round" />
-                <motion.path
-                  d={memoryPath}
-                  fill="none"
-                  stroke="#7D9BAF"
-                  strokeWidth="2.3"
-                  strokeLinecap="round"
-                  pathLength="1"
-                  initial={false}
-                  animate={
-                    prefersReducedMotion || isCompactViewport
-                      ? { pathLength: prefersReducedMotion ? 1 : diagramProgress }
-                      : undefined
-                  }
-                  style={
-                    prefersReducedMotion || isCompactViewport
-                      ? undefined
-                      : { pathLength: scrollYProgress }
-                  }
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
-                />
-
-                {COST_STAGES.map((stage, index) => {
-                  const x = 70 + index * 168;
-                  const effortY = [262, 205, 122, 42][index];
-                  const memoryY = [270, 258, 236, 214][index];
-                  const reached = index <= activeIndex;
-                  return (
-                    <motion.g
-                      key={stage.number}
-                      initial={false}
-                      animate={{ opacity: reached ? 1 : 0.24 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: EASE }}
-                    >
-                      <motion.circle
-                        cx={x}
-                        cy={effortY}
-                        r="6"
-                        fill="#C77752"
-                        initial={false}
-                        animate={{
-                          scale: reached ? (index === activeIndex ? 1.22 : 1) : 0.82,
-                          opacity: reached ? 1 : 0.42,
-                        }}
-                        style={{ transformOrigin: `${x}px ${effortY}px` }}
-                        transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
-                      />
-                      <circle cx={x} cy={memoryY} r="4.5" fill="#7D9BAF" />
-                    </motion.g>
-                  );
-                })}
-              </svg>
-              <p>
-                Every reset spends attention without building memory.
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="home-v4-cost__footer">
-            <p>
-              A stable foundation lets every signal strengthen the one before it.
+      <div className={costStyles.shell}>
+        <header className={costStyles.header}>
+          <div>
+            <p className={costStyles.eyebrow}>02 · The hidden cost</p>
+            <h2 id="home-v4-cost-title">More content.<br /><em>The same introduction.</em></h2>
+            <p className={costStyles.intro}>
+              When the brand keeps changing, the next campaign has to introduce the business all over again.
             </p>
-            <Link href="#foundation" className="home-v4-button home-v4-button--sand" data-magnetic data-cursor-label="foundation">
-              See the decision architecture <ArrowDownRight size={15} />
-            </Link>
           </div>
+          <motion.div className={costStyles.media} style={{ clipPath: prefersReducedMotion ? undefined : mediaFrame }} aria-hidden="true">
+            <motion.div className={costStyles.imagePlane} style={prefersReducedMotion ? undefined : { scale: mediaScale, y: mediaY }}>
+              <Image src="/images/pexels-river-dawn-poster.jpg" alt="" fill sizes="(max-width: 820px) 1px, 40vw" className={costStyles.image} />
+            </motion.div>
+          </motion.div>
+        </header>
+
+        <div className={costStyles.rule} aria-hidden="true">
+          <motion.span style={{ scaleX: prefersReducedMotion ? 1 : lineProgress }} />
+        </div>
+
+        <ol className={costStyles.costs} aria-label="Where an inconsistent brand costs time and attention">
+          {BRAND_RESET_COSTS.map((cost) => (
+            <li key={cost.number}>
+              <span className={costStyles.number} aria-hidden="true">{cost.number}</span>
+              <div>
+                <h3>{cost.title}</h3>
+                <p>{cost.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div className={costStyles.footer}>
+          <p>A clear position gives every campaign something to build on.</p>
+          <Link href="#foundation" className={costStyles.link} data-magnetic data-cursor-label="foundation">
+            Build the foundation <ArrowDownRight size={18} aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>

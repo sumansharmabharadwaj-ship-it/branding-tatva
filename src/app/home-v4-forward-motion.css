@@ -20,10 +20,10 @@
   --handoff-from: #0c1111; --handoff-to: #0a1211;
 }
 .home-v4 [data-home-v4-chapter="recognition"] + .home-v4-handoff {
-  --handoff-from: #0a1211; --handoff-to: #10181e;
+  --handoff-from: #0a1211; --handoff-to: #eee6d8;
 }
 .home-v4 [data-home-v4-chapter="cost"] + .home-v4-handoff {
-  --handoff-from: #0a1217; --handoff-to: #121713;
+  --handoff-from: #eee6d8; --handoff-to: #121713;
 }
 .home-v4 [data-home-v4-chapter="foundation"] + .home-v4-handoff {
   --handoff-from: #080d0a; --handoff-to: #eae1d2;
