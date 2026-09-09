@@ -9,6 +9,7 @@ const interfaceSource = read("src/sections/HomeV4/HomeV4Interface.tsx");
 const mediaDirector = read("src/sections/HomeV4/HomeV4MediaDirector.tsx");
 const page = read("src/app/page.tsx");
 const refinement = read("src/app/home-v4-refinement.css");
+const consentManager = read("src/components/ConsentManager.tsx");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -93,5 +94,15 @@ for (const cssMarker of [
   assert(refinement.includes(cssMarker), `Homepage refinement is missing ${cssMarker}.`);
 }
 assert(!/\b(?:click here|learn more)\b/i.test(scenes), "Homepage contains a generic action label.");
+assert(
+  !consentManager.includes('matchMedia("(min-width: 1024px)")'),
+  "The homepage privacy control can still cover compact-screen calls to action.",
+);
+assert(
+  refinement.includes('.consent-notice[data-consent-compact="true"]') &&
+    refinement.includes("width: 3rem !important") &&
+    refinement.includes("left: auto !important"),
+  "The scrolled homepage privacy control does not dock into its compact safe area.",
+);
 
 console.log("Homepage source gate passed: eleven ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");

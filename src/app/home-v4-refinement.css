@@ -37,6 +37,47 @@
   outline-offset: 4px;
 }
 
+/* Explain the privacy-preserving default in full on entry, then leave one
+   small, labelled control once the visitor has begun the homepage journey.
+   This keeps mobile calls to action visible without making consent disappear. */
+body:has(.home-v4) .consent-notice {
+  transition:
+    width 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    left 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body:has(.home-v4) .consent-notice[data-consent-compact="true"] {
+  width: 3rem !important;
+  left: auto !important;
+  padding: 0.2rem !important;
+}
+
+body:has(.home-v4) .consent-notice[data-consent-compact="true"] > div {
+  gap: 0;
+}
+
+body:has(.home-v4) .consent-notice__message {
+  max-width: 11rem;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 1;
+  transition:
+    max-width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease;
+}
+
+body:has(.home-v4) .consent-notice[data-consent-compact="true"] .consent-notice__message {
+  max-width: 0;
+  opacity: 0;
+}
+
+body:has(.home-v4) .consent-notice[data-consent-compact="true"] .consent-notice__action {
+  width: 2.5rem;
+  min-width: 2.5rem;
+  padding-inline: 0;
+}
+
 /* Keep the guided option discoverable without making an instructional panel
    compete with the opening message. It expands only after intentional hover
    or keyboard focus. */
@@ -95,6 +136,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  body:has(.home-v4) .consent-notice,
+  body:has(.home-v4) .consent-notice__motion {
+    transition: none !important;
+  }
+
   .home-v4-opening__scroll i::after {
     animation: none;
     transform: translateX(70%);

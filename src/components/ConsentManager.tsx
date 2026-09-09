@@ -148,18 +148,11 @@ export function ConsentManager() {
     }
 
     setNoticeCompact(false);
-    const compactViewport = window.matchMedia("(min-width: 1024px)");
     let compact = false;
     let syncFrame: number | null = null;
 
     const syncNotice = () => {
       syncFrame = null;
-      if (!compactViewport.matches) {
-        compact = false;
-        setNoticeCompact(false);
-        return;
-      }
-
       // Separate entry and return thresholds stop the control flickering when
       // a trackpad settles near the opening boundary.
       const nextCompact = compact
@@ -177,10 +170,8 @@ export function ConsentManager() {
 
     syncNotice();
     window.addEventListener("scroll", scheduleNoticeSync, { passive: true });
-    compactViewport.addEventListener("change", scheduleNoticeSync);
     return () => {
       window.removeEventListener("scroll", scheduleNoticeSync);
-      compactViewport.removeEventListener("change", scheduleNoticeSync);
       if (syncFrame !== null) window.cancelAnimationFrame(syncFrame);
     };
   }, [pathname, showBanner]);
