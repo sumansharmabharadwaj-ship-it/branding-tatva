@@ -1,0 +1,54 @@
+.section { position: relative; margin: 0; color: #f1eadc; background: #121713; }
+.scene { position: relative; overflow: hidden; isolation: isolate; }
+.landscape { position: absolute; inset: -1rem; }
+.landscape video { width: 100%; height: 100%; object-fit: cover; object-position: center 52%; }
+.scrim { position: absolute; inset: 0; background: linear-gradient(100deg, rgb(8 13 10 / 96%) 0%, rgb(8 13 10 / 86%) 42%, rgb(8 13 10 / 24%) 74%, rgb(8 13 10 / 40%) 100%), linear-gradient(180deg, rgb(8 13 10 / 10%), rgb(8 13 10 / 82%)); }
+.sunlight { position: absolute; top: 0; left: 0; bottom: 0; width: 32%; pointer-events: none; background: linear-gradient(100deg, transparent, rgb(233 225 193 / 25%), transparent); filter: blur(22px); mix-blend-mode: screen; }
+.shell { position: relative; z-index: 1; display: flex; align-items: center; width: min(100%, 90rem); min-height: 100svh; margin-inline: auto; padding: clamp(5.5rem, 9svh, 7rem) clamp(1.5rem, 5vw, 5rem) clamp(2.5rem, 5svh, 4rem); }
+.content { display: grid; gap: 1.5rem; width: min(62%, 41rem); min-width: 0; }
+.eyebrow { margin: 0 0 .8rem; color: #d1ba8f; font-size: .75rem; line-height: 1.5; letter-spacing: .12em; text-transform: uppercase; }
+.content h2 { max-width: 20ch; margin: 0; font: 400 clamp(2.75rem, 4.2vw, 4.3rem)/1.02 var(--font-display), Georgia, serif; letter-spacing: -.025em; }
+.intro { max-width: 43ch; margin: .9rem 0 0; color: #c9c8b9; font-size: 1rem; line-height: 1.6; }
+.tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .25rem; padding: .3rem; border: 1px solid rgb(239 229 210 / 26%); border-radius: 999px; background: rgb(13 21 16 / 65%); }
+.tab { display: flex; align-items: center; justify-content: center; gap: .5rem; min-width: 0; min-height: 2.85rem; padding: .65rem .45rem; border: 0; border-radius: 999px; color: #d8d3c4; background: transparent; font: inherit; font-size: .85rem; line-height: 1.3; cursor: pointer; }
+.tab > span { font-size: .65rem; font-variant-numeric: tabular-nums; }
+.tab[aria-selected="true"] { background: #ded1b6; color: #283127; }
+.tab:not([aria-selected="true"]):hover { background: rgb(239 229 210 / 9%); }
+.panel { min-width: 0; min-height: 17.5rem; padding-top: .1rem; }
+.panel h3 { max-width: 26ch; margin: 0; color: #f4ecdc; font: 400 clamp(1.9rem, 2.7vw, 2.75rem)/1.1 var(--font-display), Georgia, serif; letter-spacing: -.02em; text-wrap: balance; }
+.description { max-width: 51ch; margin: .8rem 0 0; color: #d0cfc1; font-size: .95rem; line-height: 1.65; }
+.outputLabel { margin: 1.2rem 0 .6rem; color: #d1ba8f; font-size: .7rem; line-height: 1.5; letter-spacing: .1em; text-transform: uppercase; }
+.outputs { display: flex; flex-wrap: wrap; gap: .5rem .9rem; padding: 0; margin: 0; list-style: none; }
+.outputs li { padding-left: .65rem; border-left: 1px solid #a58e68; color: #d0cfc1; font-size: .8rem; line-height: 1.6; }
+.link { display: inline-flex; align-items: center; justify-content: center; justify-self: start; gap: 1.2rem; min-height: 3rem; padding: .75rem 1.2rem; border: 1px solid rgb(239 229 210 / 45%); border-radius: 999px; background: rgb(16 22 18 / 68%); color: #f1eadc; font-size: .9rem; line-height: 1.4; }
+.link svg { flex-shrink: 0; }
+.link:hover { border-color: #d1ba8f; background: #1d271f; }
+.tab:focus-visible, .panel:focus-visible, .link:focus-visible { outline: 2px solid #f1eadc; outline-offset: 4px; }
+
+@media (min-width: 821px) and (max-height: 780px) {
+  .shell { padding-top: 5.2rem; padding-bottom: 2rem; }
+  .content { gap: 1.1rem; width: min(65%, 41rem); }
+  .content h2 { font-size: clamp(2.5rem, 3.6vw, 3.4rem); }
+  .intro { font-size: .95rem; }
+  .panel { min-height: 15.5rem; }
+  .panel h3 { font-size: 2rem; }
+  .description { font-size: .9rem; line-height: 1.55; }
+}
+
+@media (max-width: 820px) {
+  .shell { min-height: 100svh; padding: 3.2rem 1.5rem 2.5rem; }
+  .content { width: 100%; max-width: 38rem; gap: 1.35rem; }
+  .scrim { background: linear-gradient(100deg, rgb(8 13 10 / 92%), rgb(8 13 10 / 76%)), linear-gradient(180deg, transparent, #080d0a); }
+  .content h2 { font-size: clamp(2.5rem, 8vw, 3.4rem); }
+  .intro { font-size: .95rem; }
+  .panel { min-height: 19rem; }
+  .panel h3 { font-size: clamp(1.9rem, 6vw, 2.4rem); }
+  .description { font-size: .92rem; line-height: 1.6; }
+  .link { gap: .8rem; padding-inline: 1rem; font-size: .85rem; }
+}
+
+@media (max-width: 420px) {
+  .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 1.4rem; }
+  .tab { min-height: 2.75rem; font-size: .85rem; }
+  .panel { min-height: 23rem; }
+}
