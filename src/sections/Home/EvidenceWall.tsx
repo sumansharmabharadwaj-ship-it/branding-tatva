@@ -174,30 +174,24 @@ export function EvidenceWall() {
       <motion.div
         aria-hidden="true"
         className="evidence-cinematic__light evidence-cinematic__light--one"
+        initial={false}
         animate={
-          prefersReducedMotion || !inView
-            ? undefined
-            : { x: [0, 86, 0], y: [0, -30, 0], scale: [0.96, 1.12, 0.96] }
+          prefersReducedMotion
+            ? { x: 0, y: 0 }
+            : { x: activeIndex * 20, y: activeIndex * -6 }
         }
-        transition={
-          prefersReducedMotion || !inView
-            ? undefined
-            : { duration: 18, repeat: Infinity, ease: "easeInOut" }
-        }
+        transition={{ duration: prefersReducedMotion ? 0 : 0.7, ease: EASE }}
       />
       <motion.div
         aria-hidden="true"
         className="evidence-cinematic__light evidence-cinematic__light--two"
+        initial={false}
         animate={
-          prefersReducedMotion || !inView
-            ? undefined
-            : { x: [0, -64, 0], y: [0, 24, 0], scale: [1.05, 0.94, 1.05] }
+          prefersReducedMotion
+            ? { x: 0, y: 0 }
+            : { x: activeIndex * -16, y: activeIndex * 6 }
         }
-        transition={
-          prefersReducedMotion || !inView
-            ? undefined
-            : { duration: 21, repeat: Infinity, ease: "easeInOut" }
-        }
+        transition={{ duration: prefersReducedMotion ? 0 : 0.7, ease: EASE }}
       />
 
       <Container className="evidence-cinematic__shell max-w-[100rem]">

@@ -183,21 +183,6 @@
     linear-gradient(180deg, rgba(12, 10, 8, 0.18) 0%, rgba(12, 10, 8, 0.08) 39%, rgba(12, 10, 8, 0.93) 100%);
 }
 
-.evidence-cinematic__media::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: -28%;
-  bottom: -28%;
-  left: -34%;
-  width: 17%;
-  pointer-events: none;
-  background: linear-gradient(90deg, transparent, rgba(244, 239, 230, 0.09), transparent);
-  filter: blur(10px);
-  transform: skewX(-13deg);
-  animation: evidence-light-scan 9.4s ease-in-out infinite;
-}
-
 .evidence-cinematic__media-topline {
   position: absolute;
   z-index: 3;
@@ -442,6 +427,24 @@
   outline: none;
 }
 
+/* A finite selection cue keeps the archive still while a case is being read. */
+.evidence-cinematic__index button::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: auto .8rem .3rem;
+  height: 2px;
+  background: color-mix(in srgb, var(--project-accent) 35%, #f4efe6);
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 330ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.evidence-cinematic__index button.is-active::after {
+  transform: scaleX(1);
+}
+
 .evidence-cinematic__index-image {
   position: absolute;
   inset: 0;
@@ -684,29 +687,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .evidence-cinematic__header h2 em,
-  .evidence-cinematic__media::after {
+  .evidence-cinematic__header h2 em {
     animation: none;
   }
 
-  .evidence-cinematic__media::after {
-    opacity: 0.14;
-    transform: translateX(820%) skewX(-13deg);
+  .evidence-cinematic__index button::after {
+    transition: none;
   }
 }
 
-@keyframes evidence-light-scan {
-  0%, 16% {
-    transform: translateX(0) skewX(-13deg);
-    opacity: 0;
-  }
-  38% {
-    opacity: 0.65;
-  }
-  64%, 100% {
-    transform: translateX(900%) skewX(-13deg);
-    opacity: 0;
-  }
+html[data-motion="reduced"] .evidence-cinematic__index button::after {
+  transition: none;
 }
 
 /* Selection stays with the reader; focus remains distinct from the active case. */
