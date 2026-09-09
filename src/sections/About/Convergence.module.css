@@ -407,6 +407,7 @@
   gap: 0.55rem;
   transform: translateY(-50%);
   pointer-events: none;
+  will-change: opacity, clip-path;
 }
 
 .outcomeStatement {

@@ -199,10 +199,12 @@ export function Convergence() {
     SCROLL_BEATS,
     [0, 0, 88, 88, 0, 0],
   );
-  const outcomeOpacity = useTransform(pacedScrollProgress, [0.69, 0.8], [0, 1]);
-  const outcomeY = useTransform(pacedScrollProgress, [0.69, 0.8], [10, 0]);
-  const outputsOpacity = useTransform(pacedScrollProgress, [0.76, 0.92], [0, 1]);
-  const outputsY = useTransform(pacedScrollProgress, [0.76, 0.92], [14, 0]);
+  const outcomeGroupOpacity = useTransform(pacedScrollProgress, [0.69, 0.82], [0, 1]);
+  const outcomeGroupClipPath = useTransform(
+    pacedScrollProgress,
+    [0.69, 0.9],
+    ["inset(0 0 16% 0)", "inset(0 0 0% 0)"],
+  );
   const stageProgress = [readProgress, connectProgress, carryProgress] as const;
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
@@ -507,32 +509,28 @@ export function Convergence() {
               </motion.figcaption>
             </motion.figure>
 
-            <div className={styles.outputs}>
-              <motion.p
-                className={styles.outcomeStatement}
-                style={
-                  prefersReducedMotion
-                    ? { opacity: 1, y: 0 }
-                    : { opacity: outcomeOpacity, y: outcomeY }
-                }
-              >
+            <motion.div
+              className={styles.outputs}
+              style={
+                prefersReducedMotion
+                  ? undefined
+                  : {
+                      opacity: outcomeGroupOpacity,
+                      clipPath: outcomeGroupClipPath,
+                    }
+              }
+            >
+              <p className={styles.outcomeStatement}>
                 One position the whole brand can carry.
-              </motion.p>
+              </p>
               {OUTPUTS.map((output, index) => (
-                <motion.div
-                  key={output.label}
-                  style={
-                    prefersReducedMotion
-                      ? { opacity: 1, y: 0 }
-                      : { opacity: outputsOpacity, y: outputsY }
-                  }
-                >
+                <div key={output.label}>
                   <span>0{index + 1}</span>
                   <strong>{output.label}</strong>
                   <p>{output.line}</p>
-                </motion.div>
+                </div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           <motion.article

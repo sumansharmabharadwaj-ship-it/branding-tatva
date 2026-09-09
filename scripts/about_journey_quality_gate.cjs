@@ -400,14 +400,12 @@ assert(
   "The convergence composition no longer scrubs continuously with the About scroll timeline.",
 );
 assert(
-  convergence.includes("const outcomeOpacity = useTransform") &&
-    convergence.includes("const outcomeY = useTransform") &&
-    convergence.includes("const outputsOpacity = useTransform") &&
-    convergence.includes("const outputsY = useTransform") &&
-    convergence.includes("opacity: outcomeOpacity, y: outcomeY") &&
-    convergence.includes("opacity: outputsOpacity, y: outputsY") &&
+  convergence.includes("const outcomeGroupOpacity = useTransform") &&
+    convergence.includes("const outcomeGroupClipPath = useTransform") &&
+    convergence.includes("opacity: outcomeGroupOpacity") &&
+    convergence.includes("clipPath: outcomeGroupClipPath") &&
     !convergence.includes("delay: prefersReducedMotion ? 0 : index * 0.06"),
-  "The convergence outcome no longer resolves as one scroll-controlled editorial reveal.",
+  "The convergence outcome no longer resolves as one masked scroll-controlled editorial record.",
 );
 assert(
   convergence.includes("const threadFieldOpacity = useTransform") &&
