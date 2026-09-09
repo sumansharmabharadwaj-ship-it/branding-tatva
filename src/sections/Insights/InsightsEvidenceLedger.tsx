@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useId,
   useRef,
   useState,
   type CSSProperties,
@@ -58,7 +59,9 @@ const THREAD_COLORS: Record<InsightElement, string> = {
 };
 
 export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) {
+  const selectionId = useId();
   const [focusedIndex, setFocusedIndex] = useState(0);
+  const [selectionDirection, setSelectionDirection] = useState(1);
   const [markedSlugs, setMarkedSlugs] = useState<string[]>([]);
   const [readerIntent, setReaderIntent] = useState<InsightsIntentDetail>();
   const priorReaderIntentRef = useRef<InsightsIntentDetail | undefined>(
@@ -170,8 +173,17 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     : intentLayer
       ? `From your reading: ${intentLayer.name}`
       : "Choose an area to begin";
+  const revealVariants = {
+    enter: { opacity: 0, x: selectionDirection * 14 },
+    settled: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: prefersReducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] as const },
+    },
+  };
 
   function selectLayer(index: number) {
+    if (index !== focusedIndex) setSelectionDirection(index > focusedIndex ? 1 : -1);
     setFocusedIndex(index);
     if (markedCount > 0) {
       writeInsightsEvidenceState({
@@ -260,13 +272,20 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         <span aria-live="polite">{statusLabel}</span>
         <div className="insights-worksheet__marks" aria-hidden="true">
           {layers.map((layer) => (
-            <i key={layer.slug} data-marked={markedSlugs.includes(layer.slug)} />
+            <i key={layer.slug} data-marked={markedSlugs.includes(layer.slug)}>
+              <motion.span
+                initial={false}
+                animate={{ scaleX: markedSlugs.includes(layer.slug) ? 1 : 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </i>
           ))}
         </div>
       </div>
 
-      <div
+      <motion.div
         ref={layerRailRef}
+        layoutScroll
         className="insights-worksheet__areas"
         role="tablist"
         aria-label="Brand areas to review"
@@ -288,16 +307,25 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               onFocus={() => selectLayer(index)}
               onKeyDown={(event) => handleLayerKeyDown(event, index)}
             >
+              {selected ? (
+                <motion.span
+                  className="insights-worksheet__selection"
+                  aria-hidden="true"
+                  layoutId={prefersReducedMotion ? undefined : selectionId}
+                  initial={false}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+                />
+              ) : null}
               <span className="insights-worksheet__number">0{index + 1}</span>
               <span className="insights-worksheet__area-name">{layer.name}</span>
-              <span className="insights-worksheet__area-icon" aria-hidden="true">
+              <span className="insights-worksheet__area-icon" data-marked={marked} aria-hidden="true">
                 {marked ? <Check /> : <ArrowRight />}
               </span>
               {marked ? <span className="sr-only">Marked for review</span> : null}
             </button>
           );
         })}
-      </div>
+      </motion.div>
 
       {layers.map((layer, index) => (
         <div
@@ -317,33 +345,43 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               </div>
                 <motion.div
                   key={layer.slug}
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  initial={prefersReducedMotion ? false : "enter"}
+                  animate="settled"
+                  variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.065 } } }}
                   className="insights-worksheet__answer"
                 >
-                  <h3>{layer.question}</h3>
-                  <p className="insights-worksheet__signal">{layer.signal}</p>
+                  <motion.h3 variants={revealVariants}>{layer.question}</motion.h3>
+                  <motion.p variants={revealVariants} className="insights-worksheet__signal">{layer.signal}</motion.p>
                   <div className="insights-worksheet__evidence">
-                    <div>
+                    <motion.div variants={revealVariants}>
                       <h4>Evidence to collect</h4>
                       <ul>{layer.evidence.split(" · ").map((item) => <li key={item}>{item}</li>)}</ul>
-                    </div>
-                    <div>
+                    </motion.div>
+                    <motion.div variants={revealVariants}>
                       <h4>First move</h4>
                       <p>{layer.move}</p>
-                    </div>
+                    </motion.div>
                   </div>
                 </motion.div>
-              <button
+              <motion.button
                 type="button"
                 className="insights-worksheet__mark"
                 aria-pressed={focusedIsMarked}
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 onClick={() => toggleLayer(layer.slug, index)}
               >
-                {focusedIsMarked ? <Check aria-hidden="true" /> : <Plus aria-hidden="true" />}
-                {focusedIsMarked ? "Marked for review" : "Mark for review"}
-              </button>
+                <motion.span
+                  key={focusedIsMarked ? "marked" : "open"}
+                  className="insights-worksheet__mark-icon"
+                  initial={prefersReducedMotion ? false : { scale: 0.65, rotate: -35 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  aria-hidden="true"
+                >
+                  {focusedIsMarked ? <Check /> : <Plus />}
+                </motion.span>
+                <span>{focusedIsMarked ? "Marked for review" : "Mark for review"}</span>
+              </motion.button>
             </>
           ) : null}
         </div>

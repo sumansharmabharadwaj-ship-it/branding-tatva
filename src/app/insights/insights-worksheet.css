@@ -19,9 +19,19 @@
 }
 
 .insights-worksheet-eyebrow i {
+  position: relative;
   height: 1px;
   flex: 1;
   background: var(--worksheet-rule);
+}
+
+.insights-worksheet-eyebrow i::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: var(--worksheet-clay);
+  transform: scaleX(var(--scene-discovery, 1));
+  transform-origin: left;
 }
 
 .insights-worksheet-intro {
@@ -50,9 +60,21 @@
 }
 
 .insights-worksheet {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(14rem, 0.75fr) minmax(0, 1.7fr);
-  border-top: 1px solid var(--worksheet-ink);
+  border-top: 1px solid var(--worksheet-rule);
+}
+
+.insights-worksheet::before {
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 1px;
+  background: var(--worksheet-ink);
+  content: "";
+  transform: scaleX(var(--scene-discovery, 1));
+  transform-origin: left;
+  pointer-events: none;
 }
 
 .insights-worksheet__status {
@@ -75,14 +97,19 @@
 }
 
 .insights-worksheet__marks i {
+  display: block;
+  overflow: hidden;
   width: 1.25rem;
   height: 3px;
   background: var(--worksheet-rule);
-  transition: background-color 220ms ease;
 }
 
-.insights-worksheet__marks i[data-marked="true"] {
+.insights-worksheet__marks i > span {
+  display: block;
+  width: 100%;
+  height: 100%;
   background: var(--worksheet-clay);
+  transform-origin: left;
 }
 
 .insights-worksheet__areas {
@@ -95,6 +122,7 @@
 }
 
 .insights-worksheet__areas button {
+  isolation: isolate;
   position: relative;
   display: grid;
   grid-template-columns: 1.75rem minmax(0, 1fr) 1.25rem;
@@ -112,9 +140,24 @@
 .insights-worksheet__areas button:last-child { border-bottom: 0; }
 
 .insights-worksheet__areas button[aria-selected="true"] {
-  background: #e9e0d4;
   color: var(--worksheet-ink);
+}
+
+.insights-worksheet__selection {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #e9e0d4;
   box-shadow: inset 2px 0 var(--worksheet-clay);
+  pointer-events: none;
+}
+
+.insights-worksheet__area-icon {
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-worksheet__area-icon[data-marked="true"] svg {
+  animation: worksheet-confirm 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .insights-worksheet__number {
@@ -139,6 +182,7 @@
   grid-column: 2;
   grid-row: 2;
   min-width: 0;
+  min-height: 25rem;
   padding: 1.5rem 0 1.5rem clamp(1.5rem, 3.2vw, 3rem);
 }
 
@@ -198,10 +242,13 @@
 .insights-worksheet__evidence li + li { margin-top: 0.15rem; }
 
 .insights-worksheet__mark {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
   min-height: 2.75rem;
+  min-width: 12rem;
   margin-top: 1.35rem;
   padding: 0.55rem 1rem;
   border: 1px solid #ac9b8a;
@@ -218,8 +265,11 @@
   color: #fffaf2;
 }
 
+.insights-worksheet__mark-icon { display: inline-flex; flex: 0 0 auto; }
+
 .insights-worksheet__mark svg,
 .insights-worksheet__links svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
+.insights-worksheet__links svg { transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1); }
 
 .insights-worksheet__footer {
   display: flex;
@@ -239,10 +289,13 @@
 .insights-worksheet :is(button, a, [role="tabpanel"]):focus-visible { outline: 2px solid var(--worksheet-clay); outline-offset: 3px; }
 
 @media (hover: hover) {
-  .insights-worksheet__areas button:hover { color: var(--worksheet-ink); background: #ece5da; }
+  .insights-worksheet__areas button:hover { color: var(--worksheet-ink); }
+  .insights-worksheet__areas button:not([aria-selected="true"]):hover { background: #ece5da; }
+  .insights-worksheet__areas button:hover .insights-worksheet__area-icon:not([data-marked="true"]) { transform: translateX(3px); }
   .insights-worksheet__mark:hover { background: #e4d7c7; }
   .insights-worksheet__mark[aria-pressed="true"]:hover { background: #4a3d32; }
   .insights-worksheet__links a:hover { text-decoration: underline; text-underline-offset: 0.25rem; }
+  .insights-worksheet__links a:hover svg { transform: translate(2px, -2px); }
 }
 
 @media (max-width: 760px) {
@@ -254,7 +307,7 @@
   .insights-worksheet__areas { flex-direction: row; overflow-x: auto; padding: 0.5rem 0; border-right: 0; border-bottom: 1px solid var(--worksheet-rule); scrollbar-width: thin; overscroll-behavior-inline: contain; }
   .insights-worksheet__areas button { flex: 0 0 auto; min-height: 3rem; grid-template-columns: auto auto 1rem; padding-inline: 0.8rem; border-bottom: 0; }
   .insights-worksheet__area-name { font-family: inherit; font-size: 0.875rem; font-weight: 500; }
-  .insights-worksheet__areas button[aria-selected="true"] { box-shadow: inset 0 -2px var(--worksheet-clay); }
+  .insights-worksheet__selection { box-shadow: inset 0 -2px var(--worksheet-clay); }
   .insights-worksheet__panel { grid-column: 1; grid-row: 3; padding: 1.5rem 0; }
   .insights-worksheet__answer h3 { max-width: 27ch; font-size: clamp(2rem, 5.6vw, 2.5rem); }
   .insights-worksheet__evidence { gap: 1rem; }
@@ -263,9 +316,21 @@
 
 @media (max-width: 400px) {
   .insights-worksheet__evidence { grid-template-columns: 1fr; }
+  .insights-worksheet__panel { min-height: 31rem; }
   .insights-worksheet__marks i { width: 0.7rem; }
+}
+
+@keyframes worksheet-confirm {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+html[data-motion="reduced"] .insights-worksheet-eyebrow i::after,
+html[data-motion="reduced"] .insights-worksheet::before {
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .insights-worksheet *, .insights-worksheet *::before { transition: none; animation: none; scroll-behavior: auto; }
+  .insights-worksheet-eyebrow i::after, .insights-worksheet::before { transform: none; }
 }
