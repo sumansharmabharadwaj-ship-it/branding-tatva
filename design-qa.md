@@ -105,3 +105,55 @@ A separate crop was not required because the final invitation fills the 1440 × 
 - None required for this pass.
 
 final result: passed
+
+---
+
+## Final handoff camera drift
+
+### Evidence
+
+- Source visual truth: release 154, `https://branding-tatva-aumv2fdqy-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
+- Implementation: release 158, `https://branding-tatva-h21okox68-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
+- Mobile implementation: release 158, `https://branding-tatva-h21okox68-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=mobile`
+- Browser-rendered source and implementation screenshots were emitted together in one comparison input.
+- Capture pixels: 1348 × 926 for both desktop screenshots.
+- CSS comparison viewport: 1440 × 900 in the responsive QA iframe; identical scroll position and outer crop were used.
+- Comparison state: FAQ open on question 01 with the final invitation immediately below, before the new exit drift begins.
+- Motion states: final invitation progress 0.08, 0.50, and 0.90; explicit reduced-motion mode; 390 × 844 mobile preset.
+
+### Findings
+
+- No actionable P0, P1, or P2 differences.
+- Structure and composition: the approved FAQ split, invitation frame, two-column proportions, section boundaries, and opening composition remain unchanged. The new movement begins only during the final FAQ exit and invitation runway.
+- Typography and copy: headline wrapping, editorial hierarchy, labels, answers, CTA copy, and sign-off are unchanged.
+- Colour and material: the warm paper, sandstone rules, dark closing film, and existing contrast relationships are unchanged.
+- Image quality and crop: the existing golden-fog and silver-tide media remain untouched. The invitation film receives a restrained 1.05 → 1.00 scale settle and 0.8% → 0% horizontal drift without exposing an edge.
+- Responsive geometry: at the 390 × 844 preset, client width and scroll width both measured 375px. The FAQ remains a clean single-column flow and the invitation camera transform is `none`.
+
+### Primary interactions tested
+
+- Desktop visitor scroll advances invitation focus 01 → 02 → 03.
+- Camera transforms measured `matrix(1.04612, …, 10.1821, 0)`, `matrix(1.02596, …, 3.86389, 0)`, and `matrix(1.00521, …, 0.74214, 0)` across the three sampled states.
+- The primary CTA remains visible and links to `/contact#call`.
+- Explicit reduced motion settles the invitation to approximately 907px, resets the active step to 01 on scroll, and removes the camera transform.
+- Mobile preserves normal flow, keeps the invitation at step 01, removes the camera transform, and has no horizontal overflow.
+- Browser console showed no application-origin errors. Repeated cloud-browser extension metadata errors were excluded from application QA.
+
+### Comparison history
+
+- Pass 1: source and implementation matched at the shared FAQ-to-invitation state. No visual correction iteration was required.
+
+### Implementation checklist
+
+- [x] Preserve the approved visual identity, imagery, copy, and opening.
+- [x] Use Parker only as a reference for scroll pacing and camera restraint.
+- [x] Add the FAQ exit handoff and invitation camera settle.
+- [x] Verify desktop states 01, 02, and 03.
+- [x] Verify reduced-motion and mobile behavior.
+- [x] Verify CTA destination and runtime console.
+
+### Follow-up polish
+
+- None required for this pass.
+
+final result: passed
