@@ -326,7 +326,12 @@ html:has(.insights-worksheet:focus-within) {
 .insights-worksheet__links a { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; font-size: 0.875rem; }
 .insights-worksheet__service-label { display: inline-flex; align-items: center; gap: 0.5rem; }
 .insights-worksheet__checklist { color: var(--worksheet-clay); font-weight: 600; }
+.insights-worksheet :is(button, a) { scroll-margin-top: 6rem; scroll-margin-bottom: 6rem; }
 .insights-worksheet :is(button, a, [role="tabpanel"]):focus-visible { outline: 2px solid var(--worksheet-clay); outline-offset: 3px; }
+
+@media (max-width: 899px) {
+  .insights-worksheet :is(button, a) { scroll-margin-bottom: 9rem; }
+}
 
 @media (hover: hover) {
   .insights-worksheet__areas button:hover { color: var(--worksheet-ink); }

@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type FocusEvent,
   type KeyboardEvent,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -108,7 +109,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const layerRailRef = useRef<HTMLDivElement>(null);
   const layerButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const panelFocusFrameRef = useRef<number | null>(null);
+  const focusFrameRef = useRef<number | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const usesHorizontalRail = useMediaQuery("(max-width: 760px)");
   const focusedLayer = layers[focusedIndex];
@@ -191,8 +192,8 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     setReaderIntent(initialIntent);
 
     return () => {
-      if (panelFocusFrameRef.current !== null) {
-        window.cancelAnimationFrame(panelFocusFrameRef.current);
+      if (focusFrameRef.current !== null) {
+        window.cancelAnimationFrame(focusFrameRef.current);
       }
       window.removeEventListener(INSIGHTS_INTENT_EVENT, carryReaderIntent);
       window.removeEventListener(
@@ -241,14 +242,14 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
 
   function openLayer(index: number) {
     selectLayer(index);
-    if (panelFocusFrameRef.current !== null) {
-      window.cancelAnimationFrame(panelFocusFrameRef.current);
+    if (focusFrameRef.current !== null) {
+      window.cancelAnimationFrame(focusFrameRef.current);
     }
 
     // Wait for the selected panel to become visible, then hand keyboard and
     // screen-reader focus to its content without a native focus-scroll jump.
-    panelFocusFrameRef.current = window.requestAnimationFrame(() => {
-      panelFocusFrameRef.current = null;
+    focusFrameRef.current = window.requestAnimationFrame(() => {
+      focusFrameRef.current = null;
       const panel = panelRefs.current[index];
       if (!panel || panel.inert) return;
 
@@ -271,6 +272,37 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         panel.scrollIntoView({
           behavior: prefersReducedMotion ? "auto" : "smooth",
           block: "start",
+          inline: "nearest",
+        });
+      }
+    });
+  }
+
+  function keepControlVisible(event: FocusEvent<HTMLDivElement>) {
+    const control = event.target;
+    if (!(control instanceof HTMLElement) || !control.matches("button, a")) return;
+    if (focusFrameRef.current !== null) {
+      window.cancelAnimationFrame(focusFrameRef.current);
+    }
+
+    // Native keyboard focus can stop beneath the fixed chapter bar. Use the
+    // same clear space for tabs, review buttons, and the next-step links.
+    focusFrameRef.current = window.requestAnimationFrame(() => {
+      focusFrameRef.current = null;
+      if (document.activeElement !== control || !control.isConnected) return;
+
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight);
+      const styles = window.getComputedStyle(control);
+      const safeTop = viewportTop + Number.parseFloat(styles.scrollMarginTop);
+      const safeBottom = viewportBottom - Number.parseFloat(styles.scrollMarginBottom);
+      const bounds = control.getBoundingClientRect();
+
+      if (bounds.top < safeTop || bounds.bottom > safeBottom) {
+        control.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "nearest",
           inline: "nearest",
         });
       }
@@ -351,6 +383,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   return (
     <div
       className="insights-worksheet"
+      onFocusCapture={keepControlVisible}
       style={{ "--worksheet-accent": THREAD_COLORS[focusedLayer.element] } as CSSProperties}
     >
       <div className="insights-worksheet__status">
