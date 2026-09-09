@@ -340,7 +340,7 @@ html:has(.insights-worksheet:focus-within) {
 }
 
 .insights-worksheet__review { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 0 0.75rem; min-height: 2.75rem; }
-.insights-worksheet__review > p { color: var(--worksheet-muted); font-size: 0.875rem; }
+.insights-worksheet__review > p { display: flex; align-items: center; min-height: 2.75rem; color: var(--worksheet-muted); font-size: 0.875rem; }
 .insights-worksheet__review-item { position: relative; display: inline-flex; align-items: center; gap: 0.3rem; min-height: 2.75rem; color: var(--worksheet-muted); font-size: 0.8125rem; cursor: pointer; }
 .insights-worksheet__review-item svg { width: 0.8rem; height: 0.8rem; color: var(--worksheet-clay); }
 .insights-worksheet__review-item[aria-current="true"] { color: var(--worksheet-clay); }

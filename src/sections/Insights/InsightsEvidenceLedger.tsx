@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  forwardRef,
   useEffect,
   useId,
   useRef,
@@ -9,7 +10,7 @@ import {
   type FocusEvent,
   type KeyboardEvent,
 } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useIsPresent } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
@@ -74,6 +75,46 @@ function worksheetIntent(layer: EvidenceLayer): InsightsIntentDetail {
     origin: "evidence-ledger",
   };
 }
+
+const WorksheetReviewItem = forwardRef<HTMLButtonElement, {
+  name: string;
+  current: boolean;
+  selectionId: string;
+  reducedMotion: boolean;
+  onOpen: () => void;
+}>(function WorksheetReviewItem({ name, current, selectionId, reducedMotion, onOpen }, ref) {
+  const isPresent = useIsPresent();
+
+  return (
+    <motion.button
+      ref={ref}
+      type="button"
+      className="insights-worksheet__review-item"
+      layout={reducedMotion ? false : "position"}
+      aria-label={`Review ${name}`}
+      aria-current={current && isPresent ? "true" : undefined}
+      aria-hidden={!isPresent}
+      inert={!isPresent}
+      tabIndex={isPresent ? 0 : -1}
+      initial={reducedMotion ? false : { opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: reducedMotion ? 0 : -4, transition: { duration: reducedMotion ? 0 : 0.14 } }}
+      transition={{ duration: reducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+      onClick={isPresent ? onOpen : undefined}
+    >
+      <Check aria-hidden="true" />{name}
+      {current && isPresent ? (
+        <motion.span
+          className="insights-worksheet__review-selection"
+          aria-hidden="true"
+          layoutId={reducedMotion ? undefined : `${selectionId}-review`}
+          initial={false}
+          transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+        />
+      ) : null}
+    </motion.button>
+  );
+});
 
 function WorksheetMarkIcon({
   marked,
@@ -597,33 +638,28 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
 
       <footer className="insights-worksheet__footer">
         <div className="insights-worksheet__review" role="group" aria-label="Your review list">
-          {markedCount === 0 ? <p>Five questions before you commission a redesign.</p> : null}
           <AnimatePresence initial={false} mode="popLayout">
-            {markedLayers.map((layer) => (
-              <motion.button
-                key={layer.slug}
-                type="button"
-                className="insights-worksheet__review-item"
+            {markedCount === 0 ? (
+              <motion.p
+                key="empty-review"
                 layout={prefersReducedMotion ? false : "position"}
-                aria-label={`Review ${layer.name}`}
-                aria-current={layer.slug === focusedLayer.slug ? "true" : undefined}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: prefersReducedMotion ? 0 : -4 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
-                onClick={() => openLayer(layers.indexOf(layer))}
+                exit={{ opacity: 0, transition: { duration: prefersReducedMotion ? 0 : 0.1 } }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.18, delay: prefersReducedMotion ? 0 : 0.12, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Check aria-hidden="true" />{layer.name}
-                {layer.slug === focusedLayer.slug ? (
-                  <motion.span
-                    className="insights-worksheet__review-selection"
-                    aria-hidden="true"
-                    layoutId={prefersReducedMotion ? undefined : `${selectionId}-review`}
-                    initial={false}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  />
-                ) : null}
-              </motion.button>
+                Five questions before you commission a redesign.
+              </motion.p>
+            ) : null}
+            {markedLayers.map((layer) => (
+              <WorksheetReviewItem
+                key={layer.slug}
+                name={layer.name}
+                current={layer.slug === focusedLayer.slug}
+                selectionId={selectionId}
+                reducedMotion={prefersReducedMotion}
+                onOpen={() => openLayer(layers.indexOf(layer))}
+              />
             ))}
           </AnimatePresence>
         </div>
