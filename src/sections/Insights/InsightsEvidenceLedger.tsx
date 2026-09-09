@@ -174,6 +174,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const latestMarkedLayer = layers.find(
     (layer) => layer.slug === markedSlugs[markedSlugs.length - 1],
   );
+  const suggestedLayer = focusedIsMarked ? focusedLayer : latestMarkedLayer;
   const statusLabel = markedCount > 0
     ? `${markedCount} of ${layers.length} marked for review`
     : intentLayer
@@ -457,6 +458,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 key={layer.slug}
                 type="button"
                 className="insights-worksheet__review-item"
+                layout={prefersReducedMotion ? false : "position"}
                 aria-label={`Review ${layer.name}`}
                 aria-current={layer.slug === focusedLayer.slug ? "true" : undefined}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
@@ -471,20 +473,28 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
           </AnimatePresence>
         </div>
         <div className="insights-worksheet__links">
-          {latestMarkedLayer ? (
+          {suggestedLayer ? (
             <TrackedLink
-              href={`/services#package-${latestMarkedLayer.service.slug}`}
+              href={`/services#package-${suggestedLayer.service.slug}`}
               event="contextual_cta_clicked"
-              eventProps={{ source: "insights_evidence_ledger", route: latestMarkedLayer.service.slug, layer: latestMarkedLayer.slug, reader_path: readerIntent?.topicSlug ?? "none" }}
+              eventProps={{ source: "insights_evidence_ledger", route: suggestedLayer.service.slug, layer: suggestedLayer.slug, reader_path: readerIntent?.topicSlug ?? "none" }}
             >
-              Explore {latestMarkedLayer.service.name}<ArrowUpRight aria-hidden="true" />
+              <motion.span
+                key={suggestedLayer.slug}
+                className="insights-worksheet__service-label"
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 3 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+              >
+                Explore {suggestedLayer.service.name}<ArrowUpRight aria-hidden="true" />
+              </motion.span>
             </TrackedLink>
           ) : null}
           <TrackedLink
             href="/insights/brand-audit-checklist-before-rebrand"
             className="insights-worksheet__checklist"
             event="contextual_cta_clicked"
-            eventProps={{ source: "insights_evidence_ledger", route: "audit_checklist", layer: latestMarkedLayer?.slug ?? "unselected", reader_path: readerIntent?.topicSlug ?? "none" }}
+            eventProps={{ source: "insights_evidence_ledger", route: "audit_checklist", layer: suggestedLayer?.slug ?? "unselected", reader_path: readerIntent?.topicSlug ?? "none" }}
           >
             Read the full checklist<ArrowUpRight aria-hidden="true" />
           </TrackedLink>
