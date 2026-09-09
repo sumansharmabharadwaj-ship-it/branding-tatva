@@ -93,6 +93,8 @@ export function FinalInvitation() {
   const lineProgress = useTransform(entranceProgress, [0.1, 0.9], [0, 1]);
   const mediaScale = useTransform(storyProgress, [0, 0.52, 1], [1.05, 1.025, 1]);
   const mediaX = useTransform(storyProgress, [0, 0.52, 1], ["0.8%", "0.25%", "0%"]);
+  const signoffOpacity = useTransform(storyProgress, [0, 0.66, 0.84, 1], [0, 0, 1, 1]);
+  const signoffY = useTransform(storyProgress, [0, 0.66, 0.84, 1], [10, 10, 0, 0]);
 
   useMotionValueEvent(storyProgress, "change", (progress) => {
     const desktopStory = window.matchMedia(
@@ -204,7 +206,15 @@ export function FinalInvitation() {
           </ol>
           <p className={styles.conversationFooter}>Direct with Suman · Your timezone</p>
         </aside>
-        <p className={styles.signoff}>Thank you for giving your brand the attention it deserves.</p>
+        <motion.p
+          className={styles.signoff}
+          style={{
+            opacity: cinematicMotion && !reducedMotion ? signoffOpacity : 1,
+            y: cinematicMotion && !reducedMotion ? signoffY : 0,
+          }}
+        >
+          Thank you for giving your brand the attention it deserves.
+        </motion.p>
       </div>
     </div>
   );
