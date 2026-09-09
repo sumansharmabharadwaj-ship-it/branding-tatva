@@ -424,6 +424,11 @@ assert(
   "The convergence cue and readout no longer pass through one scroll-controlled focus gate.",
 );
 assert(
+  !convergenceStyles.includes("transition: color 420ms ease;") &&
+    !convergenceStyles.includes("transition: background-color 420ms ease;"),
+  "The convergence register can lag behind its masked scroll transition because timed color changes still compete with it.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),

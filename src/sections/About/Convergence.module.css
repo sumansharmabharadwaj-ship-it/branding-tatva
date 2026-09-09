@@ -338,7 +338,6 @@
   font-size: clamp(1.05rem, 1.7vw, 1.5rem);
   font-weight: 400;
   line-height: 1;
-  transition: color 420ms ease;
 }
 
 .registerTerms strong:last-child { color: #5f6c58; text-align: right; }
@@ -369,7 +368,6 @@
   background: #965b43;
   transform: scaleX(0.34);
   transform-origin: left;
-  transition: background-color 420ms ease;
   will-change: transform;
 }
 
