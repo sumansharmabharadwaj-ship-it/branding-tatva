@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
-  type PointerEvent,
+  type MouseEvent,
 } from "react";
 import {
   LayoutGroup,
@@ -281,8 +281,8 @@ export function ContactGratitude() {
     if (!allNotesVisited || completionSettled) return;
 
     const settleCompletion = () => {
-      setSelectedNote(null);
-      setActiveNote(null);
+      // Completion belongs to the scroll sequence. A note opened by pointer,
+      // touch or keyboard stays readable until the visitor leaves or closes it.
       setCompletionSettled(true);
     };
 
@@ -332,7 +332,9 @@ export function ContactGratitude() {
     noteRefs.current[nextIndex]?.focus();
   }, []);
 
-  function handleScenePointerDown(event: PointerEvent<HTMLDivElement>) {
+  function handleSceneClick(event: MouseEvent<HTMLDivElement>) {
+    // A scroll gesture starts with pointerdown too. Dismiss only after a
+    // completed click or tap so touch scrolling does not close a held note.
     const target = event.target;
     if (target instanceof Element && !target.closest("[data-contact-gratitude-note]")) {
       setSelectedNote(null);
@@ -357,7 +359,7 @@ export function ContactGratitude() {
       data-contact-gratitude-sequence-focus={
         sequenceFocusNote === null ? undefined : String(sequenceFocusNote + 1)
       }
-      onPointerDown={handleScenePointerDown}
+      onClick={handleSceneClick}
       onKeyDown={handleSceneKeyDown}
       className="relative flex min-h-[100svh] w-full items-center py-10 sm:py-14"
     >
