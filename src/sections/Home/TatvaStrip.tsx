@@ -3,7 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
@@ -61,45 +61,14 @@ const TATVAS: Tatva[] = [
   },
 ];
 
-const AUTO_ADVANCE_MS = 3400;
-const MANUAL_PAUSE_MS = 15000;
-const HOVER_PREVIEW_MS = 3000;
-
 export function TatvaStrip() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
-  const pauseUntilRef = useRef(0);
   const inView = useInView(sectionRef, { amount: 0.18 });
   const [activeIndex, setActiveIndex] = useState(0);
   const active = TATVAS[activeIndex] ?? TATVAS[0];
 
-  useEffect(() => {
-    if (prefersReducedMotion || !inView) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < pauseUntilRef.current) return;
-      setActiveIndex((current) => (current + 1) % TATVAS.length);
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [inView, prefersReducedMotion]);
-
-  useEffect(() => {
-    function onChapter(event: Event) {
-      const detail = (event as CustomEvent<{ id?: string }>).detail;
-      if (detail?.id !== "framework") return;
-      setActiveIndex(0);
-      pauseUntilRef.current = Date.now() + 650;
-    }
-
-    window.addEventListener("bt:home-chapter", onChapter as EventListener);
-    return () => {
-      window.removeEventListener("bt:home-chapter", onChapter as EventListener);
-    };
-  }, []);
-
-  function choose(index: number, duration = MANUAL_PAUSE_MS) {
-    pauseUntilRef.current = Date.now() + duration;
+  function choose(index: number) {
     setActiveIndex(index);
   }
 
@@ -111,15 +80,6 @@ export function TatvaStrip() {
       className="tatva-observatory relative isolate overflow-hidden py-20 sm:py-28"
       style={{ backgroundColor: "#0D1514" }}
       aria-labelledby="tatva-framework-title"
-      onPointerDown={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
-      }}
-      onTouchStart={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
-      }}
-      onFocusCapture={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_PAUSE_MS;
-      }}
     >
       <div className="tatva-observatory__film" aria-hidden="true">
         <video
@@ -167,16 +127,14 @@ export function TatvaStrip() {
             </p>
 
             <motion.div
-              key={active.slug}
+              id="tatva-focus-reading"
               className="tatva-observatory__focus mt-7 overflow-hidden rounded-2xl border p-5"
               style={{
                 borderColor: `${ELEMENT_HEX[active.slug]}88`,
                 background: `radial-gradient(circle at 92% 4%, ${ELEMENT_HEX[active.slug]}24, transparent 42%), rgba(9,18,16,0.78)`,
               }}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 10, filter: "blur(5px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
               aria-live="polite"
+              aria-atomic="true"
             >
               <div className="flex items-center justify-between gap-4">
                 <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em]">
@@ -195,16 +153,6 @@ export function TatvaStrip() {
               <p className="mt-4 text-[0.62rem] font-medium uppercase tracking-[0.14em]" style={{ color: ELEMENT_HEX[active.slug] }}>
                 Governs · {active.governs}
               </p>
-              <span className="mt-4 block h-px overflow-hidden bg-ivory/10">
-                <motion.span
-                  key={`progress-${active.slug}`}
-                  className="block h-full origin-left"
-                  style={{ backgroundColor: ELEMENT_HEX[active.slug] }}
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : AUTO_ADVANCE_MS / 1000, ease: "linear" }}
-                />
-              </span>
             </motion.div>
 
           </Reveal>
@@ -233,10 +181,9 @@ export function TatvaStrip() {
                     <button
                       type="button"
                       aria-pressed={isActive}
+                      aria-controls="tatva-focus-reading"
                       aria-label={`Focus ${tatva.name}: ${tatva.role}`}
                       onClick={() => choose(index)}
-                      onPointerEnter={() => choose(index, HOVER_PREVIEW_MS)}
-                      onFocus={() => choose(index)}
                       className="tatva-observatory__force group flex min-w-0 w-full flex-col items-center rounded-2xl text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
                     >
                       <motion.span

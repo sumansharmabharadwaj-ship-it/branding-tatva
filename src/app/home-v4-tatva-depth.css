@@ -336,3 +336,45 @@
     transform: none;
   }
 }
+
+/* Keep the explanation and next action readable after each deliberate choice. */
+.tatva-pressure-lab__force span span:last-child { color: #c3c1b8; }
+.tatva-pressure-lab__reading > p.font-display { color: #f4efe6; }
+.tatva-pressure-lab__next-step {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(244, 239, 230, .2);
+}
+.tatva-pressure-lab__next-step p:first-child {
+  margin: 0 0 .5rem;
+  color: #d4b99a;
+  font-size: .65rem;
+  line-height: 1.5;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.tatva-pressure-lab__next-step p:last-child {
+  margin: 0;
+  color: #e4ded2;
+  font-size: .875rem;
+  line-height: 1.6;
+}
+.tatva-pressure-lab__audit {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  min-height: 2.75rem;
+  margin-top: 1rem;
+  color: #e2c2a0;
+  font-size: .8rem;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: .3em;
+}
+.tatva-pressure-lab__audit span { transition: transform 220ms ease; }
+.tatva-pressure-lab__audit:hover span { transform: translateX(3px); }
+.tatva-pressure-lab__node { min-height: 2.75rem; }
+@media (prefers-reduced-motion: reduce) {
+  .tatva-pressure-lab__audit span { transition: none; }
+  .tatva-pressure-lab__audit:hover span { transform: none; }
+}

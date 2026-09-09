@@ -1,50 +1,51 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { useRef, useState } from "react";
 import { Container } from "@/components/Container";
+import Link from "next/link";
 
 const FORCES = [
   {
     name: "Prithvi",
     role: "Foundation",
     color: "#C77752",
-    score: 34,
     consequence:
-      "Without a foundation, every campaign has to invent a new reason for the brand to exist.",
+      "Campaigns start making different promises because the brand has no shared position.",
+    repair: "Choose the audience, position, and reason to believe.",
   },
   {
     name: "Jal",
     role: "Flow",
     color: "#52756F",
-    score: 58,
     consequence:
-      "Without flow, offers and touchpoints feel assembled beside one another rather than experienced as one brand.",
+      "The ad, website, and first conversation tell different stories.",
+    repair: "Carry the same promise from first impression to enquiry.",
   },
   {
     name: "Agni",
     role: "Distinction",
     color: "#D8A251",
-    score: 63,
     consequence:
-      "Without distinction, the right audience has no reason to notice the brand twice.",
+      "Buyers struggle to tell the brand apart from its competitors.",
+    repair: "Define the visual and verbal cues people should recognise.",
   },
   {
     name: "Vayu",
     role: "Voice",
     color: "#7D8565",
-    score: 54,
     consequence:
-      "Without a repeatable voice, people cannot carry the brand clearly beyond the moment they encounter it.",
+      "The message changes depending on who writes it.",
+    repair: "Give the team a shared voice and a small set of core messages.",
   },
   {
     name: "Akash",
     role: "Recognition",
     color: "#C08A7B",
-    score: 47,
     consequence:
-      "Without consistency over time, exposure keeps happening but never settles into familiarity.",
+      "Each new campaign feels like a different business.",
+    repair: "Keep the chosen cues consistent across channels and over time.",
   },
 ] as const;
 
@@ -56,44 +57,14 @@ const NODE_POSITIONS = [
   { x: 74, y: 172 },
 ] as const;
 
-const AUTO_ADVANCE_MS = 4100;
-const MANUAL_HOLD_MS = 16000;
-
 export function TatvaSystemLab() {
   const sectionRef = useRef<HTMLElement>(null);
-  const pauseUntilRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.28 });
   const [omittedIndex, setOmittedIndex] = useState<number | null>(null);
   const omitted = omittedIndex === null ? null : FORCES[omittedIndex];
   const motionActive = inView && !prefersReducedMotion;
-  const score = omitted?.score ?? 100;
-
-  useEffect(() => {
-    if (!motionActive) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < pauseUntilRef.current) return;
-      setOmittedIndex((current) => (current === null ? 0 : current >= FORCES.length - 1 ? null : current + 1));
-    }, AUTO_ADVANCE_MS);
-
-    return () => window.clearInterval(timer);
-  }, [motionActive]);
-
-  useEffect(() => {
-    function onChapter(event: Event) {
-      const detail = (event as CustomEvent<{ id?: string }>).detail;
-      if (detail?.id !== "framework") return;
-      pauseUntilRef.current = Date.now() + 700;
-      setOmittedIndex(null);
-    }
-
-    window.addEventListener("bt:home-chapter", onChapter as EventListener);
-    return () => window.removeEventListener("bt:home-chapter", onChapter as EventListener);
-  }, []);
-
   function choose(index: number | null) {
-    pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setOmittedIndex((current) => (index !== null && current === index ? null : index));
   }
 
@@ -103,15 +74,6 @@ export function TatvaSystemLab() {
       className="tatva-pressure-lab relative overflow-hidden border-t py-20 sm:py-28"
       style={{ backgroundColor: "#111A18", borderColor: "rgba(244,239,230,0.08)" }}
       aria-labelledby="tatva-system-lab-title"
-      onPointerDown={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onTouchStart={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
-      onFocusCapture={() => {
-        pauseUntilRef.current = Date.now() + MANUAL_HOLD_MS;
-      }}
     >
       <motion.div
         aria-hidden="true"
@@ -138,13 +100,13 @@ export function TatvaSystemLab() {
               id="tatva-system-lab-title"
               className="mt-3 max-w-xl font-display text-[clamp(2.35rem,4.5vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em]"
             >
-              Remove one force. Watch recognition lose its shape.
+              A gap in one place changes the whole brand.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-7 sm:text-base sm:leading-8">
-              This is an illustrative coherence model, rather than a performance score. Select a Tatva to see the strategic burden the remaining four are forced to carry.
+              Explore five common gaps between a brand’s intent and what customers encounter. Each points to a different decision worth revisiting.
             </p>
 
-            <div className="mt-7 grid gap-2 sm:grid-cols-2">
+            <div className="mt-7 grid gap-2 sm:grid-cols-2" role="group" aria-label="Choose a missing part of the brand">
               {FORCES.map((force, index) => {
                 const missing = omittedIndex === index;
                 return (
@@ -152,6 +114,7 @@ export function TatvaSystemLab() {
                     key={force.name}
                     type="button"
                     aria-pressed={missing}
+                    aria-controls="tatva-system-reading"
                     onClick={() => choose(index)}
                     className="tatva-pressure-lab__force group flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                     style={{
@@ -178,7 +141,7 @@ export function TatvaSystemLab() {
                     </span>
                     <span
                       className="text-[0.55rem] font-medium uppercase tracking-[0.14em]"
-                      style={{ color: missing ? force.color : "rgba(244,239,230,0.42)" }}
+                      style={{ color: missing ? "#F4EFE6" : "#C3C1B8" }}
                     >
                       {missing ? "Missing" : "Present"}
                     </span>
@@ -190,7 +153,7 @@ export function TatvaSystemLab() {
             <button
               type="button"
               onClick={() => choose(null)}
-              className="tatva-pressure-lab__restore mt-4 text-xs font-medium uppercase tracking-[0.16em] underline underline-offset-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+              className="tatva-pressure-lab__restore mt-4 inline-flex min-h-11 items-center text-xs font-medium uppercase tracking-[0.16em] underline underline-offset-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
             >
               Restore all five forces
             </button>
@@ -199,24 +162,10 @@ export function TatvaSystemLab() {
           <div className="tatva-pressure-lab__board overflow-hidden rounded-[2rem] border p-4 backdrop-blur-xl sm:p-7">
             <div className="tatva-pressure-lab__board-top flex flex-wrap items-end justify-between gap-4 border-b pb-5">
               <div>
-                <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em]">
-                  Illustrative system coherence
-                </p>
-                <div className="mt-1 flex items-end gap-2">
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.span
-                      key={score}
-                      className="font-display text-5xl leading-none sm:text-6xl"
-                      initial={prefersReducedMotion ? false : { opacity: 0, y: 10, filter: "blur(5px)" }}
-                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                      exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      {score}
-                    </motion.span>
-                  </AnimatePresence>
-                  <span className="pb-1 text-sm">/ 100</span>
-                </div>
+                <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em]">Brand connections</p>
+                <h3 className="mt-2 font-display text-3xl font-normal leading-tight">
+                  {omitted ? `${omitted.role} missing` : "All five working together"}
+                </h3>
               </div>
               <span className="tatva-pressure-lab__status rounded-full border px-3 py-2 text-[0.56rem] font-medium uppercase tracking-[0.14em]">
                 {omitted ? `${omitted.name} omitted` : "Complete system"}
@@ -231,13 +180,11 @@ export function TatvaSystemLab() {
                   role="img"
                   aria-label={omitted ? `${omitted.name} is removed from the five force brand system` : "All five Tatvas are connected to recognition"}
                 >
-                  <motion.path
+                  <path
                     d="M250 54 L426 172 L360 364 L140 364 L74 172 Z"
                     fill="rgba(244,239,230,0.035)"
                     stroke="rgba(244,239,230,0.13)"
                     strokeWidth="1.2"
-                    animate={motionActive ? { pathLength: [0.72, 1, 0.72], opacity: [0.45, 0.8, 0.45] } : undefined}
-                    transition={motionActive ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : undefined}
                   />
 
                   {NODE_POSITIONS.map((node, index) => {
@@ -252,25 +199,10 @@ export function TatvaSystemLab() {
                           y2="222"
                           stroke={force.color}
                           strokeWidth={missing ? 0.8 : 1.7}
-                          strokeDasharray={missing ? "4 8" : "2 7"}
-                          animate={{
-                            opacity: missing ? 0.15 : omitted ? 0.62 : 0.86,
-                            strokeDashoffset: motionActive && !missing ? [0, -40] : 0,
-                          }}
-                          transition={{
-                            opacity: { duration: 0.5 },
-                            strokeDashoffset: { duration: 5 + index * 0.45, repeat: Infinity, ease: "linear" },
-                          }}
+                          strokeDasharray={missing ? "4 8" : undefined}
+                          animate={{ opacity: missing ? 0.18 : 0.86, pathLength: missing ? 0.35 : 1 }}
+                          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
                         />
-                        {!missing && motionActive && (
-                          <circle r="3" fill={force.color} style={{ filter: `drop-shadow(0 0 6px ${force.color})` }}>
-                            <animateMotion
-                              dur={`${3.8 + index * 0.35}s`}
-                              repeatCount="indefinite"
-                              path={`M${node.x} ${node.y} L250 222`}
-                            />
-                          </circle>
-                        )}
                       </g>
                     );
                   })}
@@ -282,15 +214,8 @@ export function TatvaSystemLab() {
                     fill="rgba(10,20,18,0.94)"
                     stroke={omitted?.color ?? "#8FA283"}
                     strokeWidth="1.5"
-                    animate={
-                      motionActive
-                        ? {
-                            r: omitted ? [52, 56, 52] : [54, 60, 54],
-                            opacity: [0.84, 1, 0.84],
-                          }
-                        : undefined
-                    }
-                    transition={motionActive ? { duration: 5.2, repeat: Infinity, ease: "easeInOut" } : undefined}
+                    animate={{ r: omitted ? 48 : 56 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
                   />
                 </svg>
 
@@ -310,10 +235,11 @@ export function TatvaSystemLab() {
                       type="button"
                       aria-label={`${missing ? "Restore" : "Remove"} ${force.name}`}
                       aria-pressed={missing}
+                      aria-controls="tatva-system-reading"
                       onClick={() => choose(index)}
                       className="tatva-pressure-lab__node absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-xl px-2 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                       style={{ left: `${(node.x / 500) * 100}%`, top: `${(node.y / 420) * 100}%` }}
-                      animate={{ opacity: missing ? 0.3 : 1, scale: missing ? 0.84 : 1 }}
+                      animate={{ y: missing ? 3 : 0 }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
                     >
                       <span
@@ -321,6 +247,7 @@ export function TatvaSystemLab() {
                         style={{
                           backgroundColor: "#111A18",
                           borderColor: force.color,
+                          borderStyle: missing ? "dashed" : "solid",
                           boxShadow: missing ? "none" : `0 0 16px ${force.color}88`,
                         }}
                       />
@@ -330,7 +257,7 @@ export function TatvaSystemLab() {
                 })}
               </div>
 
-              <AnimatePresence mode="wait" initial={false}>
+              <div id="tatva-system-reading" className="min-w-0" aria-live="polite" aria-atomic="true">
                 <motion.div
                   key={omitted?.name ?? "complete"}
                   className="tatva-pressure-lab__reading rounded-2xl border p-5"
@@ -340,28 +267,30 @@ export function TatvaSystemLab() {
                       ? `radial-gradient(circle at 88% 4%, ${omitted.color}20, transparent 44%), rgba(244,239,230,0.035)`
                       : "radial-gradient(circle at 88% 4%, rgba(143,162,131,0.16), transparent 44%), rgba(244,239,230,0.035)",
                   }}
-                  initial={prefersReducedMotion ? false : { opacity: 0, y: 10, filter: "blur(5px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={prefersReducedMotion ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  aria-live="polite"
+                  initial={prefersReducedMotion ? false : { y: 8 }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <p
                     className="text-[0.58rem] font-medium uppercase tracking-[0.16em]"
-                    style={{ color: omitted?.color ?? "#8FA283" }}
+                    style={{ color: "#D4B99A" }}
                   >
-                    {omitted ? `What breaks without ${omitted.name}` : "When all five are present"}
+                    {omitted ? `Without ${omitted.name}` : "When all five are present"}
                   </p>
                   <p className="mt-3 font-display text-2xl leading-tight">
                     {omitted
                       ? omitted.consequence
-                      : "Each force keeps its own job, so no single layer has to rescue the rest of the brand."}
+                      : "The position, experience, identity, voice, and presence all carry the same promise."}
                   </p>
-                  <p className="mt-4 text-xs leading-relaxed">
-                    Select the missing force again to restore it, or let the model continue demonstrating the system automatically.
-                  </p>
+                  <div className="tatva-pressure-lab__next-step">
+                    <p>{omitted ? "First decision to revisit" : "Where to begin"}</p>
+                    <p>{omitted?.repair ?? "Check where customers encounter a different message from the one you intend."}</p>
+                  </div>
+                  <Link href="/services#audit" className="tatva-pressure-lab__audit">
+                    Explore the brand audit <span aria-hidden="true">→</span>
+                  </Link>
                 </motion.div>
-              </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>
