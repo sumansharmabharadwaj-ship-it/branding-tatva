@@ -264,9 +264,9 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     },
   };
 
-  function selectLayer(index: number) {
+  function selectLayer(index: number, direction?: 1 | -1) {
     if (index === focusedIndex) return;
-    setSelectionDirection(index > focusedIndex ? 1 : -1);
+    setSelectionDirection(direction ?? (index > focusedIndex ? 1 : -1));
     setFocusedIndex(index);
     if (markedCount > 0) {
       writeInsightsEvidenceState({
@@ -287,8 +287,8 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     }
   }
 
-  function openLayer(index: number) {
-    selectLayer(index);
+  function openLayer(index: number, direction?: 1 | -1) {
+    selectLayer(index, direction);
     if (focusFrameRef.current !== null) {
       window.cancelAnimationFrame(focusFrameRef.current);
     }
@@ -406,12 +406,15 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     index: number,
   ) {
     let nextIndex: number | null = null;
+    let direction: 1 | -1 | undefined;
 
     if (event.key === "ArrowDown" || event.key === "ArrowRight") {
       nextIndex = (index + 1) % layers.length;
+      direction = 1;
     }
     if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
       nextIndex = (index - 1 + layers.length) % layers.length;
+      direction = -1;
     }
     if (event.key === "Home") nextIndex = 0;
     if (event.key === "End") nextIndex = layers.length - 1;
@@ -419,7 +422,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     if (nextIndex === null) return;
 
     event.preventDefault();
-    selectLayer(nextIndex);
+    selectLayer(nextIndex, direction);
     layerButtonRefs.current[nextIndex]?.focus({ preventScroll: true });
   }
 
@@ -501,7 +504,6 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               aria-controls={`worksheet-panel-${layer.slug}`}
               tabIndex={selected ? 0 : -1}
               onClick={() => selectLayer(index)}
-              onFocus={() => selectLayer(index)}
               onKeyDown={(event) => handleLayerKeyDown(event, index)}
             >
               {selected ? (
@@ -583,7 +585,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 className="insights-worksheet__next"
                 aria-label={`${index === layers.length - 1 ? "First" : "Next"} check: ${layers[(index + 1) % layers.length].name}`}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                onClick={() => openLayer((index + 1) % layers.length)}
+                onClick={() => openLayer((index + 1) % layers.length, 1)}
               >
                 {index === layers.length - 1 ? "First check" : "Next check"}
                 <ArrowRight aria-hidden="true" />
