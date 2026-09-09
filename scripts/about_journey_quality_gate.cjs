@@ -352,6 +352,15 @@ assert(
   "The About centre readouts lost their synchronized direction-aware transitions.",
 );
 assert(
+  pointOfView.includes("const recognitionPlaceProgress = useTransform") &&
+    pointOfView.includes("const recognitionValueProgress = useTransform") &&
+    pointOfView.includes("const finalOutcomeOpacity = useTransform") &&
+    pointOfView.includes("scaleX: recognitionPlaceProgress") &&
+    pointOfView.includes("scaleX: recognitionValueProgress") &&
+    pointOfView.includes("opacity: finalOutcomeOpacity"),
+  "The recognition path no longer resolves continuously with the About scroll timeline.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),

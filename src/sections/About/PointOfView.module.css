@@ -337,8 +337,7 @@
   text-transform: uppercase;
 }
 
-.recognitionLine i { height: 1px; background: rgba(244, 239, 230, 0.16); transform: scaleX(0.22); transform-origin: left; transition: background-color 420ms ease, transform 640ms cubic-bezier(0.22, 1, 0.36, 1); }
-.recognitionLine i[data-resolved="true"] { background: #d4b99a; transform: scaleX(1); }
+.recognitionLine i { height: 1px; background: rgba(244, 239, 230, 0.16); transform: scaleX(0.22); transform-origin: left; will-change: transform, background-color; }
 .recognitionLine strong { padding: 0.42rem 0.62rem; border: 1px solid rgba(212, 185, 154, 0.38); border-radius: 999px; color: #d4b99a; white-space: nowrap; }
 
 .staticExperience { display: none; }

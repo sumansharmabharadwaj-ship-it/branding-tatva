@@ -111,6 +111,20 @@ export function PointOfView() {
   const categoryProgress = useTransform(pacedScrollProgress, [0, 0.29], [0, 1]);
   const valueProgress = useTransform(pacedScrollProgress, [0.36, 0.62], [0, 1]);
   const memoryProgress = useTransform(pacedScrollProgress, [0.69, 1], [0, 1]);
+  const recognitionPlaceProgress = useTransform(pacedScrollProgress, [0.2, 0.36], [0.22, 1]);
+  const recognitionPlaceColor = useTransform(
+    pacedScrollProgress,
+    [0.2, 0.36],
+    ["rgba(244, 239, 230, 0.16)", "#d4b99a"],
+  );
+  const recognitionValueProgress = useTransform(pacedScrollProgress, [0.53, 0.69], [0.22, 1]);
+  const recognitionValueColor = useTransform(
+    pacedScrollProgress,
+    [0.53, 0.69],
+    ["rgba(244, 239, 230, 0.16)", "#d4b99a"],
+  );
+  const finalOutcomeOpacity = useTransform(pacedScrollProgress, [0.7, 0.9], [0.48, 1]);
+  const finalOutcomeScale = useTransform(pacedScrollProgress, [0.7, 0.9], [0.97, 1]);
   const stageProgress = [categoryProgress, valueProgress, memoryProgress] as const;
 
   useEffect(() => {
@@ -355,9 +369,34 @@ export function PointOfView() {
           </div>
 
           <div className={styles.recognitionLine} aria-label="The recognition result">
-            <span>Easy to place</span><i data-resolved={activeIndex >= 1} />
-            <span>Worth valuing</span><i data-resolved={activeIndex >= 2} />
-            <span>Made to return</span><strong>Easier to choose</strong>
+            <span>Easy to place</span>
+            <motion.i
+              aria-hidden="true"
+              style={
+                prefersReducedMotion
+                  ? undefined
+                  : { scaleX: recognitionPlaceProgress, backgroundColor: recognitionPlaceColor }
+              }
+            />
+            <span>Worth valuing</span>
+            <motion.i
+              aria-hidden="true"
+              style={
+                prefersReducedMotion
+                  ? undefined
+                  : { scaleX: recognitionValueProgress, backgroundColor: recognitionValueColor }
+              }
+            />
+            <span>Made to return</span>
+            <motion.strong
+              style={
+                prefersReducedMotion
+                  ? undefined
+                  : { opacity: finalOutcomeOpacity, scale: finalOutcomeScale }
+              }
+            >
+              Easier to choose
+            </motion.strong>
           </div>
         </section>
       </Container>
