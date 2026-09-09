@@ -365,7 +365,10 @@ export function V4RecognitionScene() {
         </header>
 
         <div className="home-v4-recognition__stage">
-          <div className="home-v4-recognition__copy" aria-live="polite">
+          <div
+            className={`home-v4-recognition__copy${inView ? " is-active" : ""}`}
+            aria-live="polite"
+          >
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={active.number}
@@ -398,55 +401,27 @@ export function V4RecognitionScene() {
             </Link>
           </div>
 
-          <div className="home-v4-recognition__diagram" aria-label="Three brand conditions converging on one strategic decision">
-            <svg viewBox="0 0 620 520" role="img">
-              <defs>
-                <radialGradient id="v4-recognition-core">
-                  <stop offset="0%" stopColor={active.accent} stopOpacity="0.34" />
-                  <stop offset="100%" stopColor={active.accent} stopOpacity="0" />
-                </radialGradient>
-              </defs>
-              <circle cx="310" cy="258" r="130" fill="url(#v4-recognition-core)" />
+          <div
+            className="home-v4-recognition__diagram"
+            role="group"
+            aria-label="Three brand conditions converging on one strategic decision"
+          >
+            <svg viewBox="0 0 620 520" aria-hidden="true" focusable="false">
               {[
                 "M92 92 C182 110 224 182 310 258",
                 "M528 92 C438 118 396 184 310 258",
                 "M310 474 C310 390 310 330 310 258",
               ].map((path, index) => (
-                <g key={path}>
-                  <path d={path} fill="none" stroke="rgba(244,239,230,.12)" strokeWidth="1" />
-                  <motion.path
-                    d={path}
-                    fill="none"
-                    stroke={RECOGNITION_STATES[index].accent}
-                    strokeWidth={index === activeIndex ? 2.2 : 1}
-                    strokeDasharray="7 12"
-                    animate={{
-                      strokeDashoffset: index === activeIndex && inView ? [0, -52] : 0,
-                      opacity: index === activeIndex ? 0.92 : 0.22,
-                    }}
-                    transition={{
-                      strokeDashoffset: { duration: 1.5, repeat: Infinity, ease: "linear" },
-                      opacity: { duration: 0.38 },
-                    }}
-                  />
-                </g>
+                <path
+                  key={path}
+                  d={path}
+                  fill="none"
+                  stroke={index === activeIndex ? RECOGNITION_STATES[index].accent : "rgba(244,239,230,.18)"}
+                  strokeWidth={index === activeIndex ? 1.8 : 1}
+                  opacity={index === activeIndex ? 0.9 : 0.5}
+                  vectorEffect="non-scaling-stroke"
+                />
               ))}
-              <motion.circle
-                cx="310"
-                cy="258"
-                r="54"
-                fill="rgba(18,22,25,.7)"
-                stroke={active.accent}
-                strokeWidth="1.6"
-                initial={prefersReducedMotion ? false : { scale: 0.94, opacity: 0.8 }}
-                animate={
-                  prefersReducedMotion || !inView
-                    ? undefined
-                    : { scale: 1, opacity: 1 }
-                }
-                style={{ transformOrigin: "310px 258px" }}
-                transition={{ duration: 0.72, ease: EASE }}
-              />
             </svg>
 
             <div className="home-v4-recognition__core">
