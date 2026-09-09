@@ -248,6 +248,7 @@ export function ContactPathways() {
     count: pathways.length,
     target: sceneRef,
     reducedMotion: prefersReducedMotion,
+    persistManualSelection: true,
   });
   const active = pathways[activeIndex] ?? pathways[0];
   const activeDetail =

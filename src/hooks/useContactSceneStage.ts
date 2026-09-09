@@ -22,15 +22,18 @@ export function useContactSceneStage({
   count,
   target,
   reducedMotion = false,
+  persistManualSelection = false,
 }: {
   count: number;
   target: RefObject<HTMLElement | null>;
   reducedMotion?: boolean;
+  persistManualSelection?: boolean;
 }) {
   const safeCount = Math.max(1, count);
   const [activeIndex, setActiveIndex] = useState(0);
   const manualUntilRef = useRef(0);
   const manualProgressRef = useRef<number | null>(null);
+  const hasManualSelectionRef = useRef(false);
   const { scrollYProgress } = useScroll({
     target,
     offset: ["start 0.82", "end 0.18"],
@@ -38,7 +41,9 @@ export function useContactSceneStage({
 
   const syncToProgress = useCallback(
     (progress: number) => {
-      if (reducedMotion) return;
+      // A route choice must survive scrolling through a panel that is taller
+      // than the viewport, so its actions still belong to the selected route.
+      if (reducedMotion || (persistManualSelection && hasManualSelectionRef.current)) return;
 
       const manualProgress = manualProgressRef.current;
       if (Date.now() < manualUntilRef.current && manualProgress !== null) {
@@ -53,7 +58,7 @@ export function useContactSceneStage({
       const nextIndex = stageFromProgress(progress, safeCount);
       setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
     },
-    [reducedMotion, safeCount],
+    [persistManualSelection, reducedMotion, safeCount],
   );
 
   useMotionValueEvent(scrollYProgress, "change", syncToProgress);
@@ -65,6 +70,7 @@ export function useContactSceneStage({
   const choose = useCallback(
     (index: number) => {
       const nextIndex = ((index % safeCount) + safeCount) % safeCount;
+      hasManualSelectionRef.current = true;
       manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       manualProgressRef.current = scrollYProgress.get();
       setActiveIndex(nextIndex);
