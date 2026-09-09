@@ -1,13 +1,20 @@
 "use client";
 
-import { useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { packages } from "@/data/services";
-import { SITUATION_TO_PACKAGE, type ServicesSituationId } from "@/lib/servicesJourney";
+import {
+  isServicesSituation,
+  publishServicesSituation,
+  readCompletedHomeDiagnosis,
+  SERVICES_SITUATION_STORAGE_KEY,
+  SITUATION_TO_PACKAGE,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 import styles from "./HomePaths.module.css";
 
 const PATHS = [
@@ -49,11 +56,29 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export function PathsCinematicChapter() {
   const [activeIndex, setActiveIndex] = useState(0);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const selectionDirectionRef = useRef(0);
   const selectionId = useId();
   const reducedMotion = useHydratedReducedMotion();
   const active = PATHS[activeIndex];
   const packageSlug = SITUATION_TO_PACKAGE[active.situation];
   const offering = packages.find((item) => item.slug === packageSlug)!;
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      const saved = isServicesSituation(stored) ? stored : readCompletedHomeDiagnosis();
+      const index = PATHS.findIndex((path) => path.situation === saved);
+      if (index >= 0) setActiveIndex(index);
+    } catch {
+      // Browsing and choosing a path also work without browser storage.
+    }
+  }, []);
+
+  function choose(index: number) {
+    selectionDirectionRef.current = Math.sign(index - activeIndex);
+    setActiveIndex(index);
+    publishServicesSituation(PATHS[index].situation, "home_paths");
+  }
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -62,7 +87,7 @@ export function PathsCinematicChapter() {
       : event.key === "End" ? PATHS.length - 1
       : event.key === "ArrowRight" ? (index + 1) % PATHS.length
       : (index - 1 + PATHS.length) % PATHS.length;
-    setActiveIndex(next);
+    choose(next);
     tabsRef.current[next]?.focus();
   }
 
@@ -106,7 +131,7 @@ export function PathsCinematicChapter() {
               aria-selected={index === activeIndex}
               aria-controls="home-path-panel"
               tabIndex={index === activeIndex ? 0 : -1}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => choose(index)}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={styles.tab}
             >
@@ -135,15 +160,19 @@ export function PathsCinematicChapter() {
           <motion.div
             key={active.situation}
             className={styles.detail}
-            initial={reducedMotion ? false : { y: 8 }}
-            animate={{ y: 0 }}
+            initial={reducedMotion ? false : { x: selectionDirectionRef.current * 12 }}
+            animate={{ x: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE }}
           >
             <div className={styles.copy}>
               <p className={styles.pathNumber}>0{activeIndex + 1} <span>{offering.name}</span></p>
               <h3>{active.title}</h3>
               <p className={styles.description}>{offering.description}</p>
-              <Link href={`/services#package-${packageSlug}`} className={styles.action}>
+              <Link
+                href={`/services#package-${packageSlug}`}
+                onClick={() => publishServicesSituation(active.situation, "home_paths")}
+                className={styles.action}
+              >
                 Explore {offering.name} <ArrowRight size={19} aria-hidden="true" />
               </Link>
             </div>

@@ -8,10 +8,20 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { consultation } from "@/data/site";
-import { HOME_TO_SERVICES_SITUATION, servicesContactHrefForSituation } from "@/lib/servicesJourney";
+import {
+  HOME_TO_SERVICES_SITUATION,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  SERVICES_SITUATION_CLEARED_EVENT,
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  servicesContactHrefForSituation,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 import styles from "./HomeConversation.module.css";
 
-type Situation = "idea" | "inconsistent" | "outgrown" | "default";
+type Situation = ServicesSituationId | "default";
 
 const INVITATIONS = {
   default: {
@@ -28,14 +38,14 @@ const INVITATIONS = {
     proofHref: "/work/myshopineurope",
     proofLabel: "See how a first brand took shape",
   },
-  inconsistent: {
+  reposition: {
     eyebrow: "For a brand that has drifted",
     headline: "Find where the business and brand parted ways.",
     body: "Bring the words, visuals, or touchpoints that no longer fit. We’ll look at what still earns recognition and what may need to change.",
     proofHref: "/work/herbalcart",
     proofLabel: "See a repositioning in practice",
   },
-  outgrown: {
+  ongoing: {
     eyebrow: "For the business you’ve become",
     headline: "Give the next stage a clearer starting point.",
     body: "Tell me where growth is making the brand harder to hold together. We’ll find the decision that needs attention before adding more activity.",
@@ -46,10 +56,18 @@ const INVITATIONS = {
 
 const STEP_LABELS = ["Bring the context", "Test the question", "Choose what comes next"] as const;
 
+function legacySituation(value: string | null | undefined): ServicesSituationId | null {
+  if (value !== "idea" && value !== "inconsistent" && value !== "outgrown") return null;
+  return HOME_TO_SERVICES_SITUATION[value];
+}
+
 function readSituation(): Situation {
   try {
-    const saved = window.localStorage.getItem("bt-situation");
-    if (saved === "idea" || saved === "inconsistent" || saved === "outgrown") return saved;
+    const stored = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+    const current = isServicesSituation(stored) ? stored : readCompletedHomeDiagnosis();
+    if (current) return current;
+    const saved = legacySituation(window.localStorage.getItem("bt-situation"));
+    if (saved) return saved;
   } catch {
     // The invitation remains usable when browser storage is unavailable.
   }
@@ -95,22 +113,39 @@ export function FinalInvitation() {
 
   useEffect(() => {
     function sync() { setSituation(readSituation()); }
-    function onChapter(event: Event) {
-      if ((event as CustomEvent<{ id?: string }>).detail?.id === "invitation") sync();
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      if (isServicesSituation(detail?.situation ?? null)) setSituation(detail.situation);
     }
+    function onLegacySituation(event: Event) {
+      const saved = legacySituation((event as CustomEvent<{ situation?: string }>).detail?.situation);
+      if (saved) setSituation(saved);
+      else sync();
+    }
+    function onStorage(event: StorageEvent) {
+      if (event.key === "bt-situation") {
+        setSituation(legacySituation(event.newValue) ?? "default");
+      } else if (event.key === SERVICES_SITUATION_STORAGE_KEY || event.key === null) {
+        if (event.newValue === null) setSituation("default");
+        else sync();
+      }
+    }
+    function clear() { setSituation("default"); }
     sync();
-    window.addEventListener("storage", sync);
-    window.addEventListener("bt:situation", sync);
-    window.addEventListener("bt:home-chapter", onChapter);
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("bt:situation", onLegacySituation);
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, clear);
     return () => {
-      window.removeEventListener("storage", sync);
-      window.removeEventListener("bt:situation", sync);
-      window.removeEventListener("bt:home-chapter", onChapter);
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("bt:situation", onLegacySituation);
+      window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, clear);
     };
   }, []);
 
   const invitation = INVITATIONS[situation];
-  const contactHref = servicesContactHrefForSituation(HOME_TO_SERVICES_SITUATION[situation], "call");
+  const contactHref = servicesContactHrefForSituation(situation === "default" ? null : situation, "call");
 
   return (
     <div
