@@ -555,3 +555,56 @@
 @media (prefers-reduced-motion: reduce) {
   .studio-cinematic__chooser button { transition: none; }
 }
+
+/* Parker-inspired chapter pacing: the frame stays composed while the
+   visitor's scroll moves through Suman's three disciplines. Compact screens,
+   touch devices and reduced-motion users retain the original document flow. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
+  .studio-cinematic {
+    height: 240svh;
+    min-height: 240svh;
+    overflow: clip;
+  }
+
+  .studio-cinematic__grid {
+    --studio-scroll-progress: 0;
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 100svh;
+    box-sizing: border-box;
+  }
+
+  .studio-cinematic__media-layer {
+    animation: studio-scroll-cut 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .studio-cinematic__panel > div {
+    animation: studio-scroll-copy 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .studio-cinematic__media-topline::after {
+    content: "";
+    position: absolute;
+    top: 3.2rem;
+    right: clamp(1.35rem, 2.5vw, 2.35rem);
+    left: clamp(1.35rem, 2.5vw, 2.35rem);
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--studio-accent) calc(var(--studio-scroll-progress) * 100%),
+      rgba(244, 239, 230, 0.14) 0
+    );
+    box-shadow: 0 0 18px color-mix(in srgb, var(--studio-accent) 25%, transparent);
+  }
+}
+
+@keyframes studio-scroll-cut {
+  from { opacity: 0.36; transform: scale(1.035); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes studio-scroll-copy {
+  from { opacity: 0; transform: translateY(0.6rem); }
+  to { opacity: 1; transform: translateY(0); }
+}

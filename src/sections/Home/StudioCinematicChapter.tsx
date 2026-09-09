@@ -5,7 +5,7 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const DISCIPLINES = [
   {
@@ -62,14 +62,82 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function StudioCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const selectionId = useId();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
   const portraitY = useTransform(scrollYProgress, [0, 1], [12, -12]);
   const portraitScale = useTransform(scrollYProgress, [0, 1], [1.01, 1.055]);
   const [activeIndex, setActiveIndex] = useState(0);
   const active = DISCIPLINES[activeIndex];
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const grid = gridRef.current;
+    if (!section || !grid || prefersReducedMotion) return;
+
+    const desktopStory = window.matchMedia(
+      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
+    );
+    let frameRequest = 0;
+
+    function render() {
+      frameRequest = 0;
+      if (!desktopStory.matches) {
+        grid?.style.removeProperty("--studio-scroll-progress");
+        return;
+      }
+
+      const bounds = section?.getBoundingClientRect();
+      if (!bounds) return;
+
+      const runway = Math.max(1, bounds.height - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, -bounds.top / runway));
+      const nextIndex = Math.min(
+        DISCIPLINES.length - 1,
+        Math.floor(progress * DISCIPLINES.length),
+      );
+
+      grid?.style.setProperty("--studio-scroll-progress", progress.toFixed(4));
+      setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+    }
+
+    function schedule() {
+      if (frameRequest) return;
+      frameRequest = window.requestAnimationFrame(render);
+    }
+
+    render();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    desktopStory.addEventListener("change", schedule);
+
+    return () => {
+      if (frameRequest) window.cancelAnimationFrame(frameRequest);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      desktopStory.removeEventListener("change", schedule);
+      grid.style.removeProperty("--studio-scroll-progress");
+    };
+  }, [prefersReducedMotion]);
+
+  function choose(index: number) {
+    const section = sectionRef.current;
+    const desktopStory = window.matchMedia(
+      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
+    );
+
+    if (section && desktopStory.matches && !prefersReducedMotion) {
+      const bounds = section.getBoundingClientRect();
+      const runway = Math.max(1, bounds.height - window.innerHeight);
+      const sectionTop = window.scrollY + bounds.top;
+      const progress = (index + 0.5) / DISCIPLINES.length;
+      window.scrollTo({ top: sectionTop + runway * progress, behavior: "smooth" });
+    }
+
+    setActiveIndex(index);
+  }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -78,7 +146,7 @@ export function StudioCinematicChapter() {
       : event.key === "End" ? DISCIPLINES.length - 1
       : event.key === "ArrowRight" ? (index + 1) % DISCIPLINES.length
       : (index - 1 + DISCIPLINES.length) % DISCIPLINES.length;
-    setActiveIndex(next);
+    choose(next);
     tabsRef.current[next]?.focus();
   }
 
@@ -96,7 +164,7 @@ export function StudioCinematicChapter() {
       <div className="studio-cinematic__aurora studio-cinematic__aurora--clay" aria-hidden="true" />
       <div className="studio-cinematic__aurora studio-cinematic__aurora--sage" aria-hidden="true" />
 
-      <div className="studio-cinematic__grid">
+      <div ref={gridRef} className="studio-cinematic__grid">
         <div className="studio-cinematic__media" aria-hidden="true">
           <div className="studio-cinematic__media-layer" key={active.video}>
             <BackgroundVideo video={active.video} poster={active.poster} managedByHomepage loop={false} />
@@ -133,7 +201,7 @@ export function StudioCinematicChapter() {
                   aria-selected={selected}
                   aria-controls="studio-cinematic-panel"
                   tabIndex={selected ? 0 : -1}
-                  onClick={() => setActiveIndex(index)}
+                  onClick={() => choose(index)}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                 >
                   {selected && (
