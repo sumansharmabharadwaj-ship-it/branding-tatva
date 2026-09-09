@@ -79,7 +79,7 @@
 .evidence-cinematic__trail-step span,
 .evidence-cinematic__media-topline {
   margin: 0;
-  color: var(--evidence-accent);
+  color: color-mix(in srgb, var(--evidence-accent) 35%, #f4efe6);
   font-size: 0.64rem;
   font-weight: 600;
   letter-spacing: 0.2em;
@@ -99,19 +99,8 @@
 }
 
 .evidence-cinematic__header h2 em {
-  color: transparent;
-  background-image: linear-gradient(
-    96deg,
-    var(--evidence-accent) 0%,
-    #f4efe6 35%,
-    #d4b99a 70%,
-    var(--evidence-accent) 100%
-  );
-  background-size: 220% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: #d4b99a;
   font-weight: 400;
-  animation: evidence-living-ink 9s ease-in-out infinite;
 }
 
 .evidence-cinematic__intro {
@@ -137,7 +126,7 @@
 
 .evidence-cinematic__stage {
   display: grid;
-  margin-top: clamp(2.4rem, 5vw, 4.5rem);
+  margin-top: 1.25rem;
   grid-template-columns: minmax(34rem, 1.25fr) minmax(24rem, 0.75fr);
   align-items: stretch;
   gap: clamp(0.85rem, 1.7vw, 1.35rem);
@@ -221,7 +210,7 @@
 }
 
 .evidence-cinematic__media-topline span:first-child {
-  color: var(--evidence-accent);
+  color: color-mix(in srgb, var(--evidence-accent) 35%, #f4efe6);
 }
 
 .evidence-cinematic__media-copy {
@@ -235,7 +224,7 @@
 
 .evidence-cinematic__media-copy p {
   margin: 0;
-  color: var(--evidence-accent);
+  color: color-mix(in srgb, var(--evidence-accent) 35%, #f4efe6);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.19em;
@@ -314,7 +303,7 @@
 }
 
 .evidence-cinematic__media-actions a {
-  color: var(--evidence-accent);
+  color: color-mix(in srgb, var(--evidence-accent) 35%, #f4efe6);
 }
 
 .evidence-cinematic__dossier {
@@ -358,7 +347,7 @@
 }
 
 .evidence-cinematic__trail-step span {
-  color: var(--evidence-accent);
+  color: color-mix(in srgb, var(--evidence-accent) 35%, #f4efe6);
   font-size: 0.57rem;
 }
 
@@ -375,17 +364,6 @@
   font-family: var(--font-display), Georgia, serif;
   font-size: clamp(1.15rem, 1.7vw, 1.55rem);
   line-height: 1.27;
-}
-
-.evidence-cinematic__trail-step b {
-  position: absolute;
-  bottom: -1.6rem;
-  left: 0.28rem;
-  z-index: 2;
-  width: 1px;
-  height: 3.2rem;
-  transform-origin: top center;
-  background: linear-gradient(180deg, var(--evidence-accent), transparent);
 }
 
 .evidence-cinematic__dossier-footer {
@@ -406,7 +384,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-top: 1rem;
-  color: var(--evidence-accent);
+  color: color-mix(in srgb, var(--evidence-accent) 35%, #f4efe6);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -422,28 +400,9 @@
   outline: none;
 }
 
-.evidence-cinematic__timer {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 2px;
-  overflow: hidden;
-  background: rgba(244, 239, 230, 0.06);
-}
-
-.evidence-cinematic__timer i {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform-origin: left center;
-  background: var(--evidence-accent);
-  box-shadow: 0 0 15px color-mix(in srgb, var(--evidence-accent) 55%, transparent);
-}
-
 .evidence-cinematic__index {
   display: grid;
-  margin-top: 0.72rem;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.5rem;
 }
@@ -514,7 +473,7 @@
 }
 
 .evidence-cinematic__index-copy small {
-  color: var(--project-accent);
+  color: color-mix(in srgb, var(--project-accent) 35%, #f4efe6);
   font-size: 0.53rem;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -671,16 +630,19 @@
   }
 
   .evidence-cinematic__index {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(10rem, 65%);
     gap: 0.42rem;
+    overflow-x: auto;
+    padding: .35rem .3rem .65rem;
+    scroll-padding-inline: .3rem;
+    scroll-snap-type: x proximity;
   }
 
   .evidence-cinematic__index button {
-    min-height: 6.4rem;
-  }
-
-  .evidence-cinematic__index button:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
+    min-height: 5.5rem;
+    scroll-snap-align: start;
   }
 
   .evidence-cinematic__index-copy {
@@ -692,7 +654,7 @@
   }
 
   .evidence-cinematic__index-copy em {
-    display: none;
+    white-space: normal;
   }
 }
 
@@ -722,15 +684,6 @@
   }
 }
 
-@keyframes evidence-living-ink {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  52% {
-    background-position: 100% 50%;
-  }
-}
-
 @keyframes evidence-light-scan {
   0%, 16% {
     transform: translateX(0) skewX(-13deg);
@@ -743,4 +696,13 @@
     transform: translateX(900%) skewX(-13deg);
     opacity: 0;
   }
+}
+
+/* Selection stays with the reader; focus remains distinct from the active case. */
+.evidence-cinematic__index button:focus-visible,
+.evidence-cinematic__stage:focus-visible,
+.evidence-cinematic__media-actions :is(button, a):focus-visible,
+.evidence-cinematic__dossier-footer a:focus-visible {
+  outline: 2px solid #ead6bc;
+  outline-offset: 4px;
 }
