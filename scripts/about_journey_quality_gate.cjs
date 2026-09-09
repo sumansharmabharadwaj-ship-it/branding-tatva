@@ -419,6 +419,13 @@ assert(
   "The convergence threads no longer assemble and recede with direct scroll control.",
 );
 assert(
+  convergence.includes("const STAGE_CUTS = [0, 0.28, 0.32, 0.35, 0.39, 0.61, 0.65, 0.68, 0.72, 1]") &&
+    convergence.includes("const registerContentOpacity = useTransform") &&
+    convergence.includes("const registerContentScale = useTransform") &&
+    (convergence.match(/opacity: registerContentOpacity, scale: registerContentScale/g) || []).length === 2,
+  "The convergence readout no longer passes through one scroll-controlled focus gate.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),

@@ -79,6 +79,7 @@ const STAGES = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1];
+const STAGE_CUTS = [0, 0.28, 0.32, 0.35, 0.39, 0.61, 0.65, 0.68, 0.72, 1];
 const VERTICAL_SWAP = {
   enter: (direction: number) => ({ opacity: 0, y: direction * 7 }),
   active: { opacity: 1, y: 0 },
@@ -140,6 +141,16 @@ export function Convergence() {
     pacedScrollProgress,
     SCROLL_BEATS,
     [1, 1, 1, 1, 0.38, 0.38],
+  );
+  const registerContentOpacity = useTransform(
+    pacedScrollProgress,
+    STAGE_CUTS,
+    [1, 1, 0.08, 0.08, 1, 1, 0.08, 0.08, 1, 1],
+  );
+  const registerContentScale = useTransform(
+    pacedScrollProgress,
+    STAGE_CUTS,
+    [1, 1, 0.985, 0.985, 1, 1, 0.985, 0.985, 1, 1],
   );
   const threadFieldOpacity = useTransform(
     pacedScrollProgress,
@@ -363,7 +374,14 @@ export function Convergence() {
               }
             >
               <div className={styles.folioImage} aria-hidden="true">
-                <div className={styles.decisionRegister}>
+                <motion.div
+                  className={styles.decisionRegister}
+                  style={
+                    prefersReducedMotion
+                      ? undefined
+                      : { opacity: registerContentOpacity, scale: registerContentScale }
+                  }
+                >
                   <div className={styles.registerHead}>
                     <span>Behaviour</span>
                     <span>Language</span>
@@ -430,9 +448,16 @@ export function Convergence() {
                       </motion.strong>
                     </AnimatePresence>
                   </div>
-                </div>
+                </motion.div>
               </div>
-              <figcaption className={styles.folioCopy}>
+              <motion.figcaption
+                className={styles.folioCopy}
+                style={
+                  prefersReducedMotion
+                    ? undefined
+                    : { opacity: registerContentOpacity, scale: registerContentScale }
+                }
+              >
                 <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
                   <motion.span
                     key={activeStage.number}
@@ -472,7 +497,7 @@ export function Convergence() {
                     {stage === 1 ? activePair.coreLine : activeStage.centreLine}
                   </motion.strong>
                 </AnimatePresence>
-              </figcaption>
+              </motion.figcaption>
             </motion.figure>
 
             <div className={styles.outputs}>

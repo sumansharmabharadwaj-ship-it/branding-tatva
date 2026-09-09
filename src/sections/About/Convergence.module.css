@@ -312,6 +312,7 @@
     linear-gradient(90deg, transparent 49.8%, rgba(43, 41, 36, 0.06) 50%, transparent 50.2%),
     linear-gradient(180deg, transparent 49.8%, rgba(43, 41, 36, 0.05) 50%, transparent 50.2%);
   color: #2b2924;
+  will-change: opacity, transform;
 }
 
 .registerHead {
@@ -378,7 +379,7 @@
 .registerResult small { color: rgba(43, 41, 36, 0.56); font-size: 0.7rem; }
 .registerResult strong { color: #2b2924; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.2rem, 2.1vw, 1.85rem); font-weight: 400; line-height: 1; }
 
-.folioCopy { display: grid; min-height: 5.15rem; align-content: start; gap: 0.18rem; }
+.folioCopy { display: grid; min-height: 5.15rem; align-content: start; gap: 0.18rem; will-change: opacity, transform; }
 .folioCopy > span { color: rgba(43, 41, 36, 0.52); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.16em; }
 .folioCopy > small {
   font-size: 0.68rem;
