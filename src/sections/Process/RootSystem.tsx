@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import type { ProcessStage } from "@/data/process";
 import { consultation } from "@/data/site";
 import styles from "./ProjectJourney.module.css";
@@ -55,11 +57,29 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const selectionId = useId();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const cinematicMotion = useMediaQuery(
+    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+  );
+  const sceneInView = useInView(sectionRef, { amount: 0.06 });
+  const visualizer = useScrollDrivenVisualizer({
+    count: stages.length,
+    target: sectionRef,
+    enabled: cinematicMotion && sceneInView,
+    reducedMotion: prefersReducedMotion,
+  });
   const [selected, setSelected] = useState(0);
-  const active = Math.min(selected, Math.max(0, stages.length - 1));
+  const active = Math.min(
+    cinematicMotion ? visualizer.activeIndex : selected,
+    Math.max(0, stages.length - 1),
+  );
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const imageY = useTransform(scrollYProgress, [0, 1], [12, -12]);
   const imageScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.1]);
+
+  function choose(index: number) {
+    setSelected(index);
+    if (cinematicMotion) visualizer.choose(index);
+  }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -68,7 +88,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       : event.key === "End" ? stages.length - 1
       : event.key === "ArrowRight" ? (index + 1) % stages.length
       : (index - 1 + stages.length) % stages.length;
-    setSelected(next);
+    choose(next);
     tabsRef.current[next]?.focus();
   }
 
@@ -82,7 +102,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   };
 
   return (
-    <section ref={sectionRef} data-project-journey="true" className={`project-journey ${styles.journey}`} aria-labelledby="project-journey-title">
+    <section ref={sectionRef} data-project-journey="true" data-scroll-story="process" data-process-state={active} className={`project-journey ${styles.journey}`} aria-labelledby="project-journey-title">
       <div className={styles.shell}>
         <header className={styles.header}>
           <div>
@@ -104,7 +124,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               aria-controls="project-stage-panel"
               tabIndex={active === index ? 0 : -1}
               className={styles.tab}
-              onClick={() => setSelected(index)}
+              onClick={() => choose(index)}
               onKeyDown={(event) => onTabKeyDown(event, index)}
             >
               {active === index && <motion.span className={styles.selection} layoutId={`project-selection-${selectionId}`} transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }} aria-hidden="true" />}

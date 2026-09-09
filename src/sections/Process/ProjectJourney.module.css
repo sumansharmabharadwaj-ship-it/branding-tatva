@@ -89,3 +89,17 @@
 }
 :global(html[data-motion="reduced"]) .footer a span { transition: none; }
 :global(html[data-motion="reduced"]) .footer a:is(:hover, :focus-visible) span { transform: none; }
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .journey {
+    height: 280svh;
+    min-height: 280svh;
+    overflow: visible;
+  }
+  .shell {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 100svh;
+    overflow: clip;
+  }
+}
