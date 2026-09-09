@@ -17,7 +17,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { Container } from "@/components/Container";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -90,11 +90,11 @@ function GratitudeNote({
 }: GratitudeNoteProps) {
   const arrivalStart = 0.1 + index * 0.045;
   const arrivalEnd = 0.38 + index * 0.045;
-  const y = useTransform(progress, [arrivalStart, arrivalEnd, 0.88, 1], [24, 0, 0, -6]);
+  const y = useTransform(progress, [arrivalStart, arrivalEnd, 0.88, 1], [12, 0, 0, -4]);
   const opacity = useTransform(
     progress,
     [arrivalStart, arrivalEnd, 0.94, 1],
-    [0.2, 1, 1, 0.72],
+    [0.85, 1, 1, 1],
   );
   const active = activeNote === index;
   const noteState = visited && !active ? ", already received" : "";
@@ -128,9 +128,9 @@ function GratitudeNote({
       data-contact-gratitude-note
       data-contact-gratitude-visited={visited ? "true" : undefined}
       data-cursor-label={selected ? "Close note" : visited ? "Reopen note" : "Receive note"}
-      className="group relative grid min-h-16 w-full grid-cols-[1.7rem_1fr] items-center gap-2 overflow-hidden px-3 py-3 text-left text-ivory focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:min-h-[4.5rem] sm:grid-cols-[2.25rem_1fr_auto] sm:gap-3 sm:px-4 lg:min-h-[5.35rem] lg:border-t lg:border-white/18 lg:px-1 lg:last:border-b"
+      className="group relative grid min-h-14 w-full grid-cols-[1.4rem_minmax(0,1fr)_1rem] items-center gap-3 overflow-hidden border-t border-soil/14 px-2 py-3 text-left text-soil last:border-b focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-16 sm:grid-cols-[1.8rem_minmax(0,1fr)_1rem] sm:px-3"
       initial={false}
-      animate={{ color: active ? "rgb(246,242,234)" : "rgba(246,242,234,0.82)" }}
+      animate={{ color: active ? "rgb(39,34,30)" : "rgba(39,34,30,0.8)" }}
       transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE_AIR }}
       whileTap={reducedMotion ? undefined : { scale: 0.985 }}
       style={reducedMotion ? undefined : { y, opacity, willChange: "transform, opacity" }}
@@ -140,7 +140,7 @@ function GratitudeNote({
           layoutId="contact-gratitude-focus-baton"
           aria-hidden="true"
           data-contact-gratitude-focus-baton
-          className="absolute inset-0 bg-ivory/[0.09]"
+          className="absolute inset-0 bg-white/60"
           initial={false}
           transition={{ duration: reducedMotion ? 0 : 0.48, ease: EASE_AIR }}
         />
@@ -148,7 +148,7 @@ function GratitudeNote({
       <motion.span
         aria-hidden="true"
         data-contact-gratitude-receipt
-        className="pointer-events-none absolute inset-y-2 left-0 w-[46%] origin-left bg-gradient-to-r from-sandstone/20 to-transparent"
+        className="pointer-events-none absolute inset-y-2 left-0 w-[46%] origin-left bg-gradient-to-r from-clay/[0.07] to-transparent"
         initial={false}
         animate={{
           opacity: visited && !active ? 0.72 : 0,
@@ -158,25 +158,25 @@ function GratitudeNote({
       />
       <motion.span
         aria-hidden="true"
-        className="absolute inset-y-0 left-0 w-px origin-top bg-sandstone"
+        className="absolute inset-y-0 left-0 w-px origin-top bg-clay/60"
         initial={false}
         animate={{ scaleY: active || visited ? 1 : 0 }}
         transition={{ duration: reducedMotion ? 0 : 0.44, ease: EASE_AIR }}
       />
-      <span className="relative text-[0.57rem] font-medium tracking-[0.18em] text-sandstone/78 sm:text-[0.62rem]">
+      <span className="relative text-[0.6rem] font-medium tracking-[0.12em] text-soil/50">
         0{index + 1}
       </span>
-      <span className="relative font-display text-[1.08rem] font-normal leading-[1.02] sm:text-xl lg:text-[1.42rem]">
+      <span className="relative font-display text-xl font-normal leading-tight sm:text-[1.55rem]">
         {note.label}
       </span>
       <motion.span
         aria-hidden="true"
-        className="relative hidden text-[0.57rem] font-medium uppercase tracking-[0.16em] text-sandstone sm:block"
+        className="relative text-clay"
         initial={false}
-        animate={{ opacity: visited ? 1 : 0.48, x: active ? 0 : -3 }}
+        animate={{ rotate: selected ? 45 : 0, opacity: active ? 1 : 0.65 }}
         transition={{ duration: reducedMotion ? 0 : 0.3, ease: EASE_AIR }}
       >
-        {visited ? "received" : "open"}
+        <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
       </motion.span>
     </motion.button>
   );
@@ -236,24 +236,18 @@ export function ContactGratitude() {
     setLastReceivedNote(latestReceivedNote);
   });
 
-  const thankX = useTransform(progress, [0, 0.34, 0.76, 1], [-72, 0, 0, 18]);
-  const thankRotate = useTransform(progress, [0, 0.34, 0.76, 1], [-2.4, 0, 0, 0.8]);
-  const youX = useTransform(progress, [0, 0.34, 0.76, 1], [72, 0, 0, -18]);
-  const youRotate = useTransform(progress, [0, 0.34, 0.76, 1], [2.4, 0, 0, -0.8]);
+  const thankX = useTransform(progress, [0, 0.34, 0.76, 1], [-24, 0, 0, 8]);
+  const thankRotate = useTransform(progress, [0, 0.34, 0.76, 1], [-0.6, 0, 0, 0.2]);
+  const youX = useTransform(progress, [0, 0.34, 0.76, 1], [24, 0, 0, -8]);
+  const youRotate = useTransform(progress, [0, 0.34, 0.76, 1], [0.6, 0, 0, -0.2]);
   const resolveY = useTransform(progress, [0.12, 0.44, 0.82, 1], [30, 0, 0, -10]);
-  const resolveOpacity = useTransform(progress, [0.12, 0.4, 0.9, 1], [0.24, 1, 1, 0.76]);
-  const copyClip = useTransform(
-    progress,
-    [0.18, 0.48, 0.84, 1],
-    ["inset(0 100% 0 0%)", "inset(0 0% 0 0%)", "inset(0 0% 0 0%)", "inset(0 10% 0 0%)"],
-  );
+  const resolveOpacity = useTransform(progress, [0.12, 0.4, 0.9, 1], [0.9, 1, 1, 1]);
   const signalScale = useTransform(
     progress,
     [0.1, SCROLL_RECEIVE_THRESHOLDS[NOTES.length - 1]],
     [0, 1],
   );
   const nextY = useTransform(progress, [0.22, 0.5, 0.9, 1], [22, 0, 0, -4]);
-  const nextOpacity = useTransform(progress, [0.22, 0.46, 0.94, 1], [0, 1, 1, 0.82]);
 
   const allNotesVisited = visitedNotes === ALL_NOTES_VISITED;
   const sequenceFocusNote = completionSettled ? null : lastReceivedNote;
@@ -359,7 +353,7 @@ export function ContactGratitude() {
       }
       onPointerDown={handleScenePointerDown}
       onKeyDown={handleSceneKeyDown}
-      className="relative flex min-h-[100svh] w-full items-center py-10 sm:py-14"
+      className="relative flex min-h-[100svh] w-full items-center py-20 text-soil"
     >
       <motion.div
         aria-hidden="true"
@@ -373,22 +367,22 @@ export function ContactGratitude() {
       <Container className="relative z-10 w-full">
         <div
           data-contact-gratitude-layout
-          className="grid items-center gap-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(22rem,0.72fr)] lg:gap-[clamp(4rem,8vw,9rem)]"
+          className="grid min-w-0 items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-[clamp(2.5rem,5vw,5rem)]"
         >
-          <div data-contact-gratitude-copy className="max-w-[48rem]">
-            <p className="text-[0.64rem] font-medium uppercase tracking-[0.26em] text-sandstone sm:text-[0.68rem]">
-              One last thought
+          <div data-contact-gratitude-copy className="min-w-0 max-w-[38rem]">
+            <p className="text-[0.64rem] font-medium uppercase tracking-[0.22em] text-clay sm:text-[0.68rem]">
+              A note from Suman
             </p>
 
             <h2
               id="contact-gratitude-heading"
               aria-label="Thank you for staying with the question."
               data-contact-gratitude-heading
-              className="mt-4 font-display font-normal text-ivory"
+              className="mt-5 font-display font-normal text-soil"
             >
               <span
                 aria-hidden="true"
-                className="flex gap-[0.16em] overflow-hidden text-[clamp(4.6rem,10.6vw,9.5rem)] leading-[0.76] tracking-[-0.045em]"
+                className="flex gap-[0.16em] overflow-hidden py-[0.08em] text-[clamp(3.5rem,7.6vw,6.7rem)] leading-[0.95] tracking-[-0.045em]"
               >
                 <motion.span
                   className="block"
@@ -401,7 +395,7 @@ export function ContactGratitude() {
                   Thank
                 </motion.span>
                 <motion.span
-                  className="block italic text-sandstone"
+                  className="block italic text-clay"
                   style={
                     reducedMotion
                       ? undefined
@@ -413,7 +407,7 @@ export function ContactGratitude() {
               </span>
               <motion.span
                 aria-hidden="true"
-                className="mt-4 block max-w-[11.5em] text-[clamp(2rem,4.5vw,4.5rem)] leading-[0.94] tracking-[-0.025em] text-ivory/94"
+                className="mt-2 block max-w-[14em] text-[clamp(1.85rem,3.15vw,2.75rem)] leading-[1.08] tracking-[-0.025em] text-soil/85"
                 style={
                   reducedMotion
                     ? undefined
@@ -426,11 +420,11 @@ export function ContactGratitude() {
 
             <motion.div
               data-contact-gratitude-statement
-              className="mt-5 max-w-xl border-l border-sandstone/48 pl-4 sm:mt-7 sm:pl-5"
-              style={reducedMotion ? undefined : { clipPath: copyClip, willChange: "clip-path" }}
+              className="mt-5 max-w-[29rem] sm:mt-6"
+              style={reducedMotion ? undefined : { y: resolveY }}
             >
-              <p className="text-sm leading-relaxed text-ivory/76 sm:text-base">
-                Most brand decisions get rushed at the exact moment they need better language. You gave yours a little more room.
+              <p className="text-sm leading-relaxed text-soil/70 sm:text-base">
+                You do not need a polished brief. Bring the brand decision you are still trying to name.
               </p>
             </motion.div>
 
@@ -442,7 +436,7 @@ export function ContactGratitude() {
               style={
                 reducedMotion
                   ? undefined
-                  : { y: nextY, opacity: nextOpacity, willChange: "transform, opacity" }
+                  : { y: nextY, willChange: "transform" }
               }
             >
               <TrackedLink
@@ -451,9 +445,9 @@ export function ContactGratitude() {
                 eventProps={{ source: "contact_gratitude", route: "booking" }}
                 data-contact-gratitude-primary
                 data-cursor-label="Book the conversation"
-                className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-ivory px-5 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ivory"
+                className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-soil px-5 py-3 text-sm font-medium text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-soil/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay"
               >
-                <span className="relative z-10">Bring it to a 30 minute call</span>
+                <span className="relative z-10">Book a 30 minute call</span>
                 <ArrowRight
                   aria-hidden="true"
                   data-contact-gratitude-primary-arrow
@@ -467,7 +461,7 @@ export function ContactGratitude() {
                 event="contact_route_selected"
                 eventProps={{ source: "contact_gratitude", route: "insights" }}
                 data-cursor-label="Open field notes"
-                className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-ivory/28 bg-soil/16 px-5 py-3 text-[0.68rem] font-medium uppercase tracking-[0.14em] text-ivory backdrop-blur-lg transition-[transform,background-color,border-color] duration-300 hover:-translate-y-0.5 hover:border-sandstone/58 hover:bg-ivory/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+                className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-3 py-3 text-sm font-medium text-soil/75 underline decoration-soil/25 underline-offset-4 transition-colors duration-300 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay"
               >
                 Read the field notes
                 <ArrowRight
@@ -477,6 +471,10 @@ export function ContactGratitude() {
                 />
               </TrackedLink>
             </motion.div>
+            <div data-contact-gratitude-signature className="mt-7 border-t border-soil/15 pt-4 sm:mt-9">
+              <p className="font-display text-xl italic text-soil">Suman Sharma</p>
+              <p className="mt-1 text-[0.63rem] tracking-[0.08em] text-soil/55">Founder, Branding Tatva</p>
+            </div>
           </div>
 
           <motion.div
@@ -486,17 +484,17 @@ export function ContactGratitude() {
           >
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-[0.61rem] font-medium uppercase tracking-[0.22em] text-sandstone">
+                <p className="text-[0.61rem] font-medium uppercase tracking-[0.2em] text-clay">
                   What you brought
                 </p>
-                <p className="mt-2 max-w-xs font-display text-xl leading-tight text-ivory/88 sm:text-2xl">
-                  A useful first conversation begins here.
+                <p className="mt-2 max-w-xs font-display text-[1.6rem] leading-tight text-soil sm:text-[1.85rem]">
+                  Enough to begin.
                 </p>
               </div>
               <motion.span
                 aria-hidden="true"
                 data-contact-gratitude-ledger-status
-                className="hidden pb-1 text-right text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/60 sm:block"
+                className="sr-only"
                 initial={false}
                 animate={{
                   opacity: completionSettled ? 1 : 0.6,
@@ -521,7 +519,7 @@ export function ContactGratitude() {
                   setActiveNote(selectedNote);
                 }
               }}
-              className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-[1.35rem] border border-white/16 bg-white/12 backdrop-blur-xl sm:mt-5 lg:block lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent lg:backdrop-blur-none"
+              className="mt-5 grid min-w-0 grid-cols-1"
             >
               <LayoutGroup id="contact-gratitude-notes">
                 {NOTES.map((note, index) => (
@@ -558,7 +556,7 @@ export function ContactGratitude() {
                       ? "opening"
                       : "receiving"
               }
-              className="relative mt-4 min-h-[4.25rem] overflow-hidden border-l border-sandstone/48 pl-4 font-display text-lg italic leading-snug text-sandstone sm:min-h-[3.5rem] sm:text-xl"
+              className="relative mt-5 grid min-w-0 overflow-hidden border-l border-clay/40 pl-4 font-display text-lg italic leading-snug text-soil/75 sm:text-xl"
             >
               <p className="sr-only" aria-live="off">
                 {activeResponse}
@@ -574,7 +572,7 @@ export function ContactGratitude() {
                   <motion.p
                     key={response}
                     aria-hidden="true"
-                    className="absolute left-4 right-0 top-0"
+                    className="relative min-w-0 [grid-area:1/1]"
                     initial={false}
                     animate={
                       active
@@ -609,7 +607,7 @@ export function ContactGratitude() {
             >
               <motion.span
                 aria-hidden="true"
-                className="h-px overflow-hidden bg-ivory/18"
+                className="h-px overflow-hidden bg-soil/12"
                 style={
                   reducedMotion
                     ? undefined
@@ -620,7 +618,7 @@ export function ContactGratitude() {
                 }
               >
                 <motion.span
-                  className="block h-full origin-left bg-sandstone"
+                  className="block h-full origin-left bg-clay/60"
                   initial={false}
                   animate={{ scaleX: visitedCount / NOTES.length }}
                   transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE_AIR }}
@@ -629,7 +627,7 @@ export function ContactGratitude() {
               <motion.span
                 aria-hidden="true"
                 data-contact-gratitude-progress-label
-                className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-ivory/64"
+                className="sr-only"
                 initial={false}
                 animate={{ color: completionSettled ? "rgba(224, 190, 139, 0.96)" : "rgba(246, 242, 234, 0.64)" }}
                 transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE_AIR }}

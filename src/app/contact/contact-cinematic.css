@@ -24,35 +24,54 @@
 
 [data-contact-film] [data-contact-gratitude] {
   isolation: isolate;
+  padding-top: max(7rem, 12svh);
+  padding-bottom: max(4rem, 7svh);
 }
 
-/* The closing scene keeps the meadow luminous. A local wash preserves type
-   contrast without grading the whole film into another dark interlude. */
+/* The meadow remains a moving backdrop to a legible, warm paper surface. */
 [data-contact-film] [data-contact-gratitude-media-wash] {
   background:
     linear-gradient(
       90deg,
-      rgba(21, 28, 21, 0.7) 0%,
-      rgba(23, 31, 23, 0.5) 48%,
-      rgba(27, 34, 26, 0.48) 100%
+      rgba(246, 242, 234, 0.97) 0%,
+      rgba(246, 242, 234, 0.93) 48%,
+      rgba(246, 242, 234, 0.82) 100%
     ),
     linear-gradient(
       180deg,
-      rgba(20, 27, 20, 0.12) 0%,
-      rgba(26, 34, 25, 0.3) 54%,
-      rgba(35, 31, 26, 0.76) 100%
+      rgba(246, 242, 234, 0.15) 0%,
+      rgba(237, 229, 211, 0.3) 54%,
+      rgba(237, 229, 211, 0.7) 100%
     );
   transition: opacity 0.72s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 [data-contact-film] [data-contact-gratitude-statement] {
-  text-shadow: 0 2px 24px rgba(10, 16, 11, 0.32);
+  text-wrap: pretty;
 }
 
 [data-contact-film] [data-contact-gratitude-ledger] {
   position: relative;
   isolation: isolate;
-  text-shadow: 0 2px 22px rgba(8, 14, 9, 0.36);
+  min-width: 0;
+}
+
+/* Keep the closing message sharp while the landscape completes its camera move. */
+[data-contact-film] [data-contact-scene="afterglow"] [data-contact-scene-plane] {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+@media (min-width: 1024px) {
+  [data-contact-film] [data-contact-gratitude] > .container-page {
+    max-width: min(72rem, calc(100% - 12rem));
+    padding-inline: 2rem;
+  }
+
+  [data-contact-film] [data-contact-gratitude-ledger] {
+    border-left: 1px solid rgba(39, 34, 30, 0.14);
+    padding-left: clamp(1.5rem, 3vw, 2.5rem);
+  }
 }
 
 [data-contact-film] [data-contact-gratitude-ledger]::before {
@@ -126,7 +145,7 @@
 [data-contact-film]
   [data-contact-gratitude-next-ready="true"]
   [data-contact-gratitude-primary] {
-  background-color: rgb(224, 190, 139);
+  background-color: rgb(54, 68, 54);
   box-shadow:
     0 0 0 1px rgba(246, 221, 180, 0.28),
     0 12px 38px rgba(22, 17, 13, 0.18);
@@ -156,13 +175,13 @@
   [data-contact-film]
     [data-contact-scene="afterglow"]:has([data-contact-gratitude-active="true"])
     [data-contact-gratitude-media-wash] {
-    opacity: 0.94;
+    opacity: 1;
   }
 
   [data-contact-film]
     [data-contact-scene="afterglow"]:has([data-contact-gratitude-complete="true"])
     [data-contact-gratitude-media-wash] {
-    opacity: 0.88;
+    opacity: 1;
   }
 }
 
@@ -1182,8 +1201,8 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 
   [data-contact-film] [data-contact-gratitude] {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
   }
 
   [data-contact-film] [data-contact-gratitude-heading] {
@@ -1196,7 +1215,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 
   [data-contact-film] [data-contact-gratitude-response] {
-    min-height: 4.5rem;
+    min-height: 0;
   }
 
   [data-contact-film] .contact-write-layout {
