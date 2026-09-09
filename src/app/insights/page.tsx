@@ -34,6 +34,7 @@ import {
   type InsightScene,
 } from "@/sections/Insights/InsightsSceneNavigator";
 import "../insights-cinematic.css";
+import "./insights-worksheet.css";
 
 export const metadata: Metadata = {
   title: "Insights on brand strategy, positioning, and messaging",
@@ -150,6 +151,7 @@ const EVIDENCE_LAYER_BLUEPRINTS: Array<
     slug: "foundation",
     topicSlug: "positioning",
     name: "Foundation",
+    question: "Do buyers know why they should choose you?",
     signal: "Different buyers place the business in different categories.",
     evidence: "Buyer language · reasons deals are lost · offer comparisons",
     move: "Compare buyer language, reasons deals are lost, and offer comparisons in one table.",
@@ -158,6 +160,7 @@ const EVIDENCE_LAYER_BLUEPRINTS: Array<
     slug: "message",
     topicSlug: "brand-messaging",
     name: "Message",
+    question: "Can your website explain the value without you?",
     signal: "Calls explain the value faster than the website.",
     evidence: "Homepage hierarchy · proposal language · recurring objections",
     move: "Place homepage claims beside sales call phrasing and recurring objections.",
@@ -166,6 +169,7 @@ const EVIDENCE_LAYER_BLUEPRINTS: Array<
     slug: "identity",
     topicSlug: "distinctive-brand",
     name: "Identity",
+    question: "Would anyone recognise you without the logo?",
     signal: "Recognition fades when the logo leaves the frame.",
     evidence: "Distinctive cues · competitor similarity · channel consistency",
     move: "Test which cues people recognise before the logo appears.",
@@ -174,6 +178,7 @@ const EVIDENCE_LAYER_BLUEPRINTS: Array<
     slug: "experience",
     topicSlug: "customer-experience",
     name: "Experience",
+    question: "Does the experience live up to the promise?",
     signal: "Confidence drops between enquiry and delivery.",
     evidence: "Response gaps · handoffs · promise beside experience",
     move: "Trace confidence from enquiry through handoff and delivery.",
@@ -182,6 +187,7 @@ const EVIDENCE_LAYER_BLUEPRINTS: Array<
     slug: "memory",
     topicSlug: "brand-memory",
     name: "Memory",
+    question: "What do people remember when you leave?",
     signal: "Publishing grows while spontaneous recall stays faint.",
     evidence: "Repeated cues · branded search patterns · recall interviews",
     move: "Track which cues repeat across the moments with the widest reach.",
@@ -488,51 +494,26 @@ export default function InsightsPage() {
 
         <section
           id="insights-audit-seam"
-          className="insights-audit-scene insights-scene bg-ivory"
+          className="insights-audit-scene insights-audit-scene--worksheet insights-scene bg-ivory"
           data-scene-active="false"
+          aria-labelledby="insights-worksheet-title"
         >
           <Container className="insights-audit-scene__camera">
-            <div className="insights-audit-scene__ledger" aria-hidden="true">
+            <div className="insights-worksheet-eyebrow">
               <span>Audit worksheet</span>
-              <i />
+              <i aria-hidden="true" />
               <span>05 checks</span>
             </div>
-
-            <div className="insights-audit-scene__frame">
-              <div className="insights-audit-scene__film relative min-h-80 bg-soil">
-                <BackgroundVideo
-                  video="/videos/generated/insights-v2/page-evidence-audit.mp4"
-                  poster="/images/generated/insights-v2/page-evidence-audit.webp"
-                  imagePosition="center"
-                  playbackRate={0.86}
-                  posterPriority={false}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-soil/20 to-transparent" />
-                <div className="insights-audit-scene__film-copy absolute inset-x-0 bottom-0 p-7 text-ivory sm:p-9">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sandstone">
-                    Before the redesign
-                  </p>
-                  <p className="mt-3 max-w-md font-display text-3xl leading-tight">
-                    Find what is failing before paying to redesign it.
-                  </p>
-                </div>
-              </div>
-              <div className="insights-audit-scene__copy flex flex-col justify-center p-7 sm:p-10 lg:p-14">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
-                  Audit worksheet
-                </p>
-                <h2 className="mt-4 max-w-xl font-display text-display-sm font-normal text-soil">
-                  Review position, message, identity, experience, and memory before
-                  choosing what to rebuild.
-                </h2>
-                <p className="mt-5 max-w-xl text-base leading-7 text-foreground-secondary">
-                  Look at the five areas together. The weakest answer shows where to
-                  investigate first and which evidence to collect.
-                </p>
-
-                <InsightsEvidenceLedger layers={evidenceLayers} />
-              </div>
-            </div>
+            <header className="insights-worksheet-intro">
+              <h2 id="insights-worksheet-title">
+                Before you rebuild,<br />find the weak point.
+              </h2>
+              <p>
+                A new identity cannot fix an unclear offer. Check what buyers
+                understand, recognise, and remember. Mark what needs a closer look.
+              </p>
+            </header>
+            <InsightsEvidenceLedger layers={evidenceLayers} />
           </Container>
         </section>
 

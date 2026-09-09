@@ -7,8 +7,8 @@ import {
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Check, Plus } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, ArrowUpRight, Check, Plus } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement } from "@/data/insights";
@@ -34,6 +34,7 @@ export type EvidenceLayer = {
   topicSlug: string;
   element: InsightElement;
   name: string;
+  question: string;
   signal: string;
   evidence: string;
   move: string;
@@ -63,7 +64,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const priorReaderIntentRef = useRef<InsightsIntentDetail | undefined>(
     undefined,
   );
-  const layerRailRef = useRef<HTMLOListElement>(null);
+  const layerRailRef = useRef<HTMLDivElement>(null);
   const layerButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
   const focusedLayer = layers[focusedIndex];
@@ -158,69 +159,28 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   if (!focusedLayer) return null;
 
   const focusedIsMarked = markedSlugs.includes(focusedLayer.slug);
-  const showsSynthesis = markedCount > 0 && focusedIsMarked;
   const intentLayer = readerIntent
     ? layers.find((layer) => layer.topicSlug === readerIntent.topicSlug)
     : undefined;
-  const focusedIsCarried =
-    markedCount === 0 && intentLayer?.slug === focusedLayer.slug;
-  const focusedStateLabel = focusedIsMarked
-    ? "Marked for review"
-    : focusedIsCarried
-      ? "Carried from your reading path"
-      : "Ready for review";
-  const showsWorkingHypothesis = showsSynthesis || focusedIsCarried;
-  const markedRoute =
-    markedCount === 2
-      ? markedLayers.map((layer) => layer.name).join(" + ")
-      : `the ${markedCount} marked areas`;
-  const primaryDetail = showsSynthesis
-    ? markedCount === 1
-      ? `${focusedLayer.name} opens the first route. ${focusedLayer.signal}`
-      : `Read ${markedRoute} as one connected buyer experience; the evidence can show where confidence changes.`
-    : focusedIsCarried
-      ? `${focusedLayer.name} may be where confidence changes. ${focusedLayer.signal}`
-      : focusedLayer.signal;
-  const secondaryDetail = showsSynthesis
-    ? `${focusedLayer.move} Start with ${focusedLayer.evidence.toLowerCase()}.`
-    : focusedIsCarried
-      ? `${focusedLayer.move} Begin with ${focusedLayer.evidence.toLowerCase()}.`
-      : focusedLayer.evidence;
-  const statusLabel =
-    markedCount === 0
-      ? intentLayer
-        ? `${intentLayer.name} is the first question to test`
-        : `${layers.length} ${layers.length === 1 ? "area remains" : "areas remain"} open`
-      : markedCount === 1
-        ? `${markedLayers[0]?.name ?? "The first area"} is marked for review`
-        : `${markedCount} areas are marked for review`;
-  const latestMarkedSlug = markedSlugs[markedSlugs.length - 1];
-  const latestMarkedLayer = latestMarkedSlug
-    ? layers.find((layer) => layer.slug === latestMarkedSlug)
-    : undefined;
-  const actionLayer = latestMarkedLayer ?? intentLayer;
-  const threadLayer = actionLayer;
-  const threadIndex = threadLayer
-    ? layers.findIndex((layer) => layer.slug === threadLayer.slug)
-    : 0;
-  const threadColor = threadLayer
-    ? THREAD_COLORS[threadLayer.element]
-    : THREAD_COLORS.space;
-  const actionState = latestMarkedLayer
-    ? "ready"
+  const latestMarkedLayer = layers.find(
+    (layer) => layer.slug === markedSlugs[markedSlugs.length - 1],
+  );
+  const statusLabel = markedCount > 0
+    ? `${markedCount} of ${layers.length} marked for review`
     : intentLayer
-      ? "carried"
-      : "open";
-  const actionTitle = latestMarkedLayer
-    ? `The evidence suggests ${latestMarkedLayer.service.name}.`
-    : intentLayer
-      ? `Test ${intentLayer.name.toLowerCase()} as the first place confidence changes.`
-      : "Mark the area where buyer confidence changes first.";
-  const actionDetail = latestMarkedLayer
-    ? latestMarkedLayer.service.frame
-    : intentLayer
-      ? `${intentLayer.move} Mark it when the question deserves a place in the worksheet.`
-      : "Choose the place where buyer confidence changes. The full checklist remains available for a deeper review.";
+      ? `From your reading: ${intentLayer.name}`
+      : "Choose an area to begin";
+
+  function selectLayer(index: number) {
+    setFocusedIndex(index);
+    if (markedCount > 0) {
+      writeInsightsEvidenceState({
+        markedSlugs,
+        focusedSlug: layers[index].slug,
+        priorIntent: priorReaderIntentRef.current,
+      });
+    }
+  }
 
   function toggleLayer(slug: string, index: number) {
     const selectedLayer = layers[index];
@@ -247,9 +207,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     if (nextMarkedSlugs.length > 0) {
       writeInsightsEvidenceState({
         markedSlugs: nextMarkedSlugs,
-        focusedSlug: isMarked
-          ? (nextLatestLayer?.slug ?? selectedLayer.slug)
-          : selectedLayer.slug,
+        focusedSlug: selectedLayer.slug,
         priorIntent: priorReaderIntentRef.current,
       });
     } else {
@@ -268,24 +226,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       clearInsightsIntent();
     }
 
-    if (isMarked && nextLatestSlug) {
-      const latestMarkedIndex = layers.findIndex(
-        (layer) => layer.slug === nextLatestSlug,
-      );
-      setFocusedIndex(latestMarkedIndex >= 0 ? latestMarkedIndex : index);
-      return;
-    }
-
     setFocusedIndex(index);
-  }
-
-  function restoreLatestMarkedFocus() {
-    const latestMarkedSlug = markedSlugs[markedSlugs.length - 1];
-    if (!latestMarkedSlug) return;
-    const latestMarkedIndex = layers.findIndex(
-      (layer) => layer.slug === latestMarkedSlug,
-    );
-    if (latestMarkedIndex >= 0) setFocusedIndex(latestMarkedIndex);
   }
 
   function handleLayerKeyDown(
@@ -306,244 +247,134 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     if (nextIndex === null) return;
 
     event.preventDefault();
-    setFocusedIndex(nextIndex);
-    layerButtonRefs.current[nextIndex]?.focus();
+    selectLayer(nextIndex);
+    layerButtonRefs.current[nextIndex]?.focus({ preventScroll: true });
   }
 
   return (
     <div
-      className="insights-evidence-ledger-shell"
-      data-thread-active={Boolean(threadLayer)}
-      data-thread-state={latestMarkedLayer ? "committed" : "carried"}
-      style={
-        {
-          "--ledger-thread": threadColor,
-          "--ledger-thread-index": `${Math.max(0, threadIndex)}`,
-        } as CSSProperties
-      }
+      className="insights-worksheet"
+      style={{ "--worksheet-accent": THREAD_COLORS[focusedLayer.element] } as CSSProperties}
     >
-      <div className="insights-evidence-ledger__arrival" aria-hidden="true">
-        <i />
-        <span>
-          {threadLayer ? (
-            <>
-              <ElementGlyph
-                slug={threadLayer.element}
-                className="h-4 w-4"
-                strokeWidth={1.35}
-              />
-              <small>{readerIntent?.label ?? threadLayer.name}</small>
-            </>
-          ) : null}
-        </span>
+      <div className="insights-worksheet__status">
+        <span aria-live="polite">{statusLabel}</span>
+        <div className="insights-worksheet__marks" aria-hidden="true">
+          {layers.map((layer) => (
+            <i key={layer.slug} data-marked={markedSlugs.includes(layer.slug)} />
+          ))}
+        </div>
       </div>
 
       <div
-        className="insights-evidence-ledger"
-        style={
-          {
-            "--ledger-progress": `${
-              (markedCount + (intentLayer && markedCount === 0 ? 0.55 : 0)) /
-              Math.max(1, layers.length)
-            }`,
-          } as CSSProperties
-        }
-        data-brief-state={showsSynthesis ? "synthesized" : "preview"}
-        data-threaded={Boolean(threadLayer)}
+        ref={layerRailRef}
+        className="insights-worksheet__areas"
+        role="tablist"
+        aria-label="Brand areas to review"
       >
-        <div className="insights-evidence-ledger__status">
-          <span>Audit worksheet</span>
-          <strong aria-live="polite">{statusLabel}</strong>
-          <i aria-hidden="true">
-            <span />
-          </i>
-        </div>
-
-        <ol
-          ref={layerRailRef}
-          className="insights-evidence-ledger__layers"
-          aria-label="Brand areas to review"
-          onBlur={(event) => {
-            const nextTarget = event.relatedTarget;
-            if (
-              nextTarget instanceof Node &&
-              event.currentTarget.contains(nextTarget)
-            ) {
-              return;
-            }
-            restoreLatestMarkedFocus();
-          }}
-          onPointerLeave={(event) => {
-            if (event.pointerType !== "touch") restoreLatestMarkedFocus();
-          }}
-        >
-          {layers.map((layer, index) => {
-            const marked = markedSlugs.includes(layer.slug);
-            const focused = index === focusedIndex;
-            const carried = markedCount === 0 && intentLayer?.slug === layer.slug;
-
-            return (
-              <li key={layer.slug}>
-                <button
-                  ref={(node) => {
-                    layerButtonRefs.current[index] = node;
-                  }}
-                  type="button"
-                  aria-pressed={marked}
-                  data-threaded={carried}
-                  className={focused ? "is-focused" : undefined}
-                  onClick={() => toggleLayer(layer.slug, index)}
-                  onFocus={() => setFocusedIndex(index)}
-                  onKeyDown={(event) => handleLayerKeyDown(event, index)}
-                  onPointerEnter={(event) => {
-                    if (event.pointerType !== "touch") setFocusedIndex(index);
-                  }}
-                >
-                  <span>0{index + 1}</span>
-                  <strong>{layer.name}</strong>
-                  <small>{marked ? "Marked" : carried ? "Carried" : "Review"}</small>
-                  <i aria-hidden="true">
-                    {marked ? (
-                      <Check className="h-3.5 w-3.5" />
-                    ) : carried ? (
-                      <ElementGlyph
-                        slug={layer.element}
-                        className="h-3.5 w-3.5"
-                        strokeWidth={1.35}
-                      />
-                    ) : (
-                      <Plus className="h-3.5 w-3.5" />
-                    )}
-                  </i>
-                </button>
-              </li>
-            );
-          })}
-        </ol>
-
-        <div className="insights-evidence-ledger__detail" aria-live="polite">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={`${focusedLayer.slug}-${
-                showsSynthesis
-                  ? markedSlugs.join("-")
-                  : focusedIsCarried
-                    ? "carried"
-                    : "preview"
-              }`}
-              data-brief-mode={
-                showsSynthesis
-                  ? "synthesis"
-                  : focusedIsCarried
-                    ? "carried"
-                    : "preview"
-              }
-              initial={
-                prefersReducedMotion
-                  ? false
-                  : showsSynthesis
-                    ? { clipPath: "inset(0 100% 0 0)", x: -6 }
-                    : { clipPath: "inset(0 0 100% 0)", y: 6 }
-              }
-              animate={{ clipPath: "inset(0 0 0% 0)", x: 0, y: 0 }}
-              exit={
-                prefersReducedMotion
-                  ? undefined
-                  : showsSynthesis
-                    ? { clipPath: "inset(0 0 0 100%)", x: 4 }
-                    : { clipPath: "inset(100% 0 0 0)", y: -4 }
-              }
-              transition={{
-                duration: prefersReducedMotion ? 0 : 0.32,
-                ease: [0.22, 1, 0.36, 1],
-              }}
+        {layers.map((layer, index) => {
+          const selected = index === focusedIndex;
+          const marked = markedSlugs.includes(layer.slug);
+          return (
+            <button
+              key={layer.slug}
+              ref={(node) => { layerButtonRefs.current[index] = node; }}
+              id={`worksheet-tab-${layer.slug}`}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              aria-controls={`worksheet-panel-${layer.slug}`}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => selectLayer(index)}
+              onFocus={() => selectLayer(index)}
+              onKeyDown={(event) => handleLayerKeyDown(event, index)}
             >
-              <header className="insights-evidence-ledger__detail-head">
-                <ElementGlyph
-                  slug={focusedLayer.element}
-                  className="h-5 w-5"
-                  strokeWidth={1.35}
-                />
-                <span>
-                  <small>Area 0{focusedIndex + 1}</small>
-                  <strong>{focusedLayer.name}</strong>
-                </span>
-                <em>{focusedStateLabel}</em>
-              </header>
-              <div className="insights-evidence-ledger__detail-grid">
-                <p>
-                  <span>
-                    {showsWorkingHypothesis
-                      ? "Working hypothesis"
-                      : "Problem to investigate"}
-                  </span>
-                  {primaryDetail}
-                </p>
-                <p>
-                  <span>
-                    {showsWorkingHypothesis
-                      ? focusedIsCarried
-                        ? "First evidence move"
-                        : "Next evidence move"
-                      : "Evidence to collect"}
-                  </span>
-                  {secondaryDetail}
-                </p>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        <aside
-          className="insights-evidence-ledger__bridge"
-          data-action-state={actionState}
-          aria-label="Apply this insight"
-        >
-          <div className="insights-evidence-ledger__bridge-copy" aria-live="polite">
-            <span>
-              {latestMarkedLayer
-                ? `Worksheet answer · ${latestMarkedLayer.name}`
-                : intentLayer
-                  ? `Reading topic · ${readerIntent?.label ?? intentLayer.name}`
-                  : "Start a brand check"}
-            </span>
-            <strong>{actionTitle}</strong>
-            <p>{actionDetail}</p>
-          </div>
-          <div className="insights-evidence-ledger__bridge-actions">
-            <TrackedLink
-              href="/insights/brand-audit-checklist-before-rebrand"
-              event="contextual_cta_clicked"
-              eventProps={{
-                source: "insights_evidence_ledger",
-                route: "audit_checklist",
-                layer: actionLayer?.slug ?? "unselected",
-                reader_path: readerIntent?.topicSlug ?? "none",
-              }}
-            >
-              Read the checklist
-              <ArrowUpRight aria-hidden="true" />
-            </TrackedLink>
-            {latestMarkedLayer ? (
-              <TrackedLink
-                href={`/services#package-${latestMarkedLayer.service.slug}`}
-                data-bridge-action="service"
-                event="contextual_cta_clicked"
-                eventProps={{
-                  source: "insights_evidence_ledger",
-                  route: latestMarkedLayer.service.slug,
-                  layer: latestMarkedLayer.slug,
-                  reader_path: readerIntent?.topicSlug ?? "none",
-                }}
-              >
-                Inspect {latestMarkedLayer.service.name}
-                <ArrowUpRight aria-hidden="true" />
-              </TrackedLink>
-            ) : null}
-          </div>
-          <i aria-hidden="true" />
-        </aside>
+              <span className="insights-worksheet__number">0{index + 1}</span>
+              <span className="insights-worksheet__area-name">{layer.name}</span>
+              <span className="insights-worksheet__area-icon" aria-hidden="true">
+                {marked ? <Check /> : <ArrowRight />}
+              </span>
+              {marked ? <span className="sr-only">Marked for review</span> : null}
+            </button>
+          );
+        })}
       </div>
+
+      {layers.map((layer, index) => (
+        <div
+          key={layer.slug}
+          role="tabpanel"
+          id={`worksheet-panel-${layer.slug}`}
+          aria-labelledby={`worksheet-tab-${layer.slug}`}
+          hidden={index !== focusedIndex}
+          tabIndex={0}
+          className="insights-worksheet__panel"
+        >
+          {index === focusedIndex ? (
+            <>
+              <div className="insights-worksheet__panel-label">
+                <ElementGlyph slug={layer.element} className="h-5 w-5" strokeWidth={1.35} />
+                <span>Check 0{index + 1} / {layer.name}</span>
+              </div>
+                <motion.div
+                  key={layer.slug}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  className="insights-worksheet__answer"
+                >
+                  <h3>{layer.question}</h3>
+                  <p className="insights-worksheet__signal">{layer.signal}</p>
+                  <div className="insights-worksheet__evidence">
+                    <div>
+                      <h4>Evidence to collect</h4>
+                      <ul>{layer.evidence.split(" · ").map((item) => <li key={item}>{item}</li>)}</ul>
+                    </div>
+                    <div>
+                      <h4>First move</h4>
+                      <p>{layer.move}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              <button
+                type="button"
+                className="insights-worksheet__mark"
+                aria-pressed={focusedIsMarked}
+                onClick={() => toggleLayer(layer.slug, index)}
+              >
+                {focusedIsMarked ? <Check aria-hidden="true" /> : <Plus aria-hidden="true" />}
+                {focusedIsMarked ? "Marked for review" : "Mark for review"}
+              </button>
+            </>
+          ) : null}
+        </div>
+      ))}
+
+      <footer className="insights-worksheet__footer">
+        <p aria-live="polite">
+          {markedCount > 0
+            ? `${markedLayers.map((layer) => layer.name).join(", ")} ${markedCount === 1 ? "is" : "are"} on your review list.`
+            : "Five questions before you commission a redesign."}
+        </p>
+        <div className="insights-worksheet__links">
+          {latestMarkedLayer ? (
+            <TrackedLink
+              href={`/services#package-${latestMarkedLayer.service.slug}`}
+              event="contextual_cta_clicked"
+              eventProps={{ source: "insights_evidence_ledger", route: latestMarkedLayer.service.slug, layer: latestMarkedLayer.slug, reader_path: readerIntent?.topicSlug ?? "none" }}
+            >
+              Explore {latestMarkedLayer.service.name}<ArrowUpRight aria-hidden="true" />
+            </TrackedLink>
+          ) : null}
+          <TrackedLink
+            href="/insights/brand-audit-checklist-before-rebrand"
+            className="insights-worksheet__checklist"
+            event="contextual_cta_clicked"
+            eventProps={{ source: "insights_evidence_ledger", route: "audit_checklist", layer: latestMarkedLayer?.slug ?? "unselected", reader_path: readerIntent?.topicSlug ?? "none" }}
+          >
+            Read the full checklist<ArrowUpRight aria-hidden="true" />
+          </TrackedLink>
+        </div>
+      </footer>
     </div>
   );
 }
