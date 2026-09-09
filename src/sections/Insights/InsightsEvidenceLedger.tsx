@@ -497,12 +497,14 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   ) {
     let nextIndex: number | null = null;
     let direction: 1 | -1 | undefined;
+    const forwardKey = usesHorizontalRail ? "ArrowRight" : "ArrowDown";
+    const backwardKey = usesHorizontalRail ? "ArrowLeft" : "ArrowUp";
 
-    if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+    if (event.key === forwardKey) {
       nextIndex = (index + 1) % layers.length;
       direction = 1;
     }
-    if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+    if (event.key === backwardKey) {
       nextIndex = (index - 1 + layers.length) % layers.length;
       direction = -1;
     }

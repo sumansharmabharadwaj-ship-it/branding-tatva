@@ -421,6 +421,16 @@ html:has(.insights-worksheet:focus-within) {
   .insights-worksheet__next { font-size: 0.8125rem; }
 }
 
+html[data-motion="reduced"] .insights-worksheet *,
+html[data-motion="reduced"] .insights-worksheet *::before {
+  transition: none;
+  animation: none;
+  scroll-behavior: auto;
+}
+
+html[data-motion="reduced"] .insights-worksheet__areas button:hover .insights-worksheet__area-icon:not([data-marked="true"]),
+html[data-motion="reduced"] .insights-worksheet__next:hover svg,
+html[data-motion="reduced"] .insights-worksheet__links a:hover svg,
 html[data-motion="reduced"] .insights-worksheet-eyebrow i::after,
 html[data-motion="reduced"] .insights-worksheet::before {
   transform: none;
@@ -428,5 +438,8 @@ html[data-motion="reduced"] .insights-worksheet::before {
 
 @media (prefers-reduced-motion: reduce) {
   .insights-worksheet *, .insights-worksheet *::before { transition: none; animation: none; scroll-behavior: auto; }
+  .insights-worksheet__areas button:hover .insights-worksheet__area-icon:not([data-marked="true"]),
+  .insights-worksheet__next:hover svg,
+  .insights-worksheet__links a:hover svg { transform: none; }
   .insights-worksheet-eyebrow i::after, .insights-worksheet::before { transform: none; }
 }
