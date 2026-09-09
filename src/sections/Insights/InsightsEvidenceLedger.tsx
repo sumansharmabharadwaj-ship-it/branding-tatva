@@ -11,7 +11,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { AnimatePresence, motion, useIsPresent } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement } from "@/data/insights";
@@ -61,6 +61,8 @@ const THREAD_COLORS: Record<InsightElement, string> = {
   space: "#D09A89",
 };
 
+const WORKSHEET_CHECK_PATH = "m5 12 4 4L19 6";
+
 const REVIEW_COUNT_VARIANTS = {
   enter: (direction: number) => ({ opacity: 0, y: `${direction * 85}%` }),
   settled: { opacity: 1, y: "0%" },
@@ -102,7 +104,21 @@ const WorksheetReviewItem = forwardRef<HTMLButtonElement, {
       transition={{ duration: reducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
       onClick={isPresent ? onOpen : undefined}
     >
-      <Check aria-hidden="true" />{name}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {reducedMotion ? <path d={WORKSHEET_CHECK_PATH} /> : (
+          <motion.path
+            d={WORKSHEET_CHECK_PATH}
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: isPresent ? 1 : 0 }}
+            transition={{
+              duration: isPresent ? 0.28 : 0.1,
+              delay: isPresent ? 0.06 : 0,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          />
+        )}
+      </svg>
+      {name}
       {current && isPresent ? (
         <motion.span
           className="insights-worksheet__review-selection"
@@ -175,11 +191,10 @@ function WorksheetMarkIcon({
   openIcon?: "plus" | "arrow";
 }) {
   const openPath = openIcon === "plus" ? "M12 5v14M5 12h14" : "M5 12h14M12 5l7 7-7 7";
-  const checkPath = "m5 12 4 4L19 6";
 
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      {reducedMotion ? <path d={marked ? checkPath : openPath} /> : (
+      {reducedMotion ? <path d={marked ? WORKSHEET_CHECK_PATH : openPath} /> : (
         <>
           <motion.path
             d={openPath}
@@ -188,7 +203,7 @@ function WorksheetMarkIcon({
             transition={{ duration: 0.14 }}
           />
           <motion.path
-            d={checkPath}
+            d={WORKSHEET_CHECK_PATH}
             initial={false}
             animate={{ pathLength: marked ? 1 : 0, opacity: marked ? 1 : 0 }}
             transition={{
