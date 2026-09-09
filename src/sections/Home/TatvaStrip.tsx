@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { Reveal } from "@/components/Reveal";
 import { elements } from "@/data/elements";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
@@ -62,6 +63,7 @@ const TATVAS: Tatva[] = [
 ];
 
 export function TatvaStrip() {
+  const lenis = useLenis();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -117,6 +119,22 @@ export function TatvaStrip() {
   }, [prefersReducedMotion]);
 
   function choose(index: number) {
+    const section = sectionRef.current;
+    const desktopStory = window.matchMedia(
+      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
+    );
+
+    if (section && desktopStory.matches && !prefersReducedMotion) {
+      const bounds = section.getBoundingClientRect();
+      const runway = Math.max(0, bounds.height - window.innerHeight);
+      if (runway > 0) {
+        // Put the held frame in the middle of the chosen scroll chapter.
+        // Immediate alignment avoids briefly reading every intervening force.
+        const top = window.scrollY + bounds.top + runway * ((index + 0.5) / TATVAS.length);
+        if (lenis) lenis.scrollTo(top, { immediate: true });
+        else window.scrollTo({ top, behavior: "instant" });
+      }
+    }
     setActiveIndex(index);
   }
 
@@ -151,15 +169,15 @@ export function TatvaStrip() {
           aria-hidden="true"
           className="pointer-events-none absolute -left-28 top-[18%] z-[2] h-80 w-80 rounded-full blur-3xl"
           style={{ background: "radial-gradient(circle, rgba(199,119,82,0.22), transparent 68%)" }}
-          animate={motionActive ? { x: [0, 44, 0], y: [0, 28, 0], scale: [1, 1.12, 1] } : undefined}
-          transition={motionActive ? { duration: 14, repeat: Infinity, ease: "easeInOut" } : undefined}
+          animate={{ x: motionActive ? activeIndex * 8 : 0 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
         />
         <motion.div
           aria-hidden="true"
           className="pointer-events-none absolute -right-28 bottom-[8%] z-[2] h-96 w-96 rounded-full blur-3xl"
           style={{ background: "radial-gradient(circle, rgba(82,117,111,0.24), transparent 68%)" }}
-          animate={motionActive ? { x: [0, -52, 0], y: [0, -24, 0], scale: [1.04, 0.94, 1.04] } : undefined}
-          transition={motionActive ? { duration: 17, repeat: Infinity, ease: "easeInOut" } : undefined}
+          animate={{ x: motionActive ? activeIndex * -8 : 0 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
         />
 
         <Container className="tatva-observatory__frame relative z-[3] max-w-[100rem]">
@@ -174,7 +192,7 @@ export function TatvaStrip() {
             >
               Five forces. One recognisable brand.
             </h2>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed">
+            <p className="mt-4 max-w-sm text-base leading-relaxed">
               Each Tatva governs a different decision. The system works when none of them is forced to compensate for a missing one.
             </p>
 
@@ -189,20 +207,20 @@ export function TatvaStrip() {
               aria-atomic="true"
             >
               <div className="flex items-center justify-between gap-4">
-                <p className="text-[0.62rem] font-medium uppercase tracking-[0.18em]">
+                <p className="text-[0.8125rem] font-medium uppercase tracking-[0.12em]">
                   Now in focus
                 </p>
-                <span className="text-[0.62rem] tracking-[0.14em]" style={{ color: ELEMENT_HEX[active.slug] }}>
+                <span className="text-[0.8125rem] tracking-[0.1em] text-ivory/75">
                   {String(activeIndex + 1).padStart(2, "0")} / 05
                 </span>
               </div>
               <p className="mt-3 font-display text-2xl font-normal">
                 {active.role}
               </p>
-              <p className="mt-2 text-sm leading-relaxed">
+              <p className="mt-2 text-base leading-relaxed">
                 {active.question}
               </p>
-              <p className="mt-4 text-[0.62rem] font-medium uppercase tracking-[0.14em]" style={{ color: ELEMENT_HEX[active.slug] }}>
+              <p className="mt-4 text-sm leading-relaxed text-ivory/75">
                 Governs · {active.governs}
               </p>
             </motion.div>
@@ -213,20 +231,16 @@ export function TatvaStrip() {
             <ol className="tatva-observatory__orbit grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
               {TATVAS.map((tatva, index) => {
                 const element = elements.find((entry) => entry.slug === tatva.slug);
-                const direction = index % 2 === 0 ? 1 : -1;
                 const isActive = index === activeIndex;
 
                 return (
                   <motion.li
                     key={tatva.slug}
                     className="flex min-w-0 items-start lg:flex-1"
-                    initial={prefersReducedMotion ? false : { opacity: 0, y: 26 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    animate={{ opacity: isActive ? 1 : 0.58 }}
+                    initial={false}
+                    animate={{ y: prefersReducedMotion ? 0 : isActive ? -4 : 0 }}
                     transition={{
-                      duration: prefersReducedMotion ? 0 : 0.65,
-                      delay: prefersReducedMotion ? 0 : index * 0.06,
+                      duration: prefersReducedMotion ? 0 : 0.45,
                       ease: [0.22, 1, 0.36, 1],
                     }}
                   >
@@ -240,46 +254,18 @@ export function TatvaStrip() {
                     >
                       <motion.span
                         className="relative block h-24 w-24 lg:h-28 lg:w-28"
-                        animate={
-                          motionActive
-                            ? {
-                                y: isActive ? [0, -9, 0] : [0, -3, 0],
-                                rotate: isActive ? [0, direction * 1.5, 0] : 0,
-                                scale: isActive ? [1, 1.055, 1] : 0.9,
-                              }
-                            : undefined
-                        }
-                        transition={
-                          motionActive
-                            ? {
-                                duration: isActive ? 5.6 : 7.5,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                              }
-                            : undefined
-                        }
+                        initial={false}
+                        animate={{ scale: prefersReducedMotion ? 1 : isActive ? 1.04 : 0.96 }}
+                        transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
                       >
                         <motion.span
                           aria-hidden="true"
-                          className="absolute -inset-3 rounded-full border border-dashed"
+                          className="absolute -inset-3 rounded-full border"
                           style={{ borderColor: `${ELEMENT_HEX[tatva.slug]}77` }}
-                          animate={motionActive && isActive ? { rotate: direction * 360 } : undefined}
-                          transition={motionActive && isActive ? { duration: 17 + index * 1.5, repeat: Infinity, ease: "linear" } : undefined}
+                          initial={false}
+                          animate={{ opacity: isActive ? 1 : 0, scale: prefersReducedMotion ? 1 : isActive ? 1 : 0.94 }}
+                          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
                         />
-                        <motion.span
-                          aria-hidden="true"
-                          className="absolute -inset-4 rounded-full"
-                          animate={motionActive && isActive ? { rotate: direction * -360 } : undefined}
-                          transition={motionActive && isActive ? { duration: 11 + index * 1.2, repeat: Infinity, ease: "linear" } : undefined}
-                        >
-                          <span
-                            className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 rounded-full"
-                            style={{
-                              backgroundColor: ELEMENT_HEX[tatva.slug],
-                              boxShadow: isActive ? `0 0 18px ${ELEMENT_HEX[tatva.slug]}bb` : "none",
-                            }}
-                          />
-                        </motion.span>
 
                         <span
                           className="tatva-observatory__portrait absolute inset-0 overflow-hidden rounded-full ring-2 ring-offset-2 transition-transform duration-500 group-hover:scale-[1.05]"
@@ -291,36 +277,23 @@ export function TatvaStrip() {
                           {element?.image && (
                             <motion.span
                               className="absolute inset-0"
-                              animate={
-                                motionActive
-                                  ? isActive
-                                    ? { scale: [1.03, 1.14, 1.03], x: [0, direction * 5, 0], y: [0, -3, 0] }
-                                    : { scale: 1.04 }
-                                  : undefined
-                              }
-                              transition={motionActive ? { duration: 8 + index, repeat: Infinity, ease: "easeInOut" } : undefined}
+                              initial={false}
+                              animate={{ scale: prefersReducedMotion ? 1 : isActive ? 1.1 : 1.02 }}
+                              transition={{ duration: prefersReducedMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
                             >
                               <Image src={element.image} alt="" fill sizes="112px" className="object-cover" />
                             </motion.span>
                           )}
-                          {isActive && motionActive && (
-                            <motion.span
-                              aria-hidden="true"
-                              className="absolute -inset-y-3 -left-1/2 w-1/3 rotate-12 bg-white/20 blur-md"
-                              animate={{ x: ["0%", "520%"] }}
-                              transition={{ duration: 3.8, repeat: Infinity, repeatDelay: 2.4, ease: "easeInOut" }}
-                            />
-                          )}
                         </span>
                       </motion.span>
 
-                      <span className="tatva-observatory__name mt-5 text-xs font-medium uppercase tracking-[0.25em]">
+                      <span className="tatva-observatory__name mt-5 text-sm font-medium uppercase tracking-[0.16em]">
                         {tatva.name}
                       </span>
-                      <span className="tatva-observatory__role mt-1 font-display text-base font-normal" style={{ color: ELEMENT_HEX[tatva.slug] }}>
+                      <span className="tatva-observatory__role mt-1 font-display text-lg font-normal text-[#D4B99A]">
                         {tatva.role}
                       </span>
-                      <span className="tatva-observatory__line mt-1 max-w-[11rem] text-xs leading-relaxed">
+                      <span className="tatva-observatory__line mt-1 max-w-[11rem] text-sm leading-relaxed">
                         {tatva.line}
                       </span>
                     </button>
@@ -328,13 +301,12 @@ export function TatvaStrip() {
                     {index < TATVAS.length - 1 && (
                       <span aria-hidden="true" className="tatva-observatory__connector relative mt-14 hidden h-px flex-1 lg:block">
                         <span className="absolute inset-0 border-t border-dashed" style={{ borderColor: "rgba(244,239,230,0.18)" }} />
-                        {isActive && motionActive && (
-                          <motion.span
-                            className="absolute top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-sandstone"
-                            animate={{ left: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
-                            transition={{ duration: 2.2, repeat: Infinity, repeatDelay: 0.65, ease: "easeInOut" }}
-                          />
-                        )}
+                        <motion.span
+                          className="absolute inset-0 origin-left bg-sandstone"
+                          initial={false}
+                          animate={{ scaleX: isActive ? 1 : 0 }}
+                          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        />
                       </span>
                     )}
                   </motion.li>

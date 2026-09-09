@@ -79,7 +79,7 @@
 }
 
 .tatva-observatory__focus > div p {
-  color: rgba(244, 239, 230, 0.48);
+  color: rgba(244, 239, 230, 0.75);
 }
 
 .tatva-observatory__focus > p:nth-of-type(1) {
@@ -117,7 +117,7 @@
 }
 
 .tatva-observatory__line {
-  color: rgba(244, 239, 230, 0.56);
+  color: rgba(244, 239, 230, 0.78);
 }
 
 .tatva-observatory__connector {
