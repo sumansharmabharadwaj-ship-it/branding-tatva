@@ -45,13 +45,13 @@ assert(
 for (const runtime of [
   "<HomeV4MediaDirector />",
   "<HomeV4HeaderDirector />",
-  "<HomeV4ProcessTempo />",
   "<LivingCursor />",
   "<GuidedView />",
   "<HomePacingDirector />",
 ]) {
   assert(experience.includes(runtime), `Homepage runtime is missing ${runtime}.`);
 }
+assert(!experience.includes("HomeV4ProcessTempo"), "The working method must keep the visitor's chosen stage instead of restoring automatic selection.");
 
 for (const marker of [
   'href="#recognition"',

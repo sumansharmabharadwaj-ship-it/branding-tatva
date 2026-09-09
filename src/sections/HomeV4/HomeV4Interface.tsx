@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { Compass, Hand, Pause, Play } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -418,9 +418,16 @@ export function LivingCursor() {
 }
 
 export function SceneHandoff({ motif }: { motif: HandoffMotif }) {
+  const handoffRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { scrollYProgress } = useScroll({ target: handoffRef, offset: ["start end", "end start"] });
+  const lightX = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const lineProgress = useTransform(scrollYProgress, [0, 1], [0.12, 1]);
+  const starsX = useTransform(scrollYProgress, [0, 1], [-12, 12]);
+
   return (
-    <div className={`home-v4-handoff home-v4-handoff--${motif}`} aria-hidden="true">
-      <span className="home-v4-handoff__veil" />
+    <div ref={handoffRef} className={`home-v4-handoff home-v4-handoff--${motif}`} aria-hidden="true">
+      <motion.span className="home-v4-handoff__veil" style={{ x: prefersReducedMotion ? 0 : lightX }} />
       {motif === "river" || motif === "root" ? (
         <svg viewBox="0 0 1200 96" preserveAspectRatio="none">
           <motion.path
@@ -430,25 +437,23 @@ export function SceneHandoff({ motif }: { motif: HandoffMotif }) {
                 : "M-20 74 C130 25 250 90 390 56 C530 22 645 78 756 45 C860 14 1010 70 1220 28"
             }
             fill="none"
-            stroke={motif === "river" ? "rgba(125,155,175,.72)" : "rgba(199,119,82,.68)"}
+            stroke="var(--handoff-line)"
             strokeWidth="1.4"
-            strokeDasharray="6 11"
-            animate={{ strokeDashoffset: [0, -68], opacity: [0.22, 0.78, 0.22] }}
-            transition={{ duration: 7.2, repeat: Infinity, ease: "linear" }}
+            strokeLinecap="round"
+            opacity="0.4"
+            style={{ pathLength: prefersReducedMotion ? 1 : lineProgress }}
           />
         </svg>
       ) : null}
       {motif === "constellation" && (
-        <span className="home-v4-handoff__stars">
+        <motion.span className="home-v4-handoff__stars" style={{ x: prefersReducedMotion ? 0 : starsX }}>
           {[12, 28, 44, 61, 78, 91].map((left, index) => (
-            <motion.i
+            <i
               key={left}
               style={{ left: `${left}%`, top: `${28 + (index % 3) * 20}%` }}
-              animate={{ opacity: [0.2, 0.9, 0.2], scale: [0.75, 1.35, 0.75] }}
-              transition={{ duration: 3.2 + index * 0.35, repeat: Infinity, ease: "easeInOut" }}
             />
           ))}
-        </span>
+        </motion.span>
       )}
     </div>
   );
