@@ -60,6 +60,12 @@ const THREAD_COLORS: Record<InsightElement, string> = {
   space: "#D09A89",
 };
 
+const REVIEW_COUNT_VARIANTS = {
+  enter: (direction: number) => ({ opacity: 0, y: `${direction * 85}%` }),
+  settled: { opacity: 1, y: "0%" },
+  exit: (direction: number) => ({ opacity: 0, y: `${direction * -85}%` }),
+};
+
 function worksheetIntent(layer: EvidenceLayer): InsightsIntentDetail {
   return {
     topicSlug: layer.topicSlug,
@@ -111,6 +117,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [selectionDirection, setSelectionDirection] = useState(1);
   const [markedSlugs, setMarkedSlugs] = useState<string[]>([]);
+  const [reviewCountDirection, setReviewCountDirection] = useState(1);
   const [readerIntent, setReaderIntent] = useState<InsightsIntentDetail>();
   const priorReaderIntentRef = useRef<InsightsIntentDetail | undefined>(
     undefined,
@@ -137,6 +144,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       const nextIntent = (event as CustomEvent<InsightsIntentDetail>).detail;
       if (nextIntent.origin !== "evidence-ledger") {
         priorReaderIntentRef.current = nextIntent;
+        setReviewCountDirection(-1);
         setMarkedSlugs([]);
         clearInsightsEvidenceState();
         const nextIndex = layers.findIndex(
@@ -150,6 +158,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     function releaseReaderIntent() {
       priorReaderIntentRef.current = undefined;
       setReaderIntent(undefined);
+      setReviewCountDirection(-1);
       setMarkedSlugs([]);
       setFocusedIndex(0);
       clearInsightsEvidenceState();
@@ -239,7 +248,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     ? `${markedCount} of ${layers.length} marked for review`
     : intentLayer
       ? `From your reading: ${intentLayer.name}`
-      : "Choose an area to begin";
+      : `0 of ${layers.length} marked for review`;
   const revealVariants = {
     enter: {
       opacity: 0,
@@ -362,6 +371,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       ? worksheetIntent(nextLatestLayer)
       : priorReaderIntentRef.current;
 
+    setReviewCountDirection(isMarked ? -1 : 1);
     setMarkedSlugs(nextMarkedSlugs);
     if (nextMarkedSlugs.length > 0) {
       writeInsightsEvidenceState({
@@ -419,7 +429,33 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       style={{ "--worksheet-accent": THREAD_COLORS[focusedLayer.element] } as CSSProperties}
     >
       <div className="insights-worksheet__status">
-        <span aria-live="polite">{statusLabel}</span>
+        <div className="insights-worksheet__status-copy">
+          <span className="sr-only" role="status" aria-atomic="true">{statusLabel}</span>
+          <span className="insights-worksheet__status-summary" aria-hidden="true">
+            {markedCount > 0 || !intentLayer ? (
+              <>
+                <span className="insights-worksheet__review-count">
+                  {prefersReducedMotion ? <span>{markedCount}</span> : (
+                    <AnimatePresence initial={false} custom={reviewCountDirection}>
+                      <motion.span
+                        key={markedCount}
+                        custom={reviewCountDirection}
+                        variants={REVIEW_COUNT_VARIANTS}
+                        initial="enter"
+                        animate="settled"
+                        exit="exit"
+                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        {markedCount}
+                      </motion.span>
+                    </AnimatePresence>
+                  )}
+                </span>
+                <span>of {layers.length} marked</span>
+              </>
+            ) : statusLabel}
+          </span>
+        </div>
         <div className="insights-worksheet__marks" aria-hidden="true">
           {layers.map((layer, index) => (
             <i key={layer.slug} data-marked={markedSlugs.includes(layer.slug)}>

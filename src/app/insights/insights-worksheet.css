@@ -94,6 +94,20 @@ html:has(.insights-worksheet:focus-within) {
   font-size: 0.875rem;
 }
 
+.insights-worksheet__status-copy { min-width: 0; }
+.insights-worksheet__status-summary { display: inline-flex; align-items: center; gap: 0.3em; }
+.insights-worksheet__review-count {
+  display: inline-grid;
+  flex: 0 0 auto;
+  overflow: hidden;
+  min-width: 1ch;
+  height: 1.4em;
+  color: var(--worksheet-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+.insights-worksheet__review-count > span { grid-area: 1 / 1; }
+
 .insights-worksheet__marks {
   display: flex;
   flex: 0 0 auto;
