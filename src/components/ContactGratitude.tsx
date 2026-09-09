@@ -134,7 +134,7 @@ function GratitudeNote({
       data-cursor-label={selected ? "Close note" : visited ? "Reopen note" : "Receive note"}
       className="group relative grid min-h-16 w-full grid-cols-[1.7rem_1fr] items-center gap-2 overflow-hidden px-3 py-3 text-left text-ivory focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:min-h-[4.5rem] sm:grid-cols-[2.25rem_1fr_auto] sm:gap-3 sm:px-4 lg:min-h-[5.35rem] lg:border-t lg:border-white/18 lg:px-1 lg:last:border-b"
       initial={false}
-      animate={{ color: active ? "rgb(246,242,234)" : "rgba(246,242,234,0.82)" }}
+      animate={{ color: active ? "rgb(246,242,234)" : "rgba(246,242,234,0.94)" }}
       transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE_AIR }}
       whileTap={reducedMotion ? undefined : { scale: 0.985 }}
       style={reducedMotion ? { y: 0, opacity: 1 } : { y, opacity, willChange: "transform, opacity" }}
@@ -167,7 +167,7 @@ function GratitudeNote({
         animate={{ scaleY: active || visited ? 1 : 0 }}
         transition={{ duration: reducedMotion ? 0 : 0.44, ease: EASE_AIR }}
       />
-      <span className="relative text-[0.57rem] font-medium tracking-[0.18em] text-sandstone/78 sm:text-[0.62rem]">
+      <span className="relative text-[0.625rem] font-medium tracking-[0.18em] text-sandstone sm:text-[0.6875rem]">
         0{index + 1}
       </span>
       <span className="relative font-display text-[1.08rem] font-normal leading-[1.02] sm:text-xl lg:text-[1.42rem]">
@@ -175,9 +175,9 @@ function GratitudeNote({
       </span>
       <motion.span
         aria-hidden="true"
-        className="relative hidden text-[0.57rem] font-medium uppercase tracking-[0.16em] text-sandstone sm:block"
+        className="relative hidden text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-sandstone sm:block"
         initial={false}
-        animate={{ opacity: visited ? 1 : 0.48, x: active ? 0 : -3 }}
+        animate={{ x: active ? 0 : -3 }}
         transition={{ duration: reducedMotion ? 0 : 0.3, ease: EASE_AIR }}
       >
         {visited ? "received" : "open"}
@@ -555,7 +555,7 @@ export function ContactGratitude() {
               // Reduced motion must explicitly restore the readable state.
               style={reducedMotion ? { clipPath: "none" } : { clipPath: copyClip, willChange: "clip-path" }}
             >
-              <p className="text-sm leading-relaxed text-ivory/76 sm:text-base">
+              <p className="text-sm leading-relaxed text-ivory/90 sm:text-base">
                 Most brand decisions get rushed at the exact moment they need better language. You gave yours a little more room.
               </p>
             </motion.div>
@@ -618,17 +618,16 @@ export function ContactGratitude() {
                 <p className="text-[0.61rem] font-medium uppercase tracking-[0.22em] text-sandstone">
                   What you brought
                 </p>
-                <p className="mt-2 max-w-xs font-display text-xl leading-tight text-ivory/88 sm:text-2xl">
+                <p className="mt-2 max-w-xs font-display text-xl leading-tight text-ivory sm:text-2xl">
                   A useful first conversation begins here.
                 </p>
               </div>
               <motion.span
                 aria-hidden="true"
                 data-contact-gratitude-ledger-status
-                className="hidden pb-1 text-right text-[0.58rem] font-medium uppercase tracking-[0.18em] text-ivory/60 sm:block"
+                className="hidden pb-1 text-right text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-ivory/90 sm:block"
                 initial={false}
                 animate={{
-                  opacity: completionSettled ? 1 : 0.6,
                   y: completionSettled ? 0 : 2,
                 }}
                 transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE_AIR }}
@@ -767,9 +766,9 @@ export function ContactGratitude() {
               <motion.span
                 aria-hidden="true"
                 data-contact-gratitude-progress-label
-                className="text-[0.58rem] font-medium uppercase tracking-[0.17em] text-ivory/64"
+                className="text-[0.625rem] font-medium uppercase tracking-[0.14em] text-ivory/90 sm:text-[0.6875rem]"
                 initial={false}
-                animate={{ color: completionSettled ? "rgba(224, 190, 139, 0.96)" : "rgba(246, 242, 234, 0.64)" }}
+                animate={{ color: completionSettled ? "rgb(224, 190, 139)" : "rgba(246, 242, 234, 0.9)" }}
                 transition={{ duration: reducedMotion ? 0 : 0.5, ease: EASE_AIR }}
               >
                 {completionSettled ? "04 / 04 · enough" : `0${visitedCount} / 04 received`}
