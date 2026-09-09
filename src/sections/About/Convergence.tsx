@@ -115,6 +115,32 @@ export function Convergence() {
     SCROLL_BEATS,
     [0.34, 0.53, 0.53, 0.76, 0.76, 1],
   );
+  const psychologyX = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    ["-1vw", "-1vw", "0vw", "0vw", "2.5vw", "2.5vw"],
+  );
+  const literatureX = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    ["1vw", "1vw", "0vw", "0vw", "-2.5vw", "-2.5vw"],
+  );
+  const disciplineOpacity = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [1, 1, 1, 1, 0.28, 0.28],
+  );
+  const signalScale = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0.96, 0.96, 1, 1, 0.97, 0.97],
+  );
+  const signalY = useTransform(pacedScrollProgress, SCROLL_BEATS, [8, 8, 0, 0, -6, -6]);
+  const signalOpacity = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [1, 1, 1, 1, 0.38, 0.38],
+  );
   const stageProgress = [readProgress, connectProgress, carryProgress] as const;
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
@@ -194,11 +220,11 @@ export function Convergence() {
           <motion.article
             className={`${styles.discipline} ${styles.psychology}`}
             aria-hidden="true"
-            animate={{
-              x: stage === 0 ? "-1vw" : stage === 1 ? "0vw" : "2.5vw",
-              opacity: stage === 2 ? 0.28 : 1,
-            }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: EASE }}
+            style={
+              prefersReducedMotion
+                ? { x: "2.5vw", opacity: 0.28 }
+                : { x: psychologyX, opacity: disciplineOpacity }
+            }
           >
             <div className={styles.disciplineHeading}>
               <span><Brain size={18} aria-hidden="true" /></span>
@@ -240,12 +266,11 @@ export function Convergence() {
             <motion.figure
               className={styles.signalCore}
               data-register-stage={activeStage.number}
-              animate={{
-                scale: stage === 0 ? 0.96 : stage === 1 ? 1 : 0.97,
-                y: stage === 0 ? 8 : stage === 2 ? -6 : 0,
-                opacity: stage === 2 ? 0.38 : 1,
-              }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
+              style={
+                prefersReducedMotion
+                  ? { scale: 0.97, y: -6, opacity: 0.38 }
+                  : { scale: signalScale, y: signalY, opacity: signalOpacity }
+              }
             >
               <div className={styles.folioImage} aria-hidden="true">
                 <div className={styles.decisionRegister}>
@@ -394,11 +419,11 @@ export function Convergence() {
           <motion.article
             className={`${styles.discipline} ${styles.literature}`}
             aria-hidden="true"
-            animate={{
-              x: stage === 0 ? "1vw" : stage === 1 ? "0vw" : "-2.5vw",
-              opacity: stage === 2 ? 0.28 : 1,
-            }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.72, ease: EASE }}
+            style={
+              prefersReducedMotion
+                ? { x: "-2.5vw", opacity: 0.28 }
+                : { x: literatureX, opacity: disciplineOpacity }
+            }
           >
             <div className={styles.disciplineHeading}>
               <span><BookOpenText size={18} aria-hidden="true" /></span>

@@ -361,6 +361,18 @@ assert(
   "The recognition path no longer resolves continuously with the About scroll timeline.",
 );
 assert(
+  convergence.includes("const psychologyX = useTransform") &&
+    convergence.includes("const literatureX = useTransform") &&
+    convergence.includes("const disciplineOpacity = useTransform") &&
+    convergence.includes("const signalScale = useTransform") &&
+    convergence.includes("const signalY = useTransform") &&
+    convergence.includes("const signalOpacity = useTransform") &&
+    convergence.includes("x: psychologyX, opacity: disciplineOpacity") &&
+    convergence.includes("x: literatureX, opacity: disciplineOpacity") &&
+    convergence.includes("scale: signalScale, y: signalY, opacity: signalOpacity"),
+  "The convergence composition no longer scrubs continuously with the About scroll timeline.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),
