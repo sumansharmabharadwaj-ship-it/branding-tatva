@@ -152,6 +152,22 @@ export function Convergence() {
     STAGE_CUTS,
     [1, 1, 0.985, 0.985, 1, 1, 0.985, 0.985, 1, 1],
   );
+  const stageContentClipPath = useTransform(
+    pacedScrollProgress,
+    STAGE_CUTS,
+    [
+      "inset(0% 0 0% 0)",
+      "inset(0% 0 0% 0)",
+      "inset(50% 0 50% 0)",
+      "inset(50% 0 50% 0)",
+      "inset(0% 0 0% 0)",
+      "inset(0% 0 0% 0)",
+      "inset(50% 0 50% 0)",
+      "inset(50% 0 50% 0)",
+      "inset(0% 0 0% 0)",
+      "inset(0% 0 0% 0)",
+    ],
+  );
   const threadFieldOpacity = useTransform(
     pacedScrollProgress,
     SCROLL_BEATS,
@@ -254,7 +270,11 @@ export function Convergence() {
             style={
               prefersReducedMotion
                 ? undefined
-                : { opacity: stageContentOpacity, scale: stageContentScale }
+                : {
+                    opacity: stageContentOpacity,
+                    scale: stageContentScale,
+                    clipPath: stageContentClipPath,
+                  }
             }
           >
             <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
@@ -388,7 +408,11 @@ export function Convergence() {
                   style={
                     prefersReducedMotion
                       ? undefined
-                      : { opacity: stageContentOpacity, scale: stageContentScale }
+                      : {
+                          opacity: stageContentOpacity,
+                          scale: stageContentScale,
+                          clipPath: stageContentClipPath,
+                        }
                   }
                 >
                   <div className={styles.registerHead}>
@@ -464,7 +488,11 @@ export function Convergence() {
                 style={
                   prefersReducedMotion
                     ? undefined
-                    : { opacity: stageContentOpacity, scale: stageContentScale }
+                    : {
+                        opacity: stageContentOpacity,
+                        scale: stageContentScale,
+                        clipPath: stageContentClipPath,
+                      }
                 }
               >
                 <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
