@@ -560,7 +560,7 @@ export function ContactGratitude() {
                       ? "opening"
                       : "receiving"
               }
-              className="relative mt-4 min-h-[4.25rem] overflow-hidden border-l border-sandstone/48 pl-4 font-display text-lg italic leading-snug text-sandstone sm:min-h-[3.5rem] sm:text-xl"
+              className="relative mt-4 grid min-h-[4.25rem] min-w-0 overflow-hidden border-l border-sandstone/48 pl-4 font-display text-lg italic leading-snug text-sandstone sm:min-h-[3.5rem] sm:text-xl"
             >
               <p className="sr-only" aria-live="off">
                 {activeResponse}
@@ -576,7 +576,7 @@ export function ContactGratitude() {
                   <motion.p
                     key={response}
                     aria-hidden="true"
-                    className="absolute left-4 right-0 top-0"
+                    className="relative min-w-0 [grid-area:1/1]"
                     initial={false}
                     animate={
                       active
