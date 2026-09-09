@@ -135,7 +135,7 @@ function GratitudeNote({
       animate={{ color: active ? "rgb(246,242,234)" : "rgba(246,242,234,0.82)" }}
       transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE_AIR }}
       whileTap={reducedMotion ? undefined : { scale: 0.985 }}
-      style={reducedMotion ? undefined : { y, opacity, willChange: "transform, opacity" }}
+      style={reducedMotion ? { y: 0, opacity: 1 } : { y, opacity, willChange: "transform, opacity" }}
     >
       {active ? (
         <motion.span
@@ -415,6 +415,7 @@ export function ContactGratitude() {
     <div
       ref={sceneRef}
       data-contact-gratitude
+      data-contact-gratitude-motion={reducedMotion ? "reduced" : "full"}
       data-contact-gratitude-complete={allNotesVisited ? "true" : undefined}
       data-contact-gratitude-settled={completionSettled ? "true" : undefined}
       data-contact-gratitude-active={activeNote === null ? undefined : "true"}
@@ -458,7 +459,7 @@ export function ContactGratitude() {
                   className="block"
                   style={
                     reducedMotion
-                      ? undefined
+                      ? { x: 0, rotate: 0 }
                       : { x: thankX, rotate: thankRotate, willChange: "transform" }
                   }
                 >
@@ -468,7 +469,7 @@ export function ContactGratitude() {
                   className="block italic text-sandstone"
                   style={
                     reducedMotion
-                      ? undefined
+                      ? { x: 0, rotate: 0 }
                       : { x: youX, rotate: youRotate, willChange: "transform" }
                   }
                 >
@@ -480,7 +481,7 @@ export function ContactGratitude() {
                 className="mt-4 block max-w-[11.5em] text-[clamp(2rem,4.5vw,4.5rem)] leading-[0.94] tracking-[-0.025em] text-ivory/94"
                 style={
                   reducedMotion
-                    ? undefined
+                    ? { y: 0, opacity: 1 }
                     : { y: resolveY, opacity: resolveOpacity, willChange: "transform, opacity" }
                 }
               >
@@ -492,7 +493,9 @@ export function ContactGratitude() {
               ref={statementRef}
               data-contact-gratitude-statement
               className="mt-5 max-w-xl border-l border-sandstone/48 pl-4 sm:mt-7 sm:pl-5"
-              style={reducedMotion ? undefined : { clipPath: copyClip, willChange: "clip-path" }}
+              // Removing a MotionValue can retain its last rendered value.
+              // Reduced motion must explicitly restore the readable state.
+              style={reducedMotion ? { clipPath: "none" } : { clipPath: copyClip, willChange: "clip-path" }}
             >
               <p className="text-sm leading-relaxed text-ivory/76 sm:text-base">
                 Most brand decisions get rushed at the exact moment they need better language. You gave yours a little more room.
@@ -508,7 +511,7 @@ export function ContactGratitude() {
               className="mt-6 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap"
               style={
                 reducedMotion
-                  ? undefined
+                  ? { y: 0, opacity: 1 }
                   : { y: nextY, opacity: nextOpacity, willChange: "transform, opacity" }
               }
             >
@@ -549,7 +552,7 @@ export function ContactGratitude() {
           <motion.div
             data-contact-gratitude-ledger
             className="min-w-0"
-            style={reducedMotion ? undefined : { y: resolveY, opacity: resolveOpacity }}
+            style={reducedMotion ? { y: 0, opacity: 1 } : { y: resolveY, opacity: resolveOpacity }}
           >
             <div className="flex items-end justify-between gap-4">
               <div>
@@ -686,7 +689,7 @@ export function ContactGratitude() {
                 className="h-px overflow-hidden bg-ivory/18"
                 style={
                   reducedMotion
-                    ? undefined
+                    ? { scaleX: 1 }
                     : {
                         scaleX: allNotesVisited ? 1 : signalScale,
                         transformOrigin: "0 50%",

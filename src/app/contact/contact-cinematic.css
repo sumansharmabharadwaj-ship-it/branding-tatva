@@ -55,6 +55,21 @@
   transform: none !important;
 }
 
+/* Keep reading content visible through hydration and motion preference changes. */
+[data-contact-gratitude-motion="reduced"] :is(
+  [data-contact-gratitude-heading] span,
+  [data-contact-gratitude-ledger],
+  [data-contact-gratitude-note],
+  [data-contact-gratitude-next]
+) {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+[data-contact-gratitude-motion="reduced"] [data-contact-gratitude-statement] {
+  clip-path: none !important;
+}
+
 [data-contact-film] [data-contact-gratitude-ledger] {
   position: relative;
   isolation: isolate;
