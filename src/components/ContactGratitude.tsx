@@ -130,9 +130,10 @@ function GratitudeNote({
         }
       }}
       data-contact-gratitude-note
+      data-contact-gratitude-note-active={active ? "true" : undefined}
       data-contact-gratitude-visited={visited ? "true" : undefined}
       data-cursor-label={selected ? "Close note" : visited ? "Reopen note" : "Receive note"}
-      className="group relative grid min-h-16 w-full grid-cols-[1.7rem_1fr] items-center gap-2 overflow-hidden px-3 py-3 text-left text-ivory focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:min-h-[4.5rem] sm:grid-cols-[2.25rem_1fr_auto] sm:gap-3 sm:px-4 lg:min-h-[5.35rem] lg:border-t lg:border-white/18 lg:px-1 lg:last:border-b"
+      className="group relative grid min-h-16 w-full grid-cols-[1.7rem_1fr] items-center gap-2 overflow-hidden px-3 py-3 text-left text-ivory focus-visible:z-10 focus-visible:outline-none sm:min-h-[4.5rem] sm:grid-cols-[2.25rem_1fr_auto] sm:gap-3 sm:px-4 lg:min-h-[5.35rem] lg:border-t lg:border-white/18 lg:px-1 lg:last:border-b"
       initial={false}
       animate={{ color: active ? "rgb(246,242,234)" : "rgba(246,242,234,0.94)" }}
       transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE_AIR }}
@@ -144,7 +145,7 @@ function GratitudeNote({
           layoutId="contact-gratitude-focus-baton"
           aria-hidden="true"
           data-contact-gratitude-focus-baton
-          className="absolute inset-0 bg-ivory/[0.09]"
+          className="absolute inset-0 bg-gradient-to-r from-sandstone/[0.16] via-ivory/[0.07] to-transparent"
           initial={false}
           transition={{ duration: reducedMotion ? 0 : 0.48, ease: EASE_AIR }}
         />
@@ -170,7 +171,10 @@ function GratitudeNote({
       <span className="relative text-[0.625rem] font-medium tracking-[0.18em] text-sandstone sm:text-[0.6875rem]">
         0{index + 1}
       </span>
-      <span className="relative font-display text-[1.08rem] font-normal leading-[1.02] sm:text-xl lg:text-[1.42rem]">
+      <span
+        data-contact-gratitude-note-label
+        className="relative font-display text-[1.08rem] font-normal leading-[1.02] sm:text-xl lg:text-[1.42rem]"
+      >
         {note.label}
       </span>
       <motion.span
@@ -329,6 +333,7 @@ export function ContactGratitude() {
   const allNotesVisited = visitedNotes === ALL_NOTES_VISITED;
   const sequenceFocusNote = completionSettled && !isRevisiting ? null : scrollFocusNote;
   const visualActiveNote = activeNote ?? sequenceFocusNote;
+  const spineSettled = completionSettled && !isRevisiting && activeNote === null;
   const visitedCount = NOTES.reduce(
     (count, _note, index) => count + ((visitedNotes & (1 << index)) === 0 ? 0 : 1),
     0,
@@ -656,8 +661,25 @@ export function ContactGratitude() {
                       : selectedNote,
                 );
               }}
-              className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-[1.35rem] border border-white/16 bg-white/12 backdrop-blur-xl sm:mt-5 lg:block lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent lg:backdrop-blur-none"
+              className="relative mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-[1.35rem] border border-white/16 bg-white/12 backdrop-blur-xl sm:mt-5 lg:block lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent lg:backdrop-blur-none"
             >
+              <motion.span
+                aria-hidden="true"
+                data-contact-gratitude-scroll-spine="continuous"
+                data-contact-gratitude-scroll-spine-settled={
+                  spineSettled ? "true" : undefined
+                }
+                className="pointer-events-none absolute inset-y-0 left-0 z-[2] hidden w-px origin-top bg-sandstone/75 lg:block"
+                initial={false}
+                animate={{
+                  opacity: spineSettled ? 0.58 : 1,
+                  boxShadow: spineSettled
+                    ? "0 0 0 rgba(224, 190, 139, 0)"
+                    : "0 0 18px rgba(224, 190, 139, 0.42)",
+                }}
+                transition={{ duration: reducedMotion ? 0 : 0.72, ease: EASE_AIR }}
+                style={reducedMotion ? { scaleY: 1 } : { scaleY: signalScale }}
+              />
               <LayoutGroup id="contact-gratitude-notes">
                 {NOTES.map((note, index) => (
                   <GratitudeNote

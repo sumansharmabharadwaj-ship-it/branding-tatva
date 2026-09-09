@@ -105,6 +105,29 @@
 
 [data-contact-film] [data-contact-gratitude-note] {
   -webkit-tap-highlight-color: transparent;
+  transition: box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Keep keyboard focus unmistakable without drawing a heavy box around the
+   acknowledgement. The inset edge belongs to the same travelling light as
+   the scroll spine, so keyboard and scroll feel like one interaction. */
+[data-contact-film] [data-contact-gratitude-note]:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(224, 190, 139, 0.84),
+    0 0 28px rgba(224, 190, 139, 0.12);
+}
+
+[data-contact-film] [data-contact-gratitude-note-label] {
+  transition: transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 1024px) {
+  [data-contact-film]
+    [data-contact-gratitude-note-active="true"]
+    [data-contact-gratitude-note-label] {
+    transform: translateX(0.35rem);
+  }
 }
 
 /* The fourth acknowledgement hands its warmth to the practical next step.
@@ -1724,6 +1747,11 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-ledger]:
   transform: none !important;
 }
 
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-scroll-spine],
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-note-label] {
+  transform: none !important;
+}
+
 html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-primary] {
   transition: none !important;
 }
@@ -1791,6 +1819,11 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
 
   [data-contact-film] [data-contact-gratitude-ledger]::before {
     transition: none !important;
+    transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-gratitude-scroll-spine],
+  [data-contact-film] [data-contact-gratitude-note-label] {
     transform: none !important;
   }
 

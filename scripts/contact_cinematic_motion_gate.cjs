@@ -87,6 +87,11 @@ requireText(gratitude, 'data-contact-gratitude-scroll-scrub="bidirectional"', "g
 requireText(gratitude, "LayoutGroup", "gratitude sequence no longer shares one moving focus treatment");
 requireText(gratitude, 'layoutId="contact-gratitude-focus-baton"', "gratitude focus no longer travels between acknowledgements");
 requireText(gratitude, "data-contact-gratitude-focus-baton", "gratitude focus baton is no longer inspectable");
+requireText(gratitude, 'data-contact-gratitude-scroll-spine="continuous"', "gratitude acknowledgements no longer share one continuous scroll spine");
+requireText(gratitude, "data-contact-gratitude-scroll-spine-settled", "gratitude scroll spine no longer settles before the final handoff");
+requireText(gratitude, "data-contact-gratitude-note-active", "gratitude active acknowledgement state is no longer inspectable");
+requireText(gratitude, "data-contact-gratitude-note-label", "gratitude active label no longer carries the travelling focus cue");
+requireText(gratitude, "const spineSettled = completionSettled && !isRevisiting && activeNote === null;", "gratitude scroll spine no longer re-energizes during intentional inspection");
 requirePattern(
   gratitude,
   /const sequenceFocusNote = completionSettled && !isRevisiting \? null : scrollFocusNote;\s*const visualActiveNote = activeNote \?\? sequenceFocusNote;/,
@@ -154,6 +159,9 @@ const cssContracts = [
   ["contact-pathway-splice", "pathway light splice is missing"],
   ["contact-footer-afterglow", "closing afterglow is missing"],
   ['data-contact-gratitude-next-ready="true"', "gratitude completion handoff styling is missing"],
+  ["[data-contact-gratitude-note]:focus-visible", "gratitude keyboard focus no longer uses the calm inset treatment"],
+  ["[data-contact-gratitude-scroll-spine]", "gratitude scroll spine no longer has reduced-motion protection"],
+  ["[data-contact-gratitude-note-label]", "gratitude label motion and reduced-motion protection are missing"],
   ['html[data-motion="reduced"]', "explicit reduced-motion styling is missing"],
   ["@media (prefers-reduced-motion: reduce)", "system reduced-motion styling is missing"],
   ["@media (max-width: 359px)", "ultra-narrow phone protection is missing"],
