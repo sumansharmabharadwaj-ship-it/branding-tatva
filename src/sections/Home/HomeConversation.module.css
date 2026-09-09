@@ -158,6 +158,57 @@
   .invitationMedia { opacity: .18; }
   .signoff { font-size: 1.125rem; }
 }
+
+/* Parker-inspired pacing for the final conversation: the composed invitation
+   holds while the visitor's scroll moves through the three agenda steps.
+   Touch, compact, and reduced-motion contexts keep the original document flow. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :global(html:not([data-motion="reduced"])) .invitation {
+    height: 210svh;
+    min-height: 210svh;
+  }
+
+  :global(html:not([data-motion="reduced"])) .invitationMedia {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    width: 100%;
+    height: 100svh;
+    margin-bottom: -100svh;
+  }
+
+  :global(html:not([data-motion="reduced"])) .invitationFrame {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 100svh;
+    box-sizing: border-box;
+  }
+
+  :global(html:not([data-motion="reduced"])) .conversation li {
+    opacity: .58;
+    transform: translateX(0);
+    transition:
+      opacity 420ms cubic-bezier(.22,1,.36,1),
+      transform 420ms cubic-bezier(.22,1,.36,1),
+      border-color 420ms ease;
+  }
+
+  :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] {
+    opacity: 1;
+    transform: translateX(-.45rem);
+    border-top-color: #98623f;
+  }
+
+  :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] .stepNumber {
+    color: #855035;
+  }
+
+  :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] h3 {
+    color: #70482f;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg { transition: none; }
 }

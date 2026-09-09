@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Clock3 } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -58,9 +58,34 @@ function readSituation(): Situation {
 export function FinalInvitation() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [situation, setSituation] = useState<Situation>("default");
+  const [activeStep, setActiveStep] = useState(0);
   const reducedMotion = useHydratedReducedMotion();
-  const { scrollYProgress } = useScroll({ target: rootRef, offset: ["start end", "end end"] });
-  const lineProgress = useTransform(scrollYProgress, [0.1, 0.9], [0, 1]);
+  const { scrollYProgress: entranceProgress } = useScroll({
+    target: rootRef,
+    offset: ["start end", "end end"],
+  });
+  const { scrollYProgress: storyProgress } = useScroll({
+    target: rootRef,
+    offset: ["start start", "end end"],
+  });
+  const lineProgress = useTransform(entranceProgress, [0.1, 0.9], [0, 1]);
+
+  useMotionValueEvent(storyProgress, "change", (progress) => {
+    const desktopStory = window.matchMedia(
+      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
+    ).matches;
+
+    if (!desktopStory || reducedMotion) {
+      setActiveStep((current) => (current === 0 ? current : 0));
+      return;
+    }
+
+    const nextStep = Math.min(
+      STEP_LABELS.length - 1,
+      Math.floor(Math.min(0.9999, Math.max(0, progress)) * STEP_LABELS.length),
+    );
+    setActiveStep((current) => (current === nextStep ? current : nextStep));
+  });
 
   useEffect(() => {
     function sync() { setSituation(readSituation()); }
@@ -82,7 +107,13 @@ export function FinalInvitation() {
   const contactHref = servicesContactHrefForSituation(HOME_TO_SERVICES_SITUATION[situation], "call");
 
   return (
-    <div ref={rootRef} className={styles.invitation} data-cursor-world="light" data-invitation-situation={situation}>
+    <div
+      ref={rootRef}
+      className={styles.invitation}
+      data-cursor-world="light"
+      data-invitation-situation={situation}
+      data-invitation-step={activeStep + 1}
+    >
       <div className={styles.invitationMedia} aria-hidden="true">
         <BackgroundVideo
           video="/videos/higgsfield-silver-tide.mp4"
@@ -113,7 +144,7 @@ export function FinalInvitation() {
           </div>
           <ol>
             {consultation.fullSteps.map((step, index) => (
-              <li key={step}>
+              <li key={step} data-current={activeStep === index}>
                 <span className={styles.stepNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <h3>{STEP_LABELS[index]}</h3>
