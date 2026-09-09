@@ -3,11 +3,12 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useRef, useState } from "react";
 import recognitionStyles from "./RecognitionChoices.module.css";
 import costStyles from "./HiddenCost.module.css";
+import openingStyles from "./OpeningScene.module.css";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -65,7 +66,10 @@ const BRAND_RESET_COSTS = [
 export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.28 });
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const landscapeScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.09]);
+  const landscapeY = useTransform(scrollYProgress, [0, 1], [0, 24]);
+  const lightX = useTransform(scrollYProgress, [0, 1], ["-18%", "80%"]);
 
   return (
     <section
@@ -75,108 +79,34 @@ export function V4OpeningScene() {
       data-home-chapter="opening"
       data-home-section="opening"
       data-cursor-world="dark"
-      className="home-v4-opening"
+      className={`home-v4-opening ${openingStyles.opening}`}
       aria-labelledby="home-v4-opening-title"
     >
       <div className="home-v4-opening__media" aria-hidden="true">
-        <video
-          src="/videos/hero-forest-sanctuary.mp4"
-          poster="/images/hero-forest-sanctuary-poster.jpg"
-          muted
-          autoPlay
-          loop
-          playsInline
-          preload="auto"
-        />
-        <motion.span
-          className="home-v4-opening__camera"
-          initial={prefersReducedMotion ? false : { scale: 1.03, x: 0, y: 0 }}
-          animate={
-            prefersReducedMotion || !inView
-              ? undefined
-              : { scale: 1.095, x: -10, y: -4 }
-          }
-          transition={{ duration: 14, ease: "easeInOut" }}
-        />
+        <motion.div
+          className={openingStyles.landscape}
+          data-opening-landscape
+          style={{ scale: prefersReducedMotion ? 1 : landscapeScale, y: prefersReducedMotion ? 0 : landscapeY }}
+        >
+          <video
+            src="/videos/hero-forest-sanctuary.mp4"
+            poster="/images/hero-forest-sanctuary-poster.jpg"
+            muted
+            autoPlay={!prefersReducedMotion}
+            loop
+            playsInline
+            preload="auto"
+          />
+        </motion.div>
         <span className="home-v4-opening__wash" />
       </div>
 
       <motion.span
         aria-hidden="true"
         className="home-v4-opening__light home-v4-opening__light--one"
-        initial={prefersReducedMotion ? false : { x: "-18%", opacity: 0.18 }}
-        animate={
-          prefersReducedMotion || !inView
-            ? undefined
-            : { x: "28%", opacity: 0.42 }
-        }
-        transition={{ duration: 10, ease: "easeInOut" }}
+        data-opening-light
+        style={{ x: prefersReducedMotion ? 0 : lightX, opacity: prefersReducedMotion ? 0 : 0.3 }}
       />
-      <motion.span
-        aria-hidden="true"
-        className="home-v4-opening__light home-v4-opening__light--two"
-        initial={prefersReducedMotion ? false : { x: "12%", opacity: 0.1 }}
-        animate={
-          prefersReducedMotion || !inView
-            ? undefined
-            : { x: "-24%", opacity: 0.34 }
-        }
-        transition={{ duration: 12, ease: "easeInOut" }}
-      />
-
-      <div className="home-v4-opening__signal" aria-hidden="true">
-        <svg viewBox="0 0 520 520">
-          <motion.path
-            d="M40 314 C120 252 168 350 244 282 C316 218 340 132 482 90"
-            fill="none"
-            stroke="rgba(212,185,154,.75)"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            pathLength="1"
-            initial={prefersReducedMotion ? false : { pathLength: 0.12, opacity: 0.24 }}
-            animate={
-              prefersReducedMotion
-                ? { pathLength: 1, opacity: 0.6 }
-                : inView
-                  ? { pathLength: 1, opacity: 0.82 }
-                  : undefined
-            }
-            transition={{ duration: 4.8, ease: EASE }}
-          />
-          {[
-            [72, 294],
-            [176, 322],
-            [257, 267],
-            [344, 156],
-            [470, 96],
-          ].map(([cx, cy], index) => (
-            <motion.circle
-              key={`${cx}-${cy}`}
-              cx={cx}
-              cy={cy}
-              r="4"
-              fill={index === 4 ? "#F4EFE6" : "#D4B99A"}
-              initial={prefersReducedMotion ? false : { scale: 0.7, opacity: 0.35 }}
-              animate={
-                prefersReducedMotion
-                  ? undefined
-                  : inView
-                    ? { scale: 1, opacity: index === 4 ? 1 : 0.76 }
-                    : undefined
-              }
-              style={{ transformOrigin: `${cx}px ${cy}px` }}
-              transition={{
-                duration: 0.8,
-                delay: index * 0.24,
-                ease: EASE,
-              }}
-            />
-          ))}
-        </svg>
-        <span>signal</span>
-        <span>pattern</span>
-        <span>recognition</span>
-      </div>
 
       <div className="home-v4-opening__shell">
         <div className="home-v4-opening__topline">
@@ -217,7 +147,7 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.48, ease: EASE }}
           >
-            Branding Tatva turns audience tension into a position, language, identity, and market system people can recognise.
+            Positioning, language, and identity built around how your audience thinks and chooses.
           </motion.p>
 
           <motion.div
@@ -232,7 +162,7 @@ export function V4OpeningScene() {
               data-magnetic
               data-cursor-label="inspect"
             >
-              Find the gap in your brand <ArrowDownRight size={15} />
+              <span>Find the gap in your brand</span> <ArrowDownRight size={15} aria-hidden="true" />
             </Link>
             <Link
               href="#evidence"
@@ -240,7 +170,7 @@ export function V4OpeningScene() {
               data-magnetic
               data-cursor-label="proof"
             >
-              See recorded proof <ArrowUpRight size={15} />
+              <span>See recorded proof</span> <ArrowUpRight size={15} aria-hidden="true" />
             </Link>
           </motion.div>
         </div>
@@ -251,10 +181,12 @@ export function V4OpeningScene() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: prefersReducedMotion ? 0 : 0.72, delay: 0.52, ease: EASE }}
         >
-          <span>Recorded result</span>
-          <strong>0.71 → 2.81%</strong>
-          <p>engagement in eight weeks, with fewer posts</p>
-          <i aria-hidden="true" />
+          <span>Dr. Haley Nutrition</span>
+          <strong>0.71% → 2.81%</strong>
+          <p>LinkedIn engagement rate<br />December 2025 to January 2026</p>
+          <Link href="/work/dr-haley-nutrition" className={openingStyles.proofLink}>
+            Read the case study <ArrowUpRight size={15} aria-hidden="true" />
+          </Link>
         </motion.aside>
 
         <a href="#recognition" className="home-v4-opening__scroll" aria-label="Continue to visitor recognition">
