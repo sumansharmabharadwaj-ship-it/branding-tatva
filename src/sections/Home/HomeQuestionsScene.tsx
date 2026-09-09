@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, Plus } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -25,6 +25,7 @@ const QUESTIONS = QUESTION_ORDER.flatMap((question) =>
 
 export function HomeQuestionsScene() {
   const rootRef = useRef<HTMLElement>(null);
+  const questionRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const reducedMotion = useHydratedReducedMotion();
   const cinematicMotion = useMediaQuery(
@@ -37,6 +38,17 @@ export function HomeQuestionsScene() {
   const mediaScale = useTransform(scrollYProgress, [0, 0.68, 1], [1, 1, 1.035]);
   const frameY = useTransform(scrollYProgress, [0, 0.68, 1], [0, 0, -18]);
   const frameScale = useTransform(scrollYProgress, [0, 0.68, 1], [1, 1, 0.985]);
+
+  function onQuestionKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? 0
+      : event.key === "End" ? QUESTIONS.length - 1
+      : event.key === "ArrowDown" ? (index + 1) % QUESTIONS.length
+      : (index - 1 + QUESTIONS.length) % QUESTIONS.length;
+    // Moving between headings leaves the answer being read unchanged.
+    questionRefs.current[next]?.focus();
+  }
 
   return (
     <section ref={rootRef} className={styles.questions} data-cursor-world="light" aria-labelledby="home-questions-title">
@@ -78,12 +90,14 @@ export function HomeQuestionsScene() {
               <div key={item.question} className={styles.questionItem} data-open={open}>
                 <h3>
                   <button
+                    ref={(element) => { questionRefs.current[index] = element; }}
                     type="button"
                     id={buttonId}
                     className={styles.questionButton}
                     aria-expanded={open}
                     aria-controls={answerId}
-                    onClick={() => setOpenIndex(open ? null : index)}
+                    onClick={() => setOpenIndex((current) => current === index ? null : index)}
+                    onKeyDown={(event) => onQuestionKeyDown(event, index)}
                   >
                     <span className={styles.questionNumber} aria-hidden="true">
                       {String(index + 1).padStart(2, "0")}
@@ -92,22 +106,19 @@ export function HomeQuestionsScene() {
                     <Plus size={19} className={styles.questionIcon} aria-hidden="true" />
                   </button>
                 </h3>
-                <AnimatePresence initial={false}>
-                  {open && (
-                    <motion.div
-                      id={answerId}
-                      role="region"
-                      aria-labelledby={buttonId}
-                      className={styles.answer}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <p>{item.answer}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <motion.div
+                  id={answerId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  aria-hidden={!open}
+                  inert={!open}
+                  className={styles.answer}
+                  initial={false}
+                  animate={{ height: open ? "auto" : 0 }}
+                  transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <p>{item.answer}</p>
+                </motion.div>
               </div>
             );
           })}

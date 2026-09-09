@@ -48,11 +48,16 @@
 }
 .textLink svg { flex: 0 0 auto; transition: transform 220ms ease; }
 .textLink:hover svg { transform: translateX(3px); }
+.questionIntro .textLink:hover svg { transform: translateY(3px); }
 .textLink:hover { color: #342f27; }
 .questionList { min-width: 0; }
-.questionItem { border-top: 1px solid rgb(91 78 58 / 24%); }
+.questionItem {
+  border-top: 1px solid rgb(91 78 58 / 24%);
+  transition: border-color 280ms ease;
+}
 .questionItem h3 { margin: 0; }
 .questionItem[data-open="true"] { border-top-color: #98623f; }
+.questionItem[data-open="true"] .questionNumber { color: #70482f; }
 .questionButton {
   display: grid; grid-template-columns: 1.8rem minmax(0, 1fr) 1.2rem;
   align-items: start; gap: 1rem; width: 100%; min-height: 4.4rem;
@@ -65,6 +70,7 @@
   padding-top: .2rem; font: 500 .75rem/1.5 var(--font-sans, sans-serif);
   color: #906646; font-variant-numeric: tabular-nums;
 }
+.questionNumber { transition: color 280ms ease; }
 .questionIcon { margin-top: .2rem; transition: transform 280ms cubic-bezier(.22,1,.36,1); }
 .questionItem[data-open="true"] .questionIcon { transform: rotate(45deg); }
 .answer { overflow: hidden; }
@@ -221,5 +227,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg { transition: none; }
+  .questionItem, .questionNumber, .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg { transition: none; }
 }
