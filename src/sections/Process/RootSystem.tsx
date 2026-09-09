@@ -12,6 +12,7 @@ import {
 } from "react";
 import { useInView } from "framer-motion";
 import type { ProcessStage } from "@/data/process";
+import { consultation } from "@/data/site";
 
 type StageMeta = {
   becomes: string;
@@ -471,7 +472,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           <p>Bring the unfinished notes, the conflicting opinions, and the version nobody has managed to explain yet.</p>
           <div>
             <Link href="/contact">Bring me the messy version <span aria-hidden="true">↗</span></Link>
-            <span>Twenty minutes · zero pitch deck</span>
+            <span>{consultation.minutes} minutes · No deck required</span>
           </div>
         </footer>
       </div>

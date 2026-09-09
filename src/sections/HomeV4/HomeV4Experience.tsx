@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { DustMotes } from "@/components/DustMotes";
-import { VideoBreak } from "@/components/VideoBreak";
 import { ProcessSection } from "@/sections/Process";
 import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
@@ -142,23 +140,10 @@ export function HomeV4Experience() {
         data-home-chapter="invitation"
         data-home-section="invitation"
         data-cursor-world="dark"
-        className="home-v4-chapter home-v4-chapter--invitation invitation-cinematic"
+        className="home-v4-chapter home-v4-chapter--invitation"
         aria-label="Begin a conversation with Branding Tatva"
       >
-        <VideoBreak
-          src="/videos/higgsfield-silver-tide.mp4"
-          poster="/images/higgsfield-silver-tide-poster.jpg"
-          quote="Some things only become visible once everything else goes quiet."
-          height="auto"
-          imagePosition="50% 18%"
-          quoteVariant="statement"
-          cameraPush
-          wordFade
-          overlayGradient="linear-gradient(180deg, rgba(16,20,24,0.36) 0%, rgba(16,20,24,0.12) 25%, rgba(16,20,24,0.28) 55%, rgba(17,20,23,0.96) 100%)"
-        >
-          <DustMotes />
-          <FinalInvitation />
-        </VideoBreak>
+        <FinalInvitation />
       </section>
 
       <HomePacingDirector />
