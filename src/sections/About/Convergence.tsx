@@ -152,11 +152,6 @@ export function Convergence() {
     STAGE_CUTS,
     [1, 1, 0.08, 0.08, 1, 1, 0.08, 0.08, 1, 1],
   );
-  const stageContentScale = useTransform(
-    pacedScrollProgress,
-    STAGE_CUTS,
-    [1, 1, 0.985, 0.985, 1, 1, 0.985, 0.985, 1, 1],
-  );
   const stageContentClipPath = useTransform(
     pacedScrollProgress,
     STAGE_CUTS,
@@ -281,7 +276,6 @@ export function Convergence() {
                 ? undefined
                 : {
                     opacity: stageContentOpacity,
-                    scale: stageContentScale,
                     clipPath: stageContentClipPath,
                   }
             }
@@ -419,7 +413,6 @@ export function Convergence() {
                       ? undefined
                       : {
                           opacity: stageContentOpacity,
-                          scale: stageContentScale,
                           clipPath: stageContentClipPath,
                         }
                   }
@@ -499,7 +492,6 @@ export function Convergence() {
                     ? undefined
                     : {
                         opacity: stageContentOpacity,
-                        scale: stageContentScale,
                         clipPath: stageContentClipPath,
                       }
                 }
