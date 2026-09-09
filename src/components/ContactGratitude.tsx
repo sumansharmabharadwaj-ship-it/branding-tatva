@@ -416,6 +416,9 @@ export function ContactGratitude() {
   const sequenceFocusNote = completionSettled && !isRevisiting ? null : scrollFocusNote;
   const visualActiveNote = activeNote ?? sequenceFocusNote;
   const spineSettled = completionSettled && !isRevisiting && activeNote === null;
+  // Keep one visual priority at a time. The onward route warms only after the
+  // acknowledgement has finished, then yields while a visitor reopens a note.
+  const nextReady = completionSettled && visualActiveNote === null;
   const visitedCount = NOTES.reduce(
     (count, _note, index) => count + ((visitedNotes & (1 << index)) === 0 ? 0 : 1),
     0,
@@ -660,7 +663,7 @@ export function ContactGratitude() {
               ref={nextRef}
               onFocusCapture={handleNextActionFocus}
               data-contact-gratitude-next
-              data-contact-gratitude-next-ready={completionSettled ? "true" : undefined}
+              data-contact-gratitude-next-ready={nextReady ? "true" : undefined}
               aria-hidden="false"
               className="mt-6 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap"
               style={

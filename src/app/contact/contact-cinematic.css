@@ -171,8 +171,8 @@
 }
 
 /* The fourth acknowledgement hands its warmth to the practical next step.
-   The sweep runs once because it is driven by the settled state, then leaves
-   the booking route in a clear resting state instead of pulsing for attention. */
+   The route yields while a note is being read, then runs one finite return
+   sweep when the ledger is resting instead of competing for attention. */
 [data-contact-film] [data-contact-gratitude-primary] {
   position: relative;
   isolation: isolate;

@@ -135,6 +135,11 @@ requireText(gratitude, 'setAnnouncedResponse(nextSelectedNote === null ? "" : NO
 requireText(gratitude, 'data-contact-gratitude-flow="continuous"', "gratitude pointer flow is no longer continuous");
 requireText(gratitude, 'data-contact-gratitude-receipt="scroll-or-activation"', "gratitude receipt no longer supports scroll and deliberate inspection");
 requireText(gratitude, "data-contact-gratitude-next-ready", "gratitude completion no longer hands off to the next step");
+requireText(
+  gratitude,
+  "const nextReady = completionSettled && visualActiveNote === null;",
+  "gratitude next action no longer yields while an acknowledgement is being read",
+);
 requireText(gratitude, "data-contact-gratitude-primary", "gratitude primary route is no longer addressable");
 requireText(gratitude, "data-contact-gratitude-progress-beat", "gratitude progress count no longer carries direction between acknowledgements");
 requireText(gratitude, '<AnimatePresence initial={false} mode="wait">', "gratitude progress count no longer resolves one beat before the next");
