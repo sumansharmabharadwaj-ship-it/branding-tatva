@@ -282,7 +282,8 @@ assert(
 );
 assert(
   !pointOfViewStyles.includes("@keyframes resolveLine") &&
-    pointOfViewStyles.includes('.scrollStory[data-recognition-stage="3"] .frameShift i { transform: scaleX(1); }') &&
+    pointOfView.includes("scaleX: frameShiftProgress") &&
+    !pointOfViewStyles.includes("transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1)") &&
     !convergenceStyles.includes("animation:") &&
     /data-scene-active="false"[^}]*\.core::before\s*\{[^}]*animation-play-state:\s*paused;/.test(atlasStyles),
   "Off-screen About chapters can keep their ambient CSS loops running.",
@@ -306,7 +307,7 @@ assert(
     !pointOfView.includes('from "next/image"') &&
     pointOfView.includes("styles.decisionLedger") &&
     pointOfView.includes("styles.ledgerFocus") &&
-    pointOfViewStyles.includes('.scrollStory[data-recognition-stage="3"] .ledgerCursor') &&
+    pointOfView.includes("left: ledgerCursorX") &&
     pointOfViewStyles.includes(".scrollStory { height: 190svh; }"),
   "The point-of-view sequence lost its restrained editorial ledger or deliberate scroll runway.",
 );
@@ -376,6 +377,15 @@ assert(
     pointOfView.includes("opacity: stageContentOpacity, scale: stageContentScale") &&
     !pointOfView.includes('animate={{ opacity: 1, y: 0, clipPath: "inset(0% 0 0% 0)" }}'),
   "The recognition stage changes no longer pass through a scroll-controlled focus gate.",
+);
+assert(
+  !pointOfViewStyles.includes('.stageRail button[data-resolved="true"] b') &&
+    !pointOfViewStyles.includes('.scrollStory[data-recognition-stage="2"] .ledgerFocus') &&
+    !pointOfViewStyles.includes('.scrollStory[data-recognition-stage="3"] .ledgerCursor') &&
+    !pointOfViewStyles.includes('.scrollStory[data-recognition-stage="2"] .frameShift i') &&
+    /\.ledgerFocus\s*\{[^}]*will-change:\s*transform;/.test(pointOfViewStyles) &&
+    /\.ledgerCursor\s*\{[^}]*will-change:\s*left;/.test(pointOfViewStyles),
+  "The recognition indicators can lag behind their scroll motion because CSS state transitions compete with MotionValues.",
 );
 assert(
   convergence.includes("const psychologyX = useTransform") &&
