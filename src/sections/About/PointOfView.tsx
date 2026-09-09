@@ -93,6 +93,26 @@ export function PointOfView() {
   });
   const filmY = useTransform(pacedScrollProgress, [0, 1], ["1.2%", "-1.2%"]);
   const filmScale = useTransform(pacedScrollProgress, [0, 0.5, 1], [1.02, 1, 0.99]);
+  const chamberX = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [-8, -8, 0, 0, 6, 6],
+  );
+  const chamberOpacity = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0.86, 0.86, 1, 1, 0.9, 0.9],
+  );
+  const recordX = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [8, 8, 0, 0, -6, -6],
+  );
+  const recordOpacity = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0.86, 0.86, 1, 1, 0.9, 0.9],
+  );
   const ledgerFocusY = useTransform(
     pacedScrollProgress,
     SCROLL_BEATS,
@@ -209,7 +229,10 @@ export function PointOfView() {
                 className={styles.filmDepth}
                 style={prefersReducedMotion ? undefined : { y: filmY, scale: filmScale }}
               >
-                <div className={styles.recognitionChamber}>
+                <motion.div
+                  className={styles.recognitionChamber}
+                  style={prefersReducedMotion ? undefined : { x: chamberX, opacity: chamberOpacity }}
+                >
                   <div className={styles.evidenceFilm}>
                     <div className={styles.decisionLedger}>
                       <motion.span
@@ -295,11 +318,17 @@ export function PointOfView() {
                       </motion.strong>
                     </AnimatePresence>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
             </div>
 
-            <div id="recognition-panel" className={styles.recordSlot} role="tabpanel" aria-labelledby={`recognition-stage-${activeIndex}`}>
+            <motion.div
+              id="recognition-panel"
+              className={styles.recordSlot}
+              role="tabpanel"
+              aria-labelledby={`recognition-stage-${activeIndex}`}
+              style={prefersReducedMotion ? undefined : { x: recordX, opacity: recordOpacity }}
+            >
               <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
                 <motion.article
                   key={active.lens}
@@ -335,7 +364,7 @@ export function PointOfView() {
                   </Link>
                 </motion.article>
               </AnimatePresence>
-            </div>
+            </motion.div>
           </div>
 
           <div className={styles.staticExperience}>

@@ -361,6 +361,15 @@ assert(
   "The recognition path no longer resolves continuously with the About scroll timeline.",
 );
 assert(
+  pointOfView.includes("const chamberX = useTransform") &&
+    pointOfView.includes("const chamberOpacity = useTransform") &&
+    pointOfView.includes("const recordX = useTransform") &&
+    pointOfView.includes("const recordOpacity = useTransform") &&
+    pointOfView.includes("x: chamberX, opacity: chamberOpacity") &&
+    pointOfView.includes("x: recordX, opacity: recordOpacity"),
+  "The recognition evidence surfaces no longer move as one scroll-controlled camera composition.",
+);
+assert(
   convergence.includes("const psychologyX = useTransform") &&
     convergence.includes("const literatureX = useTransform") &&
     convergence.includes("const disciplineOpacity = useTransform") &&
