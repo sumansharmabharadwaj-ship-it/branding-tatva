@@ -3,7 +3,6 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
@@ -208,13 +207,6 @@ export function TatvaStrip() {
               </span>
             </motion.div>
 
-            <Link
-              href="#elements"
-              className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em]"
-              style={{ color: "#D4B99A" }}
-            >
-              Enter the five-element chapter <span aria-hidden="true">→</span>
-            </Link>
           </Reveal>
 
           <Reveal delay={0.1}>

@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { DustMotes } from "@/components/DustMotes";
 import { VideoBreak } from "@/components/VideoBreak";
-import { ElementsSection } from "@/sections/Elements";
 import { ProcessSection } from "@/sections/Process";
 import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
@@ -14,7 +13,6 @@ import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
 import { TatvaStrip } from "@/sections/Home/TatvaStrip";
 import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
-import { elements } from "@/data/elements";
 import { process as processStages } from "./homeSnapshotProcess";
 import { elementColor } from "@/lib/elementColor";
 import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
@@ -110,7 +108,6 @@ export function HomeV4Experience() {
       >
         <TatvaStrip />
         <TatvaSystemLab />
-        <ElementsSection elements={elements} />
       </section>
 
       <SceneHandoff motif="river" />
