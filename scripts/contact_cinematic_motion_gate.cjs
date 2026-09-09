@@ -72,7 +72,7 @@ requireText(
   "const SCROLL_RECEIVE_THRESHOLDS = [0.24, 0.34, 0.44, 0.52] as const;",
   "gratitude scroll thresholds no longer finish inside the closing scene's usable range",
 );
-requireText(gratitude, 'useMotionValueEvent(progress, "change"', "gratitude scroll sequence is missing");
+requireText(gratitude, 'useMotionValueEvent(sequenceProgress, "change"', "gratitude scroll sequence is missing");
 requireText(gratitude, "data-contact-gratitude-receipt", "gratitude scroll receipt is no longer visible");
 requireText(gratitude, "lastReceivedNote", "gratitude response no longer follows the received sequence");
 requireText(gratitude, "visitedNotesRef", "gratitude response no longer preserves receipt order");
@@ -80,7 +80,7 @@ requireText(gratitude, "sequenceFocusNote", "gratitude sequence no longer carrie
 requireText(gratitude, "scrollFocusNote", "gratitude focus no longer follows reverse scrolling");
 requireText(gratitude, "REVISIT_ENTER_PROGRESS", "gratitude reverse scroll no longer has a stable re-entry threshold");
 requireText(gratitude, "REVISIT_EXIT_PROGRESS", "gratitude reverse scroll no longer has a stable resting threshold");
-requireText(gratitude, 'useMotionValueEvent(scrollYProgress, "change"', "gratitude reverse playback no longer follows raw scroll direction");
+requireText(gratitude, 'useMotionValueEvent(sequenceScrollProgress, "change"', "gratitude reverse playback no longer follows raw scroll direction");
 requireText(gratitude, "visualActiveNote", "gratitude manual and scroll focus no longer share one visual state");
 requireText(gratitude, "data-contact-gratitude-sequence-focus", "gratitude sequence focus is no longer inspectable");
 requireText(gratitude, 'data-contact-gratitude-scroll-scrub="bidirectional"', "gratitude no longer declares its bidirectional scroll contract");
@@ -99,7 +99,7 @@ requirePattern(
 );
 requirePattern(
   gratitude,
-  /const signalScale = useTransform\(\s*progress,\s*\[0\.1, SCROLL_RECEIVE_THRESHOLDS\[NOTES\.length - 1\]\],\s*\[0, 1\],\s*\);/,
+  /const signalScale = useTransform\(\s*sequenceProgress,\s*\[0\.1, SCROLL_RECEIVE_THRESHOLDS\[NOTES\.length - 1\]\],\s*\[0, 1\],\s*\);/,
   "gratitude progress cue no longer completes with the fourth acknowledgement",
 );
 requirePattern(
@@ -115,7 +115,7 @@ requirePattern(
 );
 requirePattern(
   gratitude,
-  /setIsRevisiting\(\s*!reducedMotion && scrollYProgress\.get\(\) <= REVISIT_ENTER_PROGRESS,\s*\);\s*setCompletionSettled\(true\)/,
+  /setIsRevisiting\(\s*!reducedMotion && sequenceScrollProgress\.get\(\) <= REVISIT_ENTER_PROGRESS,\s*\);\s*setCompletionSettled\(true\)/,
   "gratitude completion no longer preserves an intentional reverse gesture during its final hold",
 );
 requireText(gratitude, "announcedResponse", "gratitude activation announcement is missing");

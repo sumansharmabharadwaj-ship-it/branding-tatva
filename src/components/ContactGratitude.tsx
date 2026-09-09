@@ -194,6 +194,7 @@ function GratitudeNote({
  */
 export function ContactGratitude() {
   const sceneRef = useRef<HTMLDivElement>(null);
+  const ledgerRef = useRef<HTMLDivElement>(null);
   const statementRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLDivElement>(null);
   const noteRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -218,6 +219,19 @@ export function ContactGratitude() {
     damping: 27,
     mass: 0.36,
   });
+  // On phones the notes sit below the copy. Follow their own viewport entry
+  // so receipt and reverse playback happen above the fixed chapter controls.
+  const { scrollYProgress: ledgerScrollProgress } = useScroll({
+    target: ledgerRef,
+    offset: ["start 65%", "end 50%"],
+  });
+  const ledgerProgress = useSpring(ledgerScrollProgress, {
+    stiffness: 108,
+    damping: 27,
+    mass: 0.36,
+  });
+  const sequenceProgress = usesSingleColumn ? progress : ledgerProgress;
+  const sequenceScrollProgress = usesSingleColumn ? scrollYProgress : ledgerScrollProgress;
   // In a stacked layout the section can be taller than the viewport. Reveal
   // reading content as it enters the frame, independent of the scene's height.
   const { scrollYProgress: statementScrollProgress } = useScroll({
@@ -244,7 +258,7 @@ export function ContactGratitude() {
      acknowledgement as the closing landscape opens, while keeping pointer,
      touch and keyboard inspection available. A backwards scroll never erases
      what the visitor has already received. */
-  useMotionValueEvent(progress, "change", (currentProgress) => {
+  useMotionValueEvent(sequenceProgress, "change", (currentProgress) => {
     if (reducedMotion) return;
 
     /* Receipt remains cumulative, but focus follows the visitor in both
@@ -283,7 +297,7 @@ export function ContactGratitude() {
   /* The spring can briefly rebound below the fourth threshold after it has
      completed. Use raw scroll progress and a small hysteresis window to tell
      an intentional upward revisit from that visual rebound. */
-  useMotionValueEvent(scrollYProgress, "change", (currentProgress) => {
+  useMotionValueEvent(sequenceScrollProgress, "change", (currentProgress) => {
     if (reducedMotion || !completionSettled) return;
 
     if (currentProgress <= REVISIT_ENTER_PROGRESS) {
@@ -305,7 +319,7 @@ export function ContactGratitude() {
     ["inset(0 100% 0 0%)", "inset(0 0% 0 0%)"],
   );
   const signalScale = useTransform(
-    progress,
+    sequenceProgress,
     [0.1, SCROLL_RECEIVE_THRESHOLDS[NOTES.length - 1]],
     [0, 1],
   );
@@ -343,7 +357,7 @@ export function ContactGratitude() {
       // Completion belongs to the scroll sequence. A note opened by pointer,
       // touch or keyboard stays readable until the visitor leaves or closes it.
       setIsRevisiting(
-        !reducedMotion && scrollYProgress.get() <= REVISIT_ENTER_PROGRESS,
+        !reducedMotion && sequenceScrollProgress.get() <= REVISIT_ENTER_PROGRESS,
       );
       setCompletionSettled(true);
     };
@@ -353,7 +367,7 @@ export function ContactGratitude() {
       reducedMotion ? 0 : COMPLETION_SETTLE_MS,
     );
     return () => window.clearTimeout(timer);
-  }, [allNotesVisited, completionSettled, reducedMotion, scrollYProgress]);
+  }, [allNotesVisited, completionSettled, reducedMotion, sequenceScrollProgress]);
 
   const handleActiveNoteChange = useCallback((index: number | null) => {
     setActiveNote(index);
@@ -369,11 +383,11 @@ export function ContactGratitude() {
       setAnnouncedResponse(nextSelectedNote === null ? "" : NOTES[index].response);
       setSelectedNote(nextSelectedNote);
       handleActiveNoteChange(nextSelectedNote);
-      if (nextSelectedNote === null && scrollYProgress.get() > REVISIT_ENTER_PROGRESS) {
+      if (nextSelectedNote === null && sequenceScrollProgress.get() > REVISIT_ENTER_PROGRESS) {
         setIsRevisiting(false);
       }
     },
-    [handleActiveNoteChange, scrollYProgress, selectedNote],
+    [handleActiveNoteChange, sequenceScrollProgress, selectedNote],
   );
 
   const handleNoteBlur = useCallback(() => {
@@ -420,7 +434,7 @@ export function ContactGratitude() {
     if (event.key === "Escape" && activeNote !== null) {
       setSelectedNote(null);
       setActiveNote(null);
-      if (scrollYProgress.get() > REVISIT_ENTER_PROGRESS) {
+      if (sequenceScrollProgress.get() > REVISIT_ENTER_PROGRESS) {
         setIsRevisiting(false);
       }
     }
@@ -594,6 +608,7 @@ export function ContactGratitude() {
           </div>
 
           <motion.div
+            ref={ledgerRef}
             data-contact-gratitude-ledger
             className="min-w-0"
             style={reducedMotion ? { y: 0, opacity: 1 } : { y: resolveY, opacity: resolveOpacity }}
@@ -650,7 +665,7 @@ export function ContactGratitude() {
                     key={note.label}
                     note={note}
                     index={index}
-                    progress={progress}
+                    progress={sequenceProgress}
                     activeNote={visualActiveNote}
                     selected={selectedNote === index}
                     visited={(visitedNotes & (1 << index)) !== 0}
