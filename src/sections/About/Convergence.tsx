@@ -6,7 +6,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import { AnimatePresence, motion, useInView, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useInView, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, BookOpenText, Brain } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -77,6 +77,7 @@ const STAGES = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1];
 
 export function Convergence() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -89,10 +90,19 @@ export function Convergence() {
     enabled: inView,
     reducedMotion: prefersReducedMotion,
   });
-  const readProgress = useTransform(visualizer.scrollYProgress, [0, 1 / 3], [0, 1]);
-  const connectProgress = useTransform(visualizer.scrollYProgress, [1 / 3, 2 / 3], [0, 1]);
-  const carryProgress = useTransform(visualizer.scrollYProgress, [2 / 3, 1], [0, 1]);
-  const registerProgress = useTransform(visualizer.scrollYProgress, [0, 1], [0.34, 1]);
+  const pacedScrollProgress = useSpring(visualizer.scrollYProgress, {
+    stiffness: 180,
+    damping: 30,
+    mass: 0.2,
+  });
+  const readProgress = useTransform(pacedScrollProgress, [0, 0.29], [0, 1]);
+  const connectProgress = useTransform(pacedScrollProgress, [0.36, 0.62], [0, 1]);
+  const carryProgress = useTransform(pacedScrollProgress, [0.69, 1], [0, 1]);
+  const registerProgress = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0.34, 0.53, 0.53, 0.76, 0.76, 1],
+  );
   const stageProgress = [readProgress, connectProgress, carryProgress] as const;
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];

@@ -328,6 +328,13 @@ assert(
   "The About editorial indicators no longer move continuously with the physical scroll position.",
 );
 assert(
+  convergence.includes("const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1]") &&
+    convergence.includes("const pacedScrollProgress = useSpring") &&
+    pointOfView.includes("const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1]") &&
+    pointOfView.includes("const pacedScrollProgress = useSpring"),
+  "The About editorial timelines lost their damped movement or deliberate chapter breathing zones.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),

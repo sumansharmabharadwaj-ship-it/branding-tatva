@@ -6,7 +6,7 @@ import {
   useRef,
   type KeyboardEvent,
 } from "react";
-import { AnimatePresence, motion, useInView, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useInView, useSpring, useTransform } from "framer-motion";
 import { ArrowUpRight, Eye, Quote, Repeat2 } from "lucide-react";
 import { Container } from "@/components/Container";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -65,6 +65,7 @@ const STAGES = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1];
 
 export function PointOfView() {
   const storyRef = useRef<HTMLDivElement>(null);
@@ -80,14 +81,31 @@ export function PointOfView() {
   const activeIndex = prefersReducedMotion ? STAGES.length - 1 : sequence.activeIndex;
   const active = STAGES[activeIndex];
   const transitionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
-  const filmY = useTransform(sequence.scrollYProgress, [0, 1], ["1.2%", "-1.2%"]);
-  const filmScale = useTransform(sequence.scrollYProgress, [0, 0.5, 1], [1.02, 1, 0.99]);
-  const ledgerFocusY = useTransform(sequence.scrollYProgress, [0, 1], ["0%", "200%"]);
-  const ledgerCursorX = useTransform(sequence.scrollYProgress, [0, 1], ["28%", "72%"]);
-  const frameShiftProgress = useTransform(sequence.scrollYProgress, [0, 1], [0.34, 1]);
-  const categoryProgress = useTransform(sequence.scrollYProgress, [0, 1 / 3], [0, 1]);
-  const valueProgress = useTransform(sequence.scrollYProgress, [1 / 3, 2 / 3], [0, 1]);
-  const memoryProgress = useTransform(sequence.scrollYProgress, [2 / 3, 1], [0, 1]);
+  const pacedScrollProgress = useSpring(sequence.scrollYProgress, {
+    stiffness: 180,
+    damping: 30,
+    mass: 0.2,
+  });
+  const filmY = useTransform(pacedScrollProgress, [0, 1], ["1.2%", "-1.2%"]);
+  const filmScale = useTransform(pacedScrollProgress, [0, 0.5, 1], [1.02, 1, 0.99]);
+  const ledgerFocusY = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    ["0%", "58%", "58%", "132%", "132%", "200%"],
+  );
+  const ledgerCursorX = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    ["28%", "40%", "40%", "60%", "60%", "72%"],
+  );
+  const frameShiftProgress = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0.34, 0.53, 0.53, 0.76, 0.76, 1],
+  );
+  const categoryProgress = useTransform(pacedScrollProgress, [0, 0.29], [0, 1]);
+  const valueProgress = useTransform(pacedScrollProgress, [0.36, 0.62], [0, 1]);
+  const memoryProgress = useTransform(pacedScrollProgress, [0.69, 1], [0, 1]);
   const stageProgress = [categoryProgress, valueProgress, memoryProgress] as const;
 
   useEffect(() => {
