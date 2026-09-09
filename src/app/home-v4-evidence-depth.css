@@ -293,6 +293,14 @@
   color: color-mix(in srgb, var(--evidence-accent) 35%, #f4efe6);
 }
 
+.evidence-cinematic__file-error {
+  flex-basis: 100%;
+  margin: 0;
+  color: #f4efe6;
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
 .evidence-cinematic__dossier {
   grid-column: 2;
   grid-row: 1;

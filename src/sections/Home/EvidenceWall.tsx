@@ -11,7 +11,21 @@ import {
   projects,
   type Project,
 } from "@/sections/HomeV4/homeSnapshotProjects";
-import { ProjectFile } from "@/sections/Home/ProjectFile";
+
+type ProjectFileModule = typeof import("@/sections/Home/ProjectFile");
+let projectFileDownload: Promise<ProjectFileModule> | null = null;
+
+function loadProjectFile() {
+  projectFileDownload ??= import("@/sections/Home/ProjectFile").catch((error) => {
+    projectFileDownload = null;
+    throw error;
+  });
+  return projectFileDownload;
+}
+
+function prepareProjectFile() {
+  void loadProjectFile().catch(() => {});
+}
 
 const ACTION: Record<string, string> = {
   "dr-haley-nutrition": "Watch the story",
@@ -118,6 +132,10 @@ export function EvidenceWall() {
   const sectionRef = useRef<HTMLElement>(null);
   const activeVideoRef = useRef<HTMLVideoElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const fileRequestRef = useRef(0);
+  const [ProjectFile, setProjectFile] = useState<ProjectFileModule["ProjectFile"] | null>(null);
+  const [openingSlug, setOpeningSlug] = useState<string | null>(null);
+  const [fileError, setFileError] = useState(false);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
@@ -126,6 +144,41 @@ export function EvidenceWall() {
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
 
+  useEffect(() => () => { fileRequestRef.current += 1; }, []);
+
+  function cancelOpening() {
+    fileRequestRef.current += 1;
+    setOpeningSlug(null);
+  }
+
+  function chooseProject(index: number) {
+    cancelOpening();
+    setFileError(false);
+    setActiveIndex(index);
+  }
+
+  async function openProjectFile(slug: string, opener: HTMLButtonElement) {
+    if (openingSlug === slug) {
+      cancelOpening();
+      return;
+    }
+    opener.focus({ preventScroll: true });
+    const request = ++fileRequestRef.current;
+    setOpeningSlug(slug);
+    setFileError(false);
+    try {
+      const loadedFile = await loadProjectFile();
+      if (request !== fileRequestRef.current) return;
+      setProjectFile(() => loadedFile.ProjectFile);
+      setOpeningSlug(null);
+      setOpenSlug(slug);
+    } catch {
+      if (request !== fileRequestRef.current) return;
+      setOpeningSlug(null);
+      setFileError(true);
+    }
+  }
+
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -133,7 +186,7 @@ export function EvidenceWall() {
       : event.key === "End" ? projects.length - 1
       : event.key === "ArrowRight" ? (index + 1) % projects.length
       : (index - 1 + projects.length) % projects.length;
-    setActiveIndex(next);
+    chooseProject(next);
     tabsRef.current[next]?.focus();
   }
 
@@ -226,7 +279,7 @@ export function EvidenceWall() {
                 tabIndex={selected ? 0 : -1}
                 className={selected ? "is-active" : undefined}
                 style={{ "--project-accent": project.accent } as CSSProperties}
-                onClick={() => setActiveIndex(index)}
+                onClick={() => chooseProject(index)}
                 onKeyDown={(event) => onTabKeyDown(event, index)}
               >
                 <span className="evidence-cinematic__index-image" aria-hidden="true">
@@ -312,13 +365,24 @@ export function EvidenceWall() {
             <div className="evidence-cinematic__media-actions">
               <button
                 type="button"
-                onClick={() => setOpenSlug(activeProject.slug)}
+                aria-haspopup="dialog"
+                aria-busy={openingSlug === activeProject.slug}
+                onPointerEnter={prepareProjectFile}
+                onFocus={prepareProjectFile}
+                onBlur={cancelOpening}
+                onClick={(event) => void openProjectFile(activeProject.slug, event.currentTarget)}
               >
-                Inspect the project file <span aria-hidden="true">↗</span>
+                {openingSlug === activeProject.slug ? "Cancel opening" : fileError ? "Retry project file" : "Inspect the project file"}
+                <span aria-hidden="true">↗</span>
               </button>
               <Link href={`/work/${activeProject.slug}`}>
                 {ACTION[activeProject.slug] ?? "View the case"} <span aria-hidden="true">→</span>
               </Link>
+              {fileError && (
+                <p className="evidence-cinematic__file-error" role="status">
+                  Loading failed. Try again or open the full case study.
+                </p>
+              )}
             </div>
           </EvidenceMedia>
           </AnimatePresence>
@@ -360,10 +424,13 @@ export function EvidenceWall() {
         </div>
       </Container>
 
-      <ProjectFile
-        project={projects.find((project) => project.slug === openSlug) ?? null}
-        onClose={() => setOpenSlug(null)}
-      />
+      <p className="sr-only" role="status">{openingSlug ? "Loading project file." : ""}</p>
+      {ProjectFile && (
+        <ProjectFile
+          project={projects.find((project) => project.slug === openSlug) ?? null}
+          onClose={() => setOpenSlug(null)}
+        />
+      )}
     </section>
   );
 }
