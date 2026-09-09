@@ -394,6 +394,12 @@ assert(
     convergence.includes("const signalScale = useTransform") &&
     convergence.includes("const signalY = useTransform") &&
     convergence.includes("const signalOpacity = useTransform") &&
+    convergence.includes("const DEPTH_BEATS = [0, 0.29, 0.36, 0.62, 0.84, 1]") &&
+    (convergence.match(/\n    DEPTH_BEATS,/g) || []).length === 6 &&
+    convergence.includes("[1, 1, 1, 1, 0.14, 0.14]") &&
+    convergence.includes("[0.96, 0.96, 1, 1, 0.94, 0.94]") &&
+    convergence.includes("[8, 8, 0, 0, -10, -10]") &&
+    convergence.includes("[1, 1, 1, 1, 0.12, 0.12]") &&
     convergence.includes("x: psychologyX, opacity: disciplineOpacity") &&
     convergence.includes("x: literatureX, opacity: disciplineOpacity") &&
     convergence.includes("scale: signalScale, y: signalY, opacity: signalOpacity"),

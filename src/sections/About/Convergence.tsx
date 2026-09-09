@@ -79,6 +79,7 @@ const STAGES = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1];
+const DEPTH_BEATS = [0, 0.29, 0.36, 0.62, 0.84, 1];
 const STAGE_CUTS = [0, 0.28, 0.32, 0.35, 0.39, 0.61, 0.65, 0.68, 0.72, 1];
 const VERTICAL_SWAP = {
   enter: (direction: number) => ({ opacity: 0, y: direction * 7 }),
@@ -118,29 +119,33 @@ export function Convergence() {
   );
   const psychologyX = useTransform(
     pacedScrollProgress,
-    SCROLL_BEATS,
+    DEPTH_BEATS,
     ["-1vw", "-1vw", "0vw", "0vw", "2.5vw", "2.5vw"],
   );
   const literatureX = useTransform(
     pacedScrollProgress,
-    SCROLL_BEATS,
+    DEPTH_BEATS,
     ["1vw", "1vw", "0vw", "0vw", "-2.5vw", "-2.5vw"],
   );
   const disciplineOpacity = useTransform(
     pacedScrollProgress,
-    SCROLL_BEATS,
-    [1, 1, 1, 1, 0.28, 0.28],
+    DEPTH_BEATS,
+    [1, 1, 1, 1, 0.14, 0.14],
   );
   const signalScale = useTransform(
     pacedScrollProgress,
-    SCROLL_BEATS,
-    [0.96, 0.96, 1, 1, 0.97, 0.97],
+    DEPTH_BEATS,
+    [0.96, 0.96, 1, 1, 0.94, 0.94],
   );
-  const signalY = useTransform(pacedScrollProgress, SCROLL_BEATS, [8, 8, 0, 0, -6, -6]);
+  const signalY = useTransform(
+    pacedScrollProgress,
+    DEPTH_BEATS,
+    [8, 8, 0, 0, -10, -10],
+  );
   const signalOpacity = useTransform(
     pacedScrollProgress,
-    SCROLL_BEATS,
-    [1, 1, 1, 1, 0.38, 0.38],
+    DEPTH_BEATS,
+    [1, 1, 1, 1, 0.12, 0.12],
   );
   const stageContentOpacity = useTransform(
     pacedScrollProgress,
