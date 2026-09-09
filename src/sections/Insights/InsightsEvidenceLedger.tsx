@@ -60,6 +60,15 @@ const THREAD_COLORS: Record<InsightElement, string> = {
   space: "#D09A89",
 };
 
+function worksheetIntent(layer: EvidenceLayer): InsightsIntentDetail {
+  return {
+    topicSlug: layer.topicSlug,
+    query: "",
+    label: layer.name,
+    origin: "evidence-ledger",
+  };
+}
+
 function WorksheetMarkIcon({
   marked,
   reducedMotion,
@@ -147,6 +156,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     }
 
     const initialIntent = readInsightsIntent();
+    let restoredIntent: InsightsIntentDetail | undefined;
     if (initialIntent?.origin !== "evidence-ledger") {
       priorReaderIntentRef.current = initialIntent;
       clearInsightsEvidenceState();
@@ -163,15 +173,22 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       const latestMarkedLayer = latestMarkedSlug
         ? layers.find((layer) => layer.slug === latestMarkedSlug)
         : undefined;
+      const focusedIndex = layers.findIndex(
+        (layer) => layer.slug === storedEvidence?.focusedSlug,
+      );
+      const focusedLayer = layers[focusedIndex];
+      const suggestedLayer = focusedLayer && markedSlugs?.includes(focusedLayer.slug)
+        ? focusedLayer
+        : latestMarkedLayer;
 
       if (
         storedEvidence &&
+        suggestedLayer &&
         markedSlugs?.length === storedEvidence.markedSlugs.length &&
-        latestMarkedLayer?.topicSlug === initialIntent.topicSlug
+        // Older sessions carried the last mark even after another was reopened.
+        (suggestedLayer.topicSlug === initialIntent.topicSlug ||
+          latestMarkedLayer?.topicSlug === initialIntent.topicSlug)
       ) {
-        const focusedIndex = layers.findIndex(
-          (layer) => layer.slug === storedEvidence.focusedSlug,
-        );
         setMarkedSlugs(markedSlugs);
         setFocusedIndex(
           focusedIndex >= 0
@@ -179,6 +196,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
             : layers.findIndex((layer) => layer.slug === latestMarkedSlug),
         );
         priorReaderIntentRef.current = storedEvidence.priorIntent;
+        restoredIntent = worksheetIntent(suggestedLayer);
       } else {
         clearInsightsEvidenceState();
       }
@@ -189,7 +207,11 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       INSIGHTS_INTENT_CLEARED_EVENT,
       releaseReaderIntent,
     );
-    setReaderIntent(initialIntent);
+    if (restoredIntent && restoredIntent.topicSlug !== initialIntent?.topicSlug) {
+      publishInsightsIntent(restoredIntent);
+    } else {
+      setReaderIntent(restoredIntent ?? initialIntent);
+    }
 
     return () => {
       if (focusFrameRef.current !== null) {
@@ -237,6 +259,16 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         focusedSlug: layers[index].slug,
         priorIntent: priorReaderIntentRef.current,
       });
+      const nextSuggestedLayer = markedSlugs.includes(layers[index].slug)
+        ? layers[index]
+        : latestMarkedLayer;
+      if (
+        nextSuggestedLayer &&
+        (readerIntent?.origin !== "evidence-ledger" ||
+          readerIntent.topicSlug !== nextSuggestedLayer.topicSlug)
+      ) {
+        publishInsightsIntent(worksheetIntent(nextSuggestedLayer));
+      }
     }
   }
 
@@ -322,12 +354,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       ? layers.find((layer) => layer.slug === nextLatestSlug)
       : undefined;
     const nextIntent: InsightsIntentDetail | undefined = nextLatestLayer
-      ? {
-          topicSlug: nextLatestLayer.topicSlug,
-          query: "",
-          label: nextLatestLayer.name,
-          origin: "evidence-ledger",
-        }
+      ? worksheetIntent(nextLatestLayer)
       : priorReaderIntentRef.current;
 
     setMarkedSlugs(nextMarkedSlugs);
