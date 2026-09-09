@@ -88,6 +88,10 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         priorReaderIntentRef.current = nextIntent;
         setMarkedSlugs([]);
         clearInsightsEvidenceState();
+        const nextIndex = layers.findIndex(
+          (layer) => layer.topicSlug === nextIntent.topicSlug,
+        );
+        if (nextIndex >= 0) setFocusedIndex(nextIndex);
       }
       setReaderIntent(nextIntent);
     }
@@ -104,6 +108,10 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     if (initialIntent?.origin !== "evidence-ledger") {
       priorReaderIntentRef.current = initialIntent;
       clearInsightsEvidenceState();
+      const initialIndex = layers.findIndex(
+        (layer) => layer.topicSlug === initialIntent?.topicSlug,
+      );
+      if (initialIndex >= 0) setFocusedIndex(initialIndex);
     } else {
       const storedEvidence = readInsightsEvidenceState();
       const markedSlugs = storedEvidence?.markedSlugs.filter((slug) =>
@@ -150,15 +158,6 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     };
   }, [layers]);
 
-  useEffect(() => {
-    if (!readerIntent || markedCount > 0) return;
-
-    const intentIndex = layers.findIndex(
-      (layer) => layer.topicSlug === readerIntent.topicSlug,
-    );
-    if (intentIndex >= 0) setFocusedIndex(intentIndex);
-  }, [layers, markedCount, readerIntent]);
-
   if (!focusedLayer) return null;
 
   const focusedIsMarked = markedSlugs.includes(focusedLayer.slug);
@@ -183,7 +182,8 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   };
 
   function selectLayer(index: number) {
-    if (index !== focusedIndex) setSelectionDirection(index > focusedIndex ? 1 : -1);
+    if (index === focusedIndex) return;
+    setSelectionDirection(index > focusedIndex ? 1 : -1);
     setFocusedIndex(index);
     if (markedCount > 0) {
       writeInsightsEvidenceState({
@@ -238,6 +238,8 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       clearInsightsIntent();
     }
 
+    // Intent events dispatch synchronously. Keep the open check after restoring
+    // the prior reading path; an effect would override this on the next render.
     setFocusedIndex(index);
   }
 
