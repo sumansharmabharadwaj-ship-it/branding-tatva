@@ -139,5 +139,15 @@ assert(
     refinement.includes(".home-v4-guide__status"),
   "The 200%-zoom homepage guide can still expand across the reading area.",
 );
+assert(
+  refinement.includes("@media (max-width: 820px) and (max-height: 520px)") &&
+    refinement.includes("html body .home-v4 .home-v4-opening__shell") &&
+    refinement.includes("grid-template-rows: auto auto") &&
+    refinement.includes("max-height: none") &&
+    refinement.includes("overflow: visible") &&
+    refinement.includes("font-size: clamp(2.9rem, 10vw, 4rem)") &&
+    refinement.includes('html[data-consent-banner="visible"] body .home-v4 .home-v4-opening__shell'),
+  "The browser-zoom opening must reflow past clipped cinematic spacing.",
+);
 
 console.log("Homepage source gate passed: eleven ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");
