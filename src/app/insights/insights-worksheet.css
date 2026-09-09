@@ -385,9 +385,9 @@ html:has(.insights-worksheet:focus-within) {
 }
 
 @media (max-width: 760px) {
-  .insights-audit-scene--worksheet { min-height: auto; padding-block: 5rem 4rem; }
+  .insights-audit-scene--worksheet { min-height: auto; padding-block: 3.5rem 4rem; }
   .insights-worksheet-intro { grid-template-columns: 1fr; gap: 1rem; padding-block: 1rem 1.4rem; }
-  .insights-worksheet-intro h2 { font-size: clamp(2.5rem, 7vw, 3.5rem); }
+  .insights-worksheet-intro h2 { font-size: clamp(2rem, 7vw, 3.5rem); }
   .insights-worksheet-intro > p { max-width: 48ch; }
   .insights-worksheet { grid-template-columns: 1fr; }
   .insights-worksheet__areas { flex-direction: row; overflow-x: auto; padding: 0.5rem 0; border-right: 0; border-bottom: 1px solid var(--worksheet-rule); scrollbar-width: thin; overscroll-behavior-inline: contain; }
