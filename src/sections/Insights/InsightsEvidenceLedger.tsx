@@ -341,16 +341,23 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       ? `From your reading: ${intentLayer.name}`
       : `0 of ${layers.length} marked for review`;
   const revealVariants = {
+    enter: { opacity: 0 },
+    settled: {
+      opacity: 1,
+      transition: { duration: prefersReducedMotion ? 0 : 0.28 },
+    },
+  };
+  const questionVariants = {
     enter: {
       opacity: 0,
-      x: usesHorizontalRail ? selectionDirection * 16 : 0,
-      y: usesHorizontalRail ? 0 : selectionDirection * 12,
+      x: usesHorizontalRail ? selectionDirection * 24 : 0,
+      y: usesHorizontalRail ? 0 : selectionDirection * 24,
     },
     settled: {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration: prefersReducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] as const },
+      transition: { duration: prefersReducedMotion ? 0 : 0.44, ease: [0.22, 1, 0.36, 1] as const },
     },
   };
 
@@ -639,14 +646,16 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               key={`${layer.slug}-${selected ? "active" : "idle"}`}
               initial={prefersReducedMotion || !selected ? false : "enter"}
               animate="settled"
-              variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.045 } } }}
+              variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.065 } } }}
               className="insights-worksheet__answer"
             >
               <motion.div variants={revealVariants} className="insights-worksheet__panel-label">
                 <ElementGlyph slug={layer.element} className="h-5 w-5" strokeWidth={1.35} />
                 <span>Check 0{index + 1} / {layer.name}</span>
               </motion.div>
-              <motion.h3 variants={revealVariants}>{layer.question}</motion.h3>
+              <div className="insights-worksheet__question-window">
+                <motion.h3 variants={questionVariants}>{layer.question}</motion.h3>
+              </div>
               <motion.p variants={revealVariants} className="insights-worksheet__signal">{layer.signal}</motion.p>
               <div className="insights-worksheet__evidence">
                 <motion.div variants={revealVariants}>
