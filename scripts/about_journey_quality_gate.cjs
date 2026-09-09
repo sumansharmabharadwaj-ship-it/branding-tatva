@@ -585,8 +585,10 @@ assert(
 assert(
   convergenceStyles.includes(".signalCore") &&
     convergenceStyles.includes("pointer-events: none;") &&
-    convergenceStyles.includes('.thread[data-thread="2"] button { translate:') &&
-    convergenceStyles.includes('.thread[data-thread="3"] button { translate:'),
+    convergence.includes("const leftPairX = useTransform") &&
+    convergence.includes("const rightPairX = useTransform") &&
+    convergence.includes("index === 1") &&
+    convergence.includes("index === 2"),
   "The centre seal can block the interactive Synthesis pairings.",
 );
 assert(
@@ -599,6 +601,17 @@ assert(
     convergence.includes("One position the whole brand can carry.") &&
     convergence.includes("A sharper decision your team can use."),
   "The synthesis chapter lost its editorial decision register, deliberate scroll runway, or explicit hiring payoff.",
+);
+assert(
+  convergence.includes("const threadLineScale = useTransform") &&
+    convergence.includes("const topThreadY = useTransform") &&
+    convergence.includes("const bottomThreadY = useTransform") &&
+    convergence.includes("scaleX: threadLineScale") &&
+    convergence.includes("y: topThreadY") &&
+    convergence.includes("y: bottomThreadY") &&
+    !convergenceStyles.includes('.section[data-convergence-stage="02"] .thread span') &&
+    !convergenceStyles.includes('.tabs button[data-active="true"] i'),
+  "The convergence pairings can fall back to separate staged CSS movements instead of following the shared scroll timeline.",
 );
 
 assert(

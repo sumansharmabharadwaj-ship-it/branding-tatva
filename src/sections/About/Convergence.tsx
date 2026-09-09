@@ -163,6 +163,31 @@ export function Convergence() {
       "inset(0 42% 0 42%)",
     ],
   );
+  const threadLineScale = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0.22, 0.22, 1, 1, 0.58, 0.58],
+  );
+  const topThreadY = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0, 0, 19, 19, 0, 0],
+  );
+  const bottomThreadY = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0, 0, -19, -19, 0, 0],
+  );
+  const leftPairX = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0, 0, -88, -88, 0, 0],
+  );
+  const rightPairX = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0, 0, 88, 88, 0, 0],
+  );
   const outcomeOpacity = useTransform(pacedScrollProgress, [0.69, 0.8], [0, 1]);
   const outcomeY = useTransform(pacedScrollProgress, [0.69, 0.8], [10, 0]);
   const outputsOpacity = useTransform(pacedScrollProgress, [0.76, 0.92], [0, 1]);
@@ -281,22 +306,50 @@ export function Convergence() {
               }
             >
               {PAIRINGS.map((pair, index) => (
-                <div className={styles.thread} key={pair.result} data-thread={index + 1}>
-                  <span />
-                  <button
+                <motion.div
+                  className={styles.thread}
+                  key={pair.result}
+                  data-thread={index + 1}
+                  style={
+                    prefersReducedMotion
+                      ? undefined
+                      : index === 0
+                        ? { y: topThreadY }
+                        : index === PAIRINGS.length - 1
+                          ? { y: bottomThreadY }
+                          : undefined
+                  }
+                >
+                  <motion.span
+                    style={prefersReducedMotion ? undefined : { scaleX: threadLineScale }}
+                  />
+                  <motion.button
                     type="button"
                     aria-label={`${pair.human} and ${pair.language} shape ${pair.result}`}
                     aria-pressed={inspectedPair === index}
                     tabIndex={stage === 1 ? 0 : -1}
+                    style={
+                      prefersReducedMotion
+                        ? undefined
+                        : index === 1
+                          ? { x: leftPairX }
+                          : index === 2
+                            ? { x: rightPairX }
+                            : undefined
+                    }
+                    whileHover={prefersReducedMotion ? undefined : { scale: 1.025 }}
+                    whileFocus={prefersReducedMotion ? undefined : { scale: 1.025 }}
                     onClick={() => setInspectedPair(index)}
                     onPointerEnter={() => setInspectedPair(index)}
                     onFocus={() => setInspectedPair(index)}
                   >
                     <small>{pair.human} + {pair.language}</small>
                     <strong>{pair.result}</strong>
-                  </button>
-                  <span />
-                </div>
+                  </motion.button>
+                  <motion.span
+                    style={prefersReducedMotion ? undefined : { scaleX: threadLineScale }}
+                  />
+                </motion.div>
               ))}
             </motion.div>
 

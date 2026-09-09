@@ -212,14 +212,15 @@
   align-items: center;
   gap: 0.7rem;
   opacity: 0.18;
-  transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1), transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 280ms ease;
+  will-change: transform, opacity;
 }
 
 .thread[data-thread="1"] { top: 5%; }
 .thread[data-thread="2"] { top: 32%; }
 .thread[data-thread="3"] { top: 59%; }
 .thread[data-thread="4"] { top: 86%; }
-.thread span { height: 1px; background: linear-gradient(90deg, transparent, rgba(150, 91, 67, 0.48)); transform: scaleX(0.22); transition: transform 680ms cubic-bezier(0.22, 1, 0.36, 1); }
+.thread span { height: 1px; background: linear-gradient(90deg, transparent, rgba(150, 91, 67, 0.48)); transform: scaleX(1); will-change: transform; }
 .thread span:last-child { background: linear-gradient(90deg, rgba(101, 120, 95, 0.52), transparent); transform-origin: left; }
 .thread span:first-child { transform-origin: right; }
 .thread button {
@@ -235,7 +236,8 @@
   color: rgba(43, 41, 36, 0.7);
   cursor: pointer;
   text-align: center;
-  transition: color 280ms ease, border-color 280ms ease, background-color 280ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1), translate 520ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color 280ms ease, border-color 280ms ease, background-color 280ms ease;
+  will-change: transform;
 }
 
 .thread button small {
@@ -258,18 +260,10 @@
   border-color: rgba(150, 91, 67, 0.36);
   background: rgba(248, 243, 233, 0.96);
   color: #2b2924;
-  transform: scale(1.04);
 }
 
 .thread button:focus-visible { outline: 2px solid #965b43; outline-offset: 2px; }
 
-.section[data-convergence-stage="02"] .thread { opacity: 1; }
-.section[data-convergence-stage="02"] .thread span { transform: scaleX(1); }
-.section[data-convergence-stage="02"] .thread[data-thread="1"] { transform: translateY(1.2rem); }
-.section[data-convergence-stage="02"] .thread[data-thread="4"] { transform: translateY(-1.2rem); }
-.section[data-convergence-stage="02"] .thread[data-thread="2"] button { translate: calc(-1 * clamp(4.75rem, 7vw, 6.5rem)) 0; }
-.section[data-convergence-stage="02"] .thread[data-thread="3"] button { translate: clamp(4.75rem, 7vw, 6.5rem) 0; }
-.section[data-convergence-stage="03"] .thread { opacity: 0.16; transform: scaleX(0.58); }
 .section[data-convergence-stage="01"] .thread button,
 .section[data-convergence-stage="03"] .thread button { pointer-events: none; }
 
@@ -343,7 +337,7 @@
   font-size: clamp(1.05rem, 1.7vw, 1.5rem);
   font-weight: 400;
   line-height: 1;
-  transition: color 420ms ease, transform 580ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color 420ms ease;
 }
 
 .registerTerms strong:last-child { color: #5f6c58; text-align: right; }
@@ -374,14 +368,11 @@
   background: #965b43;
   transform: scaleX(0.34);
   transform-origin: left;
-  transition: transform 680ms cubic-bezier(0.22, 1, 0.36, 1), background-color 420ms ease;
+  transition: background-color 420ms ease;
   will-change: transform;
 }
 
-.signalCore[data-register-stage="02"] .registerMeasure span { transform: scaleX(0.66); }
-.signalCore[data-register-stage="03"] .registerMeasure span { background: #65725d; transform: scaleX(1); }
-.signalCore[data-register-stage="02"] .registerTerms strong:first-child { transform: translateX(0.2rem); }
-.signalCore[data-register-stage="02"] .registerTerms strong:last-child { transform: translateX(-0.2rem); }
+.signalCore[data-register-stage="03"] .registerMeasure span { background: #65725d; }
 
 .registerResult { display: flex; padding-top: 0.75rem; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
 .registerResult small { color: rgba(43, 41, 36, 0.56); font-size: 0.7rem; }
@@ -459,8 +450,7 @@
 .tabs button[data-active="true"] { border-color: #965b43; color: #2b2924; }
 .tabs button span { margin-right: 0.65rem; color: #965b43; font-size: 0.58rem; letter-spacing: 0.14em; }
 .tabs button strong { font-family: var(--font-display), Georgia, serif; font-size: 0.98rem; font-weight: 400; }
-.tabs button i { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: #965b43; transform: scaleX(0); transform-origin: left; transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
-.tabs button[data-active="true"] i { transform: scaleX(1); }
+.tabs button i { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: #965b43; transform: scaleX(0); transform-origin: left; will-change: transform; }
 .footer > a { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.8rem 0; color: #80503c; font-size: 0.7rem; font-weight: 650; white-space: nowrap; }
 .mobileSynthesis { display: none; }
 
