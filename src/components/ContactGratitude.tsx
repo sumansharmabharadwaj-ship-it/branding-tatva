@@ -21,6 +21,7 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/Container";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { EASE_AIR } from "@/lib/motion";
 
 type GratitudeNote = {
@@ -199,6 +200,7 @@ export function ContactGratitude() {
   const [announcedResponse, setAnnouncedResponse] = useState("");
   const [completionSettled, setCompletionSettled] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
+  const usesSingleColumn = useMediaQuery("(min-width: 1024px)");
   const { scrollYProgress } = useScroll({
     target: sceneRef,
     offset: ["start end", "end start"],
@@ -315,22 +317,31 @@ export function ContactGratitude() {
     setActiveNote(selectedNote);
   }, [selectedNote]);
 
-  const handleNoteNavigate = useCallback((index: number, key: string) => {
-    const lastIndex = NOTES.length - 1;
-    let nextIndex = index;
+  const handleNoteNavigate = useCallback(
+    (index: number, key: string) => {
+      // Match the two-column phone/tablet grid and the desktop list. Moving
+      // vertically keeps the same column instead of stepping sideways.
+      const verticalStep = usesSingleColumn ? 1 : 2;
+      let nextIndex = index;
 
-    if (key === "ArrowDown" || key === "ArrowRight") {
-      nextIndex = (index + 1) % NOTES.length;
-    } else if (key === "ArrowUp" || key === "ArrowLeft") {
-      nextIndex = (index - 1 + NOTES.length) % NOTES.length;
-    } else if (key === "Home") {
-      nextIndex = 0;
-    } else if (key === "End") {
-      nextIndex = lastIndex;
-    }
+      if (key === "ArrowDown") {
+        nextIndex = (index + verticalStep) % NOTES.length;
+      } else if (key === "ArrowUp") {
+        nextIndex = (index - verticalStep + NOTES.length) % NOTES.length;
+      } else if (key === "ArrowRight") {
+        nextIndex = (index + 1) % NOTES.length;
+      } else if (key === "ArrowLeft") {
+        nextIndex = (index - 1 + NOTES.length) % NOTES.length;
+      } else if (key === "Home") {
+        nextIndex = 0;
+      } else if (key === "End") {
+        nextIndex = NOTES.length - 1;
+      }
 
-    noteRefs.current[nextIndex]?.focus();
-  }, []);
+      noteRefs.current[nextIndex]?.focus();
+    },
+    [usesSingleColumn],
+  );
 
   function handleSceneClick(event: MouseEvent<HTMLDivElement>) {
     // A scroll gesture starts with pointerdown too. Dismiss only after a
@@ -515,13 +526,20 @@ export function ContactGratitude() {
               data-contact-gratitude-flow="continuous"
               data-contact-gratitude-receipt="scroll-or-activation"
               onPointerLeave={(event) => {
-                const focusedInside =
-                  document.activeElement instanceof Node &&
-                  event.currentTarget.contains(document.activeElement);
+                if (event.pointerType !== "mouse") return;
 
-                if (event.pointerType === "mouse" && !focusedInside) {
-                  setActiveNote(selectedNote);
-                }
+                const focusedIndex = noteRefs.current.findIndex(
+                  (note) => note === document.activeElement,
+                );
+                // A hover preview should hand back to the focused or held
+                // note. Keep an acknowledgement closed after Escape.
+                setActiveNote((current) =>
+                  current === null
+                    ? null
+                    : focusedIndex >= 0
+                      ? focusedIndex
+                      : selectedNote,
+                );
               }}
               className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-[1.35rem] border border-white/16 bg-white/12 backdrop-blur-xl sm:mt-5 lg:block lg:overflow-visible lg:rounded-none lg:border-0 lg:bg-transparent lg:backdrop-blur-none"
             >
