@@ -165,10 +165,10 @@ body:has(.home-v4) .consent-notice[data-consent-compact="true"] .consent-notice_
   }
 
   html body .home-v4 .home-v4-opening h1 {
-    max-width: 11ch;
+    max-width: 13ch;
     margin-top: 0;
-    font-size: clamp(2.9rem, 10vw, 4rem);
-    line-height: 0.92;
+    font-size: clamp(2.5rem, 8vw, 3.25rem);
+    line-height: 0.94;
   }
 
   html body .home-v4 .home-v4-opening__lede {
@@ -182,7 +182,38 @@ body:has(.home-v4) .consent-notice[data-consent-compact="true"] .consent-notice_
   }
 
   html[data-consent-banner="visible"] body .home-v4 .home-v4-opening__shell {
-    padding-bottom: max(5rem, env(safe-area-inset-bottom, 0px));
+    padding-bottom: max(4rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  /* At browser zoom the full first-visit notice covers the reading area. Use
+     its existing shield-only state while retaining the labelled choice button. */
+  body:has(.home-v4) .consent-notice {
+    width: 3rem !important;
+    left: auto !important;
+    padding: 0.2rem !important;
+  }
+
+  body:has(.home-v4) .consent-notice__message {
+    max-width: 0;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  body:has(.home-v4) .consent-notice__action {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    padding-inline: 0;
+  }
+
+  body:has(.home-v4) .consent-notice__action-label {
+    max-width: 0 !important;
+    opacity: 0 !important;
+    transform: translateX(0.45rem) !important;
+  }
+
+  body:has(.home-v4) .consent-notice__action-icon {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg) !important;
   }
 
   html body .home-v4 .home-v4-opening__scroll {

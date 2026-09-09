@@ -145,8 +145,9 @@ assert(
     refinement.includes("grid-template-rows: auto auto") &&
     refinement.includes("max-height: none") &&
     refinement.includes("overflow: visible") &&
-    refinement.includes("font-size: clamp(2.9rem, 10vw, 4rem)") &&
-    refinement.includes('html[data-consent-banner="visible"] body .home-v4 .home-v4-opening__shell'),
+    refinement.includes("font-size: clamp(2.5rem, 8vw, 3.25rem)") &&
+    refinement.includes('html[data-consent-banner="visible"] body .home-v4 .home-v4-opening__shell') &&
+    refinement.includes(".consent-notice__action-icon"),
   "The browser-zoom opening must reflow past clipped cinematic spacing.",
 );
 
