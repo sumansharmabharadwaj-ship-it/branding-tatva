@@ -514,6 +514,8 @@ export function ContactGratitude() {
     if (target instanceof Element && !target.closest("[data-contact-gratitude-note]")) {
       setSelectedNote(null);
       setActiveNote(null);
+      // Clear the live region so reopening this same note can announce it again.
+      setAnnouncedResponse("");
     }
   }
 
@@ -521,6 +523,7 @@ export function ContactGratitude() {
     if (event.key === "Escape" && activeNote !== null) {
       setSelectedNote(null);
       setActiveNote(null);
+      setAnnouncedResponse("");
       if (sequenceScrollProgress.get() > REVISIT_ENTER_PROGRESS) {
         setIsRevisiting(false);
       }
