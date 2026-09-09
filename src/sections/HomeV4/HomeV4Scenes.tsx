@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useInView, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import recognitionStyles from "./RecognitionChoices.module.css";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -278,32 +279,30 @@ export function V4OpeningScene() {
 
 export function V4RecognitionScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const holdUntilRef = useRef(0);
+  const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const inView = useInView(sectionRef, { amount: 0.34 });
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectionDirection, setSelectionDirection] = useState<"forward" | "backward">("forward");
   const active = RECOGNITION_STATES[activeIndex];
-
-  useEffect(() => {
-    if (!inView || prefersReducedMotion) return;
-    const autoplay = window.matchMedia("(min-width: 821px) and (hover: hover) and (pointer: fine)");
-    if (!autoplay.matches) return;
-
-    const timer = window.setInterval(() => {
-      if (document.hidden || Date.now() < holdUntilRef.current) return;
-      setSelectionDirection("forward");
-      setActiveIndex((current) => (current + 1) % RECOGNITION_STATES.length);
-    }, 4300);
-
-    return () => window.clearInterval(timer);
-  }, [inView, prefersReducedMotion]);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const reflectionX = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
 
   function choose(index: number) {
-    holdUntilRef.current = Date.now() + 11000;
     if (index === activeIndex) return;
     setSelectionDirection(index > activeIndex ? "forward" : "backward");
     setActiveIndex(index);
+  }
+
+  function handleChoiceKey(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowDown") next = (index + 1) % RECOGNITION_STATES.length;
+    else if (event.key === "ArrowUp") next = (index + RECOGNITION_STATES.length - 1) % RECOGNITION_STATES.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = RECOGNITION_STATES.length - 1;
+    else return;
+    event.preventDefault();
+    choose(next);
+    choiceRefs.current[next]?.focus();
   }
 
   return (
@@ -317,12 +316,6 @@ export function V4RecognitionScene() {
       className="home-v4-recognition"
       aria-labelledby="home-v4-recognition-title"
       style={{ "--recognition-accent": active.accent } as React.CSSProperties}
-      onPointerDown={() => {
-        holdUntilRef.current = Date.now() + 11000;
-      }}
-      onFocusCapture={() => {
-        holdUntilRef.current = Date.now() + 11000;
-      }}
     >
       <div className="home-v4-recognition__media" aria-hidden="true">
         <video
@@ -342,13 +335,7 @@ export function V4RecognitionScene() {
       <motion.div
         className="home-v4-recognition__reflection"
         aria-hidden="true"
-        initial={prefersReducedMotion ? false : { x: "-8%", opacity: 0.18 }}
-        animate={
-          prefersReducedMotion || !inView
-            ? undefined
-            : { x: "8%", opacity: 0.42 }
-        }
-        transition={{ duration: 7.5, ease: "easeInOut" }}
+        style={{ x: prefersReducedMotion ? 0 : reflectionX, opacity: 0.3 }}
       />
 
       <div className="home-v4-recognition__shell">
@@ -359,98 +346,59 @@ export function V4RecognitionScene() {
               Most inconsistency begins <em>before the design file.</em>
             </h2>
           </div>
-          <span>
-            Three familiar symptoms. One strategic decision underneath.
-          </span>
+          <span>Choose the situation that feels familiar.</span>
         </header>
 
-        <div className="home-v4-recognition__stage">
-          <div
-            className={`home-v4-recognition__copy${inView ? " is-active" : ""}`}
-            aria-live="polite"
-          >
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div
-                key={active.number}
-                initial={
-                  prefersReducedMotion
-                    ? false
-                    : { opacity: 0, x: selectionDirection === "forward" ? 22 : -22 }
-                }
-                animate={{ opacity: 1, x: 0 }}
-                exit={
-                  prefersReducedMotion
-                    ? undefined
-                    : { opacity: 0, x: selectionDirection === "forward" ? -16 : 16 }
-                }
-                transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+        <div className={recognitionStyles.stage}>
+          <div className={recognitionStyles.choices} role="tablist" aria-label="Your brand situation" aria-orientation="vertical">
+            {RECOGNITION_STATES.map((state, index) => (
+              <button
+                key={state.number}
+                ref={(node) => { choiceRefs.current[index] = node; }}
+                type="button"
+                role="tab"
+                id={`recognition-choice-${state.number}`}
+                aria-selected={index === activeIndex}
+                aria-controls="recognition-reading"
+                tabIndex={index === activeIndex ? 0 : -1}
+                onClick={() => choose(index)}
+                onKeyDown={(event) => handleChoiceKey(event, index)}
+                className={recognitionStyles.choice}
+                data-cursor-label="choose"
               >
-                <p className="home-v4-recognition__label">{active.label}</p>
-                <h3>{active.headline}</h3>
-                <p className="home-v4-recognition__body">{active.body}</p>
-                <div className="home-v4-recognition__answer">
-                  <span>The useful move</span>
-                  <strong>{active.path}</strong>
-                  <p>{active.proof}</p>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <Link href="#cost" className="home-v4-text-link" data-magnetic data-cursor-label="follow">
-              See what inconsistency is costing <span aria-hidden="true">↘</span>
-            </Link>
+                <span className={recognitionStyles.number} aria-hidden="true">{state.number}</span>
+                <span className={recognitionStyles.choiceLabel}>{state.label}</span>
+                <ArrowDownRight className={recognitionStyles.choiceArrow} size={20} aria-hidden="true" />
+              </button>
+            ))}
           </div>
 
           <div
-            className="home-v4-recognition__diagram"
-            role="group"
-            aria-label="Three brand conditions converging on one strategic decision"
+            id="recognition-reading"
+            role="tabpanel"
+            aria-labelledby={`recognition-choice-${active.number}`}
+            tabIndex={0}
+            className={recognitionStyles.panel}
           >
-            <svg viewBox="0 0 620 520" aria-hidden="true" focusable="false">
-              {[
-                "M92 92 C182 110 224 182 310 258",
-                "M528 92 C438 118 396 184 310 258",
-                "M310 474 C310 390 310 330 310 258",
-              ].map((path, index) => (
-                <path
-                  key={path}
-                  d={path}
-                  fill="none"
-                  stroke={index === activeIndex ? RECOGNITION_STATES[index].accent : "rgba(244,239,230,.18)"}
-                  strokeWidth={index === activeIndex ? 1.8 : 1}
-                  opacity={index === activeIndex ? 0.9 : 0.5}
-                  vectorEffect="non-scaling-stroke"
-                />
-              ))}
-            </svg>
+            <motion.div
+              key={active.number}
+              initial={prefersReducedMotion ? false : { x: selectionDirection === "forward" ? 10 : -10 }}
+              animate={{ x: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
+            >
+              <p className={recognitionStyles.label}>What this means</p>
+              <h3>{active.headline}</h3>
+              <p className={recognitionStyles.body}>{active.body}</p>
+              <div className={recognitionStyles.answer}>
+                <span>The useful move</span>
+                <strong>{active.path}</strong>
+                <p>{active.proof}</p>
+              </div>
+            </motion.div>
 
-            <div className="home-v4-recognition__core">
-              <span>one decision</span>
-              <strong>{active.path.split(" ")[0]}</strong>
-            </div>
-
-            {RECOGNITION_STATES.map((state, index) => {
-              const positions = [
-                { left: "15%", top: "18%" },
-                { left: "85%", top: "18%" },
-                { left: "50%", top: "88%" },
-              ];
-              return (
-                <button
-                  key={state.number}
-                  type="button"
-                  aria-pressed={index === activeIndex}
-                  onClick={() => choose(index)}
-                  style={positions[index]}
-                  className={index === activeIndex ? "is-active" : undefined}
-                  data-cursor-label={state.number}
-                >
-                  <span>{state.number}</span>
-                  <strong>{state.label}</strong>
-                  <i aria-hidden="true" />
-                </button>
-              );
-            })}
+            <Link href="#cost" className={recognitionStyles.link} data-magnetic data-cursor-label="follow">
+              See what inconsistency is costing <ArrowDownRight size={18} aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </div>
