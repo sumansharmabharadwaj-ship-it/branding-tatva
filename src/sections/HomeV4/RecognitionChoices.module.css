@@ -36,13 +36,13 @@
 .choice[aria-selected="true"] .choiceArrow { opacity: 1; }
 
 .panel { min-width: 0; min-height: 25rem; padding-left: clamp(1.5rem, 3vw, 3rem); border-left: 1px solid rgb(244 239 230 / 18%); }
-.label, .answer > span { margin: 0; color: #d4b99a; font-size: .7rem; line-height: 1.5; letter-spacing: .12em; text-transform: uppercase; }
+.label, .answer > span { margin: 0; color: #d4b99a; font-size: .875rem; line-height: 1.5; letter-spacing: .1em; text-transform: uppercase; }
 .panel h3 { max-width: 22ch; margin: .75rem 0 0; color: #f4efe6; font: 400 clamp(2rem, 3.1vw, 3.1rem)/1.04 var(--font-display), Georgia, serif; letter-spacing: -.025em; text-wrap: balance; }
-.body { max-width: 50ch; margin: 1rem 0 0; color: #c8cec5; font-size: .96rem; line-height: 1.65; }
+.body { max-width: 50ch; margin: 1rem 0 0; color: #c8cec5; font-size: 1rem; line-height: 1.65; }
 .answer { margin-top: 1.3rem; padding: .9rem 1rem; border-left: 2px solid var(--recognition-accent); background: rgb(244 239 230 / 4%); }
 .answer strong { display: block; margin-top: .35rem; color: #e4c7a6; font: 400 1.65rem/1.2 var(--font-display), Georgia, serif; }
-.answer p { margin: .4rem 0 0; color: #c8cec5; font-size: .85rem; line-height: 1.5; }
-.link { display: inline-flex; align-items: center; gap: .7rem; min-height: 2.75rem; margin-top: .7rem; color: #f4efe6; font-size: .85rem; line-height: 1.45; text-decoration: underline; text-decoration-color: rgb(244 239 230 / 35%); text-underline-offset: .3em; }
+.answer p { margin: .4rem 0 0; color: #c8cec5; font-size: 1rem; line-height: 1.5; }
+.link { display: inline-flex; align-items: center; gap: .7rem; min-height: 2.75rem; margin-top: .7rem; color: #f4efe6; font-size: .875rem; line-height: 1.45; text-decoration: underline; text-decoration-color: rgb(244 239 230 / 35%); text-underline-offset: .3em; }
 .link svg { flex-shrink: 0; }
 .link:hover { color: #e4c7a6; text-decoration-color: currentColor; }
 .choice:focus-visible, .panel:focus-visible, .link:focus-visible { outline: 2px solid #f4efe6; outline-offset: 4px; }
@@ -52,7 +52,7 @@
   .choice { min-height: 4.4rem; padding-block: .8rem; }
   .panel { min-height: 22rem; }
   .panel h3 { font-size: clamp(2rem, 2.8vw, 2.65rem); }
-  .body { margin-top: .75rem; font-size: .9rem; line-height: 1.5; }
+  .body { margin-top: .75rem; line-height: 1.5; }
   .answer { margin-top: 1rem; padding-block: .75rem; }
 }
 

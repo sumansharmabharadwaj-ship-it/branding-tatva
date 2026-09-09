@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useRef, useState } from "react";
+import { publishServicesSituation } from "@/lib/servicesJourney";
 import recognitionStyles from "./RecognitionChoices.module.css";
 import costStyles from "./HiddenCost.module.css";
 import openingStyles from "./OpeningScene.module.css";
@@ -15,6 +16,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const RECOGNITION_STATES = [
   {
     number: "01",
+    situation: "idea",
     label: "The idea is clear in your head.",
     headline: "The market keeps meeting a different version.",
     body:
@@ -25,6 +27,7 @@ const RECOGNITION_STATES = [
   },
   {
     number: "02",
+    situation: "reposition",
     label: "The identity already exists.",
     headline: "The business has quietly outgrown it.",
     body:
@@ -35,6 +38,7 @@ const RECOGNITION_STATES = [
   },
   {
     number: "03",
+    situation: "ongoing",
     label: "Marketing is active.",
     headline: "Memory is starting from zero each time.",
     body:
@@ -209,6 +213,7 @@ export function V4RecognitionScene() {
   const reflectionX = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
 
   function choose(index: number) {
+    publishServicesSituation(RECOGNITION_STATES[index].situation, "home_recognition");
     if (index === activeIndex) return;
     setSelectionDirection(index > activeIndex ? "forward" : "backward");
     setActiveIndex(index);
@@ -317,7 +322,13 @@ export function V4RecognitionScene() {
               </div>
             </motion.div>
 
-            <Link href="#cost" className={recognitionStyles.link} data-magnetic data-cursor-label="follow">
+            <Link
+              href="#cost"
+              onClick={() => publishServicesSituation(active.situation, "home_recognition")}
+              className={recognitionStyles.link}
+              data-magnetic
+              data-cursor-label="follow"
+            >
               See what inconsistency is costing <ArrowDownRight size={18} aria-hidden="true" />
             </Link>
           </div>

@@ -11,8 +11,11 @@ import {
   isServicesSituation,
   publishServicesSituation,
   readCompletedHomeDiagnosis,
+  SERVICES_SITUATION_CLEARED_EVENT,
+  SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
+  type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 import styles from "./HomePaths.module.css";
@@ -64,14 +67,38 @@ export function PathsCinematicChapter() {
   const offering = packages.find((item) => item.slug === packageSlug)!;
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
-      const saved = isServicesSituation(stored) ? stored : readCompletedHomeDiagnosis();
+    function restore(saved: ServicesSituationId | null) {
       const index = PATHS.findIndex((path) => path.situation === saved);
-      if (index >= 0) setActiveIndex(index);
-    } catch {
-      // Browsing and choosing a path also work without browser storage.
+      selectionDirectionRef.current = 0;
+      setActiveIndex(index >= 0 ? index : 0);
     }
+    function sync() {
+      try {
+        const stored = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+        restore(isServicesSituation(stored) ? stored : readCompletedHomeDiagnosis());
+      } catch {
+        // In-page choices still arrive through events when storage is unavailable.
+      }
+    }
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      if (detail?.origin === "home_paths") return;
+      if (isServicesSituation(detail?.situation ?? null)) restore(detail.situation);
+    }
+    function onStorage(event: StorageEvent) {
+      if (event.key === SERVICES_SITUATION_STORAGE_KEY || event.key === null) sync();
+    }
+    function clear() { restore(null); }
+
+    sync();
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, clear);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, clear);
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
 
   function choose(index: number) {
