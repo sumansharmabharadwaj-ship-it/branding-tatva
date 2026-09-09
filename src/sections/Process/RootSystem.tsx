@@ -117,7 +117,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         <article id="project-stage-panel" role="tabpanel" aria-labelledby={`project-stage-tab-${active}`} tabIndex={0} className={styles.panel}>
           <div className={styles.media} aria-hidden="true">
             <motion.div className={styles.imagePlane} style={prefersReducedMotion ? undefined : { y: imageY, scale: imageScale }}>
-              {stage.poster && <Image src={stage.poster} alt="" fill sizes="(max-width: 680px) 100vw, 46vw" className={styles.image} />}
+              {stage.poster && <Image src={stage.poster} alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />}
             </motion.div>
             <div className={styles.imageShade} />
             <p className={styles.imageCaption}><span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>{stage.stage}</p>
