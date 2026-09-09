@@ -138,6 +138,9 @@ requireText(gratitude, "data-contact-gratitude-next-ready", "gratitude completio
 requireText(gratitude, "data-contact-gratitude-primary", "gratitude primary route is no longer addressable");
 requireText(gratitude, "data-contact-gratitude-progress-beat", "gratitude progress count no longer carries direction between acknowledgements");
 requireText(gratitude, '<AnimatePresence initial={false} mode="wait">', "gratitude progress count no longer resolves one beat before the next");
+requireText(gratitude, 'data-contact-gratitude-response-direction="vertical"', "gratitude response no longer follows the vertical reading path");
+requireText(gratitude, "data-contact-gratitude-response-beat", "gratitude response no longer carries a directional masked handoff");
+requireText(gratitude, "data-contact-gratitude-ledger-status-beat", "gratitude completion status no longer settles as a finite beat");
 requireText(gratitude, 'event.key === "ArrowDown"', "gratitude arrow-key choreography is missing");
 requireText(gratitude, "selectedNote", "gratitude click and touch selection no longer persists");
 requirePattern(
@@ -167,6 +170,8 @@ const cssContracts = [
   ["[data-contact-gratitude-scroll-spine]", "gratitude scroll spine no longer has reduced-motion protection"],
   ["[data-contact-gratitude-note-label]", "gratitude label motion and reduced-motion protection are missing"],
   ["[data-contact-gratitude-reading-head]", "gratitude reading head styling or reduced-motion protection is missing"],
+  ["[data-contact-gratitude-response-beat]", "gratitude response beat lacks reduced-motion protection"],
+  ["[data-contact-gratitude-ledger-status-beat]", "gratitude completion status lacks reduced-motion protection"],
   ["[data-contact-gratitude-progress-beat]", "gratitude progress beat lacks reduced-motion protection"],
   ['html[data-motion="reduced"]', "explicit reduced-motion styling is missing"],
   ["@media (prefers-reduced-motion: reduce)", "system reduced-motion styling is missing"],

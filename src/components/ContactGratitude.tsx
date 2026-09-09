@@ -714,18 +714,25 @@ export function ContactGratitude() {
                   A useful first conversation begins here.
                 </p>
               </div>
-              <motion.span
+              <span
                 aria-hidden="true"
                 data-contact-gratitude-ledger-status
-                className="hidden pb-1 text-right text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-ivory/90 sm:block"
-                initial={false}
-                animate={{
-                  y: completionSettled ? 0 : 2,
-                }}
-                transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE_AIR }}
+                className="hidden min-w-[10rem] overflow-hidden pb-1 text-right text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-ivory/90 sm:block"
               >
-                {completionSettled ? "enough to begin" : "four acknowledgements"}
-              </motion.span>
+                <AnimatePresence initial={false} mode="wait">
+                  <motion.span
+                    key={completionSettled ? "settled" : "receiving"}
+                    data-contact-gratitude-ledger-status-beat
+                    className="block"
+                    initial={reducedMotion ? false : { y: 6, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={reducedMotion ? undefined : { y: -6, opacity: 0 }}
+                    transition={{ duration: reducedMotion ? 0 : 0.38, ease: EASE_AIR }}
+                  >
+                    {completionSettled ? "enough to begin" : "four acknowledgements"}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
             </div>
 
             <div
@@ -804,6 +811,7 @@ export function ContactGratitude() {
                       ? "opening"
                       : "receiving"
               }
+              data-contact-gratitude-response-direction="vertical"
               className="relative mt-4 grid min-h-[4.25rem] min-w-0 overflow-hidden border-l border-sandstone/48 pl-4 font-display text-lg italic leading-snug text-sandstone sm:min-h-[3.5rem] sm:text-xl"
             >
               <p className="sr-only" aria-live="off">
@@ -820,16 +828,17 @@ export function ContactGratitude() {
                   <motion.p
                     key={response}
                     aria-hidden="true"
+                    data-contact-gratitude-response-beat
                     className="relative min-w-0 [grid-area:1/1]"
                     initial={false}
                     animate={
                       active
-                        ? { clipPath: "inset(0 0% 0 0%)", x: 0, opacity: 1 }
+                        ? { clipPath: "inset(0% 0 0% 0)", y: 0, opacity: 1 }
                         : leavesLeft
-                          ? { clipPath: "inset(0 100% 0 0%)", x: -14, opacity: 0 }
-                          : { clipPath: "inset(0 0% 0 100%)", x: 14, opacity: 0 }
+                          ? { clipPath: "inset(0% 0 100% 0)", y: -9, opacity: 0 }
+                          : { clipPath: "inset(100% 0 0% 0)", y: 9, opacity: 0 }
                     }
-                    transition={{ duration: reducedMotion ? 0 : 0.42, ease: EASE_AIR }}
+                    transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE_AIR }}
                   >
                     {response}
                   </motion.p>

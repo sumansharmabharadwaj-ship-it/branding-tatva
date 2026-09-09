@@ -108,6 +108,66 @@ final result: passed
 
 ---
 
+## Contact gratitude vertical response cadence
+
+### Evidence
+
+- Source visual truth: `/tmp/contact-gratitude-reference-parker-current.png` in the cloud browser runtime, captured from `https://heyparker.ai/?utm_source=chatgpt.com`.
+- Implementation screenshot: `/tmp/contact-gratitude-refined-response-current.png` in the cloud browser runtime, captured from the local Contact route at `#thanks` after the current build.
+- Paired comparison: `/tmp/contact-gratitude-paired-review.png` in the cloud browser runtime. Both captures were emitted together in one comparison input before this review.
+- Source and implementation captures: 1348 × 926 px at a 1363 × 936 CSS viewport and DPR 1. The paired review normalised each capture to 674 × 463 px without changing crop or density.
+- Comparison state: Parker hero with its single downward reading invitation; Branding Tatva gratitude with all four receipts complete, acknowledgement 04 held open, the status settled to `enough to begin`, and progress at `04 / 04 · enough`.
+- Responsive evidence: 390 × 844 QA frame with a 375px document width.
+
+### Findings
+
+- No actionable P0, P1, or P2 differences remain in the scoped motion refinement.
+- Fonts and typography: the existing display and body families, weights, line heights, wrapping, and small-cap labels are unchanged. The response and status transitions preserve their original text metrics.
+- Spacing and layout rhythm: the split composition, ledger width, row heights, response minimum height, progress line, and CTA placement are unchanged. The new movement stays inside the existing clipped response and status regions, so it creates no layout shift.
+- Colors and visual tokens: no palette, opacity, surface, border, or shadow token changed.
+- Image quality and asset fidelity: the existing meadow film, poster, crop, and wash are unchanged. No asset was added or substituted.
+- Copy and content: every visible Branding Tatva label, acknowledgement, response, completion phrase, and CTA is preserved.
+- Motion and interaction: response copy now enters from below and leaves above with a finite 9px masked handoff, matching the ledger's vertical reading path. Reverse inspection naturally inverts the handoff. The final ledger status uses one finite 6px settle instead of snapping. Both use the existing Air easing, do not loop, and resolve to `transform: none`.
+- Accessibility and responsiveness: the active acknowledgement keeps `aria-current="step"`, the current response remains available in non-live screen-reader text, and deliberate activation alone updates the polite announcement. Explicit and system reduced-motion rules remove transforms from both new beats. The 390 × 844 frame remains within its 375px document width and the desktop reading head stays hidden.
+
+### Full-view comparison evidence
+
+The paired input confirms that Parker's useful principle is a single clear scroll direction and a finite transfer of attention. The implementation now carries the acknowledgement response along that same vertical direction while retaining Branding Tatva's meadow, earthy palette, editorial typography, copy, and asymmetrical composition. Parker's device image, outlined navigation, cream palette, typography, and layout were intentionally excluded.
+
+### Focused-region comparison evidence
+
+A separate crop was unnecessary because the gratitude ledger is readable in the 1348 × 926 implementation capture. Browser-rendered DOM evidence confirmed `data-contact-gratitude-response-direction="vertical"`, six response beats, one status beat, acknowledgement 04 active, the matching unfinished-thought response visible at opacity 1 and `transform: none`, and the final status and progress text settled without horizontal overflow.
+
+### Primary interactions tested
+
+- Opening acknowledgement 01 moved the active state and visible response to the matching time response.
+- Opening acknowledgement 04 moved the active state and visible response to the matching unfinished-thought response.
+- The selected acknowledgement retained `aria-current="step"` and stayed readable through completion.
+- After the 920ms completion hold, the scene reported settled, the ledger status read `enough to begin`, progress read `04 / 04 · enough`, and the next action reported ready.
+- Desktop document client width and scroll width matched; no horizontal overflow was introduced.
+- Browser console contained no application-origin errors or warnings. Cloud browser extension metadata errors were excluded from application QA.
+
+### Comparison history
+
+- Pass 1: no actionable P0, P1, or P2 difference. The motion-only change preserved the approved frame while making the response and completion tempo follow the reference's vertical reading principle.
+
+### Implementation checklist
+
+- [x] Preserve approved copy, imagery, palette, typography, layout, and routes.
+- [x] Align response motion with the vertical acknowledgement path.
+- [x] Add one finite completion-status settle.
+- [x] Preserve cumulative receipts, reverse inspection, keyboard state, and screen-reader semantics.
+- [x] Add explicit and system reduced-motion protection.
+- [x] Verify build, source contracts, browser interaction, responsive fit, and console state.
+
+### Follow-up polish
+
+- None required for this pass.
+
+final result: passed
+
+---
+
 ## Final handoff camera drift
 
 ### Evidence

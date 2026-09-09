@@ -1791,6 +1791,8 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-ledger]:
 html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-scroll-spine],
 html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-note-label],
 html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-reading-head],
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-response-beat],
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-ledger-status-beat],
 html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-progress-beat] {
   transform: none !important;
 }
@@ -1868,6 +1870,8 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   [data-contact-film] [data-contact-gratitude-scroll-spine],
   [data-contact-film] [data-contact-gratitude-note-label],
   [data-contact-film] [data-contact-gratitude-reading-head],
+  [data-contact-film] [data-contact-gratitude-response-beat],
+  [data-contact-film] [data-contact-gratitude-ledger-status-beat],
   [data-contact-film] [data-contact-gratitude-progress-beat] {
     transform: none !important;
   }
