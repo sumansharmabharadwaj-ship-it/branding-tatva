@@ -375,6 +375,25 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       transition: { duration: prefersReducedMotion ? 0 : 0.44, ease: [0.22, 1, 0.36, 1] as const },
     },
   };
+  const evidenceGroupVariants = {
+    enter: {},
+    settled: {
+      transition: { staggerChildren: prefersReducedMotion ? 0 : 0.05 },
+    },
+  };
+  const evidenceItemVariants = {
+    enter: {
+      opacity: 0,
+      x: usesHorizontalRail ? selectionDirection * 8 : 0,
+      y: usesHorizontalRail ? 0 : selectionDirection * 8,
+    },
+    settled: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: { duration: prefersReducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] as const },
+    },
+  };
 
   function selectLayer(index: number, direction?: 1 | -1) {
     if (index === focusedIndex) return;
@@ -674,9 +693,13 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               </div>
               <motion.p variants={revealVariants} className="insights-worksheet__signal">{layer.signal}</motion.p>
               <div className="insights-worksheet__evidence">
-                <motion.div variants={revealVariants}>
-                  <h4>Evidence to collect</h4>
-                  <ul>{layer.evidence.split(" · ").map((item) => <li key={item}>{item}</li>)}</ul>
+                <motion.div variants={evidenceGroupVariants}>
+                  <motion.h4 variants={revealVariants}>Evidence to collect</motion.h4>
+                  <ul>
+                    {layer.evidence.split(" · ").map((item) => (
+                      <motion.li key={item} variants={evidenceItemVariants}>{item}</motion.li>
+                    ))}
+                  </ul>
                 </motion.div>
                 <motion.div variants={revealVariants}>
                   <h4>First move</h4>
