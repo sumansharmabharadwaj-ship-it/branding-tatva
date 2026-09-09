@@ -33,8 +33,14 @@ const DYNAMIC_ROUTE_PREFIXES = ["/blog/", "/glossary/", "/insights/", "/work/"];
 
 function responsiveRoute(requestedPath?: string) {
   const path = requestedPath?.trim();
-  if (!path || !/^\/(?!\/)[a-z0-9/_-]*$/i.test(path)) return "/";
-  if (ROOT_ROUTES.has(path) || DYNAMIC_ROUTE_PREFIXES.some((prefix) => path.startsWith(prefix))) return path;
+  if (!path) return "/";
+  const [pathname, fragment, ...extraFragments] = path.split("#");
+  if (
+    !/^\/(?!\/)[a-z0-9/_-]*$/i.test(pathname) ||
+    extraFragments.length > 0 ||
+    (fragment !== undefined && !/^[a-z][a-z0-9_-]*$/i.test(fragment))
+  ) return "/";
+  if (ROOT_ROUTES.has(pathname) || DYNAMIC_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return path;
   return "/";
 }
 
@@ -51,7 +57,8 @@ export default async function HomepageResponsiveQa({
     requested && requested in PRESETS ? (requested as PresetName) : "mobile";
   const preset = PRESETS[presetName];
   const route = responsiveRoute(params.path);
-  const frameSrc = `${route}${route.includes("?") ? "&" : "?"}qa-responsive=1`;
+  const [routePath, fragment] = route.split("#");
+  const frameSrc = `${routePath}?qa-responsive=1${fragment ? `#${fragment}` : ""}`;
 
   return (
     <main
