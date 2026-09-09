@@ -874,6 +874,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 @supports selector(body:has(*)) {
   body:has([data-contact-form-card]:focus-within) [data-contact-chapter-rail],
   body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail],
+  body:has([data-contact-gratitude-next] :focus-visible) [data-contact-chapter-rail],
   body:has([data-contact-gratitude-active="true"]) [data-contact-chapter-rail] {
     opacity: 0;
     pointer-events: none;
@@ -886,6 +887,12 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
    untouched submit state while preserving the desktop side rail. Keep the
    width and input-mode queries separate for the production CSS optimizer. */
 @media (max-width: 899px) {
+  /* Keyboard focus gives the closing routes the same clear reading area as
+     the enquiry form. The notice returns when focus leaves the actions. */
+  body:has([data-contact-gratitude-next] :focus-visible) .consent-notice {
+    display: none;
+  }
+
   html[data-contact-form-owns-viewport="true"] .consent-notice {
     display: none;
   }
@@ -957,6 +964,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   @supports selector(body:has(*)) {
     body:has([data-contact-form-card]:focus-within) [data-contact-chapter-rail],
     body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail],
+    body:has([data-contact-gratitude-next] :focus-visible) [data-contact-chapter-rail],
     body:has([data-contact-gratitude-active="true"]) [data-contact-chapter-rail] {
       opacity: 1;
       pointer-events: auto;
