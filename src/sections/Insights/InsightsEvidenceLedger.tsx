@@ -11,7 +11,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import { AnimatePresence, motion, useIsPresent } from "framer-motion";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightElement } from "@/data/insights";
@@ -230,6 +230,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   const layerRailRef = useRef<HTMLDivElement>(null);
   const layerButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const panelRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const reviewSummaryRef = useRef<HTMLElement | null>(null);
   const focusFrameRef = useRef<number | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const usesHorizontalRail = useMediaQuery("(max-width: 760px)");
@@ -456,6 +457,34 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     });
   }
 
+  function openReviewSummary() {
+    if (focusFrameRef.current !== null) {
+      window.cancelAnimationFrame(focusFrameRef.current);
+    }
+    focusFrameRef.current = window.requestAnimationFrame(() => {
+      focusFrameRef.current = null;
+      const summary = reviewSummaryRef.current;
+      if (!summary) return;
+
+      summary.focus({ preventScroll: true });
+      const viewport = window.visualViewport;
+      const viewportTop = viewport?.offsetTop ?? 0;
+      const viewportBottom = viewportTop + (viewport?.height ?? window.innerHeight);
+      const styles = window.getComputedStyle(summary);
+      const bounds = summary.getBoundingClientRect();
+      const safeTop = viewportTop + Number.parseFloat(styles.scrollMarginTop);
+      const safeBottom = viewportBottom - Number.parseFloat(styles.scrollMarginBottom);
+
+      if (bounds.top < safeTop || bounds.bottom > safeBottom) {
+        summary.scrollIntoView({
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+          block: "nearest",
+          inline: "nearest",
+        });
+      }
+    });
+  }
+
   function keepControlVisible(event: FocusEvent<HTMLDivElement>) {
     const control = event.target;
     if (!(control instanceof HTMLElement) || !control.matches("button, a")) return;
@@ -665,6 +694,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         const selected = index === focusedIndex;
         const marked = markedSlugs.includes(layer.slug);
         const nextLayer = layers[(index + 1) % layers.length];
+        const isLastLayer = index === layers.length - 1;
         return (
           <div
             key={layer.slug}
@@ -744,37 +774,39 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               <motion.button
                 type="button"
                 className="insights-worksheet__next"
-                aria-label={`${index === layers.length - 1 ? "First" : "Next"} check: ${nextLayer.name}`}
+                data-review-step={isLastLayer}
+                aria-label={isLastLayer ? "Review your worksheet" : `Next check: ${nextLayer.name}`}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                onClick={() => openLayer((index + 1) % layers.length, 1)}
+                onClick={() => isLastLayer ? openReviewSummary() : openLayer(index + 1, 1)}
               >
                 <span className="insights-worksheet__next-copy" aria-hidden="true">
                   <span className="insights-worksheet__next-label">
-                    {index === layers.length - 1 ? "First check" : "Next check"}
+                    {isLastLayer ? "Next step" : "Next check"}
                   </span>
                   <span className="insights-worksheet__next-name">
                     {/* Reserve every destination so the controls keep their position. */}
                     {layers.map((destination) => (
                       <span key={destination.slug} className="insights-worksheet__next-measure">{destination.name}</span>
                     ))}
+                    <span className="insights-worksheet__next-measure">Review list</span>
                     <motion.span
                       key={`${layer.slug}-${selected ? "active" : "idle"}`}
                       initial={prefersReducedMotion || !selected ? false : { opacity: 0, x: selectionDirection * 10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.32, delay: prefersReducedMotion ? 0 : 0.1, ease: [0.22, 1, 0.36, 1] }}
                     >
-                      {nextLayer.name}
+                      {isLastLayer ? "Review list" : nextLayer.name}
                     </motion.span>
                   </span>
                 </span>
-                <ArrowRight aria-hidden="true" />
+                {isLastLayer ? <ArrowDown aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
               </motion.button>
             </div>
           </div>
         );
       })}
 
-      <footer className="insights-worksheet__footer">
+      <footer ref={reviewSummaryRef} className="insights-worksheet__footer" role="region" aria-label="Worksheet review" tabIndex={-1}>
         <div className="insights-worksheet__review" role="group" aria-label="Your review list">
           <AnimatePresence initial={false} mode="popLayout">
             {markedCount === 0 ? (
@@ -786,7 +818,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 exit={{ opacity: 0, transition: { duration: prefersReducedMotion ? 0 : 0.1 } }}
                 transition={{ duration: prefersReducedMotion ? 0 : 0.18, delay: prefersReducedMotion ? 0 : 0.12, ease: [0.22, 1, 0.36, 1] }}
               >
-                Five questions before you commission a redesign.
+                No areas marked. Use the checklist to look closer.
               </motion.p>
             ) : null}
             {markedLayers.map((layer) => (

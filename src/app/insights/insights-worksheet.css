@@ -333,6 +333,7 @@ html:has(.insights-worksheet:focus-within) {
 .insights-worksheet__next-name { display: inline-grid; overflow: hidden; font-weight: 500; line-height: 1.4; }
 .insights-worksheet__next-name > span { grid-area: 1 / 1; }
 .insights-worksheet__next-measure { visibility: hidden; pointer-events: none; }
+.insights-worksheet__next[data-review-step="true"] { --worksheet-next-hover-x: 0px; --worksheet-next-hover-y: 3px; }
 
 .insights-worksheet__next svg {
   flex: 0 0 auto;
@@ -354,6 +355,8 @@ html:has(.insights-worksheet:focus-within) {
   gap: 0.75rem 1.5rem;
   padding-block: 1rem;
   border-block: 1px solid var(--worksheet-rule);
+  scroll-margin-top: 6rem;
+  scroll-margin-bottom: 6rem;
 }
 
 .insights-worksheet__review { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 0 0.75rem; min-height: 2.75rem; }
@@ -372,10 +375,10 @@ html:has(.insights-worksheet:focus-within) {
 .insights-worksheet__service-measure { visibility: hidden; pointer-events: none; }
 .insights-worksheet__checklist { color: var(--worksheet-clay); font-weight: 600; }
 .insights-worksheet :is(button, a) { scroll-margin-top: 6rem; scroll-margin-bottom: 6rem; }
-.insights-worksheet :is(button, a, [role="tabpanel"]):focus-visible { outline: 2px solid var(--worksheet-clay); outline-offset: 3px; }
+.insights-worksheet :is(button, a, [role="tabpanel"], .insights-worksheet__footer):focus-visible { outline: 2px solid var(--worksheet-clay); outline-offset: 3px; }
 
 @media (max-width: 899px) {
-  .insights-worksheet :is(button, a) { scroll-margin-bottom: 9rem; }
+  .insights-worksheet :is(button, a, .insights-worksheet__footer) { scroll-margin-bottom: 9rem; }
 }
 
 @media (hover: hover) {
@@ -384,7 +387,7 @@ html:has(.insights-worksheet:focus-within) {
   .insights-worksheet__areas button:hover .insights-worksheet__area-icon:not([data-marked="true"]) { transform: translateX(3px); }
   .insights-worksheet__mark:hover { background: #e4d7c7; }
   .insights-worksheet__mark[aria-pressed="true"]:hover { background: #4a3d32; }
-  .insights-worksheet__next:hover svg { transform: translateX(3px); }
+  .insights-worksheet__next:hover svg { transform: translate(var(--worksheet-next-hover-x, 3px), var(--worksheet-next-hover-y, 0px)); }
   .insights-worksheet__review-item:hover { color: var(--worksheet-clay); }
   .insights-worksheet__review-item:not([aria-current="true"]):hover { text-decoration: underline; text-underline-offset: 0.3rem; }
   .insights-worksheet__links a:hover { text-decoration: underline; text-underline-offset: 0.25rem; }
