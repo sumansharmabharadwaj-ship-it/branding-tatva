@@ -8,7 +8,7 @@ import {
   type CSSProperties,
   type KeyboardEvent,
 } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Check, Plus } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
@@ -194,6 +194,11 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     }
   }
 
+  function openLayer(index: number) {
+    selectLayer(index);
+    layerButtonRefs.current[index]?.focus();
+  }
+
   function toggleLayer(slug: string, index: number) {
     const selectedLayer = layers[index];
     if (!selectedLayer) return;
@@ -345,56 +350,84 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 <ElementGlyph slug={layer.element} className="h-5 w-5" strokeWidth={1.35} />
                 <span>Check 0{index + 1} / {layer.name}</span>
               </div>
-                <motion.div
-                  key={layer.slug}
-                  initial={prefersReducedMotion ? false : "enter"}
-                  animate="settled"
-                  variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.065 } } }}
-                  className="insights-worksheet__answer"
-                >
-                  <motion.h3 variants={revealVariants}>{layer.question}</motion.h3>
-                  <motion.p variants={revealVariants} className="insights-worksheet__signal">{layer.signal}</motion.p>
-                  <div className="insights-worksheet__evidence">
-                    <motion.div variants={revealVariants}>
-                      <h4>Evidence to collect</h4>
-                      <ul>{layer.evidence.split(" · ").map((item) => <li key={item}>{item}</li>)}</ul>
-                    </motion.div>
-                    <motion.div variants={revealVariants}>
-                      <h4>First move</h4>
-                      <p>{layer.move}</p>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              <motion.button
-                type="button"
-                className="insights-worksheet__mark"
-                aria-pressed={focusedIsMarked}
-                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                onClick={() => toggleLayer(layer.slug, index)}
+              <motion.div
+                key={layer.slug}
+                initial={prefersReducedMotion ? false : "enter"}
+                animate="settled"
+                variants={{ enter: {}, settled: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.065 } } }}
+                className="insights-worksheet__answer"
               >
-                <motion.span
-                  key={focusedIsMarked ? "marked" : "open"}
-                  className="insights-worksheet__mark-icon"
-                  initial={prefersReducedMotion ? false : { scale: 0.65, rotate: -35 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  aria-hidden="true"
+                <motion.h3 variants={revealVariants}>{layer.question}</motion.h3>
+                <motion.p variants={revealVariants} className="insights-worksheet__signal">{layer.signal}</motion.p>
+                <div className="insights-worksheet__evidence">
+                  <motion.div variants={revealVariants}>
+                    <h4>Evidence to collect</h4>
+                    <ul>{layer.evidence.split(" · ").map((item) => <li key={item}>{item}</li>)}</ul>
+                  </motion.div>
+                  <motion.div variants={revealVariants}>
+                    <h4>First move</h4>
+                    <p>{layer.move}</p>
+                  </motion.div>
+                </div>
+              </motion.div>
+              <div className="insights-worksheet__actions">
+                <motion.button
+                  type="button"
+                  className="insights-worksheet__mark"
+                  aria-pressed={focusedIsMarked}
+                  whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                  onClick={() => toggleLayer(layer.slug, index)}
                 >
-                  {focusedIsMarked ? <Check /> : <Plus />}
-                </motion.span>
-                <span>{focusedIsMarked ? "Marked for review" : "Mark for review"}</span>
-              </motion.button>
+                  <motion.span
+                    key={focusedIsMarked ? "marked" : "open"}
+                    className="insights-worksheet__mark-icon"
+                    initial={prefersReducedMotion ? false : { scale: 0.65, rotate: -35 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+                    aria-hidden="true"
+                  >
+                    {focusedIsMarked ? <Check /> : <Plus />}
+                  </motion.span>
+                  <span>{focusedIsMarked ? "Marked for review" : "Mark for review"}</span>
+                </motion.button>
+                <motion.button
+                  type="button"
+                  className="insights-worksheet__next"
+                  aria-label={`${index === layers.length - 1 ? "First" : "Next"} check: ${layers[(index + 1) % layers.length].name}`}
+                  whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                  onClick={() => openLayer((index + 1) % layers.length)}
+                >
+                  {index === layers.length - 1 ? "First check" : "Next check"}
+                  <ArrowRight aria-hidden="true" />
+                </motion.button>
+              </div>
             </>
           ) : null}
         </div>
       ))}
 
       <footer className="insights-worksheet__footer">
-        <p aria-live="polite">
-          {markedCount > 0
-            ? `${markedLayers.map((layer) => layer.name).join(", ")} ${markedCount === 1 ? "is" : "are"} on your review list.`
-            : "Five questions before you commission a redesign."}
-        </p>
+        <div className="insights-worksheet__review" role="group" aria-label="Your review list">
+          {markedCount === 0 ? <p>Five questions before you commission a redesign.</p> : null}
+          <AnimatePresence initial={false} mode="popLayout">
+            {markedLayers.map((layer) => (
+              <motion.button
+                key={layer.slug}
+                type="button"
+                className="insights-worksheet__review-item"
+                aria-label={`Review ${layer.name}`}
+                aria-current={layer.slug === focusedLayer.slug ? "true" : undefined}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: prefersReducedMotion ? 0 : -4 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease: [0.22, 1, 0.36, 1] }}
+                onClick={() => openLayer(layers.indexOf(layer))}
+              >
+                <Check aria-hidden="true" />{layer.name}
+              </motion.button>
+            ))}
+          </AnimatePresence>
+        </div>
         <div className="insights-worksheet__links">
           {latestMarkedLayer ? (
             <TrackedLink
