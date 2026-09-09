@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {
+  useEffect,
   useRef,
   useState,
   type KeyboardEvent,
@@ -78,9 +79,20 @@ const STAGES = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1];
+const VERTICAL_SWAP = {
+  enter: (direction: number) => ({ opacity: 0, y: direction * 7 }),
+  active: { opacity: 1, y: 0 },
+  exit: (direction: number) => ({ opacity: 0, y: direction * -5 }),
+};
+const HORIZONTAL_SWAP = {
+  enter: (direction: number) => ({ opacity: 0, x: direction * 8 }),
+  active: { opacity: 1, x: 0 },
+  exit: (direction: number) => ({ opacity: 0, x: direction * -6 }),
+};
 
 export function Convergence() {
   const sectionRef = useRef<HTMLElement>(null);
+  const previousStageRef = useRef(0);
   const [inspectedPair, setInspectedPair] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.2, margin: "8% 0px -12% 0px" });
@@ -106,10 +118,15 @@ export function Convergence() {
   const stageProgress = [readProgress, connectProgress, carryProgress] as const;
   const stage = prefersReducedMotion ? STAGES.length - 1 : visualizer.activeIndex;
   const activeStage = STAGES[stage];
+  const transitionDirection = stage >= previousStageRef.current ? 1 : -1;
   const activePair = PAIRINGS[inspectedPair];
   const registerLeft = stage === 1 ? activePair.human : stage === 0 ? "Observe" : "Position";
   const registerRight = stage === 1 ? activePair.language : stage === 0 ? "Interpret" : "Express";
   const registerResult = stage === 1 ? activePair.result : stage === 0 ? "Tension" : "Direction";
+
+  useEffect(() => {
+    previousStageRef.current = stage;
+  }, [stage]);
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -143,12 +160,14 @@ export function Convergence() {
             </h2>
           </div>
           <div className={styles.headerAside}>
-            <AnimatePresence mode="popLayout" initial={false}>
+            <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
               <motion.p
                 key={activeStage.number}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+                custom={transitionDirection}
+                variants={VERTICAL_SWAP}
+                initial={prefersReducedMotion ? false : "enter"}
+                animate="active"
+                exit={prefersReducedMotion ? undefined : "exit"}
                 transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
               >
                 {activeStage.cue}
@@ -235,24 +254,28 @@ export function Convergence() {
                     <span>Language</span>
                   </div>
                   <div className={styles.registerTerms}>
-                    <AnimatePresence mode="popLayout" initial={false}>
+                    <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
                       <motion.strong
                         key={registerLeft}
-                        initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={prefersReducedMotion ? undefined : { opacity: 0, y: -4 }}
+                        custom={transitionDirection}
+                        variants={VERTICAL_SWAP}
+                        initial={prefersReducedMotion ? false : "enter"}
+                        animate="active"
+                        exit={prefersReducedMotion ? undefined : "exit"}
                         transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
                       >
                         {registerLeft}
                       </motion.strong>
                     </AnimatePresence>
                     <i />
-                    <AnimatePresence mode="popLayout" initial={false}>
+                    <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
                       <motion.strong
                         key={registerRight}
-                        initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={prefersReducedMotion ? undefined : { opacity: 0, y: -4 }}
+                        custom={transitionDirection}
+                        variants={VERTICAL_SWAP}
+                        initial={prefersReducedMotion ? false : "enter"}
+                        animate="active"
+                        exit={prefersReducedMotion ? undefined : "exit"}
                         transition={{ duration: prefersReducedMotion ? 0 : 0.38, ease: EASE }}
                       >
                         {registerRight}
@@ -266,12 +289,14 @@ export function Convergence() {
                   </div>
                   <div className={styles.registerResult}>
                     <small>{stage === 1 ? "Resolved as" : "Decision state"}</small>
-                    <AnimatePresence mode="popLayout" initial={false}>
+                    <AnimatePresence mode="popLayout" initial={false} custom={transitionDirection}>
                       <motion.strong
                         key={registerResult}
-                        initial={prefersReducedMotion ? false : { opacity: 0, x: 8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={prefersReducedMotion ? undefined : { opacity: 0, x: -6 }}
+                        custom={transitionDirection}
+                        variants={HORIZONTAL_SWAP}
+                        initial={prefersReducedMotion ? false : "enter"}
+                        animate="active"
+                        exit={prefersReducedMotion ? undefined : "exit"}
                         transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
                       >
                         {registerResult}

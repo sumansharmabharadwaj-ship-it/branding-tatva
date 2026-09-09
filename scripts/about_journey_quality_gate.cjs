@@ -335,6 +335,14 @@ assert(
   "The About editorial timelines lost their damped movement or deliberate chapter breathing zones.",
 );
 assert(
+  convergence.includes("const previousStageRef = useRef(0)") &&
+    convergence.includes("const transitionDirection = stage >= previousStageRef.current ? 1 : -1") &&
+    convergence.includes("custom={transitionDirection}") &&
+    convergence.includes("variants={VERTICAL_SWAP}") &&
+    convergence.includes("variants={HORIZONTAL_SWAP}"),
+  "The convergence scene no longer reverses its editorial transitions with scroll direction.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),
