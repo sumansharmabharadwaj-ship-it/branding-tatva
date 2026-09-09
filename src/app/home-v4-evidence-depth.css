@@ -570,6 +570,24 @@
     padding-block: 4.75rem;
   }
 
+  .evidence-cinematic__eyebrow,
+  .evidence-cinematic__dossier-topline span,
+  .evidence-cinematic__trail-step span,
+  .evidence-cinematic__media-topline {
+    font-size: .8125rem;
+    letter-spacing: .08em;
+  }
+
+  .evidence-cinematic__intro p {
+    color: rgba(244, 239, 230, .82);
+    font-size: 1rem;
+  }
+
+  .evidence-cinematic__intro span {
+    color: rgba(244, 239, 230, .78);
+    font-size: .875rem;
+  }
+
   .evidence-cinematic__header h2 {
     max-width: 100%;
     font-size: clamp(2.8rem, 13vw, 4.8rem);
@@ -587,13 +605,30 @@
   }
 
   .evidence-cinematic__media {
+    display: flex;
     min-height: 34rem;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.1rem;
+  }
+
+  /* Keep the film behind a reading flow that can grow with larger text. */
+  .evidence-cinematic__media-topline,
+  .evidence-cinematic__media-copy,
+  .evidence-cinematic__media-actions {
+    position: relative;
+    inset: auto;
+    flex-shrink: 0;
   }
 
   .evidence-cinematic__media-copy {
-    right: 1.1rem;
-    bottom: 7.25rem;
-    left: 1.1rem;
+    margin-top: auto;
+    padding-top: 3rem;
+  }
+
+  .evidence-cinematic__media-copy p {
+    font-size: .8125rem;
+    letter-spacing: .08em;
   }
 
   .evidence-cinematic__media-copy strong {
@@ -604,6 +639,8 @@
 
   .evidence-cinematic__media-copy > span {
     max-width: 100%;
+    color: rgba(244, 239, 230, .82);
+    font-size: 1rem;
     overflow-wrap: anywhere;
   }
 
@@ -611,26 +648,36 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 0.35rem;
+    color: rgba(244, 239, 230, .78);
   }
 
   .evidence-cinematic__media-actions {
-    right: 0.9rem;
-    bottom: 0.9rem;
-    left: 0.9rem;
-    gap: 0.45rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: .5rem;
   }
 
   .evidence-cinematic__media-actions button,
   .evidence-cinematic__media-actions a {
-    min-height: 2.75rem;
-    flex: 1 1 11rem;
-    padding-inline: 0.75rem;
-    font-size: 0.58rem;
+    min-width: 0;
+    min-height: 3rem;
+    justify-content: space-between;
+    padding: .75rem 1rem;
+    font-size: .875rem;
+    line-height: 1.4;
+    letter-spacing: .02em;
+    text-transform: none;
   }
 
   .evidence-cinematic__dossier {
     min-height: auto;
     padding: 1.1rem;
+  }
+
+  .evidence-cinematic__dossier-topline strong {
+    color: rgba(244, 239, 230, .78);
+    font-size: .8125rem;
+    letter-spacing: .08em;
   }
 
   .evidence-cinematic__trail-step p,
@@ -640,7 +687,21 @@
   }
 
   .evidence-cinematic__trail-step p {
+    color: rgba(244, 239, 230, .84);
     font-size: clamp(1.1rem, 5vw, 1.35rem);
+    line-height: 1.45;
+  }
+
+  .evidence-cinematic__dossier-footer p {
+    color: rgba(244, 239, 230, .78);
+    font-size: .875rem;
+  }
+
+  .evidence-cinematic__dossier-footer a {
+    min-height: 2.75rem;
+    font-size: .875rem;
+    letter-spacing: .02em;
+    text-transform: none;
   }
 
   .evidence-cinematic__index {
@@ -663,11 +724,21 @@
     padding: 0.75rem;
   }
 
+  .evidence-cinematic__index-copy small {
+    font-size: .75rem;
+    letter-spacing: .08em;
+  }
+
   .evidence-cinematic__index-copy strong {
-    font-size: 0.95rem;
+    margin-top: .35rem;
+    font-size: 1.125rem;
+    line-height: 1.15;
   }
 
   .evidence-cinematic__index-copy em {
+    margin-top: .3rem;
+    color: rgba(244, 239, 230, .78);
+    font-size: .8125rem;
     white-space: normal;
   }
 }
@@ -675,10 +746,6 @@
 @media (max-width: 430px) {
   .evidence-cinematic__media {
     min-height: 31.5rem;
-  }
-
-  .evidence-cinematic__media-copy {
-    bottom: 7.8rem;
   }
 
   .evidence-cinematic__index-image {
