@@ -429,11 +429,12 @@ assert(
   convergence.includes("const STAGE_CUTS = [0, 0.28, 0.32, 0.35, 0.39, 0.61, 0.65, 0.68, 0.72, 1]") &&
     convergence.includes("const stageContentOpacity = useTransform") &&
     convergence.includes("const stageContentClipPath = useTransform") &&
+    (convergence.match(/visualizer\.scrollYProgress,\s*STAGE_CUTS,/g) || []).length === 2 &&
     !convergence.includes("const stageContentScale = useTransform") &&
     (convergence.match(/opacity: stageContentOpacity/g) || []).length === 3 &&
     !convergence.includes("scale: stageContentScale") &&
     (convergence.match(/clipPath: stageContentClipPath/g) || []).length === 3,
-  "The convergence cue and readout no longer pass through one scroll-controlled editorial aperture without a card-like scale pulse.",
+  "The convergence cue and readout no longer pass through one raw-scroll editorial aperture without lag or a card-like scale pulse.",
 );
 assert(
   !convergenceStyles.includes("transition: color 420ms ease;") &&

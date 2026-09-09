@@ -148,12 +148,12 @@ export function Convergence() {
     [1, 1, 1, 1, 0.12, 0.12],
   );
   const stageContentOpacity = useTransform(
-    pacedScrollProgress,
+    visualizer.scrollYProgress,
     STAGE_CUTS,
     [1, 1, 0.08, 0.08, 1, 1, 0.08, 0.08, 1, 1],
   );
   const stageContentClipPath = useTransform(
-    pacedScrollProgress,
+    visualizer.scrollYProgress,
     STAGE_CUTS,
     [
       "inset(0% 0 0% 0)",
