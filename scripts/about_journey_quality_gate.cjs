@@ -383,6 +383,15 @@ assert(
   "The convergence outcome no longer resolves as one scroll-controlled editorial reveal.",
 );
 assert(
+  convergence.includes("const threadFieldOpacity = useTransform") &&
+    convergence.includes("const threadFieldScale = useTransform") &&
+    convergence.includes("const threadFieldClipPath = useTransform") &&
+    convergence.includes("opacity: threadFieldOpacity") &&
+    convergence.includes("scaleX: threadFieldScale") &&
+    convergence.includes("clipPath: threadFieldClipPath"),
+  "The convergence threads no longer assemble and recede with direct scroll control.",
+);
+assert(
   !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
     origin.includes('role="tabpanel"') &&
     origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),

@@ -141,6 +141,28 @@ export function Convergence() {
     SCROLL_BEATS,
     [1, 1, 1, 1, 0.38, 0.38],
   );
+  const threadFieldOpacity = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0.22, 0.22, 1, 1, 0.18, 0.18],
+  );
+  const threadFieldScale = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [0.96, 0.96, 1, 1, 0.98, 0.98],
+  );
+  const threadFieldClipPath = useTransform(
+    pacedScrollProgress,
+    SCROLL_BEATS,
+    [
+      "inset(0 42% 0 42%)",
+      "inset(0 42% 0 42%)",
+      "inset(0 0% 0 0%)",
+      "inset(0 0% 0 0%)",
+      "inset(0 42% 0 42%)",
+      "inset(0 42% 0 42%)",
+    ],
+  );
   const outcomeOpacity = useTransform(pacedScrollProgress, [0.69, 0.8], [0, 1]);
   const outcomeY = useTransform(pacedScrollProgress, [0.69, 0.8], [10, 0]);
   const outputsOpacity = useTransform(pacedScrollProgress, [0.76, 0.92], [0, 1]);
@@ -246,7 +268,18 @@ export function Convergence() {
           </motion.article>
 
           <div className={styles.synthesisField}>
-            <div className={styles.threadField}>
+            <motion.div
+              className={styles.threadField}
+              style={
+                prefersReducedMotion
+                  ? { opacity: 0.18, scaleX: 0.98, clipPath: "inset(0 42% 0 42%)" }
+                  : {
+                      opacity: threadFieldOpacity,
+                      scaleX: threadFieldScale,
+                      clipPath: threadFieldClipPath,
+                    }
+              }
+            >
               {PAIRINGS.map((pair, index) => (
                 <div className={styles.thread} key={pair.result} data-thread={index + 1}>
                   <span />
@@ -265,7 +298,7 @@ export function Convergence() {
                   <span />
                 </div>
               ))}
-            </div>
+            </motion.div>
 
             <motion.figure
               className={styles.signalCore}
