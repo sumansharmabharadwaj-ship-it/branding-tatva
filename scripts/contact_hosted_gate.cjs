@@ -851,7 +851,7 @@ async function auditKeyboardJourney(browser) {
       "keyboard journey: gratitude completion is not announced clearly",
     );
     const next = page.locator("[data-contact-gratitude-next]");
-    const nextLink = next.getByRole("link", { name: "Carry a question into the field notes" });
+    const nextLink = next.getByRole("link", { name: "Read the field notes", exact: true });
     assert((await next.getAttribute("aria-hidden")) === "false", "keyboard journey: completed gratitude handoff remains hidden");
     assert((await nextLink.getAttribute("tabindex")) !== "-1", "keyboard journey: completed gratitude handoff remains outside the tab order");
     await nextLink.focus();

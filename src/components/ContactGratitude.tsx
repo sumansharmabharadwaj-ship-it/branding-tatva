@@ -608,7 +608,6 @@ export function ContactGratitude() {
               </TrackedLink>
               <TrackedLink
                 href="/insights"
-                aria-label="Carry a question into the field notes"
                 event="contact_route_selected"
                 eventProps={{ source: "contact_gratitude", route: "insights" }}
                 data-cursor-label="Open field notes"
