@@ -910,8 +910,9 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
    untouched submit state while preserving the desktop side rail. Keep the
    width and input-mode queries separate for the production CSS optimizer. */
 @media (max-width: 899px) {
-  /* Keyboard focus gives the closing routes the same clear reading area as
-     the enquiry form. The notice returns when focus leaves the actions. */
+  /* Keyboard focus gives acknowledgements and closing routes the same clear
+     reading area as the enquiry form. The notice returns when focus leaves. */
+  body:has([data-contact-gratitude-note]:focus-visible) .consent-notice,
   body:has([data-contact-gratitude-next] :focus-visible) .consent-notice {
     display: none;
   }
