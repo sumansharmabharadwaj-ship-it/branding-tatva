@@ -63,12 +63,17 @@ requireText(pathways, "<AnimatePresence", "pathway changes no longer use a cinem
 requireText(pathways, "data-contact-pathway-shot", "pathway shot boundary is missing");
 // The selected sunlit invitation replaces the acknowledgement ledger.
 const invitationCss = read("src/components/ContactGratitude.module.css");
-for (const text of ["useScroll", "cameraScale", "cameraY", "useHydratedMotionPreference", "data-invitation-motion", "data-contact-invitation-camera", "coarsePointer", 'amount: 0.2']) {
+for (const text of ["useScroll", "cameraScale", "cameraY", "useHydratedMotionPreference", "data-invitation-motion", "data-contact-invitation-camera", "coarsePointer", 'data-invitation-scroll="reversible"', "invitationMotionAt", "progress.jump(scrollYProgress.get())", "trackContentSize: true"]) {
   requireText(gratitude, text, `sunlit invitation motion contract missing: ${text}`);
 }
 for (const text of ["prefers-reduced-motion: reduce", 'data-invitation-motion="reduced"', "animation: none !important", "transform: none !important", ":focus-visible", "min-height: 44px"]) {
   requireText(invitationCss, text, `sunlit invitation accessibility contract missing: ${text}`);
 }
+requireText(invitationCss, ".scene:focus-within [data-invitation-layer]", "keyboard focus must resolve the still reading composition");
+forbidPattern(gratitude, /useInView|data-invitation-entered/, "sunlit motion must follow scroll in both directions instead of a one-time entrance");
+forbidPattern(invitationCss, /@keyframes|position:\s*sticky/, "sunlit motion must keep its native one-scene scroll range");
+requirePattern(gratitude, /style=\{motionEnabled \? \{ scale: cameraScale, y: cameraY \}/, "phones must retain the lighter scroll camera rather than disabling it");
+requirePattern(gratitude, /<div data-contact-invitation-actions className=\{styles.actions\}>/, "booking and writing actions must remain outside animated wrappers");
 forbidPattern(invitationCss, /opacity:\s*0(?:[;}\s])/, "invitation text and actions must never be hidden for motion");
 forbidPattern(gratitude, /role="progressbar"|visitedNotes|setTimeout|ScrollTrigger|tabIndex=\{-1\}/, "gratitude must never become a completion task or delay its next step");
 requireText(backgroundVideo, "loop = true", "background films must keep a safe default loop contract");

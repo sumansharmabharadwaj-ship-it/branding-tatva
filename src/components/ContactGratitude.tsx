@@ -2,14 +2,15 @@
 
 import Image from "next/image";
 import { Cormorant_Garamond } from "next/font/google";
-import { useRef } from "react";
-import { motion, useInView, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
 import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
+import { invitationMotionAt } from "@/lib/contactInvitationMotion";
 import { site } from "@/data/site";
 import styles from "./ContactGratitude.module.css";
 
@@ -21,15 +22,14 @@ const invitationItalic = Cormorant_Garamond({
   display: "swap",
 });
 
-/** The selected Sunlit Invitation: an open horizon and a personal invitation.
- * The photograph moves; reading and decision surfaces always stay available.
- * Native scroll drives a finite camera move, without a pin or completion gate.
+/** Preserve the selected composition, then let native scroll open it.
+ * Landscape, headline and personal note share a reversible arrival. The
+ * actions stay outside moving wrappers: no pin, timer or completion gate.
  */
 export function ContactGratitude() {
   const sectionRef = useRef<HTMLElement>(null);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const coarsePointer = useMediaQuery("(pointer: coarse), (max-width: 767px)");
-  const hasEntered = useInView(sectionRef, { once: true, amount: 0.2 });
   const packageSlug = useServicesContactPackage();
   const bookingHref = calendlyHrefForServicesPackage(site.calendlyUrl, packageSlug);
   const motionEnabled = hydrated && !prefersReducedMotion;
@@ -40,10 +40,26 @@ export function ContactGratitude() {
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
+    trackContentSize: true,
   });
-  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 30 });
-  const cameraScale = useTransform(progress, [0, 0.5, 1], [1.065, 1.008, 1.025]);
-  const cameraY = useTransform(progress, [0, 0.5, 1], [22, 0, -12]);
+  const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 32, mass: 0.6 });
+  const pose = useTransform(() => invitationMotionAt(progress.get(), coarsePointer));
+  const cameraScale = useTransform(pose, (value) => value.cameraScale);
+  const cameraY = useTransform(pose, (value) => value.cameraY);
+  const thankYouX = useTransform(pose, (value) => value.thankYouX);
+  const thankYouY = useTransform(pose, (value) => value.thankYouY);
+  const makingRoomX = useTransform(pose, (value) => value.makingRoomX);
+  const makingRoomY = useTransform(pose, (value) => value.makingRoomY);
+  const makingRoomScale = useTransform(pose, (value) => value.makingRoomScale);
+  const noteY = useTransform(pose, (value) => value.noteY);
+
+  // Hash arrivals and restored pages start at their real position, instead of
+  // replaying the entrance from the top of the page after hydration.
+  useEffect(() => {
+    progress.jump(scrollYProgress.get());
+    pointerX.set(0);
+    pointerY.set(0);
+  }, [hydrated, coarsePointer, motionEnabled, progress, scrollYProgress, pointerX, pointerY]);
 
   return (
     <section
@@ -53,7 +69,8 @@ export function ContactGratitude() {
       data-contact-scene="invitation"
       data-contact-gratitude="sunlit"
       data-invitation-motion={motionEnabled ? "full" : "reduced"}
-      data-invitation-entered={hasEntered ? "true" : "false"}
+      data-invitation-scroll="reversible"
+      data-invitation-input={coarsePointer ? "compact" : "desktop"}
       className={`${styles.scene} ${invitationItalic.variable}`}
       onPointerMove={(event) => {
         if (!motionEnabled || coarsePointer || event.pointerType !== "mouse") return;
@@ -67,10 +84,11 @@ export function ContactGratitude() {
       <div className={styles.landscape} aria-hidden="true">
         <motion.div
           data-contact-invitation-camera
+          data-invitation-layer="camera"
           className={styles.camera}
-          style={motionEnabled && !coarsePointer ? { scale: cameraScale, y: cameraY } : undefined}
+          style={motionEnabled ? { scale: cameraScale, y: cameraY } : { scale: 1, y: 0 }}
         >
-          <motion.div className={styles.photograph} style={motionEnabled && !coarsePointer ? { x, y } : undefined}>
+          <motion.div data-invitation-layer="pointer" className={styles.photograph} style={motionEnabled && !coarsePointer ? { x, y } : { x: 0, y: 0 }}>
             <picture>
               <source media="(max-width: 767px)" srcSet="/images/generated/bt-contact-sunlit-invitation-mobile-v1.webp" />
               <Image
@@ -88,13 +106,25 @@ export function ContactGratitude() {
       <div className={styles.content}>
         <p className={styles.eyebrow}>Before you go</p>
         <h2 id="contact-gratitude-heading" className={styles.heading}>
-          <span className={styles.thankYou}>Thank you for</span>{" "}
-          <em className={styles.makingRoom}>making room.</em>
+          <motion.span
+            data-invitation-layer="thank-you"
+            className={styles.thankYou}
+            style={motionEnabled ? { x: thankYouX, y: thankYouY } : { x: 0, y: 0 }}
+          >Thank you for</motion.span>{" "}
+          <motion.em
+            data-invitation-layer="making-room"
+            className={styles.makingRoom}
+            style={motionEnabled ? { x: makingRoomX, y: makingRoomY, scale: makingRoomScale } : { x: 0, y: 0, scale: 1 }}
+          >making room.</motion.em>
         </h2>
-        <div className={styles.acknowledgement}>
+        <motion.div
+          data-invitation-layer="note"
+          className={styles.acknowledgement}
+          style={motionEnabled ? { y: noteY } : { y: 0 }}
+        >
           <p>For a question that matters to you.</p>
           <p>For the business you have put so much into.</p>
-        </div>
+        </motion.div>
         <p className={styles.invitation}>
           Bring the part you are still figuring out. <span>I will meet you there.</span>
         </p>

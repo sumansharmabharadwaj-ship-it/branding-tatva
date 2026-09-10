@@ -137,21 +137,10 @@
 .booking:focus-visible,
 .write:focus-visible { outline: 2px solid #27221e; outline-offset: 6px; }
 
-/* All content is visible in SSR and before motion. Only finite arrival
-   transforms are animated; the decision surface never disappears. */
-.scene[data-invitation-motion="full"][data-invitation-entered="true"] .thankYou {
-  animation: invitation-arrive 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.scene[data-invitation-motion="full"][data-invitation-entered="true"] .makingRoom {
-  animation: invitation-open 1500ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes invitation-arrive {
-  from { transform: translateY(18px); }
-  to { transform: translateY(0); }
-}
-@keyframes invitation-open {
-  from { transform: translateY(24px) scale(0.965); }
-  to { transform: translateY(0) scale(1); }
+/* Keyboard focus resolves the exact reading composition immediately. The
+   action group itself never has a scroll transform, even during arrival. */
+.scene:focus-within [data-invitation-layer] {
+  transform: none !important;
 }
 
 @media (max-width: 767px) {
@@ -185,13 +174,13 @@
   .acknowledgement { margin-top: 24px; }
   .signature { margin-top: 18px; }
 }
-.scene[data-invitation-motion="reduced"] :is(.camera, .photograph, .thankYou, .makingRoom, .booking, .booking svg) {
+.scene[data-invitation-motion="reduced"] :is([data-invitation-layer], .booking, .booking svg) {
   animation: none !important;
   transform: none !important;
   transition: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  .scene :is(.camera, .photograph, .thankYou, .makingRoom, .booking, .booking svg) {
+  .scene :is([data-invitation-layer], .booking, .booking svg) {
     animation: none !important;
     transform: none !important;
     transition: none !important;
