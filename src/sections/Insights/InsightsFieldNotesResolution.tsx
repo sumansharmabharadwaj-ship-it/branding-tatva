@@ -200,66 +200,59 @@ export function InsightsFieldNotesResolution({
       style={{ "--notes-path-color": accent } as CSSProperties}
     >
       <div className="insights-notes-scene__copy">
-        <AnimatePresence mode="sync" initial={false}>
-          <motion.div
-            key={`${readerIntent?.origin ?? "open"}-${
-              readerIntent?.label ?? selectedPath?.slug ?? "open"
-            }`}
-            className="insights-notes-scene__resolution"
-            initial={
-              prefersReducedMotion
-                ? false
-                : { opacity: 0, clipPath: "inset(0 12% 0 0)", x: 8 }
-            }
-            animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)", x: 0 }}
-            exit={
-              prefersReducedMotion
-                ? undefined
-                : { opacity: 0, clipPath: "inset(0 0 0 12%)", x: -6 }
-            }
-            transition={{
-              duration: prefersReducedMotion ? 0 : 0.34,
-              ease: EASE_AIR,
-            }}
+        <motion.div
+          key={`${readerIntent?.origin ?? "open"}-${
+            readerIntent?.label ?? selectedPath?.slug ?? "open"
+          }`}
+          className="insights-notes-scene__resolution"
+          initial={
+            prefersReducedMotion
+              ? false
+              : { x: 8 }
+          }
+          animate={{ x: 0 }}
+          transition={{
+            duration: prefersReducedMotion ? 0 : 0.34,
+            ease: EASE_AIR,
+          }}
+        >
+          <p className="insights-notes-scene__eyebrow text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
+            {selectedPath ? (
+              <ElementGlyph
+                slug={selectedPath.element}
+                className="h-5 w-5"
+                strokeWidth={1.35}
+              />
+            ) : null}
+            <span>{readerThreadLabel}</span>
+          </p>
+          <h2 className="insights-notes-scene__headline mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
+            {resolvedHeadline}
+          </h2>
+          <p className="insights-notes-scene__description mt-5 max-w-xl text-base leading-7 text-ivory/75">
+            {resolvedDescription}
+          </p>
+          <ol
+            className="insights-notes-scene__cadence"
+            aria-label="What each letter contains"
           >
-            <p className="insights-notes-scene__eyebrow text-xs font-semibold uppercase tracking-[0.22em] text-sandstone">
-              {selectedPath ? (
-                <ElementGlyph
-                  slug={selectedPath.element}
-                  className="h-5 w-5"
-                  strokeWidth={1.35}
-                />
-              ) : null}
-              <span>{readerThreadLabel}</span>
-            </p>
-            <h2 className="insights-notes-scene__headline mt-4 max-w-2xl font-display text-display-md font-normal text-ivory">
-              {resolvedHeadline}
-            </h2>
-            <p className="insights-notes-scene__description mt-5 max-w-xl text-base leading-7 text-ivory/75">
-              {resolvedDescription}
-            </p>
-            <ol
-              className="insights-notes-scene__cadence"
-              aria-label="What each letter contains"
-            >
-              <li>
-                <span>01</span>
-                <strong>Problem</strong>
-                <small>{resolution.cadence[0]}</small>
-              </li>
-              <li>
-                <span>02</span>
-                <strong>Evidence</strong>
-                <small>{resolution.cadence[1]}</small>
-              </li>
-              <li>
-                <span>03</span>
-                <strong>Decision</strong>
-                <small>{resolution.cadence[2]}</small>
-              </li>
-            </ol>
-          </motion.div>
-        </AnimatePresence>
+            <li>
+              <span>01</span>
+              <strong>Problem</strong>
+              <small>{resolution.cadence[0]}</small>
+            </li>
+            <li>
+              <span>02</span>
+              <strong>Evidence</strong>
+              <small>{resolution.cadence[1]}</small>
+            </li>
+            <li>
+              <span>03</span>
+              <strong>Decision</strong>
+              <small>{resolution.cadence[2]}</small>
+            </li>
+          </ol>
+        </motion.div>
       </div>
       <div className="insights-notes-scene__form lg:min-w-96">
         <AnimatePresence initial={false}>

@@ -147,12 +147,22 @@ export function InsightsFooterInvitation({
       >
         <Link
           href={
-            selectedPath ? `/insights/topic/${selectedPath.slug}` : "/insights"
+            selectedPath
+              ? `/insights/topic/${selectedPath.slug}`
+              : "#insights-library"
           }
         >
-          {selectedPath
-            ? `Keep reading ${selectedPath.name}`
-            : "Return to the library"}
+          <span className="insights-footer-invitation__route-copy">
+            <small>01 / Keep investigating</small>
+            <strong>
+              {selectedPath ? selectedPath.name : "Return to the essays"}
+            </strong>
+            <span>
+              {selectedPath
+                ? "Follow this topic through the essay collection."
+                : "Find an essay for the problem you are working through."}
+            </span>
+          </span>
           <ArrowRight aria-hidden="true" />
         </Link>
         <Link
@@ -162,9 +172,19 @@ export function InsightsFooterInvitation({
               : "/services"
           }
         >
-          {selectedPath
-            ? `See where ${selectedPath.service.name} fits`
-            : "Compare brand engagements"}
+          <span className="insights-footer-invitation__route-copy">
+            <small>02 / Work with Suman</small>
+            <strong>
+              {selectedPath
+                ? selectedPath.service.name
+                : "Explore the engagements"}
+            </strong>
+            <span>
+              {selectedPath
+                ? "See the scope and deliverables for this brand question."
+                : "Compare the scope, process, and deliverables."}
+            </span>
+          </span>
           <ArrowRight aria-hidden="true" />
         </Link>
       </nav>

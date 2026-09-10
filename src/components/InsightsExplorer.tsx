@@ -185,31 +185,15 @@ function interleaveTopicPaths(
   ];
 }
 
+// Replace the selection immediately so the controls, article links, and refs
+// always describe the same folio while its short entrance settles.
 const FOLIO_TURN_VARIANTS: Variants = {
   enter: (direction: number = 1) => ({
-    opacity: 0.72,
-    rotateY: direction * 4,
-    scaleX: 0.985,
-    clipPath:
-      direction > 0
-        ? "inset(0 7% 0 0 round 1.5rem)"
-        : "inset(0 0 0 7% round 1.5rem)",
+    x: direction * 24,
   }),
   settled: {
-    opacity: 1,
-    rotateY: 0,
-    scaleX: 1,
-    clipPath: "inset(0 0% 0 0% round 0rem)",
+    x: 0,
   },
-  exit: (direction: number = 1) => ({
-    opacity: 0.48,
-    rotateY: direction * -3,
-    scaleX: 0.992,
-    clipPath:
-      direction > 0
-        ? "inset(0 0 0 7% round 1.5rem)"
-        : "inset(0 7% 0 0 round 1.5rem)",
-  }),
 };
 
 export function InsightsExplorer({
@@ -541,10 +525,14 @@ export function InsightsExplorer({
 
   function turnFolio(nextIndex: number) {
     const clampedIndex = Math.min(folioCount - 1, Math.max(0, nextIndex));
-    setFolio((current) => ({
-      index: clampedIndex,
-      direction: clampedIndex >= current.index ? 1 : -1,
-    }));
+    setFolio((current) =>
+      clampedIndex === current.index
+        ? current
+        : {
+            index: clampedIndex,
+            direction: clampedIndex > current.index ? 1 : -1,
+          },
+    );
   }
 
   function goToMobileCard(nextIndex: number) {
@@ -838,63 +826,59 @@ export function InsightsExplorer({
                 <i aria-hidden="true" />
               </div>
             ) : null}
-            <AnimatePresence mode="wait" initial={false} custom={folio.direction}>
-              <motion.div
-                key={`${topicSlug}-${activeFolio}-${visibleFolioKey}`}
-                ref={folioTrackRef}
-                custom={folio.direction}
-                className="insights-library__folios"
-                onScroll={handleMobileCardScroll}
-                variants={FOLIO_TURN_VARIANTS}
-                initial={prefersReducedMotion ? false : "enter"}
-                animate="settled"
-                exit={prefersReducedMotion ? undefined : "exit"}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : 0.46,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                style={{ transformPerspective: 1400 }}
-              >
-                {visiblePosts.map((post, index) => (
-                  <div
-                    key={post.slug}
-                    ref={(node) => {
-                      folioCardRefs.current[index] = node;
+            <motion.div
+              key={`${topicSlug}-${activeFolio}-${visibleFolioKey}`}
+              ref={folioTrackRef}
+              custom={folio.direction}
+              className="insights-library__folios"
+              onScroll={handleMobileCardScroll}
+              variants={FOLIO_TURN_VARIANTS}
+              initial={prefersReducedMotion ? false : "enter"}
+              animate="settled"
+              transition={{
+                duration: prefersReducedMotion ? 0 : 0.4,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              {visiblePosts.map((post, index) => (
+                <div
+                  key={post.slug}
+                  ref={(node) => {
+                    folioCardRefs.current[index] = node;
+                  }}
+                  className="insights-library__folio"
+                  style={{
+                    "--folio-delay": `${index * 38}ms`,
+                  } as CSSProperties}
+                >
+                  <InsightEditorialRow
+                    post={post}
+                    visual={libraryVisuals.get(post.slug)!}
+                    rowNumber={firstPostIndex + index + 1}
+                    onOpen={(openedPost) =>
+                      carryArticleIntent(openedPost, index)
+                    }
+                    tracking={{
+                      source: "insights_library",
+                      context: {
+                        mode: settledQuery
+                          ? "ranked_search"
+                          : topicSlug === "all"
+                            ? "open_archive"
+                            : "topic_filter",
+                        folio: activeFolio + 1,
+                        position: firstPostIndex + index + 1,
+                        match_reason:
+                          firstPostIndex === 0 && index === 0
+                            ? topMatch?.kind ?? "none"
+                            : "none",
+                        carried_from: carriedIntent?.origin ?? "none",
+                      },
                     }}
-                    className="insights-library__folio"
-                    style={{
-                      "--folio-delay": `${index * 38}ms`,
-                    } as CSSProperties}
-                  >
-                    <InsightEditorialRow
-                      post={post}
-                      visual={libraryVisuals.get(post.slug)!}
-                      rowNumber={firstPostIndex + index + 1}
-                      onOpen={(openedPost) =>
-                        carryArticleIntent(openedPost, index)
-                      }
-                      tracking={{
-                        source: "insights_library",
-                        context: {
-                          mode: settledQuery
-                            ? "ranked_search"
-                            : topicSlug === "all"
-                              ? "open_archive"
-                              : "topic_filter",
-                          folio: activeFolio + 1,
-                          position: firstPostIndex + index + 1,
-                          match_reason:
-                            firstPostIndex === 0 && index === 0
-                              ? topMatch?.kind ?? "none"
-                              : "none",
-                          carried_from: carriedIntent?.origin ?? "none",
-                        },
-                      }}
-                    />
-                  </div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+                  />
+                </div>
+              ))}
+            </motion.div>
 
             {folioCount > 1 ? (
               <div
