@@ -386,8 +386,22 @@ html:has(.insights-worksheet:focus-within) {
 .insights-worksheet__review { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 0 0.75rem; min-height: 2.75rem; }
 .insights-worksheet__review > p { display: flex; align-items: center; min-height: 2.75rem; color: var(--worksheet-muted); font-size: 0.875rem; }
 .insights-worksheet__review-item { position: relative; display: inline-flex; align-items: center; gap: 0.3rem; min-height: 2.75rem; color: var(--worksheet-muted); font-size: 0.8125rem; cursor: pointer; }
+.insights-worksheet__review-item::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0.5rem 1.1rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
 .insights-worksheet__review-item svg { width: 0.8rem; height: 0.8rem; color: var(--worksheet-clay); }
 .insights-worksheet__review-item[aria-current="true"] { color: var(--worksheet-clay); }
+.insights-worksheet__review-item[aria-current="true"]::before { content: none; }
+.insights-worksheet__review-item:focus-visible { color: var(--worksheet-clay); }
+.insights-worksheet__review-item:focus-visible::before { transform: scaleX(1); transform-origin: left center; }
 .insights-worksheet__review-selection { position: absolute; right: 0; bottom: 0.5rem; left: 1.1rem; height: 1px; background: currentColor; pointer-events: none; }
 .insights-worksheet__links { position: relative; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
 .insights-worksheet__service-slot,
@@ -400,6 +414,8 @@ html:has(.insights-worksheet:focus-within) {
 .insights-worksheet__checklist { color: var(--worksheet-clay); font-weight: 600; }
 .insights-worksheet :is(button, a) { scroll-margin-top: 6rem; scroll-margin-bottom: 6rem; }
 .insights-worksheet :is(button, a, [role="tabpanel"], .insights-worksheet__footer):focus-visible { outline: 2px solid var(--worksheet-clay); outline-offset: 3px; }
+.insights-worksheet__next:focus-visible svg { transform: translate(var(--worksheet-next-hover-x, 3px), var(--worksheet-next-hover-y, 0px)); }
+.insights-worksheet__links a:focus-visible svg { transform: translate(2px, -2px); }
 
 @media (max-width: 899px) {
   .insights-worksheet :is(button, a, .insights-worksheet__footer) { scroll-margin-bottom: 9rem; }
@@ -413,7 +429,7 @@ html:has(.insights-worksheet:focus-within) {
   .insights-worksheet__mark[aria-pressed="true"]:hover { background: #4a3d32; }
   .insights-worksheet__next:hover svg { transform: translate(var(--worksheet-next-hover-x, 3px), var(--worksheet-next-hover-y, 0px)); }
   .insights-worksheet__review-item:hover { color: var(--worksheet-clay); }
-  .insights-worksheet__review-item:not([aria-current="true"]):hover { text-decoration: underline; text-underline-offset: 0.3rem; }
+  .insights-worksheet__review-item:hover::before { transform: scaleX(1); transform-origin: left center; }
   .insights-worksheet__links a:hover { text-decoration: underline; text-underline-offset: 0.25rem; }
   .insights-worksheet__links a:hover svg { transform: translate(2px, -2px); }
 }
@@ -472,8 +488,8 @@ html[data-motion="reduced"] .insights-worksheet *::before {
 }
 
 html[data-motion="reduced"] .insights-worksheet__areas button:hover .insights-worksheet__area-icon:not([data-marked="true"]),
-html[data-motion="reduced"] .insights-worksheet__next:hover svg,
-html[data-motion="reduced"] .insights-worksheet__links a:hover svg,
+html[data-motion="reduced"] .insights-worksheet__next:is(:hover, :focus-visible) svg,
+html[data-motion="reduced"] .insights-worksheet__links a:is(:hover, :focus-visible) svg,
 html[data-motion="reduced"] .insights-worksheet-eyebrow i::after,
 html[data-motion="reduced"] .insights-worksheet::before {
   transform: none;
@@ -482,7 +498,7 @@ html[data-motion="reduced"] .insights-worksheet::before {
 @media (prefers-reduced-motion: reduce) {
   .insights-worksheet *, .insights-worksheet *::before { transition: none; animation: none; scroll-behavior: auto; }
   .insights-worksheet__areas button:hover .insights-worksheet__area-icon:not([data-marked="true"]),
-  .insights-worksheet__next:hover svg,
-  .insights-worksheet__links a:hover svg { transform: none; }
+  .insights-worksheet__next:is(:hover, :focus-visible) svg,
+  .insights-worksheet__links a:is(:hover, :focus-visible) svg { transform: none; }
   .insights-worksheet-eyebrow i::after, .insights-worksheet::before { transform: none; }
 }
