@@ -7,7 +7,7 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -207,7 +207,6 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
           <span>Relevant decision</span>
         </div>
 
-        <AnimatePresence mode="popLayout" initial={false}>
           <motion.article
             key={activeQuest.topicSlug}
             id={`decision-mirror-panel-${activeQuest.topicSlug}`}
@@ -218,33 +217,18 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               prefersReducedMotion
                 ? false
                 : {
-                    opacity: 0.58,
-                    x: directionRef.current * 20,
-                    rotateY: directionRef.current * 3,
-                    clipPath: "inset(0 7% 0 7% round 1.25rem)",
+                    x: usesHorizontalRail ? directionRef.current * 22 : 0,
+                    y: usesHorizontalRail ? 0 : directionRef.current * 18,
                   }
             }
             animate={{
-              opacity: 1,
               x: 0,
-              rotateY: 0,
-              clipPath: "inset(0 0% 0 0% round 0rem)",
+              y: 0,
             }}
-            exit={
-              prefersReducedMotion
-                ? undefined
-                : {
-                    opacity: 0.36,
-                    x: directionRef.current * -14,
-                    rotateY: directionRef.current * -2,
-                    clipPath: "inset(0 4% 0 4% round 1rem)",
-                  }
-            }
             transition={{
               duration: prefersReducedMotion ? 0 : 0.48,
               ease: [0.22, 1, 0.36, 1],
             }}
-            style={{ transformPerspective: 1100 }}
           >
             <p className="insights-decision-mirror__route">
               {committedSlug === activeQuest.topicSlug
@@ -290,7 +274,6 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               <ArrowDown aria-hidden="true" className="h-4 w-4" />
             </a>
           </motion.article>
-        </AnimatePresence>
         <p className="sr-only" aria-live="polite">
           {committedSlug === activeQuest.topicSlug
             ? `${activeQuest.pathName} is selected for the topic map.`

@@ -10,7 +10,6 @@ import {
 import Link from "next/link";
 import { motion, useInView, useMotionValueEvent, useScroll } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { TrackedLink } from "@/components/TrackedLink";
@@ -64,11 +63,11 @@ type AtlasSelectionLock = {
 };
 
 const ELEMENT_COLORS: Record<InsightElement, string> = {
-  earth: "#D77A51",
-  water: "#7FA4BA",
-  fire: "#D7A84A",
-  air: "#A8B68F",
-  space: "#D09A89",
+  earth: "#A64C2E",
+  water: "#436B7E",
+  fire: "#805B18",
+  air: "#526442",
+  space: "#8E5140",
 };
 
 export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
@@ -339,13 +338,6 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
         }
       }}
     >
-      <BackgroundVideo
-        video="/videos/generated/insights-v2/page-reading-currents.mp4"
-        poster="/images/generated/insights-v2/page-reading-currents.webp"
-        playbackRate={0.96}
-        posterPriority={false}
-      />
-      <div className="insights-atlas__veil" aria-hidden="true" />
       <div className="insights-atlas__arrival" aria-hidden="true">
         <span>
           {carriedPath && carriedIntent?.origin === "decision-mirror" ? (
@@ -378,17 +370,17 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
       </div>
 
       <Container className="insights-atlas__container">
+        <p className="insights-section-kicker"><span>02 / Topic map</span><i aria-hidden="true" /><span>05 connected topics</span></p>
         <header className="insights-atlas__header">
           <div>
-            <p className="insights-atlas__eyebrow">Topic map</p>
             <h2 id="insights-atlas-title">
-              Follow the visible problem to the decision underneath it.
+              Find the question behind the problem.
             </h2>
           </div>
           <p>
             {carriedPath
               ? `${carriedPath.name} is selected. Its questions, evidence, essays, and relevant engagement are gathered here.`
-              : "Five topics connect common founder concerns to sharper questions, evidence, essays, and relevant client work."}
+              : "Explore the questions buyers leave you with. Each topic brings together the reading, client work, and service that can help."}
           </p>
         </header>
 
@@ -488,11 +480,6 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             }}
             onPointerCancel={() => setPaused(false)}
           >
-            <div className="insights-atlas__orbital" aria-hidden="true">
-              <span />
-              <i />
-            </div>
-
             <motion.article
               key={activePath.slug}
               id={`atlas-panel-${activePath.slug}`}
@@ -503,25 +490,18 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                 prefersReducedMotion
                   ? false
                   : {
-                      opacity: 0.58,
-                      x: transitionDirectionRef.current * 24,
-                      rotateY: transitionDirectionRef.current * 5,
-                      scale: 0.988,
-                      clipPath: "inset(0 8% 0 8% round 1.5rem)",
+                      x: usesHorizontalRail ? transitionDirectionRef.current * 24 : 0,
+                      y: usesHorizontalRail ? 0 : transitionDirectionRef.current * 20,
                     }
               }
               animate={{
-                opacity: 1,
                 x: 0,
-                rotateY: 0,
-                scale: 1,
-                clipPath: "inset(0 0% 0 0% round 0rem)",
+                y: 0,
               }}
               transition={{
                 duration: prefersReducedMotion ? 0 : 0.34,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              style={{ transformPerspective: 1200 }}
             >
                 <div className="insights-atlas__panel-head">
                   <p style={{ color: accent }}>{activePath.eyebrow}</p>
@@ -577,7 +557,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                     <strong>{activePath.proof.title}</strong>
                     <p>{activePath.proof.frame}</p>
                     <span>
-                      Open the project record
+                      See the project
                       <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                     </span>
                   </Link>
@@ -589,7 +569,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                     <strong>{activePath.service.name}</strong>
                     <p>{activePath.service.frame}</p>
                     <span>
-                      Inspect the engagement
+                      Explore the service
                       <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                     </span>
                   </Link>

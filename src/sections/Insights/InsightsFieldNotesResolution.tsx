@@ -34,7 +34,7 @@ type InsightsFieldNotesResolutionProps = {
 };
 
 const DEFAULT_RESOLUTION: FieldNotesResolution = {
-  headline: "Occasional letters for the brand question currently on your desk.",
+  headline: "A letter for the question still on your desk.",
   description:
     "Each email examines a specific founder problem, shows the evidence or framework, and ends with a decision to test. Sent only when there is something worth reading.",
   evidenceHeadline:
@@ -127,11 +127,11 @@ const RESOLUTIONS: Record<string, FieldNotesResolution> = {
 };
 
 const ELEMENT_COLORS: Record<InsightElement, string> = {
-  earth: "#D77A51",
-  water: "#7FA4BA",
-  fire: "#D7A84A",
-  air: "#A8B68F",
-  space: "#D09A89",
+  earth: "#A64C2E",
+  water: "#436B7E",
+  fire: "#805B18",
+  air: "#526442",
+  space: "#8E5140",
 };
 
 export function InsightsFieldNotesResolution({
@@ -189,7 +189,7 @@ export function InsightsFieldNotesResolution({
     ? resolution.evidenceHeadline
     : resolution.headline;
   const resolvedDescription = isEvidenceThread
-    ? resolution.evidenceDescription
+    ? "Your worksheet topic stays selected on this page. The letters go to the whole list and explore different brand questions."
     : resolution.description;
 
   return (
@@ -290,8 +290,8 @@ export function InsightsFieldNotesResolution({
                 strokeWidth={1.35}
               />
               <span>
-                <small>Topic saved</small>
-                <strong>{selectedPath.name} will stay attached to this request.</strong>
+                <small>From your worksheet</small>
+                <strong>{selectedPath.name} is selected on this page.</strong>
               </span>
               <Check aria-hidden="true" />
             </motion.div>

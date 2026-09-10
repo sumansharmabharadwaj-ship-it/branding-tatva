@@ -12,6 +12,7 @@ import {
 import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightCardPost } from "@/components/InsightCard";
 import type { InsightEditorialVisual } from "@/data/insightEditorialVisuals";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 const TOPIC_NAMES: Record<string, string> = {
   positioning: "Positioning",
@@ -48,6 +49,7 @@ export function InsightEditorialRow({
   onOpen,
 }: InsightEditorialRowProps) {
   const linkRef = useRef<HTMLAnchorElement>(null);
+  const prefersReducedMotion = useHydratedReducedMotion();
   const topicName = TOPIC_NAMES[post.topicSlug] ?? post.element;
   const readingTime = post.readingTime.replace(/\s+read$/i, "");
 
@@ -55,16 +57,16 @@ export function InsightEditorialRow({
     const node = linkRef.current;
     if (!node) return;
 
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reducedMotion) {
+    if (prefersReducedMotion) {
       node.dataset.revealed = "true";
+      resetDepth(node);
       return;
     }
 
     let frame = 0;
+    let visible = false;
     const updateScrollDepth = () => {
+      if (!visible) return;
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const rect = node.getBoundingClientRect();
@@ -87,9 +89,12 @@ export function InsightEditorialRow({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting) {
+        visible = Boolean(entry?.isIntersecting);
+        if (visible) {
           node.dataset.revealed = "true";
-          observer.disconnect();
+          updateScrollDepth();
+        } else {
+          cancelAnimationFrame(frame);
         }
       },
       { threshold: 0.16 },
@@ -106,12 +111,12 @@ export function InsightEditorialRow({
       window.removeEventListener("scroll", updateScrollDepth);
       window.removeEventListener("resize", updateScrollDepth);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   function handlePointerMove(event: PointerEvent<HTMLAnchorElement>) {
     if (event.pointerType === "touch") return;
     const node = event.currentTarget;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion) return;
 
     const rect = node.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
@@ -125,6 +130,8 @@ export function InsightEditorialRow({
   }
 
   function handleFocus(event: FocusEvent<HTMLAnchorElement>) {
+    if (prefersReducedMotion) return;
+    event.currentTarget.dataset.revealed = "true";
     event.currentTarget.dataset.depthActive = "true";
   }
 
@@ -157,7 +164,7 @@ export function InsightEditorialRow({
       <span className="insight-editorial-row__copy">
         <span className="insight-editorial-row__eyebrow">
           <span>{String(rowNumber).padStart(2, "0")}</span>
-          <span aria-hidden="true">—</span>
+          <span aria-hidden="true">/</span>
           {topicName}
         </span>
         <span className="insight-editorial-row__title-line">

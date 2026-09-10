@@ -635,6 +635,9 @@ export function InsightsExplorer({
       </div>
       <div className="insights-library__camera relative mx-auto w-full">
         <div className="insights-library__header">
+          {preservesLibraryPlace ? (
+            <p className="insights-section-kicker"><span>03 / Essay library</span><span>{posts.length} essays</span></p>
+          ) : null}
           <h2 className="insights-library__wordmark">
             Branding Tatva <em>Insights</em>
           </h2>

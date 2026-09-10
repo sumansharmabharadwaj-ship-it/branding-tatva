@@ -4,12 +4,10 @@ import Link from "next/link";
 import { Container } from "@/components/Container";
 import type { InsightCardPost } from "@/components/InsightCard";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
-import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { PhotoHero } from "@/components/PhotoHero";
 import { Reveal } from "@/components/Reveal";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { SplitReveal } from "@/components/SplitReveal";
-import { TexturedDark } from "@/components/TexturedDark";
 import { elements } from "@/data/elements";
 import { getInsightApplication } from "@/data/insightApplications";
 import { insightPosts, insightTopics } from "@/data/insights";
@@ -35,6 +33,7 @@ import {
 } from "@/sections/Insights/InsightsSceneNavigator";
 import "../insights-cinematic.css";
 import "./insights-worksheet.css";
+import "./insights-editorial-sections.css";
 
 export const metadata: Metadata = {
   title: "Insights on brand strategy, positioning, and messaging",
@@ -80,7 +79,7 @@ const INSIGHT_SCENES: InsightScene[] = [
     id: "knowledge-atlas",
     label: "Topic map",
     shortLabel: "Topics",
-    theme: "dark",
+    theme: "light",
     accent: "#7FA4BA",
   },
   {
@@ -101,7 +100,7 @@ const INSIGHT_SCENES: InsightScene[] = [
     id: "insights-field-notes",
     label: "Occasional letters",
     shortLabel: "Letters",
-    theme: "dark",
+    theme: "light",
     accent: "#D7A84A",
   },
 ];
@@ -405,7 +404,7 @@ export default function InsightsPage() {
                     Choose the problem that sounds familiar. The library connects it to the
                     relevant question, evidence, essay, and service.
                   </p>
-                  <Link href="#knowledge-atlas" className="insights-hero__link">
+                  <Link href="#insights-foundation" className="insights-hero__link">
                     Find the closest business problem <span aria-hidden="true">↓</span>
                   </Link>
                 </Reveal>
@@ -448,28 +447,17 @@ export default function InsightsPage() {
           className="insights-foundation insights-scene relative overflow-hidden bg-ivory"
           data-scene-active="false"
         >
-          <div className="insights-foundation__film" aria-hidden="true">
-            <BackgroundVideo
-              video="/videos/generated/insights-v2/page-foundation-folio.mp4"
-              poster="/images/generated/insights-v2/page-foundation-folio.webp"
-              playbackRate={0.86}
-              posterPriority={false}
-            />
-            <div className="absolute inset-0 bg-[#F4EFE6]/84" />
-          </div>
           <Container className="insights-foundation__camera relative">
+            <p className="insights-section-kicker"><span>01 / Problem finder</span><i aria-hidden="true" /><span>05 starting points</span></p>
             <div className="insights-foundation__header">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-clay">
-                  Problem finder
-                </p>
                 <h2 className="mt-3 font-display text-display-sm font-normal text-soil">
-                  Which sentence have you said recently?
+                  Which problem sounds familiar?
                 </h2>
               </div>
               <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
-                Each sentence points to a different brand decision. Choose the one
-                closest to the business today and the relevant reading will move forward.
+                Choose what you keep hearing from buyers. Start with the question
+                behind it, then read the essay that helps you investigate.
               </p>
             </div>
             <InsightsDecisionMirror quests={readerQuests} />
@@ -522,15 +510,12 @@ export default function InsightsPage() {
           className="insights-scene"
           data-scene-active="false"
         >
-          <TexturedDark
-            image="/images/pixabay-golden-reeds-wind-poster.jpg"
-            video="/videos/pixabay-golden-reeds-wind.mp4"
-            className="insights-notes-scene"
-          >
+          <section className="insights-notes-scene" aria-label="Occasional letters">
             <Container className="insights-notes-scene__camera">
+              <p className="insights-section-kicker"><span>05 / Occasional letters</span><i aria-hidden="true" /><span>From Suman</span></p>
               <InsightsFieldNotesResolution paths={fieldNotesPaths} />
             </Container>
-          </TexturedDark>
+          </section>
         </div>
       </main>
       <Footer
