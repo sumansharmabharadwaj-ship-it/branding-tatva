@@ -1,5 +1,35 @@
 # Design QA log
 
+## Studio scroll continuation — 2026-09-10
+
+### Scope and visual evidence
+
+- Reference: release 212 Studio chapter, Psychology selected, pinned at the top of a 1363 × 936 viewport.
+- Compared the reference screenshot and local implementation screenshot together in one browser output. The reference remains the visual target; Parker supplies only the vertical, visitor-led motion principle.
+- Kept all copy, imagery, portrait treatment, colors, borders, surfaces, tab order and routes. No new visual asset was introduced. The headline now uses two lines on the tested desktop, with a viewport-aware size; tighter panel spacing leaves the complete footer visible at 831px, clear of the fixed guidance control. The original footer reached 901px when pinned.
+- Desktop grid: 936px high, sticky at 0; outer scene: 2246px (unchanged 240svh runway); horizontal overflow: 0.
+- Mobile: screenshots at the existing 390 × 844 QA preset show the original single-column reading layout. Selecting Literature updates its heading, result and MyShopInEurope proof link.
+
+### Interaction and accessibility checks completed
+
+- Desktop scroll advances to Literature with the correct heading.
+- End key selects Strategy; keyboard traversal reaches `/work/dr-haley-nutrition`.
+- While that link has visible keyboard focus, scrolling back to progress 0.5098 retains Strategy and the same focused link.
+- Activating the site's reduced-motion control releases the grid to `position: relative`, collapses the section to 936px and removes the portrait transform.
+- Browser console showed only a cloud-browser extension metadata error, not an application-origin error.
+- Unit/source gate covers collapsed runways, forward/reverse steps, boundary hysteresis, listener cleanup, keyboard ownership and both reduced-motion fallbacks.
+- Production build (79 routes), homepage source gate, built homepage gate and controlled-deployment self-test passed after integrating upstream release 214.
+
+### Remaining verification / release gate
+
+The local preview service stopped during short-laptop navigation, which returned `ERR_CONNECTION_REFUSED`. Its status confirms stopped. Earlier browser input commands also intermittently timed out; successful state reads above were verified separately rather than inferred from those commands.
+
+Short-laptop/tablet visual inspection and an unpaused reverse-scroll browser check remain pending. Do not treat source tests as substitutes for these checks. Do not publish this continuation until the preview can be restored and the remaining checks pass. No deployment or authentication settings were changed.
+
+final result: blocked
+
+---
+
 ## Contact gratitude continuity
 
 - Date: 2026-09-09 UTC

@@ -3,6 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import { studioProgress, studioStep } from "./studioScroll";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
@@ -60,6 +61,12 @@ const DISCIPLINES = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+const DESKTOP_STORY = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
+const MEDIA_TRANSITION = {
+  enter: (direction: number) => ({ opacity: 0.82, y: direction * 16, scale: 1.035 }),
+  visible: { opacity: 1, y: 0, scale: 1.015 },
+  exit: (direction: number) => ({ opacity: 0.78, y: direction * -12, scale: 1.015 }),
+};
 
 export function StudioCinematicChapter() {
   const lenis = useLenis();
@@ -72,6 +79,7 @@ export function StudioCinematicChapter() {
   const portraitY = useTransform(scrollYProgress, [0, 1], [12, -12]);
   const portraitScale = useTransform(scrollYProgress, [0, 1], [1.01, 1.055]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [desktopMotion, setDesktopMotion] = useState(false);
   const selectionRef = useRef({ index: 0, direction: 0 });
   const active = DISCIPLINES[activeIndex];
 
@@ -86,13 +94,12 @@ export function StudioCinematicChapter() {
     const grid = gridRef.current;
     if (!section || !grid || prefersReducedMotion) return;
 
-    const desktopStory = window.matchMedia(
-      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
-    );
+    const desktopStory = window.matchMedia(DESKTOP_STORY);
     let frameRequest = 0;
 
     function render() {
       frameRequest = 0;
+      setDesktopMotion(desktopStory.matches);
       if (!desktopStory.matches) {
         grid?.style.removeProperty("--studio-scroll-progress");
         return;
@@ -101,15 +108,15 @@ export function StudioCinematicChapter() {
       const bounds = section?.getBoundingClientRect();
       if (!bounds) return;
 
-      const runway = Math.max(1, bounds.height - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, -bounds.top / runway));
-      const nextIndex = Math.min(
-        DISCIPLINES.length - 1,
-        Math.floor(progress * DISCIPLINES.length),
-      );
+      const progress = studioProgress(bounds.top, bounds.height, window.innerHeight);
+      if (progress === null) return;
 
       grid?.style.setProperty("--studio-scroll-progress", progress.toFixed(4));
-      select(nextIndex);
+      // A keyboard user owns the selected panel until focus leaves it.
+      // Otherwise a scroll can unmount the very proof link they are reading.
+      const focused = document.activeElement;
+      if (focused instanceof HTMLElement && section?.contains(focused) && focused.matches(":focus-visible")) return;
+      select(studioStep(progress, selectionRef.current.index, DISCIPLINES.length));
     }
 
     function schedule() {
@@ -121,21 +128,21 @@ export function StudioCinematicChapter() {
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
     desktopStory.addEventListener("change", schedule);
+    section.addEventListener("focusout", schedule);
 
     return () => {
       if (frameRequest) window.cancelAnimationFrame(frameRequest);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       desktopStory.removeEventListener("change", schedule);
+      section.removeEventListener("focusout", schedule);
       grid.style.removeProperty("--studio-scroll-progress");
     };
   }, [prefersReducedMotion, select]);
 
   function choose(index: number) {
     const section = sectionRef.current;
-    const desktopStory = window.matchMedia(
-      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
-    );
+    const desktopStory = window.matchMedia(DESKTOP_STORY);
 
     if (section && desktopStory.matches && !prefersReducedMotion) {
       const bounds = section.getBoundingClientRect();
@@ -179,14 +186,16 @@ export function StudioCinematicChapter() {
 
       <div ref={gridRef} className="studio-cinematic__grid">
         <div className="studio-cinematic__media" aria-hidden="true">
-          <AnimatePresence mode="sync" initial={false}>
+          <AnimatePresence mode="sync" initial={false} custom={selectionRef.current.direction}>
             <motion.div
               className="studio-cinematic__media-layer"
               key={active.video}
-              initial={prefersReducedMotion ? false : { opacity: 0.82 }}
-              animate={{ opacity: 1 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0.78 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
+              custom={selectionRef.current.direction}
+              variants={MEDIA_TRANSITION}
+              initial={prefersReducedMotion ? false : "enter"}
+              animate={prefersReducedMotion ? { opacity: 1, y: 0, scale: 1 } : "visible"}
+              exit={prefersReducedMotion ? undefined : "exit"}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: EASE }}
             >
               <BackgroundVideo video={active.video} poster={active.poster} managedByHomepage loop={false} />
             </motion.div>
@@ -249,8 +258,8 @@ export function StudioCinematicChapter() {
           >
             <motion.div
               key={active.number}
-              initial={prefersReducedMotion ? false : { x: selectionRef.current.direction * 10 }}
-              animate={{ x: 0 }}
+              initial={prefersReducedMotion ? false : { y: selectionRef.current.direction * 10 }}
+              animate={{ y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
             >
               <p className="studio-cinematic__credential">{active.eyebrow}</p>
@@ -279,7 +288,7 @@ export function StudioCinematicChapter() {
         <aside className="studio-cinematic__portrait">
           <motion.div
             className="studio-cinematic__portrait-image"
-            style={{ y: prefersReducedMotion ? 0 : portraitY, scale: prefersReducedMotion ? 1 : portraitScale }}
+            style={{ y: prefersReducedMotion || !desktopMotion ? 0 : portraitY, scale: prefersReducedMotion || !desktopMotion ? 1 : portraitScale }}
           >
             <Image
               src="/images/own-portrait.jpg"
