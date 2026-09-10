@@ -164,6 +164,28 @@
 .insights-page .insights-library--editorial .insights-library__lens input { min-height: 3.25rem; border-radius: 0.25rem; font-size: 1rem; background: #fcf9f2; }
 .insights-page .insights-library--editorial .insights-library__topics { gap: 0.5rem 1.25rem; margin-top: 1.5rem; padding-bottom: 1rem; }
 .insights-page .insights-library--editorial .insights-library__topics button { position: relative; min-height: 2.75rem; font-size: 0.875rem; border-radius: 0.25rem; }
+.insights-page .insights-library--editorial .insights-library__topics button {
+  isolation: isolate;
+  padding-inline: 0.85rem;
+  color: var(--insights-page-muted);
+}
+.insights-page .insights-library--editorial .insights-library__topics button:is(.is-active, [aria-pressed="true"]) {
+  background: transparent;
+  color: var(--insights-page-ink);
+}
+.insights-page .insights-library__topics button:focus-visible {
+  outline: 2px solid var(--insights-page-accent);
+  outline-offset: 3px;
+}
+.insights-page .insights-library__topic-selection {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: 0.25rem 0.25rem 0 0;
+  background: #fcf9f2;
+  box-shadow: inset 0 -2px var(--insights-page-accent);
+  pointer-events: none;
+}
 .insights-page .insights-library--editorial .insights-library__result-line { display: flex; grid-column: 1 / -1; grid-row: 3; padding-block: 0.8rem; }
 .insights-page .insights-library--editorial .insights-library__folios { grid-row: 4; }
 .insights-page .insights-library--editorial .insights-library__empty { grid-column: 1 / -1; grid-row: 4; border-radius: 0.25rem; }
@@ -185,6 +207,57 @@
   transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .insights-page .insight-editorial-row:is(:hover, :focus-visible)::after { transform: scaleX(1); transform-origin: left; }
+
+/* A wider page control keeps the range useful on touch and makes the current
+   essay range readable without returning to the search header. */
+.insights-page .insights-library--editorial .insights-library__pager {
+  --library-thread: var(--insights-page-accent);
+  width: min(100%, 42rem);
+  grid-template-columns: minmax(6rem, 1fr) minmax(10rem, 1.3fr) minmax(6rem, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding-block: 1rem;
+}
+.insights-page .insights-library__pager button {
+  position: relative;
+  min-height: 3rem;
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #fcf9f2;
+  color: var(--insights-page-ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.insights-page .insights-library__pager button:not(:disabled):is(:hover, :focus-visible) {
+  border-color: var(--insights-page-accent);
+  background: #eee4d7;
+}
+.insights-page .insights-library__pager button:disabled { opacity: 0.5; }
+.insights-page .insights-library__pager button svg { transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1); }
+.insights-page .insights-library__pager button:first-child:not(:disabled):is(:hover, :focus-visible) svg { transform: translateX(-3px); }
+.insights-page .insights-library__pager button:last-child:not(:disabled):is(:hover, :focus-visible) svg { transform: translateX(3px); }
+.insights-page .insights-library__folio-depth { width: 100%; gap: 0; color: var(--insights-page-muted); }
+.insights-page .insights-library__folio-depth .insights-library__page-label {
+  color: var(--insights-page-ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  text-transform: none;
+}
+.insights-page .insights-library__folio-depth .insights-library__page-value {
+  display: inline-block;
+  min-width: 2ch;
+  color: var(--insights-page-accent);
+  font-size: inherit;
+  font-weight: 650;
+  letter-spacing: normal;
+}
+.insights-page .insights-library__page-range { color: var(--insights-page-muted); font-size: 0.75rem; line-height: 1.5; text-align: center; font-variant-numeric: tabular-nums; }
+.insights-page .insights-library__folio-depth input { height: 2.75rem; }
+.insights-page .insights-library__folio-depth input:focus-visible { outline: 2px solid var(--insights-page-accent); outline-offset: 2px; border-radius: 0.25rem; }
 
 /* 05: a letter and its request form, with readable light surfaces in every state. */
 .insights-page .insights-notes-scene { background: #e8dfd1; color: var(--insights-page-ink); padding-block: 5.5rem 4rem; }
@@ -330,6 +403,8 @@
   .insights-page .insights-notes-scene__cadence small { grid-column: 2; }
 }
 @media (max-width: 599px) {
+  .insights-page .insights-library--editorial .insights-library__pager { grid-template-columns: 3rem minmax(0, 1fr) 3rem; gap: 0.75rem; }
+  .insights-page .insights-library__page-button-label { display: none; }
   .insights-footer .insights-footer-invitation__routes { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .insights-footer .insights-footer-invitation__routes a + a { border-top: 0; }
 }
@@ -342,6 +417,9 @@ html[data-motion="reduced"] .insights-page :is(.insights-library__folios, .insig
 html[data-motion="reduced"] .insights-page .insights-notes-scene__cadence li::after { transform: none !important; }
 html[data-motion="reduced"] .insights-footer .insights-footer-invitation__routes a::before,
 html[data-motion="reduced"] .insights-footer .insights-footer-invitation__routes a::after { transition: none; }
+html[data-motion="reduced"] .insights-page .insights-library__page-value,
+html[data-motion="reduced"] .insights-page .insights-library__pager button svg { transform: none !important; transition: none; }
+html[data-motion="reduced"] .insights-page .insights-library__folio-depth input::-webkit-slider-thumb { transform: none; transition: none; }
 @media (prefers-reduced-motion: reduce) {
   .insights-page :is(.insights-section-kicker > i, .insights-notes-scene__form, .insight-editorial-row__panel-depth, .insight-editorial-row__panel-layer) { transform: none; }
   .insights-page .insight-editorial-row::after { transition: none; }
@@ -350,4 +428,7 @@ html[data-motion="reduced"] .insights-footer .insights-footer-invitation__routes
   .insights-page .insights-notes-scene__cadence li::after { transform: none !important; }
   .insights-footer .insights-footer-invitation__routes a::before,
   .insights-footer .insights-footer-invitation__routes a::after { transition: none; }
+  .insights-page .insights-library__page-value,
+  .insights-page .insights-library__pager button svg { transform: none !important; transition: none; }
+  .insights-page .insights-library__folio-depth input::-webkit-slider-thumb { transform: none; transition: none; }
 }

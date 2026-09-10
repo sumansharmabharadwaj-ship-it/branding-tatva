@@ -3,6 +3,7 @@
 import {
   useDeferredValue,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -221,6 +222,19 @@ export function InsightsExplorer({
   const localArticleIntentRef = useRef<InsightsIntentDetail | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const preservesLibraryPlace = sectionId === "insights-library";
+  const selectionId = useId();
+  const topicSelection = preservesLibraryPlace ? (
+    <motion.span
+      className="insights-library__topic-selection"
+      aria-hidden="true"
+      layoutId={prefersReducedMotion ? undefined : `${selectionId}-topic`}
+      initial={false}
+      transition={{
+        duration: prefersReducedMotion ? 0 : 0.38,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    />
+  ) : null;
 
   const libraryVisuals = useMemo(
     () => buildInsightEditorialVisuals(posts),
@@ -701,8 +715,9 @@ export function InsightsExplorer({
           </div>
 
           {topics.length > 0 && (
-            <div
+            <motion.div
               ref={topicRailRef}
+              layoutScroll
               className="insights-library__topics mt-4 flex flex-wrap gap-2"
               aria-label="Filter articles by topic"
             >
@@ -728,6 +743,7 @@ export function InsightsExplorer({
                     : "border-border bg-transparent text-soil hover:border-soil/30"
                 }`}
               >
+                {topicSlug === "all" ? topicSelection : null}
                 All topics
               </button>
               {topics.map((topic, index) => {
@@ -746,11 +762,12 @@ export function InsightsExplorer({
                       active ? "is-active" : ""
                     }`}
                   >
+                    {active ? topicSelection : null}
                     {topic.name}
                   </button>
                 );
               })}
-            </div>
+            </motion.div>
           )}
         </div>
 
@@ -884,7 +901,7 @@ export function InsightsExplorer({
               <div
                 className="insights-library__pager"
                 role="group"
-                aria-label="Essay folios"
+                aria-label="Essay pages"
                 style={
                   {
                     "--folio-progress": `${folioProgress}%`,
@@ -893,15 +910,29 @@ export function InsightsExplorer({
               >
                 <button
                   type="button"
+                  aria-label="Previous essay page"
                   onClick={() => turnFolio(activeFolio - 1)}
                   disabled={activeFolio === 0}
                 >
                   <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-                  Previous
+                  <span className="insights-library__page-button-label">Previous</span>
                 </button>
                 <label className="insights-library__folio-depth">
-                  <span aria-live="polite">
-                    Folio {activeFolio + 1} / {folioCount}
+                  <span className="insights-library__page-label" aria-live="polite">
+                    Page{" "}
+                    <motion.span
+                      key={activeFolio}
+                      className="insights-library__page-value"
+                      initial={prefersReducedMotion ? false : { y: folio.direction * 6 }}
+                      animate={{ y: 0 }}
+                      transition={{
+                        duration: prefersReducedMotion ? 0 : 0.26,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
+                      {activeFolio + 1}
+                    </motion.span>{" "}
+                    / {folioCount}
                   </span>
                   <input
                     type="range"
@@ -912,16 +943,20 @@ export function InsightsExplorer({
                     onChange={(event) =>
                       turnFolio(Number(event.currentTarget.value) - 1)
                     }
-                    aria-label="Choose essay folio"
-                    aria-valuetext={`Folio ${activeFolio + 1} of ${folioCount}, essays ${firstPostIndex + 1} to ${firstPostIndex + visiblePosts.length}`}
+                    aria-label="Choose essay page"
+                    aria-valuetext={`Page ${activeFolio + 1} of ${folioCount}, essays ${firstPostIndex + 1} to ${firstPostIndex + visiblePosts.length} of ${filteredPosts.length}`}
                   />
+                  <small className="insights-library__page-range">
+                    Essays {firstPostIndex + 1} to {firstPostIndex + visiblePosts.length} of {filteredPosts.length}
+                  </small>
                 </label>
                 <button
                   type="button"
+                  aria-label="Next essay page"
                   onClick={() => turnFolio(activeFolio + 1)}
                   disabled={activeFolio === folioCount - 1}
                 >
-                  Next
+                  <span className="insights-library__page-button-label">Next</span>
                   <ArrowRight aria-hidden="true" className="h-4 w-4" />
                 </button>
               </div>
