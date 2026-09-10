@@ -1,19 +1,28 @@
 .landscape { position: absolute; inset: -3%; }
 
+/* Give italic descenders their own line box, including at narrow widths. */
+:global(.home-v4) .opening h1.headline { max-width: 19ch; font-size: clamp(3.1rem, 5.4vw, 5.75rem); line-height: 1.04; letter-spacing: -.035em; perspective: none; }
+:global(.home-v4) .opening h1.headline em { margin-top: .18em; padding-right: .12em; color: #e4c7a2; -webkit-text-fill-color: currentColor; background: none; animation: none; font-size: .96em; line-height: 1.2; letter-spacing: -.025em; }
+.headline em > span { display: inline-block; white-space: nowrap; }
+.opening:global(.home-v4-opening) :global(.home-v4-opening__wash) { background: linear-gradient(90deg, rgb(12 15 17 / 78%) 0%, rgb(12 15 17 / 58%) 38%, rgb(12 15 17 / 8%) 75%), linear-gradient(180deg, rgb(8 11 12 / 18%), transparent 45%, rgb(8 11 12 / 28%)); }
+
 .opening:global(.home-v4-opening) :global(.home-v4-opening__lede) { font-size: clamp(1rem, 1.2vw, 1.125rem); line-height: 1.6; max-width: 42ch; }
 .opening:global(.home-v4-opening) :global(.home-v4-opening__actions) :global(.home-v4-button) { min-height: 3rem; font-size: .875rem; letter-spacing: .015em; text-transform: none; }
 .opening:global(.home-v4-opening) :global(.home-v4-opening__actions) svg { flex-shrink: 0; }
-.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) { width: min(100%, 20rem); padding: 1.25rem 1.4rem; }
-.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) > span { font-size: .75rem; letter-spacing: .09em; }
-.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) strong { font-size: clamp(2rem, 3vw, 2.75rem); white-space: nowrap; }
-.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) p { font-size: .875rem; line-height: 1.55; }
-.proofLink { position: relative; display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; margin-top: .45rem; color: #f4efe6; font-size: .875rem; text-decoration: underline; text-decoration-color: #d4b99a88; text-underline-offset: .3em; }
+.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) { width: min(100%, 21rem); padding: 1.5rem; color: #342f27; border-color: rgb(255 249 236 / 60%); background: rgb(244 239 230 / 94%); box-shadow: 0 20px 60px rgb(12 15 17 / 18%); }
+.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) > span { color: #70533e; font-size: .75rem; letter-spacing: .09em; }
+.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) strong { margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid rgb(94 76 51 / 22%); color: #514936; font-size: clamp(2rem, 3vw, 2.75rem); white-space: nowrap; }
+.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) p { color: #595246; font-size: .875rem; line-height: 1.55; }
+.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) p.proofStory { margin-top: .8rem; color: #342f27; font: 400 clamp(1.65rem, 2.1vw, 2rem)/1.12 var(--font-display), Georgia, serif; letter-spacing: -.015em; }
+.proofLink { position: relative; display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; margin-top: .45rem; color: #514936; font-size: .875rem; text-decoration: underline; text-decoration-color: #80523966; text-underline-offset: .3em; }
 .proofLink:hover { text-decoration-color: currentColor; }
 
 @media (min-width: 821px) and (max-width: 1120px) {
   .opening:global(.home-v4-opening) :global(.home-v4-opening__proof) { bottom: 5.5rem; width: 18rem; }
 }
 @media (min-width: 821px) {
+  .opening:global(.home-v4-opening) :global(.home-v4-opening__shell) { width: min(calc(100% - 6rem), 90rem); grid-template-columns: minmax(0, 1.3fr) minmax(16rem, .6fr); }
+  .opening:global(.home-v4-opening) :global(.home-v4-opening__proof) { position: relative; inset: auto; }
   :global(html[data-consent-banner="visible"]) .opening:global(.home-v4-opening) :global(.home-v4-opening__proof) { margin-bottom: 3.75rem; }
 }
 
@@ -25,7 +34,7 @@
   .opening:global(.home-v4-opening) :global(.home-v4-opening__topline) > span:last-child { display: block; }
   .opening:global(.home-v4-opening) :global(.home-v4-opening__eyebrow) { display: none; }
   .opening:global(.home-v4-opening) :global(.home-v4-opening__copy) { align-self: center; padding-block: 1rem; }
-  .opening:global(.home-v4-opening) h1 { max-width: 13ch; margin-top: 0; font-size: clamp(2.5rem, 10.5vw, 5rem); line-height: .98; letter-spacing: -.04em; }
+  :global(.home-v4) .opening h1.headline { max-width: 18ch; margin-top: 0; font-size: clamp(2.5rem, 9.5vw, 4.5rem); line-height: 1.04; letter-spacing: -.035em; }
   .opening:global(.home-v4-opening) :global(.home-v4-opening__lede) { margin-top: 1.15rem; }
   .opening:global(.home-v4-opening) :global(.home-v4-opening__actions) { margin-top: 1.3rem; gap: .5rem; }
   .opening:global(.home-v4-opening) :global(.home-v4-opening__proof),

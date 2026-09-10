@@ -17,10 +17,10 @@
   isolation: isolate;
 }
 .home-v4 [data-home-v4-chapter="opening"] + .home-v4-handoff {
-  --handoff-from: #0c1111; --handoff-to: #0a1211;
+  --handoff-from: #0c1111; --handoff-to: #eee7da;
 }
 .home-v4 [data-home-v4-chapter="recognition"] + .home-v4-handoff {
-  --handoff-from: #0a1211; --handoff-to: #eee6d8;
+  --handoff-from: #eee7da; --handoff-to: #eee6d8; --handoff-line: #805239;
 }
 .home-v4 [data-home-v4-chapter="cost"] + .home-v4-handoff {
   --handoff-from: #eee6d8; --handoff-to: #121713;

@@ -69,9 +69,10 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     enabled: cinematicMotion && sceneInView,
     reducedMotion: prefersReducedMotion,
   });
-  const [selected, setSelected] = useState(0);
+  // One selection survives switching between the scroll story, compact layout,
+  // and reduced motion. The visualizer also accepts direct choices when idle.
   const active = Math.min(
-    cinematicMotion ? visualizer.activeIndex : selected,
+    visualizer.activeIndex,
     Math.max(0, stages.length - 1),
   );
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
@@ -86,8 +87,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   }
 
   function choose(index: number) {
-    setSelected(index);
-    if (cinematicMotion) visualizer.choose(index);
+    visualizer.choose(index);
 
     const section = sectionRef.current;
     if (!section || !cinematicMotion || prefersReducedMotion || !stages.length) return;
@@ -161,12 +161,16 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         </div>
 
         <article id="project-stage-panel" role="tabpanel" aria-labelledby={`project-stage-tab-${active}`} tabIndex={0} className={styles.panel}>
-          <div className={styles.media} aria-hidden="true">
+          <div className={styles.media}>
             <motion.div className={styles.imagePlane} style={prefersReducedMotion ? undefined : { y: imageY, scale: imageScale }}>
-              {stage.poster && <Image src={stage.poster} alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />}
+              <Image src="/images/strategy-working-desk.webp" alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />
             </motion.div>
             <div className={styles.imageShade} />
-            <motion.p key={active} className={styles.imageCaption} initial={stepEntrance} animate={{ x: 0 }} transition={stepTiming}>
+            <motion.div key={`question-${active}`} className={styles.deskNote} initial={stepEntrance} animate={{ x: 0 }} transition={stepTiming}>
+              <span>Before moving on</span>
+              <p>{meta.decision}</p>
+            </motion.div>
+            <motion.p key={active} className={styles.imageCaption} initial={stepEntrance} animate={{ x: 0 }} transition={stepTiming} aria-hidden="true">
               <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>{stage.stage}
             </motion.p>
           </div>
@@ -177,7 +181,6 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
             <p className={styles.explanation}>{meta.explanation}</p>
             <dl className={styles.notes}>
               <div><dt>What you receive</dt><dd>{meta.output}</dd></div>
-              <div><dt>Before moving on</dt><dd>{meta.decision}</dd></div>
             </dl>
           </motion.div>
         </article>

@@ -23,6 +23,10 @@ const RECOGNITION_STATES = [
       "The logo, website, pitch, and content are making separate promises because the position was never committed first.",
     path: "Build the foundation",
     proof: "A position the rest of the business can inherit.",
+    example: [
+      { label: "The pitch", text: "For every business." },
+      { label: "The buyer’s question", text: "Is this built for a business like mine?" },
+    ],
     accent: "#C77752",
   },
   {
@@ -34,6 +38,10 @@ const RECOGNITION_STATES = [
       "What the company has become and what its brand still teaches people to expect are no longer the same thing.",
     path: "Reposition the system",
     proof: "Useful recognition kept. Confusing signals removed.",
+    example: [
+      { label: "The old story", text: "Natural wellness." },
+      { label: "The business now", text: "Supplements for an active life." },
+    ],
     accent: "#7D9BAF",
   },
   {
@@ -45,6 +53,10 @@ const RECOGNITION_STATES = [
       "Every campaign works alone. Attention arrives, then disappears because no repeated pattern is waiting underneath it.",
     path: "Create consistency",
     proof: "One idea repeated with intent across every channel.",
+    example: [
+      { label: "What keeps changing", text: "A fresh tone with every campaign." },
+      { label: "What should stay", text: "The same promise, expressed in new ways." },
+    ],
     accent: "#C6A97A",
   },
 ] as const;
@@ -128,20 +140,20 @@ export function V4OpeningScene() {
             Psychology finds the tension. Strategy gives it shape.
           </motion.p>
 
-          <h1 id="home-v4-opening-title">
+          <h1 id="home-v4-opening-title" className={openingStyles.headline}>
             <motion.span
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 44, rotateX: -10 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              initial={prefersReducedMotion ? false : { y: 14 }}
+              animate={{ y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.86, delay: 0.18, ease: EASE }}
             >
               Your audience has already formed an opinion.
             </motion.span>
             <motion.em
-              initial={prefersReducedMotion ? false : { opacity: 0, x: -34 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={prefersReducedMotion ? false : { y: 14 }}
+              animate={{ y: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.82, delay: 0.34, ease: EASE }}
             >
-              Did you design it?
+              <span>Did you</span>{" "}<span>design it?</span>
             </motion.em>
           </h1>
 
@@ -151,7 +163,7 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.48, ease: EASE }}
           >
-            Positioning, language, and identity built around how your audience thinks and chooses.
+            A position people understand. A voice they recognise. A reason to choose you. Built from audience psychology, carried into words and design.
           </motion.p>
 
           <motion.div
@@ -186,6 +198,7 @@ export function V4OpeningScene() {
           transition={{ duration: prefersReducedMotion ? 0 : 0.72, delay: 0.52, ease: EASE }}
         >
           <span>Dr. Haley Nutrition</span>
+          <p className={openingStyles.proofStory}>Fewer posts.<br />A clearer reason to pay attention.</p>
           <strong>0.71% → 2.81%</strong>
           <p>LinkedIn engagement rate<br />December 2025 to January 2026</p>
           <Link href="/work/dr-haley-nutrition" className={openingStyles.proofLink}>
@@ -228,7 +241,7 @@ export function V4RecognitionScene() {
     else return;
     event.preventDefault();
     choose(next);
-    choiceRefs.current[next]?.focus();
+    choiceRefs.current[next]?.focus({ preventScroll: true });
   }
 
   return (
@@ -238,15 +251,15 @@ export function V4RecognitionScene() {
       data-home-v4-chapter="recognition"
       data-home-chapter="recognition"
       data-home-section="recognition"
-      data-cursor-world="dark"
-      className="home-v4-recognition"
+      data-cursor-world="light"
+      className={`home-v4-recognition ${recognitionStyles.section}`}
       aria-labelledby="home-v4-recognition-title"
       style={{ "--recognition-accent": active.accent } as React.CSSProperties}
     >
       <div className="home-v4-recognition__media" aria-hidden="true">
         <video
           muted
-          autoPlay
+          autoPlay={!prefersReducedMotion}
           loop
           playsInline
           preload="metadata"
@@ -315,6 +328,17 @@ export function V4RecognitionScene() {
               <p className={recognitionStyles.label}>What this means</p>
               <h3>{active.headline}</h3>
               <p className={recognitionStyles.body}>{active.body}</p>
+              <div className={recognitionStyles.example}>
+                <p className={recognitionStyles.exampleLabel}>Illustrative example</p>
+                <div className={recognitionStyles.examplePair}>
+                  {active.example.map((item) => (
+                    <div key={item.label}>
+                      <span>{item.label}</span>
+                      <p>{item.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
               <div className={recognitionStyles.answer}>
                 <span>The useful move</span>
                 <strong>{active.path}</strong>
