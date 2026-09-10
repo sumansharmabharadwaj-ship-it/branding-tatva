@@ -20,13 +20,21 @@
 - Unit/source gate covers collapsed runways, forward/reverse steps, boundary hysteresis, listener cleanup, keyboard ownership and both reduced-motion fallbacks.
 - Production build (79 routes), homepage source gate, built homepage gate and controlled-deployment self-test passed after integrating upstream release 214.
 
-### Remaining verification / release gate
+### Completed verification / release gate
 
-The local preview service stopped during short-laptop navigation, which returned `ERR_CONNECTION_REFUSED`. Its status confirms stopped. Earlier browser input commands also intermittently timed out; successful state reads above were verified separately rather than inferred from those commands.
+The preview service was restored on continuation. Browser input commands still occasionally reported timeouts; the conclusions below use separately observed resulting states, not the command return alone.
 
-Short-laptop/tablet visual inspection and an unpaused reverse-scroll browser check remain pending. Do not treat source tests as substitutes for these checks. Do not publish this continuation until the preview can be restored and the remaining checks pass. No deployment or authentication settings were changed.
+- Short laptop, 1280 × 720: ordinary document flow (`position: relative`), 1265px content/scroll width, no horizontal overflow. Scrolling exposes the complete proof, portrait and footer; footer bottom measured 529px after scrolling, inside the 720px frame. The chapter remains at Psychology rather than cycling through disciplines on this compact screen.
+- Tablet, 768 × 820: ordinary document flow, equal 753px content/scroll widths, three 44px-high tabs, readable text and no overlap in the captured frame.
+- Unpaused desktop reverse: Strategy at section top -1069.6px returned to Literature at -463.1px after backward scroll, with body focus. This verifies reversal separately from the earlier focused-link retention test.
+- Current preview release 215 is READY: deployment `dpl_Ff66BwhmXJ9nHHAKbB96c3BZryYK`, trigger `aa2f9a4a47cadc5639189f8fc57d63689240a781`. Git ancestry and an empty scoped source diff confirm that it contains the exact Studio patch from `5feb51ad`.
+- Compared the original release 212 frame with the actual release 215 Studio frame together at 1363 × 936, Psychology selected. The intended headline/spacing refinement is present, footer bottom is 831px, and imagery, copy and surfaces match the tested local implementation.
+- Deployed browser console contains only the browser extension metadata error. No application error was observed in the scoped verification.
+- A concurrent controlled release included the saved Studio commit before this QA continuation. No duplicate deployment is needed; this commit records verification only. Production and deployment protection settings remain untouched.
 
-final result: blocked
+No actionable P0, P1 or P2 issue remains in this scoped Studio continuation. Native Safari was not tested; responsive browser evidence is not a Safari certification.
+
+final result: passed
 
 ---
 
