@@ -126,7 +126,9 @@ export async function POST(request: NextRequest) {
       (entry) => entry.slug === data.servicePackage,
     );
     const text = [
-      `Request ID: ${requestId}`,
+      // Keep the provider payload identical when the same submission is retried.
+      // The per-attempt requestId remains in logs and the API response.
+      `Submission ID: ${submissionId}`,
       `Name: ${singleLine(data.name)}`,
       `Email: ${singleLine(data.email)}`,
       data.phone && `Phone: ${singleLine(data.phone)}`,

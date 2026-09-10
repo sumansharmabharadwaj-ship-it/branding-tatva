@@ -245,6 +245,71 @@ assert.equal(monitorKeys[0], monitorKeys[1]);
 assert.notEqual(monitorKeys[1], monitorKeys[2]);
 assert.match(monitorKeys[0], /provider-monitor-preview-unsafe-characters-2026-08-30$/);
 
+// Exercise the route as well as the helper: request-local diagnostics must
+// never change the provider payload for an unchanged submission retry.
+const routeSource = fs.readFileSync("src/app/api/contact/route.ts", "utf8");
+const routeCompiled = ts.transpileModule(routeSource, {
+  compilerOptions: {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2020,
+  },
+}).outputText;
+const routeModule = { exports: {} };
+const providerAttempts = [];
+const acceptedBodies = new Map();
+let deliveredCount = 0;
+let requestNumber = 0;
+const routeDependencies = {
+  "@/lib/contact-schema": {
+    contactSchema: { safeParse: (data) => ({ success: true, data }) },
+  },
+  "@/data/services": { packages: [] },
+  "@/lib/contact-delivery": { deliverContactEnquiry },
+  "@/lib/api-protection": {
+    guardJsonRequest: () => null,
+    readJsonBody: async (req) => ({ ok: true, value: await req.json() }),
+    singleLine: (value) => value.replace(/[\r\n]/g, " "),
+    jsonNoStore: (body, init) => Response.json(body, init),
+    fetchWithTimeout: async (_url, init) => {
+      const key = new Headers(init.headers).get("Idempotency-Key");
+      providerAttempts.push({ key, body: init.body });
+      if (acceptedBodies.has(key) && acceptedBodies.get(key) !== init.body) {
+        return Response.json({ error: "invalid_idempotent_request" }, { status: 409 });
+      }
+      if (!acceptedBodies.has(key)) {
+        acceptedBodies.set(key, init.body);
+        deliveredCount += 1;
+      }
+      return Response.json({ id: "email_route_retry" });
+    },
+  },
+};
+new Function("exports", "module", "require", "process", "crypto", "console", routeCompiled)(
+  routeModule.exports,
+  routeModule,
+  (name) => {
+    assert.ok(name in routeDependencies, `Unexpected route dependency: ${name}`);
+    return routeDependencies[name];
+  },
+  { env: { RESEND_API_KEY: "test_key", CONTACT_TO_EMAIL: "test@example.com" } },
+  { randomUUID: () => `request-${++requestNumber}` },
+  { info() {}, error() {} },
+);
+const routeRequest = () => new Request("https://preview.example/api/contact", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "X-Contact-Submission": submissionId },
+  body: JSON.stringify({ name: "Test visitor", email: "visitor@example.com",
+    description: "An unchanged enquiry retried after a lost confirmation." }),
+});
+const firstRouteResponse = await routeModule.exports.POST(routeRequest());
+const retryRouteResponse = await routeModule.exports.POST(routeRequest());
+assert.equal(firstRouteResponse.status, 200);
+assert.equal(retryRouteResponse.status, 200, "An unchanged retry must recover provider acceptance.");
+assert.deepEqual(providerAttempts[0], providerAttempts[1], "Retry key AND body must stay identical.");
+assert.equal(deliveredCount, 1, "Retry must not send a second email.");
+assert.notEqual((await firstRouteResponse.json()).requestId,
+  (await retryRouteResponse.json()).requestId, "Request diagnostics must remain distinct.");
+
 console.log(
   JSON.stringify(
     {
@@ -252,6 +317,8 @@ console.log(
       providerAcceptance: true,
       providerIdRequired: true,
       stableRetryKey: true,
+      routeRetryPayloadStable: true,
+      routeRetrySendsOnce: true,
       providerRejection: true,
       unreadableResponse: true,
       networkFailure: true,
