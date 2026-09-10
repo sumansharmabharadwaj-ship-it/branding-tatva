@@ -10,6 +10,7 @@ const mediaDirector = read("src/sections/HomeV4/HomeV4MediaDirector.tsx");
 const evidenceWall = read("src/sections/Home/EvidenceWall.tsx");
 const evidenceDepth = read("src/app/home-v4-evidence-depth.css");
 const page = read("src/app/page.tsx");
+const pacing = read("src/sections/Home/HomePacingDirector.tsx");
 const refinement = read("src/app/home-v4-refinement.css");
 const consentManager = read("src/components/ConsentManager.tsx");
 
@@ -45,6 +46,7 @@ assert(
 for (const runtime of [
   "<HomeV4MediaDirector />",
   "<HomeV4HeaderDirector />",
+  "<HomeV4SceneRhythm />",
   "<LivingCursor />",
   "<GuidedView />",
   "<HomePacingDirector />",
@@ -95,6 +97,32 @@ assert(
 assert(
   evidenceDepth.includes("grid-column: 1;") && evidenceDepth.includes("grid-column: 2;"),
   "Evidence crossfade layers must share stable grid cells while both files are mounted.",
+);
+assert(
+  page.includes('import "./home-v4-scene-rhythm.css";'),
+  "Homepage scene rhythm styles are not mounted.",
+);
+assert(
+  pacing.includes('const SECTION_SELECTOR = "[data-home-v4-chapter]";'),
+  "Homepage pacing can assign multiple owners to one nested chapter.",
+);
+assert(
+  pacing.includes('const wasActive = section.dataset.homeSceneState === "active";') &&
+    pacing.includes("if (active && !wasActive) {"),
+  "Homepage chapter arrival can replay at observer thresholds.",
+);
+assert(
+  pacing.includes("const hasScrollIntent = Date.now() <= scrollIntentUntil;") &&
+    pacing.includes("if (Math.abs(delta) > 0.5 && hasScrollIntent) {") &&
+    pacing.indexOf('root.dataset.homeMotion = "live";') >
+      pacing.indexOf("if (Math.abs(delta) > 0.5 && hasScrollIntent) {") &&
+    (pacing.match(/root\.dataset\.homeMotion = "live";/g) || []).length === 1 &&
+    pacing.includes('} else if (root.dataset.homeMotion !== "live") {') &&
+    pacing.includes("smoothedVelocity = 0;") &&
+    pacing.includes('window.addEventListener("wheel", markPointerScrollIntent, { passive: true });') &&
+    pacing.includes('window.addEventListener("touchmove", markPointerScrollIntent, { passive: true });') &&
+    pacing.includes('window.addEventListener("keydown", markKeyboardScrollIntent);'),
+  "Homepage layout updates can wake the cinematic motion layer without visitor scrolling.",
 );
 
 assert(page.includes('import "./home-v4-refinement.css";'), "Homepage refinement layer is not mounted.");
