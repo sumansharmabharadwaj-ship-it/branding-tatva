@@ -1,5 +1,22 @@
 # Design QA log
 
+## Homepage invitation agenda continuity — 2026-09-10
+
+- Scope: the existing closing invitation. Preserved copy, media, typography, spacing, booking/proof routes and the 210svh desktop scene. About was untouched. Parker remains motion inspiration only.
+- Compared release 219 and the local production build together at 1363 × 936 with the same Reposition visitor state. The invitation frame matched the reference; header visibility varied with navigation direction, outside this change.
+- Replaced independent per-row rules with one shared layout rule. Added a small scroll-boundary deadband to avoid alternating steps during trackpad jitter. Preference/breakpoint changes now resynchronize the selected step without waiting for another scroll event.
+- Browser checks observed the first and third steps with exactly one rule, aligned to the selected row at rest. Forward scrolling revealed the thank-you line; reversing restored step 1 and opacity 0. The full closing frame, booking button and thank-you line fit at the tested desktop size.
+- The focused booking link retained its visible keyboard focus and `/contact?package=brand-clarity#call` destination. No booking was submitted.
+- Reduced-motion control: step 1, no moving rule, relative frame, media transform `none`, thank-you opacity 1. Full motion was restored after checking.
+- Mobile 390 × 844: ordinary document flow, no sideways overflow (375px scroll width within the scrollbar-bearing viewport), 56.4px-high booking link, no moving rule and a fully visible signoff in normal flow. The screenshot showed the original readable single-column invitation.
+- The pure scroll gate checks both intermediate boundaries, jitter in both directions, true forward/reverse crossings, large jumps and invalid samples. Browser gesture commands were intermittent; measurements came from separate resulting-state reads, not command success. Native Safari was not tested.
+- Verification passed: targeted ESLint, production build (79 routes), homepage source/rendered gates, invitation scroll gate and whitespace checks. The local build preceded integration of unrelated Insights release 221; the scoped invitation files were unchanged by that integration. The controlled-deployment contract was checked before publishing.
+- Browser console showed only the cloud-browser extension metadata error; no application error was observed in this scope.
+
+final result: passed
+
+---
+
 ## Homepage question selection continuity — 2026-09-10
 
 - Scope: the existing “Before we work together” scene after Studio. Kept copy, FAQ data, media, type, spacing, links, and ordinary document flow.

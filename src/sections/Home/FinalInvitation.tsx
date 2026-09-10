@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Clock3 } from "lucide-react";
@@ -20,6 +20,7 @@ import {
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 import styles from "./HomeConversation.module.css";
+import { invitationStep } from "./invitationScroll";
 
 type Situation = ServicesSituationId | "default";
 
@@ -76,6 +77,7 @@ function readSituation(): Situation {
 
 export function FinalInvitation() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const agendaId = useId();
   const [situation, setSituation] = useState<Situation>("default");
   const [activeStep, setActiveStep] = useState(0);
   const reducedMotion = useHydratedReducedMotion();
@@ -95,23 +97,22 @@ export function FinalInvitation() {
   const mediaX = useTransform(storyProgress, [0, 0.52, 1], ["0.8%", "0.25%", "0%"]);
   const signoffOpacity = useTransform(storyProgress, [0, 0.66, 0.84, 1], [0, 0, 1, 1]);
   const signoffY = useTransform(storyProgress, [0, 0.66, 0.84, 1], [10, 10, 0, 0]);
+  const desktopStory = cinematicMotion && !reducedMotion;
 
   useMotionValueEvent(storyProgress, "change", (progress) => {
-    const desktopStory = window.matchMedia(
-      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
-    ).matches;
-
-    if (!desktopStory || reducedMotion) {
-      setActiveStep((current) => (current === 0 ? current : 0));
-      return;
-    }
-
-    const nextStep = Math.min(
-      STEP_LABELS.length - 1,
-      Math.floor(Math.min(0.9999, Math.max(0, progress)) * STEP_LABELS.length),
+    setActiveStep((current) => desktopStory
+      ? invitationStep(progress, current, STEP_LABELS.length)
+      : 0,
     );
-    setActiveStep((current) => (current === nextStep ? current : nextStep));
   });
+
+  // A preference or breakpoint change must settle without another scroll event.
+  useEffect(() => {
+    setActiveStep((current) => desktopStory
+      ? invitationStep(storyProgress.get(), current, STEP_LABELS.length)
+      : 0,
+    );
+  }, [desktopStory, storyProgress]);
 
   useEffect(() => {
     function sync() { setSituation(readSituation()); }
@@ -196,6 +197,15 @@ export function FinalInvitation() {
           <ol>
             {consultation.fullSteps.map((step, index) => (
               <li key={step} data-current={activeStep === index}>
+                {desktopStory && activeStep === index && (
+                  <motion.span
+                    className={styles.conversationRule}
+                    layoutId={`home-conversation-rule-${agendaId}`}
+                    initial={false}
+                    transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                    aria-hidden="true"
+                  />
+                )}
                 <span className={styles.stepNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <h3>{STEP_LABELS[index]}</h3>

@@ -209,21 +209,13 @@
     position: relative;
   }
 
-  /* Follow the conversation with a rule while every sentence stays readable. */
-  :global(html:not([data-motion="reduced"])) .conversation li::before {
-    content: "";
+  /* One rule carries the reader between steps, in either scroll direction. */
+  :global(html:not([data-motion="reduced"])) .conversationRule {
     position: absolute;
     inset: -1px 0 auto;
     height: 1px;
     background: #98623f;
     pointer-events: none;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 420ms cubic-bezier(.22,1,.36,1);
-  }
-
-  :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"]::before {
-    transform: scaleX(1);
   }
 
   :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] .stepNumber {
