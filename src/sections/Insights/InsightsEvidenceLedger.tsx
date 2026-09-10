@@ -220,6 +220,7 @@ function WorksheetMarkIcon({
 export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) {
   const selectionId = useId();
   const [focusedIndex, setFocusedIndex] = useState(0);
+  const [reviewReturnIndex, setReviewReturnIndex] = useState<number | null>(null);
   const [selectionDirection, setSelectionDirection] = useState(1);
   const [markedSlugs, setMarkedSlugs] = useState<string[]>([]);
   const [reviewCountDirection, setReviewCountDirection] = useState(1);
@@ -250,6 +251,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     function carryReaderIntent(event: Event) {
       const nextIntent = (event as CustomEvent<InsightsIntentDetail>).detail;
       if (nextIntent.origin !== "evidence-ledger") {
+        setReviewReturnIndex(null);
         priorReaderIntentRef.current = nextIntent;
         setReviewCountDirection(-1);
         setMarkedSlugs([]);
@@ -263,6 +265,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     }
 
     function releaseReaderIntent() {
+      setReviewReturnIndex(null);
       priorReaderIntentRef.current = undefined;
       setReaderIntent(undefined);
       setReviewCountDirection(-1);
@@ -397,6 +400,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
   };
 
   function selectLayer(index: number, direction?: 1 | -1) {
+    setReviewReturnIndex(null);
     if (index === focusedIndex) return;
     setSelectionDirection(direction ?? (index > focusedIndex ? 1 : -1));
     setFocusedIndex(index);
@@ -419,8 +423,9 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
     }
   }
 
-  function openLayer(index: number, direction?: 1 | -1) {
+  function openLayer(index: number, direction?: 1 | -1, fromReview = false) {
     selectLayer(index, direction);
+    if (fromReview) setReviewReturnIndex(index);
     if (focusFrameRef.current !== null) {
       window.cancelAnimationFrame(focusFrameRef.current);
     }
@@ -556,9 +561,10 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
       clearInsightsIntent();
     }
 
-    // Intent events dispatch synchronously. Keep the open check after restoring
-    // the prior reading path; an effect would override this on the next render.
+    // Intent events dispatch synchronously. Keep the open check and its route
+    // back to the review, including after removing the final marked area.
     setFocusedIndex(index);
+    setReviewReturnIndex(reviewReturnIndex === index ? index : null);
   }
 
   function handleLayerKeyDown(
@@ -695,6 +701,8 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         const marked = markedSlugs.includes(layer.slug);
         const nextLayer = layers[(index + 1) % layers.length];
         const isLastLayer = index === layers.length - 1;
+        const returningToReview = reviewReturnIndex === index;
+        const opensReview = isLastLayer || returningToReview;
         return (
           <div
             key={layer.slug}
@@ -774,14 +782,14 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
               <motion.button
                 type="button"
                 className="insights-worksheet__next"
-                data-review-step={isLastLayer}
-                aria-label={isLastLayer ? "Review your worksheet" : `Next check: ${nextLayer.name}`}
+                data-review-step={opensReview}
+                aria-label={returningToReview ? "Return to worksheet review" : isLastLayer ? "Review your worksheet" : `Next check: ${nextLayer.name}`}
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                onClick={() => isLastLayer ? openReviewSummary() : openLayer(index + 1, 1)}
+                onClick={() => opensReview ? openReviewSummary() : openLayer(index + 1, 1)}
               >
                 <span className="insights-worksheet__next-copy" aria-hidden="true">
                   <span className="insights-worksheet__next-label">
-                    {isLastLayer ? "Next step" : "Next check"}
+                    {returningToReview ? "Back to" : isLastLayer ? "Next step" : "Next check"}
                   </span>
                   <span className="insights-worksheet__next-name">
                     {/* Reserve every destination so the controls keep their position. */}
@@ -790,16 +798,16 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                     ))}
                     <span className="insights-worksheet__next-measure">Review list</span>
                     <motion.span
-                      key={`${layer.slug}-${selected ? "active" : "idle"}`}
+                      key={`${layer.slug}-${selected ? "active" : "idle"}-${opensReview ? "review" : "next"}`}
                       initial={prefersReducedMotion || !selected ? false : { opacity: 0, x: selectionDirection * 10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: prefersReducedMotion ? 0 : 0.32, delay: prefersReducedMotion ? 0 : 0.1, ease: [0.22, 1, 0.36, 1] }}
                     >
-                      {isLastLayer ? "Review list" : nextLayer.name}
+                      {opensReview ? "Review list" : nextLayer.name}
                     </motion.span>
                   </span>
                 </span>
-                {isLastLayer ? <ArrowDown aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
+                {opensReview ? <ArrowDown aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
               </motion.button>
             </div>
           </div>
@@ -828,7 +836,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
                 current={layer.slug === focusedLayer.slug}
                 selectionId={selectionId}
                 reducedMotion={prefersReducedMotion}
-                onOpen={() => openLayer(layers.indexOf(layer))}
+                onOpen={() => openLayer(layers.indexOf(layer), undefined, true)}
               />
             ))}
           </AnimatePresence>
