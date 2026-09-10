@@ -26,6 +26,54 @@
   isolation: isolate;
 }
 
+/* The meadow keeps its natural range while two broad, feathered exposure
+   zones steady the actual reading areas. They have no visible card edge, so
+   the landscape still reads as the surface instead of sitting behind panels. */
+[data-contact-film] [data-contact-gratitude-layout] {
+  position: relative;
+  isolation: isolate;
+}
+
+[data-contact-film] [data-contact-gratitude-layout]::before {
+  content: "";
+  position: absolute;
+  inset: -3rem -2.25rem -3.5rem;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 58% 78% at 19% 48%,
+      rgba(18, 24, 18, 0.58) 0%,
+      rgba(20, 27, 20, 0.38) 48%,
+      transparent 78%
+    ),
+    radial-gradient(
+      ellipse 47% 82% at 83% 50%,
+      rgba(18, 24, 18, 0.56) 0%,
+      rgba(21, 28, 21, 0.4) 52%,
+      transparent 80%
+    );
+  opacity: 0.84;
+  transform: scale(0.985);
+  transition:
+    opacity 0.78s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.92s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-contact-film]
+  [data-contact-gratitude-active="true"]
+  [data-contact-gratitude-layout]::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+[data-contact-film]
+  [data-contact-gratitude-settled="true"]
+  [data-contact-gratitude-layout]::before {
+  opacity: 0.9;
+  transform: scale(1);
+}
+
 /* The closing scene keeps the meadow luminous. A local wash preserves type
    contrast without grading the whole film into another dark interlude. */
 [data-contact-film] [data-contact-gratitude-media-wash] {
@@ -46,7 +94,7 @@
 }
 
 [data-contact-film] [data-contact-gratitude-statement] {
-  text-shadow: 0 2px 24px rgba(10, 16, 11, 0.32);
+  text-shadow: 0 2px 24px rgba(10, 16, 11, 0.46);
 }
 
 /* Keyboard focus takes precedence over the entrance animation. */
@@ -167,6 +215,19 @@
     [data-contact-gratitude-note-active="true"]
     [data-contact-gratitude-note-label] {
     transform: translateX(0.2rem);
+  }
+}
+
+@media (max-width: 1023px) {
+  [data-contact-film] [data-contact-gratitude-layout]::before {
+    inset: -2rem -1.25rem -2.75rem;
+    background: linear-gradient(
+      180deg,
+      rgba(18, 24, 18, 0.54) 0%,
+      rgba(20, 27, 20, 0.34) 48%,
+      rgba(18, 24, 18, 0.58) 100%
+    );
+    opacity: 0.9;
   }
 }
 
@@ -1783,6 +1844,7 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude] * {
   animation: none !important;
 }
 
+html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-layout]::before,
 html[data-motion="reduced"] [data-contact-film] [data-contact-gratitude-ledger]::before {
   transition: none !important;
   transform: none !important;
@@ -1862,6 +1924,7 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
     animation: none !important;
   }
 
+  [data-contact-film] [data-contact-gratitude-layout]::before,
   [data-contact-film] [data-contact-gratitude-ledger]::before {
     transition: none !important;
     transform: none !important;

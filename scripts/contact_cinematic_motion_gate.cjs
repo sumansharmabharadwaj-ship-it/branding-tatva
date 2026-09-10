@@ -178,6 +178,8 @@ const cssContracts = [
   ["contact-footer-afterglow", "closing afterglow is missing"],
   ['data-contact-gratitude-next-ready="true"', "gratitude completion handoff styling is missing"],
   ["[data-contact-gratitude-note]:focus-visible", "gratitude keyboard focus no longer uses the calm inset treatment"],
+  ["[data-contact-gratitude-layout]::before", "gratitude reading exposure veil is missing"],
+  ['data-contact-gratitude-active="true"', "gratitude reading exposure no longer responds to active acknowledgement focus"],
   ["[data-contact-gratitude-scroll-spine]", "gratitude scroll spine no longer has reduced-motion protection"],
   ["[data-contact-gratitude-note-label]", "gratitude label motion and reduced-motion protection are missing"],
   ["[data-contact-gratitude-reading-head]", "gratitude reading head styling or reduced-motion protection is missing"],
