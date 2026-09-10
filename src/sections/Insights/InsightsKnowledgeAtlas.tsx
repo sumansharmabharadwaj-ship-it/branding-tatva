@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useId,
   useRef,
   useState,
   type CSSProperties,
@@ -71,6 +72,7 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 };
 
 export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
+  const selectionId = useId();
   const [activeIndex, setActiveIndex] = useState(0);
   const [carriedIntent, setCarriedIntent] =
     useState<InsightsIntentDetail>();
@@ -246,7 +248,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
 
   function selectPath(index: number, shouldFocus = false) {
     setActiveIndex((current) => {
-      transitionDirectionRef.current = index >= current ? 1 : -1;
+      if (index !== current) transitionDirectionRef.current = index > current ? 1 : -1;
       return index;
     });
     if (shouldFocus) {
@@ -290,11 +292,13 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex: number | null = null;
+    const forwardKey = usesHorizontalRail ? "ArrowRight" : "ArrowDown";
+    const backwardKey = usesHorizontalRail ? "ArrowLeft" : "ArrowUp";
 
-    if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+    if (event.key === forwardKey) {
       nextIndex = (index + 1) % paths.length;
     }
-    if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+    if (event.key === backwardKey) {
       nextIndex = (index - 1 + paths.length) % paths.length;
     }
     if (event.key === "Home") nextIndex = 0;
@@ -385,8 +389,9 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
         </header>
 
         <div className="insights-atlas__stage">
-          <div
+          <motion.div
             ref={pathRailRef}
+            layoutScroll
             className="insights-atlas__paths"
             role="tablist"
             aria-label="Brand decision paths"
@@ -404,17 +409,6 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             }}
             onPointerCancel={() => setPaused(false)}
           >
-            <div className="insights-atlas__current" aria-hidden="true">
-              <motion.span
-                animate={{ y: `${activeIndex * 100}%` }}
-                transition={
-                  prefersReducedMotion
-                    ? { duration: 0 }
-                    : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
-                }
-              />
-            </div>
-
             {paths.map((path, index) => {
               const selected = index === activeIndex;
               const color = ELEMENT_COLORS[path.element];
@@ -447,6 +441,15 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   }}
                   onKeyDown={(event) => handleKeyDown(event, index)}
                 >
+                  {selected ? (
+                    <motion.span
+                      className="insights-choice-selection"
+                      aria-hidden="true"
+                      layoutId={prefersReducedMotion ? undefined : `${selectionId}-topic`}
+                      initial={false}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  ) : null}
                   <span className="insights-atlas__path-index">0{index + 1}</span>
                   <span
                     className="insights-atlas__path-glyph"
@@ -465,7 +468,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                 </button>
               );
             })}
-          </div>
+          </motion.div>
 
           <div
             className="insights-atlas__panel-wrap"

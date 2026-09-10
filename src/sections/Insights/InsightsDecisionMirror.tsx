@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useId,
   useRef,
   useState,
   type CSSProperties,
@@ -46,6 +47,7 @@ const ELEMENT_COLORS: Record<InsightElement, string> = {
 };
 
 export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) {
+  const selectionId = useId();
   const [activeIndex, setActiveIndex] = useState(0);
   const [committedSlug, setCommittedSlug] = useState<string>();
   const questRailRef = useRef<HTMLDivElement>(null);
@@ -65,7 +67,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
 
   function selectQuest(index: number, focus = false) {
     setActiveIndex((current) => {
-      directionRef.current = index >= current ? 1 : -1;
+      if (index !== current) directionRef.current = index > current ? 1 : -1;
       return index;
     });
     if (focus) tabRefs.current[index]?.focus();
@@ -121,11 +123,13 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex: number | null = null;
+    const forwardKey = usesHorizontalRail ? "ArrowRight" : "ArrowDown";
+    const backwardKey = usesHorizontalRail ? "ArrowLeft" : "ArrowUp";
 
-    if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+    if (event.key === forwardKey) {
       nextIndex = (index + 1) % quests.length;
     }
-    if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+    if (event.key === backwardKey) {
       nextIndex = (index - 1 + quests.length) % quests.length;
     }
     if (event.key === "Home") nextIndex = 0;
@@ -147,8 +151,9 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
       className="insights-decision-mirror"
       style={{ "--mirror-accent": accent } as CSSProperties}
     >
-      <div
+      <motion.div
         ref={questRailRef}
+        layoutScroll
         className="insights-decision-mirror__quests"
         role="tablist"
         aria-label="Common brand problems"
@@ -186,6 +191,15 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               }}
               onKeyDown={(event) => handleKeyDown(event, index)}
             >
+              {selected ? (
+                <motion.span
+                  className="insights-choice-selection"
+                  aria-hidden="true"
+                  layoutId={prefersReducedMotion ? undefined : `${selectionId}-problem`}
+                  initial={false}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+                />
+              ) : null}
               <span className="insights-decision-mirror__index">0{index + 1}</span>
               <span
                 className="insights-decision-mirror__glyph"
@@ -198,7 +212,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
             </button>
           );
         })}
-      </div>
+      </motion.div>
 
       <div className="insights-decision-mirror__answer">
         <div className="insights-decision-mirror__signal" aria-hidden="true">
