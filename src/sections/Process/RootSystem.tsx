@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useId, useRef, useState, type KeyboardEvent } from "react";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -56,6 +57,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const selectionId = useId();
+  const lenis = useLenis();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const cinematicMotion = useMediaQuery(
     "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
@@ -79,6 +81,19 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   function choose(index: number) {
     setSelected(index);
     if (cinematicMotion) visualizer.choose(index);
+
+    const section = sectionRef.current;
+    if (!section || !cinematicMotion || prefersReducedMotion || !stages.length) return;
+
+    const bounds = section.getBoundingClientRect();
+    const runway = Math.max(0, bounds.height - window.innerHeight);
+    if (runway <= 1) return;
+
+    // Land inside the chosen step's scroll interval so the next wheel movement
+    // continues from that decision instead of restoring the previous position.
+    const top = window.scrollY + bounds.top + runway * ((index + 0.5) / stages.length);
+    if (lenis) lenis.scrollTo(top, { immediate: true });
+    else window.scrollTo({ top, behavior: "instant" });
   }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -89,7 +104,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       : event.key === "ArrowRight" ? (index + 1) % stages.length
       : (index - 1 + stages.length) % stages.length;
     choose(next);
-    tabsRef.current[next]?.focus();
+    tabsRef.current[next]?.focus({ preventScroll: true });
   }
 
   if (!stages.length) return null;
