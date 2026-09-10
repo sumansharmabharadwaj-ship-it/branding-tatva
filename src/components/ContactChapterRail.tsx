@@ -7,7 +7,7 @@ const CHAPTERS = [
   { id: "choose", label: "Choose", tone: "light" },
   { id: "write", label: "Write", tone: "light" },
   { id: "call", label: "Call", tone: "dark" },
-  { id: "thanks", label: "Thank you", tone: "dark" },
+  { id: "thanks", label: "Thank you", tone: "light" },
 ] as const;
 
 export function ContactChapterRail() {
@@ -90,7 +90,9 @@ export function ContactChapterRail() {
     };
   }, []);
 
-  const visible = activeIndex >= 0;
+  // The closing invitation owns its routes; the chapter dock yields so
+  // the personal note keeps the selected open composition.
+  const visible = activeIndex >= 0 && activeIndex < CHAPTERS.length - 1;
   const activeChapter = CHAPTERS[Math.max(activeIndex, 0)] ?? CHAPTERS[0];
 
   return (

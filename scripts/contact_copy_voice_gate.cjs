@@ -8,6 +8,7 @@ const surfaces = [
   "src/app/contact/page.tsx",
   "src/components/ContactCallSequence.tsx",
   "src/components/ContactForm.tsx",
+  "src/components/ContactGratitude.tsx",
   "src/components/ContactPathways.tsx",
   "src/components/ContactServicesHandoff.tsx",
   "src/app/api/contact/route.ts",

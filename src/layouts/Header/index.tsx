@@ -60,6 +60,16 @@ export function Header({ transparent = false }: HeaderProps) {
     function handleScroll(current: number) {
       setScrolled(current > SCROLLED_THRESHOLD);
 
+      // The closing Contact invitation deliberately keeps the selected pill
+      // navigation visible, including a direct #thanks arrival.
+      const invitation = pathname === "/contact" ? document.getElementById("thanks") : null;
+      const invitationRect = invitation?.getBoundingClientRect();
+      if (invitationRect && invitationRect.top <= window.innerHeight * 0.28 && invitationRect.bottom >= window.innerHeight * 0.35) {
+        setBarHidden(false);
+        lastScrollRef.current = current;
+        return;
+      }
+
       const last = lastScrollRef.current;
       const delta = current - last;
       if (Math.abs(delta) < HIDE_REVEAL_DELTA) return;
@@ -83,7 +93,7 @@ export function Header({ transparent = false }: HeaderProps) {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [lenis]);
+  }, [lenis, pathname]);
 
   useEffect(() => {
     if (!open) return;

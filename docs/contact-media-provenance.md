@@ -2,7 +2,7 @@
 
 Accessed and reviewed: 2026-08-31
 
-The Contact page uses eight newly sourced Pexels clips under the Pexels License. Pexels permits free website and commercial use, modification, and use without attribution. The license remains subject to its published restrictions, including standalone redistribution and implied endorsement.
+The original Contact set comprised eight newly sourced Pexels clips under the Pexels License. Seven remain in use after the selected Sunlit Invitation replaced the gratitude film on 2026-09-10. Pexels permits free website and commercial use, modification, and use without attribution. The license remains subject to its published restrictions, including standalone redistribution and implied endorsement.
 
 - License: https://www.pexels.com/legal-pages/license/
 - No footage previously referenced by the Contact page is used in this set.
@@ -32,3 +32,13 @@ The Call scene was replaced after an editorial relevance review. Its retired emp
 The Write scene now shows a person actively composing a note in a notebook. The former rain-on-glass film carried the page mood but did not explain the chapter action. Its portrait derivative keeps the pen, hands, and written page visible rather than treating the landscape file as a generic mobile crop.
 
 The Contact media gate rejects legacy Pexels/Pixabay paths, missing assets, repeated desktop placements, duplicate final-file hashes, shared posters, and audio streams.
+
+## Sunlit Invitation, 2026-09-10
+
+User selected the first displayed ImageGen concept, “The Sunlit Invitation”. The closing section now uses `public/images/generated/bt-contact-sunlit-invitation-v1.webp`, a 1486 × 1058 WebP (81,026 bytes), rather than the Pexels gratitude film. The previous film and poster remain available in the repository but are no longer placed on the page.
+
+The asset was made with the built-in ImageGen edit tool from the selected mockup. Prompt: remove every navigation, text and button element; reconstruct only the underlying photorealistic sunlit alpine meadow, preserving framing, natural lighting, lower-third mountains, white wildflowers, butterfly, right-horizon sun and broad pale ivory reading space. Optimized with Sharp, WebP quality 84, without upscaling. This is generated atmospheric imagery, not a photograph of the founder or evidence of client work. All typography, links and navigation are accessible HTML.
+
+The mobile counterpart is `public/images/generated/bt-contact-sunlit-invitation-mobile-v1.webp`, 854 × 1842, 93,010 bytes. A second built-in ImageGen edit recomposed the same landscape in portrait framing, retaining the lower-edge flowers and butterfly while preserving the clear central sky. It is selected via a picture source at widths up to 767px, avoiding the loss of foreground detail from a center crop.
+
+Native-scroll camera easing and a capped pointer drift animate the scene without a video loop, scroll pin or reading gate. Coarse pointers receive a still camera. System and site reduced-motion settings retain the complete still composition and working links.

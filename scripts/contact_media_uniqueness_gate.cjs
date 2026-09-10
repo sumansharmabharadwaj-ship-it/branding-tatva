@@ -7,6 +7,7 @@ const root = process.cwd();
 const sourceFiles = [
   "src/app/contact/page.tsx",
   "src/components/ContactPathways.tsx",
+  "src/components/ContactGratitude.tsx",
 ];
 const source = sourceFiles
   .map((file) => fs.readFileSync(path.join(root, file), "utf8"))
@@ -40,7 +41,6 @@ const expectedFilms = [
   "bt-contact-original-write-card.mp4",
   "bt-contact-original-write-scene.mp4",
   "bt-contact-original-call.mp4",
-  "bt-contact-original-gratitude.mp4",
 ];
 
 const expectedPosters = [
@@ -51,7 +51,8 @@ const expectedPosters = [
   "bt-contact-original-write-card-poster.jpg",
   "bt-contact-write-note-v2.webp",
   "bt-contact-decision-table-v2.webp",
-  "bt-contact-original-gratitude-poster.jpg",
+  "bt-contact-sunlit-invitation-v1.webp",
+  "bt-contact-sunlit-invitation-mobile-v1.webp",
 ];
 const desktopReferences = [
   ...source.matchAll(/\/videos\/generated\/(bt-contact-original-[a-z-]+\.mp4)/g),
@@ -59,7 +60,7 @@ const desktopReferences = [
   .map((match) => match[1])
   .filter((file) => !file.includes("-mobile"));
 const posterReferences = [
-  ...source.matchAll(/\/images\/generated\/(bt-contact-(?:original-[a-z-]+-poster\.jpg|[a-z-]+-v2\.webp))/g),
+  ...source.matchAll(/\/images\/generated\/(bt-contact-(?:original-[a-z-]+-poster\.jpg|[a-z-]+-v[12]\.webp))/g),
 ].map((match) => match[1]);
 
 if (desktopReferences.length !== expectedFilms.length) {

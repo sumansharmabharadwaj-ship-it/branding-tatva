@@ -178,42 +178,18 @@ if (!contactReadiness.includes('CONTACT_RATE_LIMIT_SCOPE = "instance-local"')) {
 if (/apiKey|toEmail|cronSecret/i.test(contactVerificationRoute)) {
   fail("Public Contact readiness must not serialize delivery configuration values.");
 }
-if (!contactGratitude.includes('role="progressbar"')) {
-  fail("Contact gratitude must expose acknowledgement progress.");
+for (const marker of ['id="thanks"', 'aria-labelledby="contact-gratitude-heading"', "Thank you for", "making room.", "data-contact-invitation-actions", "data-contact-invitation-booking", "data-contact-invitation-write"]) {
+  if (!contactGratitude.includes(marker)) fail(`Contact invitation is missing its accessible content: ${marker}`);
 }
-if (!contactGratitude.includes('event.key === "Escape"')) {
-  fail("Contact gratitude must let keyboard visitors close an active acknowledgement.");
+if (!contactGratitude.includes('href={bookingHref}') || !contactGratitude.includes("calendlyHrefForServicesPackage(site.calendlyUrl, packageSlug)")) {
+  fail("Contact invitation must use the configured booking URL and retain the selected services context.");
 }
-const preservesFocusedGratitudeNote =
-  contactGratitude.includes("event.currentTarget.contains(document.activeElement)") ||
-  (contactGratitude.includes("focusedIndex = noteRefs.current.findIndex") &&
-    contactGratitude.includes("note === document.activeElement") &&
-    contactGratitude.includes("focusedIndex >= 0") &&
-    contactGratitude.includes(": selectedNote"));
-
-if (!preservesFocusedGratitudeNote) {
-  fail("Contact gratitude hover must preserve keyboard focus across the acknowledgement group.");
+if (!contactGratitude.includes('href="#write"')) fail("Contact invitation must keep the real enquiry route available.");
+if (!contactGratitude.includes('target="_blank"') || !contactGratitude.includes('rel="noopener noreferrer"')) {
+  fail("Contact invitation must open the calendar safely in a new tab.");
 }
-if (!contactGratitude.includes('data-contact-gratitude-flow="continuous"')) {
-  fail("Contact gratitude must keep pointer movement continuous across acknowledgements.");
-}
-if (!contactGratitude.includes('event.key === "ArrowDown"')) {
-  fail("Contact gratitude acknowledgements must support arrow-key movement.");
-}
-if (!contactGratitude.includes("selectedNote")) {
-  fail("Contact gratitude must keep click and touch selections open until dismissed.");
-}
-if (!contactGratitude.includes('data-contact-gratitude-next')) {
-  fail("Contact gratitude must expose its onward routes.");
-}
-if (!contactGratitude.includes('href="/insights"')) {
-  fail("Contact gratitude must offer a useful reading route.");
-}
-if (!contactGratitude.includes('href="#call"')) {
-  fail("Contact gratitude must keep the booking route available.");
-}
-if (!contactGratitude.includes('aria-hidden="false"')) {
-  fail("Contact gratitude onward routes must remain available without a completion gate.");
+if (/tabIndex=\{-1\}|aria-hidden=\{.*?\}|nextReady|completionSettled/.test(contactGratitude)) {
+  fail("Contact invitation links must remain available without a completion gate.");
 }
 if (!contactChapterRail.includes("data-contact-chapter-status")) {
   fail("Contact chapter navigation must expose an assistive current-chapter status.");

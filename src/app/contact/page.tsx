@@ -426,33 +426,7 @@ export default function ContactPage() {
           </Container>
         </ContactCinematicScene>
 
-        <ContactCinematicScene
-          id="thanks"
-          labelledBy="contact-gratitude-heading"
-          variant="afterglow"
-          className="bg-soil"
-          media={
-            <>
-              <BackgroundVideo
-                video="/videos/generated/bt-contact-original-gratitude.mp4"
-                videoMobile="/videos/generated/bt-contact-original-gratitude-mobile.mp4"
-                poster="/images/generated/bt-contact-original-gratitude-poster.jpg"
-                imagePosition="center 42%"
-                playbackRate={0.78}
-                loop={false}
-                posterPriority={false}
-                push
-              />
-              <div
-                aria-hidden="true"
-                data-contact-gratitude-media-wash
-                className="absolute inset-0"
-              />
-            </>
-          }
-        >
-          <ContactGratitude />
-        </ContactCinematicScene>
+        <ContactGratitude />
       </main>
       <Footer compact className="contact-footer-afterglow" />
     </>

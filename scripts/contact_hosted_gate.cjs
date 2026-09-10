@@ -828,46 +828,27 @@ async function auditKeyboardJourney(browser) {
 
     await page.goto(`${BASE_URL}/contact#thanks`, { waitUntil: "domcontentloaded" });
     await waitForPrelude(page, "gratitude keyboard journey");
-    const notes = page.locator("[data-contact-gratitude-note]");
-    assert((await notes.count()) === 4, "keyboard journey: gratitude acknowledgements are incomplete");
-
-    for (let index = 0; index < 4; index += 1) {
-      const note = notes.nth(index);
-      await note.focus();
-      await page.waitForTimeout(50);
-      assert((await note.getAttribute("aria-pressed")) === "true", `keyboard journey: note ${index + 1} did not open on focus`);
-      if (index === 0) {
-        await note.press("Escape");
-        await page.waitForTimeout(50);
-        assert((await note.getAttribute("aria-pressed")) === "false", "keyboard journey: Escape did not close the active acknowledgement");
-        await note.focus();
-      }
-    }
-
-    const progress = page.getByRole("progressbar", { name: "Acknowledgements received" });
-    assert((await progress.getAttribute("aria-valuenow")) === "4", "keyboard journey: gratitude progress did not reach four");
-    assert(
-      (await progress.getAttribute("aria-valuetext")) === "All four acknowledgements received",
-      "keyboard journey: gratitude completion is not announced clearly",
-    );
-    const next = page.locator("[data-contact-gratitude-next]");
-    const nextLink = next.getByRole("link", { name: "Read the field notes", exact: true });
-    assert((await next.getAttribute("aria-hidden")) === "false", "keyboard journey: completed gratitude handoff remains hidden");
-    assert((await nextLink.getAttribute("tabindex")) !== "-1", "keyboard journey: completed gratitude handoff remains outside the tab order");
-    await nextLink.focus();
-    assert(
-      await nextLink.evaluate((node) => document.activeElement === node),
-      "keyboard journey: completed gratitude handoff cannot receive focus",
-    );
+    const invitation = page.locator('[data-contact-gratitude="sunlit"]');
+    assert(await invitation.isVisible(), "keyboard journey: sunlit invitation is missing");
+    const booking = invitation.locator("[data-contact-invitation-booking]");
+    const write = invitation.locator("[data-contact-invitation-write]");
+    assert((await booking.getAttribute("href")).startsWith("https://calendly.com/"), "keyboard journey: invitation booking route is missing");
+    assert((await booking.getAttribute("target")) === "_blank", "keyboard journey: calendar must open separately");
+    await booking.focus();
+    assert(await booking.evaluate((node) => document.activeElement === node), "keyboard journey: booking link cannot receive focus");
+    await booking.press("Tab");
+    assert(await write.evaluate((node) => document.activeElement === node), "keyboard journey: writing link is outside the natural tab order");
+    await write.press("Enter");
+    await page.waitForURL(/#write$/, { timeout: 5_000 });
+    assert(await page.locator("[data-contact-form-card]").isVisible(), "keyboard journey: invitation did not reach the enquiry form");
 
     return {
       pathwayTabKeyboardNavigation: true,
       pathwayPhoneDisclosed: true,
       chapterKeyboardNavigation: true,
       chapterAnnouncement: true,
-      gratitudeEscape: true,
-      gratitudeCompletion: true,
-      gratitudeHandoffFocusable: true,
+      gratitudeBookingFocusable: true,
+      gratitudeWritingKeyboardNavigation: true,
     };
   } finally {
     await context.close();
