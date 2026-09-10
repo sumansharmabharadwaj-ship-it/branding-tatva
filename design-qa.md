@@ -1,5 +1,21 @@
 # Design QA log
 
+## Homepage question selection continuity — 2026-09-10
+
+- Scope: the existing “Before we work together” scene after Studio. Kept copy, FAQ data, media, type, spacing, links, and ordinary document flow.
+- Reference: current Branding Tatva question scene from release 215, compared with the local production build at 1363 × 936; Parker's held-frame transition was reviewed as motion inspiration only.
+- Replaced the separate active borders with one shared selection rule. During a change from question 2 to 5, its observed transform travelled from -319.734px to `none`, settling exactly 1px above the selected heading.
+- Answer height and text now resolve together, with a short inward text withdrawal on close. The active answer settles at opacity 1; every other answer has zero height, `aria-hidden="true"`, and `inert`.
+- Keyboard Home moved focus from question 5 to question 1 while leaving question 5 expanded. Enter deliberately changed the answer. Closing the selected answer left no expanded panel or selection rule and retained button focus.
+- Mobile 390 × 844: content and scroll width both 375px; buttons measured 70–83px high. The longest answer measured 210.3px and was fully readable in the captured reading position, without clipped text or sideways overflow.
+- Site reduced-motion mode: answer and rule transforms settle to `none`, the selected answer is fully visible, and closed panels remain inert. CSS icon transitions are suppressed as well as the existing JavaScript motion. Operating-system reduction continues through the existing shared hook; native Safari was not tested.
+- Verification passed: targeted ESLint, production build (79 generated routes), homepage source gate, built homepage gate, deployment contract self-test, and `git diff --check`. The build and browser checks preceded the clean integration of unrelated Insights release 218; the scoped question files were unchanged by that integration.
+- Browser console: only the cloud-browser extension metadata error; no application error observed in this scope.
+
+final result: passed
+
+---
+
 ## Studio scroll continuation — 2026-09-10
 
 ### Scope and visual evidence

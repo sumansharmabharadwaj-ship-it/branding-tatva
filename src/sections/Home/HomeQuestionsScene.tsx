@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useId, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, Plus } from "lucide-react";
@@ -26,6 +26,7 @@ const QUESTIONS = QUESTION_ORDER.flatMap((question) =>
 export function HomeQuestionsScene() {
   const rootRef = useRef<HTMLElement>(null);
   const questionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const selectionId = useId();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const reducedMotion = useHydratedReducedMotion();
   const cinematicMotion = useMediaQuery(
@@ -88,6 +89,15 @@ export function HomeQuestionsScene() {
             const answerId = `${buttonId}-answer`;
             return (
               <div key={item.question} className={styles.questionItem} data-open={open}>
+                {open && (
+                  <motion.span
+                    aria-hidden="true"
+                    className={styles.questionRule}
+                    layoutId={reducedMotion ? undefined : `home-answer-rule-${selectionId}`}
+                    initial={false}
+                    transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                )}
                 <h3>
                   <button
                     ref={(element) => { questionRefs.current[index] = element; }}
@@ -115,9 +125,19 @@ export function HomeQuestionsScene() {
                   className={styles.answer}
                   initial={false}
                   animate={{ height: open ? "auto" : 0 }}
-                  transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <p>{item.answer}</p>
+                  <motion.p
+                    initial={false}
+                    animate={{ opacity: open ? 1 : 0, y: reducedMotion || open ? 0 : -6 }}
+                    transition={{
+                      duration: reducedMotion ? 0 : open ? 0.32 : 0.12,
+                      delay: reducedMotion || !open ? 0 : 0.06,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    {item.answer}
+                  </motion.p>
                 </motion.div>
               </div>
             );

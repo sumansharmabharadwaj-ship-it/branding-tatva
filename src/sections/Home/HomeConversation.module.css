@@ -52,11 +52,14 @@
 .textLink:hover { color: #342f27; }
 .questionList { min-width: 0; }
 .questionItem {
+  position: relative;
   border-top: 1px solid rgb(91 78 58 / 24%);
-  transition: border-color 280ms ease;
 }
 .questionItem h3 { margin: 0; }
-.questionItem[data-open="true"] { border-top-color: #98623f; }
+.questionRule {
+  position: absolute; inset: -1px 0 auto; height: 1px;
+  background: #98623f; pointer-events: none; transform-origin: left;
+}
 .questionItem[data-open="true"] .questionNumber { color: #70482f; }
 .questionButton {
   display: grid; grid-template-columns: 1.8rem minmax(0, 1fr) 1.2rem;
@@ -234,4 +237,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .questionItem, .questionNumber, .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg { transition: none; }
+}
+
+:global(html[data-motion="reduced"]) .questions :is(.questionNumber, .questionIcon, .questionButton, .textLink svg) {
+  transition: none;
 }
