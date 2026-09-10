@@ -10,6 +10,7 @@
   }
 
   html body .home-v4 #evidence > .evidence-cinematic {
+    display: block !important;
     height: 285svh !important;
     min-height: 285svh !important;
     padding-block: 0 !important;
