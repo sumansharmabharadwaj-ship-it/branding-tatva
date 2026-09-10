@@ -2,7 +2,6 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useRef, useState } from "react";
@@ -78,6 +77,14 @@ const BRAND_RESET_COSTS = [
     body: "A campaign earns attention. A different identity next time makes the connection harder for people to recognise.",
   },
 ] as const;
+
+const MESSAGE_TOUCHPOINTS = [
+  { channel: "Website", separate: "Eat for your goals.", shared: "Dinner, decided before six." },
+  { channel: "Email", separate: "Recipes for everyone.", shared: "A week of dinners. One short list." },
+  { channel: "Social", separate: "Count every calorie.", shared: "Five dinners from one Sunday shop." },
+] as const;
+
+type MessageMode = "separate" | "shared";
 
 export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -365,15 +372,13 @@ export function V4RecognitionScene() {
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const [comparison, setComparison] = useState<{ mode: MessageMode; direction: number }>({ mode: "separate", direction: 0 });
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const mediaScale = useTransform(scrollYProgress, [0, 1], [1.12, 1.02]);
-  const mediaY = useTransform(scrollYProgress, [0, 1], [14, -14]);
-  const mediaFrame = useTransform(
-    scrollYProgress,
-    [0.12, 0.5],
-    ["inset(8% 12% 8% 12% round 2rem)", "inset(0% 0% 0% 0% round 1rem)"],
-  );
   const lineProgress = useTransform(scrollYProgress, [0.2, 0.6], [0.08, 1]);
+
+  function chooseMessageMode(mode: MessageMode) {
+    setComparison((current) => current.mode === mode ? current : { mode, direction: mode === "shared" ? 1 : -1 });
+  }
 
   return (
     <section
@@ -395,11 +400,47 @@ export function V4HiddenCostScene() {
               When the brand keeps changing, the next campaign has to introduce the business all over again.
             </p>
           </div>
-          <motion.div className={costStyles.media} style={{ clipPath: prefersReducedMotion ? undefined : mediaFrame }} aria-hidden="true">
-            <motion.div className={costStyles.imagePlane} style={prefersReducedMotion ? undefined : { scale: mediaScale, y: mediaY }}>
-              <Image src="/images/pexels-river-dawn-poster.jpg" alt="" fill sizes="(max-width: 820px) 1px, 40vw" className={costStyles.image} />
-            </motion.div>
-          </motion.div>
+          <div className={costStyles.comparison} data-message-mode={comparison.mode}>
+            <p className={costStyles.exampleLabel}>Illustrative example · Meal planning</p>
+            <div className={costStyles.modeChoices} role="group" aria-label="Compare how a brand communicates">
+              <button type="button" aria-pressed={comparison.mode === "separate"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("separate")}>
+                Separate promises
+              </button>
+              <button type="button" aria-pressed={comparison.mode === "shared"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("shared")}>
+                Shared position
+              </button>
+            </div>
+
+            <div id="brand-message-example" className={costStyles.messageExample}>
+              <dl className={costStyles.touchpoints}>
+                {MESSAGE_TOUCHPOINTS.map((touchpoint, index) => (
+                  <div key={touchpoint.channel}>
+                    <dt><span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{touchpoint.channel}</dt>
+                    <dd>
+                      <span className={costStyles.messageMeasure} aria-hidden="true">
+                        <span>{touchpoint.separate}</span>
+                        <span>{touchpoint.shared}</span>
+                      </span>
+                      <motion.span
+                        className={costStyles.messageText}
+                        key={comparison.mode}
+                        initial={prefersReducedMotion || comparison.direction === 0 ? false : { x: comparison.direction * 8 }}
+                        animate={{ x: 0 }}
+                        transition={{ duration: prefersReducedMotion ? 0 : .3, ease: EASE }}
+                      >
+                        {touchpoint[comparison.mode]}
+                      </motion.span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <p className={costStyles.comparisonMeaning} role="status" aria-atomic="true">
+                {comparison.mode === "shared"
+                  ? "One promise: make weekday dinners easier to decide."
+                  : "Three channels. Three different reasons to choose."}
+              </p>
+            </div>
+          </div>
         </header>
 
         <div className={costStyles.rule} aria-hidden="true">
