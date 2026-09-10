@@ -23,7 +23,6 @@ type InsightsSceneNavigatorProps = {
   scenes: InsightScene[];
 };
 
-const OBSERVER_THRESHOLDS = [0.06, 0.14, 0.26, 0.4, 0.58, 0.76];
 const SCENE_STYLE_PROPERTIES = [
   "--scene-progress",
   "--scene-presence",
@@ -70,7 +69,6 @@ function phaseFromProgress(progress: number) {
 export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) {
   const [activeIndex, setActiveIndex] = useState(-1);
   const activeIndexRef = useRef(-1);
-  const ratiosRef = useRef(new Map<string, number>());
   const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
 
@@ -81,44 +79,44 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
 
     if (targets.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          ratiosRef.current.set(
-            entry.target.id,
-            entry.isIntersecting ? entry.intersectionRatio : 0,
-          );
-        });
+    let observer: IntersectionObserver | undefined;
+    let observing = true;
 
-        let nextIndex = 0;
-        let strongestRatio = -1;
+    function observeReadingLine() {
+      observer?.disconnect();
+      const visible = new Set<string>();
+      const height = Math.max(1, window.innerHeight);
+      const line = Math.round(height * 0.42);
 
-        scenes.forEach((scene, index) => {
-          const ratio = ratiosRef.current.get(scene.id) ?? 0;
-          if (ratio > strongestRatio) {
-            strongestRatio = ratio;
-            nextIndex = index;
-          }
-        });
+      // A narrow reading line gives long sections the same chapter ownership
+      // as short ones. Pixel margins also avoid width-based percentage margins.
+      const nextObserver = new IntersectionObserver(
+        (entries) => {
+          if (!observing || observer !== nextObserver) return;
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) visible.add(entry.target.id);
+            else visible.delete(entry.target.id);
+          });
+          const nextIndex = scenes.findIndex((scene) => visible.has(scene.id));
+          activeIndexRef.current = nextIndex;
+          setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+        },
+        {
+          rootMargin: `${-line}px 0px ${-Math.max(0, height - line - 2)}px 0px`,
+          threshold: 0,
+        },
+      );
+      observer = nextObserver;
+      targets.forEach((target) => nextObserver.observe(target));
+    }
 
-        if (strongestRatio <= 0) {
-          activeIndexRef.current = -1;
-          setActiveIndex(-1);
-          return;
-        }
-        activeIndexRef.current = nextIndex;
-        setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-      },
-      {
-        rootMargin: "-12% 0px -20% 0px",
-        threshold: OBSERVER_THRESHOLDS,
-      },
-    );
-
-    targets.forEach((target) => observer.observe(target));
+    observeReadingLine();
+    window.addEventListener("resize", observeReadingLine, { passive: true });
     return () => {
+      observing = false;
       activeIndexRef.current = -1;
-      observer.disconnect();
+      observer?.disconnect();
+      window.removeEventListener("resize", observeReadingLine);
     };
   }, [scenes]);
 
@@ -180,7 +178,19 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     let lastScroll = window.scrollY;
     let targetVelocity = 0;
     let renderedVelocity = 0;
-    let settleTimer: number | null = null;
+    let lastFrameTime = 0;
+    const styleValues = new WeakMap<HTMLElement, Map<string, string>>();
+
+    function writeStyle(node: HTMLElement, property: string, value: string) {
+      let values = styleValues.get(node);
+      if (!values) {
+        values = new Map();
+        styleValues.set(node, values);
+      }
+      if (values.get(property) === value) return;
+      values.set(property, value);
+      node.style.setProperty(property, value);
+    }
 
     page.dataset.scrollState = "settled";
 
@@ -196,75 +206,44 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       if (page.dataset.scrollState !== state) page.dataset.scrollState = state;
     }
 
-    function scheduleSceneSettle() {
-      if (settleTimer !== null) window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => {
-        settleTimer = null;
-
-        // Reading a worksheet check takes precedence over section alignment.
-        const activeElement = document.activeElement;
-        if (
-          activeElement instanceof HTMLElement &&
-          activeElement.matches(
-            "input, textarea, select, [contenteditable='true'], [role='dialog'] *, .insights-worksheet *",
-          )
-        ) {
-          return;
-        }
-
-        const viewportHeight = viewportMetrics().height;
-        const threshold = Math.min(96, viewportHeight * 0.11);
-        let nearestTarget: HTMLElement | null = null;
-        let nearestDistance = Number.POSITIVE_INFINITY;
-
-        for (const target of targets) {
-          const distance = Math.abs(target.getBoundingClientRect().top);
-          if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearestTarget = target;
-          }
-        }
-
-        if (!nearestTarget || nearestDistance <= 1 || nearestDistance > threshold) {
-          return;
-        }
-
-        setScrollState("moving");
-        if (lenis) {
-          lenis.scrollTo(nearestTarget, {
-            duration: 0.42,
-            easing: (value) => 1 - Math.pow(1 - value, 3),
-          });
-          return;
-        }
-
-        nearestTarget.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 210);
-    }
-
-    function renderCamera() {
+    function renderCamera(timestamp = performance.now()) {
       frame = 0;
       if (document.visibilityState === "hidden") return;
 
-      pointerX += (pointerTargetX - pointerX) * 0.12;
-      pointerY += (pointerTargetY - pointerY) * 0.12;
-      renderedVelocity += (targetVelocity - renderedVelocity) * 0.18;
-      targetVelocity *= 0.84;
+      const frameStep = lastFrameTime
+        ? clamp((timestamp - lastFrameTime) / (1000 / 60), 0.1, 3)
+        : 1;
+      lastFrameTime = timestamp;
+      const pointerEase = 1 - Math.pow(0.88, frameStep);
+      const velocityEase = 1 - Math.pow(0.82, frameStep);
+      pointerX += (pointerTargetX - pointerX) * pointerEase;
+      pointerY += (pointerTargetY - pointerY) * pointerEase;
+      renderedVelocity += (targetVelocity - renderedVelocity) * velocityEase;
+      targetVelocity *= Math.pow(0.84, frameStep);
 
-      page.dataset.scrollDirection = direction > 0 ? "forward" : "backward";
-      page.style.setProperty("--insights-pointer-x", pointerX.toFixed(4));
-      page.style.setProperty("--insights-pointer-y", pointerY.toFixed(4));
-      page.style.setProperty(
+      // Read all geometry before changing styles, including page variables.
+      const viewport = viewportMetrics();
+      const viewportHeight = viewport.height;
+      const viewportBottom = viewport.top + viewportHeight;
+      const measuredScenes = targets.map((target, index) => ({
+        target,
+        index,
+        bounds: target.getBoundingClientRect(),
+      }));
+
+      const scrollDirection = direction > 0 ? "forward" : "backward";
+      if (page.dataset.scrollDirection !== scrollDirection) {
+        page.dataset.scrollDirection = scrollDirection;
+      }
+      writeStyle(page, "--insights-pointer-x", pointerX.toFixed(4));
+      writeStyle(page, "--insights-pointer-y", pointerY.toFixed(4));
+      writeStyle(
+        page,
         "--insights-scroll-velocity",
         Math.abs(renderedVelocity).toFixed(4),
       );
 
-      const viewport = viewportMetrics();
-      const viewportHeight = viewport.height;
-      const viewportBottom = viewport.top + viewportHeight;
-
-      targets.forEach((target, index) => {
-        const bounds = target.getBoundingClientRect();
+      measuredScenes.forEach(({ target, index, bounds }) => {
         if (
           bounds.bottom < viewport.top - viewportHeight ||
           bounds.top > viewportBottom + viewportHeight
@@ -300,43 +279,49 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         if (target.dataset.scenePhase !== nextPhase) {
           target.dataset.scenePhase = nextPhase;
         }
-        target.style.setProperty("--scene-progress", sceneProgress.toFixed(4));
-        target.style.setProperty("--scene-presence", presence.toFixed(4));
-        target.style.setProperty("--scene-anticipation", anticipation.toFixed(4));
-        target.style.setProperty("--scene-activation", activation.toFixed(4));
-        target.style.setProperty("--scene-discovery", discovery.toFixed(4));
-        target.style.setProperty("--scene-resolution", resolution.toFixed(4));
-        target.style.setProperty("--scene-camera-x", `${cameraX.toFixed(2)}px`);
-        target.style.setProperty("--scene-camera-y", `${cameraY.toFixed(2)}px`);
-        target.style.setProperty("--scene-camera-scale", cameraScale.toFixed(4));
-        target.style.setProperty("--scene-camera-roll", `${cameraRoll.toFixed(3)}deg`);
-        target.style.setProperty("--scene-entry-shift", `${entryShift.toFixed(2)}px`);
-        target.style.setProperty(
+        writeStyle(target, "--scene-progress", sceneProgress.toFixed(4));
+        writeStyle(target, "--scene-presence", presence.toFixed(4));
+        writeStyle(target, "--scene-anticipation", anticipation.toFixed(4));
+        writeStyle(target, "--scene-activation", activation.toFixed(4));
+        writeStyle(target, "--scene-discovery", discovery.toFixed(4));
+        writeStyle(target, "--scene-resolution", resolution.toFixed(4));
+        writeStyle(target, "--scene-camera-x", `${cameraX.toFixed(2)}px`);
+        writeStyle(target, "--scene-camera-y", `${cameraY.toFixed(2)}px`);
+        writeStyle(target, "--scene-camera-scale", cameraScale.toFixed(4));
+        writeStyle(target, "--scene-camera-roll", `${cameraRoll.toFixed(3)}deg`);
+        writeStyle(target, "--scene-entry-shift", `${entryShift.toFixed(2)}px`);
+        writeStyle(
+          target,
           "--scene-discovery-shift",
           `${discoveryShift.toFixed(2)}px`,
         );
-        target.style.setProperty(
+        writeStyle(
+          target,
           "--scene-resolution-shift",
           `${resolutionShift.toFixed(2)}px`,
         );
-        target.style.setProperty(
+        writeStyle(
+          target,
           "--scene-seam-shift",
           `${seamShift.toFixed(2)}px`,
         );
-        target.style.setProperty("--scene-mask", `${mask.toFixed(2)}%`);
-        target.style.setProperty("--scene-content-opacity", contentOpacity.toFixed(4));
+        writeStyle(target, "--scene-mask", `${mask.toFixed(2)}%`);
+        writeStyle(target, "--scene-content-opacity", contentOpacity.toFixed(4));
       });
 
-      const needsAnotherFrame =
+      const scrollIsMoving =
         Math.abs(targetVelocity) > 0.004 ||
-        Math.abs(renderedVelocity) > 0.004 ||
+        Math.abs(renderedVelocity) > 0.004;
+      const needsAnotherFrame =
+        scrollIsMoving ||
         Math.abs(pointerTargetX - pointerX) > 0.003 ||
         Math.abs(pointerTargetY - pointerY) > 0.003;
 
       if (needsAnotherFrame) {
-        setScrollState("moving");
+        setScrollState(scrollIsMoving ? "moving" : "settled");
         frame = window.requestAnimationFrame(renderCamera);
       } else {
+        lastFrameTime = 0;
         setScrollState("settled");
       }
     }
@@ -353,7 +338,6 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       targetVelocity = clamp((velocity ?? delta) / 32, -1, 1);
       if (Math.abs(delta) > 0.2 || Math.abs(targetVelocity) > 0.01) {
         setScrollState("moving");
-        scheduleSceneSettle();
       }
       scheduleCamera();
     }
@@ -437,6 +421,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       if (document.visibilityState === "hidden") {
         window.cancelAnimationFrame(frame);
         frame = 0;
+        lastFrameTime = 0;
         targetVelocity = 0;
         renderedVelocity = 0;
         setScrollState("settled");
@@ -472,7 +457,6 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
 
     return () => {
       window.cancelAnimationFrame(frame);
-      if (settleTimer !== null) window.clearTimeout(settleTimer);
       unsubscribeLenis?.();
       window.removeEventListener("scroll", handleNativeScroll);
       window.removeEventListener("resize", handleViewportChange);
@@ -543,6 +527,10 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     event: MouseEvent<HTMLAnchorElement>,
     scene: InsightScene,
   ) {
+    if (
+      event.defaultPrevented || event.button !== 0 || event.metaKey ||
+      event.ctrlKey || event.shiftKey || event.altKey
+    ) return;
     const target = document.getElementById(scene.id);
     if (!target) return;
 

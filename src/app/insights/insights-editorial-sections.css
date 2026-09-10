@@ -8,6 +8,15 @@
   --insights-page-accent: #a64c2e;
 }
 
+/* Native scrolling owns the resting position; only chapter links request a
+   journey. The visual timeline continues to follow the reader's movement. */
+html:has(.insights-page) { scroll-snap-type: none; }
+.insights-page .insights-scene { scroll-snap-align: none; --scene-transition-color: #f4efe6; }
+.insights-page .insights-library-scene { --scene-transition-color: #ede5d8; }
+.insights-page .insights-scene::before { height: clamp(2rem, 5svh, 4rem); }
+.insights-page[data-scroll-state] .insights-scene[data-scene-active]::after { box-shadow: none; }
+.insights-page :is(.insights-library__header, .insights-library__lens) { opacity: 1; transform: none; }
+
 .insights-page .insights-section-kicker {
   display: flex;
   align-items: center;
