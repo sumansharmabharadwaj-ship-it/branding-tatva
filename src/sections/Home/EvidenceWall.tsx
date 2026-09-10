@@ -1,6 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -132,14 +133,22 @@ export function EvidenceWall() {
   const sectionRef = useRef<HTMLElement>(null);
   const activeVideoRef = useRef<HTMLVideoElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const previousIndexRef = useRef(0);
   const fileRequestRef = useRef(0);
   const [ProjectFile, setProjectFile] = useState<ProjectFileModule["ProjectFile"] | null>(null);
   const [openingSlug, setOpeningSlug] = useState<string | null>(null);
   const [fileError, setFileError] = useState(false);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
+  const visualizer = useScrollDrivenVisualizer({
+    count: projects.length,
+    target: sectionRef,
+    enabled: inView,
+    reducedMotion: prefersReducedMotion,
+  });
+  const { activeIndex, choose: chooseVisualState, preview, releasePreview } = visualizer;
+  const selectionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
   const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
@@ -154,7 +163,7 @@ export function EvidenceWall() {
   function chooseProject(index: number) {
     cancelOpening();
     setFileError(false);
-    setActiveIndex(index);
+    chooseVisualState(index);
   }
 
   async function openProjectFile(slug: string, opener: HTMLButtonElement) {
@@ -210,12 +219,18 @@ export function EvidenceWall() {
     };
   }, [activeIndex, inView, prefersReducedMotion]);
 
+  useEffect(() => {
+    previousIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
   return (
     <section
       ref={sectionRef}
       className="evidence-cinematic"
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
+      data-evidence-index={activeIndex}
+      data-scroll-story="evidence"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
     >
       <BackgroundVideo
@@ -280,6 +295,10 @@ export function EvidenceWall() {
                 className={selected ? "is-active" : undefined}
                 style={{ "--project-accent": project.accent } as CSSProperties}
                 onClick={() => chooseProject(index)}
+                onPointerEnter={() => preview(index)}
+                onPointerLeave={releasePreview}
+                onFocus={() => preview(index)}
+                onBlur={releasePreview}
                 onKeyDown={(event) => onTabKeyDown(event, index)}
               >
                 <span className="evidence-cinematic__index-image" aria-hidden="true">
@@ -315,10 +334,10 @@ export function EvidenceWall() {
           <EvidenceMedia
             key={`media-${activeProject.slug}`}
             className="evidence-cinematic__media"
-            initial={prefersReducedMotion ? false : { opacity: 0.78, scale: 1.014, filter: "blur(1px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            exit={prefersReducedMotion ? undefined : { opacity: 0.78, scale: 1.006, filter: "blur(1px)" }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
+            initial={prefersReducedMotion ? false : { opacity: 0.68, x: selectionDirection * 28, scale: 1.018, filter: "blur(2px)" }}
+            animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0.78, x: selectionDirection * -18, scale: 1.006, filter: "blur(2px)" }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
           >
             <div className="evidence-cinematic__media-layer">
               {activeProject.cardImage && (
@@ -391,10 +410,10 @@ export function EvidenceWall() {
           <EvidenceDossier
             key={`trail-${activeProject.slug}`}
             className="evidence-cinematic__dossier"
-            initial={prefersReducedMotion ? false : { opacity: 0.8, y: 7, filter: "blur(1px)" }}
+            initial={prefersReducedMotion ? false : { opacity: 0.62, y: selectionDirection * 18, filter: "blur(2px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={prefersReducedMotion ? undefined : { opacity: 0.8, y: -4, filter: "blur(1px)" }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.36, ease: EASE }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0.8, y: selectionDirection * -12, filter: "blur(2px)" }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
           >
             <div className="evidence-cinematic__dossier-topline">
               <span>Decision record</span>

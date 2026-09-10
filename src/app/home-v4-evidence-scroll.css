@@ -1,0 +1,52 @@
+/* Evidence becomes a visitor-led film strip on capable desktop viewports.
+   The archive holds as one composed plate while scroll chooses each case.
+   Touch, short screens and reduced motion retain the ordinary reading flow. */
+
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
+  html body .home-v4 #evidence {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  html body .home-v4 #evidence > .evidence-cinematic {
+    height: 285svh !important;
+    min-height: 285svh !important;
+    padding-block: 0 !important;
+    overflow: clip !important;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    position: sticky !important;
+    top: 0 !important;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    box-sizing: border-box;
+    padding-block: clamp(4.4rem, 6.5svh, 5.5rem) 1rem !important;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__media-layer,
+  .home-v4 #evidence .evidence-cinematic__media-wash,
+  .home-v4 #evidence .evidence-cinematic__trail-step,
+  .home-v4 #evidence .evidence-cinematic__index button {
+    will-change: transform, opacity;
+  }
+
+  .home-v4 #evidence .evidence-cinematic__index button.is-active {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .home-v4 #evidence,
+  html body .home-v4 #evidence > .evidence-cinematic,
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    height: auto !important;
+    min-height: auto !important;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    position: relative !important;
+    top: auto !important;
+  }
+}
