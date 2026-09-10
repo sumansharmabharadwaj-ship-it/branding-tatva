@@ -77,6 +77,13 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const imageY = useTransform(scrollYProgress, [0, 1], [12, -12]);
   const imageScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.1]);
+  const [stepTransition, setStepTransition] = useState({ index: active, direction: 0 });
+
+  // Resolve direction before the new keyed content mounts, including changes
+  // driven by scrolling. Repeated renders retain the same entry direction.
+  if (stepTransition.index !== active) {
+    setStepTransition({ index: active, direction: Math.sign(active - stepTransition.index) });
+  }
 
   function choose(index: number) {
     setSelected(index);
@@ -115,6 +122,10 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     output: "A decision the next stage can use",
     decision: "What needs to be agreed before the next stage?",
   };
+  const stepEntrance = prefersReducedMotion || stepTransition.direction === 0
+    ? false
+    : { x: stepTransition.direction * 10 };
+  const stepTiming = { duration: prefersReducedMotion ? 0 : 0.3, ease: EASE };
 
   return (
     <section ref={sectionRef} data-project-journey="true" data-scroll-story="process" data-process-state={active} className={`project-journey ${styles.journey}`} aria-labelledby="project-journey-title">
@@ -155,10 +166,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               {stage.poster && <Image src={stage.poster} alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />}
             </motion.div>
             <div className={styles.imageShade} />
-            <p className={styles.imageCaption}><span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>{stage.stage}</p>
+            <motion.p key={active} className={styles.imageCaption} initial={stepEntrance} animate={{ x: 0 }} transition={stepTiming}>
+              <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>{stage.stage}
+            </motion.p>
           </div>
 
-          <motion.div key={active} className={styles.reading} initial={prefersReducedMotion ? false : { x: 10 }} animate={{ x: 0 }} transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}>
+          <motion.div key={active} className={styles.reading} initial={stepEntrance} animate={{ x: 0 }} transition={stepTiming}>
             <p className={styles.eyebrow}>The decision</p>
             <h3>{meta.title}</h3>
             <p className={styles.explanation}>{meta.explanation}</p>
