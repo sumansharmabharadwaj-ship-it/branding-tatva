@@ -243,18 +243,13 @@ function GratitudeNote({
         className="relative hidden overflow-hidden text-right text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-sandstone sm:grid"
       >
         <span className="invisible [grid-area:1/1]">received</span>
-        <AnimatePresence initial={false} mode="wait">
-          <motion.span
-            key={status}
-            className="block [grid-area:1/1]"
-            initial={reducedMotion ? false : { y: 8, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={reducedMotion ? undefined : { y: -8, opacity: 0 }}
-            transition={{ duration: reducedMotion ? 0 : 0.2, ease: EASE_AIR }}
-          >
-            {status}
-          </motion.span>
-        </AnimatePresence>
+        {/* Keep the state word truthful during rapid scroll handoffs. The
+            shared focus baton carries the motion between rows, while the
+            outgoing label resolves immediately instead of leaving two
+            acknowledgements marked as reading. */}
+        <span data-contact-gratitude-note-status-state className="block [grid-area:1/1]">
+          {status}
+        </span>
       </span>
     </motion.button>
   );

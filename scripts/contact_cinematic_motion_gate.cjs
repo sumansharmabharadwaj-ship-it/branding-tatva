@@ -93,6 +93,12 @@ requireText(gratitude, 'data-contact-gratitude-scroll-spine="continuous"', "grat
 requireText(gratitude, "data-contact-gratitude-scroll-spine-settled", "gratitude scroll spine no longer settles before the final handoff");
 requireText(gratitude, "data-contact-gratitude-note-active", "gratitude active acknowledgement state is no longer inspectable");
 requireText(gratitude, "data-contact-gratitude-note-label", "gratitude active label no longer carries the travelling focus cue");
+requireText(gratitude, "data-contact-gratitude-note-status-state", "gratitude acknowledgement status is no longer inspectable");
+requirePattern(
+  gratitude,
+  /data-contact-gratitude-note-status-state[^>]*>[\s\S]*?\{status\}/,
+  "gratitude acknowledgement status must update synchronously with the travelling focus baton",
+);
 requireText(gratitude, "const spineSettled = completionSettled && !isRevisiting && activeNote === null;", "gratitude scroll spine no longer re-energizes during intentional inspection");
 requirePattern(
   gratitude,
