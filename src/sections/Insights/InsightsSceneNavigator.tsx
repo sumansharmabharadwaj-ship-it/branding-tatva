@@ -68,6 +68,7 @@ function phaseFromProgress(progress: number) {
  */
 export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) {
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [hasNavigationFocus, setHasNavigationFocus] = useState(false);
   const activeIndexRef = useRef(-1);
   const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
@@ -540,14 +541,17 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
   }, [activeIndex, scenes]);
 
   useEffect(() => {
+    let restoreFrame = 0;
     function restoreSceneFromHistory() {
+      window.cancelAnimationFrame(restoreFrame);
       const scene = scenes.find(({ id }) => window.location.hash === `#${id}`);
       if (!scene) return;
 
       const target = document.getElementById(scene.id);
       if (!target) return;
 
-      window.requestAnimationFrame(() => {
+      restoreFrame = window.requestAnimationFrame(() => {
+        restoreFrame = 0;
         if (lenis && !prefersReducedMotion) {
           lenis.scrollTo(target, {
             duration: 0.68,
@@ -564,7 +568,10 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     }
 
     window.addEventListener("popstate", restoreSceneFromHistory);
-    return () => window.removeEventListener("popstate", restoreSceneFromHistory);
+    return () => {
+      window.cancelAnimationFrame(restoreFrame);
+      window.removeEventListener("popstate", restoreSceneFromHistory);
+    };
   }, [lenis, prefersReducedMotion, scenes]);
 
   function handleSceneJourney(
@@ -599,19 +606,29 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
   }
 
   const activeScene = scenes[activeIndex];
+  const navigationVisible = Boolean(activeScene) || hasNavigationFocus;
 
   return (
     <nav
       className="insights-scene-compass"
       data-insights-scene-compass
       aria-label="Insights chapters"
-      data-visible={activeScene ? "true" : "false"}
+      aria-hidden={navigationVisible ? undefined : true}
+      inert={!navigationVisible}
+      data-visible={navigationVisible ? "true" : "false"}
+      data-current={activeScene ? "true" : "false"}
       data-theme={activeScene?.theme ?? "light"}
+      onFocusCapture={() => setHasNavigationFocus(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setHasNavigationFocus(false);
+        }
+      }}
       style={
         {
           "--compass-accent": activeScene?.accent ?? "#D77A51",
-          "--compass-progress-scale":
-            activeIndex >= 0 ? (activeIndex + 1) / scenes.length : 0,
+          "--compass-index": Math.max(0, activeIndex),
+          "--compass-count": scenes.length,
         } as CSSProperties
       }
     >
