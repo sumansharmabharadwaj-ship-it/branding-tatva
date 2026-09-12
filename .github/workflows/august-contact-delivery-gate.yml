@@ -1,0 +1,68 @@
+name: August contact delivery regression check
+
+on:
+  push:
+    branches:
+      - august-8-isolated
+    paths:
+      - "src/app/api/contact/**"
+      - "src/lib/contact-delivery.ts"
+      - "src/lib/contact-readiness.ts"
+      - "scripts/contact_delivery_gate.mjs"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "vercel-preview-release.json"
+      - ".github/workflows/august-contact-delivery-gate.yml"
+  pull_request:
+    branches:
+      - august-8-isolated
+    paths:
+      - "src/app/api/contact/**"
+      - "src/lib/contact-delivery.ts"
+      - "src/lib/contact-readiness.ts"
+      - "scripts/contact_delivery_gate.mjs"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "vercel-preview-release.json"
+      - ".github/workflows/august-contact-delivery-gate.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: august-contact-delivery-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contact-delivery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the source being checked
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout: |
+            src/app/api/contact
+            src/lib
+            scripts
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # The gate executes the actual route and delivery helper with fake
+      # provider responses. It needs no credentials and sends no email.
+      - name: Verify retries and provider failure handling
+        run: node scripts/contact_delivery_gate.mjs
