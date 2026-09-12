@@ -213,13 +213,22 @@ export function PathsCinematicChapter() {
           <motion.div
             key={active.situation}
             className={styles.detail}
-            initial={reducedMotion ? false : { x: selectionDirection * 12 }}
-            animate={{ x: 0 }}
-            transition={{ duration: reducedMotion ? 0 : 0.32, ease: EASE }}
+            initial={false}
+            data-path-detail
           >
-            <div className={styles.copy}>
+            <motion.div
+              className={styles.copy}
+              initial={reducedMotion ? false : { x: -selectionDirection * (cinematicMotion ? 30 : 10), y: cinematicMotion ? 12 : 0 }}
+              animate={{ x: 0, y: 0 }}
+              transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
+            >
               <p className={styles.pathNumber}>0{activeIndex + 1} <span>{offering.name}</span></p>
-              <h3>{active.title}</h3>
+              <motion.h3
+                initial={reducedMotion || !cinematicMotion ? false : { rotateX: 18, y: 18 }}
+                animate={{ rotateX: 0, y: 0 }}
+                transition={{ duration: reducedMotion ? 0 : 0.6, ease: EASE }}
+                style={{ transformPerspective: 900, transformOrigin: "50% 100%" }}
+              >{active.title}</motion.h3>
               <p className={styles.description}>{offering.description}</p>
               <Link
                 href={`/services#package-${packageSlug}`}
@@ -228,21 +237,33 @@ export function PathsCinematicChapter() {
               >
                 Explore {offering.name} <ArrowRight size={19} aria-hidden="true" />
               </Link>
-            </div>
+            </motion.div>
 
-            <div className={styles.scope}>
+            <motion.div
+              className={styles.scope}
+              data-path-scope
+              initial={reducedMotion ? false : { x: selectionDirection * (cinematicMotion ? 38 : 12), rotateY: cinematicMotion ? selectionDirection * -9 : 0 }}
+              animate={{ x: 0, rotateY: 0 }}
+              transition={{ duration: reducedMotion ? 0 : 0.6, ease: EASE }}
+              style={{ transformPerspective: 1100, transformOrigin: "0% 50%" }}
+            >
               <p className={styles.eyebrow}>The first question</p>
               <p className={styles.question}>{active.question}</p>
               <p className={styles.scopeLabel}>What we work on</p>
               <ul>
                 {active.decisions.map((decision, index) => (
-                  <li key={decision}>
+                  <motion.li
+                    key={decision}
+                    initial={reducedMotion ? false : { x: selectionDirection * 22 }}
+                    animate={{ x: 0 }}
+                    transition={{ duration: reducedMotion ? 0 : 0.4, delay: reducedMotion ? 0 : index * 0.055, ease: EASE }}
+                  >
                     <span aria-hidden="true">0{index + 1}</span>
                     {decision}
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
 

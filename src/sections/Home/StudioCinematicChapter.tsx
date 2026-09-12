@@ -76,8 +76,10 @@ export function StudioCinematicChapter() {
   const selectionId = useId();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
-  const portraitY = useTransform(scrollYProgress, [0, 1], [12, -12]);
-  const portraitScale = useTransform(scrollYProgress, [0, 1], [1.01, 1.055]);
+  const portraitY = useTransform(scrollYProgress, [0, 0.5, 1], [18, -8, 8]);
+  const portraitScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.035, 1.14, 1.06]);
+  const portraitX = useTransform(scrollYProgress, [0, 0.5, 1], ["-1%", "1.5%", "-1.5%"]);
+  const portraitTurn = useTransform(scrollYProgress, [0, 0.5, 1], [-1.2, 0.8, 0]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [desktopMotion, setDesktopMotion] = useState(false);
   const selectionRef = useRef({ index: 0, direction: 0 });
@@ -258,17 +260,24 @@ export function StudioCinematicChapter() {
           >
             <motion.div
               key={active.number}
-              initial={prefersReducedMotion ? false : { y: selectionRef.current.direction * 10 }}
-              animate={{ y: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
+              data-studio-decision
+              initial={prefersReducedMotion ? false : { y: selectionRef.current.direction * (desktopMotion ? 26 : 10), rotateX: desktopMotion ? selectionRef.current.direction * 9 : 0 }}
+              animate={{ y: 0, rotateX: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}
+              style={{ transformPerspective: 1000, transformOrigin: "50% 0%" }}
             >
               <p className="studio-cinematic__credential">{active.eyebrow}</p>
               <h3>{active.title}</h3>
               <p className="studio-cinematic__panel-copy">{active.line}</p>
-              <div className="studio-cinematic__result">
+              <motion.div
+                className="studio-cinematic__result"
+                initial={prefersReducedMotion ? false : { x: selectionRef.current.direction * 28 }}
+                animate={{ x: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.48, delay: prefersReducedMotion ? 0 : 0.08, ease: EASE }}
+              >
                 <span>What the client receives</span>
                 <strong>{active.result}</strong>
-              </div>
+              </motion.div>
               <Link href={active.proofHref} className="studio-cinematic__proof">
                 <span>
                   <small>{active.proofLabel}</small>
@@ -288,7 +297,8 @@ export function StudioCinematicChapter() {
         <aside className="studio-cinematic__portrait">
           <motion.div
             className="studio-cinematic__portrait-image"
-            style={{ y: prefersReducedMotion || !desktopMotion ? 0 : portraitY, scale: prefersReducedMotion || !desktopMotion ? 1 : portraitScale }}
+            data-studio-portrait-camera
+            style={{ y: prefersReducedMotion || !desktopMotion ? 0 : portraitY, x: prefersReducedMotion || !desktopMotion ? 0 : portraitX, rotate: prefersReducedMotion || !desktopMotion ? 0 : portraitTurn, scale: prefersReducedMotion || !desktopMotion ? 1 : portraitScale }}
           >
             <Image
               src="/images/own-portrait.jpg"

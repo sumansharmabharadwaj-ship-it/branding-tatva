@@ -65,7 +65,7 @@
 .action svg, .footer svg { flex: 0 0 auto; transition: transform 220ms ease; }
 .action:hover { background: #3b3629; }
 .action:hover svg, .footer a:hover svg { transform: translateX(4px); }
-.scope { border-left: 1px solid rgb(94 76 51 / 25%); padding-left: clamp(2rem, 4vw, 4rem); }
+.scope { border: 1px solid rgb(94 76 51 / 18%); border-radius: 1.25rem; padding: 1.2rem 1.5rem; background: rgb(250 246 237 / 78%); box-shadow: 0 18px 45px rgb(76 62 41 / 7%); }
 .question { max-width: 26ch; margin: 0 0 1.6rem; font: 400 clamp(1.5rem, 2.2vw, 2rem)/1.25 var(--font-display, Georgia, serif); text-wrap: pretty; }
 .scopeLabel { margin: 0 0 .7rem; color: #514b40; font-size: .875rem; line-height: 1.5; }
 .scope ul { margin: 0; padding: 0; list-style: none; }
@@ -92,7 +92,7 @@
 }
 @media (max-width: 900px) {
   .header, .detail { gap: 2rem; grid-template-columns: 1fr 1fr; }
-  .scope { padding-left: 2rem; }
+  .scope { padding: 1.2rem; }
 }
 @media (max-width: 680px) {
   .frame { padding: 6rem 1.5rem 3.5rem; gap: 1.65rem; }
@@ -107,7 +107,7 @@
   .copy h3 { max-width: 18ch; font-size: clamp(2rem, 8vw, 2.8rem); }
   .description { margin-block: 1rem; }
   .action { width: 100%; }
-  .scope { border-left: 0; border-top: 1px solid rgb(94 76 51 / 25%); padding: 1.4rem 0 0; }
+  .scope { padding: 1.25rem; }
   .question { max-width: 28ch; margin-bottom: 1.3rem; }
   .footer { display: block; }
 }

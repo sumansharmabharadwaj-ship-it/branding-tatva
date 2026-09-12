@@ -1,5 +1,6 @@
 "use client";
 
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
@@ -140,6 +141,7 @@ export function EvidenceWall() {
   const [fileError, setFileError] = useState(false);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const desktopMotion = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const visualizer = useScrollDrivenVisualizer({
     count: projects.length,
@@ -339,7 +341,13 @@ export function EvidenceWall() {
             exit={prefersReducedMotion ? undefined : { opacity: 0.78, x: selectionDirection * -18, scale: 1.006, filter: "blur(2px)" }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
           >
-            <div className="evidence-cinematic__media-layer">
+            <motion.div
+              className="evidence-cinematic__media-layer"
+              data-evidence-camera
+              initial={prefersReducedMotion ? false : { scale: desktopMotion ? 1.16 : 1.035, rotate: desktopMotion ? selectionDirection * -0.8 : 0 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.9, ease: EASE }}
+            >
               {activeProject.cardImage && (
                 <Image
                   src={activeProject.cardImage}
@@ -370,7 +378,7 @@ export function EvidenceWall() {
                   transition={{ opacity: { duration: 0.72 }, scale: { duration: 8, ease: "linear" } }}
                 />
               )}
-            </div>
+            </motion.div>
             <div className="evidence-cinematic__media-wash" aria-hidden="true" />
             <div className="evidence-cinematic__media-topline">
               <span>Case file {String(activeIndex + 1).padStart(2, "0")}</span>
@@ -424,14 +432,20 @@ export function EvidenceWall() {
               ["01 · The signal", activeTrail.signal],
               ["02 · The decision", activeTrail.decision],
               ["03 · Recorded proof", activeTrail.proof],
-            ].map(([label, value]) => (
-              <div key={label} className="evidence-cinematic__trail-step">
+            ].map(([label, value], index) => (
+              <motion.div
+                key={label}
+                className="evidence-cinematic__trail-step"
+                initial={prefersReducedMotion ? false : { x: selectionDirection * 20 }}
+                animate={{ x: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.44, delay: prefersReducedMotion ? 0 : index * 0.07, ease: EASE }}
+              >
                 <div>
                   <span>{label}</span>
                   <i aria-hidden="true" />
                 </div>
                 <p>{value}</p>
-              </div>
+              </motion.div>
             ))}
 
             <div className="evidence-cinematic__dossier-footer">

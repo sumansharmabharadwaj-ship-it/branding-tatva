@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
-type Treatment = "title" | "fan" | "plate" | "portrait" | "row";
+type Treatment = "title" | "fan" | "plate" | "portrait" | "row" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
 type SceneSpec = { selector: string; layers: readonly LayerSpec[] };
 
@@ -22,13 +22,13 @@ const SCENES: readonly SceneSpec[] = [
     ["h2", "title"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
   ] },
   { selector: '[data-scroll-story="foundation"]', layers: [
-    ["h2", "title"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    ["h2", "title"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-scroll-story="paths"]', layers: [
-    ["h2", "title"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    ["h2", "title"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-scroll-story="process"]', layers: [
-    ["h2", "title"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    ["h2", "title"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-home-v4-chapter="evidence"]', layers: [
     ["h2", "title"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
@@ -112,7 +112,9 @@ export function HomeV4SceneRhythm() {
           let rotate = 0;
           let scale = 1;
           if (wide) {
-            if (treatment === "fan") {
+            if (treatment === "rail") {
+              y = 28 * amount;
+            } else if (treatment === "fan") {
               x = spread * 42 * amount;
               y = (74 + Math.abs(spread) * 18) * amount;
               rotate = spread * 3.2 * amount;
