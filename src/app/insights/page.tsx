@@ -457,7 +457,7 @@ export default function InsightsPage() {
               </div>
               <p className="max-w-2xl text-sm leading-6 text-foreground-secondary lg:justify-self-end">
                 Choose what you keep hearing from buyers. Start with the question
-                behind it, then read the essay that helps you investigate.
+                behind it, then read the essay built to investigate it.
               </p>
             </div>
             <InsightsDecisionMirror quests={readerQuests} />
