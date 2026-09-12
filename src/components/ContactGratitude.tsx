@@ -37,11 +37,19 @@ export function ContactGratitude() {
   const pointerY = useMotionValue(0);
   const x = useSpring(pointerX, { stiffness: 44, damping: 22, mass: 0.8 });
   const y = useSpring(pointerY, { stiffness: 44, damping: 22, mass: 0.8 });
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: entryProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"],
+    offset: ["start end", "start start"],
     trackContentSize: true,
   });
+  const { scrollYProgress: exitProgress } = useScroll({
+    target: sectionRef,
+    offset: ["end end", "end start"],
+    trackContentSize: true,
+  });
+  // Finish the entrance at the section top even when a short phone, landscape
+  // viewport or enlarged text makes this scene taller than a single screen.
+  const scrollYProgress = useTransform(() => (entryProgress.get() + exitProgress.get()) / 2);
   const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 32, mass: 0.6 });
   const pose = useTransform(() => invitationMotionAt(progress.get(), coarsePointer));
   const cameraScale = useTransform(pose, (value) => value.cameraScale);
@@ -52,6 +60,8 @@ export function ContactGratitude() {
   const makingRoomY = useTransform(pose, (value) => value.makingRoomY);
   const makingRoomScale = useTransform(pose, (value) => value.makingRoomScale);
   const noteY = useTransform(pose, (value) => value.noteY);
+  const invitationY = useTransform(pose, (value) => value.invitationY);
+  const signatureY = useTransform(pose, (value) => value.signatureY);
 
   // Hash arrivals and restored pages start at their real position, instead of
   // replaying the entrance from the top of the page after hydration.
@@ -125,13 +135,21 @@ export function ContactGratitude() {
           <p>For a question that matters to you.</p>
           <p>For the business you have put so much into.</p>
         </motion.div>
-        <p className={styles.invitation}>
+        <motion.p
+          data-invitation-layer="invitation"
+          className={styles.invitation}
+          style={motionEnabled ? { y: invitationY } : { y: 0 }}
+        >
           Bring the part you are still figuring out. <span>I will meet you there.</span>
-        </p>
-        <p className={styles.signature}>
+        </motion.p>
+        <motion.p
+          data-invitation-layer="signature"
+          className={styles.signature}
+          style={motionEnabled ? { y: signatureY } : { y: 0 }}
+        >
           <span>Suman Sharma</span>
           <span>Brand strategist</span>
-        </p>
+        </motion.p>
         <div data-contact-invitation-actions className={styles.actions}>
           <TrackedLink
             href={bookingHref}

@@ -19,7 +19,7 @@ const resting = {
   cameraScale: 1, cameraY: 0,
   thankYouX: 0, thankYouY: 0,
   makingRoomX: 0, makingRoomY: 0, makingRoomScale: 1,
-  noteY: 0,
+  noteY: 0, invitationY: 0, signatureY: 0,
 };
 
 for (const compact of [false, true]) {
@@ -40,6 +40,8 @@ for (const compact of [false, true]) {
     if (compact) assert.equal(Math.abs(current.thankYouX) + Math.abs(current.makingRoomX), 0, "Phone text must stay inside its horizontal bounds.");
     // The 12px paragraph gap stays open even while the note is travelling.
     assert.ok(current.noteY <= 8);
+    assert.ok(12 + current.invitationY - current.noteY >= 4, "The note must not touch the invitation as they settle.");
+    assert.ok(18 - current.signatureY >= 13, "The signature must not touch the stationary actions.");
     // Model the smallest scene's 72% camera origin and its 6px overscan.
     const sceneHeight = compact ? 820 : 800;
     const topCover = 6 + sceneHeight * 0.72 * (current.cameraScale - 1) - current.cameraY;
@@ -57,4 +59,6 @@ for (const compact of [false, true]) {
 }
 assert.ok(pose(0.25).cameraScale > pose(0.25, true).cameraScale, "Touch motion must have a lighter amplitude.");
 assert.ok(pose(0.25).thankYouX < 0 && pose(0.25).makingRoomX > 0, "Headline lines must converge from opposite sides.");
+assert.equal(pose(0.42).thankYouX, 0, "The opening thanks settles first.");
+assert.ok(pose(0.42).makingRoomX > 0 && pose(0.46).noteY > 0 && pose(0.49).signatureY > 0, "The following lines should resolve in reading order.");
 console.log("[contact-invitation] 2,002 scroll poses verified: reversible, bounded, responsive, stable reading frame.");
