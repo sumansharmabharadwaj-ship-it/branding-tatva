@@ -174,6 +174,9 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     let touchOriginY = 0;
     let touchDriftX = 0;
     let touchDriftY = 0;
+    let renderedTouchX = 0;
+    let renderedTouchY = 0;
+    let touchIdentifier: number | null = null;
     let direction = 1;
     let lastScroll = window.scrollY;
     let targetVelocity = 0;
@@ -218,6 +221,10 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       const velocityEase = 1 - Math.pow(0.82, frameStep);
       pointerX += (pointerTargetX - pointerX) * pointerEase;
       pointerY += (pointerTargetY - pointerY) * pointerEase;
+      renderedTouchX += (touchDriftX - renderedTouchX) * pointerEase;
+      renderedTouchY += (touchDriftY - renderedTouchY) * pointerEase;
+      if (Math.abs(touchDriftX - renderedTouchX) < 0.003) renderedTouchX = touchDriftX;
+      if (Math.abs(touchDriftY - renderedTouchY) < 0.003) renderedTouchY = touchDriftY;
       renderedVelocity += (targetVelocity - renderedVelocity) * velocityEase;
       targetVelocity *= Math.pow(0.84, frameStep);
 
@@ -262,9 +269,9 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         const alternatingPan = index % 2 === 0 ? -1 : 1;
         const velocityKick = renderedVelocity;
         const cameraX =
-          pointerX * 8 + alternatingPan * (1 - presence) * 12 + touchDriftX * 7;
+          pointerX * 8 + alternatingPan * (1 - presence) * 12 + renderedTouchX * 7;
         const cameraY =
-          pointerY * 5 + velocityKick * 9 + (0.5 - sceneProgress) * 16 + touchDriftY * 5;
+          pointerY * 5 + velocityKick * 9 + (0.5 - sceneProgress) * 16 + renderedTouchY * 5;
         const cameraScale =
           1 + (1 - presence) * 0.032 + Math.abs(renderedVelocity) * 0.008;
         const cameraRoll = alternatingPan * pointerX * 0.22 + velocityKick * 0.16;
@@ -315,7 +322,9 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       const needsAnotherFrame =
         scrollIsMoving ||
         Math.abs(pointerTargetX - pointerX) > 0.003 ||
-        Math.abs(pointerTargetY - pointerY) > 0.003;
+        Math.abs(pointerTargetY - pointerY) > 0.003 ||
+        renderedTouchX !== touchDriftX ||
+        renderedTouchY !== touchDriftY;
 
       if (needsAnotherFrame) {
         setScrollState(scrollIsMoving ? "moving" : "settled");
@@ -369,9 +378,23 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     }
 
     function handleTouchStart(event: TouchEvent) {
-      if (activeIndexRef.current < 0) return;
+      const target = event.target;
+      // Native controls, horizontal topic rails, and pinch gestures own their
+      // input. Track one finger only when the gesture begins on a scene.
+      if (
+        activeIndexRef.current < 0 || event.touches.length !== 1 ||
+        !(target instanceof Element) || !page.contains(target) ||
+        !target.closest(".insights-scene") ||
+        target.closest(
+          "a, button, input, textarea, select, label, [contenteditable], [role='slider'], [role='tablist'], .insights-worksheet, .insights-library__topics, .insights-library__pager",
+        )
+      ) {
+        handleTouchEnd();
+        return;
+      }
       const touch = event.touches[0];
       if (!touch) return;
+      touchIdentifier = touch.identifier;
       touchOriginX = touch.clientX;
       touchOriginY = touch.clientY;
       touchDriftX = 0;
@@ -379,9 +402,18 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     }
 
     function handleTouchMove(event: TouchEvent) {
-      if (activeIndexRef.current < 0) return;
-      const touch = event.touches[0];
-      if (!touch) return;
+      if (touchIdentifier === null) return;
+      if (activeIndexRef.current < 0 || event.touches.length !== 1) {
+        handleTouchEnd();
+        return;
+      }
+      const touch = Array.from(event.touches).find(
+        (point) => point.identifier === touchIdentifier,
+      );
+      if (!touch) {
+        handleTouchEnd();
+        return;
+      }
       touchDriftX = clamp(
         (touch.clientX - touchOriginX) / Math.max(1, window.innerWidth * 0.35),
         -1,
@@ -396,6 +428,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     }
 
     function handleTouchEnd() {
+      touchIdentifier = null;
       touchDriftX = 0;
       touchDriftY = 0;
       scheduleCamera();
@@ -424,6 +457,15 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
         lastFrameTime = 0;
         targetVelocity = 0;
         renderedVelocity = 0;
+        touchIdentifier = null;
+        touchDriftX = 0;
+        touchDriftY = 0;
+        renderedTouchX = 0;
+        renderedTouchY = 0;
+        pointerTargetX = 0;
+        pointerTargetY = 0;
+        pointerX = 0;
+        pointerY = 0;
         setScrollState("settled");
         return;
       }
@@ -451,6 +493,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+    window.addEventListener("blur", handleTouchEnd);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     renderCamera();
@@ -472,6 +515,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("touchcancel", handleTouchEnd);
+      window.removeEventListener("blur", handleTouchEnd);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       delete page.dataset.insightsMotion;
       delete page.dataset.scrollDirection;
