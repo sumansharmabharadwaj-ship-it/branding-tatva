@@ -70,7 +70,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
       if (index !== current) directionRef.current = index > current ? 1 : -1;
       return index;
     });
-    if (focus) tabRefs.current[index]?.focus();
+    if (focus) tabRefs.current[index]?.focus({ preventScroll: true });
   }
 
   function carryQuest(index: number) {
@@ -87,16 +87,20 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
   }
 
   function previewQuest(index: number) {
-    selectQuest(index);
     const page = document.querySelector<HTMLElement>(".insights-page");
     const scrollVelocity = Number.parseFloat(
       page?.style.getPropertyValue("--insights-scroll-velocity") ?? "0",
     );
-    if (Number.isFinite(scrollVelocity) && scrollVelocity > 0.08) return;
+    if (Number.isFinite(scrollVelocity) && Math.abs(scrollVelocity) > 0.08) return;
+    if (page?.querySelector(
+      ".insights-decision-mirror :focus-visible, .insights-decision-mirror__panel:focus-within",
+    )) return;
+    selectQuest(index);
     carryQuest(index);
   }
 
   function handleAtlasJourney(event: MouseEvent<HTMLAnchorElement>) {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const target = document.getElementById("knowledge-atlas");
     carryQuest(activeIndex);
     if (!target) return;
@@ -221,28 +225,17 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
           <span>Relevant decision</span>
         </div>
 
-          <motion.article
+          <article
             key={activeQuest.topicSlug}
             id={`decision-mirror-panel-${activeQuest.topicSlug}`}
             role="tabpanel"
             aria-labelledby={`decision-mirror-tab-${activeQuest.topicSlug}`}
             className="insights-decision-mirror__panel"
-            initial={
-              prefersReducedMotion
-                ? false
-                : {
-                    x: usesHorizontalRail ? directionRef.current * 22 : 0,
-                    y: usesHorizontalRail ? 0 : directionRef.current * 18,
-                  }
-            }
-            animate={{
-              x: 0,
-              y: 0,
-            }}
-            transition={{
-              duration: prefersReducedMotion ? 0 : 0.48,
-              ease: [0.22, 1, 0.36, 1],
-            }}
+            data-choice-motion={prefersReducedMotion ? "reduced" : "full"}
+            style={{
+              "--choice-entry-x": `${usesHorizontalRail ? directionRef.current * 12 : 0}px`,
+              "--choice-entry-y": `${usesHorizontalRail ? 0 : directionRef.current * 10}px`,
+            } as CSSProperties}
           >
             <p className="insights-decision-mirror__route">
               {committedSlug === activeQuest.topicSlug
@@ -287,7 +280,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               See all {activeQuest.pathName.toLowerCase()} essays
               <ArrowDown aria-hidden="true" className="h-4 w-4" />
             </a>
-          </motion.article>
+          </article>
         <p className="sr-only" aria-live="polite">
           {committedSlug === activeQuest.topicSlug
             ? `${activeQuest.pathName} is selected for the topic map.`

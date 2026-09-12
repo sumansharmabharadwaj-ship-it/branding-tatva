@@ -143,6 +143,27 @@ html:has(.insights-page) { scroll-snap-type: none; }
 .insights-page .insights-atlas__application span { color: var(--atlas-accent); font-size: 0.8125rem; }
 .insights-page .insights-atlas__cta { color: var(--atlas-accent); border-color: var(--insights-page-rule); font-size: 0.875rem; }
 
+/* A new choice moves through the reading order in a short sequence. Content
+   stays opaque, and the paper surface holds still beneath the changing text. */
+.insights-page [data-choice-motion="full"] > * {
+  --choice-delay: 0ms;
+  animation: insights-choice-arrival 360ms cubic-bezier(0.22, 1, 0.36, 1) var(--choice-delay) backwards;
+}
+.insights-page [data-choice-motion="full"] > :nth-child(3) { --choice-delay: 25ms; }
+.insights-page [data-choice-motion="full"] > :nth-child(4) { --choice-delay: 50ms; }
+.insights-page [data-choice-motion="full"] > :nth-child(5) { --choice-delay: 75ms; }
+.insights-page [data-choice-motion="full"] > :nth-child(6) { --choice-delay: 100ms; }
+@keyframes insights-choice-arrival {
+  from { translate: var(--choice-entry-x, 0px) var(--choice-entry-y, 0px); }
+  to { translate: 0 0; }
+}
+/* A reader who tabs into a newly selected answer gets a stationary target. */
+.insights-page [data-choice-motion]:focus-within > * { animation-play-state: paused; }
+html[data-motion="reduced"] .insights-page [data-choice-motion] > * { animation: none; translate: none; }
+@media (prefers-reduced-motion: reduce) {
+  .insights-page [data-choice-motion] > * { animation: none; translate: none; }
+}
+
 /* One moving selection surface follows the actual row dimensions, including
    the horizontal phone rail. Text and keyboard outlines stay above it. */
 .insights-page :is(.insights-decision-mirror__quests, .insights-atlas__paths) button {

@@ -253,7 +253,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
     });
     if (shouldFocus) {
       setPaused(true);
-      tabRefs.current[index]?.focus();
+      tabRefs.current[index]?.focus({ preventScroll: true });
     }
   }
 
@@ -280,12 +280,13 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
   }
 
   function previewPath(index: number) {
-    selectPath(index);
     const page = document.querySelector<HTMLElement>(".insights-page");
     const scrollVelocity = Number.parseFloat(
       page?.style.getPropertyValue("--insights-scroll-velocity") ?? "0",
     );
-    if (Number.isFinite(scrollVelocity) && scrollVelocity > 0.08) return;
+    if (Number.isFinite(scrollVelocity) && Math.abs(scrollVelocity) > 0.08) return;
+    if (sectionRef.current?.querySelector(":focus-visible, .insights-atlas__panel:focus-within")) return;
+    selectPath(index);
     lockSelection(index);
     carryPath(index);
   }
@@ -483,28 +484,17 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             }}
             onPointerCancel={() => setPaused(false)}
           >
-            <motion.article
+            <article
               key={activePath.slug}
               id={`atlas-panel-${activePath.slug}`}
               role="tabpanel"
               aria-labelledby={`atlas-tab-${activePath.slug}`}
               className="insights-atlas__panel"
-              initial={
-                prefersReducedMotion
-                  ? false
-                  : {
-                      x: usesHorizontalRail ? transitionDirectionRef.current * 24 : 0,
-                      y: usesHorizontalRail ? 0 : transitionDirectionRef.current * 20,
-                    }
-              }
-              animate={{
-                x: 0,
-                y: 0,
-              }}
-              transition={{
-                duration: prefersReducedMotion ? 0 : 0.34,
-                ease: [0.22, 1, 0.36, 1],
-              }}
+              data-choice-motion={prefersReducedMotion ? "reduced" : "full"}
+              style={{
+                "--choice-entry-x": `${usesHorizontalRail ? transitionDirectionRef.current * 12 : 0}px`,
+                "--choice-entry-y": `${usesHorizontalRail ? 0 : transitionDirectionRef.current * 10}px`,
+              } as CSSProperties}
             >
                 <div className="insights-atlas__panel-head">
                   <p style={{ color: accent }}>{activePath.eyebrow}</p>
@@ -586,7 +576,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   Read all {activePath.name.toLowerCase()} essays
                   <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                 </Link>
-            </motion.article>
+            </article>
           </div>
         </div>
       </Container>
