@@ -49,7 +49,7 @@
   transform: translate(calc(var(--brand-open, 0) * 10px), calc(var(--brand-open, 0) * 3px))
     rotate(calc(var(--brand-open, 0) * 7deg));
 }
-.upper path, .lower path, .trunk path {
+.upperBloom, .lowerBloom, .upper path, .lower path, .trunk path {
   transform-box: view-box;
   transform-origin: 35px 56px;
 }
@@ -84,28 +84,47 @@
   animation: name-arrive 1400ms cubic-bezier(.22, 1, .36, 1) both;
 }
 .mark[data-animated="true"] .breath {
-  animation: mark-breathe 7600ms ease-in-out 2300ms infinite;
+  animation: mark-breathe 8400ms ease-in-out 2300ms infinite;
+}
+.mark[data-animated="true"] .upperBloom {
+  animation: upper-bloom 8400ms cubic-bezier(.45, 0, .25, 1) 2300ms infinite;
+}
+.mark[data-animated="true"] .lowerBloom {
+  animation: lower-bloom 8400ms cubic-bezier(.45, 0, .25, 1) 2300ms infinite;
+}
+.mark[data-animated="true"] .glint {
+  stroke-dasharray: .18 .82;
+  animation: signature-light 8400ms ease-in-out 2300ms infinite;
 }
 
 /* Scroll settles the identity. Focus and hover open its two curves. */
 :global(.site-header__brand[data-brand-compact="true"]) .breath,
-:global(.site-header__brand:focus-visible) .breath {
+:global(.site-header__brand[data-brand-compact="true"]) .upperBloom,
+:global(.site-header__brand[data-brand-compact="true"]) .lowerBloom,
+:global(.site-header__brand[data-brand-compact="true"]) .glint,
+:global(.site-header__brand:focus-visible) .breath,
+:global(.site-header__brand:focus-visible) .upperBloom,
+:global(.site-header__brand:focus-visible) .lowerBloom {
   animation-play-state: paused;
 }
 :global(.site-header__brand:focus-visible) .mark[data-animated="true"] {
   --brand-open: 1;
 }
 :global(.site-header__brand:focus-visible) .mark[data-animated="true"] .glint {
+  stroke-dasharray: 1;
   animation: trace-arrive 1800ms ease both;
 }
 @media (hover: hover) and (pointer: fine) {
   :global(.site-header__brand:hover) .mark[data-animated="true"] {
     --brand-open: 1;
   }
-  :global(.site-header__brand:hover) .breath {
+  :global(.site-header__brand:hover) .breath,
+  :global(.site-header__brand:hover) .upperBloom,
+  :global(.site-header__brand:hover) .lowerBloom {
     animation-play-state: paused;
   }
   :global(.site-header__brand:hover) .mark[data-animated="true"] .glint {
+    stroke-dasharray: 1;
     animation: trace-arrive 1800ms ease both;
   }
 }
@@ -133,8 +152,22 @@
 }
 @keyframes mark-breathe {
   0%, 100% { transform: none; }
-  45% { transform: translateY(-1.5px) rotate(3deg) scale(1.04); }
-  75% { transform: translateY(.3px) rotate(-1deg); }
+  36% { transform: translateY(-1px) rotate(2deg) scale(1.03); }
+  68% { transform: translateY(.2px) rotate(-1deg); }
+}
+@keyframes upper-bloom {
+  0%, 72%, 100% { transform: none; }
+  32% { transform: translate(5px, -3px) rotate(-5deg); }
+}
+@keyframes lower-bloom {
+  0%, 12%, 88%, 100% { transform: none; }
+  48% { transform: translate(6px, 3px) rotate(4deg); }
+}
+@keyframes signature-light {
+  0%, 16% { stroke-dashoffset: 1; opacity: 0; }
+  28% { opacity: .85; }
+  58% { stroke-dashoffset: -1; opacity: 0; }
+  100% { stroke-dashoffset: -1; opacity: 0; }
 }
 :global(:root[data-motion="reduced"]) .mark *,
 :global(:root[data-motion="reduced"]) .wordmark * {

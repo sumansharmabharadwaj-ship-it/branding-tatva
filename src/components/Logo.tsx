@@ -16,8 +16,12 @@ export function LogoMark({ size = 32, className, light = false, animated = false
         <span className={styles.perspective}>
           <span className={styles.breath}>
             <svg viewBox="0 0 104 112" fill="none" aria-hidden="true" focusable="false">
-              <g className={styles.upper}><path d={BRAND_IDENTITY.upper} /></g>
-              <g className={styles.lower}><path d={BRAND_IDENTITY.lower} /></g>
+              <g className={styles.upper}>
+                <g className={styles.upperBloom}><path d={BRAND_IDENTITY.upper} /></g>
+              </g>
+              <g className={styles.lower}>
+                <g className={styles.lowerBloom}><path d={BRAND_IDENTITY.lower} /></g>
+              </g>
               <g className={styles.trunk}><path d={BRAND_IDENTITY.trunk} /></g>
               <path className={styles.trace} d={BRAND_IDENTITY.trace} pathLength="1" />
               <path className={styles.glint} d={BRAND_IDENTITY.trunk} pathLength="1" />
