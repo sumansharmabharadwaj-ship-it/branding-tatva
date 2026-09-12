@@ -169,6 +169,7 @@ jobs:
           exit 1
 
       - name: Return the branch to controlled mode
+        id: cleanup
         if: always() && steps.enable.outputs.enable_sha != ''
         shell: bash
         run: |
@@ -211,24 +212,30 @@ jobs:
           VERCEL_STATE: ${{ steps.wait.outputs.vercel_state }}
           VERCEL_URL: ${{ steps.wait.outputs.target_url }}
           ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
+          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
         with:
           script: |
             const observed = process.env.VERCEL_STATE;
-            const state = ['success', 'failure', 'error'].includes(observed) ? observed : 'error';
-            const trigger = process.env.ENABLE_SHA;
-            const description = observed === 'success'
-              ? `Preview ready; deployment trigger ${trigger.slice(0, 8)}.`
-              : observed === 'failure' || observed === 'error'
-                ? `Vercel reported ${observed}; trigger ${trigger.slice(0, 8)}.`
-                : trigger
-                  ? 'Preview result unconfirmed: status polling failed, timed out, or was cancelled.'
-                  : 'Preview request failed before a deployment trigger was recorded.';
+            const trigger = process.env.ENABLE_SHA || '';
+            const cleanupIncomplete = Boolean(trigger) && process.env.CLEANUP_OUTCOME !== 'success';
+            const state = cleanupIncomplete
+              ? 'error'
+              : ['success', 'failure', 'error'].includes(observed) ? observed : 'error';
+            const description = cleanupIncomplete
+              ? `Controlled-mode cleanup unconfirmed; Vercel ${observed || 'result unavailable'}.`
+              : observed === 'success'
+                ? `Preview ready; deployment trigger ${trigger.slice(0, 8)}.`
+                : observed === 'failure' || observed === 'error'
+                  ? `Vercel reported ${observed}; trigger ${trigger.slice(0, 8)}.`
+                  : trigger
+                    ? 'Preview result unconfirmed: status polling failed, timed out, or was cancelled.'
+                    : 'Preview request failed before a deployment trigger was recorded.';
+            const workflowUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             await github.rest.repos.createCommitStatus({
               ...context.repo,
               sha: context.sha,
               context: 'Controlled preview',
               state,
               description,
-              target_url: process.env.VERCEL_URL ||
-                `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              target_url: cleanupIncomplete ? workflowUrl : process.env.VERCEL_URL || workflowUrl,
             });
