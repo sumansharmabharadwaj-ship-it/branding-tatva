@@ -38,6 +38,7 @@ function resetDepth(node: HTMLElement) {
   node.style.setProperty("--editorial-depth-y", "0px");
   node.style.setProperty("--editorial-rotate-x", "0deg");
   node.style.setProperty("--editorial-rotate-y", "0deg");
+  node.style.setProperty("--editorial-lift", "0");
   node.dataset.depthActive = "false";
 }
 
@@ -50,6 +51,7 @@ export function InsightEditorialRow({
 }: InsightEditorialRowProps) {
   const linkRef = useRef<HTMLAnchorElement>(null);
   const pointerRef = useRef<{ x: number; y: number } | null>(null);
+  const focusedRef = useRef(false);
   const queueDepthRef = useRef<(() => void) | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const topicName = TOPIC_NAMES[post.topicSlug] ?? post.element;
@@ -70,45 +72,90 @@ export function InsightEditorialRow({
 
     let frame = 0;
     let visible = false;
-    const renderDepth = () => {
+    let lastFrameTime = 0;
+    let needsMeasurement = true;
+    const current = { x: 0, y: 0, scroll: 0, lift: 0 };
+    const target = { ...current };
+    const styleValues = new Map<string, string>();
+
+    const writeStyle = (property: string, value: string) => {
+      if (styleValues.get(property) === value) return;
+      styleValues.set(property, value);
+      node.style.setProperty(property, value);
+    };
+
+    const renderDepth = (timestamp: number) => {
       frame = 0;
       if (!visible || document.hidden) return;
-      const rect = node.getBoundingClientRect();
-      const viewportCenter = window.innerHeight / 2;
-      const rowCenter = rect.top + rect.height / 2;
-      const distance = Math.max(
-        -1,
-        Math.min(1, (viewportCenter - rowCenter) / window.innerHeight),
-      );
-      node.style.setProperty(
-        "--editorial-scroll-y",
-        `${(distance * 10).toFixed(2)}px`,
-      );
-      node.style.setProperty(
-        "--editorial-scroll-rotate",
-        `${(distance * 0.75).toFixed(2)}deg`,
-      );
-      const pointer = pointerRef.current;
-      if (pointer) {
-        const x = Math.max(-0.5, Math.min(0.5,
-          (pointer.x - rect.left) / Math.max(1, rect.width) - 0.5,
+
+      // Read geometry only after input or a viewport change. Settling frames
+      // interpolate the cached targets without measuring the layout again.
+      if (needsMeasurement) {
+        needsMeasurement = false;
+        const rect = node.getBoundingClientRect();
+        const viewportHeight = Math.max(1, window.innerHeight);
+        target.scroll = Math.max(-1, Math.min(1,
+          (viewportHeight / 2 - rect.top - rect.height / 2) / viewportHeight,
         ));
-        const y = Math.max(-0.5, Math.min(0.5,
-          (pointer.y - rect.top) / Math.max(1, rect.height) - 0.5,
-        ));
-        node.dataset.depthActive = "true";
-        node.style.setProperty("--editorial-depth-x", `${(x * 9).toFixed(2)}px`);
-        node.style.setProperty("--editorial-depth-y", `${(y * 7).toFixed(2)}px`);
-        node.style.setProperty("--editorial-rotate-x", `${(-y * 3).toFixed(2)}deg`);
-        node.style.setProperty("--editorial-rotate-y", `${(x * 4).toFixed(2)}deg`);
+        const pointer = pointerRef.current;
+        const pointerInside = pointer &&
+          pointer.x >= rect.left && pointer.x <= rect.right &&
+          pointer.y >= rect.top && pointer.y <= rect.bottom;
+        if (pointerInside) {
+          target.x = (pointer.x - rect.left) / Math.max(1, rect.width) - 0.5;
+          target.y = (pointer.y - rect.top) / Math.max(1, rect.height) - 0.5;
+        } else {
+          pointerRef.current = null;
+          target.x = 0;
+          target.y = 0;
+        }
+        target.lift = pointerInside || focusedRef.current ? 1 : 0;
+        node.dataset.depthActive = String(target.lift === 1);
       }
+
+      const elapsed = lastFrameTime ? Math.min(50, timestamp - lastFrameTime) : 1000 / 60;
+      lastFrameTime = timestamp;
+      let settling = false;
+      for (const key of ["x", "y", "scroll", "lift"] as const) {
+        const ease = 1 - Math.exp(-elapsed / (key === "lift" ? 140 : 100));
+        current[key] += (target[key] - current[key]) * ease;
+        if (Math.abs(target[key] - current[key]) < 0.002) current[key] = target[key];
+        else settling = true;
+      }
+
+      writeStyle("--editorial-depth-x", `${(current.x * 9).toFixed(2)}px`);
+      writeStyle("--editorial-depth-y", `${(current.y * 7).toFixed(2)}px`);
+      writeStyle("--editorial-rotate-x", `${(-current.y * 3).toFixed(2)}deg`);
+      writeStyle("--editorial-rotate-y", `${(current.x * 4).toFixed(2)}deg`);
+      writeStyle("--editorial-scroll-y", `${(current.scroll * 10).toFixed(2)}px`);
+      writeStyle("--editorial-scroll-rotate", `${(current.scroll * 0.75).toFixed(2)}deg`);
+      writeStyle("--editorial-lift", current.lift.toFixed(3));
+
+      if (settling) frame = requestAnimationFrame(renderDepth);
+      else lastFrameTime = 0;
     };
-    // Pointer and scroll share one geometry read and one paint per frame.
+    // Pointer, focus, and scroll share one animation; leave and blur settle too.
     const updateScrollDepth = () => {
+      needsMeasurement = true;
       if (!visible || frame || document.hidden) return;
       frame = requestAnimationFrame(renderDepth);
     };
     queueDepthRef.current = updateScrollDepth;
+
+    const suspendDepth = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      lastFrameTime = 0;
+      pointerRef.current = null;
+      for (const key of ["x", "y", "scroll", "lift"] as const) {
+        current[key] = 0;
+        target[key] = 0;
+      }
+      styleValues.clear();
+      resetDepth(node);
+      node.style.setProperty("--editorial-scroll-y", "0px");
+      node.style.setProperty("--editorial-scroll-rotate", "0deg");
+    };
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -117,13 +164,10 @@ export function InsightEditorialRow({
           node.dataset.revealed = "true";
           updateScrollDepth();
         } else {
-          cancelAnimationFrame(frame);
-          frame = 0;
-          pointerRef.current = null;
-          resetDepth(node);
+          suspendDepth();
         }
       },
-      { threshold: 0.16 },
+      { threshold: 0 },
     );
 
     observer.observe(node);
@@ -132,12 +176,20 @@ export function InsightEditorialRow({
     window.addEventListener("resize", updateScrollDepth, { passive: true });
     const handleVisibility = () => {
       if (document.hidden) {
-        cancelAnimationFrame(frame);
-        frame = 0;
-        pointerRef.current = null;
-        resetDepth(node);
+        suspendDepth();
       } else updateScrollDepth();
     };
+    const handleWindowBlur = () => {
+      pointerRef.current = null;
+      focusedRef.current = false;
+      updateScrollDepth();
+    };
+    const handleWindowFocus = () => {
+      focusedRef.current = document.activeElement === node && node.matches(":focus-visible");
+      updateScrollDepth();
+    };
+    window.addEventListener("blur", handleWindowBlur);
+    window.addEventListener("focus", handleWindowFocus);
     document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
@@ -147,6 +199,8 @@ export function InsightEditorialRow({
       window.removeEventListener("scroll", updateScrollDepth);
       window.removeEventListener("resize", updateScrollDepth);
       document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("blur", handleWindowBlur);
+      window.removeEventListener("focus", handleWindowFocus);
     };
   }, [prefersReducedMotion]);
 
@@ -158,9 +212,10 @@ export function InsightEditorialRow({
   }
 
   function handleFocus(event: FocusEvent<HTMLAnchorElement>) {
+    focusedRef.current = event.currentTarget.matches(":focus-visible");
     if (prefersReducedMotion) return;
     event.currentTarget.dataset.revealed = "true";
-    event.currentTarget.dataset.depthActive = "true";
+    queueDepthRef.current?.();
   }
 
   return (
@@ -185,14 +240,14 @@ export function InsightEditorialRow({
       }}
       onClick={onOpen ? () => onOpen(post) : undefined}
       onPointerMove={handlePointerMove}
-      onPointerLeave={(event) => {
+      onPointerLeave={() => {
         pointerRef.current = null;
-        resetDepth(event.currentTarget);
+        queueDepthRef.current?.();
       }}
       onFocus={handleFocus}
-      onBlur={(event) => {
-        pointerRef.current = null;
-        resetDepth(event.currentTarget);
+      onBlur={() => {
+        focusedRef.current = false;
+        queueDepthRef.current?.();
       }}
     >
       <span className="insight-editorial-row__copy">
