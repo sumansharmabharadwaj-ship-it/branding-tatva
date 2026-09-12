@@ -73,6 +73,15 @@ export type LivingGradientProps = {
   shaft?: boolean;
   /** Override the preset's grain, 0 to disable. */
   grain?: number;
+  /**
+   * Layer the drifting colour over existing media instead of replacing
+   * it: the opaque base fill and the vignette both drop out, so footage
+   * underneath still reads. Use where a section already has approved
+   * footage and the wash on top of it is a dead static gradient.
+   */
+  plain?: boolean;
+  /** Field opacity. Lower it when layering over media that must stay legible. */
+  opacity?: number;
   className?: string;
 };
 
@@ -91,9 +100,12 @@ export function LivingGradient({
   preset = "canopy",
   shaft = true,
   grain,
+  plain = false,
+  opacity,
   className,
 }: LivingGradientProps) {
   const field = FIELDS[preset];
+  const grainAmount = grain ?? field.grain;
 
   const style = {
     "--lg-base": field.base,
@@ -101,14 +113,17 @@ export function LivingGradient({
     "--lg-b": field.b,
     "--lg-c": field.c,
     "--lg-light": field.light,
-    "--lg-grain": grain ?? field.grain,
+    "--lg-grain": grainAmount,
+    ...(opacity === undefined ? null : { opacity }),
   } as CSSProperties;
 
   return (
     <div
       aria-hidden="true"
       data-living-gradient={preset}
-      className={className ? `${styles.field} ${className}` : styles.field}
+      className={[styles.field, plain ? styles.plain : null, className]
+        .filter(Boolean)
+        .join(" ")}
       style={style}
     >
       <div className={`${styles.blob} ${styles.blobA}`} />
@@ -116,7 +131,7 @@ export function LivingGradient({
       <div className={`${styles.blob} ${styles.blobC}`} />
       {shaft ? <div className={styles.shaft} /> : null}
       <div className={styles.vignette} />
-      {(grain ?? field.grain) > 0 ? <div className={styles.grain} /> : null}
+      {grainAmount > 0 ? <div className={styles.grain} /> : null}
     </div>
   );
 }

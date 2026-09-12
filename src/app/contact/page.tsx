@@ -18,6 +18,7 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
+import { LivingGradient } from "@/components/LivingGradient";
 import { ArrowUpRight, CalendarDays, MessageCircle, Phone } from "lucide-react";
 import { consultation, site } from "@/data/site";
 import { pageSchema, ORGANIZATION_ID } from "@/lib/pageSchema";
@@ -362,6 +363,17 @@ export default function ContactPage() {
                 aria-hidden="true"
                 style={{ backgroundImage: "linear-gradient(105deg, rgba(28,34,27,0.72) 0%, rgba(39,42,31,0.52) 48%, rgba(39,32,24,0.42) 100%)" }}
               />
+              {/* The wash above is what guarantees contrast for the
+                  headline and the booking card, so it stays exactly as
+                  it was. This adds the drifting colour on top of it —
+                  the deep-green understory field from the reference
+                  board — so the most important scene on the site stops
+                  reading as one static dark rectangle. Layered mode, so
+                  the approved meadow footage underneath still reads;
+                  held at 0.42 and given no light sweep, since a moving
+                  highlight behind a booking card would compete with the
+                  one thing this scene exists to get clicked. */}
+              <LivingGradient preset="understory" plain shaft={false} grain={0} opacity={0.42} />
             </>
           }
         >
