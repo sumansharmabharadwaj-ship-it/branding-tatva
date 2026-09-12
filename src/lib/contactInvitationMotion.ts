@@ -65,7 +65,9 @@ export function invitationMotionAt(progress: number, compact = false) {
   const room = 1 - easeBetween(p, 0.22, 0.62);
   const note = 1 - easeBetween(p, 0.56, 0.75);
   const invitation = 1 - easeBetween(p, 0.68, 0.82);
-  const signature = 1 - easeBetween(p, 0.74, 0.86);
+  const invitationLead = 1 - easeBetween(p, 0.66, 0.77);
+  const invitationReply = 1 - easeBetween(p, 0.73, 0.83);
+  const signature = 1 - easeBetween(p, 0.78, 0.86);
   const arc = easeBetween(p, 0.14, 0.36) * (1 - easeBetween(p, 0.36, 0.64));
 
   return {
@@ -92,9 +94,11 @@ export function invitationMotionAt(progress: number, compact = false) {
     firstNoteClip: 100 * (1 - easeBetween(p, 0.56, 0.69)),
     secondNoteClip: 100 * (1 - easeBetween(p, 0.61, 0.75)),
     invitationY: invitation * (compact ? 8 : 18),
-    invitationOpacity: 1 - invitation,
+    invitationLeadClip: invitationLead * 100,
+    invitationReplyClip: invitationReply * 100,
+    promiseStroke: easeBetween(p, 0.8, 0.86),
     signatureY: signature * (compact ? 5 : 9),
-    signatureOpacity: 1 - signature,
+    signatureClip: signature * 100,
     bookingOrbit: easeBetween(p, 0.72, 0.86),
   };
 }

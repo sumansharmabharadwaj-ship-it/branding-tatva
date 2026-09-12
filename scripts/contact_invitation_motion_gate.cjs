@@ -17,7 +17,7 @@ const resting = {
   windowX: 0, windowTop: 0, windowBottom: 0, windowRadius: 0,
   thankYouX: 0, thankYouY: 0, thankYouScale: 1, thankYouRotate: 0, thankYouRotateY: 0,
   makingRoomX: 0, makingRoomY: 0, makingRoomScale: 1, makingRoomRotate: 0, makingRoomRotateY: 0,
-  noteY: 0, firstNoteClip: 0, secondNoteClip: 0, invitationY: 0, invitationOpacity: 1, signatureY: 0, signatureOpacity: 1, bookingOrbit: 1,
+  noteY: 0, firstNoteClip: 0, secondNoteClip: 0, invitationY: 0, invitationLeadClip: 0, invitationReplyClip: 0, promiseStroke: 1, signatureY: 0, signatureClip: 0, bookingOrbit: 1,
 };
 
 function assertCameraCoverage(current, width, height, compact) {
@@ -53,9 +53,14 @@ for (const compact of [false, true]) {
     assert.ok(Object.values(current).every(Number.isFinite));
     assert.ok(current.cameraScale >= 1 && current.cameraScale <= (compact ? 1.26 : 1.48));
     assert.ok(current.windowX >= 0 && current.windowX <= 32 && current.windowTop >= 0 && current.windowBottom >= 0 && current.windowTop + current.windowBottom < 60, "The panorama must keep a substantial landscape visible throughout its transition.");
-    for (const opacity of [current.invitationOpacity, current.signatureOpacity, current.bookingOrbit]) assert.ok(opacity >= 0 && opacity <= 1);
+    for (const stroke of [current.promiseStroke, current.bookingOrbit]) assert.ok(stroke >= 0 && stroke <= 1);
     assert.ok(current.firstNoteClip >= 0 && current.firstNoteClip <= current.secondNoteClip && current.secondNoteClip <= 100, "The two notes must reveal in reading order at full contrast.");
-    assert.ok(1 - current.secondNoteClip / 100 >= current.invitationOpacity - 1e-9 && current.invitationOpacity >= current.signatureOpacity, "The note, invitation and signature must appear in reading order.");
+    const readingClips = [current.secondNoteClip, current.invitationLeadClip, current.invitationReplyClip, current.signatureClip];
+    for (let index = 0; index < readingClips.length; index++) {
+      assert.ok(readingClips[index] >= 0 && readingClips[index] <= 100);
+      if (index) assert.ok(readingClips[index] >= readingClips[index - 1] - 1e-9, "The note, invitation, reply and signature must reveal in reading order at full contrast.");
+    }
+    assert.ok(current.promiseStroke <= 1 - current.invitationReplyClip / 100 + 1e-9, "The underline must follow the promise rather than drawing under empty space.");
     if (current.firstNoteClip < 100) {
       assert.ok(current.makingRoomY < (compact ? 4 : 8), "The oversized headline must clear the supporting copy before it appears.");
       for (let i = 0; i < 11; i++) assert.ok(Object.values(invitationLetterAt(step / 1000, i, compact)).every(value => value === 0), "Letter folding must finish before the first note opens.");
@@ -72,6 +77,8 @@ assert.ok(pose(0.48).windowX < 5 && pose(0.48).windowTop > 14, "The landscape mu
 assert.equal(pose(0.54).thankYouX, 0);
 assert.ok(pose(0.54).makingRoomX > 0, "The second headline should follow the first.");
 assert.equal(pose(0.7).bookingOrbit, 0, "The booking emphasis belongs to the completed invitation, not the opening shot.");
+assert.equal(pose(0.79).promiseStroke, 0, "The underline belongs to the closing words.");
+assert.equal(pose(0.77).invitationLeadClip, 0, "The first invitation phrase must be readable before the final signature.");
 
 // The authored foreground and typography retrace the same resting shots.
 // Direction-sensitive flex is bounded separately below.

@@ -126,9 +126,11 @@ export function ContactGratitude() {
   const firstNoteClip = useTransform(pose, (value) => `inset(0 ${value.firstNoteClip}% 0 0)`);
   const secondNoteClip = useTransform(pose, (value) => `inset(0 ${value.secondNoteClip}% 0 0)`);
   const invitationY = useTransform(pose, (value) => value.invitationY);
-  const invitationOpacity = useTransform(pose, (value) => value.invitationOpacity);
+  const invitationLeadClip = useTransform(pose, (value) => `inset(0 0 ${value.invitationLeadClip}% 0)`);
+  const invitationReplyClip = useTransform(pose, (value) => `inset(0 ${value.invitationReplyClip}% 0 0)`);
+  const promiseStroke = useTransform(pose, (value) => value.promiseStroke);
   const signatureY = useTransform(pose, (value) => value.signatureY);
-  const signatureOpacity = useTransform(pose, (value) => value.signatureOpacity);
+  const signatureClip = useTransform(pose, (value) => `inset(0 0 ${value.signatureClip}% 0)`);
   const bookingOrbit = useTransform(pose, (value) => value.bookingOrbit);
   const botany = useTransform(() => invitationBotanyAt(canopyProgress.get()));
   const botanicalLeftX = useTransform(botany, (value) => `${value.leftX}%`);
@@ -265,14 +267,20 @@ export function ContactGratitude() {
         <motion.p
           data-invitation-layer="invitation"
           className={styles.invitation}
-          style={motionEnabled ? { y: invitationY, opacity: invitationOpacity } : { y: 0, opacity: 1 }}
+          style={motionEnabled ? { y: invitationY } : { y: 0 }}
         >
-          Bring the part you are still figuring out. <span>I will meet you there.</span>
+          <motion.span data-invitation-layer="invitation-lead" className={styles.invitationLead} style={{ clipPath: motionEnabled ? invitationLeadClip : "none" }}>Bring the part you are still figuring out.</motion.span>{" "}
+          <span className={styles.invitationReply}>
+            <motion.span data-invitation-layer="invitation-reply" className={styles.invitationReplyText} style={{ clipPath: motionEnabled ? invitationReplyClip : "none" }}>I will meet you there.</motion.span>
+            <svg className={styles.promiseLine} viewBox="0 0 260 10" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <motion.path d="M3 6C55 1 146 2 221 5C238 6 252 5 257 4" fill="none" vectorEffect="non-scaling-stroke" style={{ pathLength: motionEnabled ? promiseStroke : 1 }} />
+            </svg>
+          </span>
         </motion.p>
         <motion.p
           data-invitation-layer="signature"
           className={styles.signature}
-          style={motionEnabled ? { y: signatureY, opacity: signatureOpacity } : { y: 0, opacity: 1 }}
+          style={motionEnabled ? { y: signatureY, clipPath: signatureClip } : { y: 0, clipPath: "none" }}
         >
           <span>Suman Sharma</span>
           <span>Brand strategist</span>
