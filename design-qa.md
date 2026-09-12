@@ -1,5 +1,18 @@
 # Design QA log
 
+## Questions-to-invitation keyboard handoff — 2026-09-12
+
+- Reproduced on release 222: activating “Talk through your question” scrolled to the invitation but left focus on the originating link. Pressing Tab focused question 1 and pulled the viewport back to the questions (invitation top changed from 84px to 1178px).
+- Changed that in-page link to a native fragment anchor and made the invitation section a programmatic focus target with `tabIndex={-1}`. No added scroll animation, timeout, focus trap or extra Tab stop. Copy, styling, media and the existing agenda motion are unchanged.
+- Local production build: Enter focused `#invitation` at the existing 84px desktop clearance. The next Tab reached the fully visible booking link, `/contact#call`, without moving backward.
+- Site reduced motion: the same Enter/Tab sequence reached booking; the invitation retained ordinary document flow. Restored full motion after verification.
+- Mobile 390 × 844: clicking the link focused the invitation at its existing 76px header clearance; Tab then reached booking. Content and scroll widths both measured 375px, with no horizontal overflow.
+- Passed targeted ESLint, production build (79 routes), homepage source and rendered gates, deployment contract self-test and whitespace checks. These checks preceded integration of unrelated Insights release 223, Contact release 224 and the Contact regression workflow; the two scoped homepage files were unchanged by that integration. Native Safari was not tested; no form was submitted.
+
+final result: passed
+
+---
+
 ## Homepage invitation agenda continuity — 2026-09-10
 
 - Scope: the existing closing invitation. Preserved copy, media, typography, spacing, booking/proof routes and the 210svh desktop scene. About was untouched. Parker remains motion inspiration only.

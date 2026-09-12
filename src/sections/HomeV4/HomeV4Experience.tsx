@@ -136,6 +136,7 @@ export function HomeV4Experience() {
 
       <section
         id="invitation"
+        tabIndex={-1}
         data-home-v4-chapter="invitation"
         data-home-chapter="invitation"
         data-home-section="invitation"

@@ -77,9 +77,10 @@ export function HomeQuestionsScene() {
           <p className={styles.lede}>
             A clear scope, a realistic schedule, and the same person leading the work.
           </p>
-          <Link href="#invitation" className={styles.textLink}>
+          {/* Native fragment navigation carries keyboard focus into the next scene. */}
+          <a href="#invitation" className={styles.textLink}>
             Talk through your question <ArrowDown size={17} aria-hidden="true" />
-          </Link>
+          </a>
         </header>
 
         <div className={styles.questionList}>
