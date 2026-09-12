@@ -13,18 +13,41 @@
   --brand-brass: #c6a97a;
   --brand-light: #f2f0e8;
 }
-.sculpture {
+.sculpture, .perspective, .breath {
   display: block;
   width: 100%;
   height: 100%;
+}
+.sculpture {
   transform: rotate(-4deg);
   transition: transform 800ms cubic-bezier(.22, 1, .36, 1);
+}
+.mark[data-animated="true"] .sculpture {
+  transform: rotate(calc(-4deg + var(--brand-scroll, 0) * 4deg + var(--brand-open, 0) * 4deg))
+    scale(calc(1 - var(--brand-scroll, 0) * .1 + var(--brand-open, 0) * .14));
+}
+.mark[data-animated="true"] .perspective {
+  transform: perspective(220px)
+    translate3d(calc(var(--brand-pointer-x, 0) * 2.5px), calc(var(--brand-pointer-y, 0) * 2px), 0)
+    rotateX(calc(var(--brand-pointer-y, 0) * -9deg))
+    rotateY(calc(var(--brand-pointer-x, 0) * 12deg));
+  transition: transform 450ms cubic-bezier(.22, 1, .36, 1);
 }
 .sculpture svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .upper, .lower { fill: var(--brand-ink); }
 .trunk { fill: var(--brand-brass); }
 .upper, .lower, .trunk {
+  transform-box: view-box;
+  transform-origin: 35px 56px;
   transition: transform 800ms cubic-bezier(.22, 1, .36, 1);
+}
+.mark[data-animated="true"] .upper {
+  transform: translate(calc(var(--brand-open, 0) * 8px), calc(var(--brand-open, 0) * -3px))
+    rotate(calc(var(--brand-open, 0) * -7deg));
+}
+.mark[data-animated="true"] .lower {
+  transform: translate(calc(var(--brand-open, 0) * 10px), calc(var(--brand-open, 0) * 3px))
+    rotate(calc(var(--brand-open, 0) * 7deg));
 }
 .upper path, .lower path, .trunk path {
   transform-box: view-box;
@@ -39,15 +62,17 @@
   stroke-dashoffset: 0;
   opacity: 0;
 }
-.wordmark { overflow: hidden; padding-block: .16em; }
-.lettering { display: block; }
+.wordmark { padding-block: .16em; }
+.lettering { display: block; white-space: nowrap; }
+.wordClip { display: inline-block; overflow: hidden; vertical-align: top; padding-block: .08em; }
+.word { display: inline-block; }
 
-/* A finite arrival. Base styles remain a complete identity without motion. */
+/* Separate layers let arrival, breathing and interaction move independently. */
 .mark[data-animated="true"] .upper path {
-  animation: upper-arrive 1600ms cubic-bezier(.22, 1, .36, 1) 180ms both;
+  animation: upper-arrive 1800ms cubic-bezier(.22, 1, .36, 1) 280ms both;
 }
 .mark[data-animated="true"] .lower path {
-  animation: lower-arrive 1700ms cubic-bezier(.22, 1, .36, 1) 280ms both;
+  animation: lower-arrive 1900ms cubic-bezier(.22, 1, .36, 1) 400ms both;
 }
 .mark[data-animated="true"] .trunk path {
   animation: trunk-arrive 1400ms cubic-bezier(.22, 1, .36, 1) 120ms both;
@@ -55,42 +80,41 @@
 .mark[data-animated="true"] .trace {
   animation: trace-arrive 2100ms cubic-bezier(.22, .6, .36, 1) 100ms both;
 }
-.wordmark[data-animated="true"] .lettering {
-  animation: name-arrive 1300ms cubic-bezier(.22, 1, .36, 1) 320ms both;
+.wordmark[data-animated="true"] .word {
+  animation: name-arrive 1400ms cubic-bezier(.22, 1, .36, 1) both;
+}
+.mark[data-animated="true"] .breath {
+  animation: mark-breathe 7600ms ease-in-out 2300ms infinite;
 }
 
-/* Scroll movement stays inside the reserved box, without layout shifts. */
-:global(.site-header__brand[data-brand-compact="true"]) .sculpture {
-  transform: rotate(0deg) scale(.9);
+/* Scroll settles the identity. Focus and hover open its two curves. */
+:global(.site-header__brand[data-brand-compact="true"]) .breath,
+:global(.site-header__brand:focus-visible) .breath {
+  animation-play-state: paused;
 }
-:global(.site-header__brand:focus-visible) .mark[data-animated="true"] .sculpture {
-  transform: rotate(0deg) scale(1.12);
-}
-:global(.site-header__brand:focus-visible) .mark[data-animated="true"] .upper,
-:global(.site-header__brand:focus-visible) .mark[data-animated="true"] .lower {
-  transform: translateX(4px);
+:global(.site-header__brand:focus-visible) .mark[data-animated="true"] {
+  --brand-open: 1;
 }
 :global(.site-header__brand:focus-visible) .mark[data-animated="true"] .glint {
-  animation: trace-arrive 1600ms ease both;
+  animation: trace-arrive 1800ms ease both;
 }
 @media (hover: hover) and (pointer: fine) {
-  :global(.site-header__brand:hover) .mark[data-animated="true"] .sculpture {
-    transform: rotate(0deg) scale(1.12);
+  :global(.site-header__brand:hover) .mark[data-animated="true"] {
+    --brand-open: 1;
   }
-  :global(.site-header__brand:hover) .mark[data-animated="true"] .upper,
-  :global(.site-header__brand:hover) .mark[data-animated="true"] .lower {
-    transform: translateX(4px);
+  :global(.site-header__brand:hover) .breath {
+    animation-play-state: paused;
   }
   :global(.site-header__brand:hover) .mark[data-animated="true"] .glint {
-    animation: trace-arrive 1600ms ease both;
+    animation: trace-arrive 1800ms ease both;
   }
 }
 @keyframes upper-arrive {
-  from { opacity: .15; transform: translate(16px, -10px) rotate(-17deg); }
+  from { opacity: .15; transform: translate(24px, -18px) rotate(-28deg); }
   to { opacity: 1; transform: none; }
 }
 @keyframes lower-arrive {
-  from { opacity: .15; transform: translate(19px, 13px) rotate(14deg); }
+  from { opacity: .15; transform: translate(26px, 17px) rotate(22deg); }
   to { opacity: 1; transform: none; }
 }
 @keyframes trunk-arrive {
@@ -104,8 +128,13 @@
   100% { stroke-dashoffset: 0; opacity: 0; }
 }
 @keyframes name-arrive {
-  from { transform: translateY(110%); }
-  to { transform: none; }
+  from { opacity: .3; transform: translateY(115%) rotate(3deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes mark-breathe {
+  0%, 100% { transform: none; }
+  45% { transform: translateY(-1.5px) rotate(3deg) scale(1.04); }
+  75% { transform: translateY(.3px) rotate(-1deg); }
 }
 :global(:root[data-motion="reduced"]) .mark *,
 :global(:root[data-motion="reduced"]) .wordmark * {

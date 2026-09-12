@@ -4,6 +4,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import type { PointerEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
@@ -39,6 +40,11 @@ const headerNavigation = navigation.map((item) => ({
     : item.label,
 }));
 
+function resetBrandPointer(brand: HTMLAnchorElement | null) {
+  brand?.style.removeProperty("--brand-pointer-x");
+  brand?.style.removeProperty("--brand-pointer-y");
+}
+
 export function Header({ transparent = false }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -47,6 +53,7 @@ export function Header({ transparent = false }: HeaderProps) {
   const [hoveredRoute, setHoveredRoute] = useState<string | null>(null);
   const [focusedRoute, setFocusedRoute] = useState<string | null>(null);
   const lastScrollRef = useRef(0);
+  const brandRef = useRef<HTMLAnchorElement>(null);
   const desktopNavRef = useRef<HTMLElement>(null);
   const navigationFocusRef = useRef<"desktop" | "menu-button" | null>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -56,9 +63,28 @@ export function Header({ transparent = false }: HeaderProps) {
   const element = useCurrentElement();
   const pathname = usePathname() ?? "/";
 
+  function handleBrandPointer(event: PointerEvent<HTMLAnchorElement>) {
+    if (pathname !== "/" || prefersReducedMotion || event.pointerType !== "mouse") return;
+    const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
+    if (!width || !height) return;
+    const x = Math.max(-1, Math.min(1, ((event.clientX - left) / width) * 2 - 1));
+    const y = Math.max(-1, Math.min(1, ((event.clientY - top) / height) * 2 - 1));
+    event.currentTarget.style.setProperty("--brand-pointer-x", x.toFixed(3));
+    event.currentTarget.style.setProperty("--brand-pointer-y", y.toFixed(3));
+  }
+
+  useEffect(() => {
+    resetBrandPointer(brandRef.current);
+  }, [pathname, prefersReducedMotion]);
+
   useEffect(() => {
     function handleScroll(current: number) {
       setScrolled(current > SCROLLED_THRESHOLD);
+      // Share the header's scroll subscription; motion never reflows the link.
+      const progress = pathname === "/" && !prefersReducedMotion
+        ? Math.max(0, Math.min(1, current / HIDE_REVEAL_MIN_SCROLL))
+        : 0;
+      brandRef.current?.style.setProperty("--brand-scroll", progress.toFixed(3));
 
       // The closing Contact invitation deliberately keeps the selected pill
       // navigation visible, including a direct #thanks arrival.
@@ -93,7 +119,7 @@ export function Header({ transparent = false }: HeaderProps) {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [lenis, pathname]);
+  }, [lenis, pathname, prefersReducedMotion]);
 
   useEffect(() => {
     if (!open) return;
@@ -207,7 +233,13 @@ export function Header({ transparent = false }: HeaderProps) {
               scrolled ? "bg-[#f4efe6]/94" : "bg-[#f4efe6]/84"
             }`}
           >
-            <Link href="/" aria-label="Branding Tatva home" data-brand-compact={pathname === "/" && scrolled ? "true" : undefined} className="site-header__brand flex min-w-0 shrink-0 items-center gap-3">
+            <Link ref={brandRef} href="/" aria-label="Branding Tatva home"
+              data-brand-compact={pathname === "/" && scrolled ? "true" : undefined}
+              onPointerEnter={handleBrandPointer} onPointerMove={handleBrandPointer}
+              onPointerLeave={() => resetBrandPointer(brandRef.current)}
+              onPointerCancel={() => resetBrandPointer(brandRef.current)}
+              onBlur={() => resetBrandPointer(brandRef.current)}
+              className="site-header__brand flex min-w-0 shrink-0 items-center gap-3">
               <LogoMark key={pathname === "/" ? "home-mark" : "page-mark"} size={40} animated={pathname === "/"} className="shrink-0" />
               <span aria-hidden="true" className="site-header__divider hidden h-6 w-px bg-soil/20 min-[360px]:block" />
               {/* Logo owns an inline-flex display internally, so the

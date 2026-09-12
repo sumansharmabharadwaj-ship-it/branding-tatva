@@ -13,13 +13,17 @@ export function LogoMark({ size = 32, className, light = false, animated = false
       data-animated={animated ? "true" : undefined} data-light={light ? "true" : undefined}
       style={{ width: size, height: size }}>
       <span className={styles.sculpture}>
-        <svg viewBox="0 0 104 112" fill="none" aria-hidden="true" focusable="false">
-          <g className={styles.upper}><path d={BRAND_IDENTITY.upper} /></g>
-          <g className={styles.lower}><path d={BRAND_IDENTITY.lower} /></g>
-          <g className={styles.trunk}><path d={BRAND_IDENTITY.trunk} /></g>
-          <path className={styles.trace} d={BRAND_IDENTITY.trace} pathLength="1" />
-          <path className={styles.glint} d={BRAND_IDENTITY.trace} pathLength="1" />
-        </svg>
+        <span className={styles.perspective}>
+          <span className={styles.breath}>
+            <svg viewBox="0 0 104 112" fill="none" aria-hidden="true" focusable="false">
+              <g className={styles.upper}><path d={BRAND_IDENTITY.upper} /></g>
+              <g className={styles.lower}><path d={BRAND_IDENTITY.lower} /></g>
+              <g className={styles.trunk}><path d={BRAND_IDENTITY.trunk} /></g>
+              <path className={styles.trace} d={BRAND_IDENTITY.trace} pathLength="1" />
+              <path className={styles.glint} d={BRAND_IDENTITY.trunk} pathLength="1" />
+            </svg>
+          </span>
+        </span>
       </span>
     </span>
   );
@@ -32,7 +36,13 @@ export function Logo({ className, light = false, animated = false }: { className
         className={`${styles.lettering} font-display text-[0.95rem] font-medium uppercase tracking-[0.3em] transition-colors duration-500 ${light ? "text-ivory" : "text-soil"}`}
         style={light ? { textShadow: "0 1px 10px rgba(20,17,14,0.7)" } : undefined}
       >
-        {site.name}
+        {animated ? site.name.split(" ").map((word, index) => (
+          <span key={`${word}-${index}`} className={styles.wordClip}>
+            <span className={styles.word} style={{ animationDelay: `${380 + index * 160}ms` }}>
+              {index > 0 ? "\u00a0" : ""}{word}
+            </span>
+          </span>
+        )) : site.name}
       </span>
     </span>
   );
