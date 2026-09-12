@@ -21,7 +21,7 @@ const GROUPS: {
     tier: "story",
     index: "02",
     title: "Project stories",
-    description: "Meaningful engagements told at the depth the available evidence can honestly support.",
+    description: "Real engagements told at the depth the available evidence can honestly support.",
   },
 ];
 

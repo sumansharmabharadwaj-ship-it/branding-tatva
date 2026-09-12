@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Compass, Hand, Pause, Play, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -26,7 +26,6 @@ const CHAPTER_NAMES = [
   "decision",
   "invitation",
 ] as const;
-const CURSOR_SPRING = { stiffness: 460, damping: 34, mass: 0.34 } as const;
 const TAB_STOP_SELECTOR = "a[href], button, input, select, textarea, [tabindex]";
 
 function isAvailableTabStop(element: HTMLElement) {
@@ -38,7 +37,6 @@ function isAvailableTabStop(element: HTMLElement) {
 }
 
 type GuideMode = HomeGuideMode;
-type CursorWorld = "dark" | "light";
 type HandoffMotif = "mist" | "river" | "root" | "aperture" | "paper" | "constellation" | "light";
 
 export function GuidedView() {
@@ -397,114 +395,6 @@ export function GuidedView() {
         <Hand size={13} />
       </button>
     </div>
-  );
-}
-
-export function LivingCursor() {
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const x = useMotionValue(-80);
-  const y = useMotionValue(-80);
-  const springX = useSpring(x, CURSOR_SPRING);
-  const springY = useSpring(y, CURSOR_SPRING);
-  const [enabled, setEnabled] = useState(false);
-  const [interactive, setInteractive] = useState(false);
-  const [pressed, setPressed] = useState(false);
-  const [world, setWorld] = useState<CursorWorld>("dark");
-  const [label, setLabel] = useState("");
-
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const finePointer = window.matchMedia("(pointer: fine)");
-
-    function syncEnabled() {
-      setEnabled(finePointer.matches);
-      document.documentElement.classList.toggle("home-v4-cursor-active", finePointer.matches);
-    }
-
-    syncEnabled();
-    finePointer.addEventListener("change", syncEnabled);
-    return () => {
-      finePointer.removeEventListener("change", syncEnabled);
-      document.documentElement.classList.remove("home-v4-cursor-active");
-    };
-  }, [prefersReducedMotion]);
-
-  useEffect(() => {
-    if (!enabled) return;
-
-    function move(event: PointerEvent) {
-      const target = event.target instanceof Element ? event.target : null;
-      const interactiveTarget = target?.closest<HTMLElement>(
-        "a, button, [data-magnetic], [role='button']",
-      );
-      const worldTarget = target?.closest<HTMLElement>("[data-cursor-world]");
-      const nextWorld = worldTarget?.dataset.cursorWorld === "light" ? "light" : "dark";
-
-      setWorld(nextWorld);
-      setInteractive(Boolean(interactiveTarget));
-      setLabel(
-        interactiveTarget?.dataset.cursorLabel ||
-          interactiveTarget?.getAttribute("aria-label") ||
-          "",
-      );
-
-      if (interactiveTarget) {
-        const rect = interactiveTarget.getBoundingClientRect();
-        const attraction = 0.22;
-        x.set(event.clientX * (1 - attraction) + (rect.left + rect.width / 2) * attraction);
-        y.set(event.clientY * (1 - attraction) + (rect.top + rect.height / 2) * attraction);
-      } else {
-        x.set(event.clientX);
-        y.set(event.clientY);
-      }
-    }
-
-    function down() {
-      setPressed(true);
-    }
-
-    function up() {
-      setPressed(false);
-    }
-
-    window.addEventListener("pointermove", move, { passive: true });
-    window.addEventListener("pointerdown", down, { passive: true });
-    window.addEventListener("pointerup", up, { passive: true });
-    window.addEventListener("pointercancel", up, { passive: true });
-
-    return () => {
-      window.removeEventListener("pointermove", move);
-      window.removeEventListener("pointerdown", down);
-      window.removeEventListener("pointerup", up);
-      window.removeEventListener("pointercancel", up);
-    };
-  }, [enabled, x, y]);
-
-  if (!enabled || prefersReducedMotion) return null;
-
-  return (
-    <motion.div
-      className="home-v4-cursor"
-      style={{ x: springX, y: springY }}
-      aria-hidden="true"
-    >
-      <motion.div
-        className={`home-v4-cursor__orb is-${world}${interactive ? " is-interactive" : ""}`}
-        animate={{
-          scale: pressed ? 0.72 : interactive ? 1.42 : 1,
-          rotate: world === "light" ? -18 : 0,
-        }}
-        transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <span className="home-v4-cursor__core" />
-        <span className="home-v4-cursor__crescent" />
-        <span className="home-v4-cursor__ray home-v4-cursor__ray--one" />
-        <span className="home-v4-cursor__ray home-v4-cursor__ray--two" />
-        <span className="home-v4-cursor__ray home-v4-cursor__ray--three" />
-        <span className="home-v4-cursor__ray home-v4-cursor__ray--four" />
-      </motion.div>
-      {interactive && label && <span className="home-v4-cursor__label">{label.slice(0, 18)}</span>}
-    </motion.div>
   );
 }
 

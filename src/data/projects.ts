@@ -41,7 +41,7 @@ export const projects: Project[] = [
     challenge:
       "A nutrition brand's social presence was growing in volume while quality lagged behind. More posts were failing to translate into an audience that would actually stay. The two month engagement, running December 2025 to January 2026, needed to prove whether fewer, sharper posts could outperform a heavier posting schedule.",
     insight:
-      "The account was gaining reach while meaningful response lagged behind. Impressions and follower counts looked fine in isolation, but comments and followers earned per post showed that the publishing volume was doing too little work.",
+      "The account was gaining reach while earned response lagged behind. Impressions and follower counts looked fine in isolation, but comments and followers earned per post showed that the publishing volume was doing too little work.",
     strategy:
       "Shifted the entire approach from volume first to quality first across Instagram, Facebook, and LinkedIn, deliberately posting less but making every post earn its place.",
     execution:

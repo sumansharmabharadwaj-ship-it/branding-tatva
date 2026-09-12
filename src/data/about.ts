@@ -59,6 +59,6 @@ export const aboutIntro = {
     "I study how people pay attention before I write a word of brand copy.",
   body: [
     "My background pairs a master's in clinical psychology with an undergraduate degree in English literature: one trained me to observe how people notice and decide, the other to examine how language carries meaning. Both shape the questions I ask on every project.",
-    "That changes the work. The visual identity does not begin until the business can name the category it belongs to, the buyer it wants, the promise it can prove, and the memory it wants to leave.",
+    "That changes the work. The visual identity waits until the business can name the category it belongs to, the buyer it wants, the promise it can prove, and the memory it wants to leave.",
   ],
 } as const;

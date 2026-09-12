@@ -12,12 +12,12 @@ export const WORK_NEEDS = [
   {
     id: "recognition",
     label: "Recognition",
-    description: "People see us, but do not remember us.",
+    description: "People see us, then forget us.",
   },
   {
     id: "conversion",
     label: "Conversion",
-    description: "Attention is not leading anywhere useful.",
+    description: "Attention arrives, then leads nowhere.",
   },
   {
     id: "authority",

@@ -9,7 +9,7 @@ export const site = {
   positioning:
     "Branding Tatva finds the reason buyers choose a business, then gives that reason language, identity, and repetition.",
   description:
-    "Suman Sharma works directly with founders whose business has outgrown the words, identity, or habits representing it. Positioning, voice, identity, and content are rebuilt around the reason buyers choose.",
+    "Most brands are visible. Very few are remembered. Suman Sharma works directly with founders to rebuild positioning, voice, identity, and content around the reason buyers choose.",
   url: "https://brandingtatva.com",
   email: "suman@brandingtatva.com",
   phone: {
@@ -30,7 +30,7 @@ export const site = {
 export const consultation = {
   minutes: site.consultationMinutes,
   actionLabel: `Book the ${site.consultationMinutes} minute diagnosis`,
-  preparation: "Bring the question as it stands. No deck is required.",
+  preparation: "Bring the question as it stands. The deck can wait.",
   steps: [
     "Describe what is no longer working",
     "Test the assumption beneath it",

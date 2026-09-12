@@ -54,7 +54,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Apply",
     description:
-      "The decisions move into the website, content, campaigns, proposals, and sales material. A strategy earns its value in use, not in the presentation where it was approved.",
+      "The decisions move into the website, content, campaigns, proposals, and sales material. A strategy earns its value in use, never in the presentation where it was approved.",
     element: "Fire",
     video: "/videos/higgsfield-process-express.mp4",
     poster: "/images/higgsfield-process-express-poster.jpg",

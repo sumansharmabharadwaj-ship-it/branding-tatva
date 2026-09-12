@@ -156,7 +156,7 @@ const PRESENTATIONS: Record<string, CaseStudyPresentation> = {
       "Sixteen pieces were organised to validate, challenge, humanise, and define rather than fill a content calendar.",
     artifacts: [
       { label: "Research Papers", detail: "Evidence based validation included the Delhi Jal Board proof point." },
-      { label: "Perspective Pieces", detail: "Provocative questions challenged assumptions technology leaders had not yet examined." },
+      { label: "Perspective Pieces", detail: "Provocative questions challenged assumptions technology leaders had left unexamined." },
       { label: "Blogs", detail: "Emerging technology was translated into relevance for everyday readers." },
       { label: "Articles", detail: "Short articles gave time pressed readers a route into the subject." },
     ],
@@ -185,7 +185,7 @@ const FALLBACK: CaseStudyPresentation = {
   resultSummary: "The record shows the problem, the decision, the work produced, and the evidence available.",
   artifacts: [],
   ctaHeading: "Is this close to the problem in your business?",
-  ctaBody: "Bring the current materials and the decision your team has not settled.",
+  ctaBody: "Bring the current materials and the decision your team has left open.",
   serviceHref: "/services#offerings",
   serviceLabel: "Find the relevant service",
   palette: {

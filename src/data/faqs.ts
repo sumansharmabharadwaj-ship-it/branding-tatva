@@ -7,7 +7,7 @@ export const faqs = [
   {
     question: "Do you design logos?",
     answer:
-      "Logo design is not sold as an isolated task. I define the position, verbal direction, and creative principles a visual identity must express, then include identity work when the agreed project needs it.",
+      "A logo is the last decision in the sequence, never the first. I define the position, verbal direction, and creative principles a visual identity must express, then include identity work when the agreed project needs it.",
   },
   {
     question: "Can you help a brand new business?",
@@ -32,7 +32,7 @@ export const faqs = [
   {
     question: "What should I prepare before we start?",
     answer:
-      "Bring whatever already exists, even when it is messy: past content, sales material, customer language, competitor examples, and the questions you have not settled. I will tell you what else would be useful.",
+      "Bring whatever already exists, even when it is messy: past content, sales material, customer language, competitor examples, and the questions still open. I will tell you what else would be useful.",
   },
   {
     question: "Can we work remotely?",
@@ -41,7 +41,7 @@ export const faqs = [
   {
     question: "Will branding increase revenue?",
     answer:
-      "Branding can improve how quickly buyers understand, remember, and trust the offer, but revenue also depends on price, distribution, demand, sales, and delivery. For Dr. Haley Nutrition, engagement moved from 0.71% to 2.81% while posting less. That is evidence from one account, not a promise for every business.",
+      "Branding can improve how quickly buyers understand, remember, and trust the offer, but revenue also depends on price, distribution, demand, sales, and delivery. For Dr. Haley Nutrition, engagement moved from 0.71% to 2.81% while posting less. That is evidence from one account. Every business earns its own numbers.",
   },
   {
     question: "How long before I see results?",
