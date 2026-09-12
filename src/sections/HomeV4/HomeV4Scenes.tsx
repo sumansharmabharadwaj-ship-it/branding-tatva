@@ -90,8 +90,8 @@ export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
-  const landscapeScale = useTransform(scrollYProgress, [0, 1], [1.02, 1.09]);
-  const landscapeY = useTransform(scrollYProgress, [0, 1], [0, 24]);
+  const landscapeScale = useTransform(scrollYProgress, [0, 0.65, 1], [1.02, 1.17, 1.2]);
+  const landscapeY = useTransform(scrollYProgress, [0, 1], [0, 58]);
   const lightX = useTransform(scrollYProgress, [0, 1], ["-18%", "80%"]);
 
   return (
@@ -403,7 +403,7 @@ export function V4HiddenCostScene() {
               When the brand keeps changing, the next campaign has to introduce the business all over again.
             </p>
           </div>
-          <div className={costStyles.comparison} data-message-mode={comparison.mode}>
+          <div data-home-cost-comparison className={costStyles.comparison} data-message-mode={comparison.mode}>
             <p className={costStyles.exampleLabel}>Illustrative example · Meal planning</p>
             <div className={costStyles.modeChoices} role="group" aria-label="Compare how a brand communicates">
               <button type="button" aria-pressed={comparison.mode === "separate"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("separate")}>
@@ -452,7 +452,7 @@ export function V4HiddenCostScene() {
 
         <ol className={costStyles.costs} aria-label="Where an inconsistent brand costs time and attention">
           {BRAND_RESET_COSTS.map((cost) => (
-            <li key={cost.number}>
+            <li data-home-cost-item key={cost.number}>
               <span className={costStyles.number} aria-hidden="true">{cost.number}</span>
               <div>
                 <h3>{cost.title}</h3>
