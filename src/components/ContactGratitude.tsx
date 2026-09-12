@@ -67,6 +67,13 @@ export function ContactGratitude() {
   const headingY = useTransform(y, [-1, 1], [4, -4]);
   const headingRotateX = useTransform(y, [-1, 1], [-1.5, 1.5]);
   const headingRotateY = useTransform(x, [-1, 1], [2.5, -2.5]);
+  // Only the ink follows the pointer: the link and its label keep a stable
+  // hit area, including along the lower edge of the button.
+  const inkTargetX = useMotionValue(0);
+  const inkTargetY = useMotionValue(0);
+  const inkX = useSpring(inkTargetX, { stiffness: 150, damping: 24, mass: 0.65 });
+  const inkY = useSpring(inkTargetY, { stiffness: 150, damping: 24, mass: 0.65 });
+  const inkRotate = useTransform(inkX, [-6, 6], [-2, 2]);
   const { scrollYProgress: entryProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "start start"],
@@ -85,6 +92,8 @@ export function ContactGratitude() {
   useMotionValueEvent(scrollYProgress, "change", () => {
     pointerX.set(0);
     pointerY.set(0);
+    inkTargetX.set(0);
+    inkTargetY.set(0);
   });
   const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 34, mass: 0.6 });
   // Near foliage carries a little more weight than the distant camera. Both
@@ -145,7 +154,9 @@ export function ContactGratitude() {
     canopyProgress.jump(scrollYProgress.get());
     pointerX.set(0);
     pointerY.set(0);
-  }, [hydrated, coarsePointer, motionEnabled, pinEnabled, progress, canopyProgress, scrollYProgress, pointerX, pointerY]);
+    inkTargetX.set(0);
+    inkTargetY.set(0);
+  }, [hydrated, coarsePointer, motionEnabled, pinEnabled, progress, canopyProgress, scrollYProgress, pointerX, pointerY, inkTargetX, inkTargetY]);
 
   return (
     <section
@@ -269,11 +280,23 @@ export function ContactGratitude() {
             eventProps={{ source: "contact_gratitude", ...(packageSlug ? { package: packageSlug } : {}) }}
             data-contact-invitation-booking
             className={styles.booking}
+            onPointerMove={(event) => {
+              if (!pointerEnabled || event.pointerType !== "mouse" || event.currentTarget.matches(":focus-visible")) return;
+              const bounds = event.currentTarget.getBoundingClientRect();
+              inkTargetX.set(Math.max(-1, Math.min(1, (event.clientX - bounds.left) / Math.max(1, bounds.width) * 2 - 1)) * 6);
+              inkTargetY.set(Math.max(-1, Math.min(1, (event.clientY - bounds.top) / Math.max(1, bounds.height) * 2 - 1)) * 4);
+            }}
+            onPointerLeave={() => { inkTargetX.set(0); inkTargetY.set(0); }}
+            onPointerCancel={() => { inkTargetX.set(0); inkTargetY.set(0); }}
+            onFocus={() => { inkTargetX.set(0); inkTargetY.set(0); }}
           >
-            <svg className={styles.bookingOrbit} viewBox="0 0 400 76" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-              <motion.path d="M22 40C14 13 112 3 214 8C330 9 383 19 383 37C386 58 295 72 191 68C90 67 13 60 16 39C18 17 104 4 200 6" fill="none" vectorEffect="non-scaling-stroke" style={{ pathLength: motionEnabled ? bookingOrbit : 1 }} />
-            </svg>
-            <span>Find a time with Suman</span>
+            <span className={styles.bookingFill} aria-hidden="true" />
+            <motion.span data-invitation-orbit className={styles.bookingOrbitPointer} aria-hidden="true" style={pointerEnabled ? { x: inkX, y: inkY, rotate: inkRotate } : { x: 0, y: 0, rotate: 0 }}>
+              <svg className={styles.bookingOrbit} viewBox="0 0 400 76" preserveAspectRatio="none" focusable="false">
+                <motion.path d="M22 40C14 13 112 3 214 8C330 9 383 19 383 37C386 58 295 72 191 68C90 67 13 60 16 39C18 17 104 4 200 6" fill="none" vectorEffect="non-scaling-stroke" style={{ pathLength: motionEnabled ? bookingOrbit : 1 }} />
+              </svg>
+            </motion.span>
+            <span className={styles.bookingLabel}>Find a time with Suman</span>
             <ArrowRight className={styles.bookingArrow} aria-hidden="true" size={20} strokeWidth={1.4} />
           </TrackedLink>
           <p className={styles.reassurance}>
