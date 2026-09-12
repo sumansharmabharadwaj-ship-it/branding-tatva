@@ -7,58 +7,56 @@ const ts = require("typescript");
 
 const root = path.resolve(__dirname, "..");
 const source = fs.readFileSync(path.join(root, "src/lib/contactInvitationMotion.ts"), "utf8");
-const compiled = ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS },
-}).outputText;
+const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
 const context = { exports: {} };
 vm.runInNewContext(compiled, context);
 const { invitationMotionAt } = context.exports;
-const pose = (progress, compact = false) => JSON.parse(JSON.stringify(invitationMotionAt(progress, compact)));
-
+const pose = (p, compact = false) => JSON.parse(JSON.stringify(invitationMotionAt(p, compact)));
 const resting = {
-  cameraScale: 1, cameraY: 0,
-  thankYouX: 0, thankYouY: 0,
-  makingRoomX: 0, makingRoomY: 0, makingRoomScale: 1,
-  noteY: 0, invitationY: 0, signatureY: 0,
+  cameraScale: 1, cameraY: 0, cameraRotate: 0,
+  windowX: 0, windowTop: 0, windowBottom: 0, windowRadius: 0,
+  thankYouX: 0, thankYouY: 0, thankYouScale: 1, thankYouRotate: 0, thankYouRotateY: 0,
+  makingRoomX: 0, makingRoomY: 0, makingRoomScale: 1, makingRoomRotate: 0, makingRoomRotateY: 0,
+  noteY: 0, noteOpacity: 1, invitationY: 0, invitationOpacity: 1, signatureY: 0, signatureOpacity: 1,
 };
 
-for (const compact of [false, true]) {
-  for (const progress of [0.5, 0.6, 0.74, NaN, Infinity]) {
-    assert.deepEqual(pose(progress, compact), resting, "Reading and restored-hash poses must match the approved composition.");
-  }
-  assert.deepEqual(pose(-1, compact), pose(0, compact));
-  assert.deepEqual(pose(2, compact), pose(1, compact));
-
-  const forward = [];
-  for (let step = 0; step <= 1000; step += 1) {
-    const progress = step / 1000;
-    const current = pose(progress, compact);
-    forward.push(current);
-    assert.ok(Object.values(current).every(Number.isFinite));
-    assert.ok(current.cameraScale >= 1 && current.cameraScale <= (compact ? 1.055 : 1.12));
-    assert.ok(current.makingRoomScale >= 0.965 && current.makingRoomScale <= 1);
-    if (compact) assert.equal(Math.abs(current.thankYouX) + Math.abs(current.makingRoomX), 0, "Phone text must stay inside its horizontal bounds.");
-    // The 12px paragraph gap stays open even while the note is travelling.
-    assert.ok(current.noteY <= 8);
-    assert.ok(12 + current.invitationY - current.noteY >= 4, "The note must not touch the invitation as they settle.");
-    assert.ok(18 - current.signatureY >= 13, "The signature must not touch the stationary actions.");
-    // Model the smallest scene's 72% camera origin and its 6px overscan.
-    const sceneHeight = compact ? 820 : 800;
-    const topCover = 6 + sceneHeight * 0.72 * (current.cameraScale - 1) - current.cameraY;
-    const bottomCover = 6 + sceneHeight * 0.28 * (current.cameraScale - 1) + current.cameraY;
-    assert.ok(topCover >= 0 && bottomCover >= 0, "Camera travel must never expose an unpainted edge.");
-    if (step > 0) {
-      for (const key of Object.keys(current)) {
-        assert.ok(Math.abs(current[key] - forward[step - 1][key]) < 0.2, `Abrupt motion in ${key}.`);
-      }
+function assertCameraCoverage(current, width, height) {
+  const originX = width / 2;
+  const originY = (height + 12) * 0.72 - 6;
+  const radians = current.cameraRotate * Math.PI / 180;
+  // Invert the actual camera transform at every corner of the aperture.
+  // Curved corners show less of the image, so this is a conservative bound.
+  for (const cx of [width * current.windowX / 100, width * (1 - current.windowX / 100)]) {
+    for (const cy of [height * current.windowTop / 100, height * (1 - current.windowBottom / 100)]) {
+      const dx = cx - originX;
+      const dy = cy - originY - current.cameraY;
+      const x = (Math.cos(radians) * dx + Math.sin(radians) * dy) / current.cameraScale + originX;
+      const y = (-Math.sin(radians) * dx + Math.cos(radians) * dy) / current.cameraScale + originY;
+      assert.ok(x >= -6 && x <= width + 6 && y >= -6 && y <= height + 6, "The opening camera must cover every visible edge.");
     }
   }
-  for (let step = 1000; step >= 0; step -= 1) {
-    assert.deepEqual(pose(step / 1000, compact), forward[step], "Scrolling back must retrace exactly, without a one-shot gate.");
-  }
 }
-assert.ok(pose(0.25).cameraScale > pose(0.25, true).cameraScale, "Touch motion must have a lighter amplitude.");
-assert.ok(pose(0.25).thankYouX < 0 && pose(0.25).makingRoomX > 0, "Headline lines must converge from opposite sides.");
-assert.equal(pose(0.42).thankYouX, 0, "The opening thanks settles first.");
-assert.ok(pose(0.42).makingRoomX > 0 && pose(0.46).noteY > 0 && pose(0.49).signatureY > 0, "The following lines should resolve in reading order.");
-console.log("[contact-invitation] 2,002 scroll poses verified: reversible, bounded, responsive, stable reading frame.");
+
+for (const compact of [false, true]) {
+  for (const p of [0.86, 0.92, 1, NaN, Infinity]) assert.deepEqual(pose(p, compact), resting, "The film must end in the approved readable composition.");
+  assert.deepEqual(pose(-1, compact), pose(0, compact));
+  assert.deepEqual(pose(2, compact), pose(1, compact));
+  const forward = [];
+  for (let step = 0; step <= 1000; step++) {
+    const current = pose(step / 1000, compact);
+    forward.push(current);
+    assert.ok(Object.values(current).every(Number.isFinite));
+    assert.ok(current.cameraScale >= 1 && current.cameraScale <= (compact ? 1.26 : 1.48));
+    for (const opacity of [current.noteOpacity, current.invitationOpacity, current.signatureOpacity]) assert.ok(opacity >= 0 && opacity <= 1);
+    assert.ok(current.noteOpacity >= current.invitationOpacity && current.invitationOpacity >= current.signatureOpacity, "The note, invitation and signature must appear in reading order.");
+    if (compact) assert.equal(Math.abs(current.thankYouX) + Math.abs(current.makingRoomX) + Math.abs(current.cameraRotate), 0, "Compact screens must avoid sideways text travel and camera roll.");
+    for (const [w, h] of compact ? [[320, 822], [390, 844]] : [[1280, 800], [1363, 936], [2560, 1440]]) assertCameraCoverage(current, w, h);
+    if (step) for (const key of Object.keys(current)) assert.ok(Math.abs(current[key] - forward[step - 1][key]) < 2, `A discontinuity appeared in ${key}.`);
+  }
+  for (let step = 1000; step >= 0; step--) assert.deepEqual(pose(step / 1000, compact), forward[step], "Reverse scroll must rewind the same film.");
+}
+assert.ok(pose(0.14).cameraScale > 1.4 && pose(0.14).makingRoomScale > 1.4, "The opening must retain the explicitly requested dramatic scale change.");
+assert.ok(pose(0.4).windowX < pose(0.14).windowX && pose(0.7).windowX === 0, "The narrow landscape must open to full bleed.");
+assert.equal(pose(0.64).thankYouX, 0);
+assert.ok(pose(0.64).makingRoomX > 0, "The second headline should follow the first.");
+console.log("[contact-invitation] 2,002 reversible film poses verified: camera coverage, type depth, reading order, and compact bounds.");

@@ -71,8 +71,15 @@ for (const text of ["prefers-reduced-motion: reduce", 'data-invitation-motion="r
 }
 requireText(invitationCss, ".scene:focus-within [data-invitation-layer]", "keyboard focus must resolve the still reading composition");
 forbidPattern(gratitude, /useInView|data-invitation-entered/, "sunlit motion must follow scroll in both directions instead of a one-time entrance");
-forbidPattern(invitationCss, /@keyframes|position:\s*sticky/, "sunlit motion must keep its native one-scene scroll range");
-requirePattern(gratitude, /style=\{motionEnabled \? \{ scale: cameraScale, y: cameraY \}/, "phones must retain the lighter scroll camera rather than disabling it");
+// The user requested a stronger Parker-inspired scroll film. Pin only a stage
+// that actually fits, and retain native flow for short screens/reduced motion.
+forbidPattern(invitationCss, /@keyframes/, "the invitation must follow scroll instead of running a timed loop");
+requireText(gratitude, 'data-invitation-pinned={pinEnabled ? "true" : "false"}', "pinning must follow the actual stage fit and motion preference");
+requireText(gratitude, "stage.offsetHeight <= window.innerHeight + 1", "an oversized stage must never be pinned");
+requireText(invitationCss, '.scene[data-invitation-motion="reduced"] .stage { position: relative; }', "reduced motion must restore normal document flow");
+requireText(invitationCss, "opacity: 1 !important", "keyboard focus and reduced motion must reveal all invitation copy");
+requireText(invitationCss, "clip-path: none !important", "keyboard focus and reduced motion must open the landscape");
+requirePattern(gratitude, /style=\{motionEnabled \? \{ scale: cameraScale, y: cameraY, rotate: cameraRotate \}/, "phones must retain the lighter scroll camera rather than disabling it");
 requirePattern(gratitude, /<div data-contact-invitation-actions className=\{styles.actions\}>/, "booking and writing actions must remain outside animated wrappers");
 forbidPattern(invitationCss, /opacity:\s*0(?:[;}\s])/, "invitation text and actions must never be hidden for motion");
 forbidPattern(gratitude, /role="progressbar"|visitedNotes|setTimeout|ScrollTrigger|tabIndex=\{-1\}/, "gratitude must never become a completion task or delay its next step");

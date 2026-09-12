@@ -72,6 +72,16 @@ export function ContactScrollRuntime() {
       }
 
       const viewportHeight = Math.max(window.innerHeight, 1);
+      // The gratitude film owns its continuous scroll interval. Proximity
+      // snapping here would skip its middle shots or pull the visitor back.
+      const invitation = contactFilm.querySelector<HTMLElement>('[data-invitation-pinned="true"]');
+      if (invitation) {
+        const rect = invitation.getBoundingClientRect();
+        if (rect.top <= 2 && rect.bottom >= viewportHeight - 2) {
+          delete root.dataset.contactFilmSnap;
+          return;
+        }
+      }
       const firstSceneTop = scenes[0].offsetTop;
       const lastScene = scenes[scenes.length - 1];
       const releasePoint = lastScene.offsetTop + lastScene.offsetHeight - viewportHeight * 0.5;
@@ -182,6 +192,7 @@ export function ContactScrollRuntime() {
         attributeFilter: [
           "data-contact-reading-focus",
           "data-contact-form-expanded",
+          "data-invitation-pinned",
         ],
       }),
     );

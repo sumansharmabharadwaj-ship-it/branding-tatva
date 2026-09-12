@@ -5,29 +5,43 @@ function easeBetween(value: number, start: number, end: number) {
   return t * t * (3 - 2 * t);
 }
 
-/** Entry and exit each cover one viewport of native scroll. A taller section
- * holds 0.5 throughout its extra reading space. Position alone owns every pose.
+/** Three reversible beats: a narrow landscape, oversized type moving through
+ * depth, then the approved open invitation. The last 14% is a reading hold.
+ * Short screens use the same sequence during native entry without pinning.
  */
 export function invitationMotionAt(progress: number, compact = false) {
-  const p = Number.isFinite(progress) ? clamp(progress) : 0.5;
-  const arrival = 1 - easeBetween(p, 0.12, 0.5);
-  const departure = easeBetween(p, 0.74, 1);
-  const thankYouArrival = 1 - easeBetween(p, 0.08, 0.42);
-  const makingRoomArrival = 1 - easeBetween(p, 0.16, 0.46);
-  const noteArrival = 1 - easeBetween(p, 0.23, 0.48);
-  const invitationArrival = 1 - easeBetween(p, 0.27, 0.49);
-  const signatureArrival = 1 - easeBetween(p, 0.31, 0.5);
+  const p = Number.isFinite(progress) ? clamp(progress) : 1;
+  const camera = 1 - easeBetween(p, 0.04, 0.78);
+  const opening = 1 - easeBetween(p, 0.16, 0.7);
+  const thanks = 1 - easeBetween(p, 0.2, 0.64);
+  const room = 1 - easeBetween(p, 0.28, 0.72);
+  const note = 1 - easeBetween(p, 0.5, 0.76);
+  const invitation = 1 - easeBetween(p, 0.58, 0.82);
+  const signature = 1 - easeBetween(p, 0.65, 0.86);
 
   return {
-    cameraScale: 1 + arrival * (compact ? 0.055 : 0.12) + departure * (compact ? 0.012 : 0.022),
-    cameraY: arrival * (compact ? 12 : 30) - departure * (compact ? 4 : 10),
-    thankYouX: compact ? 0 : -44 * thankYouArrival,
-    thankYouY: thankYouArrival * (compact ? 6 : 10),
-    makingRoomX: compact ? 0 : 38 * makingRoomArrival,
-    makingRoomY: makingRoomArrival * (compact ? 8 : 14),
-    makingRoomScale: 1 - makingRoomArrival * (compact ? 0.015 : 0.035),
-    noteY: noteArrival * (compact ? 6 : 8),
-    invitationY: invitationArrival * (compact ? 4 : 6),
-    signatureY: signatureArrival * (compact ? 3 : 5),
+    cameraScale: 1 + camera * (compact ? 0.26 : 0.48),
+    cameraY: camera * (compact ? 24 : 48),
+    cameraRotate: compact ? 0 : -4 * camera,
+    windowX: opening * (compact ? 19 : 32),
+    windowTop: opening * 13,
+    windowBottom: opening * 12,
+    windowRadius: opening * 220,
+    thankYouX: compact ? 0 : -130 * thanks,
+    thankYouY: thanks * (compact ? 22 : 40),
+    thankYouScale: 1 + thanks * (compact ? 0.08 : 0.35),
+    thankYouRotate: compact ? 0 : -7 * thanks,
+    thankYouRotateY: compact ? 0 : -24 * thanks,
+    makingRoomX: compact ? 0 : 115 * room,
+    makingRoomY: room * (compact ? 38 : 98),
+    makingRoomScale: 1 + room * (compact ? 0.12 : 0.5),
+    makingRoomRotate: compact ? 0 : 5 * room,
+    makingRoomRotateY: compact ? 0 : 20 * room,
+    noteY: note * (compact ? 12 : 26),
+    noteOpacity: 1 - note,
+    invitationY: invitation * (compact ? 8 : 18),
+    invitationOpacity: 1 - invitation,
+    signatureY: signature * (compact ? 5 : 9),
+    signatureOpacity: 1 - signature,
   };
 }

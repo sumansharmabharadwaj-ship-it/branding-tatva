@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Cormorant_Garamond } from "next/font/google";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TrackedLink } from "@/components/TrackedLink";
@@ -22,17 +22,20 @@ const invitationItalic = Cormorant_Garamond({
   display: "swap",
 });
 
-/** Preserve the selected composition, then let native scroll open it.
- * Landscape, headline and personal note share a reversible arrival. The
- * actions stay outside moving wrappers: no pin, timer or completion gate.
+/** A short scroll film opens the valley and brings the type through depth.
+ * The approved composition is the final shot. Short screens and reduced motion
+ * keep native flow; the two contact actions are available in every shot.
  */
 export function ContactGratitude() {
   const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [stageFits, setStageFits] = useState(false);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const coarsePointer = useMediaQuery("(pointer: coarse), (max-width: 767px)");
   const packageSlug = useServicesContactPackage();
   const bookingHref = calendlyHrefForServicesPackage(site.calendlyUrl, packageSlug);
   const motionEnabled = hydrated && !prefersReducedMotion;
+  const pinEnabled = motionEnabled && stageFits;
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const x = useSpring(pointerX, { stiffness: 44, damping: 22, mass: 0.8 });
@@ -42,26 +45,48 @@ export function ContactGratitude() {
     offset: ["start end", "start start"],
     trackContentSize: true,
   });
-  const { scrollYProgress: exitProgress } = useScroll({
+  const { scrollYProgress: storyProgress } = useScroll({
     target: sectionRef,
-    offset: ["end end", "end start"],
+    offset: ["start start", "end end"],
     trackContentSize: true,
   });
-  // Finish the entrance at the section top even when a short phone, landscape
-  // viewport or enlarged text makes this scene taller than a single screen.
-  const scrollYProgress = useTransform(() => (entryProgress.get() + exitProgress.get()) / 2);
-  const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 32, mass: 0.6 });
+  const scrollYProgress = useTransform(() => pinEnabled
+    ? entryProgress.get() * 0.14 + storyProgress.get() * 0.86
+    : entryProgress.get());
+  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 34, mass: 0.6 });
   const pose = useTransform(() => invitationMotionAt(progress.get(), coarsePointer));
   const cameraScale = useTransform(pose, (value) => value.cameraScale);
   const cameraY = useTransform(pose, (value) => value.cameraY);
+  const cameraRotate = useTransform(pose, (value) => value.cameraRotate);
+  const aperture = useTransform(pose, (value) => `inset(${value.windowTop}% ${value.windowX}% ${value.windowBottom}% ${value.windowX}% round ${value.windowRadius}px)`);
   const thankYouX = useTransform(pose, (value) => value.thankYouX);
   const thankYouY = useTransform(pose, (value) => value.thankYouY);
+  const thankYouScale = useTransform(pose, (value) => value.thankYouScale);
+  const thankYouRotate = useTransform(pose, (value) => value.thankYouRotate);
+  const thankYouRotateY = useTransform(pose, (value) => value.thankYouRotateY);
   const makingRoomX = useTransform(pose, (value) => value.makingRoomX);
   const makingRoomY = useTransform(pose, (value) => value.makingRoomY);
   const makingRoomScale = useTransform(pose, (value) => value.makingRoomScale);
+  const makingRoomRotate = useTransform(pose, (value) => value.makingRoomRotate);
+  const makingRoomRotateY = useTransform(pose, (value) => value.makingRoomRotateY);
   const noteY = useTransform(pose, (value) => value.noteY);
+  const noteOpacity = useTransform(pose, (value) => value.noteOpacity);
   const invitationY = useTransform(pose, (value) => value.invitationY);
+  const invitationOpacity = useTransform(pose, (value) => value.invitationOpacity);
   const signatureY = useTransform(pose, (value) => value.signatureY);
+  const signatureOpacity = useTransform(pose, (value) => value.signatureOpacity);
+
+  // Never trap tall text or short landscape screens in a sticky viewport.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const measure = () => setStageFits(stage.offsetHeight <= window.innerHeight + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
+  }, []);
 
   // Hash arrivals and restored pages start at their real position, instead of
   // replaying the entrance from the top of the page after hydration.
@@ -69,7 +94,7 @@ export function ContactGratitude() {
     progress.jump(scrollYProgress.get());
     pointerX.set(0);
     pointerY.set(0);
-  }, [hydrated, coarsePointer, motionEnabled, progress, scrollYProgress, pointerX, pointerY]);
+  }, [hydrated, coarsePointer, motionEnabled, pinEnabled, progress, scrollYProgress, pointerX, pointerY]);
 
   return (
     <section
@@ -80,9 +105,15 @@ export function ContactGratitude() {
       data-contact-gratitude="sunlit"
       data-invitation-motion={motionEnabled ? "full" : "reduced"}
       data-invitation-scroll="reversible"
+      data-invitation-pinned={pinEnabled ? "true" : "false"}
       data-invitation-input={coarsePointer ? "compact" : "desktop"}
       className={`${styles.scene} ${invitationItalic.variable}`}
-      onPointerMove={(event) => {
+    >
+      <div
+        ref={stageRef}
+        data-contact-invitation-stage
+        className={styles.stage}
+        onPointerMove={(event) => {
         if (!motionEnabled || coarsePointer || event.pointerType !== "mouse") return;
         const bounds = event.currentTarget.getBoundingClientRect();
         pointerX.set(((event.clientX - bounds.left) / bounds.width - 0.5) * 8);
@@ -90,13 +121,13 @@ export function ContactGratitude() {
       }}
       onPointerLeave={() => { pointerX.set(0); pointerY.set(0); }}
       onFocusCapture={() => { pointerX.set(0); pointerY.set(0); }}
-    >
-      <div className={styles.landscape} aria-hidden="true">
+      >
+      <motion.div className={styles.landscape} aria-hidden="true" data-invitation-layer="aperture" style={motionEnabled ? { clipPath: aperture } : { clipPath: "none" }}>
         <motion.div
           data-contact-invitation-camera
           data-invitation-layer="camera"
           className={styles.camera}
-          style={motionEnabled ? { scale: cameraScale, y: cameraY } : { scale: 1, y: 0 }}
+          style={motionEnabled ? { scale: cameraScale, y: cameraY, rotate: cameraRotate } : { scale: 1, y: 0, rotate: 0 }}
         >
           <motion.div data-invitation-layer="pointer" className={styles.photograph} style={motionEnabled && !coarsePointer ? { x, y } : { x: 0, y: 0 }}>
             <picture>
@@ -111,7 +142,7 @@ export function ContactGratitude() {
             </picture>
           </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
 
       <div className={styles.content}>
         <p className={styles.eyebrow}>Before you go</p>
@@ -119,18 +150,18 @@ export function ContactGratitude() {
           <motion.span
             data-invitation-layer="thank-you"
             className={styles.thankYou}
-            style={motionEnabled ? { x: thankYouX, y: thankYouY } : { x: 0, y: 0 }}
+            style={motionEnabled ? { x: thankYouX, y: thankYouY, scale: thankYouScale, rotate: thankYouRotate, rotateY: thankYouRotateY } : { x: 0, y: 0, scale: 1, rotate: 0, rotateY: 0 }}
           >Thank you for</motion.span>{" "}
           <motion.em
             data-invitation-layer="making-room"
             className={styles.makingRoom}
-            style={motionEnabled ? { x: makingRoomX, y: makingRoomY, scale: makingRoomScale } : { x: 0, y: 0, scale: 1 }}
+            style={motionEnabled ? { x: makingRoomX, y: makingRoomY, scale: makingRoomScale, rotate: makingRoomRotate, rotateY: makingRoomRotateY } : { x: 0, y: 0, scale: 1, rotate: 0, rotateY: 0 }}
           >making room.</motion.em>
         </h2>
         <motion.div
           data-invitation-layer="note"
           className={styles.acknowledgement}
-          style={motionEnabled ? { y: noteY } : { y: 0 }}
+          style={motionEnabled ? { y: noteY, opacity: noteOpacity } : { y: 0, opacity: 1 }}
         >
           <p>For a question that matters to you.</p>
           <p>For the business you have put so much into.</p>
@@ -138,14 +169,14 @@ export function ContactGratitude() {
         <motion.p
           data-invitation-layer="invitation"
           className={styles.invitation}
-          style={motionEnabled ? { y: invitationY } : { y: 0 }}
+          style={motionEnabled ? { y: invitationY, opacity: invitationOpacity } : { y: 0, opacity: 1 }}
         >
           Bring the part you are still figuring out. <span>I will meet you there.</span>
         </motion.p>
         <motion.p
           data-invitation-layer="signature"
           className={styles.signature}
-          style={motionEnabled ? { y: signatureY } : { y: 0 }}
+          style={motionEnabled ? { y: signatureY, opacity: signatureOpacity } : { y: 0, opacity: 1 }}
         >
           <span>Suman Sharma</span>
           <span>Brand strategist</span>
@@ -179,6 +210,7 @@ export function ContactGratitude() {
             I would rather write
           </TrackedLink>
         </div>
+      </div>
       </div>
     </section>
   );
