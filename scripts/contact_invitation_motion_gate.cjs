@@ -10,10 +10,10 @@ const source = fs.readFileSync(path.join(root, "src/lib/contactInvitationMotion.
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
 const context = { exports: {} };
 vm.runInNewContext(compiled, context);
-const { invitationMotionAt, invitationBotanyAt, invitationLetterAt } = context.exports;
+const { invitationMotionAt, invitationBotanyAt, invitationLetterAt, invitationMomentumAt } = context.exports;
 const pose = (p, compact = false) => JSON.parse(JSON.stringify(invitationMotionAt(p, compact)));
 const resting = {
-  cameraScale: 1, cameraY: 0, cameraRotate: 0,
+  cameraScale: 1, cameraX: 0, cameraY: 0, cameraRotate: 0,
   windowX: 0, windowTop: 0, windowBottom: 0, windowRadius: 0,
   thankYouX: 0, thankYouY: 0, thankYouScale: 1, thankYouRotate: 0, thankYouRotateY: 0,
   makingRoomX: 0, makingRoomY: 0, makingRoomScale: 1, makingRoomRotate: 0, makingRoomRotateY: 0,
@@ -28,7 +28,7 @@ function assertCameraCoverage(current, width, height, compact) {
   // Curved corners show less of the image, so this is a conservative bound.
   for (const cx of [width * current.windowX / 100, width * (1 - current.windowX / 100)]) {
     for (const cy of [height * current.windowTop / 100, height * (1 - current.windowBottom / 100)]) {
-      const dx = cx - originX;
+      const dx = cx - originX - current.cameraX;
       const dy = cy - originY - current.cameraY;
       const x = (Math.cos(radians) * dx + Math.sin(radians) * dy) / current.cameraScale + originX;
       const y = (-Math.sin(radians) * dx + Math.cos(radians) * dy) / current.cameraScale + originY;
@@ -60,8 +60,8 @@ for (const compact of [false, true]) {
       assert.ok(current.makingRoomY < (compact ? 4 : 8), "The oversized headline must clear the supporting copy before it appears.");
       for (let i = 0; i < 11; i++) assert.ok(Object.values(invitationLetterAt(step / 1000, i, compact)).every(value => value === 0), "Letter folding must finish before the first note opens.");
     }
-    if (compact) assert.equal(Math.abs(current.thankYouX) + Math.abs(current.makingRoomX) + Math.abs(current.cameraRotate), 0, "Compact screens must avoid sideways text travel and camera roll.");
-    for (const [w, h] of compact ? [[320, 822], [390, 844]] : [[1280, 720], [1363, 936], [2560, 1440]]) assertCameraCoverage(current, w, h, compact);
+    if (compact) assert.equal(Math.abs(current.thankYouX) + Math.abs(current.makingRoomX) + Math.abs(current.cameraRotate) + Math.abs(current.cameraX), 0, "Compact screens must avoid sideways text travel and camera roll.");
+    for (const [w, h] of compact ? [[305, 720], [320, 822], [390, 844]] : [[1280, 720], [1363, 936], [2560, 1440]]) assertCameraCoverage(current, w, h, compact);
     if (step) for (const key of Object.keys(current)) assert.ok(Math.abs(current[key] - forward[step - 1][key]) < 2, `A discontinuity appeared in ${key}.`);
   }
   for (let step = 1000; step >= 0; step--) assert.deepEqual(pose(step / 1000, compact), forward[step], "Reverse scroll must rewind the same film.");
@@ -73,8 +73,8 @@ assert.equal(pose(0.54).thankYouX, 0);
 assert.ok(pose(0.54).makingRoomX > 0, "The second headline should follow the first.");
 assert.equal(pose(0.7).bookingOrbit, 0, "The booking emphasis belongs to the completed invitation, not the opening shot.");
 
-// New foreground and typography must resolve before the reading hold, never
-// depend on elapsed time, and retrace the same intermediate shots backwards.
+// The authored foreground and typography retrace the same resting shots.
+// Direction-sensitive flex is bounded separately below.
 for (const compact of [false, true]) {
   const shots = [];
   for (let step = 0; step <= 1000; step++) {
@@ -101,5 +101,26 @@ for (const compact of [false, true]) {
     assert.deepEqual(JSON.parse(JSON.stringify({ branches: invitationBotanyAt(p), letters: Array.from({ length: 11 }, (_, i) => invitationLetterAt(p, i, compact)) })), shots[step]);
   }
 }
+assert.ok(invitationBotanyAt(0.4).leftX < -invitationBotanyAt(0.4).rightX - 10, "The near branch must clear first instead of behaving like a mirrored curtain.");
+assert.ok(pose(0.36).cameraX < -20, "The desktop camera should travel through the opening in an arc.");
+for (const compact of [false, true]) {
+  for (let step = 0; step <= 1000; step++) {
+    const p = step / 1000;
+    const forward = invitationMomentumAt(p, 1, compact);
+    const reverse = invitationMomentumAt(p, -1, compact);
+    const stopped = invitationMomentumAt(p, 0, compact);
+    for (const key of Object.keys(forward)) {
+      assert.ok(Number.isFinite(forward[key]));
+      assert.ok(Math.abs(forward[key] + reverse[key]) < 1e-9, "Changing scroll direction must reverse the foliage response.");
+      assert.ok(stopped[key] === 0, "Foliage flex must settle when scrolling stops.");
+      if (p >= 0.6 || p <= 0.1) assert.ok(forward[key] === 0, "Extra movement must end before the final invitation and remain off outside the opening.");
+    }
+    assert.ok(Math.abs(forward.leftRotate) <= (compact ? 1.1 : 4.5) && Math.abs(forward.rightRotate) <= (compact ? 0.8 : 3));
+    assert.ok(Math.abs(forward.leftY) <= (compact ? 3 : 10) && Math.abs(forward.rightY) <= (compact ? 2 : 7), "Scroll speed must never throw the branches across the reading area.");
+    for (const input of [NaN, Infinity]) assert.ok(Object.values(invitationMomentumAt(p, input, compact)).every(value => value === 0));
+    assert.deepEqual(invitationMomentumAt(p, 10, compact), forward, "Fast input must clamp to the same safe maximum.");
+  }
+}
 console.log("[contact-invitation] 2,002 reversible film poses verified: camera coverage, type depth, reading order, and compact bounds.");
 console.log("[contact-invitation] Botanical passage and 11-letter unfolding verified in both directions, including compact bounds and the final reading hold.");
+console.log("[contact-invitation] Camera arc and asymmetric branches verified; scroll momentum is bounded, reverses with direction, and settles before the final invitation.");

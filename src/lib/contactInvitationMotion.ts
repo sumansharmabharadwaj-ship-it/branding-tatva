@@ -9,14 +9,34 @@ function easeBetween(value: number, start: number, end: number) {
 export function invitationBotanyAt(progress: number) {
   const p = Number.isFinite(progress) ? clamp(progress) : 1;
   const passage = easeBetween(p, 0.12, 0.76);
+  const leftPassage = easeBetween(p, 0.1, 0.7);
+  const rightPassage = easeBetween(p, 0.18, 0.78);
   return {
-    leftX: -4 - passage * 74,
-    rightX: 4 + passage * 74,
-    y: passage * 32,
+    leftX: -4 - leftPassage * 74,
+    rightX: 4 + rightPassage * 74,
+    leftY: leftPassage * 32,
+    rightY: rightPassage * 32,
     scale: 1 + passage * 0.15,
-    rotate: passage * 8,
+    leftRotate: -leftPassage * 8,
+    rightRotate: rightPassage * 8,
     opacity: 1 - passage * 0.24,
     frame: easeBetween(p, 0.38, 0.82),
+  };
+}
+
+/** A bounded response to scroll direction and speed, confined to the opening.
+ * Supporting copy and the final invitation never inherit this extra movement.
+ */
+export function invitationMomentumAt(progress: number, velocity: number, compact = false) {
+  const p = Number.isFinite(progress) ? clamp(progress) : 1;
+  const speed = Number.isFinite(velocity) ? Math.max(-1, Math.min(1, velocity)) : 0;
+  const opening = easeBetween(p, 0.1, 0.24) * (1 - easeBetween(p, 0.42, 0.6));
+  const flex = speed * opening;
+  return {
+    leftRotate: flex * (compact ? 1.1 : 4.5),
+    rightRotate: -flex * (compact ? 0.8 : 3),
+    leftY: flex * (compact ? 3 : 10),
+    rightY: -flex * (compact ? 2 : 7),
   };
 }
 
@@ -46,9 +66,11 @@ export function invitationMotionAt(progress: number, compact = false) {
   const note = 1 - easeBetween(p, 0.56, 0.75);
   const invitation = 1 - easeBetween(p, 0.68, 0.82);
   const signature = 1 - easeBetween(p, 0.74, 0.86);
+  const arc = easeBetween(p, 0.14, 0.36) * (1 - easeBetween(p, 0.36, 0.64));
 
   return {
     cameraScale: 1 + camera * (compact ? 0.26 : 0.48),
+    cameraX: compact ? 0 : -24 * arc,
     cameraY: camera * (compact ? 24 : 48),
     cameraRotate: compact ? 0 : -4 * camera,
     windowX: opening * (compact ? 19 : 32),

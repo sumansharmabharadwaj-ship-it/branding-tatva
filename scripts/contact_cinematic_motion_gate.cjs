@@ -79,7 +79,7 @@ requireText(gratitude, "stage.offsetHeight <= window.innerHeight + 1", "an overs
 requireText(invitationCss, '.scene[data-invitation-motion="reduced"] .stage { position: relative; }', "reduced motion must restore normal document flow");
 requireText(invitationCss, "opacity: 1 !important", "keyboard focus and reduced motion must reveal all invitation copy");
 requireText(invitationCss, "clip-path: none !important", "keyboard focus and reduced motion must open the landscape");
-requirePattern(gratitude, /style=\{motionEnabled \? \{ scale: cameraScale, y: cameraY, rotate: cameraRotate \}/, "phones must retain the lighter scroll camera rather than disabling it");
+requirePattern(gratitude, /style=\{motionEnabled \? \{ scale: cameraScale, y: cameraY, rotate: cameraRotate(?:, x: cameraX)? \}/, "phones must retain the lighter scroll camera rather than disabling it");
 requirePattern(gratitude, /<div data-contact-invitation-actions className=\{styles.actions\}>/, "booking and writing actions must remain outside animated wrappers");
 forbidPattern(invitationCss, /opacity:\s*0(?:[;}\s])/, "invitation text and actions must never be hidden for motion");
 forbidPattern(gratitude, /role="progressbar"|visitedNotes|setTimeout|ScrollTrigger|tabIndex=\{-1\}/, "gratitude must never become a completion task or delay its next step");

@@ -3,14 +3,14 @@
 import Image from "next/image";
 import { Cormorant_Garamond } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform, useVelocity, type MotionValue } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
 import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
-import { invitationBotanyAt, invitationLetterAt, invitationMotionAt } from "@/lib/contactInvitationMotion";
+import { invitationBotanyAt, invitationLetterAt, invitationMomentumAt, invitationMotionAt } from "@/lib/contactInvitationMotion";
 import { site } from "@/data/site";
 import styles from "./ContactGratitude.module.css";
 
@@ -99,8 +99,13 @@ export function ContactGratitude() {
   // Near foliage carries a little more weight than the distant camera. Both
   // springs are overdamped so quick direction changes cannot produce a loop.
   const canopyProgress = useSpring(scrollYProgress, { stiffness: 92, damping: 22, mass: 0.85 });
+  const scrollVelocity = useVelocity(scrollYProgress);
+  const flexTarget = useTransform(scrollVelocity, [-1.6, 0, 1.6], [-1, 0, 1]);
+  const flex = useSpring(flexTarget, { stiffness: 100, damping: 24, mass: 0.65 });
+  const momentum = useTransform(() => invitationMomentumAt(progress.get(), flex.get(), coarsePointer));
   const pose = useTransform(() => invitationMotionAt(progress.get(), coarsePointer));
   const cameraScale = useTransform(pose, (value) => value.cameraScale);
+  const cameraX = useTransform(pose, (value) => value.cameraX);
   const cameraY = useTransform(pose, (value) => value.cameraY);
   const cameraRotate = useTransform(pose, (value) => value.cameraRotate);
   const aperture = useTransform(pose, (value) => {
@@ -128,10 +133,11 @@ export function ContactGratitude() {
   const botany = useTransform(() => invitationBotanyAt(canopyProgress.get()));
   const botanicalLeftX = useTransform(botany, (value) => `${value.leftX}%`);
   const botanicalRightX = useTransform(botany, (value) => `${value.rightX}%`);
-  const botanicalY = useTransform(botany, (value) => value.y);
+  const botanicalLeftY = useTransform(() => botany.get().leftY + momentum.get().leftY);
+  const botanicalRightY = useTransform(() => botany.get().rightY + momentum.get().rightY);
   const botanicalScale = useTransform(botany, (value) => value.scale);
-  const botanicalLeftRotate = useTransform(botany, (value) => -value.rotate);
-  const botanicalRightRotate = useTransform(botany, (value) => value.rotate);
+  const botanicalLeftRotate = useTransform(() => botany.get().leftRotate + momentum.get().leftRotate);
+  const botanicalRightRotate = useTransform(() => botany.get().rightRotate + momentum.get().rightRotate);
   const botanicalOpacity = useTransform(botany, (value) => value.opacity);
   const frameDraw = useTransform(() => invitationBotanyAt(progress.get()).frame);
 
@@ -152,11 +158,12 @@ export function ContactGratitude() {
   useEffect(() => {
     progress.jump(scrollYProgress.get());
     canopyProgress.jump(scrollYProgress.get());
+    flex.jump(0);
     pointerX.set(0);
     pointerY.set(0);
     inkTargetX.set(0);
     inkTargetY.set(0);
-  }, [hydrated, coarsePointer, motionEnabled, pinEnabled, progress, canopyProgress, scrollYProgress, pointerX, pointerY, inkTargetX, inkTargetY]);
+  }, [hydrated, coarsePointer, motionEnabled, pinEnabled, progress, canopyProgress, flex, scrollYProgress, pointerX, pointerY, inkTargetX, inkTargetY]);
 
   return (
     <section
@@ -191,7 +198,7 @@ export function ContactGratitude() {
           data-contact-invitation-camera
           data-invitation-layer="camera"
           className={styles.camera}
-          style={motionEnabled ? { scale: cameraScale, y: cameraY, rotate: cameraRotate } : { scale: 1, y: 0, rotate: 0 }}
+          style={motionEnabled ? { scale: cameraScale, y: cameraY, rotate: cameraRotate, x: cameraX } : { scale: 1, y: 0, rotate: 0, x: 0 }}
         >
           <motion.div data-invitation-layer="pointer" className={styles.photograph} style={pointerEnabled ? { x: landscapeX, y: landscapeY } : { x: 0, y: 0 }}>
             <picture>
@@ -214,10 +221,10 @@ export function ContactGratitude() {
       </svg>
 
       <motion.div aria-hidden="true" data-invitation-layer="foreground-pointer" className={styles.botanicalForeground} style={pointerEnabled ? { x: foregroundX, y: foregroundY } : { x: 0, y: 0 }}>
-        <motion.div data-invitation-botany="left" className={`${styles.botanicalSide} ${styles.botanicalLeft}`} style={motionEnabled ? { x: botanicalLeftX, y: botanicalY, scale: botanicalScale, rotate: botanicalLeftRotate, opacity: botanicalOpacity } : { x: "-78%", y: 32, scale: 1.15, rotate: -8, opacity: 0.76 }}>
+        <motion.div data-invitation-botany="left" className={`${styles.botanicalSide} ${styles.botanicalLeft}`} style={motionEnabled ? { x: botanicalLeftX, y: botanicalLeftY, scale: botanicalScale, rotate: botanicalLeftRotate, opacity: botanicalOpacity } : { x: "-78%", y: 32, scale: 1.15, rotate: -8, opacity: 0.76 }}>
           <Image src={botanicalImage} alt="" fill unoptimized className={styles.botanicalImage} sizes="40vw" />
         </motion.div>
-        <motion.div data-invitation-botany="right" className={`${styles.botanicalSide} ${styles.botanicalRight}`} style={motionEnabled ? { x: botanicalRightX, y: botanicalY, scale: botanicalScale, rotate: botanicalRightRotate, opacity: botanicalOpacity } : { x: "78%", y: 32, scale: 1.15, rotate: 8, opacity: 0.76 }}>
+        <motion.div data-invitation-botany="right" className={`${styles.botanicalSide} ${styles.botanicalRight}`} style={motionEnabled ? { x: botanicalRightX, y: botanicalRightY, scale: botanicalScale, rotate: botanicalRightRotate, opacity: botanicalOpacity } : { x: "78%", y: 32, scale: 1.15, rotate: 8, opacity: 0.76 }}>
           <Image src={botanicalImage} alt="" fill unoptimized className={styles.botanicalImage} sizes="40vw" />
         </motion.div>
       </motion.div>
