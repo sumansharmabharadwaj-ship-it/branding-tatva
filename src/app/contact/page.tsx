@@ -68,6 +68,16 @@ export default function ContactPage() {
             is the immediate "who am I actually talking to" signal, the
             same two-jobs-one-fact pattern a masthead and a byline
             already play on any real publication. */}
+        {/* The hero carried two stacked washes that together peaked near
+            0.76 at the foot and 0.7 across the left third, so the
+            footage underneath arrived as an unreadable brown murk — the
+            "dark, vague, low quality" verdict this page's own media
+            standard was written to prevent. Rebalanced rather than
+            replaced, since the clip itself is an approved pick: the left
+            scrim is now an ellipse sized to the headline block instead
+            of a full-height column, so it still carries type contrast
+            where the words actually are while the rest of the frame
+            keeps its light. */}
         <PhotoHero
           video="/videos/generated/bt-contact-original-hero.mp4"
           videoMobile="/videos/generated/bt-contact-original-hero-mobile.mp4"
@@ -76,7 +86,7 @@ export default function ContactPage() {
           imagePosition="62% 56%"
           playbackRate={0.84}
           className="contact-hero-film"
-          overlayGradient="linear-gradient(180deg, rgba(25,27,22,0.18) 0%, rgba(28,29,23,0.32) 48%, rgba(29,27,23,0.76) 100%), linear-gradient(90deg, rgba(25,25,21,0.7) 0%, rgba(26,27,22,0.42) 46%, rgba(24,26,21,0.06) 78%)"
+          overlayGradient="linear-gradient(180deg, rgba(25,27,22,0.10) 0%, rgba(28,29,23,0.22) 48%, rgba(29,27,23,0.66) 100%), radial-gradient(95% 85% at 12% 52%, rgba(25,25,21,0.62) 0%, rgba(25,25,21,0.34) 42%, rgba(24,26,21,0) 74%)"
         >
           <div data-contact-hero-frame aria-hidden="true">
             <span />
@@ -189,12 +199,26 @@ export default function ContactPage() {
                 push
                 posterPriority={false}
               />
+              {/* The veil used to be one flat 0.84 → 0.62 wash across the
+                  whole plate, which is the failure the media standard
+                  names outright: grading footage down until it reads as
+                  mud so that type can sit anywhere on it. Measured
+                  against that standard the old peak was more than twice
+                  the 0.4 ceiling, and the result was a pebble bed you
+                  could not identify behind cream panels of almost the
+                  same value — no ground, no depth, no contrast for the
+                  glass to register against.
+                  Split into the two layers the standard actually asks
+                  for: a localized scrim weighted to the left, where the
+                  copy column sits and legibility is genuinely needed,
+                  and a much lighter global wash so the right half of the
+                  footage stays bright and readable as an image. */}
               <div
                 aria-hidden="true"
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(110deg, rgba(232,222,208,0.84) 0%, rgba(235,227,216,0.68) 55%, rgba(223,225,214,0.62) 100%)",
+                    "radial-gradient(120% 92% at 6% 46%, rgba(232,222,208,0.92) 0%, rgba(232,222,208,0.58) 36%, rgba(232,222,208,0) 68%), linear-gradient(110deg, rgba(232,222,208,0.44) 0%, rgba(235,227,216,0.28) 55%, rgba(223,225,214,0.22) 100%)",
                 }}
               />
             </>
@@ -227,12 +251,18 @@ export default function ContactPage() {
                 playbackRate={0.8}
                 posterPriority={false}
               />
+              {/* Same correction as the pathways scene above, and for the
+                  same reason: a 0.88 peak wash left the desk footage as
+                  an unreadable grey fog behind a cream form panel, so
+                  the page read as one flat beige field rather than glass
+                  resting on something. Localized scrim under the copy
+                  column, light wash everywhere else. */}
               <div
                 aria-hidden="true"
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "linear-gradient(100deg, rgba(235,232,221,0.88) 0%, rgba(232,229,219,0.66) 48%, rgba(218,224,214,0.48) 100%)",
+                    "radial-gradient(120% 95% at 5% 44%, rgba(235,232,221,0.93) 0%, rgba(235,232,221,0.58) 34%, rgba(235,232,221,0) 66%), linear-gradient(100deg, rgba(235,232,221,0.42) 0%, rgba(232,229,219,0.26) 48%, rgba(218,224,214,0.18) 100%)",
                 }}
               />
             </>

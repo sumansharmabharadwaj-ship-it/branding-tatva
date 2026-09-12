@@ -3,10 +3,22 @@
   background: #eae1d2; color: #342f27;
 }
 .scene { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; }
-.film { position: absolute; inset: 0; z-index: -1; overflow: hidden; opacity: .2; pointer-events: none; }
+/* This chapter reads as 1800px of flat cream on a real scroll-through,
+   and these two rules were why. The footage sat at opacity .2 behind a
+   wash whose first stop was fully opaque cream to 10% and still 85% at
+   midpoint — so the clip underneath was a ghost nobody could identify,
+   and the whole scene collapsed to one beige field with no ground for
+   the cards to sit on.
+   Corrected the same way the Contact scenes were, and for the same
+   reason the media standard gives: footage stays legible, the wash goes
+   light, and readability is bought with a localized scrim exactly where
+   the copy column sits rather than by blanketing the entire plate. */
+.film { position: absolute; inset: 0; z-index: -1; overflow: hidden; opacity: .58; pointer-events: none; }
 .scene::before {
   content: ""; position: absolute; z-index: 0; inset: 0; pointer-events: none;
-  background: linear-gradient(105deg, #eae1d2 10%, rgb(234 225 210 / 85%) 55%, rgb(234 225 210 / 45%));
+  background:
+    radial-gradient(118% 92% at 6% 50%, #eae1d2 0%, rgb(234 225 210 / 88%) 32%, rgb(234 225 210 / 0%) 70%),
+    linear-gradient(105deg, rgb(234 225 210 / 60%) 0%, rgb(234 225 210 / 36%) 55%, rgb(234 225 210 / 26%) 100%);
 }
 .frame {
   position: relative; z-index: 1; width: min(100%, 90rem); min-height: 100svh;

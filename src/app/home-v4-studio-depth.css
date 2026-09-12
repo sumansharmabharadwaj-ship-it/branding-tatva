@@ -37,10 +37,55 @@
     radial-gradient(34rem 30rem at 92% 72%, rgba(125, 154, 168, 0.12), transparent 72%);
 }
 
+/* These two aurora blooms were doing nothing at all. `screen` blending
+   lightens toward white, and this chapter's ground is cream (#f2f0e8),
+   so both blobs resolved to very nearly the background they sat on —
+   invisible on every real screen, while still paying for two 80px
+   blurs. At 0.34 opacity on top of that they had no chance.
+   `multiply` is the correct operator against a light ground: the same
+   colours now read as soft tinted shade rather than washing out, which
+   is what gives this chapter the depth the flat-cream run was missing.
+   They also drift now. A static gradient behind a scrolling page reads
+   as a flat panel; slow independent cycles on transform only (no
+   repaint, no layout) make the ground feel like weather instead. */
 .studio-cinematic__aurora {
   z-index: 1;
-  opacity: 0.34;
-  mix-blend-mode: screen;
+  opacity: 0.9;
+  mix-blend-mode: multiply;
+  will-change: transform;
+}
+
+.studio-cinematic__aurora--clay {
+  animation: studioAuroraClay 49s ease-in-out infinite alternate;
+}
+
+.studio-cinematic__aurora--sage {
+  animation: studioAuroraSage 63s ease-in-out infinite alternate;
+}
+
+@keyframes studioAuroraClay {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(14%, 9%, 0) scale(1.22); }
+}
+
+@keyframes studioAuroraSage {
+  0% { transform: translate3d(0, 0, 0) scale(1.14); }
+  100% { transform: translate3d(-12%, -8%, 0) scale(1); }
+}
+
+/* Reduced motion keeps the colour and the depth, and simply stops the
+   drift — the standing rule on this project is a static equivalent,
+   never a disabled component. */
+@media (prefers-reduced-motion: reduce) {
+  .studio-cinematic__aurora--clay,
+  .studio-cinematic__aurora--sage {
+    animation: none;
+  }
+}
+
+html[data-motion="reduced"] .studio-cinematic__aurora--clay,
+html[data-motion="reduced"] .studio-cinematic__aurora--sage {
+  animation: none;
 }
 
 .studio-cinematic__aurora--clay {

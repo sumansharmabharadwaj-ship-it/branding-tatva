@@ -1,0 +1,203 @@
+/* Animated section background gradients.
+ *
+ * Built from Suman's reference board (Sep 2026): the dark botanical
+ * orangery, the god-ray forest, the Plura cyanotype, the jungle glass
+ * cards, the warm sunset mountains, the frosted-leaf panel, the sage
+ * plantation editorial, and the bone-cream Wanderlust poster. The
+ * technique is mined from those, the hues stay inside this site's own
+ * earthy palette per the standing rule (adapt the technique, never
+ * import a reference's literal colors).
+ *
+ * Performance shape, deliberately: every moving layer animates only
+ * `transform`, so the whole field composites on the GPU and never
+ * repaints. Animating background-position or gradient stops would
+ * repaint a full-bleed box every frame — measurably worse on the
+ * mid-range Android hardware this site actually gets read on.
+ *
+ * Stacking: no negative z-index anywhere. This codebase has been bitten
+ * before by a background layer with -z-10 escaping its parent's
+ * stacking context and painting behind an ancestor's own background
+ * (the Process section video). DOM order does the work instead — this
+ * field renders first, content after, and the field sets z-index 0 on
+ * an explicitly positioned root so it owns a context of its own.
+ *
+ * Sticky safety: overflow:hidden lives on THIS leaf wrapper only. It is
+ * never an ancestor of pinned content, so it cannot break the
+ * containing block for a position:sticky descendant elsewhere.
+ */
+
+.field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--lg-base);
+  /* Paint containment keeps the blurred blobs from inflating this
+     section's layout/paint box into its neighbours. */
+  contain: paint;
+}
+
+/* Layered over existing media rather than standing in for it: the base
+   fill and the vignette both drop out, so only the drifting colour
+   remains and whatever sits underneath still reads. Used where a
+   section already has approved footage that should stay visible, and
+   the wash on top of it was a dead static gradient. */
+.plain {
+  background-color: transparent;
+}
+
+.plain .vignette {
+  display: none;
+}
+
+/* Each drifting mass is a soft radial bloom. No filter: blur() — a
+   radial-gradient with a long transparent tail is already soft, and
+   costs nothing per frame, whereas a large blur radius is one of the
+   most expensive things a compositor can be asked to hold. */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.blobA {
+  width: 90%;
+  height: 120%;
+  top: -30%;
+  left: -18%;
+  background: radial-gradient(circle at 50% 50%, var(--lg-a) 0%, color-mix(in oklab, var(--lg-a) 55%, transparent) 38%, transparent 68%);
+  animation: driftA 46s ease-in-out infinite alternate;
+}
+
+.blobB {
+  width: 80%;
+  height: 105%;
+  top: -10%;
+  right: -20%;
+  background: radial-gradient(circle at 50% 50%, var(--lg-b) 0%, color-mix(in oklab, var(--lg-b) 50%, transparent) 40%, transparent 70%);
+  animation: driftB 61s ease-in-out infinite alternate;
+}
+
+.blobC {
+  width: 105%;
+  height: 90%;
+  bottom: -34%;
+  left: 8%;
+  background: radial-gradient(circle at 50% 50%, var(--lg-c) 0%, color-mix(in oklab, var(--lg-c) 45%, transparent) 42%, transparent 72%);
+  animation: driftC 53s ease-in-out infinite alternate;
+}
+
+/* The light shaft: the god-ray read from the forest reference and the
+   window light in the orangery plate. A single wide, very low-opacity
+   sweep on a long cycle — it should register as weather, not as an
+   effect anyone can name. */
+.shaft {
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  width: 55%;
+  height: 190%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in oklab, var(--lg-light) 42%, transparent) 42%,
+    color-mix(in oklab, var(--lg-light) 62%, transparent) 50%,
+    color-mix(in oklab, var(--lg-light) 42%, transparent) 58%,
+    transparent 100%
+  );
+  will-change: transform, opacity;
+  animation: sweep 38s ease-in-out infinite alternate;
+}
+
+/* Vignette: keeps type legible against the brightest part of the field
+   without darkening the whole plate, which is the failure the media
+   standard calls out by name (grading a background down so text can sit
+   on it, instead of letting the panel carry readability). */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 120% 90% at 50% 45%,
+    transparent 0%,
+    transparent 52%,
+    color-mix(in oklab, var(--lg-base) 62%, transparent) 82%,
+    color-mix(in oklab, var(--lg-base) 88%, transparent) 100%
+  );
+}
+
+/* Film grain. An inline SVG turbulence tile — about 250 bytes, no
+   network request, and it stops the wide flat gradients from banding on
+   8-bit panels, which is the single most common way an effect like this
+   reads as "cheap" on a real screen. */
+.grain {
+  position: absolute;
+  inset: -200%;
+  width: 500%;
+  height: 500%;
+  opacity: var(--lg-grain, 0.05);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  will-change: transform;
+  animation: grainShift 7s steps(6) infinite;
+}
+
+@keyframes driftA {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(12%, 7%, 0) scale(1.16); }
+}
+
+@keyframes driftB {
+  0%   { transform: translate3d(0, 0, 0) scale(1.08); }
+  100% { transform: translate3d(-14%, 10%, 0) scale(1); }
+}
+
+@keyframes driftC {
+  0%   { transform: translate3d(0, 0, 0) scale(1.05); }
+  100% { transform: translate3d(9%, -9%, 0) scale(1.2); }
+}
+
+@keyframes sweep {
+  0%   { transform: translate3d(-120%, 0, 0) rotate(9deg); opacity: 0.5; }
+  50%  { opacity: 1; }
+  100% { transform: translate3d(70%, 0, 0) rotate(9deg); opacity: 0.45; }
+}
+
+@keyframes grainShift {
+  0%   { transform: translate3d(0, 0, 0); }
+  25%  { transform: translate3d(-2%, 1%, 0); }
+  50%  { transform: translate3d(1%, -2%, 0); }
+  75%  { transform: translate3d(-1%, -1%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* Reduced motion: the field keeps its full colour and depth, it simply
+   stops moving. Per the project rule, every animated component ships a
+   static equivalent rather than disappearing — a visitor who prefers
+   reduced motion should still get the designed background, not a flat
+   fill that reads as a different (worse) design. */
+@media (prefers-reduced-motion: reduce) {
+  .blobA,
+  .blobB,
+  .blobC,
+  .shaft,
+  .grain {
+    animation: none;
+  }
+
+  .shaft {
+    transform: translate3d(-20%, 0, 0) rotate(9deg);
+    opacity: 0.7;
+  }
+}
+
+/* The sitewide MotionPreference toggle writes data-motion="reduced" on
+   the document element; honour it the same way the media query does so
+   the footer control actually governs this field too. */
+:global([data-motion="reduced"]) .blobA,
+:global([data-motion="reduced"]) .blobB,
+:global([data-motion="reduced"]) .blobC,
+:global([data-motion="reduced"]) .shaft,
+:global([data-motion="reduced"]) .grain {
+  animation: none;
+}

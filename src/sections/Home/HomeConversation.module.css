@@ -6,14 +6,24 @@
   position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
 }
 .invitationMediaCamera { position: absolute; inset: 0; }
-.questionMedia { opacity: .15; }
-.invitationMedia { opacity: .32; }
+/* Same correction as the paths chapter: media at .15 behind a wash that
+   is opaque cream to 8% and still 90% at midpoint leaves these two
+   closing scenes as flat paper, which is most of why the back half of
+   Home reads as one long beige run. Footage up, wash down, and the
+   contrast for the copy bought with a localized scrim where the column
+   actually sits. */
+.questionMedia { opacity: .52; }
+.invitationMedia { opacity: .58; }
 .questions::before, .invitation::before {
   content: ""; position: absolute; z-index: 0; inset: 0; pointer-events: none;
-  background: linear-gradient(105deg, #f1eadf 8%, rgb(241 234 223 / 90%) 48%, rgb(241 234 223 / 35%));
+  background:
+    radial-gradient(115% 92% at 7% 50%, #f1eadf 0%, rgb(241 234 223 / 90%) 32%, rgb(241 234 223 / 0%) 70%),
+    linear-gradient(105deg, rgb(241 234 223 / 62%) 0%, rgb(241 234 223 / 38%) 48%, rgb(241 234 223 / 24%) 100%);
 }
 .invitation::before {
-  background: linear-gradient(100deg, #eee5d7 5%, rgb(238 229 215 / 88%) 55%, rgb(238 229 215 / 45%));
+  background:
+    radial-gradient(115% 92% at 6% 52%, #eee5d7 0%, rgb(238 229 215 / 88%) 34%, rgb(238 229 215 / 0%) 72%),
+    linear-gradient(100deg, rgb(238 229 215 / 58%) 0%, rgb(238 229 215 / 36%) 55%, rgb(238 229 215 / 24%) 100%);
 }
 .questionFrame, .invitationFrame {
   position: relative; z-index: 1; width: min(100%, 90rem); margin-inline: auto;
@@ -165,7 +175,10 @@
   .bookButton { width: 100%; padding-inline: 1.15rem; gap: .7rem; }
   .preparation { margin-bottom: .7rem; }
   .conversation li { padding-block: 1.15rem; }
-  .invitationMedia { opacity: .18; }
+  /* Raised with the desktop value above, kept a little lower because the
+     mobile copy column spans the full width and has no clear side of
+     the frame to fall back on. */
+  .invitationMedia { opacity: .42; }
   .signoff { font-size: 1.125rem; }
 }
 
