@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Cormorant_Garamond } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
@@ -36,10 +36,17 @@ export function ContactGratitude() {
   const bookingHref = calendlyHrefForServicesPackage(site.calendlyUrl, packageSlug);
   const motionEnabled = hydrated && !prefersReducedMotion;
   const pinEnabled = motionEnabled && stageFits;
+  const pointerEnabled = motionEnabled && !coarsePointer;
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
-  const x = useSpring(pointerX, { stiffness: 44, damping: 22, mass: 0.8 });
-  const y = useSpring(pointerY, { stiffness: 44, damping: 22, mass: 0.8 });
+  const x = useSpring(pointerX, { stiffness: 70, damping: 24, mass: 0.65 });
+  const y = useSpring(pointerY, { stiffness: 70, damping: 24, mass: 0.65 });
+  const landscapeX = useTransform(x, [-1, 1], [-8, 8]);
+  const landscapeY = useTransform(y, [-1, 1], [-6, 6]);
+  const headingX = useTransform(x, [-1, 1], [6, -6]);
+  const headingY = useTransform(y, [-1, 1], [4, -4]);
+  const headingRotateX = useTransform(y, [-1, 1], [-1.5, 1.5]);
+  const headingRotateY = useTransform(x, [-1, 1], [2.5, -2.5]);
   const { scrollYProgress: entryProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "start start"],
@@ -53,6 +60,12 @@ export function ContactGratitude() {
   const scrollYProgress = useTransform(() => pinEnabled
     ? entryProgress.get() * 0.14 + storyProgress.get() * 0.86
     : entryProgress.get());
+  // Scroll takes the camera back to its authored path. The pointer springs
+  // settle without carrying a stale tilt into the next reading frame.
+  useMotionValueEvent(scrollYProgress, "change", () => {
+    pointerX.set(0);
+    pointerY.set(0);
+  });
   const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 34, mass: 0.6 });
   const pose = useTransform(() => invitationMotionAt(progress.get(), coarsePointer));
   const cameraScale = useTransform(pose, (value) => value.cameraScale);
@@ -114,13 +127,14 @@ export function ContactGratitude() {
         data-contact-invitation-stage
         className={styles.stage}
         onPointerMove={(event) => {
-        if (!motionEnabled || coarsePointer || event.pointerType !== "mouse") return;
-        const bounds = event.currentTarget.getBoundingClientRect();
-        pointerX.set(((event.clientX - bounds.left) / bounds.width - 0.5) * 8);
-        pointerY.set(((event.clientY - bounds.top) / bounds.height - 0.5) * 6);
-      }}
-      onPointerLeave={() => { pointerX.set(0); pointerY.set(0); }}
-      onFocusCapture={() => { pointerX.set(0); pointerY.set(0); }}
+          if (!pointerEnabled || event.pointerType !== "mouse" || event.currentTarget.matches(":focus-within")) return;
+          const bounds = event.currentTarget.getBoundingClientRect();
+          pointerX.set(Math.max(-1, Math.min(1, (event.clientX - bounds.left) / Math.max(1, bounds.width) * 2 - 1)));
+          pointerY.set(Math.max(-1, Math.min(1, (event.clientY - bounds.top) / Math.max(1, bounds.height) * 2 - 1)));
+        }}
+        onPointerLeave={() => { pointerX.set(0); pointerY.set(0); }}
+        onPointerCancel={() => { pointerX.set(0); pointerY.set(0); }}
+        onFocusCapture={() => { pointerX.set(0); pointerY.set(0); }}
       >
       <motion.div className={styles.landscape} aria-hidden="true" data-invitation-layer="aperture" style={motionEnabled ? { clipPath: aperture } : { clipPath: "none" }}>
         <motion.div
@@ -129,7 +143,7 @@ export function ContactGratitude() {
           className={styles.camera}
           style={motionEnabled ? { scale: cameraScale, y: cameraY, rotate: cameraRotate } : { scale: 1, y: 0, rotate: 0 }}
         >
-          <motion.div data-invitation-layer="pointer" className={styles.photograph} style={motionEnabled && !coarsePointer ? { x, y } : { x: 0, y: 0 }}>
+          <motion.div data-invitation-layer="pointer" className={styles.photograph} style={pointerEnabled ? { x: landscapeX, y: landscapeY } : { x: 0, y: 0 }}>
             <picture>
               <source media="(max-width: 767px)" srcSet="/images/generated/bt-contact-sunlit-invitation-mobile-v1.webp" />
               <Image
@@ -146,7 +160,12 @@ export function ContactGratitude() {
 
       <div className={styles.content}>
         <p className={styles.eyebrow}>Before you go</p>
-        <h2 id="contact-gratitude-heading" className={styles.heading}>
+        <motion.h2
+          id="contact-gratitude-heading"
+          data-invitation-layer="heading-depth"
+          className={styles.heading}
+          style={pointerEnabled ? { x: headingX, y: headingY, rotateX: headingRotateX, rotateY: headingRotateY } : { x: 0, y: 0, rotateX: 0, rotateY: 0 }}
+        >
           <motion.span
             data-invitation-layer="thank-you"
             className={styles.thankYou}
@@ -157,7 +176,7 @@ export function ContactGratitude() {
             className={styles.makingRoom}
             style={motionEnabled ? { x: makingRoomX, y: makingRoomY, scale: makingRoomScale, rotate: makingRoomRotate, rotateY: makingRoomRotateY } : { x: 0, y: 0, scale: 1, rotate: 0, rotateY: 0 }}
           >making room.</motion.em>
-        </h2>
+        </motion.h2>
         <motion.div
           data-invitation-layer="note"
           className={styles.acknowledgement}

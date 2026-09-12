@@ -46,6 +46,7 @@
   margin-inline: auto;
   padding: clamp(140px, 17svh, 184px) 28px 120px;
   text-align: center;
+  perspective: 1400px;
 }
 
 .eyebrow {

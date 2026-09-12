@@ -20,7 +20,7 @@ const resting = {
   noteY: 0, noteOpacity: 1, invitationY: 0, invitationOpacity: 1, signatureY: 0, signatureOpacity: 1,
 };
 
-function assertCameraCoverage(current, width, height) {
+function assertCameraCoverage(current, width, height, compact) {
   const originX = width / 2;
   const originY = (height + 12) * 0.72 - 6;
   const radians = current.cameraRotate * Math.PI / 180;
@@ -33,6 +33,11 @@ function assertCameraCoverage(current, width, height) {
       const x = (Math.cos(radians) * dx + Math.sin(radians) * dy) / current.cameraScale + originX;
       const y = (-Math.sin(radians) * dx + Math.cos(radians) * dy) / current.cameraScale + originY;
       assert.ok(x >= -6 && x <= width + 6 && y >= -6 && y <= height + 6, "The opening camera must cover every visible edge.");
+      for (const pointerX of compact ? [0] : [-8, 0, 8]) {
+        for (const pointerY of compact ? [0] : [-6, 0, 6]) {
+          assert.ok(x - pointerX >= -12 && x - pointerX <= width + 12 && y - pointerY >= -12 && y - pointerY <= height + 12, "Pointer depth must never expose an empty image edge, including during scroll.");
+        }
+      }
     }
   }
 }
@@ -51,7 +56,7 @@ for (const compact of [false, true]) {
     for (const opacity of [current.noteOpacity, current.invitationOpacity, current.signatureOpacity]) assert.ok(opacity >= 0 && opacity <= 1);
     assert.ok(current.noteOpacity >= current.invitationOpacity && current.invitationOpacity >= current.signatureOpacity, "The note, invitation and signature must appear in reading order.");
     if (compact) assert.equal(Math.abs(current.thankYouX) + Math.abs(current.makingRoomX) + Math.abs(current.cameraRotate), 0, "Compact screens must avoid sideways text travel and camera roll.");
-    for (const [w, h] of compact ? [[320, 822], [390, 844]] : [[1280, 800], [1363, 936], [2560, 1440]]) assertCameraCoverage(current, w, h);
+    for (const [w, h] of compact ? [[320, 822], [390, 844]] : [[1280, 720], [1363, 936], [2560, 1440]]) assertCameraCoverage(current, w, h, compact);
     if (step) for (const key of Object.keys(current)) assert.ok(Math.abs(current[key] - forward[step - 1][key]) < 2, `A discontinuity appeared in ${key}.`);
   }
   for (let step = 1000; step >= 0; step--) assert.deepEqual(pose(step / 1000, compact), forward[step], "Reverse scroll must rewind the same film.");
