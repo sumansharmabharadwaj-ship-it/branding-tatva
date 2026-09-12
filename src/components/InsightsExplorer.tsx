@@ -84,11 +84,11 @@ const INTENT_LANGUAGE: Record<string, string> = {
   "customer-experience":
     "trust hesitate friction gap gaps enquiry inquiry onboarding journey handoff slow confusing inconsistent experience promise delivery drop off",
   "distinctive-brand":
-    "same sameness similar generic interchangeable invisible attention recognition distinctive visual identity polished bland stand out",
+    "same sameness similar generic interchangeable invisible attention recognition distinctive visual identity polished bland stand out ai artificial intelligence generated slop machine average automated content tools",
   "brand-messaging":
     "explain explanation words website homepage proposal sales language voice message confusing unclear value proposition",
   "brand-memory":
-    "forgettable recall remember memory consistency content publish posting recognition repeated familiar awareness faint",
+    "forgettable recall remember memory consistency content publish posting recognition repeated familiar awareness faint chatgpt ai assistant recommend recommendation answer engine shortlist skipped rebrand backlash logo change jaguar",
 };
 
 function scorePostForIntent(post: InsightCardPost, cleanQuery: string) {

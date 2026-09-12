@@ -195,6 +195,10 @@ export default async function InsightArticlePage({ params }: Props) {
         url: `${site.url}/insights/${post.slug}`,
         headline: post.title,
         description: post.excerpt,
+        // The direct answer is the page's opening block for readers; the
+        // abstract carries the same sentence for answer engines, which
+        // quote abstracts far more readily than reconstructed excerpts.
+        abstract: post.directAnswer,
         image: {
           "@type": "ImageObject",
           url: `${site.url}${post.heroImage}`,

@@ -177,7 +177,7 @@ export function InsightsFooterInvitation({
             <strong>
               {selectedPath
                 ? selectedPath.service.name
-                : "Explore the engagements"}
+                : "See the engagements"}
             </strong>
             <span>
               {selectedPath

@@ -3,9 +3,44 @@
   "configurations": [
     {
       "name": "branding-tatva-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "next",
+        "dev",
+        "--port",
+        "3000"
+      ],
       "port": 3000
+    },
+    {
+      "name": "branding-tatva-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 4173
+    },
+    {
+      "name": "branding-tatva-dev-alt",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "next",
+        "dev"
+      ],
+      "port": 3105,
+      "autoPort": true
+    },
+    {
+      "name": "insights-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "next",
+        "dev",
+        "--port",
+        "3456"
+      ],
+      "port": 3456
     }
   ]
 }

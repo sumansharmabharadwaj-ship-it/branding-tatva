@@ -1,3 +1,4 @@
+import { aiEraInsightPosts } from "@/data/aiEraInsights";
 import { brandArchitectureInsightPosts } from "@/data/brandArchitectureInsights";
 import { brandConsistencyInsightPosts } from "@/data/brandConsistencyInsights";
 import { brandDiscoveryWorkshopInsightPosts } from "@/data/brandDiscoveryWorkshopInsights";
@@ -63,6 +64,7 @@ const combinedPosts = [
   ...servicePageMessagingInsightPosts,
   ...caseStudyInsightPosts,
   ...testimonialEvidenceInsightPosts,
+  ...aiEraInsightPosts,
 ];
 
 const uniquePosts = combinedPosts.filter(
@@ -107,6 +109,9 @@ const relatedRegistrations = [
   { supportingSlug: "service-page-messaging-strategy", pillarSlugs: ["homepage-messaging-service-businesses", "website-messaging-hierarchy-service-businesses", "brand-positioning-strategy-service-businesses"] },
   { supportingSlug: "case-study-structure-service-businesses", pillarSlugs: ["turn-client-proof-into-positioning-advantage", "service-page-messaging-strategy", "brand-audit-checklist-before-rebrand"] },
   { supportingSlug: "testimonial-questions-buying-evidence", pillarSlugs: ["case-study-structure-service-businesses", "turn-client-proof-into-positioning-advantage", "service-page-messaging-strategy"] },
+  { supportingSlug: "how-ai-assistants-choose-brands-to-recommend", pillarSlugs: ["brand-awareness-vs-brand-recall", "measure-brand-recall-limited-budget", "distinctive-brand-assets-audit"] },
+  { supportingSlug: "why-ai-content-makes-brands-average", pillarSlugs: ["why-beautiful-brand-identity-can-be-forgettable", "brand-voice-guidelines-writers-can-use", "find-real-differentiator-crowded-service-market"] },
+  { supportingSlug: "what-rebrand-backlashes-teach-about-brand-memory", pillarSlugs: ["brand-refresh-vs-rebrand-how-much-change", "reposition-established-service-business-without-losing-recognition", "brand-audit-checklist-before-rebrand"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {

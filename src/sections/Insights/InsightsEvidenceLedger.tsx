@@ -163,7 +163,7 @@ const WorksheetServiceLink = forwardRef<HTMLDivElement, {
           {/* Reserve the longest service label at each available width. */}
           {serviceNames.map((name) => (
             <span key={name} className="insights-worksheet__service-measure">
-              Explore {name}<ArrowUpRight />
+              Open {name}<ArrowUpRight />
             </span>
           ))}
           <motion.span
@@ -173,7 +173,7 @@ const WorksheetServiceLink = forwardRef<HTMLDivElement, {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            Explore {layer.service.name}<ArrowUpRight />
+            Open {layer.service.name}<ArrowUpRight />
           </motion.span>
         </span>
       </TrackedLink>

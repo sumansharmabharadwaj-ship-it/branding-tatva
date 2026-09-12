@@ -119,6 +119,40 @@ export function InsightFrameworkVisualizer({
           <div className="insight-framework__rings" aria-hidden="true">
             <span />
           </div>
+          {/* The spine draws the reader's position through the framework:
+              a track of step nodes with a fill that flows to the active
+              decision. Purely presentational; the tablist above stays the
+              interactive control. */}
+          <div className="insight-framework__spine" aria-hidden="true">
+            <span className="insight-framework__spine-track" />
+            <motion.span
+              className="insight-framework__spine-fill"
+              initial={false}
+              animate={{
+                width:
+                  framework.steps.length > 1
+                    ? `${(activeIndex / (framework.steps.length - 1)) * 100}%`
+                    : "100%",
+              }}
+              transition={{
+                duration: prefersReducedMotion ? 0 : 0.55,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            />
+            {framework.steps.map((step, index) => (
+              <span
+                key={step.title}
+                className="insight-framework__spine-node"
+                data-done={index <= activeIndex ? "true" : "false"}
+                style={{
+                  left:
+                    framework.steps.length > 1
+                      ? `${(index / (framework.steps.length - 1)) * 100}%`
+                      : "0%",
+                }}
+              />
+            ))}
+          </div>
           <ElementGlyph
             slug={element}
             className="insight-framework__glyph h-9 w-9"

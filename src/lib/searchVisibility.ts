@@ -28,11 +28,34 @@ export function searchCrawlerRules(): MetadataRoute.Robots["rules"] {
     return { userAgent: "*", disallow: "/" };
   }
 
+  // Answer and generative engines are named explicitly rather than left
+  // to the wildcard rule. The wildcard already permits them, but the
+  // explicit entries are what AEO tooling checks for, and they mean a
+  // future tightening of the wildcard cannot silently drop the site out
+  // of AI answers as a side effect. /api/ routes return JSON with no
+  // reader-facing content, so every crawler is steered away from them.
   return [
     {
-      userAgent: ["Googlebot", "Bingbot", "OAI-SearchBot", "ChatGPT-User"],
+      userAgent: [
+        "Googlebot",
+        "Bingbot",
+        "OAI-SearchBot",
+        "ChatGPT-User",
+        "GPTBot",
+        "ClaudeBot",
+        "Claude-Web",
+        "anthropic-ai",
+        "PerplexityBot",
+        "Perplexity-User",
+        "Google-Extended",
+        "Applebot-Extended",
+        "meta-externalagent",
+        "cohere-ai",
+        "CCBot",
+      ],
       allow: "/",
+      disallow: "/api/",
     },
-    { userAgent: "*", allow: "/" },
+    { userAgent: "*", allow: "/", disallow: "/api/" },
   ];
 }

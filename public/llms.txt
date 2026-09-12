@@ -21,6 +21,12 @@ The practice is based in India and delivers founder-led remote projects for busi
 
 Legacy `/blog` URLs, the retired `/work` index, and superseded Insight slugs permanently redirect to their closest current guide, project evidence, or service path.
 
+## New and notable guides
+
+- [How AI assistants decide which brands to recommend](https://brandingtatva.com/insights/how-ai-assistants-choose-brands-to-recommend): why assistants name some brands and skip others, explained through entity consistency, mental availability, and third-party corroboration
+- [Why AI content makes brands average, and what escapes it](https://brandingtatva.com/insights/why-ai-content-makes-brands-average): the statistical mechanism behind AI sameness and the distinctiveness system that survives it
+- [What the rebrand backlash year teaches about brand memory](https://brandingtatva.com/insights/what-rebrand-backlashes-teach-about-brand-memory): the Cracker Barrel and Jaguar controversies of 2025 read as memory psychology, with a change budget framework for established brands
+
 ## Contact
 
 - Email: suman@brandingtatva.com

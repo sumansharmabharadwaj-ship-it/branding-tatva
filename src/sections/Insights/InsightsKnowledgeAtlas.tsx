@@ -385,7 +385,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
           <p>
             {carriedPath
               ? `${carriedPath.name} is selected. Its questions, evidence, essays, and relevant engagement are gathered here.`
-              : "Explore the questions buyers leave you with. Each topic brings together the reading, client work, and service that can help."}
+              : "Start from the question buyers leave you with. Each topic gathers the reading, client work, and service that can help."}
           </p>
         </header>
 
@@ -562,7 +562,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                     <strong>{activePath.service.name}</strong>
                     <p>{activePath.service.frame}</p>
                     <span>
-                      Explore the service
+                      Open the service
                       <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                     </span>
                   </Link>
