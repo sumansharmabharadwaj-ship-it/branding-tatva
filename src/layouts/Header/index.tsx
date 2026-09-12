@@ -207,15 +207,15 @@ export function Header({ transparent = false }: HeaderProps) {
               scrolled ? "bg-[#f4efe6]/94" : "bg-[#f4efe6]/84"
             }`}
           >
-            <Link href="/" aria-label="Branding Tatva home" className="site-header__brand flex min-w-0 shrink-0 items-center gap-3">
-              <LogoMark size={32} className="shrink-0" />
+            <Link href="/" aria-label="Branding Tatva home" data-brand-compact={pathname === "/" && scrolled ? "true" : undefined} className="site-header__brand flex min-w-0 shrink-0 items-center gap-3">
+              <LogoMark key={pathname === "/" ? "home-mark" : "page-mark"} size={40} animated={pathname === "/"} className="shrink-0" />
               <span aria-hidden="true" className="site-header__divider hidden h-6 w-px bg-soil/20 min-[360px]:block" />
               {/* Logo owns an inline-flex display internally, so the
                   responsive visibility belongs to a parent wrapper.
                   Shared mobile CSS keeps the complete wordmark visible
                   without crowding the menu control on narrow phones. */}
               <span className="site-header__wordmark hidden min-[360px]:inline-flex">
-                <Logo className="origin-left" />
+                <Logo key={pathname === "/" ? "home-name" : "page-name"} animated={pathname === "/"} className="origin-left" />
               </span>
             </Link>
 
