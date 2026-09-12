@@ -47,6 +47,7 @@ for (const compact of [false, true]) {
     forward.push(current);
     assert.ok(Object.values(current).every(Number.isFinite));
     assert.ok(current.cameraScale >= 1 && current.cameraScale <= (compact ? 1.26 : 1.48));
+    assert.ok(current.windowX >= 0 && current.windowX <= 32 && current.windowTop >= 0 && current.windowBottom >= 0 && current.windowTop + current.windowBottom < 60, "The panorama must keep a substantial landscape visible throughout its transition.");
     for (const opacity of [current.noteOpacity, current.invitationOpacity, current.signatureOpacity]) assert.ok(opacity >= 0 && opacity <= 1);
     assert.ok(current.noteOpacity >= current.invitationOpacity && current.invitationOpacity >= current.signatureOpacity, "The note, invitation and signature must appear in reading order.");
     if (compact) assert.equal(Math.abs(current.thankYouX) + Math.abs(current.makingRoomX) + Math.abs(current.cameraRotate), 0, "Compact screens must avoid sideways text travel and camera roll.");
@@ -57,6 +58,7 @@ for (const compact of [false, true]) {
 }
 assert.ok(pose(0.14).cameraScale > 1.4 && pose(0.14).makingRoomScale > 1.4, "The opening must retain the explicitly requested dramatic scale change.");
 assert.ok(pose(0.4).windowX < pose(0.14).windowX && pose(0.7).windowX === 0, "The narrow landscape must open to full bleed.");
+assert.ok(pose(0.48).windowX < 5 && pose(0.48).windowTop > 14, "The landscape must open sideways into a panorama before filling the screen vertically.");
 assert.equal(pose(0.64).thankYouX, 0);
 assert.ok(pose(0.64).makingRoomX > 0, "The second headline should follow the first.");
 console.log("[contact-invitation] 2,002 reversible film poses verified: camera coverage, type depth, reading order, and compact bounds.");

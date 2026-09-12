@@ -5,14 +5,15 @@ function easeBetween(value: number, start: number, end: number) {
   return t * t * (3 - 2 * t);
 }
 
-/** Three reversible beats: a narrow landscape, oversized type moving through
- * depth, then the approved open invitation. The last 14% is a reading hold.
+/** Three reversible beats: a narrow landscape opens into a panorama before
+ * the full invitation. Type travels through depth; the last 14% is a reading hold.
  * Short screens use the same sequence during native entry without pinning.
  */
 export function invitationMotionAt(progress: number, compact = false) {
   const p = Number.isFinite(progress) ? clamp(progress) : 1;
   const camera = 1 - easeBetween(p, 0.04, 0.78);
-  const opening = 1 - easeBetween(p, 0.16, 0.7);
+  const opening = 1 - easeBetween(p, 0.16, 0.58);
+  const panorama = easeBetween(p, 0.16, 0.42) * (1 - easeBetween(p, 0.42, 0.7));
   const thanks = 1 - easeBetween(p, 0.2, 0.64);
   const room = 1 - easeBetween(p, 0.28, 0.72);
   const note = 1 - easeBetween(p, 0.5, 0.76);
@@ -24,9 +25,9 @@ export function invitationMotionAt(progress: number, compact = false) {
     cameraY: camera * (compact ? 24 : 48),
     cameraRotate: compact ? 0 : -4 * camera,
     windowX: opening * (compact ? 19 : 32),
-    windowTop: opening * 13,
-    windowBottom: opening * 12,
-    windowRadius: opening * 220,
+    windowTop: opening * 13 + panorama * (compact ? 8 : 16),
+    windowBottom: opening * 12 + panorama * (compact ? 7 : 14),
+    windowRadius: opening * 220 + panorama * 32,
     thankYouX: compact ? 0 : -130 * thanks,
     thankYouY: thanks * (compact ? 22 : 40),
     thankYouScale: 1 + thanks * (compact ? 0.08 : 0.35),
