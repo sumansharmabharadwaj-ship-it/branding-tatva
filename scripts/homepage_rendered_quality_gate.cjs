@@ -85,12 +85,15 @@ const cssText = cssFiles
   .join("\n");
 for (const marker of [
   ".home-v4-guide",
-  ".home-v4-cursor",
+  // The pointer is the layout's sitewide sun cursor now; a homepage-only
+  // cursor class reappearing here would mean the split-cursor bug is back.
+  ".sun-cursor",
   "text-wrap:balance",
   "outline:2px solid #ead6bc",
 ]) {
   assert(cssText.includes(marker), `Rendered homepage CSS is missing ${marker}.`);
 }
+assert(!cssText.includes(".home-v4-cursor"), "A homepage-only cursor style has returned; the site must keep one shared cursor.");
 assert(cssBytes <= 600_000, `Homepage CSS budget exceeded: ${cssBytes.toLocaleString()} bytes.`);
 
 console.log(

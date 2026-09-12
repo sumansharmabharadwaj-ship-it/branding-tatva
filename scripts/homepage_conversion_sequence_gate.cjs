@@ -47,12 +47,16 @@ for (const runtime of [
   "<HomeV4MediaDirector />",
   "<HomeV4HeaderDirector />",
   "<HomeV4SceneRhythm />",
-  "<LivingCursor />",
   "<GuidedView />",
   "<HomePacingDirector />",
 ]) {
   assert(experience.includes(runtime), `Homepage runtime is missing ${runtime}.`);
 }
+// One cursor for the whole site: the layout's SparkCursor. A homepage-only
+// cursor mount is exactly the bug that made the pointer change identity
+// between routes, so its absence here is asserted rather than its presence.
+assert(!experience.includes("LivingCursor"), "The homepage must inherit the sitewide cursor instead of mounting its own.");
+assert(read("src/app/layout.tsx").includes("<SparkCursor />"), "The root layout must mount the sitewide SparkCursor.");
 assert(!experience.includes("HomeV4ProcessTempo"), "The working method must keep the visitor's chosen stage instead of restoring automatic selection.");
 
 for (const marker of [
