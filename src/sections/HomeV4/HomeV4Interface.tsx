@@ -3,7 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import { Compass, Hand, Pause, Play, RotateCcw } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import {
   publishHomeGuideMode,
@@ -27,6 +27,15 @@ const CHAPTER_NAMES = [
   "invitation",
 ] as const;
 const CURSOR_SPRING = { stiffness: 460, damping: 34, mass: 0.34 } as const;
+const TAB_STOP_SELECTOR = "a[href], button, input, select, textarea, [tabindex]";
+
+function isAvailableTabStop(element: HTMLElement) {
+  return element.tabIndex >= 0 &&
+    !element.matches(":disabled") &&
+    !element.closest('[inert], [aria-hidden="true"]') &&
+    element.getClientRects().length > 0 &&
+    window.getComputedStyle(element).visibility === "visible";
+}
 
 type GuideMode = HomeGuideMode;
 type CursorWorld = "dark" | "light";
@@ -268,6 +277,37 @@ export function GuidedView() {
     };
   }, [changeMode, dismissHint, prefersReducedMotion, stopGuidedMotion]);
 
+  function continueReading(event: ReactKeyboardEvent<HTMLDivElement>) {
+    if (event.key !== "Tab" || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
+
+    const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(TAB_STOP_SELECTOR))
+      .filter(isAvailableTabStop);
+    if (event.target !== controls[controls.length - 1]) return;
+
+    const chapter = resolveChapters()[activeIndex];
+    if (!chapter) return;
+    const candidates = Array.from(chapter.querySelectorAll<HTMLElement>(TAB_STOP_SELECTOR))
+      .filter(isAvailableTabStop);
+    // The fixed guide precedes the opening in DOM order. Leave it at the
+    // current reading position, preferring a control already in the viewport.
+    const destination = candidates.find((candidate) => {
+      const rect = candidate.getBoundingClientRect();
+      return rect.top >= 0 && rect.bottom <= window.innerHeight;
+    }) ?? candidates[0];
+    if (!destination) return;
+
+    dismissHint();
+    changeMode("manual");
+    destination.focus({ preventScroll: true });
+    if (document.activeElement !== destination) return;
+    event.preventDefault();
+
+    const rect = destination.getBoundingClientRect();
+    if (rect.top < 0 || rect.bottom > window.innerHeight) {
+      destination.scrollIntoView({ block: "nearest", behavior: "instant" });
+    }
+  }
+
   if (prefersReducedMotion) return null;
 
   const count = Math.max(1, chaptersRef.current.length || CHAPTER_NAMES.length);
@@ -298,6 +338,7 @@ export function GuidedView() {
       data-guide-final={atFinalChapter ? "true" : "false"}
       className="home-v4-guide"
       aria-label="Guided homepage controls"
+      onKeyDown={continueReading}
     >
       <span className="home-v4-guide__signal" aria-hidden="true">
         <motion.i

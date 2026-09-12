@@ -1,5 +1,18 @@
 # Design QA log
 
+## Guided homepage keyboard continuation — 2026-09-12
+
+- Reproduced on release 229: paused the guide at chapter 10, then tabbed through the manual control. The next Tab focused the opening CTA and moved the viewport from scroll Y 18238 to 79.
+- Added a forward-Tab handoff at the last available guide control. The handoff cancels guided movement and focuses an available control in the current chapter, preferring one already fully visible. Hidden, inert, disabled and negative-tabindex elements are excluded. An offscreen destination is brought into view using the nearest edge. Shift+Tab and navigation inside the guide retain their normal behavior.
+- Desktop 1363 × 936: pause → Tab → Shift+Tab correctly traversed the guide controls. Tabbing out reached “Talk through your question” at 722–764px while keeping scroll Y 18238; the following Tab reached question 1. No focus trap and no return to the opening.
+- Starting the guide from evidence and tabbing out reached the selected Dr. Haley project tab, returned guide mode to manual and retained scroll Y 9653.
+- Mobile 390 × 844: existing CSS hides the guide and all its controls have no rendered rectangles; the handoff adds no mobile Tab stops. Content and scroll widths remained 375px. Reduced motion removes the guide entirely; full motion was restored after verification.
+- Passed focused ESLint, production build (79 routes), homepage source/rendered gates, the required mocked Contact delivery gate, deployment contract self-test and whitespace checks. Browser logs showed only cloud extension metadata errors. These checks preceded integration of unrelated Insights release 232; the scoped homepage interface was unchanged by that integration. Native Safari was not tested; no form was submitted.
+
+final result: passed
+
+---
+
 ## Homepage section shortcut focus — 2026-09-12
 
 - Reproduced on release 225: “See recorded proof” scrolled to evidence but kept focus on the opening link. Tab then focused the opening case-study link and pulled evidence from 0px to 9598px below the viewport.
