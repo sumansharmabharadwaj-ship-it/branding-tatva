@@ -73,9 +73,9 @@ export function ContactScrollRuntime() {
 
       const viewportHeight = Math.max(window.innerHeight, 1);
       // Release snapping from the invitation's first visible edge through the
-      // footer. Re-enabling it when the sticky stage leaves the viewport would
-      // swallow small reverse scrolls and pull the visitor back to the footer.
-      const invitation = contactFilm.querySelector<HTMLElement>('[data-invitation-pinned="true"]');
+      // footer, including layouts too short to pin. Re-enabling it when the
+      // stage leaves would swallow small reverse scrolls back into the scene.
+      const invitation = contactFilm.querySelector<HTMLElement>('[data-contact-gratitude="sunlit"]');
       if (invitation) {
         const rect = invitation.getBoundingClientRect();
         if (rect.top <= viewportHeight) {

@@ -31,7 +31,8 @@ export function ContactGratitude() {
   const stageRef = useRef<HTMLDivElement>(null);
   const [stageFits, setStageFits] = useState(false);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
-  const coarsePointer = useMediaQuery("(pointer: coarse), (max-width: 767px)");
+  // Use the same compact breakpoint as the Contact camera and navigation.
+  const coarsePointer = useMediaQuery("(pointer: coarse), (max-width: 940px)");
   const packageSlug = useServicesContactPackage();
   const bookingHref = calendlyHrefForServicesPackage(site.calendlyUrl, packageSlug);
   const motionEnabled = hydrated && !prefersReducedMotion;
