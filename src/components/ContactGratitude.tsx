@@ -87,11 +87,17 @@ export function ContactGratitude() {
     pointerY.set(0);
   });
   const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 34, mass: 0.6 });
+  // Near foliage carries a little more weight than the distant camera. Both
+  // springs are overdamped so quick direction changes cannot produce a loop.
+  const canopyProgress = useSpring(scrollYProgress, { stiffness: 92, damping: 22, mass: 0.85 });
   const pose = useTransform(() => invitationMotionAt(progress.get(), coarsePointer));
   const cameraScale = useTransform(pose, (value) => value.cameraScale);
   const cameraY = useTransform(pose, (value) => value.cameraY);
   const cameraRotate = useTransform(pose, (value) => value.cameraRotate);
-  const aperture = useTransform(pose, (value) => `inset(${value.windowTop}% ${value.windowX}% ${value.windowBottom}% ${value.windowX}% round ${value.windowRadius}px)`);
+  const aperture = useTransform(pose, (value) => {
+    const radius = value.windowRadius;
+    return `inset(${value.windowTop}% ${value.windowX}% ${value.windowBottom}% ${value.windowX}% round ${radius * 1.6}px ${radius * 0.42}px ${radius * 1.35}px ${radius * 0.55}px)`;
+  });
   const thankYouX = useTransform(pose, (value) => value.thankYouX);
   const thankYouY = useTransform(pose, (value) => value.thankYouY);
   const thankYouScale = useTransform(pose, (value) => value.thankYouScale);
@@ -110,7 +116,7 @@ export function ContactGratitude() {
   const signatureY = useTransform(pose, (value) => value.signatureY);
   const signatureOpacity = useTransform(pose, (value) => value.signatureOpacity);
   const bookingOrbit = useTransform(pose, (value) => value.bookingOrbit);
-  const botany = useTransform(() => invitationBotanyAt(progress.get()));
+  const botany = useTransform(() => invitationBotanyAt(canopyProgress.get()));
   const botanicalLeftX = useTransform(botany, (value) => `${value.leftX}%`);
   const botanicalRightX = useTransform(botany, (value) => `${value.rightX}%`);
   const botanicalY = useTransform(botany, (value) => value.y);
@@ -118,7 +124,7 @@ export function ContactGratitude() {
   const botanicalLeftRotate = useTransform(botany, (value) => -value.rotate);
   const botanicalRightRotate = useTransform(botany, (value) => value.rotate);
   const botanicalOpacity = useTransform(botany, (value) => value.opacity);
-  const frameDraw = useTransform(botany, (value) => value.frame);
+  const frameDraw = useTransform(() => invitationBotanyAt(progress.get()).frame);
 
   // Never trap tall text or short landscape screens in a sticky viewport.
   useEffect(() => {
@@ -136,9 +142,10 @@ export function ContactGratitude() {
   // replaying the entrance from the top of the page after hydration.
   useEffect(() => {
     progress.jump(scrollYProgress.get());
+    canopyProgress.jump(scrollYProgress.get());
     pointerX.set(0);
     pointerY.set(0);
-  }, [hydrated, coarsePointer, motionEnabled, pinEnabled, progress, scrollYProgress, pointerX, pointerY]);
+  }, [hydrated, coarsePointer, motionEnabled, pinEnabled, progress, canopyProgress, scrollYProgress, pointerX, pointerY]);
 
   return (
     <section

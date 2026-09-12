@@ -17,11 +17,11 @@
 /* Sticky travel must live in the containing block's content box. Padding
    would extend the section without giving the stage any room to stick. */
 .scene[data-invitation-pinned="true"] {
-  --invitation-travel: 100svh;
+  --invitation-travel: 88svh;
   min-height: calc(100svh + var(--invitation-travel));
 }
 .scene[data-invitation-pinned="true"] .stage { position: sticky; top: 0; }
-.scene[data-invitation-pinned="true"][data-invitation-input="compact"] { --invitation-travel: 72svh; }
+.scene[data-invitation-pinned="true"][data-invitation-input="compact"] { --invitation-travel: 64svh; }
 
 .landscape {
   position: absolute;
