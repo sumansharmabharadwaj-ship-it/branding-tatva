@@ -233,6 +233,7 @@ export function ContactForm() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const draftTimerRef = useRef<number | null>(null);
   const submissionRef = useRef<ContactSubmission | null>(null);
+  const submissionInFlightRef = useRef(false);
   const rippleTimersRef = useRef<Set<number>>(new Set());
   const spotlightRef = useSpotlight(buttonRef, Boolean(prefersReducedMotion));
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -398,6 +399,7 @@ export function ContactForm() {
   }, []);
 
   async function onSubmit(values: ContactFormValues) {
+    if (submissionInFlightRef.current) return;
     setStatus("submitting");
     setServerError(null);
     setServerRequestId(null);
@@ -412,6 +414,7 @@ export function ContactForm() {
     const submissionId = submissionRef.current.id;
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15_000);
+    submissionInFlightRef.current = true;
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -485,6 +488,7 @@ export function ContactForm() {
       setServerRequestId(null);
       setStatus("error");
     } finally {
+      submissionInFlightRef.current = false;
       window.clearTimeout(timeout);
     }
   }
@@ -521,6 +525,7 @@ export function ContactForm() {
   }
 
   function clearSavedNote() {
+    if (submissionInFlightRef.current) return;
     clearContactDraft();
     reset(emptyContactFormValues(servicePackage ?? undefined));
     setDraftStatus("empty");
@@ -536,7 +541,7 @@ export function ContactForm() {
   }
 
   function removeSelectedPackage() {
-    if (!selectedPackage || !servicePackage) return;
+    if (submissionInFlightRef.current || !selectedPackage || !servicePackage) return;
 
     const removedPackageName = selectedPackage.name;
     clearServicesContactPackage();
@@ -782,6 +787,7 @@ export function ContactForm() {
             <button
               type="button"
               onClick={removeSelectedPackage}
+              disabled={status === "submitting"}
               data-contact-form-package-remove
               data-cursor-label="Remove package"
               aria-label={`Remove ${selectedPackage.name} from this enquiry`}
@@ -858,14 +864,18 @@ export function ContactForm() {
 
       <form
         ref={formRef}
-        data-contact-form-body
         data-service-package={servicePackage ?? undefined}
         onSubmit={handleSubmit(onSubmit, onInvalid)}
         onFocusCapture={handleRequiredFieldFocus}
         onBlurCapture={handleRequiredFieldBlur}
         noValidate
         aria-busy={status === "submitting"}
-        className="mt-6 space-y-5"
+      >
+      <fieldset
+        data-contact-form-body
+        disabled={status === "submitting"}
+        aria-label="Your enquiry"
+        className="mt-6 min-w-0 space-y-5"
       >
       {/* Honeypot — hidden from real users, visible to bots */}
       <input
@@ -1226,6 +1236,7 @@ export function ContactForm() {
         <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
           {status === "submitting" ? "Sending your enquiry." : ""}
         </span>
+      </fieldset>
       </form>
     </div>
   );
