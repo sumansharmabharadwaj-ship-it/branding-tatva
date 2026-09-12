@@ -241,7 +241,7 @@ export function ContactForm() {
   const [packageNotice, setPackageNotice] = useState("");
   // Manual guide p38 and Suman's reference panel: ask only what is
   // needed up front. Three essential fields carry the enquiry; the
-  // seven optional ones stay one click away rather than gone, so a
+  // optional details stay one click away rather than gone, so a
   // visitor who wants to say more still can.
   const [showMore, setShowMore] = useState(false);
   const [activeRequiredField, setActiveRequiredField] = useState<RequiredContactField | null>(null);
@@ -933,7 +933,7 @@ export function ContactForm() {
         </Field>
       </div>
 
-      {/* The optional seven, kept and reachable rather than removed. */}
+      {/* Optional context stays mounted so closing it preserves values and refs. */}
       <div className="border-t border-soil/10 pt-5">
         <button
           type="button"
@@ -941,75 +941,82 @@ export function ContactForm() {
           aria-controls="contact-more"
           onClick={() => setShowMore((v) => !v)}
           data-cursor-label={showMore ? "Close details" : "Add details"}
-          className="link-underline inline-flex min-h-11 items-center gap-2 py-2 text-sm font-medium text-clay transition-colors duration-300 hover:text-soil"
+          className="group flex min-h-14 w-full items-center justify-between gap-4 rounded-xl py-2 text-left text-clay transition-colors duration-300 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay"
         >
-          {showMore ? "Fewer details" : "Add useful context"}
-          <span aria-hidden="true" className={`text-base transition-transform duration-300 ${showMore ? "rotate-45" : ""}`}>
-            +
+          <span>
+            <span className="block text-sm font-medium">
+              {showMore ? "Fewer details" : "Add useful context"}
+            </span>
+            <span className="mt-1 block text-xs text-soil/55">Brand, scope and timing</span>
           </span>
+          <motion.span
+            aria-hidden="true"
+            animate={{ rotate: showMore ? 45 : 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: EASE_AIR }}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-clay/18 bg-white/35 text-xl font-light transition-colors group-hover:bg-white/65"
+          >
+            +
+          </motion.span>
         </button>
 
-        <div id="contact-more">
-          <AnimatePresence initial={false}>
-            {showMore && (
-              <motion.div
-                initial={prefersReducedMotion ? undefined : { opacity: 0.65, scaleY: 0.94, clipPath: "inset(0 0 100% 0 round 1rem)" }}
-                animate={{ opacity: 1, scaleY: 1, clipPath: "inset(0 0 0% 0 round 0rem)" }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, scaleY: 0.97, clipPath: "inset(0 0 100% 0 round 1rem)" }}
-                transition={{ duration: 0.35, ease: EASE_AIR }}
-                className="mt-5 space-y-5"
-                style={{ transformOrigin: "top" }}
-              >
-                <p className="text-xs leading-relaxed text-soil/52">
-                  Add only the context already at hand. Every field below is optional.
-                </p>
-                <fieldset className="space-y-5">
-                  <legend className="sr-only">About the brand</legend>
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Business or brand name" error={errors.business?.message}>
-                      <input autoComplete="organization" maxLength={CONTACT_DRAFT_LIMITS.business} className={inputClass} {...register("business")} />
-                    </Field>
-                    <Field label="Phone (optional)" error={errors.phone?.message}>
-                      <input type="tel" inputMode="tel" autoComplete="tel" maxLength={CONTACT_DRAFT_LIMITS.phone} className={inputClass} {...register("phone")} />
-                    </Field>
-                  </div>
-                  <Field label="Website or social link (optional)" error={errors.website?.message}>
-                    <input type="url" inputMode="url" autoComplete="url" maxLength={CONTACT_DRAFT_LIMITS.website} className={inputClass} {...register("website")} />
-                  </Field>
-                  <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
-                    <select className={inputClass} defaultValue="" {...register("brandStage")}>
-                      <option value="" disabled>
-                        Choose the closest fit
-                      </option>
-                      {brandStages.map((stage) => (
-                        <option key={stage} value={stage}>
-                          {stage}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                </fieldset>
-                <fieldset className="space-y-5 border-t border-soil/10 pt-5">
-                  <legend className="sr-only">Scope and timing</legend>
-                  <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
-                    <input maxLength={CONTACT_DRAFT_LIMITS.servicesNeeded} className={inputClass} {...register("servicesNeeded")} placeholder="Name the work you have in mind" />
-                  </Field>
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <Field label="Estimated budget (optional)" error={errors.budget?.message}>
-                      <input maxLength={CONTACT_DRAFT_LIMITS.budget} className={inputClass} {...register("budget")} />
-                    </Field>
-                    <Field label="Desired timeline (optional)" error={errors.timeline?.message}>
-                      <input maxLength={CONTACT_DRAFT_LIMITS.timeline} className={inputClass} {...register("timeline")} />
-                    </Field>
-                  </div>
-                  <Field label="How did you find Branding Tatva? (optional)" error={errors.referral?.message}>
-                    <input maxLength={CONTACT_DRAFT_LIMITS.referral} className={inputClass} {...register("referral")} />
-                  </Field>
-                </fieldset>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <motion.div
+          id="contact-more"
+          inert={!showMore}
+          aria-hidden={!showMore}
+          initial={false}
+          animate={{ height: showMore ? "auto" : 0, opacity: showMore ? 1 : 0 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: EASE_AIR }}
+          className="-mx-2 overflow-hidden px-2"
+        >
+          <div className="space-y-7 pb-2 pt-5">
+            <p className="text-xs leading-relaxed text-soil/52">
+              Add only the context already at hand. Every field below is optional.
+            </p>
+            <fieldset className="min-w-0 space-y-5">
+              <legend className="mb-4 font-display text-2xl leading-none text-soil">About the brand</legend>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label="Business or brand name" error={errors.business?.message}>
+                  <input autoComplete="organization" maxLength={CONTACT_DRAFT_LIMITS.business} className={inputClass} {...register("business")} />
+                </Field>
+                <Field label="Phone (optional)" error={errors.phone?.message}>
+                  <input type="tel" inputMode="tel" autoComplete="tel" maxLength={CONTACT_DRAFT_LIMITS.phone} className={inputClass} {...register("phone")} />
+                </Field>
+              </div>
+              <Field label="Website or social link (optional)" error={errors.website?.message}>
+                <input type="url" inputMode="url" autoComplete="url" maxLength={CONTACT_DRAFT_LIMITS.website} className={inputClass} {...register("website")} />
+              </Field>
+              <Field label="Where is your brand right now?" error={errors.brandStage?.message}>
+                <select className={inputClass} defaultValue="" {...register("brandStage")}>
+                  <option value="" disabled>
+                    Choose the closest fit
+                  </option>
+                  {brandStages.map((stage) => (
+                    <option key={stage} value={stage}>
+                      {stage}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </fieldset>
+            <fieldset className="min-w-0 space-y-5 border-t border-soil/10 pt-5">
+              <legend className="pr-4 font-display text-2xl leading-none text-soil">Scope and timing</legend>
+              <Field label="What do you think you need?" error={errors.servicesNeeded?.message}>
+                <input maxLength={CONTACT_DRAFT_LIMITS.servicesNeeded} className={inputClass} {...register("servicesNeeded")} placeholder="Name the work you have in mind" />
+              </Field>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label="Estimated budget (optional)" error={errors.budget?.message}>
+                  <input maxLength={CONTACT_DRAFT_LIMITS.budget} className={inputClass} {...register("budget")} />
+                </Field>
+                <Field label="Desired timeline (optional)" error={errors.timeline?.message}>
+                  <input maxLength={CONTACT_DRAFT_LIMITS.timeline} className={inputClass} {...register("timeline")} />
+                </Field>
+              </div>
+              <Field label="How did you find Branding Tatva? (optional)" error={errors.referral?.message}>
+                <input maxLength={CONTACT_DRAFT_LIMITS.referral} className={inputClass} {...register("referral")} />
+              </Field>
+            </fieldset>
+          </div>
+        </motion.div>
       </div>
 
       {/* A single resolution line keeps validation and delivery recovery

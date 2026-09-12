@@ -255,14 +255,20 @@ const routeCompiled = ts.transpileModule(routeSource, {
   },
 }).outputText;
 const routeModule = { exports: {} };
+const schemaModule = { exports: {} };
+const schemaCompiled = ts.transpileModule(
+  fs.readFileSync("src/lib/contact-schema.ts", "utf8"),
+  { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } },
+).outputText;
+new Function("exports", "module", "require", schemaCompiled)(
+  schemaModule.exports, schemaModule, require,
+);
 const providerAttempts = [];
 const acceptedBodies = new Map();
 let deliveredCount = 0;
 let requestNumber = 0;
 const routeDependencies = {
-  "@/lib/contact-schema": {
-    contactSchema: { safeParse: (data) => ({ success: true, data }) },
-  },
+  "@/lib/contact-schema": schemaModule.exports,
   "@/data/services": { packages: [] },
   "@/lib/contact-delivery": { deliverContactEnquiry },
   "@/lib/api-protection": {
@@ -295,11 +301,11 @@ new Function("exports", "module", "require", "process", "crypto", "console", rou
   { randomUUID: () => `request-${++requestNumber}` },
   { info() {}, error() {} },
 );
-const routeRequest = () => new Request("https://preview.example/api/contact", {
+const routeRequest = (details = {}) => new Request("https://preview.example/api/contact", {
   method: "POST",
   headers: { "Content-Type": "application/json", "X-Contact-Submission": submissionId },
   body: JSON.stringify({ name: "Test visitor", email: "visitor@example.com",
-    description: "An unchanged enquiry retried after a lost confirmation." }),
+    description: "An unchanged enquiry retried after a lost confirmation.", ...details }),
 });
 const firstRouteResponse = await routeModule.exports.POST(routeRequest());
 const retryRouteResponse = await routeModule.exports.POST(routeRequest());
@@ -310,6 +316,18 @@ assert.equal(deliveredCount, 1, "Retry must not send a second email.");
 assert.notEqual((await firstRouteResponse.json()).requestId,
   (await retryRouteResponse.json()).requestId, "Request diagnostics must remain distinct.");
 
+const blankStageResponse = await routeModule.exports.POST(routeRequest({ brandStage: "" }));
+assert.equal(blankStageResponse.status, 200, "Leaving the optional brand stage blank must allow sending.");
+assert.deepEqual(providerAttempts[2], providerAttempts[0], "A blank optional stage must be equivalent to an omitted stage.");
+assert.equal(deliveredCount, 1, "A blank optional stage must preserve retry identity.");
+const attemptsBeforeInvalidStage = providerAttempts.length;
+const invalidStageResponse = await routeModule.exports.POST(routeRequest({ brandStage: "made up stage" }));
+assert.equal(invalidStageResponse.status, 422, "An unsupported brand stage must still be rejected.");
+assert.equal(providerAttempts.length, attemptsBeforeInvalidStage, "Invalid details must never reach the provider.");
+for (const stage of schemaModule.exports.brandStages) {
+  assert.equal(schemaModule.exports.contactSchema.shape.brandStage.parse(stage), stage);
+}
+
 console.log(
   JSON.stringify(
     {
@@ -319,6 +337,8 @@ console.log(
       stableRetryKey: true,
       routeRetryPayloadStable: true,
       routeRetrySendsOnce: true,
+      optionalBrandStageCanBeBlank: true,
+      invalidBrandStageRejectedBeforeDelivery: true,
       providerRejection: true,
       unreadableResponse: true,
       networkFailure: true,

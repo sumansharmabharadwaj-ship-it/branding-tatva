@@ -47,7 +47,10 @@ export const contactSchema = z.object({
     .max(500)
     .refine(isWebsiteOrSocialReference, "Share a full link, domain, or @handle.")
     .optional(),
-  brandStage: z.enum(brandStages).optional(),
+  brandStage: z
+    .union([z.enum(brandStages), z.literal("")])
+    .optional()
+    .transform((value) => value || undefined),
   servicesNeeded: z.string().trim().max(1000).optional(),
   budget: z.string().trim().max(120).optional(),
   timeline: z.string().trim().max(120).optional(),
