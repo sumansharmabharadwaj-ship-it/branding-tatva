@@ -20,6 +20,7 @@ import { CalendarDays, Check, CircleAlert, Copy, Mail, RotateCcw, X } from "luci
 import { contactSchema, brandStages, type ContactFormValues } from "@/lib/contact-schema";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/Magnetic";
+import { ContactNoteProgress } from "@/components/ContactNoteProgress";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { track } from "@/lib/analytics";
 import { EASE_AIR } from "@/lib/motion";
@@ -800,55 +801,14 @@ export function ContactForm() {
         ) : null}
       </div>
 
-      <div
-        data-contact-form-progress
-        className="mt-6 rounded-2xl border border-soil/10 bg-white/30 px-4 py-3"
-        role="progressbar"
-        aria-label="Required enquiry details"
-        aria-valuemin={0}
-        aria-valuemax={3}
-        aria-valuenow={completedDetails}
-        aria-valuetext={completionLabel}
-      >
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-soil/48">Conversation note</p>
-          <p className="text-xs text-soil/58" aria-live="polite">{completionLabel}</p>
-        </div>
-        <div className="mt-3 h-px overflow-hidden bg-soil/12" aria-hidden="true">
-          <motion.span
-            className="block h-full origin-left bg-clay"
-            initial={false}
-            animate={{ scaleX: completedDetails / 3 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: EASE_AIR }}
-          />
-        </div>
-        <div className="mt-2 grid grid-cols-3 gap-2" aria-hidden="true">
-          {["Name", "Email", "Question"].map((label, index) => {
-            const fieldName = REQUIRED_FIELD_SEQUENCE[index];
-            const active = activeRequiredField === fieldName;
-            return (
-              <motion.span
-                key={label}
-                data-active={active ? "true" : undefined}
-                className={`flex items-center gap-1.5 text-[0.58rem] font-medium uppercase tracking-[0.12em] transition-colors duration-300 ${
-                  requiredDetailChecks[index] ? "text-clay" : active ? "text-soil/70" : "text-soil/34"
-                }`}
-                animate={prefersReducedMotion ? undefined : { x: active ? 3 : 0 }}
-                transition={{ duration: 0.34, ease: EASE_AIR }}
-              >
-                <motion.span
-                  className={`h-1.5 w-1.5 shrink-0 rounded-full transition-colors duration-300 ${
-                    requiredDetailChecks[index] ? "bg-clay" : active ? "bg-soil/45" : "bg-soil/15"
-                  }`}
-                  animate={prefersReducedMotion ? undefined : { scale: active ? 1.55 : 1 }}
-                  transition={{ duration: 0.34, ease: EASE_AIR }}
-                />
-                {label}
-              </motion.span>
-            );
-          })}
-        </div>
-      </div>
+      <ContactNoteProgress
+        checks={requiredDetailChecks}
+        activeField={activeRequiredField}
+        completionLabel={completionLabel}
+        submitting={status === "submitting"}
+        reducedMotion={prefersReducedMotion}
+        onSelect={(field) => setFocus(field)}
+      />
 
       <p
         ref={packageStatusRef}
@@ -1160,9 +1120,18 @@ export function ContactForm() {
               disabled={status === "submitting"}
               data-cursor-label={status === "submitting" ? "Sending" : "Send enquiry"}
               className={cn(
-                "group/btn relative inline-flex min-h-12 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-ring-halo disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none sm:w-auto",
+                "group/btn relative inline-flex min-h-12 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:-translate-y-0.5 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-ring-halo disabled:opacity-85 disabled:hover:translate-y-0 disabled:hover:shadow-none sm:w-auto",
               )}
             >
+              {status === "submitting" && !prefersReducedMotion ? (
+                <motion.span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                  initial={{ x: "-120%" }}
+                  animate={{ x: "240%" }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }}
+                />
+              ) : null}
               <span
                 ref={spotlightRef}
                 aria-hidden="true"
