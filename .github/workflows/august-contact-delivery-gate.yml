@@ -12,6 +12,7 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "vercel-preview-release.json"
+      - ".github/workflows/deploy-august-preview.yml"
       - ".github/workflows/august-contact-delivery-gate.yml"
   pull_request:
     branches:
@@ -24,6 +25,7 @@ on:
       - "package.json"
       - "pnpm-lock.yaml"
       - "vercel-preview-release.json"
+      - ".github/workflows/deploy-august-preview.yml"
       - ".github/workflows/august-contact-delivery-gate.yml"
 
 permissions:

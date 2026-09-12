@@ -63,6 +63,17 @@ jobs:
               target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
             });
 
+      - name: Set up pnpm for the delivery check
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js for the delivery check
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
       - name: Enable one Git integrated preview
         id: enable
         shell: bash
@@ -83,6 +94,12 @@ jobs:
             echo "Release ${RELEASE} is stale because the branch now declares release ${current_release}." >&2
             exit 1
           fi
+
+          # Check the exact branch contents used by the trigger, including
+          # any changes that arrived after the release request was queued.
+          # A failed install or test exits before deployment is enabled.
+          pnpm install --frozen-lockfile --ignore-scripts
+          node scripts/contact_delivery_gate.mjs
 
           node <<'NODE'
           const fs = require("node:fs");
