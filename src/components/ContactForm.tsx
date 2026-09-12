@@ -32,7 +32,7 @@ import {
 import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
 
 type Status = "idle" | "submitting" | "success" | "error";
-type DraftStatus = "empty" | "restored" | "saving" | "saved";
+type DraftStatus = "empty" | "restored" | "saving" | "saved" | "unavailable";
 type RecoveryCopyStatus = "idle" | "copied" | "error";
 type ContactDraftField = Exclude<keyof ContactFormValues, "company_website" | "servicePackage">;
 type ContactSubmission = { fingerprint: string; id: string };
@@ -109,7 +109,7 @@ function readContactDraft(): Partial<ContactFormValues> | null {
   }
 }
 
-function persistContactDraft(values: ContactFormValues) {
+function persistContactDraft(values: ContactFormValues): boolean {
   try {
     const draft: Record<string, string> = {};
     for (const field of CONTACT_DRAFT_FIELDS) {
@@ -121,16 +121,18 @@ function persistContactDraft(values: ContactFormValues) {
 
     if (!Object.values(draft).some((value) => value.trim())) {
       window.sessionStorage.removeItem(CONTACT_DRAFT_KEY);
-      return;
+      return true;
     }
 
     window.sessionStorage.setItem(
       CONTACT_DRAFT_KEY,
       JSON.stringify({ version: CONTACT_DRAFT_VERSION, values: draft }),
     );
+    return true;
   } catch {
     // Storage may be unavailable in a restricted/private browser. The form
     // remains fully functional; only this same-tab convenience stands down.
+    return false;
   }
 }
 
@@ -249,7 +251,9 @@ export function ContactForm() {
         ? "Saving in this tab."
         : draftStatus === "saved"
           ? "Saved in this tab."
-          : "Unfinished notes stay in this tab.";
+          : draftStatus === "unavailable"
+            ? "Draft saving is unavailable. Keep this page open until you send your note."
+            : "Unfinished notes stay in this tab.";
   const serverReference = serverRequestId?.replaceAll("-", "").slice(0, 12) ?? null;
 
   function handleButtonClick(e: MouseEvent<HTMLButtonElement>) {
@@ -341,11 +345,15 @@ export function ContactForm() {
         window.clearTimeout(draftTimerRef.current);
       }
       const hasValues = hasContactDraftValues(getValues());
-      setDraftStatus(hasValues ? "saving" : "empty");
+      setDraftStatus((current) =>
+        hasValues ? (current === "unavailable" ? current : "saving") : "empty",
+      );
       draftTimerRef.current = window.setTimeout(() => {
         const values = getValues();
-        persistContactDraft(values);
-        setDraftStatus(hasContactDraftValues(values) ? "saved" : "empty");
+        const saved = persistContactDraft(values);
+        setDraftStatus(
+          hasContactDraftValues(values) ? (saved ? "saved" : "unavailable") : "empty",
+        );
         draftTimerRef.current = null;
       }, CONTACT_DRAFT_DELAY_MS);
     });
@@ -1199,7 +1207,9 @@ export function ContactForm() {
             >
               {draftStatus === "restored"
                 ? "Your unfinished contact note was restored in this tab."
-                : ""}
+                : draftStatus === "unavailable"
+                  ? draftStatusCopy
+                  : ""}
             </span>
             {hasDraft ? (
               <button
