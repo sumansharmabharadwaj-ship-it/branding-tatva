@@ -5,6 +5,33 @@ function easeBetween(value: number, start: number, end: number) {
   return t * t * (3 - 2 * t);
 }
 
+/** Foreground branches pass the camera faster than the distant landscape. */
+export function invitationBotanyAt(progress: number) {
+  const p = Number.isFinite(progress) ? clamp(progress) : 1;
+  const passage = easeBetween(p, 0.12, 0.76);
+  return {
+    leftX: -4 - passage * 74,
+    rightX: 4 + passage * 74,
+    y: passage * 32,
+    scale: 1 + passage * 0.15,
+    rotate: passage * 8,
+    opacity: 1 - passage * 0.24,
+    frame: easeBetween(p, 0.38, 0.82),
+  };
+}
+
+/** A travelling fold, rather than a timed animation, so every letter rewinds. */
+export function invitationLetterAt(progress: number, index: number, compact = false) {
+  const p = Number.isFinite(progress) ? clamp(progress) : 1;
+  const delay = Math.min(10, Math.max(0, index)) * 0.022;
+  const fold = 1 - easeBetween(p, 0.12 + delay, 0.43 + delay);
+  return {
+    y: fold * (compact ? 12 : 30),
+    rotateX: fold * (compact ? 36 : 68),
+    rotate: fold * (index % 2 ? -1 : 1) * (compact ? 2 : 5),
+  };
+}
+
 /** Three reversible beats: a narrow landscape opens into a panorama before
  * the full invitation. Type travels through depth; the last 14% is a reading hold.
  * Short screens use the same sequence during native entry without pinning.

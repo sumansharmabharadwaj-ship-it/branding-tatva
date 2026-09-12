@@ -40,8 +40,21 @@
 
 .image { object-fit: cover; object-position: 50% 100%; }
 
+.paperFrame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.paperEdge { fill: #f2eddf; }
+.frameLine { stroke: #756847; stroke-width: 1; stroke-opacity: 0.32; }
+
+.botanicalForeground { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.botanicalSide { position: absolute; top: -3%; width: 37%; height: 106%; }
+.botanicalLeft { left: 0; transform-origin: 0% 80%; mask-image: linear-gradient(90deg, #000 65%, transparent); }
+.botanicalRight { right: 0; transform-origin: 100% 80%; mask-image: linear-gradient(270deg, #000 65%, transparent); }
+.botanicalImage { object-fit: cover; }
+.botanicalLeft .botanicalImage { object-position: 0% 50%; }
+.botanicalRight .botanicalImage { object-position: 100% 50%; }
+
 .content {
   position: relative;
+  z-index: 2;
   width: min(100%, 1180px);
   margin-inline: auto;
   padding: clamp(140px, 17svh, 184px) 28px 120px;
@@ -80,6 +93,11 @@
   font-weight: 400;
   letter-spacing: -0.045em;
 }
+
+.accessibleText { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.letterLine { display: inline-block; }
+.word { display: inline-block; white-space: nowrap; perspective: 650px; }
+.letter { display: inline-block; transform-origin: 50% 100%; }
 
 .acknowledgement {
   margin-top: 14px;
@@ -161,8 +179,12 @@
   opacity: 1 !important;
   clip-path: none !important;
 }
+.scene:focus-within [data-invitation-glyph] { transform: none !important; }
+.scene:focus-within .botanicalLeft { transform: translate(-78%, 32px) scale(1.15) rotate(-8deg) !important; opacity: 0.76 !important; }
+.scene:focus-within .botanicalRight { transform: translate(78%, 32px) scale(1.15) rotate(8deg) !important; opacity: 0.76 !important; }
 
 @media (max-width: 767px) {
+  .botanicalSide { width: 27%; }
   .stage { min-height: max(820px, 100svh); }
   .content { padding: 130px 24px 150px; }
   .eyebrow { font-size: 10px; margin-bottom: 24px; letter-spacing: 0.25em; }
@@ -202,7 +224,7 @@
   .acknowledgement { margin-top: 16px; }
   .signature { margin-top: 14px; }
 }
-.scene[data-invitation-motion="reduced"] :is([data-invitation-layer], .booking, .booking svg) {
+.scene[data-invitation-motion="reduced"] :is([data-invitation-layer], [data-invitation-glyph], .booking, .booking svg) {
   animation: none !important;
   transform: none !important;
   transition: none !important;
@@ -214,11 +236,13 @@
 @media (prefers-reduced-motion: reduce) {
   .scene[data-invitation-pinned="true"] { min-height: 0; }
   .scene[data-invitation-pinned="true"] .stage { position: relative; }
-  .scene :is([data-invitation-layer], .booking, .booking svg) {
+  .scene :is([data-invitation-layer], [data-invitation-glyph], .booking, .booking svg) {
     animation: none !important;
     transform: none !important;
     transition: none !important;
     opacity: 1 !important;
     clip-path: none !important;
   }
+  .scene .botanicalLeft { transform: translate(-78%, 32px) scale(1.15) rotate(-8deg) !important; opacity: 0.76 !important; }
+  .scene .botanicalRight { transform: translate(78%, 32px) scale(1.15) rotate(8deg) !important; opacity: 0.76 !important; }
 }

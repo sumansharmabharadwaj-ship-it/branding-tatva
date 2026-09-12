@@ -53,6 +53,7 @@ const expectedPosters = [
   "bt-contact-decision-table-v2.webp",
   "bt-contact-sunlit-invitation-v1.webp",
   "bt-contact-sunlit-invitation-mobile-v1.webp",
+  "bt-contact-botanical-foreground-v1.webp",
 ];
 const desktopReferences = [
   ...source.matchAll(/\/videos\/generated\/(bt-contact-original-[a-z-]+\.mp4)/g),

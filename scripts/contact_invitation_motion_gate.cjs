@@ -10,7 +10,7 @@ const source = fs.readFileSync(path.join(root, "src/lib/contactInvitationMotion.
 const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
 const context = { exports: {} };
 vm.runInNewContext(compiled, context);
-const { invitationMotionAt } = context.exports;
+const { invitationMotionAt, invitationBotanyAt, invitationLetterAt } = context.exports;
 const pose = (p, compact = false) => JSON.parse(JSON.stringify(invitationMotionAt(p, compact)));
 const resting = {
   cameraScale: 1, cameraY: 0, cameraRotate: 0,
@@ -66,4 +66,34 @@ assert.ok(pose(0.4).windowX < pose(0.14).windowX && pose(0.7).windowX === 0, "Th
 assert.ok(pose(0.48).windowX < 5 && pose(0.48).windowTop > 14, "The landscape must open sideways into a panorama before filling the screen vertically.");
 assert.equal(pose(0.64).thankYouX, 0);
 assert.ok(pose(0.64).makingRoomX > 0, "The second headline should follow the first.");
+
+// New foreground and typography must resolve before the reading hold, never
+// depend on elapsed time, and retrace the same intermediate shots backwards.
+for (const compact of [false, true]) {
+  const shots = [];
+  for (let step = 0; step <= 1000; step++) {
+    const p = step / 1000;
+    const branches = invitationBotanyAt(p);
+    const letters = Array.from({ length: 11 }, (_, i) => invitationLetterAt(p, i, compact));
+    const shot = JSON.parse(JSON.stringify({ branches, letters }));
+    shots.push(shot);
+    assert.ok(Object.values(branches).every(Number.isFinite));
+    assert.ok(branches.leftX <= 0 && branches.rightX >= 0, "Branches must part toward their own edges, away from the contact actions.");
+    assert.ok(branches.opacity >= 0 && branches.opacity <= 1);
+    for (const letter of letters) {
+      assert.ok(Object.values(letter).every(Number.isFinite));
+      if (compact) assert.ok(letter.y <= 12 && Math.abs(letter.rotate) <= 2, "Phone typography must stay inside its compact reading area.");
+      if (p >= 0.7) assert.ok(Object.values(letter).every(value => value === 0), "All letters must resolve before the invitation is fully revealed.");
+    }
+    if (step) {
+      assert.ok(branches.leftX <= shots[step - 1].branches.leftX && branches.rightX >= shots[step - 1].branches.rightX, "Foreground travel must never lurch back toward the reading area.");
+    }
+    if (p >= 0.86) assert.deepEqual(shot, shots[860], "The final reading hold must stay still.");
+  }
+  for (let step = 1000; step >= 0; step--) {
+    const p = step / 1000;
+    assert.deepEqual(JSON.parse(JSON.stringify({ branches: invitationBotanyAt(p), letters: Array.from({ length: 11 }, (_, i) => invitationLetterAt(p, i, compact)) })), shots[step]);
+  }
+}
 console.log("[contact-invitation] 2,002 reversible film poses verified: camera coverage, type depth, reading order, and compact bounds.");
+console.log("[contact-invitation] Botanical passage and 11-letter unfolding verified in both directions, including compact bounds and the final reading hold.");

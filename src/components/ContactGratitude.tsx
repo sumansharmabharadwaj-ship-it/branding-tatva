@@ -3,14 +3,14 @@
 import Image from "next/image";
 import { Cormorant_Garamond } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { TrackedLink } from "@/components/TrackedLink";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
 import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
-import { invitationMotionAt } from "@/lib/contactInvitationMotion";
+import { invitationBotanyAt, invitationLetterAt, invitationMotionAt } from "@/lib/contactInvitationMotion";
 import { site } from "@/data/site";
 import styles from "./ContactGratitude.module.css";
 
@@ -21,6 +21,23 @@ const invitationItalic = Cormorant_Garamond({
   variable: "--font-invitation-italic",
   display: "swap",
 });
+
+const botanicalImage = "/images/generated/bt-contact-botanical-foreground-v1.webp";
+const frameShape = "M76 18H380Q396 18 404 30L412 40Q420 50 438 50H562Q580 50 588 40L596 30Q604 18 620 18H924Q944 18 954 36L974 64Q984 78 984 100V700Q984 722 970 736L950 758Q938 780 916 780H624Q606 780 596 766L588 756Q580 746 562 746H438Q420 746 412 756L404 766Q394 780 376 780H84Q62 780 50 758L30 736Q16 722 16 700V100Q16 78 26 64L46 36Q56 18 76 18Z";
+
+function UnfoldingLetter({ letter, index, progress, enabled, compact }: {
+  letter: string;
+  index: number;
+  progress: MotionValue<number>;
+  enabled: boolean;
+  compact: boolean;
+}) {
+  const pose = useTransform(() => invitationLetterAt(progress.get(), index, compact));
+  const y = useTransform(pose, (value) => value.y);
+  const rotateX = useTransform(pose, (value) => value.rotateX);
+  const rotate = useTransform(pose, (value) => value.rotate);
+  return <motion.span data-invitation-glyph className={styles.letter} style={enabled ? { y, rotateX, rotate } : { y: 0, rotateX: 0, rotate: 0 }}>{letter}</motion.span>;
+}
 
 /** A short scroll film opens the valley and brings the type through depth.
  * The approved composition is the final shot. Short screens and reduced motion
@@ -44,6 +61,8 @@ export function ContactGratitude() {
   const y = useSpring(pointerY, { stiffness: 70, damping: 24, mass: 0.65 });
   const landscapeX = useTransform(x, [-1, 1], [-8, 8]);
   const landscapeY = useTransform(y, [-1, 1], [-6, 6]);
+  const foregroundX = useTransform(x, [-1, 1], [-24, 24]);
+  const foregroundY = useTransform(y, [-1, 1], [-14, 14]);
   const headingX = useTransform(x, [-1, 1], [6, -6]);
   const headingY = useTransform(y, [-1, 1], [4, -4]);
   const headingRotateX = useTransform(y, [-1, 1], [-1.5, 1.5]);
@@ -89,6 +108,15 @@ export function ContactGratitude() {
   const invitationOpacity = useTransform(pose, (value) => value.invitationOpacity);
   const signatureY = useTransform(pose, (value) => value.signatureY);
   const signatureOpacity = useTransform(pose, (value) => value.signatureOpacity);
+  const botany = useTransform(() => invitationBotanyAt(progress.get()));
+  const botanicalLeftX = useTransform(botany, (value) => `${value.leftX}%`);
+  const botanicalRightX = useTransform(botany, (value) => `${value.rightX}%`);
+  const botanicalY = useTransform(botany, (value) => value.y);
+  const botanicalScale = useTransform(botany, (value) => value.scale);
+  const botanicalLeftRotate = useTransform(botany, (value) => -value.rotate);
+  const botanicalRightRotate = useTransform(botany, (value) => value.rotate);
+  const botanicalOpacity = useTransform(botany, (value) => value.opacity);
+  const frameDraw = useTransform(botany, (value) => value.frame);
 
   // Never trap tall text or short landscape screens in a sticky viewport.
   useEffect(() => {
@@ -121,6 +149,7 @@ export function ContactGratitude() {
       data-invitation-scroll="reversible"
       data-invitation-pinned={pinEnabled ? "true" : "false"}
       data-invitation-input={coarsePointer ? "compact" : "desktop"}
+      data-invitation-art="botanical-passage"
       className={`${styles.scene} ${invitationItalic.variable}`}
     >
       <div
@@ -159,6 +188,20 @@ export function ContactGratitude() {
         </motion.div>
       </motion.div>
 
+      <svg className={styles.paperFrame} viewBox="0 0 1000 800" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path d={`M0 0H1000V800H0Z ${frameShape}`} fillRule="evenodd" className={styles.paperEdge} />
+        <motion.path d={frameShape} fill="none" vectorEffect="non-scaling-stroke" className={styles.frameLine} style={{ pathLength: motionEnabled ? frameDraw : 1 }} />
+      </svg>
+
+      <motion.div aria-hidden="true" data-invitation-layer="foreground-pointer" className={styles.botanicalForeground} style={pointerEnabled ? { x: foregroundX, y: foregroundY } : { x: 0, y: 0 }}>
+        <motion.div data-invitation-botany="left" className={`${styles.botanicalSide} ${styles.botanicalLeft}`} style={motionEnabled ? { x: botanicalLeftX, y: botanicalY, scale: botanicalScale, rotate: botanicalLeftRotate, opacity: botanicalOpacity } : { x: "-78%", y: 32, scale: 1.15, rotate: -8, opacity: 0.76 }}>
+          <Image src={botanicalImage} alt="" fill unoptimized className={styles.botanicalImage} sizes="40vw" />
+        </motion.div>
+        <motion.div data-invitation-botany="right" className={`${styles.botanicalSide} ${styles.botanicalRight}`} style={motionEnabled ? { x: botanicalRightX, y: botanicalY, scale: botanicalScale, rotate: botanicalRightRotate, opacity: botanicalOpacity } : { x: "78%", y: 32, scale: 1.15, rotate: 8, opacity: 0.76 }}>
+          <Image src={botanicalImage} alt="" fill unoptimized className={styles.botanicalImage} sizes="40vw" />
+        </motion.div>
+      </motion.div>
+
       <div className={styles.content}>
         <p className={styles.eyebrow}>Before you go</p>
         <motion.h2
@@ -176,7 +219,13 @@ export function ContactGratitude() {
             data-invitation-layer="making-room"
             className={styles.makingRoom}
             style={motionEnabled ? { x: makingRoomX, y: makingRoomY, scale: makingRoomScale, rotate: makingRoomRotate, rotateY: makingRoomRotateY } : { x: 0, y: 0, scale: 1, rotate: 0, rotateY: 0 }}
-          >making room.</motion.em>
+          >
+            <span className={styles.accessibleText}>making room.</span>
+            <span aria-hidden="true" className={styles.letterLine}>
+              <span className={styles.word}>{Array.from("making").map((letter, index) => <UnfoldingLetter key={index} letter={letter} index={index} progress={progress} enabled={motionEnabled} compact={coarsePointer} />)}</span>{" "}
+              <span className={styles.word}>{Array.from("room.").map((letter, index) => <UnfoldingLetter key={index} letter={letter} index={index + 6} progress={progress} enabled={motionEnabled} compact={coarsePointer} />)}</span>
+            </span>
+          </motion.em>
         </motion.h2>
         <motion.div
           data-invitation-layer="note"
