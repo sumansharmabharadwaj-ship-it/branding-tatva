@@ -258,15 +258,16 @@ export function InsightEditorialRow({
         </span>
         <span className="insight-editorial-row__title-line">
           <strong>{visual.shortTitle ?? post.title}</strong>
-          <ArrowRight aria-hidden="true" />
         </span>
         <span className="insight-editorial-row__description">
           {visual.description ?? post.excerpt}
         </span>
         <span className="insight-editorial-row__meta">
-          {topicName}
-          <span aria-hidden="true">·</span>
-          {readingTime}
+          <span className="insight-editorial-row__read">
+            Read essay
+            <ArrowRight aria-hidden="true" />
+          </span>
+          <span className="insight-editorial-row__duration">{readingTime}</span>
         </span>
       </span>
 
