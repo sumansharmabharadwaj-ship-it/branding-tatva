@@ -456,3 +456,24 @@ Browser console errors checked: the sampled errors originate from the browser ex
 No actionable P0/P1/P2 findings remain. P3: optional future tuning of small reassurance text size. No conversion uplift is claimed without measurement.
 
 final result: passed
+
+
+---
+
+# Homepage foundation motion — 2026-09-12
+
+Scope: `BrandFoundationScene.tsx` and its CSS module. Parker's live `#how-it-works` sequence was inspected in cloud Chrome as a motion reference: a held reading frame, followed by coordinated entry into the next step. No Parker assets or page layout were copied.
+
+The roots film now follows a reversible, multi-stage camera path during the existing desktop scroll runway. The reading card retains its placement and the four decisions use one travelling selection marker. Incoming headings, descriptions and outputs arrive in a short stagger; outgoing content becomes aria-hidden and inert during its exit. No copy, media, scroll height or other section was changed in this pass.
+
+Verification:
+
+- Desktop 1363 × 936: forward scrolling selected Category, Audience and Position at the expected positions. Reversing the same 230px scroll returned both Category and the earlier camera transform. The selected marker matched the selected tab's rectangle. The foundation action remained visible at approximately y737–785.
+- Keyboard: Home from Position focused Category. The outgoing Position content became aria-hidden during its exit and was removed after settling. Actual Tab reached the persistent tabpanel, then the foundation services link. One active marker and one accessible decision remained.
+- Reduced motion: the site's own preference control changed the scene to static/relative, with computed camera transform `none`. End selected Position with immediately visible, untransformed text and no lingering outgoing panel.
+- Laptop 1280 × 720: the scene remains in normal flow and camera transform is `none`; all tabs were approximately 45.6px high. Manually selected Position remained selected after scrolling. Document client/scroll widths both measured 1265px.
+- Mobile 390 × 844 responsive iframe: two-by-two tabs measured 44px high, camera transform was `none`, and client/scroll widths both measured 375px. Position remained selected after a 325px scroll. The screenshot showed readable content and the 48px-high foundation action without clipping.
+- Production build, TypeScript, changed-file lint, homepage source/rendered gates, mocked contact delivery gate, deployment contract self-test and whitespace checks passed. Build output reported 79 routes and the homepage rendered gate checked 445,263 CSS bytes. These local browser checks used the built foundation changes before integration of the separately published Contact/Insights updates; the scoped foundation files were unchanged by integration. The controlled workflow checks its exact integrated source before deployment, and the final hosted foundation is checked separately.
+- Sampled browser errors were extension metadata messages; no application-origin error appeared in that sample. Native Safari was not tested.
+
+No actionable P0/P1/P2 issue remains in this scoped pass. Hosted release verification is recorded in the delivery response.
