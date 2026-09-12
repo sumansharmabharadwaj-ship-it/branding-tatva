@@ -7,6 +7,7 @@ import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { pillars } from "@/data/glossary";
+import { site } from "@/data/site";
 
 // The glossary index — the practice's working vocabulary as crawlable
 // routes (governing bible §12–§13: glossary pages linking concepts to
@@ -22,9 +23,57 @@ export const metadata: Metadata = {
   alternates: { canonical: "/glossary" },
 };
 
+// Every /glossary/[term] page publishes a DefinedTerm naming this route as
+// its inDefinedTermSet, but the set itself was never published anywhere, so
+// ten pages each claimed membership of a parent node that did not exist.
+// This declares it, with all ten terms and their real definitions inline,
+// which is also the form an answer engine can quote one definition out of
+// without crawling ten further routes.
+//
+// The pillars carry a `questions` array too, and the obvious move would be a
+// FAQPage built from it. Those questions have no stored answers: the answer
+// is the linked article, in full prose. Emitting FAQPage would mean
+// authoring answers here purely for crawlers, which is fabricated content by
+// another name, and the exact pattern search engines penalise.
+const glossarySchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "DefinedTermSet",
+      "@id": `${site.url}/glossary`,
+      name: "Branding Tatva Glossary",
+      url: `${site.url}/glossary`,
+      description:
+        "Plain language definitions for the brand strategy terms founders meet when choosing a position, message, identity, or offer structure.",
+      publisher: { "@id": `${site.url}/#organization` },
+      hasDefinedTerm: pillars.flatMap((pillar) =>
+        pillar.terms.map((t) => ({
+          "@type": "DefinedTerm",
+          name: t.term,
+          description: t.definition,
+          url: `${site.url}/glossary/${t.slug}`,
+          termCode: t.slug,
+          inDefinedTermSet: { "@id": `${site.url}/glossary` },
+        })),
+      ),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Insights", item: `${site.url}/insights` },
+        { "@type": "ListItem", position: 2, name: "Glossary", item: `${site.url}/glossary` },
+      ],
+    },
+  ],
+};
+
 export default function GlossaryPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(glossarySchema) }}
+      />
       <Header transparent />
       <main id="main-content">
         {/* This was the only top level route opening straight onto flat
