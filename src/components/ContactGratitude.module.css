@@ -14,9 +14,14 @@
   background: #f2eddf;
 }
 
-.scene[data-invitation-pinned="true"] { padding-bottom: 100svh; }
+/* Sticky travel must live in the containing block's content box. Padding
+   would extend the section without giving the stage any room to stick. */
+.scene[data-invitation-pinned="true"] {
+  --invitation-travel: 100svh;
+  min-height: calc(100svh + var(--invitation-travel));
+}
 .scene[data-invitation-pinned="true"] .stage { position: sticky; top: 0; }
-.scene[data-invitation-pinned="true"][data-invitation-input="compact"] { padding-bottom: 72svh; }
+.scene[data-invitation-pinned="true"][data-invitation-input="compact"] { --invitation-travel: 72svh; }
 
 .landscape {
   position: absolute;
@@ -194,10 +199,10 @@
   opacity: 1 !important;
   clip-path: none !important;
 }
-.scene[data-invitation-motion="reduced"] { padding-bottom: 0; }
+.scene[data-invitation-motion="reduced"] { min-height: 0; }
 .scene[data-invitation-motion="reduced"] .stage { position: relative; }
 @media (prefers-reduced-motion: reduce) {
-  .scene[data-invitation-pinned="true"] { padding-bottom: 0; }
+  .scene[data-invitation-pinned="true"] { min-height: 0; }
   .scene[data-invitation-pinned="true"] .stage { position: relative; }
   .scene :is([data-invitation-layer], .booking, .booking svg) {
     animation: none !important;
