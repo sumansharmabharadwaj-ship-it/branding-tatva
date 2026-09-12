@@ -179,22 +179,23 @@ export function V4OpeningScene() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : 0.66, delay: 0.6, ease: EASE }}
           >
-            <Link
+            {/* Native fragment links carry keyboard focus into the destination scene. */}
+            <a
               href="#recognition"
               className="home-v4-button home-v4-button--primary"
               data-magnetic
               data-cursor-label="inspect"
             >
               <span>Find the gap in your brand</span> <ArrowDownRight size={15} aria-hidden="true" />
-            </Link>
-            <Link
+            </a>
+            <a
               href="#evidence"
               className="home-v4-button home-v4-button--quiet"
               data-magnetic
               data-cursor-label="proof"
             >
               <span>See recorded proof</span> <ArrowUpRight size={15} aria-hidden="true" />
-            </Link>
+            </a>
           </motion.div>
         </div>
 
@@ -255,6 +256,7 @@ export function V4RecognitionScene() {
     <section
       ref={sectionRef}
       id="recognition"
+      tabIndex={-1}
       data-home-v4-chapter="recognition"
       data-home-chapter="recognition"
       data-home-section="recognition"
@@ -353,7 +355,7 @@ export function V4RecognitionScene() {
               </div>
             </motion.div>
 
-            <Link
+            <a
               href="#cost"
               onClick={() => publishServicesSituation(active.situation, "home_recognition")}
               className={recognitionStyles.link}
@@ -361,7 +363,7 @@ export function V4RecognitionScene() {
               data-cursor-label="follow"
             >
               See what inconsistency is costing <ArrowDownRight size={18} aria-hidden="true" />
-            </Link>
+            </a>
           </div>
         </div>
       </div>
@@ -384,6 +386,7 @@ export function V4HiddenCostScene() {
     <section
       ref={sectionRef}
       id="cost"
+      tabIndex={-1}
       data-home-v4-chapter="cost"
       data-home-chapter="cost"
       data-home-section="cost"
@@ -461,9 +464,9 @@ export function V4HiddenCostScene() {
 
         <div className={costStyles.footer}>
           <p>A clear position gives every campaign something to build on.</p>
-          <Link href="#foundation" className={costStyles.link} data-magnetic data-cursor-label="foundation">
+          <a href="#foundation" className={costStyles.link} data-magnetic data-cursor-label="foundation">
             Build the foundation <ArrowDownRight size={18} aria-hidden="true" />
-          </Link>
+          </a>
         </div>
       </div>
     </section>

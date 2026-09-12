@@ -46,6 +46,7 @@ export function HomeV4Experience() {
 
       <div
         id="foundation"
+        tabIndex={-1}
         data-home-v4-chapter="foundation"
         data-home-chapter="foundation"
         data-home-section="foundation"
@@ -84,6 +85,7 @@ export function HomeV4Experience() {
 
       <div
         id="evidence"
+        tabIndex={-1}
         data-home-v4-chapter="evidence"
         data-home-chapter="evidence"
         data-home-section="evidence"

@@ -1,5 +1,18 @@
 # Design QA log
 
+## Homepage section shortcut focus — 2026-09-12
+
+- Reproduced on release 225: “See recorded proof” scrolled to evidence but kept focus on the opening link. Tab then focused the opening case-study link and pulled evidence from 0px to 9598px below the viewport.
+- Changed the four simple same-page shortcuts in `HomeV4Scenes` to native fragment anchors and made recognition, cost, foundation and evidence programmatic focus targets (`tabIndex={-1}`). Preserved the recognition situation callback and all copy, media, styling and motion. Route links still use Next Link; the existing “Follow the signal” anchor now shares the recognition target.
+- Local production build: Enter focused each destination in the recognition → cost → foundation sequence. Tab reached the recognition choice, Separate promises button and Category tab respectively, without moving backward. The proof shortcut focused evidence; Tab reached its first project tab at 275px without changing the section position.
+- After reduced-motion layout settled, the proof shortcut focused evidence at 0px; Tab reached its fully visible project tab without a backward jump. Restored full motion after verification.
+- Mobile 390 × 844 in full motion: evidence target top 76px; content and scroll widths both 375px. Tab reached the first project control at 528–642px without moving the section.
+- Passed targeted ESLint, production build (79 routes), homepage source and rendered gates, required Contact delivery gate with mocked provider responses, deployment contract self-test and whitespace checks. These checks preceded integration of unrelated Contact release 228; the scoped homepage files were unchanged by that integration. No form was submitted; native Safari was not tested.
+
+final result: passed
+
+---
+
 ## Questions-to-invitation keyboard handoff — 2026-09-12
 
 - Reproduced on release 222: activating “Talk through your question” scrolled to the invitation but left focus on the originating link. Pressing Tab focused question 1 and pulled the viewport back to the questions (invitation top changed from 84px to 1178px).
