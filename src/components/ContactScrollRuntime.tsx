@@ -72,12 +72,13 @@ export function ContactScrollRuntime() {
       }
 
       const viewportHeight = Math.max(window.innerHeight, 1);
-      // The gratitude film owns its continuous scroll interval. Proximity
-      // snapping here would skip its middle shots or pull the visitor back.
+      // Release snapping from the invitation's first visible edge through the
+      // footer. Re-enabling it when the sticky stage leaves the viewport would
+      // swallow small reverse scrolls and pull the visitor back to the footer.
       const invitation = contactFilm.querySelector<HTMLElement>('[data-invitation-pinned="true"]');
       if (invitation) {
         const rect = invitation.getBoundingClientRect();
-        if (rect.top <= 2 && rect.bottom >= viewportHeight - 2) {
+        if (rect.top <= viewportHeight) {
           delete root.dataset.contactFilmSnap;
           return;
         }
