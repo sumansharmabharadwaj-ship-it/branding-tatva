@@ -23,8 +23,8 @@ export function invitationBotanyAt(progress: number) {
 /** A travelling fold, rather than a timed animation, so every letter rewinds. */
 export function invitationLetterAt(progress: number, index: number, compact = false) {
   const p = Number.isFinite(progress) ? clamp(progress) : 1;
-  const delay = Math.min(10, Math.max(0, index)) * 0.022;
-  const fold = 1 - easeBetween(p, 0.12 + delay, 0.43 + delay);
+  const delay = Math.min(10, Math.max(0, index)) * 0.018;
+  const fold = 1 - easeBetween(p, 0.12 + delay, 0.38 + delay);
   return {
     y: fold * (compact ? 12 : 30),
     rotateX: fold * (compact ? 36 : 68),
@@ -41,11 +41,11 @@ export function invitationMotionAt(progress: number, compact = false) {
   const camera = 1 - easeBetween(p, 0.04, 0.78);
   const opening = 1 - easeBetween(p, 0.16, 0.58);
   const panorama = easeBetween(p, 0.16, 0.42) * (1 - easeBetween(p, 0.42, 0.7));
-  const thanks = 1 - easeBetween(p, 0.2, 0.64);
-  const room = 1 - easeBetween(p, 0.28, 0.72);
-  const note = 1 - easeBetween(p, 0.5, 0.76);
-  const invitation = 1 - easeBetween(p, 0.58, 0.82);
-  const signature = 1 - easeBetween(p, 0.65, 0.86);
+  const thanks = 1 - easeBetween(p, 0.16, 0.54);
+  const room = 1 - easeBetween(p, 0.22, 0.62);
+  const note = 1 - easeBetween(p, 0.56, 0.75);
+  const invitation = 1 - easeBetween(p, 0.68, 0.82);
+  const signature = 1 - easeBetween(p, 0.74, 0.86);
 
   return {
     cameraScale: 1 + camera * (compact ? 0.26 : 0.48),
@@ -66,10 +66,13 @@ export function invitationMotionAt(progress: number, compact = false) {
     makingRoomRotate: compact ? 0 : 5 * room,
     makingRoomRotateY: compact ? 0 : 20 * room,
     noteY: note * (compact ? 12 : 26),
-    noteOpacity: 1 - note,
+    // Both lines reveal at full contrast, after the headline clears them.
+    firstNoteClip: 100 * (1 - easeBetween(p, 0.56, 0.69)),
+    secondNoteClip: 100 * (1 - easeBetween(p, 0.61, 0.75)),
     invitationY: invitation * (compact ? 8 : 18),
     invitationOpacity: 1 - invitation,
     signatureY: signature * (compact ? 5 : 9),
     signatureOpacity: 1 - signature,
+    bookingOrbit: easeBetween(p, 0.72, 0.86),
   };
 }

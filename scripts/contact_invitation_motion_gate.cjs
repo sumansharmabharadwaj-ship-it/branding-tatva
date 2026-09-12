@@ -17,7 +17,7 @@ const resting = {
   windowX: 0, windowTop: 0, windowBottom: 0, windowRadius: 0,
   thankYouX: 0, thankYouY: 0, thankYouScale: 1, thankYouRotate: 0, thankYouRotateY: 0,
   makingRoomX: 0, makingRoomY: 0, makingRoomScale: 1, makingRoomRotate: 0, makingRoomRotateY: 0,
-  noteY: 0, noteOpacity: 1, invitationY: 0, invitationOpacity: 1, signatureY: 0, signatureOpacity: 1,
+  noteY: 0, firstNoteClip: 0, secondNoteClip: 0, invitationY: 0, invitationOpacity: 1, signatureY: 0, signatureOpacity: 1, bookingOrbit: 1,
 };
 
 function assertCameraCoverage(current, width, height, compact) {
@@ -53,8 +53,13 @@ for (const compact of [false, true]) {
     assert.ok(Object.values(current).every(Number.isFinite));
     assert.ok(current.cameraScale >= 1 && current.cameraScale <= (compact ? 1.26 : 1.48));
     assert.ok(current.windowX >= 0 && current.windowX <= 32 && current.windowTop >= 0 && current.windowBottom >= 0 && current.windowTop + current.windowBottom < 60, "The panorama must keep a substantial landscape visible throughout its transition.");
-    for (const opacity of [current.noteOpacity, current.invitationOpacity, current.signatureOpacity]) assert.ok(opacity >= 0 && opacity <= 1);
-    assert.ok(current.noteOpacity >= current.invitationOpacity && current.invitationOpacity >= current.signatureOpacity, "The note, invitation and signature must appear in reading order.");
+    for (const opacity of [current.invitationOpacity, current.signatureOpacity, current.bookingOrbit]) assert.ok(opacity >= 0 && opacity <= 1);
+    assert.ok(current.firstNoteClip >= 0 && current.firstNoteClip <= current.secondNoteClip && current.secondNoteClip <= 100, "The two notes must reveal in reading order at full contrast.");
+    assert.ok(1 - current.secondNoteClip / 100 >= current.invitationOpacity - 1e-9 && current.invitationOpacity >= current.signatureOpacity, "The note, invitation and signature must appear in reading order.");
+    if (current.firstNoteClip < 100) {
+      assert.ok(current.makingRoomY < (compact ? 4 : 8), "The oversized headline must clear the supporting copy before it appears.");
+      for (let i = 0; i < 11; i++) assert.ok(Object.values(invitationLetterAt(step / 1000, i, compact)).every(value => value === 0), "Letter folding must finish before the first note opens.");
+    }
     if (compact) assert.equal(Math.abs(current.thankYouX) + Math.abs(current.makingRoomX) + Math.abs(current.cameraRotate), 0, "Compact screens must avoid sideways text travel and camera roll.");
     for (const [w, h] of compact ? [[320, 822], [390, 844]] : [[1280, 720], [1363, 936], [2560, 1440]]) assertCameraCoverage(current, w, h, compact);
     if (step) for (const key of Object.keys(current)) assert.ok(Math.abs(current[key] - forward[step - 1][key]) < 2, `A discontinuity appeared in ${key}.`);
@@ -64,8 +69,9 @@ for (const compact of [false, true]) {
 assert.ok(pose(0.14).cameraScale > 1.4 && pose(0.14).makingRoomScale > 1.4, "The opening must retain the explicitly requested dramatic scale change.");
 assert.ok(pose(0.4).windowX < pose(0.14).windowX && pose(0.7).windowX === 0, "The narrow landscape must open to full bleed.");
 assert.ok(pose(0.48).windowX < 5 && pose(0.48).windowTop > 14, "The landscape must open sideways into a panorama before filling the screen vertically.");
-assert.equal(pose(0.64).thankYouX, 0);
-assert.ok(pose(0.64).makingRoomX > 0, "The second headline should follow the first.");
+assert.equal(pose(0.54).thankYouX, 0);
+assert.ok(pose(0.54).makingRoomX > 0, "The second headline should follow the first.");
+assert.equal(pose(0.7).bookingOrbit, 0, "The booking emphasis belongs to the completed invitation, not the opening shot.");
 
 // New foreground and typography must resolve before the reading hold, never
 // depend on elapsed time, and retrace the same intermediate shots backwards.

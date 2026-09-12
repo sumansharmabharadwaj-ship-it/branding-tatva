@@ -103,11 +103,13 @@ export function ContactGratitude() {
   const makingRoomRotate = useTransform(pose, (value) => value.makingRoomRotate);
   const makingRoomRotateY = useTransform(pose, (value) => value.makingRoomRotateY);
   const noteY = useTransform(pose, (value) => value.noteY);
-  const noteOpacity = useTransform(pose, (value) => value.noteOpacity);
+  const firstNoteClip = useTransform(pose, (value) => `inset(0 ${value.firstNoteClip}% 0 0)`);
+  const secondNoteClip = useTransform(pose, (value) => `inset(0 ${value.secondNoteClip}% 0 0)`);
   const invitationY = useTransform(pose, (value) => value.invitationY);
   const invitationOpacity = useTransform(pose, (value) => value.invitationOpacity);
   const signatureY = useTransform(pose, (value) => value.signatureY);
   const signatureOpacity = useTransform(pose, (value) => value.signatureOpacity);
+  const bookingOrbit = useTransform(pose, (value) => value.bookingOrbit);
   const botany = useTransform(() => invitationBotanyAt(progress.get()));
   const botanicalLeftX = useTransform(botany, (value) => `${value.leftX}%`);
   const botanicalRightX = useTransform(botany, (value) => `${value.rightX}%`);
@@ -230,10 +232,10 @@ export function ContactGratitude() {
         <motion.div
           data-invitation-layer="note"
           className={styles.acknowledgement}
-          style={motionEnabled ? { y: noteY, opacity: noteOpacity } : { y: 0, opacity: 1 }}
+          style={motionEnabled ? { y: noteY } : { y: 0 }}
         >
-          <p>For a question that matters to you.</p>
-          <p>For the business you have put so much into.</p>
+          <motion.p data-invitation-layer="note-first" style={{ clipPath: motionEnabled ? firstNoteClip : "none" }}>For a question that matters to you.</motion.p>
+          <motion.p data-invitation-layer="note-second" style={{ clipPath: motionEnabled ? secondNoteClip : "none" }}>For the business you have put so much into.</motion.p>
         </motion.div>
         <motion.p
           data-invitation-layer="invitation"
@@ -261,8 +263,11 @@ export function ContactGratitude() {
             data-contact-invitation-booking
             className={styles.booking}
           >
+            <svg className={styles.bookingOrbit} viewBox="0 0 400 76" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <motion.path d="M22 40C14 13 112 3 214 8C330 9 383 19 383 37C386 58 295 72 191 68C90 67 13 60 16 39C18 17 104 4 200 6" fill="none" vectorEffect="non-scaling-stroke" style={{ pathLength: motionEnabled ? bookingOrbit : 1 }} />
+            </svg>
             <span>Find a time with Suman</span>
-            <ArrowRight aria-hidden="true" size={20} strokeWidth={1.4} />
+            <ArrowRight className={styles.bookingArrow} aria-hidden="true" size={20} strokeWidth={1.4} />
           </TrackedLink>
           <p className={styles.reassurance}>
             <span>{site.consultationMinutes} minute conversation</span>
