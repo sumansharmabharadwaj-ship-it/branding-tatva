@@ -32,39 +32,51 @@ type FieldVars = {
   light: string;
   /** Light plates need far less grain before it reads as dirt rather than film. */
   grain: number;
+  /**
+   * The type colour this field is built to sit under.
+   *
+   * Seven fields are dark enough to carry ivory. `wanderlust` is a light
+   * bone plate and carries soil instead — put ivory type on it and the
+   * contrast collapses to roughly 1.2:1, which is unreadable. That is a
+   * measured result, not a guess: the first render of these eight fields
+   * used ivory type throughout and the wanderlust plate came back
+   * illegible, which is why this field exists at all.
+   */
+  carries: "ivory" | "soil";
 };
 
 const FIELDS: Record<LivingGradientPreset, FieldVars> = {
   // Plate 1 — the dark botanical orangery. Near-black green ground with
   // a warm lamp bloom, the way the orchid plate is lit from one side.
-  orangery: { base: "#14180F", a: "#1F3A28", b: "#C28A28", c: "#556B4A", light: "#D4B99A", grain: 0.06 },
+  orangery: { base: "#14180F", a: "#1F3A28", b: "#C28A28", c: "#556B4A", light: "#D4B99A", grain: 0.06, carries: "ivory" },
 
   // Plate 2 — god rays through a wet forest. Cooler, with the shaft
   // doing most of the visible work.
-  canopy: { base: "#101A12", a: "#1F3A28", b: "#8FAE83", c: "#556B4A", light: "#F2F0E8", grain: 0.055 },
+  canopy: { base: "#101A12", a: "#1F3A28", b: "#8FAE83", c: "#556B4A", light: "#F2F0E8", grain: 0.055, carries: "ivory" },
 
   // Plate 3 — the Plura cyanotype. The one genuinely cool field in the
   // set; maps onto the site's existing Indigo rather than a new blue.
-  cyanotype: { base: "#16202A", a: "#24394D", b: "#7D9BAF", c: "#B5B3AA", light: "#DDE2DC", grain: 0.05 },
+  cyanotype: { base: "#16202A", a: "#24394D", b: "#7D9BAF", c: "#B5B3AA", light: "#DDE2DC", grain: 0.05, carries: "ivory" },
 
   // Plate 4 — jungle depth behind glass cards. Deepest of the set;
   // built to sit under frosted panels, not under bare type.
-  understory: { base: "#0E1714", a: "#1F3A28", b: "#5C6B4A", c: "#24394D", light: "#8FAE83", grain: 0.05 },
+  understory: { base: "#0E1714", a: "#1F3A28", b: "#5C6B4A", c: "#24394D", light: "#8FAE83", grain: 0.05, carries: "ivory" },
 
   // Plate 5 — the warm sunset mountains. The most literally "gradient"
   // reference on the board, and the warmest field here.
-  dusk: { base: "#2A1D18", a: "#B85A34", b: "#CD7A4C", c: "#C6A97A", light: "#D4B99A", grain: 0.05 },
+  dusk: { base: "#2A1D18", a: "#B85A34", b: "#CD7A4C", c: "#C6A97A", light: "#D4B99A", grain: 0.05, carries: "ivory" },
 
   // Plate 6 — frosted glass over backlit leaves.
-  verdure: { base: "#18231A", a: "#556B4A", b: "#7D8E52", c: "#8FAE83", light: "#F2F0E8", grain: 0.05 },
+  verdure: { base: "#18231A", a: "#556B4A", b: "#7D8E52", c: "#8FAE83", light: "#F2F0E8", grain: 0.05, carries: "ivory" },
 
-  // Plate 7 — the sage plantation editorial. Mid-tone rather than dark;
-  // the only field meant to carry dark type as easily as light.
-  plantation: { base: "#48553B", a: "#7D8E52", b: "#8FAE83", c: "#B5B3AA", light: "#F2F0E8", grain: 0.04 },
+  // Plate 7 — the sage plantation editorial. Mid-tone rather than dark,
+  // so it still carries ivory, but it is the one field with little
+  // headroom left: keep type large and avoid long body copy on it.
+  plantation: { base: "#48553B", a: "#7D8E52", b: "#8FAE83", c: "#B5B3AA", light: "#F2F0E8", grain: 0.04, carries: "ivory" },
 
   // Plate 8 — the bone Wanderlust poster. A light field, for the cream
   // chapters that currently read as flat paper.
-  wanderlust: { base: "#EDE7DA", a: "#D4B99A", b: "#E8DED0", c: "#C6A97A", light: "#FFFDF7", grain: 0.03 },
+  wanderlust: { base: "#EDE7DA", a: "#D4B99A", b: "#E8DED0", c: "#C6A97A", light: "#FFFDF7", grain: 0.03, carries: "soil" },
 };
 
 export type LivingGradientProps = {

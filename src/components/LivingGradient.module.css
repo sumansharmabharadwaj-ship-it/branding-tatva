@@ -99,12 +99,20 @@
   left: 50%;
   width: 55%;
   height: 190%;
+  /* The falloff used to run transparent → 42% → 50% → 58% → transparent,
+     which is narrow enough that the two outer stops read as actual
+     edges: a visible diagonal band crossing the plate rather than
+     light. Widened to the full width with a soft centre so it resolves
+     as atmosphere. Lower peak for the same reason — a shaft you can
+     point at is a shape, not a light. */
   background: linear-gradient(
     100deg,
     transparent 0%,
-    color-mix(in oklab, var(--lg-light) 42%, transparent) 42%,
-    color-mix(in oklab, var(--lg-light) 62%, transparent) 50%,
-    color-mix(in oklab, var(--lg-light) 42%, transparent) 58%,
+    color-mix(in oklab, var(--lg-light) 10%, transparent) 22%,
+    color-mix(in oklab, var(--lg-light) 30%, transparent) 40%,
+    color-mix(in oklab, var(--lg-light) 38%, transparent) 50%,
+    color-mix(in oklab, var(--lg-light) 30%, transparent) 60%,
+    color-mix(in oklab, var(--lg-light) 10%, transparent) 78%,
     transparent 100%
   );
   will-change: transform, opacity;
@@ -118,12 +126,18 @@
 .vignette {
   position: absolute;
   inset: 0;
+  /* Held flat to 52% and then climbing steeply, this left a visible
+     elliptical rim arcing across the plate — the darkening read as a
+     drawn shape. Starting the falloff early and easing it out over the
+     whole radius keeps the edge weighting without any perceptible
+     boundary. */
   background: radial-gradient(
-    ellipse 120% 90% at 50% 45%,
+    ellipse 135% 105% at 50% 45%,
     transparent 0%,
-    transparent 52%,
-    color-mix(in oklab, var(--lg-base) 62%, transparent) 82%,
-    color-mix(in oklab, var(--lg-base) 88%, transparent) 100%
+    color-mix(in oklab, var(--lg-base) 8%, transparent) 38%,
+    color-mix(in oklab, var(--lg-base) 26%, transparent) 60%,
+    color-mix(in oklab, var(--lg-base) 52%, transparent) 80%,
+    color-mix(in oklab, var(--lg-base) 76%, transparent) 100%
   );
 }
 
