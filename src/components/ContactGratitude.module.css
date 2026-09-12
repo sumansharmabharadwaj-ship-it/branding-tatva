@@ -183,8 +183,13 @@
 .scene:focus-within .botanicalLeft { transform: translate(-78%, 32px) scale(1.15) rotate(-8deg) !important; opacity: 0.76 !important; }
 .scene:focus-within .botanicalRight { transform: translate(78%, 32px) scale(1.15) rotate(8deg) !important; opacity: 0.76 !important; }
 
+@media (max-width: 940px) {
+  /* Keep dark leaves outside the narrow headline's ink throughout arrival. */
+  .botanicalSide { width: 18%; }
+  .botanicalLeft { mask-image: linear-gradient(90deg, #000a, transparent 85%); }
+  .botanicalRight { mask-image: linear-gradient(270deg, #000a, transparent 85%); }
+}
 @media (max-width: 767px) {
-  .botanicalSide { width: 27%; }
   .stage { min-height: max(820px, 100svh); }
   .content { padding: 130px 24px 150px; }
   .eyebrow { font-size: 10px; margin-bottom: 24px; letter-spacing: 0.25em; }
