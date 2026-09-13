@@ -6,7 +6,7 @@ import { track } from "@/lib/analytics";
 const CHAPTERS = [
   { id: "choose", label: "Choose", tone: "light" },
   { id: "write", label: "Write", tone: "light" },
-  { id: "call", label: "Call", tone: "dark" },
+  { id: "call", label: "Call", tone: "light" },
   { id: "thanks", label: "Thank you", tone: "light" },
 ] as const;
 

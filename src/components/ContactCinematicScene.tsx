@@ -23,7 +23,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { EASE_AIR } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
-type ContactSceneVariant = "branch" | "paper" | "horizon" | "afterglow";
+type ContactSceneVariant = "branch" | "paper" | "horizon" | "daybreak" | "afterglow";
 
 type SceneMotion = {
   cameraX: number[];
@@ -41,8 +41,13 @@ const BEATS = [0, 0.18, 0.48, 0.78, 1];
 
 const SCENE_HANDOFF: Record<ContactSceneVariant, string> = {
   branch: "linear-gradient(180deg, rgba(221,226,220,0) 0%, rgba(221,226,220,0.9) 100%)",
-  paper: "linear-gradient(180deg, rgba(39,34,30,0) 0%, rgba(39,34,30,0.9) 100%)",
+  // The write chapter now hands off into daybreak's sunlit base rather than
+  // a dark cut: the whole post-hero film stays inside one bright register.
+  paper: "linear-gradient(180deg, rgba(234,227,212,0) 0%, rgba(234,227,212,0.9) 100%)",
   horizon: "linear-gradient(180deg, rgba(39,34,30,0) 0%, rgba(39,34,30,0.96) 100%)",
+  // Daybreak develops toward the gratitude scene's paper cream, so the match
+  // cut into the closing invitation reads as the same morning continuing.
+  daybreak: "linear-gradient(180deg, rgba(244,239,229,0) 0%, rgba(244,239,229,0.92) 100%)",
   afterglow: "linear-gradient(180deg, rgba(39,34,30,0) 0%, rgba(39,34,30,0.98) 100%)",
 };
 
@@ -53,6 +58,8 @@ const SCENE_EXPOSURE: Record<ContactSceneVariant, string> = {
     "radial-gradient(circle at 78% 22%, rgba(255,235,205,0.78) 0%, rgba(235,217,188,0.26) 26%, transparent 57%), linear-gradient(236deg, rgba(255,255,255,0.2) 0%, transparent 44%)",
   horizon:
     "radial-gradient(ellipse at 52% 88%, rgba(238,198,145,0.86) 0%, rgba(210,168,119,0.3) 25%, transparent 58%), linear-gradient(180deg, transparent 30%, rgba(246,220,183,0.16) 100%)",
+  daybreak:
+    "radial-gradient(circle at 76% 18%, rgba(255,232,192,0.9) 0%, rgba(244,214,168,0.32) 26%, transparent 58%), linear-gradient(210deg, rgba(255,248,232,0.26) 0%, transparent 46%)",
   afterglow:
     "radial-gradient(circle at 62% 72%, rgba(248,205,142,0.92) 0%, rgba(224,177,112,0.3) 24%, transparent 56%), linear-gradient(150deg, rgba(255,237,204,0.12) 0%, transparent 46%)",
 };
@@ -93,6 +100,23 @@ const SCENE_MOTION: Record<ContactSceneVariant, SceneMotion> = {
     contentRotateY: [1.5, 0.7, 0, -0.2, -1.2],
   },
   horizon: {
+    cameraX: [0, 0, 0, -3, -7],
+    cameraY: [-36, -20, 0, 12, 28],
+    cameraScale: [1.22, 1.14, 1.055, 1.035, 1.08],
+    cameraClip: [
+      "inset(15% 4% 0% 4% round 2.75rem 2.75rem 0rem 0rem)",
+      "inset(7% 2% 0% 2% round 2rem 2rem 0rem 0rem)",
+      "inset(0% 0% 0% 0% round 0rem)",
+      "inset(0% 0% 0% 0% round 0rem)",
+      "inset(4% 3% 3% 3% round 1.8rem)",
+    ],
+    contentX: [0, 0, 0, -2, -6],
+    contentY: [34, 17, 0, -5, -16],
+    contentScale: [0.968, 0.985, 1, 1, 0.99],
+    contentRotateX: [2.8, 1.3, 0, -0.1, -1.2],
+    contentRotateY: [-0.7, -0.3, 0, 0.2, 0.7],
+  },
+  daybreak: {
     cameraX: [0, 0, 0, -3, -7],
     cameraY: [-36, -20, 0, 12, 28],
     cameraScale: [1.22, 1.14, 1.055, 1.035, 1.08],

@@ -43,20 +43,20 @@ export function ContactCallSequence() {
     >
       <span
         aria-hidden="true"
-        className="absolute left-[16.5%] right-[16.5%] top-[1.65rem] h-px bg-white/12 sm:top-8 lg:hidden"
+        className="absolute left-[16.5%] right-[16.5%] top-[1.65rem] h-px bg-soil/12 sm:top-8 lg:hidden"
       />
       <motion.span
         aria-hidden="true"
-        className="absolute left-[16.5%] right-[16.5%] top-[1.65rem] h-px origin-left bg-sandstone/65 sm:top-8 lg:hidden"
+        className="absolute left-[16.5%] right-[16.5%] top-[1.65rem] h-px origin-left bg-clay/60 sm:top-8 lg:hidden"
         style={{ scaleX: prefersReducedMotion ? 1 : drawn }}
       />
       <span
         aria-hidden="true"
-        className="absolute bottom-5 left-[1.55rem] top-5 hidden w-px bg-white/12 lg:block"
+        className="absolute bottom-5 left-[1.55rem] top-5 hidden w-px bg-soil/12 lg:block"
       />
       <motion.span
         aria-hidden="true"
-        className="absolute bottom-5 left-[1.55rem] top-5 z-10 hidden w-px origin-top bg-sandstone/65 lg:block"
+        className="absolute bottom-5 left-[1.55rem] top-5 z-10 hidden w-px origin-top bg-clay/60 lg:block"
         style={{ scaleY: prefersReducedMotion ? 1 : drawn }}
       />
 
@@ -73,27 +73,27 @@ export function ContactCallSequence() {
                 onClick={() => choose(index)}
                 onFocus={() => choose(index)}
                 onMouseEnter={() => choose(index)}
-                className={`group relative flex min-h-[6.75rem] w-full flex-col items-center gap-2 overflow-hidden rounded-xl border px-2 py-3 text-center transition-[border-color,color,transform] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone sm:min-h-20 sm:flex-row sm:items-start sm:gap-4 sm:rounded-2xl sm:px-4 sm:py-4 sm:text-left lg:min-h-0 lg:items-center lg:py-3 ${
+                className={`group relative flex min-h-[6.75rem] w-full flex-col items-center gap-2 overflow-hidden rounded-xl border px-2 py-3 text-center transition-[border-color,color,transform] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-20 sm:flex-row sm:items-start sm:gap-4 sm:rounded-2xl sm:px-4 sm:py-4 sm:text-left lg:min-h-0 lg:items-center lg:py-3 ${
                   active
-                    ? "border-white/20 text-ivory"
-                    : "border-white/10 text-ivory/64 hover:border-white/16 hover:text-ivory/88"
+                    ? "border-soil/16 text-soil"
+                    : "border-soil/10 bg-white/25 text-soil/62 backdrop-blur-sm hover:border-soil/14 hover:text-soil/85"
                 }`}
               >
                 {active ? (
                   <motion.span
                     layoutId="contact-call-active-step"
                     aria-hidden="true"
-                    className="absolute inset-0 rounded-2xl bg-white/[0.095] shadow-[0_16px_50px_rgba(0,0,0,0.14)] backdrop-blur-xl"
+                    className="absolute inset-0 rounded-2xl bg-white/45 shadow-[0_16px_50px_rgba(78,60,38,0.12)] backdrop-blur-xl"
                     transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE_AIR }}
                   />
                 ) : null}
                 <motion.span
                   aria-hidden="true"
-                  className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-sandstone/30 bg-soil/35 font-display text-sm leading-none text-sandstone"
+                  className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-clay/30 bg-white/50 font-display text-sm leading-none text-clay"
                 >
                   {active && isSequenceVisible && !prefersReducedMotion ? (
                     <motion.span
-                      className="absolute -inset-1 rounded-full border border-sandstone/45"
+                      className="absolute -inset-1 rounded-full border border-clay/45"
                       initial={{ scale: 0.82, opacity: 0 }}
                       animate={{ scale: 1.38, opacity: [0, 0.45, 0] }}
                       transition={{ duration: 1.15, ease: "easeOut" }}

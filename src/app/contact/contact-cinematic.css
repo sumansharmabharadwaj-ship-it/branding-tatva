@@ -131,26 +131,131 @@
 }
 
 @supports selector(section:has(*)) {
-  [data-contact-film] [data-contact-scene="horizon"]:has([data-contact-call-step="1"][aria-current="step"])
+  [data-contact-film] [data-contact-scene="daybreak"]:has([data-contact-call-step="1"][aria-current="step"])
     [data-contact-booking-card]::before {
     transform: translate3d(0, -1%, 0) scale(1);
   }
 
-  [data-contact-film] [data-contact-scene="horizon"]:has([data-contact-call-step="2"][aria-current="step"])
+  [data-contact-film] [data-contact-scene="daybreak"]:has([data-contact-call-step="2"][aria-current="step"])
     [data-contact-booking-card]::before {
     opacity: 0.58;
     transform: translate3d(16%, 12%, 0) scale(1.08);
   }
 
-  [data-contact-film] [data-contact-scene="horizon"]:has([data-contact-call-step="1"][aria-current="step"])
+  [data-contact-film] [data-contact-scene="daybreak"]:has([data-contact-call-step="1"][aria-current="step"])
     [data-contact-booking-card]::after {
     transform: scaleX(0.67);
   }
 
-  [data-contact-film] [data-contact-scene="horizon"]:has([data-contact-call-step="2"][aria-current="step"])
+  [data-contact-film] [data-contact-scene="daybreak"]:has([data-contact-call-step="2"][aria-current="step"])
     [data-contact-booking-card]::after {
     transform: scaleX(1);
   }
+}
+
+/* Vibrancy grade. The approved footage on this page is bright material —
+   flowers and prints on warm wood, clear water over stone, a plant filled
+   window — that previously arrived desaturated under heavy washes. Each
+   plate gets a gentle lift toward its own colour instead of a darker one;
+   the media standard's ceiling applies to darkening, and these only open
+   the footage up. Filters sit on the media elements themselves so no
+   ancestor gains a containing block or stacking side effect. */
+[data-contact-film] .contact-hero-film video,
+[data-contact-film] .contact-hero-film > img {
+  filter: saturate(1.12) brightness(1.05);
+}
+
+[data-contact-film] [data-contact-scene="branch"] [data-background-video-stage] video,
+[data-contact-film] [data-contact-scene="branch"] [data-background-video-stage] img {
+  filter: saturate(1.2) brightness(1.09);
+}
+
+/* The journal plate is the one inherently dim clip in the set: lifted
+   toward lamplight so the chapter reads warm instead of overcast. */
+[data-contact-film] [data-contact-scene="paper"] [data-background-video-stage] video,
+[data-contact-film] [data-contact-scene="paper"] [data-background-video-stage] img {
+  filter: saturate(1.1) brightness(1.24) contrast(0.98);
+}
+
+[data-contact-film] [data-contact-scene="daybreak"] [data-background-video-stage] video,
+[data-contact-film] [data-contact-scene="daybreak"] [data-background-video-stage] img {
+  filter: saturate(1.14) brightness(1.1);
+}
+
+[data-contact-film] .contact-pathway-film-video {
+  filter: saturate(1.12) brightness(1.05);
+}
+
+/* Sun dust. Two tiled layers of soft pollen motes rise at different speeds
+   through the light chapters, so standing still the scene is already
+   breathing. Transform-only tile loops; each layer's slack covers its own
+   travel so no edge is ever exposed. */
+[data-contact-film] [data-contact-sundust] {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+[data-contact-film] [data-contact-sundust] > span {
+  position: absolute;
+  inset: -280px 0;
+  background-repeat: repeat;
+  will-change: transform;
+}
+
+[data-contact-film] [data-contact-sundust] > span:first-child {
+  opacity: 0.5;
+  background-image:
+    radial-gradient(2.5px 2.5px at 22px 34px, rgba(255, 232, 186, 0.9) 0%, rgba(255, 232, 186, 0) 100%),
+    radial-gradient(1.8px 1.8px at 118px 158px, rgba(224, 178, 110, 0.85) 0%, rgba(224, 178, 110, 0) 100%),
+    radial-gradient(2px 2px at 204px 86px, rgba(255, 244, 214, 0.8) 0%, rgba(255, 244, 214, 0) 100%),
+    radial-gradient(1.5px 1.5px at 66px 226px, rgba(214, 164, 94, 0.8) 0%, rgba(214, 164, 94, 0) 100%),
+    radial-gradient(9px 9px at 168px 250px, rgba(255, 226, 172, 0.32) 0%, rgba(255, 226, 172, 0) 100%);
+  background-size: 260px 280px;
+  animation: contact-sundust-rise 44s linear infinite;
+}
+
+[data-contact-film] [data-contact-sundust] > span:last-child {
+  opacity: 0.38;
+  background-image:
+    radial-gradient(1.6px 1.6px at 44px 64px, rgba(255, 238, 198, 0.85) 0%, rgba(255, 238, 198, 0) 100%),
+    radial-gradient(2.2px 2.2px at 258px 188px, rgba(226, 182, 118, 0.8) 0%, rgba(226, 182, 118, 0) 100%),
+    radial-gradient(1.4px 1.4px at 148px 320px, rgba(255, 248, 226, 0.8) 0%, rgba(255, 248, 226, 0) 100%),
+    radial-gradient(12px 12px at 348px 96px, rgba(255, 224, 168, 0.24) 0%, rgba(255, 224, 168, 0) 100%);
+  background-size: 420px 380px;
+  animation: contact-sundust-rise-far 74s linear infinite;
+}
+
+@keyframes contact-sundust-rise {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, -280px, 0);
+  }
+}
+
+@keyframes contact-sundust-rise-far {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, -380px, 0);
+  }
+}
+
+/* The two commitments a visitor can click carry a warm standing light, so
+   the eye lands on them the way it lands on the brightest point of a frame. */
+[data-contact-film] [data-contact-booking-action] {
+  box-shadow: 0 18px 55px rgba(190, 132, 62, 0.28);
+}
+
+[data-contact-film] [data-contact-booking-action]:hover {
+  box-shadow: 0 24px 70px rgba(190, 132, 62, 0.4);
 }
 
 /* Contact opens like a composed film frame rather than a generic full-bleed
@@ -239,6 +344,34 @@
   transform-origin: 72% 28%;
   animation: contact-hero-light-open 2.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   will-change: transform, opacity;
+}
+
+[data-contact-film] [data-contact-hero-sun] {
+  position: absolute;
+  inset: -10%;
+  opacity: 0.12;
+  background: radial-gradient(
+    ellipse at 74% 22%,
+    rgba(255, 224, 172, 0.85) 0%,
+    rgba(238, 196, 138, 0.28) 26%,
+    transparent 58%
+  );
+  mix-blend-mode: screen;
+  transform-origin: 74% 22%;
+  animation: contact-hero-sun-breathe 11s cubic-bezier(0.45, 0, 0.55, 1) 2.4s infinite alternate;
+  will-change: transform, opacity;
+}
+
+@keyframes contact-hero-sun-breathe {
+  from {
+    opacity: 0.09;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0.2;
+    transform: scale(1.06) translate3d(0.6%, -0.5%, 0);
+  }
 }
 
 [data-contact-film] [data-contact-hero-signal] {
@@ -1507,6 +1640,12 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-scene-heading] {
   transform: none !important;
 }
 
+html[data-motion="reduced"] [data-contact-film] [data-contact-sundust] > span,
+html[data-motion="reduced"] [data-contact-film] [data-contact-hero-sun] {
+  animation: none !important;
+  transform: none !important;
+}
+
 html[data-motion="reduced"] .contact-hero-film > video,
 html[data-motion="reduced"] [data-contact-film] .contact-hero-signal-line > span,
 html[data-motion="reduced"] [data-contact-film] .contact-pathway-film-video,
@@ -1620,6 +1759,8 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   [data-contact-film] [data-contact-hero-frame],
   [data-contact-film] [data-contact-hero-matte],
   [data-contact-film] [data-contact-hero-light-open],
+  [data-contact-film] [data-contact-hero-sun],
+  [data-contact-film] [data-contact-sundust] > span,
   [data-contact-film] [data-contact-pathway-shot]::after {
     animation: none !important;
     transform: none !important;

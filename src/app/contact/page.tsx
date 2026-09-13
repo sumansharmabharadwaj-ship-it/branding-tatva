@@ -18,7 +18,6 @@ import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
 import { NatureAccent } from "@/components/NatureAccent";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { LivingGradient } from "@/components/LivingGradient";
 import { ArrowUpRight, CalendarDays, MessageCircle, Phone } from "lucide-react";
 import { consultation, site } from "@/data/site";
 import { pageSchema, ORGANIZATION_ID } from "@/lib/pageSchema";
@@ -79,6 +78,11 @@ export default function ContactPage() {
             of a full-height column, so it still carries type contrast
             where the words actually are while the rest of the frame
             keeps its light. */}
+        {/* Vibrancy pass: the same two-layer structure, regraded from
+            near-neutral charcoal to the footage's own warm register —
+            deep wood tones in the scrim instead of grey-green, and a
+            lower foot so the flowers and prints on the table arrive in
+            colour. The scrim still peaks only where the headline sits. */}
         <PhotoHero
           video="/videos/generated/bt-contact-original-hero.mp4"
           videoMobile="/videos/generated/bt-contact-original-hero-mobile.mp4"
@@ -87,7 +91,7 @@ export default function ContactPage() {
           imagePosition="62% 56%"
           playbackRate={0.84}
           className="contact-hero-film"
-          overlayGradient="linear-gradient(180deg, rgba(25,27,22,0.10) 0%, rgba(28,29,23,0.22) 48%, rgba(29,27,23,0.66) 100%), radial-gradient(95% 85% at 12% 52%, rgba(25,25,21,0.62) 0%, rgba(25,25,21,0.34) 42%, rgba(24,26,21,0) 74%)"
+          overlayGradient="linear-gradient(180deg, rgba(43,32,20,0.08) 0%, rgba(43,32,20,0.18) 48%, rgba(38,28,18,0.54) 100%), radial-gradient(95% 85% at 12% 52%, rgba(40,29,18,0.58) 0%, rgba(40,29,18,0.3) 42%, rgba(40,29,18,0) 74%)"
         >
           <div data-contact-hero-frame aria-hidden="true">
             <span />
@@ -97,6 +101,10 @@ export default function ContactPage() {
             <span data-contact-hero-matte="top" />
             <span data-contact-hero-matte="bottom" />
             <span data-contact-hero-light-open />
+            {/* A window-light presence that stays after the opening: slow
+                breathing warmth over the table's upper right, so the frame
+                keeps reading as morning light on a working surface. */}
+            <span data-contact-hero-sun />
           </div>
           <Container data-contact-hero className="relative py-16 sm:py-24">
             <div data-contact-hero-grid className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
@@ -219,9 +227,13 @@ export default function ContactPage() {
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "radial-gradient(120% 92% at 6% 46%, rgba(232,222,208,0.92) 0%, rgba(232,222,208,0.58) 36%, rgba(232,222,208,0) 68%), linear-gradient(110deg, rgba(232,222,208,0.44) 0%, rgba(235,227,216,0.28) 55%, rgba(223,225,214,0.22) 100%)",
+                    "radial-gradient(120% 92% at 6% 46%, rgba(240,230,212,0.92) 0%, rgba(240,230,212,0.56) 36%, rgba(240,230,212,0) 68%), radial-gradient(70% 55% at 82% 8%, rgba(255,226,178,0.3) 0%, rgba(255,226,178,0.1) 45%, rgba(255,226,178,0) 72%), linear-gradient(110deg, rgba(240,230,212,0.4) 0%, rgba(238,230,216,0.24) 55%, rgba(226,228,214,0.18) 100%)",
                 }}
               />
+              <div data-contact-sundust aria-hidden="true">
+                <span />
+                <span />
+              </div>
             </>
           }
         >
@@ -263,9 +275,13 @@ export default function ContactPage() {
                 className="absolute inset-0"
                 style={{
                   backgroundImage:
-                    "radial-gradient(120% 95% at 5% 44%, rgba(235,232,221,0.93) 0%, rgba(235,232,221,0.58) 34%, rgba(235,232,221,0) 66%), linear-gradient(100deg, rgba(235,232,221,0.42) 0%, rgba(232,229,219,0.26) 48%, rgba(218,224,214,0.18) 100%)",
+                    "radial-gradient(120% 95% at 5% 44%, rgba(238,233,219,0.93) 0%, rgba(238,233,219,0.56) 34%, rgba(238,233,219,0) 66%), radial-gradient(62% 52% at 88% 78%, rgba(255,218,166,0.26) 0%, rgba(255,218,166,0.08) 46%, rgba(255,218,166,0) 70%), linear-gradient(100deg, rgba(238,233,219,0.4) 0%, rgba(234,230,218,0.24) 48%, rgba(222,226,214,0.16) 100%)",
                 }}
               />
+              <div data-contact-sundust aria-hidden="true">
+                <span />
+                <span />
+              </div>
             </>
           }
         >
@@ -324,30 +340,20 @@ export default function ContactPage() {
           </Container>
         </ContactCinematicScene>
 
-        {/* Was solid Indigo — a second distinct color on a two-section
-            page already using Sandstone above, exactly the kind of
-            per-section color-cycling flagged sitewide as reading
-            cluttered rather than cohesive. Soil now, the same dark
-            anchor every other page uses; the water glyph below still
-            carries the "water" theme as an accent, it just isn't the
-            whole backdrop anymore. CalendlyEmbed already wraps itself in
-            an opaque card, so no change needed there. */}
-        {/* Direct feedback that this section read as two flat text blocks
-            with only a hairline dividing them — same bordered,
-            element-tinted card treatment FounderLens/PackageSelector
-            already proved on Services, applied here to the two real
-            choices this page already offers (book directly, or stay on
-            the list). Water and Air, matching the glyphs already used.
-            Audit found this section had no video behind it at all — the
-            same "blank section" bug class fixed elsewhere. A calm
-            wildflower meadow, genuinely unused elsewhere on this page
-            (or its own Footer), fitting "grab a time / stay in touch."
-            Overlay at bg-soil/80, the site's normalized standard. */}
+        {/* The booking scene's own footage is a bright plant filled window
+            conversation — and it was buried under a 0.72 charcoal wash plus
+            a dark drifting field, so the single most consequential scene on
+            the site arrived as the darkest frame on the page. Flipped to a
+            daybreak treatment instead: the footage keeps its window light,
+            a localized cream scrim sits only under the copy column, and the
+            headline moves to soil ink on light, matching the sunlit
+            invitation that follows. The visitor now books inside the
+            brightest stretch of the film rather than its lowest. */}
         <ContactCinematicScene
           id="call"
           labelledBy="contact-call-heading"
-          variant="horizon"
-          className="bg-soil"
+          variant="daybreak"
+          className="border-t border-soil/10 bg-[#EAE3D4]"
           media={
             <>
               <BackgroundVideo
@@ -361,34 +367,30 @@ export default function ContactPage() {
               <div
                 className="absolute inset-0"
                 aria-hidden="true"
-                style={{ backgroundImage: "linear-gradient(105deg, rgba(28,34,27,0.72) 0%, rgba(39,42,31,0.52) 48%, rgba(39,32,24,0.42) 100%)" }}
+                style={{
+                  backgroundImage:
+                    "radial-gradient(115% 92% at 8% 46%, rgba(236,229,214,0.92) 0%, rgba(236,229,214,0.55) 38%, rgba(236,229,214,0) 68%), radial-gradient(66% 54% at 86% 12%, rgba(255,228,182,0.3) 0%, rgba(255,228,182,0.1) 44%, rgba(255,228,182,0) 70%), linear-gradient(105deg, rgba(236,229,214,0.36) 0%, rgba(234,227,212,0.22) 48%, rgba(230,226,212,0.16) 100%)",
+                }}
               />
-              {/* The wash above is what guarantees contrast for the
-                  headline and the booking card, so it stays exactly as
-                  it was. This adds the drifting colour on top of it —
-                  the deep-green understory field from the reference
-                  board — so the most important scene on the site stops
-                  reading as one static dark rectangle. Layered mode, so
-                  the approved meadow footage underneath still reads;
-                  held at 0.42 and given no light sweep, since a moving
-                  highlight behind a booking card would compete with the
-                  one thing this scene exists to get clicked. */}
-              <LivingGradient preset="understory" plain shaft={false} grain={0} opacity={0.42} />
+              <div data-contact-sundust aria-hidden="true">
+                <span />
+                <span />
+              </div>
             </>
           }
         >
           <Container className="contact-call-layout relative grid w-full gap-12 py-12 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
             <div data-contact-call-copy>
               <div>
-                <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-sandstone">Thirty minutes with Suman</p>
+                <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-clay">Thirty minutes with Suman</p>
                 <ContactKineticHeading
                   id="contact-call-heading"
                   data-contact-call-heading
                   lines={["Bring one", "brand decision.", "Find its frame."]}
-                  resolveClassName="text-sandstone"
-                  className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-ivory"
+                  resolveClassName="text-clay"
+                  className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-soil"
                 />
-                <p data-contact-call-intro className="mt-6 max-w-md text-sm leading-relaxed text-ivory/75 sm:text-base">
+                <p data-contact-call-intro className="mt-6 max-w-md text-sm leading-relaxed text-soil/72 sm:text-base">
                   We examine what the audience sees, what the business means, and where the two have drifted apart.
                 </p>
               </div>
@@ -397,7 +399,7 @@ export default function ContactPage() {
             </div>
 
             <div className="min-w-0">
-              <div data-contact-booking-card className="rounded-[2rem] border border-white/45 bg-[#F6F2EA]/90 p-6 shadow-[0_30px_100px_rgba(10,18,11,0.34)] backdrop-blur-3xl sm:p-10">
+              <div data-contact-booking-card className="rounded-[2rem] border border-white/60 bg-[#F8F4EC]/92 p-6 shadow-[0_30px_90px_rgba(62,48,30,0.18)] backdrop-blur-3xl sm:p-10">
                 <div data-contact-booking-header className="flex items-start justify-between gap-6">
                   <div>
                     <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">Direct with the founder</p>
