@@ -103,7 +103,7 @@ export function TatvaSystemLab() {
               A gap in one place changes the whole brand.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-7 sm:text-base sm:leading-8">
-              Explore five common gaps between a brand’s intent and what customers encounter. Each points to a different decision worth revisiting.
+              Walk through five common gaps between a brand’s intent and what customers encounter. Each points to a different decision worth revisiting.
             </p>
 
             <div className="mt-7 grid gap-2 sm:grid-cols-2" role="group" aria-label="Choose a missing part of the brand">
@@ -287,7 +287,7 @@ export function TatvaSystemLab() {
                     <p>{omitted?.repair ?? "Check where customers encounter a different message from the one you intend."}</p>
                   </div>
                   <Link href="/services#audit" className="tatva-pressure-lab__audit">
-                    Explore the brand audit <span aria-hidden="true">→</span>
+                    Open the brand audit <span aria-hidden="true">→</span>
                   </Link>
                 </motion.div>
               </div>

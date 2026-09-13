@@ -39,6 +39,11 @@ export const faqs = [
     answer: "Yes. All of the work shown here was done remotely.",
   },
   {
+    question: "Why a solo strategist instead of an agency?",
+    answer:
+      "The person who hears your problem is the person who thinks it through, writes the words, and directs the design. Agencies hand strategy from the pitch team to the delivery team, and every handoff loses part of the reasoning. Here the reasoning stays whole from the first conversation to the launched work.",
+  },
+  {
     question: "Will branding increase revenue?",
     answer:
       "Branding can improve how quickly buyers understand, remember, and trust the offer, but revenue also depends on price, distribution, demand, sales, and delivery. For Dr. Haley Nutrition, engagement moved from 0.71% to 2.81% while posting less. That is evidence from one account. Every business earns its own numbers.",

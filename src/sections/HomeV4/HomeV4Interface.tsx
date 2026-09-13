@@ -320,11 +320,11 @@ export function GuidedView() {
         ? "guided journey paused"
         : showHint
           ? "play the journey"
-          : "explore at your pace";
+          : "move at your pace";
   const detail = atFinalChapter
     ? "the invitation"
     : showHint
-      ? "eleven scenes · always user-led"
+      ? "eleven scenes · always yours to steer"
       : chapterName;
 
   return (
@@ -387,10 +387,10 @@ export function GuidedView() {
           dismissHint();
           changeMode("manual");
         }}
-        aria-label="Explore the homepage manually"
+        aria-label="Read the homepage at your own pace"
         aria-pressed={mode === "manual"}
-        data-cursor-label="manual"
-        title="Explore manually"
+        data-cursor-label="your pace"
+        title="Your own pace"
       >
         <Hand size={13} />
       </button>

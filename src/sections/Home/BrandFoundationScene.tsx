@@ -226,7 +226,7 @@ export function BrandFoundationScene() {
             </div>
 
             <Link href="/services#package-brand-beginning" className={styles.link} data-magnetic data-cursor-label="foundation">
-              Explore the foundation path <ArrowUpRight size={18} aria-hidden="true" />
+              Walk the foundation path <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
           </div>
         </div>

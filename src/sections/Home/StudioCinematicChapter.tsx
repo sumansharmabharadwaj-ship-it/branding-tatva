@@ -221,7 +221,7 @@ export function StudioCinematicChapter() {
             Strategy connects both to the decisions a business makes.
           </p>
 
-          <div className="studio-cinematic__chooser" role="tablist" aria-label="Explore Suman's three disciplines">
+          <div className="studio-cinematic__chooser" role="tablist" aria-label="Choose one of Suman's three disciplines">
             {DISCIPLINES.map((discipline, index) => {
               const selected = index === activeIndex;
               return (

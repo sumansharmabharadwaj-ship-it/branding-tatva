@@ -235,7 +235,7 @@ export function PathsCinematicChapter() {
                 onClick={() => publishServicesSituation(active.situation, "home_paths")}
                 className={styles.action}
               >
-                Explore {offering.name} <ArrowRight size={19} aria-hidden="true" />
+                Open {offering.name} <ArrowRight size={19} aria-hidden="true" />
               </Link>
             </motion.div>
 

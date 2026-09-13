@@ -12,7 +12,7 @@ export default function NotFound() {
           <Container>
             <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">404</p>
             <h1 className="mt-3 text-display-lg font-display font-normal text-soil">
-              That address does not lead to a page.
+              That address leads nowhere.
             </h1>
             <p className="mx-auto mt-4 max-w-md text-foreground-secondary">
               The page may have moved, or the address may be incomplete.

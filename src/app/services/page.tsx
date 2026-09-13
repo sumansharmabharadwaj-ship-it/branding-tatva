@@ -125,12 +125,12 @@ const engagementsJsonLd = {
 export const metadata: Metadata = {
   title: "Brand Strategy for Service Businesses",
   description:
-    "Founder led brand strategy, positioning, messaging, identity and content systems for service businesses in the US, UK and India, delivered remotely by Suman Sharma.",
+    "Brand strategy that decides why buyers choose you, then builds the positioning, messaging, identity, and content to prove it. Remote, founder led, for the US, UK and India.",
   alternates: { canonical: "/services" },
   openGraph: {
     title: "Brand Strategy for Service Businesses | Branding Tatva",
     description:
-      "Founder led brand strategy, positioning, messaging, identity and content systems for service businesses in the US, UK and India, delivered remotely by Suman Sharma.",
+      "Brand strategy that decides why buyers choose you, then builds the positioning, messaging, identity, and content to prove it. Remote, founder led, for the US, UK and India.",
     type: "website",
   },
 };

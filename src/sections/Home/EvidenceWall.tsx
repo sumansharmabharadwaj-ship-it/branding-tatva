@@ -66,22 +66,22 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
   myshopineurope: {
     signal: "A new marketplace risked reading as generic access and cheap supply.",
     decision: "Position Indian craft, origin, and wellness heritage ahead of price.",
-    proof: "A complete brand foundation and year-long content operating system.",
+    proof: "A complete brand foundation and a yearlong content operating system.",
   },
   "executive-springboard": {
     signal: "Social content was building awareness without a clear destination.",
     decision: "Sequence each platform toward webinar registration and mentor action.",
-    proof: "An eight-pillar, platform-specific content system built around conversion.",
+    proof: "A content system of eight pillars, shaped per platform and built around conversion.",
   },
   herbalcart: {
     signal: "A modern supplement range was being read through a purely herbal lens.",
-    decision: "Explain supplementation as a practical gap-filler for active lifestyles.",
+    decision: "Explain supplementation as the practical answer to the gaps an active life leaves.",
     proof: "Five content formats ready to shoot and complete Hinglish video scripts.",
   },
   "plaxonic-content-portfolio": {
     signal: "One content tone failed to serve beginners and technical experts with equal credibility.",
     decision: "Give research, perspective, education, and fast consumption different jobs.",
-    proof: "A sixteen-piece authority portfolio structured to validate, challenge, humanise, and define.",
+    proof: "Sixteen authority pieces structured to validate, challenge, humanise, and define.",
   },
 };
 
@@ -407,7 +407,7 @@ export function EvidenceWall() {
               </Link>
               {fileError && (
                 <p className="evidence-cinematic__file-error" role="status">
-                  Loading failed. Try again or open the full case study.
+                  Loading failed. Retry, or open the full case study.
                 </p>
               )}
             </div>
@@ -450,7 +450,7 @@ export function EvidenceWall() {
 
             <div className="evidence-cinematic__dossier-footer">
               <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
-              <Link href="/work">Explore the full archive <span aria-hidden="true">→</span></Link>
+              <Link href="/work">Open the full archive <span aria-hidden="true">→</span></Link>
             </div>
           </EvidenceDossier>
           </AnimatePresence>

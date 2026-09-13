@@ -259,6 +259,9 @@ const NECESSARY_HYPHEN_TERMS = ["Ehrenberg-Bass"];
 
 function issueFor(text, { checkStockPhrases = true } = {}) {
   const clean = text.replace(/\s+/g, " ").trim();
+  // CSS values inside style strings (calc/env/var expressions) are code,
+  // never rendered copy, so their hyphens are grammar rather than voice.
+  if (/\b(?:calc|env|var|clamp|min|max)\(/.test(clean)) return null;
   const authoredCopy = NECESSARY_HYPHEN_TERMS.reduce(
     (value, term) => value.replaceAll(term, term.replaceAll("-", " ")),
     clean,

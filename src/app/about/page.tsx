@@ -24,18 +24,18 @@ const pageJsonLd = pageSchema({
   path: "/about",
   name: "Inside the Strategist | Suman Sharma",
   description:
-    "The thinking behind Branding Tatva: brand strategy grounded in psychology and language.",
+    "A master's in clinical psychology, a degree in English literature, and the brand strategy practice built on both.",
   trail: [{ name: "Meet Your Strategist", path: "/about" }],
   mainEntity: PERSON_ID,
 });
 
 export const metadata: Metadata = {
   title: "Suman Sharma, Brand Strategist",
-  description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
+  description: `A master's in clinical psychology, a degree in English literature, and the brand strategy practice built on both.`,
   alternates: { canonical: "/about" },
   openGraph: {
     title: `${site.founder}, Brand Strategist | ${site.name}`,
-    description: `The thinking behind ${site.name}: brand strategy grounded in psychology and language.`,
+    description: `A master's in clinical psychology, a degree in English literature, and the brand strategy practice built on both.`,
     type: "profile",
   },
 };

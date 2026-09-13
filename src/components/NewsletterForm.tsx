@@ -85,7 +85,7 @@ export function NewsletterForm({
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setServerError(data.error ?? "The letter request did not reach the mailing list. Send it once more.");
+        setServerError(data.error ?? "The letter request never reached the mailing list. Send it once more.");
         setStatus("error");
         return;
       }
