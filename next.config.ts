@@ -3,9 +3,17 @@ import type { NextConfig } from "next";
 // Calendly is the only third-party browser-side runtime. JSON-LD,
 // Framer Motion, and the current utility system still require inline
 // script/style allowances; the remaining policy is deliberately narrow.
+// Next's dev server executes client modules and React Refresh through
+// eval(). The policy below has no environment branch, so in `next dev` the
+// site's own CSP blocked its own JavaScript: client components never
+// hydrated, scroll directors never ran, and the homepage rendered as static
+// markup. Production builds need no eval, so the shipped policy is
+// unchanged and stays strict; only the dev server relaxes.
+const IS_DEV = process.env.NODE_ENV === "development";
+
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://assets.calendly.com",
+  `script-src 'self' 'unsafe-inline'${IS_DEV ? " 'unsafe-eval'" : ""} https://assets.calendly.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "media-src 'self'",
