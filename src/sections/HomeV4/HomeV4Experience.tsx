@@ -19,6 +19,7 @@ import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { HomeV4SceneRhythm } from "./HomeV4SceneRhythm";
 import { HomeV4ScrollCamera } from "./HomeV4ScrollCamera";
+import { HomeV4SeamDirector } from "./HomeV4SeamDirector";
 import { V4CostStackScene } from "./CostStackScene";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
@@ -35,6 +36,7 @@ export function HomeV4Experience() {
       <HomeV4HeaderDirector />
       <HomeV4SceneRhythm />
       <HomeV4ScrollCamera />
+      <HomeV4SeamDirector />
       <GuidedView />
 
       <V4OpeningScene />
