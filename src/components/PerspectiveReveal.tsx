@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { motion } from "framer-motion";
 import { EASE_AIR as EASE } from "@/lib/motion";
 import { useRevealTrigger } from "@/hooks/useRevealTrigger";
 
@@ -19,7 +20,7 @@ export function PerspectiveReveal({
   children: React.ReactNode;
   className?: string;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [ref, visible] = useRevealTrigger("0px 0px -15% 0px");
 
   if (prefersReducedMotion) {
@@ -32,7 +33,7 @@ export function PerspectiveReveal({
       className={className}
       initial={{ scale: 0.94, opacity: 0, filter: "blur(6px)" }}
       animate={visible ? { scale: 1, opacity: 1, filter: "blur(0px)" } : undefined}
-      transition={{ duration: 0.9, ease: EASE }}
+      transition={{ duration: 0.72, ease: EASE }}
     >
       {children}
     </motion.div>

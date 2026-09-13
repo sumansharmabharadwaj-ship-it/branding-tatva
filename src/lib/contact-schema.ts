@@ -1,5 +1,22 @@
 import { z } from "zod";
 
+function isWebsiteOrSocialReference(value: string) {
+  if (!value || /^@[a-z0-9._-]{2,64}$/i.test(value)) return true;
+
+  const candidate = /^[a-z][a-z0-9+.-]*:\/\//i.test(value)
+    ? value
+    : `https://${value}`;
+  try {
+    const parsed = new URL(candidate);
+    return (
+      (parsed.protocol === "http:" || parsed.protocol === "https:") &&
+      parsed.hostname.includes(".")
+    );
+  } catch {
+    return false;
+  }
+}
+
 export const brandStages = [
   "I am beginning with an idea",
   "I am preparing to launch",
@@ -9,22 +26,42 @@ export const brandStages = [
   "I need help deciding",
 ] as const;
 
+export const servicePackages = [
+  "brand-beginning",
+  "brand-clarity",
+  "brand-partnership",
+] as const;
+
 export const contactSchema = z.object({
-  name: z.string().min(2, "Please share your name."),
-  email: z.string().email("That looks like it might have a typo, mind checking it?"),
-  phone: z.string().optional(),
-  business: z.string().min(1, "Let me know your business or brand name."),
-  website: z.string().optional(),
-  brandStage: z.enum(brandStages, {
-    errorMap: () => ({ message: "Pick the option closest to where you are." }),
-  }),
-  servicesNeeded: z.string().min(1, "A rough idea is fine, what do you think you need?"),
-  budget: z.string().optional(),
-  timeline: z.string().optional(),
-  description: z.string().min(10, "A few sentences helps me prepare before we talk."),
-  referral: z.string().optional(),
-  // honeypot — real users never fill this in
-  company_website: z.string().max(0, "").optional(),
+  name: z.string().trim().min(2, "Please share your name.").max(120),
+  email: z
+    .string()
+    .trim()
+    .email("Check the email address. One character may be out of place.")
+    .max(254),
+  phone: z.string().trim().max(60).optional(),
+  business: z.string().trim().max(160).optional(),
+  website: z
+    .string()
+    .trim()
+    .max(500)
+    .refine(isWebsiteOrSocialReference, "Share a full link, domain, or @handle.")
+    .optional(),
+  brandStage: z
+    .union([z.enum(brandStages), z.literal("")])
+    .optional()
+    .transform((value) => value || undefined),
+  servicesNeeded: z.string().trim().max(1000).optional(),
+  budget: z.string().trim().max(120).optional(),
+  timeline: z.string().trim().max(120).optional(),
+  description: z
+    .string()
+    .trim()
+    .min(10, "A few words help me prepare before we talk.")
+    .max(5000),
+  referral: z.string().trim().max(200).optional(),
+  servicePackage: z.enum(servicePackages).optional(),
+  company_website: z.string().trim().max(200).optional(),
 });
 
 export type ContactFormValues = z.infer<typeof contactSchema>;

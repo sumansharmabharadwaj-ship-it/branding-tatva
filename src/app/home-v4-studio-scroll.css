@@ -1,0 +1,75 @@
+/* Keep the thinking room composed throughout its three scroll-led beats.
+   Existing imagery, copy, surfaces and the 240svh runway remain intact. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
+  html body .home-v4 #studio {
+    scroll-margin-top: 0;
+  }
+
+  .home-v4 #studio .studio-cinematic__grid {
+    padding-block: clamp(5.5rem, 9svh, 6.25rem) 2rem;
+  }
+
+  .home-v4 #studio .studio-cinematic__content {
+    padding-block: .5rem;
+  }
+
+  .home-v4 #studio .studio-cinematic__content > h2 {
+    max-width: 26ch;
+    font-size: clamp(2.8rem, min(4.2vw, 5.8svh), 4.6rem);
+  }
+
+  .home-v4 #studio .studio-cinematic__lede,
+  .home-v4 #studio .studio-cinematic__chooser {
+    margin-top: .9rem;
+  }
+
+  .home-v4 #studio .studio-cinematic__panel {
+    padding: 1.25rem;
+    min-height: 21rem;
+  }
+
+  .home-v4 #studio .studio-cinematic__result,
+  .home-v4 #studio .studio-cinematic__proof {
+    margin-top: 1rem;
+  }
+
+  .home-v4 #studio .studio-cinematic__footer {
+    margin-top: 1rem;
+  }
+}
+
+.home-v4 #studio :is([role="tab"], [role="tabpanel"], a):focus-visible {
+  outline: 2px solid var(--studio-accent);
+  outline-offset: 4px;
+}
+
+/* Both the site preference and the OS preference release the held frame. */
+html[data-motion="reduced"] body .home-v4 #studio {
+  height: auto !important;
+  min-height: auto !important;
+}
+html[data-motion="reduced"] body .home-v4 #studio .studio-cinematic__grid {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 100svh;
+}
+html[data-motion="reduced"] body .home-v4 #studio .studio-cinematic__media-topline::after {
+  display: none;
+}
+html[data-motion="reduced"] body .home-v4 #studio :is(a, button) {
+  transition: none;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body .home-v4 #studio { height: auto !important; min-height: auto !important; }
+  html body .home-v4 #studio .studio-cinematic__grid {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 100svh;
+  }
+  .home-v4 #studio .studio-cinematic__media-topline::after { display: none; }
+  .home-v4 #studio :is(a, button) { transition: none; transform: none; }
+}

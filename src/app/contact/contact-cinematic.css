@@ -1,0 +1,1631 @@
+/* Contact's post-hero chapters share one camera rhythm. These rules only
+   compress density where viewport height is scarce; the protected hero is
+   deliberately outside every selector below. */
+
+[data-contact-film] [data-contact-scene] {
+  isolation: isolate;
+  /* Every chapter is already a full-viewport composition with generous
+     internal top clearance. Offsetting hash navigation by the global header
+     height exposed the tail of the previous chapter and made direct links
+     look like a broken scene seam. Land on the actual frame boundary; the
+     fixed header can sit over the scene without covering its first content. */
+  scroll-margin-top: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+[data-contact-film] [data-contact-scene-media="true"] {
+  transform-origin: 50% 46%;
+}
+
+[data-contact-film] [data-contact-scene-exposure="true"] {
+  transform-origin: 50% 55%;
+}
+
+/* The three-part call ledger now develops the booking card instead of living
+   beside it as an unrelated widget. Each selected step moves one practical
+   light across the paper and advances the fine completion line at its edge. */
+[data-contact-film] [data-contact-booking-card] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+[data-contact-film] [data-contact-booking-card]::before {
+  content: "";
+  position: absolute;
+  inset: -45%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.48;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(224, 190, 139, 0.28) 0%,
+    rgba(224, 190, 139, 0.08) 24%,
+    transparent 54%
+  );
+  mix-blend-mode: multiply;
+  transform: translate3d(-16%, -11%, 0) scale(0.88);
+  transition: transform 0.82s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+  will-change: transform;
+}
+
+[data-contact-film] [data-contact-booking-card]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(163, 103, 74, 0.84), rgba(212, 185, 154, 0.66));
+  transform: scaleX(0.34);
+  transform-origin: 0 50%;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-contact-film] [data-contact-booking-card] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* The note develops like paper moving beneath a window. Validation remains
+   explicit in the progress ledger; this layer only gives the completed fields
+   a quiet material response and never communicates state on its own. */
+[data-contact-film] [data-contact-form-completion] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+[data-contact-film] [data-contact-form-completion]::before {
+  content: "";
+  position: absolute;
+  inset: -48% -22%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background: linear-gradient(
+    108deg,
+    transparent 32%,
+    rgba(255, 242, 216, 0.12) 42%,
+    rgba(210, 170, 121, 0.28) 50%,
+    rgba(255, 242, 216, 0.1) 58%,
+    transparent 68%
+  );
+  mix-blend-mode: multiply;
+  transform: translate3d(0, -28%, 0) rotate(-4deg);
+  transition: transform 0.86s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+  will-change: transform, opacity;
+}
+
+[data-contact-film] [data-contact-form-completion] > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-contact-film] [data-contact-form-completion="1"]::before {
+  opacity: 0.12;
+  transform: translate3d(0, -12%, 0) rotate(-4deg);
+}
+
+[data-contact-film] [data-contact-form-completion="2"]::before {
+  opacity: 0.15;
+  transform: translate3d(0, 7%, 0) rotate(-4deg);
+}
+
+[data-contact-film] [data-contact-form-completion="3"]::before {
+  opacity: 0.18;
+  transform: translate3d(0, 24%, 0) rotate(-4deg);
+}
+
+[data-contact-film] [data-contact-form-progress] {
+  transition: border-color 0.42s ease, box-shadow 0.42s ease, background-color 0.42s ease;
+}
+
+[data-contact-film] [data-contact-form-completion="3"] [data-contact-form-progress] {
+  border-color: rgba(163, 103, 74, 0.22);
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 14px 42px rgba(104, 75, 49, 0.07);
+}
+
+@supports selector(section:has(*)) {
+  [data-contact-film] [data-contact-scene="horizon"]:has([data-contact-call-step="1"][aria-current="step"])
+    [data-contact-booking-card]::before {
+    transform: translate3d(0, -1%, 0) scale(1);
+  }
+
+  [data-contact-film] [data-contact-scene="horizon"]:has([data-contact-call-step="2"][aria-current="step"])
+    [data-contact-booking-card]::before {
+    opacity: 0.58;
+    transform: translate3d(16%, 12%, 0) scale(1.08);
+  }
+
+  [data-contact-film] [data-contact-scene="horizon"]:has([data-contact-call-step="1"][aria-current="step"])
+    [data-contact-booking-card]::after {
+    transform: scaleX(0.67);
+  }
+
+  [data-contact-film] [data-contact-scene="horizon"]:has([data-contact-call-step="2"][aria-current="step"])
+    [data-contact-booking-card]::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Contact opens like a composed film frame rather than a generic full-bleed
+   banner. The measured overhead camera movement follows a live visual edit,
+   while the inset rails and three-beat signal keep the opening restrained. */
+.contact-hero-film > video {
+  transform-origin: 62% 54%;
+  animation: contact-hero-camera 26s cubic-bezier(0.45, 0, 0.35, 1) infinite alternate;
+  transition-duration: 1.4s;
+}
+
+[data-contact-film] [data-contact-hero-frame] {
+  position: absolute;
+  z-index: 2;
+  inset: clamp(0.7rem, 1.7vw, 1.5rem);
+  pointer-events: none;
+  border: 1px solid rgba(246, 242, 234, 0.18);
+  border-radius: clamp(1.2rem, 2vw, 2rem);
+  box-shadow:
+    inset 0 0 90px rgba(9, 13, 9, 0.2),
+    0 28px 90px rgba(10, 15, 10, 0.12);
+  animation: contact-hero-frame-settle 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-contact-film] [data-contact-hero-frame] > span {
+  position: absolute;
+  top: 50%;
+  width: clamp(1.6rem, 4vw, 4rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(246, 242, 234, 0.38));
+}
+
+[data-contact-film] [data-contact-hero-frame] > span:first-child {
+  left: 0;
+}
+
+[data-contact-film] [data-contact-hero-frame] > span:last-child {
+  right: 0;
+  transform: rotate(180deg);
+}
+
+[data-contact-film] [data-contact-hero] {
+  z-index: 3;
+}
+
+[data-contact-film] [data-contact-hero-aperture] {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+[data-contact-film] [data-contact-hero-matte] {
+  position: absolute;
+  inset-inline: 0;
+  height: clamp(2.5rem, 8svh, 5.5rem);
+  background: linear-gradient(180deg, rgba(12, 15, 11, 0.92), rgba(17, 19, 15, 0.76));
+  will-change: transform;
+}
+
+[data-contact-film] [data-contact-hero-matte="top"] {
+  top: 0;
+  transform: translate3d(0, -105%, 0);
+  animation: contact-hero-matte-open-top 1.45s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-contact-film] [data-contact-hero-matte="bottom"] {
+  bottom: 0;
+  transform: translate3d(0, 105%, 0);
+  background: linear-gradient(0deg, rgba(12, 15, 11, 0.94), rgba(17, 19, 15, 0.78));
+  animation: contact-hero-matte-open-bottom 1.45s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-contact-film] [data-contact-hero-light-open] {
+  position: absolute;
+  inset: -8%;
+  opacity: 0.06;
+  background: radial-gradient(
+    circle at 72% 28%,
+    rgba(255, 226, 178, 0.78) 0%,
+    rgba(231, 201, 155, 0.22) 25%,
+    transparent 58%
+  );
+  mix-blend-mode: screen;
+  transform-origin: 72% 28%;
+  animation: contact-hero-light-open 2.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+}
+
+[data-contact-film] [data-contact-hero-signal] {
+  overflow: hidden;
+}
+
+[data-contact-film] .contact-hero-signal-line > span {
+  animation: contact-signal-reveal 1.45s 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-contact-film] .contact-hero-signal-line:nth-child(4) > span {
+  animation-delay: 1.38s;
+}
+
+[data-contact-film] [data-contact-pathways-card] {
+  container: contact-pathways / inline-size;
+}
+
+/* Content participates in layout: longer route copy must never disappear
+   behind the card edge. Crossfading shots share a grid cell, not a fixed box. */
+[data-contact-film] [data-contact-pathway-shot] {
+  align-content: start;
+}
+
+[data-contact-film] [data-contact-pathway-film] {
+  aspect-ratio: 16 / 9;
+  transform-origin: 50% 50%;
+}
+
+/* Respond to the card's available width, not just the viewport. The former
+   nested 34% strip squeezed both the subject and its caption on laptops. */
+@container contact-pathways (min-width: 34rem) {
+  [data-contact-film] [data-contact-pathway-shot] {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
+    column-gap: 1.5rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-copy] {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  [data-contact-film] [data-contact-pathway-film] {
+    grid-column: 2;
+    grid-row: 1;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+[data-contact-film] .contact-pathway-film-video {
+  will-change: transform;
+}
+
+[data-contact-film] [data-contact-pathway-camera="folio"] .contact-pathway-film-video {
+  transform-origin: 36% 50%;
+  animation: contact-pathway-camera-folio 22s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+[data-contact-film] [data-contact-pathway-camera="conversation"] .contact-pathway-film-video {
+  transform-origin: 52% 56%;
+  animation: contact-pathway-camera-conversation 17s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+}
+
+[data-contact-film] [data-contact-pathway-camera="letter"] .contact-pathway-film-video {
+  transform-origin: 68% 50%;
+  animation: contact-pathway-camera-letter 24s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+[data-contact-film] [data-contact-pathway-film]:hover .contact-pathway-film-glint {
+  animation: contact-pathway-glint 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-contact-film] [data-contact-pathway-shot]::after {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  z-index: 30;
+  pointer-events: none;
+  background: linear-gradient(
+    104deg,
+    transparent 38%,
+    rgba(255, 241, 218, 0.04) 44%,
+    rgba(255, 241, 218, 0.38) 50%,
+    rgba(255, 241, 218, 0.05) 56%,
+    transparent 62%
+  );
+  mix-blend-mode: screen;
+  transform: translate3d(-112%, 0, 0);
+  animation: contact-pathway-splice 0.68s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes contact-hero-camera {
+  0% {
+    transform: scale(1.035) translate3d(-0.35%, 0, 0);
+  }
+
+  100% {
+    transform: scale(1.09) translate3d(0.65%, -0.8%, 0);
+  }
+}
+
+@keyframes contact-hero-frame-settle {
+  from {
+    opacity: 0.18;
+    transform: scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes contact-hero-matte-open-top {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, -105%, 0);
+  }
+}
+
+@keyframes contact-hero-matte-open-bottom {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, 105%, 0);
+  }
+}
+
+@keyframes contact-hero-light-open {
+  from {
+    opacity: 0.5;
+    transform: scale(1.14) translate3d(1.5%, -1%, 0);
+  }
+
+  58% {
+    opacity: 0.16;
+  }
+
+  to {
+    opacity: 0.06;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes contact-signal-reveal {
+  from {
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
+  to {
+    transform: scaleX(1);
+    transform-origin: 0 50%;
+  }
+}
+
+@keyframes contact-pathway-camera-folio {
+  from {
+    transform: scale(1.025) translate3d(-0.65%, 0.15%, 0);
+  }
+
+  to {
+    transform: scale(1.08) translate3d(0.7%, -0.4%, 0);
+  }
+}
+
+@keyframes contact-pathway-camera-conversation {
+  from {
+    transform: scale(1.03) translate3d(0, 0.5%, 0);
+  }
+
+  to {
+    transform: scale(1.065) translate3d(0.18%, -0.55%, 0);
+  }
+}
+
+@keyframes contact-pathway-camera-letter {
+  from {
+    transform: scale(1.03) translate3d(0.7%, -0.1%, 0);
+  }
+
+  to {
+    transform: scale(1.075) translate3d(-0.55%, -0.45%, 0);
+  }
+}
+
+@keyframes contact-pathway-glint {
+  from {
+    transform: translateX(0) rotate(11deg);
+  }
+
+  to {
+    transform: translateX(340%) rotate(11deg);
+  }
+}
+
+@keyframes contact-pathway-splice {
+  0% {
+    opacity: 0;
+    transform: translate3d(-112%, 0, 0);
+  }
+
+  20% {
+    opacity: 0.72;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(112%, 0, 0);
+  }
+}
+
+/* The compact measurement choice remains available throughout the journey,
+   but it must not sit over active fields, validation, delivery recovery, or
+   the confirmed reply destination. Defer it while the form owns focus and
+   during finite resolution states; it returns when the visitor leaves them. */
+body:has([data-contact-form-card]:focus-within) .consent-notice,
+body:has([data-contact-form-resolution]) .consent-notice,
+body:has([data-contact-form-success]) .consent-notice {
+  display: none;
+}
+
+[data-contact-film] [data-contact-heading-stack],
+[data-contact-film] [data-contact-heading-line] {
+  display: block;
+}
+
+[data-contact-film] [data-contact-heading-line] {
+  width: max-content;
+  max-width: 100%;
+  transform-origin: 0 50%;
+  text-wrap: pretty;
+}
+
+[data-contact-film] [data-contact-heading-line="body"] {
+  margin-inline-start: clamp(0.25rem, 2vw, 1.5rem);
+}
+
+[data-contact-film] [data-contact-heading-line="resolve"] {
+  margin-inline-start: clamp(0.5rem, 3.5vw, 2.75rem);
+  font-style: italic;
+}
+
+/* One typography behavior across every post-hero chapter. The display lines
+   begin slightly narrow, gather into their authored proportions at the reading
+   point, then compress by a fraction as the camera hands off. Transform-only
+   view timelines keep the move native, reversible and compositor-friendly. */
+@supports (animation-timeline: view()) {
+  [data-contact-film] [data-contact-scene-heading]:not([data-contact-kinetic-heading]) {
+    animation: contact-heading-gather linear both;
+    animation-timeline: view(block);
+    animation-range: entry 8% exit 88%;
+    transform-origin: 0 50%;
+  }
+
+  [data-contact-film] [data-contact-heading-line] {
+    animation-duration: 1ms;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: view(block);
+    animation-range: entry 4% exit 86%;
+  }
+
+  [data-contact-film] [data-contact-heading-line="lead"] {
+    animation-name: contact-heading-lead;
+  }
+
+  [data-contact-film] [data-contact-heading-line="body"] {
+    animation-name: contact-heading-body;
+  }
+
+  [data-contact-film] [data-contact-heading-line="resolve"] {
+    animation-name: contact-heading-resolve;
+  }
+}
+
+@keyframes contact-heading-gather {
+  0% {
+    transform: translateX(0.025em) scaleX(0.978);
+  }
+
+  46%,
+  72% {
+    transform: translateX(0) scaleX(1);
+  }
+
+  100% {
+    transform: translateX(-0.01em) scaleX(0.993);
+  }
+}
+
+@keyframes contact-heading-lead {
+  0% {
+    transform: translateX(-0.14em) scaleX(0.96);
+  }
+
+  42%,
+  72% {
+    transform: translateX(0) scaleX(1);
+  }
+
+  100% {
+    transform: translateX(0.035em) scaleX(0.994);
+  }
+}
+
+@keyframes contact-heading-body {
+  0% {
+    transform: translateX(0.18em) scaleX(0.945);
+  }
+
+  46%,
+  74% {
+    transform: translateX(0) scaleX(1);
+  }
+
+  100% {
+    transform: translateX(-0.03em) scaleX(0.992);
+  }
+}
+
+@keyframes contact-heading-resolve {
+  0% {
+    transform: translateX(-0.1em) scaleX(0.92);
+  }
+
+  50%,
+  76% {
+    transform: translateX(0) scaleX(1.012);
+  }
+
+  100% {
+    transform: translateX(0.02em) scaleX(1);
+  }
+}
+
+html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
+  scroll-snap-type: y proximity;
+}
+
+/* A quiet chapter control appears only while the four Contact scenes are in
+   view. The compact dock gives touch visitors the same control as the desktop
+   rail while leaving the opening film and footer visually untouched. */
+[data-contact-chapter-rail] {
+  --contact-chapter-progress: 0.25;
+  position: fixed;
+  z-index: 48;
+  left: 50%;
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  width: min(calc(100vw - 1.5rem), 32rem);
+  padding: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 999px;
+  background: rgba(246, 242, 234, 0.88);
+  box-shadow: 0 16px 46px rgba(26, 31, 25, 0.18);
+  backdrop-filter: blur(24px);
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+  transition:
+    opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 320ms ease,
+    border-color 320ms ease;
+}
+
+[data-contact-chapter-rail][data-active-index="1"] {
+  --contact-chapter-progress: 0.5;
+}
+
+[data-contact-chapter-rail][data-active-index="2"] {
+  --contact-chapter-progress: 0.75;
+}
+
+[data-contact-chapter-rail][data-active-index="3"] {
+  --contact-chapter-progress: 1;
+}
+
+[data-contact-chapter-rail]::after {
+  content: "";
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.18rem;
+  left: 0.9rem;
+  height: 1px;
+  border-radius: 999px;
+  background: #a5623f;
+  opacity: 0.62;
+  transform: scaleX(var(--contact-chapter-progress));
+  transform-origin: 0 50%;
+  transition: transform 90ms linear, background-color 320ms ease;
+}
+
+[data-contact-chapter-rail][data-visible="false"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.75rem);
+}
+
+[data-contact-chapter-rail] ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.2rem;
+}
+
+[data-contact-chapter-rail] a {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  color: rgba(39, 34, 30, 0.56);
+  font-size: 0.64rem;
+  transition:
+    color 240ms ease,
+    background-color 240ms ease;
+}
+
+[data-contact-chapter-rail] a:focus-visible {
+  outline: 2px solid #a5623f;
+  outline-offset: 2px;
+}
+
+[data-contact-chapter-rail] li[data-active="true"] a {
+  color: #f6f2ea;
+  background: #27221e;
+}
+
+[data-contact-chapter-rail] a span {
+  display: none;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+}
+
+[data-contact-chapter-rail] a strong {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-contact-chapter-rail][data-tone="dark"] {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(35, 34, 29, 0.82);
+}
+
+[data-contact-chapter-rail][data-tone="dark"]::after {
+  background: #d4b99a;
+}
+
+[data-contact-chapter-rail][data-tone="dark"] a {
+  color: rgba(246, 242, 234, 0.58);
+}
+
+[data-contact-chapter-rail][data-tone="dark"] li[data-active="true"] a {
+  color: #27221e;
+  background: #f6f2ea;
+}
+
+@supports selector(body:has(*)) {
+  body:has([data-contact-form-card]:focus-within) [data-contact-chapter-rail],
+  body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail],
+  body:has([data-contact-gratitude-next] :focus-visible) [data-contact-chapter-rail],
+  body:has([data-contact-gratitude-active="true"]) [data-contact-chapter-rail] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 0.75rem);
+  }
+}
+
+/* On compact/touch viewports the form takes ownership before a field receives
+   focus. This prevents the chapter dock and privacy choice from covering the
+   untouched submit state while preserving the desktop side rail. Keep the
+   width and input-mode queries separate for the production CSS optimizer. */
+@media (max-width: 899px) {
+  /* Keyboard focus gives acknowledgements and closing routes the same clear
+     reading area as the enquiry form. The notice returns when focus leaves. */
+  body:has([data-contact-gratitude-note]:focus-visible) .consent-notice,
+  body:has([data-contact-gratitude-next] :focus-visible) .consent-notice {
+    display: none;
+  }
+
+  html[data-contact-form-owns-viewport="true"] .consent-notice {
+    display: none;
+  }
+
+  html[data-contact-form-owns-viewport="true"] [data-contact-chapter-rail] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 0.75rem);
+  }
+}
+
+@media (pointer: coarse) {
+  html[data-contact-form-owns-viewport="true"] .consent-notice {
+    display: none;
+  }
+
+  html[data-contact-form-owns-viewport="true"] [data-contact-chapter-rail] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 0.75rem);
+  }
+}
+
+@media (min-width: 1360px) and (pointer: fine) {
+  [data-contact-chapter-rail] {
+    left: auto;
+    right: max(0.5rem, env(safe-area-inset-right));
+    bottom: auto;
+    top: 50%;
+    width: auto;
+    min-width: 7rem;
+    padding: 0.45rem;
+    border-radius: 1.4rem;
+    transform: translate(0, -50%);
+  }
+
+  [data-contact-chapter-rail]::after {
+    top: 0.9rem;
+    right: auto;
+    bottom: 0.9rem;
+    left: 0.18rem;
+    width: 1px;
+    height: auto;
+    transform: scaleY(var(--contact-chapter-progress));
+    transform-origin: 50% 0;
+  }
+
+  [data-contact-chapter-rail][data-visible="false"] {
+    transform: translate(0.75rem, -50%);
+  }
+
+  [data-contact-chapter-rail] ol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  [data-contact-chapter-rail] a {
+    min-height: 2.85rem;
+    justify-content: flex-start;
+    gap: 0.45rem;
+    padding: 0 0.7rem;
+  }
+
+  [data-contact-chapter-rail] a span {
+    display: inline;
+  }
+
+  @supports selector(body:has(*)) {
+    body:has([data-contact-form-card]:focus-within) [data-contact-chapter-rail],
+    body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail],
+    body:has([data-contact-gratitude-next] :focus-visible) [data-contact-chapter-rail],
+    body:has([data-contact-gratitude-active="true"]) [data-contact-chapter-rail] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(0, -50%);
+    }
+  }
+}
+
+@media (min-width: 640px) and (max-height: 780px) {
+  [data-contact-film] [data-contact-hero] {
+    padding-top: 4.5rem;
+    padding-bottom: 2.25rem;
+  }
+
+  [data-contact-film] [data-contact-hero-grid] {
+    gap: 1.5rem;
+  }
+
+  [data-contact-film] [data-contact-hero] h1 {
+    margin-top: 1rem;
+    font-size: clamp(2.35rem, 6vw, 3.75rem);
+  }
+
+  [data-contact-film] [data-contact-hero-actions] {
+    margin-top: 1.15rem;
+  }
+
+  [data-contact-film] [data-contact-hero-trust] {
+    margin-top: 0.75rem;
+  }
+
+  [data-contact-film] [data-contact-hero-direct] {
+    margin-top: 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 800px) {
+  [data-contact-film] .contact-pathways-layout,
+  [data-contact-film] .contact-write-layout,
+  [data-contact-film] .contact-call-layout {
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-grid],
+  [data-contact-film] .contact-write-layout,
+  [data-contact-film] .contact-call-layout {
+    column-gap: 2.5rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-heading] {
+    font-size: clamp(2.15rem, 3.3vw, 3rem);
+  }
+
+  [data-contact-film] [data-contact-write-heading] {
+    font-size: clamp(2.2rem, 4.4vw, 3.65rem);
+  }
+
+  [data-contact-film] [data-contact-write-note] {
+    margin-top: 1.25rem;
+    padding: 1rem;
+  }
+
+  [data-contact-film] [data-contact-form-card] {
+    padding: 1.35rem 2rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(2) {
+    margin-top: 0.45rem;
+    font-size: 1.8rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(3) {
+    margin-top: 0.55rem;
+    line-height: 1.45;
+  }
+
+  [data-contact-film] [data-contact-form-progress],
+  [data-contact-film] [data-contact-form-body] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-form-body] > :not(.hidden) ~ :not(.hidden) {
+    margin-top: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-form-question] textarea {
+    min-height: 4.6rem;
+    height: 4.6rem;
+  }
+
+  [data-contact-film] [data-contact-call-heading] {
+    font-size: clamp(2.35rem, 4.8vw, 4.25rem);
+  }
+
+  [data-contact-film] [data-contact-call-sequence] {
+    margin-top: 1.35rem;
+  }
+
+  [data-contact-film] [data-contact-booking-card] {
+    padding: 1.75rem;
+  }
+}
+
+/* Tablet landscape needs the same one-frame composition as a short laptop,
+   but it remains on the touch camera. Move the authored two-column layouts
+   down one breakpoint only when height is scarce; portrait tablets keep the
+   calmer stacked reading order. */
+@media (min-width: 768px) and (max-width: 1023px) and (max-height: 820px) {
+  [data-contact-film] .contact-pathways-layout,
+  [data-contact-film] .contact-write-layout,
+  [data-contact-film] .contact-call-layout {
+    padding-top: 1.35rem;
+    padding-bottom: 1.35rem;
+  }
+
+  [data-contact-film] .contact-write-layout {
+    grid-template-columns: 0.78fr 1.22fr;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  [data-contact-film] .contact-call-layout {
+    grid-template-columns: 0.88fr 1.12fr;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-heading] {
+    font-size: clamp(2rem, 4.7vw, 2.75rem);
+  }
+
+  [data-contact-film] [data-contact-write-heading],
+  [data-contact-film] [data-contact-call-heading] {
+    font-size: clamp(2.1rem, 4.8vw, 3rem);
+  }
+
+  [data-contact-film] [data-contact-write-note] {
+    margin-top: 1rem;
+    padding: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-form-card] {
+    padding: 1.15rem 1.5rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(2) {
+    margin-top: 0.4rem;
+    font-size: 1.7rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(3) {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-form-progress],
+  [data-contact-film] [data-contact-form-body] {
+    margin-top: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-form-body] > :not(.hidden) ~ :not(.hidden) {
+    margin-top: 0.8rem;
+  }
+
+  [data-contact-film] [data-contact-form-question] textarea {
+    min-height: 4.25rem;
+    height: 4.25rem;
+  }
+
+  [data-contact-film] [data-contact-call-intro] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-call-sequence],
+  [data-contact-film] .contact-booking-action-wrap {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-card] {
+    padding: 1.5rem;
+  }
+
+  [data-contact-film] [data-contact-booking-description] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-options] {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+  }
+}
+
+@media (max-width: 940px), (pointer: coarse) {
+  html[data-contact-film-snap="true"] {
+    scroll-snap-type: none;
+  }
+
+  [data-contact-film] [data-contact-scene-media="true"],
+  [data-contact-film] [data-contact-scene-plane="true"] {
+    backface-visibility: hidden;
+  }
+
+  [data-contact-film] [data-contact-touch-surface] {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+@media (max-width: 639px) {
+  [data-contact-film] [data-contact-hero] {
+    padding-top: 5.25rem;
+    padding-bottom: 2.5rem;
+  }
+
+  [data-contact-film] [data-contact-hero-grid] {
+    gap: 1.25rem;
+  }
+
+  [data-contact-film] [data-contact-hero] h1 {
+    margin-top: 1rem;
+    font-size: clamp(2.3rem, 12.5vw, 3.15rem);
+  }
+
+  [data-contact-film] [data-contact-hero-actions] {
+    margin-top: 1.35rem;
+  }
+
+  [data-contact-film] [data-contact-hero-aside] {
+    display: none;
+  }
+
+  /* Keep the smallest reassurance visible beside the mobile booking choice.
+     The larger founder card stays removed so the first frame remains calm. */
+  [data-contact-film] [data-contact-hero-trust] {
+    margin-top: 0.75rem;
+    font-size: 0.58rem;
+    line-height: 1.45;
+    letter-spacing: 0.14em;
+  }
+
+  [data-contact-film] [data-contact-hero-direct] {
+    margin-top: 0.45rem;
+    font-size: 0.76rem;
+  }
+
+  [data-contact-film] .contact-write-layout {
+    gap: 1.4rem;
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-write-heading] {
+    margin-top: 0.65rem;
+    font-size: clamp(2.15rem, 10.5vw, 2.75rem);
+    line-height: 0.98;
+  }
+
+  [data-contact-film] [data-contact-write-copy] > :nth-child(3) {
+    margin-top: 0.85rem;
+  }
+
+  /* The trust card repeats the personal-reading and privacy promises already
+     visible immediately above and below the form. Removing only that duplicate
+     on the narrowest viewports brings the usable form into the first frame. */
+  [data-contact-film] [data-contact-write-note] {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-write-copy] > :last-child {
+    margin-top: 0.85rem;
+  }
+
+  [data-contact-film] [data-contact-form-card] {
+    border-radius: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(2) {
+    margin-top: 0.45rem;
+    font-size: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-form-intro] > :nth-child(3) {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-form-progress],
+  [data-contact-film] [data-contact-form-body] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-form-body] > :not(.hidden) ~ :not(.hidden) {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-form-question] textarea {
+    min-height: 4.75rem;
+    height: 4.75rem;
+  }
+
+  [data-contact-film] .contact-call-layout {
+    gap: 1.35rem;
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-call-heading] {
+    margin-top: 0.65rem;
+    font-size: clamp(2.25rem, 10.8vw, 2.85rem);
+    line-height: 0.98;
+  }
+
+  [data-contact-film] [data-contact-call-intro] {
+    margin-top: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-call-sequence] {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-card] {
+    border-radius: 1.5rem;
+    padding: 1.25rem;
+  }
+
+  [data-contact-film] [data-contact-booking-header] {
+    gap: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-header] > div > :nth-child(2) {
+    margin-top: 0.5rem;
+    font-size: 2.25rem;
+  }
+
+  [data-contact-film] [data-contact-booking-header] > span {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  [data-contact-film] [data-contact-booking-description] {
+    margin-top: 1rem;
+    line-height: 1.5;
+  }
+
+  [data-contact-film] .contact-booking-action-wrap {
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-booking-action] {
+    min-height: 3.5rem;
+    padding: 0.75rem;
+  }
+
+  [data-contact-film] [data-contact-booking-action-title] {
+    font-size: 1.35rem;
+  }
+
+  [data-contact-film] [data-contact-booking-action-arrow] {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  [data-contact-film] [data-contact-booking-options] {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+  }
+
+  [data-contact-film] [data-contact-booking-meta] {
+    display: none;
+  }
+}
+
+/* Required fields become one comfortable reading column on narrow phones;
+   the progress ledger above stays as a concise three-part overview. */
+@media (max-width: 479px) {
+  [data-contact-film] [data-contact-required-grid] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-submit-row] {
+    gap: 0.7rem;
+  }
+
+  [data-contact-film] [data-contact-draft-status] {
+    max-width: 17rem;
+    margin-inline: auto;
+  }
+}
+
+/* Ultra narrow phones keep the hero's two primary decisions side by side
+   without asking the headline, signal map, and direct routes to compete for
+   the same horizontal measure. The direct routes remain present as compact
+   text actions on tall screens and stay deferred on short screens below. */
+@media (max-width: 359px) {
+  [data-contact-film] [data-contact-hero] h1 {
+    max-width: 18rem;
+    font-size: clamp(2rem, 11.8vw, 2.65rem);
+  }
+
+  [data-contact-film] [data-contact-hero-signal] {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-hero-actions] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  [data-contact-film] [data-contact-hero-actions] > a {
+    min-height: 2.75rem;
+    padding: 0.6rem 0.7rem;
+    font-size: 0.72rem;
+    line-height: 1.15;
+  }
+
+  [data-contact-film] [data-contact-hero-trust] {
+    font-size: 0.54rem;
+    letter-spacing: 0.1em;
+  }
+
+  [data-contact-film] [data-contact-hero-direct] {
+    gap: 1rem;
+  }
+
+  [data-contact-film] [data-contact-hero-direct] > span {
+    display: none;
+  }
+
+  [data-contact-chapter-rail] {
+    bottom: max(0.5rem, env(safe-area-inset-bottom));
+    width: calc(100vw - 1rem);
+    padding: 0.25rem;
+  }
+
+  [data-contact-chapter-rail] a {
+    gap: 0.2rem;
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 639px) and (max-height: 740px) {
+  [data-contact-film] [data-contact-call-intro],
+  [data-contact-film] [data-contact-booking-description] {
+    display: none;
+  }
+
+  [data-contact-film] .contact-call-layout {
+    gap: 1rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  [data-contact-film] [data-contact-call-sequence],
+  [data-contact-film] .contact-booking-action-wrap {
+    margin-top: 0.75rem;
+  }
+}
+
+/* Short phones reduce repeated intro copy. Route content keeps its natural
+   height so larger text and longer choices remain reachable by page scroll. */
+@media (max-width: 639px) and (max-height: 820px) {
+  [data-contact-film] .contact-hero-film {
+    min-height: 100svh !important;
+  }
+
+  [data-contact-film] [data-contact-hero] {
+    padding-top: max(4.6rem, calc(env(safe-area-inset-top) + 3.5rem));
+    padding-bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem));
+  }
+
+  [data-contact-film] [data-contact-hero-grid] {
+    gap: 0.75rem;
+  }
+
+  [data-contact-film] [data-contact-hero] h1 {
+    max-width: 20rem;
+    margin-top: 0.75rem;
+    font-size: clamp(1.9rem, 9.4vw, 2.35rem);
+    line-height: 0.98;
+  }
+
+  [data-contact-film] [data-contact-hero-intro] {
+    display: -webkit-box;
+    margin-top: 0.75rem;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.42;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  [data-contact-film] [data-contact-hero-signal],
+  [data-contact-film] [data-contact-hero-direct] {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-hero-actions] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+  }
+
+  [data-contact-film] [data-contact-hero-actions] > a {
+    min-height: 2.75rem;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.74rem;
+    line-height: 1.15;
+  }
+
+  [data-contact-film] [data-contact-hero-trust] {
+    margin-top: 0.6rem;
+  }
+
+  [data-contact-film] .contact-pathways-layout {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-grid] {
+    gap: 0.75rem;
+  }
+
+  [data-contact-film] [data-contact-pathways-intro] > :first-child,
+  [data-contact-film] [data-contact-pathways-intro] > :last-child {
+    display: none;
+  }
+
+  [data-contact-film] [data-contact-pathways-heading] {
+    margin-top: 0;
+    max-width: 18rem;
+    font-size: clamp(1.85rem, 9.2vw, 2.2rem);
+    line-height: 0.96;
+  }
+
+  [data-contact-film] [data-contact-pathways-card] {
+    border-radius: 1.2rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-tabs] {
+    gap: 0.3rem;
+    padding: 0.4rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-tabs] > button {
+    min-height: 3.65rem;
+    gap: 0.25rem;
+    border-radius: 0.85rem;
+    padding-block: 0.35rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-tab-icon] {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-panel] {
+    padding: 0.75rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-shot] {
+    gap: 1rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-film] {
+    border-radius: 0.95rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-title] {
+    margin-top: 0.6rem;
+    font-size: clamp(1.45rem, 6.8vw, 1.8rem);
+    line-height: 1;
+  }
+
+  [data-contact-film] [data-contact-pathway-description],
+  [data-contact-film] [data-contact-pathway-best] {
+    margin-top: 0.55rem;
+    font-size: 0.69rem;
+    line-height: 1.42;
+  }
+
+  [data-contact-film] [data-contact-pathway-handoff] {
+    padding-top: 0.65rem;
+  }
+
+  [data-contact-film] [data-contact-pathway-actions] {
+    margin-top: 0.65rem;
+  }
+}
+
+/* The final afterglow does not cut to a generic footer strip. Light from the
+   gratitude landscape narrows into one horizon, then settles behind the
+   practical links. View progress makes this a single finite closing shot. */
+.contact-footer-afterglow {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  /* Give wheel scrolling a reachable endpoint beyond the final scene.
+     Without it, proximity snapping can return to that scene's start before
+     the fourth acknowledgement has time to resolve. */
+  scroll-snap-align: end;
+  margin-top: -1px;
+  background: #27221e;
+}
+
+.contact-footer-afterglow::before,
+.contact-footer-afterglow::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.contact-footer-afterglow::before {
+  top: 0;
+  right: 8%;
+  left: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 185, 154, 0.3) 22%,
+    rgba(246, 221, 180, 0.82) 50%,
+    rgba(212, 185, 154, 0.3) 78%,
+    transparent
+  );
+  box-shadow: 0 0 32px rgba(224, 190, 139, 0.16);
+  opacity: 0.48;
+  transform: scaleX(0.42);
+  transform-origin: 50% 50%;
+}
+
+.contact-footer-afterglow::after {
+  top: -170%;
+  right: 8%;
+  bottom: -65%;
+  left: 8%;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(238, 204, 154, 0.24) 0%,
+    rgba(207, 172, 126, 0.08) 30%,
+    transparent 68%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.16;
+  transform: translate3d(0, -14%, 0) scaleX(0.84);
+  transform-origin: 50% 0%;
+}
+
+.contact-footer-afterglow .site-footer-meta {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(39, 34, 30, 0.68), #27221e 72%);
+}
+
+@supports (animation-timeline: view()) {
+  .contact-footer-afterglow::before {
+    animation: contact-footer-horizon linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% cover 72%;
+  }
+
+  .contact-footer-afterglow::after {
+    animation: contact-footer-afterglow linear both;
+    animation-timeline: view(block);
+    animation-range: entry 0% cover 88%;
+  }
+}
+
+@keyframes contact-footer-horizon {
+  0% {
+    opacity: 0.12;
+    transform: scaleX(0.12);
+  }
+
+  46% {
+    opacity: 0.76;
+    transform: scaleX(1);
+  }
+
+  100% {
+    opacity: 0.34;
+    transform: scaleX(0.42);
+  }
+}
+
+@keyframes contact-footer-afterglow {
+  0% {
+    opacity: 0.3;
+    transform: translate3d(0, -28%, 0) scaleX(0.78);
+  }
+
+  100% {
+    opacity: 0.08;
+    transform: translate3d(0, 16%, 0) scaleX(1.08);
+  }
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-scene-heading] {
+  animation: none !important;
+  transform: none !important;
+}
+
+html[data-motion="reduced"] .contact-hero-film > video,
+html[data-motion="reduced"] [data-contact-film] .contact-hero-signal-line > span,
+html[data-motion="reduced"] [data-contact-film] .contact-pathway-film-video,
+html[data-motion="reduced"] [data-contact-film] .contact-pathway-film-glint,
+html[data-motion="reduced"] [data-contact-film] [data-contact-hero-frame],
+html[data-motion="reduced"] [data-contact-film] [data-contact-hero-matte],
+html[data-motion="reduced"] [data-contact-film] [data-contact-hero-light-open],
+html[data-motion="reduced"] [data-contact-film] [data-contact-pathway-shot]::after {
+  animation: none !important;
+  transform: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-hero-matte] {
+  display: none;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-heading-line] {
+  animation: none !important;
+  transform: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-scene-exposure="true"] {
+  opacity: 0.1 !important;
+  transform: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card]::before,
+html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card]::after,
+html[data-motion="reduced"] [data-contact-film] [data-contact-form-completion]::before,
+html[data-motion="reduced"] [data-contact-film] [data-contact-form-progress],
+html[data-motion="reduced"] [data-contact-film] [data-contact-required-field] {
+  transition: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-required-field] {
+  transform: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail] {
+  transition: none !important;
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail]::after,
+html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail] a {
+  transition: none !important;
+}
+
+html[data-motion="reduced"] .contact-footer-afterglow::before,
+html[data-motion="reduced"] .contact-footer-afterglow::after {
+  animation: none !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-contact-film-snap="true"] {
+    scroll-snap-type: none;
+  }
+
+  [data-contact-film] [data-contact-scene-media="true"],
+  [data-contact-film] [data-contact-scene-plane="true"] {
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  [data-contact-film] [data-contact-scene-exposure="true"] {
+    opacity: 0.1 !important;
+    transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-scene-heading] {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-heading-line] {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-booking-card]::before,
+  [data-contact-film] [data-contact-booking-card]::after,
+  [data-contact-film] [data-contact-form-completion]::before,
+  [data-contact-film] [data-contact-form-progress],
+  [data-contact-film] [data-contact-required-field] {
+    transition: none !important;
+  }
+
+  [data-contact-film] [data-contact-required-field] {
+    transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-chapter-rail] {
+    transition: none !important;
+  }
+
+  [data-contact-film] [data-contact-chapter-rail]::after,
+  [data-contact-film] [data-contact-chapter-rail] a {
+    transition: none !important;
+  }
+
+  .contact-footer-afterglow::before,
+  .contact-footer-afterglow::after {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .contact-hero-film > video,
+  [data-contact-film] .contact-hero-signal-line > span,
+  [data-contact-film] .contact-pathway-film-video,
+  [data-contact-film] .contact-pathway-film-glint,
+  [data-contact-film] [data-contact-hero-frame],
+  [data-contact-film] [data-contact-hero-matte],
+  [data-contact-film] [data-contact-hero-light-open],
+  [data-contact-film] [data-contact-pathway-shot]::after {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  [data-contact-film] [data-contact-hero-matte] {
+    display: none;
+  }
+}

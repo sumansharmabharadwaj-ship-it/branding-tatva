@@ -1,8 +1,9 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useLazyMount } from "@/hooks/useLazyMount";
@@ -41,7 +42,7 @@ export function JourneyStage({
   dark?: boolean;
 }) {
   const ref = useRef<HTMLLIElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
   const [mediaRef, shouldLoad] = useLazyMount();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -72,7 +73,7 @@ export function JourneyStage({
             initial={{ pathLength: 0 }}
             whileInView={prefersReducedMotion ? undefined : { pathLength: 1 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: EASE_AIR, delay }}
+            transition={{ duration: 0.72, ease: EASE_AIR, delay }}
           />
         </svg>
         <span
@@ -82,7 +83,7 @@ export function JourneyStage({
           {index + 1}
         </span>
       </span>
-      <div className="relative -mx-4 overflow-hidden rounded-lg px-4 py-3">
+      <div className="relative -mx-4 overflow-hidden rounded-2xl px-4 py-3">
         {stage.poster && (
           <div ref={mediaRef} className="absolute inset-0" aria-hidden="true">
             <Image
@@ -114,7 +115,7 @@ export function JourneyStage({
           <div
             ref={spotlightRef}
             aria-hidden="true"
-            className="stage-spotlight pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity duration-500"
+            className="stage-spotlight pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500"
           />
         )}
         <Reveal delay={delay}>

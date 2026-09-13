@@ -1,15 +1,19 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { LinkButton } from "@/components/Button";
 import { TiltCard } from "@/components/TiltCard";
-import { ScrollCue } from "@/components/ScrollCue";
 import { Fireflies } from "@/components/Fireflies";
-import { useRevealTrigger } from "@/hooks/useRevealTrigger";
+import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
+
+const ABOUT_HERO_VIDEO_GROUP = "about-hero";
 
 // Full-bleed nature backdrop with a single framed photo/video card
 // floating centered on it, the headline carried directly on the card
@@ -29,6 +33,8 @@ export function AboutSplitHero({
   body,
   ctaHref,
   ctaLabel,
+  secondaryCtaHref,
+  secondaryCtaLabel,
   video,
   poster,
   bgVideo,
@@ -39,27 +45,57 @@ export function AboutSplitHero({
   body: string;
   ctaHref: string;
   ctaLabel: string;
+  // Optional second action — the redesign brief wants the authority
+  // hero to carry both the booking path and the work path.
+  secondaryCtaHref?: string;
+  secondaryCtaLabel?: string;
   video: string;
   poster: string;
   bgVideo: string;
   bgPoster: string;
 }) {
   const ref = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const [cardRef, cardVisible] = useRevealTrigger();
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+  const portraitVideoRef = useRef<HTMLVideoElement>(null);
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const backgroundLivingStill = usesLivingStill(bgVideo);
+  const portraitLivingStill = usesLivingStill(video);
+  const heroInView = useInView(ref, { amount: 0.05, margin: "12% 0px 12% 0px" });
+  // Keep the same scroll geometry while avoiding Framer Motion's native
+  // ViewTimeline cache, which strongly retains unmounted target elements.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0%", "end 0%"] });
+
+  // VideoWarden owns both films as one composed scene. The fade hook still
+  // reveals decoded frames, but it must not add two more playback observers
+  // that can race the page-level budget during the opening handoff.
+  useVideoFadeIn(backgroundVideoRef, !prefersReducedMotion && !backgroundLivingStill, true);
+  useVideoFadeIn(portraitVideoRef, !prefersReducedMotion && !portraitLivingStill, true);
 
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const cardY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <section ref={ref} className="relative flex min-h-screen items-center justify-center overflow-hidden bg-soil pt-24">
+    <section
+      ref={ref}
+      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-soil pt-24"
+      data-about-hero-active={heroInView}
+    >
       {prefersReducedMotion ? (
         <Image src={bgPoster} alt="" fill priority sizes="100vw" className="object-cover" />
+      ) : backgroundLivingStill ? (
+        <motion.div className="absolute inset-0 top-[-10%] h-[120%] w-full" style={{ y: bgY }}>
+          <LivingImage
+            src={bgPoster}
+            priority
+            imagePosition="center"
+            intensity="hero"
+          />
+        </motion.div>
       ) : (
         <motion.div className="absolute inset-0 top-[-10%] h-[120%] w-full" style={{ y: bgY }}>
           <video
+            ref={backgroundVideoRef}
             className="h-full w-full object-cover"
             src={bgVideo}
             poster={bgPoster}
@@ -67,6 +103,8 @@ export function AboutSplitHero({
             muted
             loop
             playsInline
+            aria-hidden="true"
+            data-video-warden-group={ABOUT_HERO_VIDEO_GROUP}
           />
         </motion.div>
       )}
@@ -83,16 +121,16 @@ export function AboutSplitHero({
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 85% 65% at 50% 42%, rgba(39,34,30,0.4) 0%, rgba(39,34,30,0.1) 55%, rgba(39,34,30,0.4) 100%)",
+            "radial-gradient(ellipse 85% 68% at 50% 42%, rgba(39,34,30,0.18) 0%, rgba(39,34,30,0.04) 56%, rgba(39,34,30,0.24) 100%)",
         }}
       />
 
       <motion.div
-        className="relative z-10 flex flex-col items-center px-6 py-16 text-center"
+        className="relative -top-20 z-10 flex flex-col items-center px-6 py-16 text-center sm:top-0 sm:py-24"
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity }}
       >
         <Reveal>
-          <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/85 [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]">
+          <span className="inline-flex items-center rounded-full border border-ivory/55 bg-soil/35 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory shadow-[0_8px_24px_rgba(20,17,14,0.16)] backdrop-blur-[2px] [text-shadow:0_2px_12px_rgba(0,0,0,0.72)]">
             {eyebrow}
           </span>
         </Reveal>
@@ -105,21 +143,14 @@ export function AboutSplitHero({
             TiltCard already gives every other card on the site, so the
             "wow" comes from motion quality and a real interaction, not
             from stacking on more decoration. */}
-        <div ref={cardRef} className="relative z-10 mt-6" style={{ perspective: 1200 }}>
+        <div className="relative z-10 mt-6" style={{ perspective: 1200 }}>
           <motion.div
-            initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.8, y: 56 }}
-            animate={
-              prefersReducedMotion
-                ? undefined
-                : cardVisible
-                  ? { opacity: 1, scale: 1, y: 0 }
-                  : { opacity: 0, scale: 0.8, y: 56 }
-            }
-            transition={{ type: "spring", stiffness: 170, damping: 20, mass: 0.9 }}
+            initial={false}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
           >
             <TiltCard glowColor="#C28A28" maxDegrees={7}>
               <motion.div
-                className="card-float relative w-[260px] overflow-hidden rounded-lg border-[6px] border-ivory sm:w-[320px]"
+                className="card-float relative w-[260px] overflow-hidden rounded-2xl border-[6px] border-ivory sm:w-[320px]"
                 style={{
                   ...(prefersReducedMotion ? undefined : { y: cardY }),
                   boxShadow: "0 14px 30px rgba(20,17,14,0.4), 0 0 40px 6px rgba(20,17,14,0.2)",
@@ -128,15 +159,25 @@ export function AboutSplitHero({
                 <div className="relative aspect-[3/4] w-full overflow-hidden">
                   {prefersReducedMotion ? (
                     <Image src={poster} alt="" fill sizes="320px" className="object-cover" />
+                  ) : portraitLivingStill ? (
+                    <LivingImage
+                      src={poster}
+                      sizes="320px"
+                      imagePosition="center"
+                      intensity="cinematic"
+                    />
                   ) : (
                     <video
+                      ref={portraitVideoRef}
                       className="absolute inset-0 h-full w-full object-cover"
                       src={video}
                       poster={poster}
                       autoPlay
                       muted
-                      loop
+                      loop={false}
                       playsInline
+                      aria-hidden="true"
+                      data-video-warden-group={ABOUT_HERO_VIDEO_GROUP}
                     />
                   )}
                   <div
@@ -145,18 +186,18 @@ export function AboutSplitHero({
                     // strongest point) of this gradient, which was 0.7 —
                     // under the site's normalized bg-soil/80 contrast
                     // floor. Bumped to match.
-                    style={{ backgroundImage: "linear-gradient(180deg, rgba(20,17,14,0.8) 0%, rgba(20,17,14,0) 100%)" }}
+                    style={{ backgroundImage: "linear-gradient(180deg, rgba(20,17,14,0.9) 0%, rgba(20,17,14,0.08) 78%, rgba(20,17,14,0) 100%)" }}
                   >
                     <SplitReveal
                       as="h1"
-                      className="font-display text-[clamp(1.15rem,3.6vw,1.6rem)] font-normal leading-[1.25] text-ivory"
+                      className="font-display text-[clamp(1.15rem,3.6vw,1.6rem)] font-normal leading-[1.25] text-ivory [text-shadow:0_2px_14px_rgba(0,0,0,0.72)]"
                     >
                       {headline}
                     </SplitReveal>
                   </div>
                   <div
                     className="absolute inset-x-0 bottom-0 px-5 pb-4 pt-10"
-                    style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.8) 0%, rgba(20,17,14,0) 100%)" }}
+                    style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.9) 0%, rgba(20,17,14,0.06) 82%, rgba(20,17,14,0) 100%)" }}
                   >
                     <p className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-ivory/90">{body}</p>
                   </div>
@@ -167,11 +208,19 @@ export function AboutSplitHero({
         </div>
 
         <Reveal delay={0.2} className="mt-9">
-          <LinkButton href={ctaHref}>{ctaLabel}</LinkButton>
+          <div className="flex flex-wrap gap-3">
+            <LinkButton href={ctaHref} trackEvent="hero_booking_click" trackProps={{ page: "about" }}>
+              {ctaLabel}
+            </LinkButton>
+            {secondaryCtaHref && secondaryCtaLabel && (
+              <LinkButton href={secondaryCtaHref} variant="secondary" className="border-ivory/40 text-ivory hover:bg-ivory/10">
+                {secondaryCtaLabel}
+              </LinkButton>
+            )}
+          </div>
         </Reveal>
       </motion.div>
 
-      <ScrollCue />
     </section>
   );
 }

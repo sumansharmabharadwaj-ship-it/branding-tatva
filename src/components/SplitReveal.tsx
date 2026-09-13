@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
+
 import { initSplitTextReveal } from "@/animations/splitTextReveal";
 
 // Splits a heading into individual words and staggers them in, instead
@@ -27,11 +28,18 @@ export function SplitReveal({
   splitType?: "words" | "chars";
 }) {
   const ref = useRef<HTMLHeadingElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
     const el = ref.current;
     if (!el || prefersReducedMotion) return;
+
+    // On compact screens the headline is usually the first meaningful
+    // content in a very short viewport. Keep it in the initial paint instead
+    // of briefly replacing every word with compositor-driven transparent
+    // layers. The stagger remains an editorial enhancement on larger screens;
+    // mobile readers get the same heading without delayed comprehension.
+    if (window.matchMedia("(max-width: 767px)").matches) return;
 
     const ctx = initSplitTextReveal(el, { type: splitType });
     return () => ctx.revert();

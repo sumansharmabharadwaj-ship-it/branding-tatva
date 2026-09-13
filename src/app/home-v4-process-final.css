@@ -1,0 +1,160 @@
+/* Final method chapter: one cinematic decision, one continuous selector. */
+
+html body .home-v4 #process .decision-flow__shell {
+  padding-bottom: clamp(.8rem, 1.8svh, 1.2rem);
+}
+
+html body .home-v4 #process .decision-flow__header {
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 22rem);
+  gap: clamp(2rem, 7vw, 8rem);
+}
+
+html body .home-v4 #process .decision-flow__stage {
+  padding-block: clamp(.7rem, 2.2svh, 1.5rem);
+}
+
+html body .home-v4 #process .decision-flow__stage article {
+  width: min(100%, 48rem);
+}
+
+html body .home-v4 #process .decision-flow__stage h3 {
+  max-width: 11ch;
+}
+
+html body .home-v4 #process .decision-flow__result {
+  display: flex;
+  max-width: 48rem;
+  margin: clamp(.85rem, 1.8svh, 1.25rem) 0 0;
+  padding-top: .72rem;
+  border-top: 1px solid rgba(32, 50, 40, .25);
+  gap: .65rem;
+  color: rgba(32, 50, 40, .78);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(.85rem, 1.05vw, 1.05rem);
+  line-height: 1.38;
+}
+
+html body .home-v4 #process .decision-flow__result span:first-child {
+  color: #203228;
+}
+
+html body .home-v4 #process .decision-flow__selector {
+  align-self: end;
+}
+
+html body .home-v4 #process .decision-flow__selector-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 .15rem .55rem;
+  color: rgba(247, 241, 228, .82);
+  font-size: clamp(.56rem, .66vw, .66rem);
+  font-weight: 650;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 16px rgba(16, 29, 23, .32);
+}
+
+html body .home-v4 #process .decision-flow__rail {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+html body .home-v4 #process .decision-flow__rail button {
+  min-height: clamp(4rem, 8svh, 5.15rem);
+}
+
+@media (max-width: 900px) {
+  html body .home-v4 #process .decision-flow__header {
+    grid-template-columns: 1fr;
+    gap: .65rem;
+  }
+
+  html body .home-v4 #process .decision-flow__stage {
+    padding-block: .75rem;
+  }
+
+  html body .home-v4 #process .decision-flow__result {
+    flex-wrap: wrap;
+    gap: .2rem .5rem;
+  }
+}
+
+@media (max-width: 620px) {
+  html body .home-v4 #process .decision-flow__shell {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    padding-top: 4.75rem;
+    padding-bottom: .55rem;
+  }
+
+  html body .home-v4 #process .decision-flow__header > p {
+    display: none;
+  }
+
+  html body .home-v4 #process .decision-flow__header h2 {
+    max-width: 12ch;
+    font-size: clamp(2.55rem, 12.5vw, 3.75rem);
+  }
+
+  html body .home-v4 #process .decision-flow__stage h3 {
+    font-size: clamp(2.8rem, 12vw, 4.1rem);
+  }
+
+  html body .home-v4 #process .decision-flow__explanation {
+    max-width: 35rem;
+    margin-top: .65rem;
+    line-height: 1.45;
+  }
+
+  html body .home-v4 #process .decision-flow__result {
+    margin-top: .7rem;
+    padding-top: .55rem;
+    font-size: .82rem;
+  }
+
+  html body .home-v4 #process .decision-flow__rail button {
+    width: 7.8rem;
+    min-height: 3.8rem;
+    flex-basis: 7.8rem;
+    padding-block: .62rem .75rem;
+  }
+
+  html body .home-v4 #process .decision-flow__rail button strong {
+    margin-top: .2rem;
+  }
+}
+
+@media (max-height: 740px) and (min-width: 621px) {
+  html body .home-v4 #process .decision-flow__shell {
+    padding-top: 4.6rem;
+    padding-bottom: .55rem;
+  }
+
+  html body .home-v4 #process .decision-flow__header h2 {
+    font-size: clamp(2.65rem, 5.3vw, 4.4rem);
+  }
+
+  html body .home-v4 #process .decision-flow__header > p {
+    margin-top: .55rem;
+    line-height: 1.42;
+  }
+
+  html body .home-v4 #process .decision-flow__stage h3 {
+    font-size: clamp(3rem, 6.2vw, 5.2rem);
+  }
+
+  html body .home-v4 #process .decision-flow__explanation {
+    margin-top: .55rem;
+    line-height: 1.42;
+  }
+
+  html body .home-v4 #process .decision-flow__result {
+    margin-top: .55rem;
+    padding-top: .5rem;
+  }
+
+  html body .home-v4 #process .decision-flow__rail button {
+    min-height: 3.75rem;
+    padding-block: .55rem .7rem;
+  }
+}

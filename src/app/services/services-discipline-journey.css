@@ -1,0 +1,176 @@
+/* -------------------------------------------------------------------------- */
+/* Services discipline journey                                                */
+/* -------------------------------------------------------------------------- */
+
+/* `overflow-hidden` on the server-rendered section would turn it into the
+   sticky element's containing scroll box. `clip` keeps the cinematic crop
+   without disconnecting the stable stage from the document scroll. */
+#offerings {
+  overflow: clip !important;
+}
+
+[data-services-discipline-journey="true"] {
+  width: 100%;
+}
+
+.services-discipline-rail-viewport {
+  min-width: 0;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 2rem, #000 calc(100% - 2rem), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 2rem, #000 calc(100% - 2rem), transparent 100%);
+}
+
+.services-discipline-rail-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.services-discipline-rail {
+  transform: translateZ(0);
+}
+
+@media (min-width: 1024px) {
+  #offerings {
+    padding-block: 0 !important;
+  }
+
+  [data-services-discipline-journey="true"] > div {
+    min-height: 100svh;
+  }
+
+  .services-discipline-rail {
+    display: grid !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem !important;
+    padding: 0.5rem !important;
+  }
+
+  .services-discipline-rail-viewport {
+    overflow: visible !important;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .services-discipline-rail > button {
+    width: 100% !important;
+    scroll-snap-align: none;
+  }
+
+  .services-discipline-rail > button {
+    transition:
+      opacity 320ms ease,
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 320ms ease;
+  }
+
+  .services-discipline-rail > button[aria-selected="false"] {
+    opacity: 0.76;
+    filter: saturate(0.86);
+    transform: scale(0.965);
+  }
+
+  .services-discipline-rail > button[aria-selected="true"] {
+    opacity: 1;
+    filter: saturate(1);
+    transform: scale(1);
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 950px) {
+  #desire {
+    padding-block: 2rem !important;
+  }
+
+  [data-package-selector="true"] > [data-services-chapter-copy="true"] > p:first-child,
+  [data-package-selector="true"] > [data-services-chapter-copy="true"] > h2 {
+    margin-top: 0.25rem !important;
+  }
+
+  [data-package-selector="true"] > [data-services-chapter-instrument="true"] {
+    margin-top: 1.25rem !important;
+    gap: 0.65rem !important;
+  }
+
+  [data-package-selector="true"] > [data-services-chapter-instrument="true"] > button {
+    padding: 0.9rem !important;
+  }
+
+  [data-package-selector="true"] > [data-package-controls="true"] {
+    margin-top: 0.65rem !important;
+  }
+
+  [data-package-selector="true"] > [data-services-chapter-resolution="true"] {
+    min-height: 0 !important;
+    margin-top: 0.9rem !important;
+  }
+
+  [data-package-selector="true"] > [data-services-chapter-resolution="true"] > div {
+    padding: 1rem 1.25rem !important;
+  }
+
+  [data-package-inclusions="true"] li:nth-child(n + 4) {
+    display: none !important;
+  }
+
+  [data-package-disclaimer="true"] {
+    margin-top: 0.75rem !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  #offerings {
+    overflow: hidden !important;
+  }
+
+  .services-discipline-rail-viewport {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-services-discipline-journey="true"] {
+    height: auto !important;
+  }
+
+  [data-services-discipline-journey="true"] > div {
+    position: relative !important;
+    top: auto !important;
+    min-height: auto !important;
+  }
+
+  .services-discipline-rail-viewport {
+    scroll-behavior: auto;
+  }
+
+  .services-discipline-rail > button {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
+
+/* Mirror the operating-system fallback when Reduced is chosen in the site
+   footer. The local control is part of the same accessibility contract. */
+:root[data-motion="reduced"] [data-services-discipline-journey="true"] {
+  height: auto !important;
+}
+
+:root[data-motion="reduced"] [data-services-discipline-journey="true"] > div {
+  position: relative !important;
+  top: auto !important;
+  min-height: auto !important;
+}
+
+:root[data-motion="reduced"] .services-discipline-rail-viewport {
+  scroll-behavior: auto;
+}
+
+:root[data-motion="reduced"] .services-discipline-rail > button {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}

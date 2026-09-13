@@ -3,30 +3,45 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { ContactForm } from "@/components/ContactForm";
+import { ContactPathways } from "@/components/ContactPathways";
+import { ContactCinematicScene } from "@/components/ContactCinematicScene";
+import { ContactKineticHeading } from "@/components/ContactKineticHeading";
+import { ContactGratitude } from "@/components/ContactGratitude";
+import { ContactCallSequence } from "@/components/ContactCallSequence";
+import { ContactScrollRuntime } from "@/components/ContactScrollRuntime";
+import { ContactChapterRail } from "@/components/ContactChapterRail";
+import { ContactBookingAction } from "@/components/ContactBookingAction";
+import { ContactHeroBookingLink, ContactHeroContextCard } from "@/components/ContactServicesHandoff";
+import { TrackedLink } from "@/components/TrackedLink";
 import { Reveal } from "@/components/Reveal";
 import { SplitReveal } from "@/components/SplitReveal";
 import { PhotoHero } from "@/components/PhotoHero";
-import { VideoBreak } from "@/components/VideoBreak";
-import { CalendlyEmbed } from "@/components/CalendlyEmbed";
-import { NewsletterForm } from "@/components/NewsletterForm";
-import { ElementGlyph } from "@/components/ElementGlyph";
 import { NatureAccent } from "@/components/NatureAccent";
-import { Fireflies } from "@/components/Fireflies";
-import { AmbientElementShader } from "@/components/AmbientElementShader";
-import { ScrollProgress } from "@/components/ScrollProgress";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { site } from "@/data/site";
-import { credentials } from "@/data/about";
-import { projects } from "@/data/projects";
-import { SANDSTONE, ELEMENT_HEX } from "@/lib/sectionWash";
+import { LivingGradient } from "@/components/LivingGradient";
+import { ArrowUpRight, CalendarDays, MessageCircle, Phone } from "lucide-react";
+import { consultation, site } from "@/data/site";
+import { pageSchema, ORGANIZATION_ID } from "@/lib/pageSchema";
+import "./contact-cinematic.css";
+
+
+const pageJsonLd = pageSchema({
+  type: "ContactPage",
+  path: "/contact",
+  name: "Contact | Branding Tatva",
+  description:
+    "Schedule a brand strategy consultation with Suman Sharma, call or WhatsApp directly, or send a written enquiry.",
+  trail: [{ name: "Contact", path: "/contact" }],
+  mainEntity: ORGANIZATION_ID,
+});
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Tell me what your brand is becoming.",
+  description: "Schedule thirty minutes with Suman Sharma for a brand strategy consultation, call or WhatsApp directly, or send a written enquiry.",
   alternates: { canonical: "/contact" },
   openGraph: {
     title: `Contact | ${site.name}`,
-    description: "Tell me what your brand is becoming.",
+    description: "Schedule thirty minutes with Suman Sharma for a brand strategy consultation, call or WhatsApp directly, or send a written enquiry.",
     type: "website",
   },
 };
@@ -35,18 +50,12 @@ export default function ContactPage() {
   return (
     <>
       <Header transparent />
-      <ScrollProgress />
-      <main id="main-content">
-        {/* Every other page on the site opens on a real video/photo
-            hero; this page used to open directly on a flat color
-            section instead, the one structural outlier in an otherwise
-            consistent pattern. Tier 3 (70vh), the same as Services/
-            Work — matches PhotoHero's own documented height-tier
-            table. higgsfield-forest-light.mp4 (trees opening onto a
-            clear valley view) was picked specifically because it
-            echoes this page's own existing VideoBreak quote below: "A
-            brand conversation is just the first clear view through the
-            noise." */}
+      <main id="main-content" data-contact-film>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
+        {/* Contact opens as an immersive 88svh film rather than a utility-page
+            banner. The hero now shows a real visual-editing process rather
+            than a generic journey metaphor; a dedicated portrait derivative
+            keeps the hands and reference material legible on mobile. */}
         {/* Redesigned from the same centered pill-badge-plus-headline
             template Work/Services/Blog's heroes used to share into the
             asymmetric masthead already proven on this site's case-study
@@ -60,21 +69,37 @@ export default function ContactPage() {
             is the immediate "who am I actually talking to" signal, the
             same two-jobs-one-fact pattern a masthead and a byline
             already play on any real publication. */}
+        {/* The hero carried two stacked washes that together peaked near
+            0.76 at the foot and 0.7 across the left third, so the
+            footage underneath arrived as an unreadable brown murk — the
+            "dark, vague, low quality" verdict this page's own media
+            standard was written to prevent. Rebalanced rather than
+            replaced, since the clip itself is an approved pick: the left
+            scrim is now an ellipse sized to the headline block instead
+            of a full-height column, so it still carries type contrast
+            where the words actually are while the rest of the frame
+            keeps its light. */}
         <PhotoHero
-          video="/videos/higgsfield-forest-light.mp4"
-          poster="/images/higgsfield-forest-light-poster.jpg"
-          minHeight="70vh"
+          video="/videos/generated/bt-contact-original-hero.mp4"
+          videoMobile="/videos/generated/bt-contact-original-hero-mobile.mp4"
+          poster="/images/generated/bt-contact-signal-folio-v2.webp"
+          minHeight="88vh"
+          imagePosition="62% 56%"
+          playbackRate={0.84}
+          className="contact-hero-film"
+          overlayGradient="linear-gradient(180deg, rgba(25,27,22,0.10) 0%, rgba(28,29,23,0.22) 48%, rgba(29,27,23,0.66) 100%), radial-gradient(95% 85% at 12% 52%, rgba(25,25,21,0.62) 0%, rgba(25,25,21,0.34) 42%, rgba(24,26,21,0) 74%)"
         >
-          {/* Every other atmospheric hero on the site (About's forest
-              backdrop) carries a small ambient layer on top of the
-              video; this one was the plain video-plus-gradient every
-              other page's hero already is, missing the one touch that
-              gives About's hero its "considered, not just footage"
-              feel. Same forest register as this hero's own clip, not a
-              new visual idea introduced just for this page. */}
-          <Fireflies />
-          <Container className="relative py-20">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+          <div data-contact-hero-frame aria-hidden="true">
+            <span />
+            <span />
+          </div>
+          <div data-contact-hero-aperture aria-hidden="true">
+            <span data-contact-hero-matte="top" />
+            <span data-contact-hero-matte="bottom" />
+            <span data-contact-hero-light-open />
+          </div>
+          <Container data-contact-hero className="relative py-16 sm:py-24">
+            <div data-contact-hero-grid className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal className="relative">
                 <NatureAccent
                   variant="butterfly"
@@ -87,21 +112,121 @@ export default function ContactPage() {
                   as="h1"
                   className="mt-6 max-w-2xl font-display text-[clamp(2.4rem,6.5vw,4.5rem)] font-normal leading-[1.05] text-ivory"
                 >
-                  Tell me what your brand is becoming.
+                  Tell me what your brand needs people to understand.
                 </SplitReveal>
-                <p className="mt-4 max-w-lg text-ivory/80">
-                  Fill in as much or as little as you know right now.
-                  I&apos;ll ask a few more questions where it helps.
+                <p data-contact-hero-intro className="mt-4 max-w-lg text-ivory/80">
+                  Bring the gap between what the business means and what people currently understand. Positioning, voice, identity, or something harder to name.
                 </p>
+                <div
+                  data-contact-hero-signal
+                  role="img"
+                  aria-label="The conversation moves from reading the signal, to naming the tension, to shaping the decision."
+                  className="mt-5 grid max-w-xl grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2 text-[0.56rem] font-medium uppercase tracking-[0.16em] text-ivory/62 sm:gap-3 sm:text-[0.62rem] sm:tracking-[0.2em]"
+                >
+                  <span>Read the signal</span>
+                  <span aria-hidden="true" className="contact-hero-signal-line h-px overflow-hidden bg-ivory/18"><span className="block h-full origin-left bg-sandstone/80" /></span>
+                  <span>Name the tension</span>
+                  <span aria-hidden="true" className="contact-hero-signal-line h-px overflow-hidden bg-ivory/18"><span className="block h-full origin-left bg-sandstone/80" /></span>
+                  <span>Shape the decision</span>
+                </div>
+                <div data-contact-hero-actions className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <ContactHeroBookingLink />
+                  <TrackedLink
+                    href="#write"
+                    event="contact_route_selected"
+                    eventProps={{ source: "contact_hero", route: "write" }}
+                    data-cursor-label="Write a note"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-ivory/30 bg-soil/20 px-6 py-3 text-sm font-medium text-ivory backdrop-blur-lg transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-soil/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                  >
+                    Write a note
+                  </TrackedLink>
+                </div>
+                <p data-contact-hero-trust className="mt-4 text-[0.64rem] font-medium uppercase tracking-[0.18em] text-ivory/62">
+                  {site.consultationMinutes} minutes · with Suman · your timezone
+                </p>
+                <div
+                  data-contact-hero-direct
+                  className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ivory/72"
+                  aria-label="Direct contact options"
+                >
+                  <span className="text-ivory/52">Need the shortest route?</span>
+                  <TrackedLink
+                    href={`tel:${site.phone.tel}`}
+                    event="contact_route_selected"
+                    eventProps={{ source: "contact_hero", route: "call" }}
+                    data-cursor-label="Call Suman"
+                    className="link-underline inline-flex min-h-11 items-center text-ivory transition-colors hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                    aria-label={`Call Suman at ${site.phone.display}`}
+                  >
+                    <Phone aria-hidden="true" className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} />
+                    Call
+                  </TrackedLink>
+                  <TrackedLink
+                    href={site.phone.whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    event="contact_route_selected"
+                    eventProps={{ source: "contact_hero", route: "whatsapp" }}
+                    data-cursor-label="WhatsApp Suman"
+                    className="link-underline inline-flex min-h-11 items-center text-ivory transition-colors hover:text-sandstone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+                  >
+                    <MessageCircle aria-hidden="true" className="mr-1.5 h-3.5 w-3.5" strokeWidth={1.5} />
+                    WhatsApp
+                  </TrackedLink>
+                </div>
               </Reveal>
-              <Reveal delay={0.1} className="lg:pb-2 lg:text-right">
-                <p className="font-display text-lg text-ivory">{site.founder}</p>
-                <p className="mt-1 text-sm text-ivory/70">Founder, {site.name}</p>
-                <p className="mt-1 text-sm text-ivory/70">Reads every enquiry personally</p>
+              <Reveal delay={0.1} className="lg:pb-2" data-contact-hero-aside>
+                <ContactHeroContextCard />
               </Reveal>
             </div>
           </Container>
         </PhotoHero>
+
+        <ContactScrollRuntime />
+        <ContactChapterRail />
+
+        <ContactCinematicScene
+          id="choose"
+          labelledBy="contact-pathways-heading"
+          variant="branch"
+          className="border-b border-soil/10 bg-[#E8DED0]"
+          media={
+            <>
+              <BackgroundVideo
+                video="/videos/generated/bt-contact-original-pathways.mp4"
+                videoMobile="/videos/generated/bt-contact-original-pathways-mobile.mp4"
+                poster="/images/generated/bt-contact-original-pathways-poster.jpg"
+                playbackRate={0.86}
+                push
+                posterPriority={false}
+              />
+              {/* The veil used to be one flat 0.84 → 0.62 wash across the
+                  whole plate, which is the failure the media standard
+                  names outright: grading footage down until it reads as
+                  mud so that type can sit anywhere on it. Measured
+                  against that standard the old peak was more than twice
+                  the 0.4 ceiling, and the result was a pebble bed you
+                  could not identify behind cream panels of almost the
+                  same value — no ground, no depth, no contrast for the
+                  glass to register against.
+                  Split into the two layers the standard actually asks
+                  for: a localized scrim weighted to the left, where the
+                  copy column sits and legibility is genuinely needed,
+                  and a much lighter global wash so the right half of the
+                  footage stays bright and readable as an image. */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(120% 92% at 6% 46%, rgba(232,222,208,0.92) 0%, rgba(232,222,208,0.58) 36%, rgba(232,222,208,0) 68%), linear-gradient(110deg, rgba(232,222,208,0.44) 0%, rgba(235,227,216,0.28) 55%, rgba(223,225,214,0.22) 100%)",
+                }}
+              />
+            </>
+          }
+        >
+          <ContactPathways />
+        </ContactCinematicScene>
 
         {/* Was a one-off terracotta wash (earth blended 22%) — its own
             color, distinct from every other light section on the site.
@@ -110,77 +235,94 @@ export default function ContactPage() {
             moved into the new hero; this section now carries just the
             form and the direct-contact links.
             Redesign pass: this is the single most consequential section
-            on the entire site, the actual conversion moment, yet it was
-            the flattest, a solid color with text and form fields and
-            nothing else, while every other section on this page now
-            has real depth. AmbientElementShader (the one deliberately
-            restrained WebGL moment already proven safe on Services,
-            color and light only, no 3D objects) gives it quiet
-            atmosphere instead of a flat fill, at the same low opacity
-            Services already uses on comparable light sections. */}
-        <section className="relative overflow-hidden pb-20 pt-16 sm:pb-28 sm:pt-20" style={{ backgroundColor: SANDSTONE }}>
-          <AmbientElementShader opacity={0.14} />
-          <Container className="relative grid gap-12 lg:grid-cols-5">
-            <Reveal className="lg:col-span-2">
-              <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
-                Reach me directly
+            on the entire site, so its atmosphere must never depend on a
+            WebGL context. Two restrained paper-light washes keep the form
+            dimensional without adding a GPU-heavy failure point. */}
+        <ContactCinematicScene
+          id="write"
+          labelledBy="contact-write-heading"
+          variant="paper"
+          className="bg-[#DDE2DC]"
+          media={
+            <>
+              <BackgroundVideo
+                video="/videos/generated/bt-contact-original-write-scene.mp4"
+                videoMobile="/videos/generated/bt-contact-original-write-scene-mobile.mp4"
+                poster="/images/generated/bt-contact-write-note-v2.webp"
+                playbackRate={0.8}
+                posterPriority={false}
+              />
+              {/* Same correction as the pathways scene above, and for the
+                  same reason: a 0.88 peak wash left the desk footage as
+                  an unreadable grey fog behind a cream form panel, so
+                  the page read as one flat beige field rather than glass
+                  resting on something. Localized scrim under the copy
+                  column, light wash everywhere else. */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(120% 95% at 5% 44%, rgba(235,232,221,0.93) 0%, rgba(235,232,221,0.58) 34%, rgba(235,232,221,0) 66%), linear-gradient(100deg, rgba(235,232,221,0.42) 0%, rgba(232,229,219,0.26) 48%, rgba(218,224,214,0.18) 100%)",
+                }}
+              />
+            </>
+          }
+        >
+          <Container className="contact-write-layout relative grid w-full gap-10 py-12 sm:py-14 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-16">
+            <div data-contact-write-copy>
+              <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-soil/60">Put the decision into words</p>
+              <ContactKineticHeading
+                id="contact-write-heading"
+                data-contact-write-heading
+                lines={["Name the gap", "behind the", "visible problem."]}
+                resolveClassName="text-clay"
+                className="mt-4 max-w-lg font-display text-[clamp(2.5rem,5vw,4.8rem)] font-normal leading-[0.98] text-soil"
+              />
+              <p className="mt-6 max-w-md text-sm leading-relaxed text-soil/72 sm:text-base">
+                Tell me what people need to understand, what they understand today, and which decision is waiting on that difference.
               </p>
-              <div className="mt-3 space-y-2 text-sm text-foreground-secondary">
-                <p>
-                  Prefer email?{" "}
-                  <a href={`mailto:${site.email}`} className="text-action-primary-hover link-underline">
-                    {site.email}
-                  </a>
-                </p>
-                <p>
-                  <a
-                    href={site.social.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-action-primary-hover link-underline"
-                  >
-                    Connect on LinkedIn
-                  </a>
+
+              <div data-contact-write-note className="mt-8 max-w-md rounded-2xl border border-white/45 bg-white/28 p-5 backdrop-blur-xl">
+                <p className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-soil/48">Where your note goes</p>
+                <p className="mt-3 font-display text-2xl font-normal text-soil">To Suman, not a sales desk.</p>
+                <p className="mt-2 text-sm leading-relaxed text-soil/65">
+                  The same person who reads the note would lead the work.
                 </p>
               </div>
 
-              {/* Real trust indicator, placed where a first-time visitor
-                  is actually deciding whether to fill in the form, not
-                  buried elsewhere on the page. Same real facts and same
-                  dot-separator presentation Home's own Trust beat
-                  already uses (page.tsx), not a new device and not a
-                  fabricated testimonial or client logo. */}
-              <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-soil/10 pt-5 text-xs uppercase tracking-[0.1em] text-foreground-secondary">
-                {credentials
-                  .filter((c) => c.featured)
-                  .map((c) => (
-                    <span key={c.label} className="inline-flex items-center gap-3">
-                      {c.label}
-                      <span aria-hidden="true" className="h-1 w-1 rounded-full bg-soil/25" />
-                    </span>
-                  ))}
-                <span>{projects.length} real client engagements</span>
-              </div>
-            </Reveal>
+              <p className="mt-6 text-sm text-soil/68">
+                Prefer your inbox?{" "}
+                <TrackedLink
+                  href={`mailto:${site.email}`}
+                  event="contact_route_selected"
+                  eventProps={{ source: "contact_write_intro", route: "email" }}
+                  data-cursor-label="Email Suman"
+                  className="link-underline text-action-primary-hover"
+                >
+                  {site.email}
+                </TrackedLink>
+              </p>
+            </div>
 
-            <Reveal delay={0.1} className="lg:col-span-3">
+            <div className="min-w-0">
               <ContactForm />
-            </Reveal>
+              <p className="mt-4 rounded-full border border-white/35 bg-white/25 px-4 py-2 text-center text-[0.68rem] leading-relaxed text-soil/58 backdrop-blur-lg">
+                Your details reach Suman directly and can be deleted on request. Read the{" "}
+                <TrackedLink
+                  href="/privacy"
+                  event="contact_route_selected"
+                  eventProps={{ source: "contact_form_privacy", route: "privacy" }}
+                  data-cursor-label="Read privacy"
+                  className="link-underline text-action-primary-hover"
+                >
+                  privacy note
+                </TrackedLink>
+                .
+              </p>
+            </div>
           </Container>
-        </section>
-
-        {/* own-leaves-cabin.mp4 replaced with higgsfield-verdant-hills.mp4
-            (morning mist parting over green hills, originally generated
-            for Home's closing CTA) per direct feedback moving this clip
-            here instead. */}
-        <VideoBreak
-          src="/videos/higgsfield-verdant-hills.mp4"
-          poster="/images/higgsfield-verdant-hills-poster.jpg"
-          quote="A brand conversation is just the first clear view through the noise."
-          height="60vh"
-          cameraPush
-          spotlight
-        />
+        </ContactCinematicScene>
 
         {/* Was solid Indigo — a second distinct color on a two-section
             page already using Sandstone above, exactly the kind of
@@ -201,75 +343,134 @@ export default function ContactPage() {
             wildflower meadow, genuinely unused elsewhere on this page
             (or its own Footer), fitting "grab a time / stay in touch."
             Overlay at bg-soil/80, the site's normalized standard. */}
-        <section className="relative overflow-hidden bg-soil py-16">
-          <BackgroundVideo video="/videos/pixabay-alpine-wildflowers.mp4" poster="/images/pixabay-alpine-wildflowers-poster.jpg" />
-          <div className="absolute inset-0 bg-soil/80" />
-          {/* min-w-0 on both grid items: CalendlyEmbed's own real
-              minWidth:320px constraint (its own widget's floor, not
-              this page's choice) was propagating up through CSS
-              Grid's default min-width:auto item behavior, forcing the
-              shared single-column mobile track wider than the
-              viewport, and dragging the Newsletter card along with it
-              even though it has no width problem of its own.
-              Confirmed via computed-style inspection at 375px width
-              (both cards measured 370px, 43px past the actual 327px
-              content box) before fixing. */}
-          <Container className="relative grid gap-8 lg:grid-cols-2 lg:items-start">
-            <Reveal className="min-w-0">
+        <ContactCinematicScene
+          id="call"
+          labelledBy="contact-call-heading"
+          variant="horizon"
+          className="bg-soil"
+          media={
+            <>
+              <BackgroundVideo
+                video="/videos/generated/bt-contact-original-call.mp4"
+                videoMobile="/videos/generated/bt-contact-original-call-mobile.mp4"
+                poster="/images/generated/bt-contact-decision-table-v2.webp"
+                playbackRate={0.83}
+                push
+                posterPriority={false}
+              />
               <div
-                className="rounded-2xl border p-6 sm:p-8"
-                style={{ borderColor: `${ELEMENT_HEX.water}40`, backgroundColor: `${ELEMENT_HEX.water}14` }}
-              >
-                <ElementGlyph slug="water" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                  Or skip the form
-                </p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Just grab a time that works for you.
-                </h2>
-                <p className="mt-3 text-ivory/85">
-                  Times shown automatically adjust to your local timezone,
-                  wherever you are.
-                </p>
-                <CalendlyEmbed url={site.calendlyUrl} />
-                <p className="mt-3 text-xs text-ivory/75">
-                  Having trouble with the embed?{" "}
-                  <a
-                    href={site.calendlyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sandstone link-underline"
-                  >
-                    Open it directly instead
-                  </a>
-                  .
+                className="absolute inset-0"
+                aria-hidden="true"
+                style={{ backgroundImage: "linear-gradient(105deg, rgba(28,34,27,0.72) 0%, rgba(39,42,31,0.52) 48%, rgba(39,32,24,0.42) 100%)" }}
+              />
+              {/* The wash above is what guarantees contrast for the
+                  headline and the booking card, so it stays exactly as
+                  it was. This adds the drifting colour on top of it —
+                  the deep-green understory field from the reference
+                  board — so the most important scene on the site stops
+                  reading as one static dark rectangle. Layered mode, so
+                  the approved meadow footage underneath still reads;
+                  held at 0.42 and given no light sweep, since a moving
+                  highlight behind a booking card would compete with the
+                  one thing this scene exists to get clicked. */}
+              <LivingGradient preset="understory" plain shaft={false} grain={0} opacity={0.42} />
+            </>
+          }
+        >
+          <Container className="contact-call-layout relative grid w-full gap-12 py-12 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+            <div data-contact-call-copy>
+              <div>
+                <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-sandstone">Thirty minutes with Suman</p>
+                <ContactKineticHeading
+                  id="contact-call-heading"
+                  data-contact-call-heading
+                  lines={["Bring one", "brand decision.", "Find its frame."]}
+                  resolveClassName="text-sandstone"
+                  className="mt-4 max-w-xl font-display text-[clamp(2.7rem,5.6vw,5.4rem)] font-normal leading-[0.96] text-ivory"
+                />
+                <p data-contact-call-intro className="mt-6 max-w-md text-sm leading-relaxed text-ivory/75 sm:text-base">
+                  We examine what the audience sees, what the business means, and where the two have drifted apart.
                 </p>
               </div>
-            </Reveal>
 
-            <Reveal delay={0.1} className="min-w-0">
-              <div
-                className="rounded-2xl border p-6 sm:p-8"
-                style={{ borderColor: `${ELEMENT_HEX.air}40`, backgroundColor: `${ELEMENT_HEX.air}14` }}
-              >
-                <ElementGlyph slug="air" className="h-6 w-6 text-sandstone" strokeWidth={1.2} />
-                <p className="mt-3 text-sm font-medium uppercase tracking-wide text-sandstone">
-                  Still deciding?
+              <ContactCallSequence />
+            </div>
+
+            <div className="min-w-0">
+              <div data-contact-booking-card className="rounded-[2rem] border border-white/45 bg-[#F6F2EA]/90 p-6 shadow-[0_30px_100px_rgba(10,18,11,0.34)] backdrop-blur-3xl sm:p-10">
+                <div data-contact-booking-header className="flex items-start justify-between gap-6">
+                  <div>
+                    <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">Direct with the founder</p>
+                    <p className="mt-3 font-display text-4xl font-normal leading-none text-soil sm:text-5xl">{site.consultationMinutes} minutes</p>
+                  </div>
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-soil text-ivory">
+                    <CalendarDays aria-hidden="true" className="h-6 w-6" strokeWidth={1.35} />
+                  </span>
+                </div>
+
+                <p data-contact-booking-description className="mt-7 max-w-md text-sm leading-relaxed text-soil/68 sm:text-base">
+                  The calendar converts every available time to your timezone. {consultation.preparation}
                 </p>
-                <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Get occasional notes on brand clarity.
-                </h2>
-                <p className="mt-3 text-ivory/85">
-                  A few honest thoughts a month, short and specific. Zero pitch,
-                  unsubscribe whenever.
+
+                <p className="mt-4 border-l border-clay/25 pl-4 text-sm leading-relaxed text-soil/62">
+                  Suman leads the conversation herself. Bring the decision that cannot afford another vague answer.
                 </p>
-                <NewsletterForm />
+
+                {/* The direct Calendly route keeps the handoff immediate and
+                    resilient even when an embedded calendar is blocked. */}
+                <ContactBookingAction
+                  href={site.calendlyUrl}
+                  consultationMinutes={site.consultationMinutes}
+                  founder={site.founder}
+                />
+
+                <div data-contact-booking-options className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-soil/10 pt-5">
+                  <p data-contact-booking-meta className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-soil/45">
+                    Calendly · opens in a new tab
+                  </p>
+                  <div data-contact-booking-direct className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+                    <TrackedLink
+                      href={`tel:${site.phone.tel}`}
+                      aria-label={`Call Suman at ${site.phone.display}`}
+                      event="contact_route_selected"
+                      eventProps={{ source: "contact_final_scene", route: "call" }}
+                      data-cursor-label="Call Suman"
+                      className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/10 bg-white/30 px-2 text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:justify-start sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0"
+                    >
+                      <Phone aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
+                      <span className="leading-tight">
+                        <span className="block">Call Suman</span>
+                        <span
+                          data-contact-phone-number
+                          className="mt-0.5 block text-[0.62rem] font-normal tracking-[0.04em] text-soil/55"
+                        >
+                          {site.phone.display}
+                        </span>
+                      </span>
+                    </TrackedLink>
+                    <TrackedLink
+                      href={site.phone.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      event="contact_route_selected"
+                      eventProps={{ source: "contact_final_scene", route: "whatsapp" }}
+                      data-cursor-label="WhatsApp Suman"
+                      className="inline-flex min-h-11 items-center justify-center rounded-full border border-soil/10 bg-white/30 px-2 text-sm font-medium text-soil transition-colors duration-300 hover:text-clay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:justify-start sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0"
+                    >
+                      <MessageCircle aria-hidden="true" className="mr-2 h-4 w-4" strokeWidth={1.5} />
+                      WhatsApp Suman
+                      <ArrowUpRight aria-hidden="true" className="ml-1.5 h-4 w-4" />
+                    </TrackedLink>
+                  </div>
+                </div>
               </div>
-            </Reveal>
+            </div>
           </Container>
-        </section>
+        </ContactCinematicScene>
+
+        <ContactGratitude />
       </main>
-      <Footer />
+      <Footer compact className="contact-footer-afterglow" />
     </>
   );
 }

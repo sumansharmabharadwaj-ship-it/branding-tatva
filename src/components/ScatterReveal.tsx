@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
+
 import { initScatterTextReveal } from "@/animations/scatterTextReveal";
 
 // The one showcase spot for a scattered-to-settled word entrance — words
@@ -23,7 +24,7 @@ export function ScatterReveal({
   as?: "h1" | "h2";
 }) {
   const ref = useRef<HTMLHeadingElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
     const el = ref.current;

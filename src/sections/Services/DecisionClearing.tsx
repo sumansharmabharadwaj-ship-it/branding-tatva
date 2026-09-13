@@ -1,9 +1,12 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import { faqs } from "@/data/faqs";
+import { track } from "@/lib/analytics";
+import { consultation } from "@/data/site";
 
 // The decision clearing — a full recomposition of "Is this the right
 // fit?" per the direct redesign brief. A sticky editorial panel on the
@@ -45,13 +48,6 @@ const GROUPS = [
   },
 ] as const;
 
-const CALL_STEPS = [
-  "You describe where the brand stands today, in your own words.",
-  "I ask direct questions about positioning, audience, and where recognition is actually falling short.",
-  "You get honest feedback either way, no sales pitch.",
-  "If it makes sense to continue, we agree on what the first thirty days would actually look like.",
-] as const;
-
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 function previewOf(answer: string) {
@@ -62,7 +58,7 @@ function previewOf(answer: string) {
 export function DecisionClearing() {
   const [activeCategory, setActiveCategory] = useState<string>(GROUPS[0].id);
   const [openQuestion, setOpenQuestion] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
   const chapterRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -122,7 +118,7 @@ export function DecisionClearing() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => jumpTo(group.id)}
-                className={`relative shrink-0 rounded-xl px-4 py-3 text-left text-sm transition-colors duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] lg:w-full ${
+                className={`relative shrink-0 rounded-2xl px-4 py-3 text-left text-sm transition-colors duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] lg:w-full ${
                   active ? "text-ivory" : "text-ivory/60 hover:text-ivory/85"
                 }`}
                 style={{
@@ -135,7 +131,7 @@ export function DecisionClearing() {
                     layoutId="clearing-line"
                     aria-hidden="true"
                     className="absolute inset-y-2 left-0 w-[2px] rounded-full bg-[#A0A690]"
-                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, ease: EASE }}
+                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: EASE }}
                   />
                 )}
                 <span className="pl-2">{group.label}</span>
@@ -150,7 +146,7 @@ export function DecisionClearing() {
         <div className="mt-10 hidden border-t border-ivory/10 pt-8 lg:block">
           <p className="text-xs font-medium uppercase tracking-[0.15em] text-ivory/60">What happens on the call</p>
           <ol className="mt-4 space-y-3.5">
-            {CALL_STEPS.map((step, i) => (
+            {consultation.fullSteps.map((step, i) => (
               <li key={step} className="flex items-start gap-3">
                 <span className="pt-0.5 font-display text-lg font-normal leading-none text-ivory/30" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
@@ -192,7 +188,7 @@ export function DecisionClearing() {
                     initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16, filter: "blur(3px)" }}
                     whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
                     viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-                    transition={{ duration: 0.6, delay: qi * 0.06, ease: EASE }}
+                    transition={{ duration: 0.72, delay: qi * 0.06, ease: EASE }}
                   >
                     {/* The clearing brightens behind the open row. */}
                     <AnimatePresence>
@@ -204,7 +200,7 @@ export function DecisionClearing() {
                           initial={prefersReducedMotion ? undefined : { opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          transition={{ duration: 0.5, ease: EASE }}
+                          transition={{ duration: 0.35, ease: EASE }}
                         />
                       )}
                     </AnimatePresence>
@@ -213,7 +209,10 @@ export function DecisionClearing() {
                       type="button"
                       aria-expanded={isOpen}
                       aria-controls={panelId}
-                      onClick={() => setOpenQuestion(isOpen ? null : item.question)}
+                      onClick={() => {
+                        if (!isOpen) track("faq_opened", { question: item.question });
+                        setOpenQuestion(isOpen ? null : item.question);
+                      }}
                       className="group relative grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#A0A690] sm:gap-5"
                     >
                       <span className="font-display text-base text-ivory/35" aria-hidden="true">
@@ -233,7 +232,7 @@ export function DecisionClearing() {
                         aria-hidden="true"
                         className="pt-1 text-xl font-light text-ivory/60 transition-colors duration-300 group-hover:text-ivory"
                         animate={{ rotate: isOpen ? 45 : 0 }}
-                        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: EASE }}
+                        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: EASE }}
                       >
                         +
                       </motion.span>

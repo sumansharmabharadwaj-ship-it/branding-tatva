@@ -1,0 +1,585 @@
+"use client";
+
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+} from "react";
+import Link from "next/link";
+import { motion, useInView, useMotionValueEvent, useScroll } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { Container } from "@/components/Container";
+import { ElementGlyph } from "@/components/ElementGlyph";
+import { TrackedLink } from "@/components/TrackedLink";
+import { useCenteredRailSelection } from "@/hooks/useCenteredRailSelection";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import {
+  INSIGHTS_INTENT_CLEARED_EVENT,
+  INSIGHTS_INTENT_EVENT,
+  publishInsightsIntent,
+  readInsightsIntent,
+  type InsightsIntentDetail,
+} from "@/lib/insights-intent";
+import type { InsightElement } from "@/data/insights";
+
+type AtlasArticle = {
+  slug: string;
+  title: string;
+  readingTime: string;
+};
+
+export type AtlasPath = {
+  slug: string;
+  element: InsightElement;
+  name: string;
+  eyebrow: string;
+  promise: string;
+  diagnosticQuestions: string[];
+  articleCount: number;
+  articles: AtlasArticle[];
+  proof: {
+    slug: string;
+    title: string;
+    frame: string;
+  };
+  service: {
+    slug: string;
+    name: string;
+    frame: string;
+  };
+};
+
+type InsightsKnowledgeAtlasProps = {
+  paths: AtlasPath[];
+};
+
+type AtlasSelectionLock = {
+  index: number;
+  awaitingArrival: boolean;
+  arrivalY: number | null;
+};
+
+const ELEMENT_COLORS: Record<InsightElement, string> = {
+  earth: "#A64C2E",
+  water: "#436B7E",
+  fire: "#805B18",
+  air: "#526442",
+  space: "#8E5140",
+};
+
+export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
+  const selectionId = useId();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [carriedIntent, setCarriedIntent] =
+    useState<InsightsIntentDetail>();
+  const [paused, setPaused] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const pathRailRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const transitionDirectionRef = useRef(1);
+  const selectionLockRef = useRef<AtlasSelectionLock | null>(null);
+  const inView = useInView(sectionRef, { amount: 0.42 });
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const usesHorizontalRail = useMediaQuery("(max-width: 899px)");
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 92%", "end 8%"],
+  });
+  const activePath = paths[activeIndex];
+  const carriedPath = carriedIntent
+    ? paths.find((path) => path.slug === carriedIntent.topicSlug)
+    : undefined;
+
+  useCenteredRailSelection(
+    pathRailRef,
+    tabRefs,
+    activeIndex,
+    prefersReducedMotion,
+  );
+
+  useEffect(() => {
+    function syncPathFromHash() {
+      const prefix = "#atlas-tab-";
+      if (window.location.hash === "#knowledge-atlas") {
+        selectionLockRef.current = {
+          index: 0,
+          awaitingArrival: true,
+          arrivalY: null,
+        };
+        setActiveIndex((current) => {
+          transitionDirectionRef.current = current === 0 ? 1 : -1;
+          return 0;
+        });
+        return;
+      }
+
+      if (!window.location.hash.startsWith(prefix)) {
+        selectionLockRef.current = null;
+        return;
+      }
+
+      const slug = decodeURIComponent(window.location.hash.slice(prefix.length));
+      const nextIndex = paths.findIndex((path) => path.slug === slug);
+      if (nextIndex < 0) return;
+
+      selectionLockRef.current = {
+        index: nextIndex,
+        awaitingArrival: true,
+        arrivalY: null,
+      };
+
+      setActiveIndex((current) => {
+        transitionDirectionRef.current = nextIndex >= current ? 1 : -1;
+        return nextIndex;
+      });
+    }
+
+    syncPathFromHash();
+    window.addEventListener("hashchange", syncPathFromHash);
+    return () => window.removeEventListener("hashchange", syncPathFromHash);
+  }, [paths]);
+
+  useEffect(() => {
+    function applyCarriedPath(detail: InsightsIntentDetail | undefined) {
+      if (!detail) return;
+
+      const nextIndex = paths.findIndex((path) => path.slug === detail.topicSlug);
+      if (nextIndex < 0) return;
+
+      setCarriedIntent(detail);
+      selectionLockRef.current = {
+        index: nextIndex,
+        awaitingArrival: true,
+        arrivalY: null,
+      };
+      setActiveIndex((current) => {
+        transitionDirectionRef.current = nextIndex >= current ? 1 : -1;
+        return nextIndex;
+      });
+    }
+
+    function carryMirrorPath(event: Event) {
+      const { detail } = event as CustomEvent<InsightsIntentDetail>;
+      applyCarriedPath(detail);
+    }
+
+    function releaseCarriedPath() {
+      setCarriedIntent(undefined);
+      selectionLockRef.current = null;
+    }
+
+    window.addEventListener(INSIGHTS_INTENT_EVENT, carryMirrorPath);
+    window.addEventListener(
+      INSIGHTS_INTENT_CLEARED_EVENT,
+      releaseCarriedPath,
+    );
+    if (!window.location.hash.startsWith("#atlas-tab-")) {
+      applyCarriedPath(readInsightsIntent());
+    }
+
+    return () => {
+      window.removeEventListener(INSIGHTS_INTENT_EVENT, carryMirrorPath);
+      window.removeEventListener(
+        INSIGHTS_INTENT_CLEARED_EVENT,
+        releaseCarriedPath,
+      );
+    };
+  }, [paths]);
+
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (!inView || paused || prefersReducedMotion || paths.length < 2) return;
+
+    if (carriedPath) {
+      const carriedIndex = paths.findIndex(
+        (path) => path.slug === carriedPath.slug,
+      );
+      if (carriedIndex >= 0) {
+        setActiveIndex((current) =>
+          current === carriedIndex ? current : carriedIndex,
+        );
+      }
+      return;
+    }
+
+    const selectionLock = selectionLockRef.current;
+    if (selectionLock) {
+      const bounds = sectionRef.current?.getBoundingClientRect();
+
+      if (selectionLock.awaitingArrival) {
+        if (
+          bounds &&
+          bounds.top <= window.innerHeight * 0.24 &&
+          bounds.bottom >= window.innerHeight * 0.42
+        ) {
+          selectionLock.awaitingArrival = false;
+          selectionLock.arrivalY = window.scrollY;
+        }
+
+        setActiveIndex((current) =>
+          current === selectionLock.index ? current : selectionLock.index,
+        );
+        return;
+      }
+
+      const arrivalY = selectionLock.arrivalY ?? window.scrollY;
+      if (Math.abs(window.scrollY - arrivalY) < window.innerHeight * 0.18) {
+        setActiveIndex((current) =>
+          current === selectionLock.index ? current : selectionLock.index,
+        );
+        return;
+      }
+
+      selectionLockRef.current = null;
+    }
+
+    const progress = Math.min(0.9999, Math.max(0, value));
+    const nextIndex = Math.min(paths.length - 1, Math.floor(progress * paths.length));
+
+    setActiveIndex((current) => {
+      if (current === nextIndex) return current;
+      transitionDirectionRef.current = nextIndex > current ? 1 : -1;
+      return nextIndex;
+    });
+  });
+
+  function selectPath(index: number, shouldFocus = false) {
+    setActiveIndex((current) => {
+      if (index !== current) transitionDirectionRef.current = index > current ? 1 : -1;
+      return index;
+    });
+    if (shouldFocus) {
+      setPaused(true);
+      tabRefs.current[index]?.focus({ preventScroll: true });
+    }
+  }
+
+  function lockSelection(index: number) {
+    selectionLockRef.current = {
+      index,
+      awaitingArrival: false,
+      arrivalY: window.scrollY,
+    };
+  }
+
+  function carryPath(index: number) {
+    const path = paths[index];
+    if (!path) return;
+
+    const detail: InsightsIntentDetail = {
+      topicSlug: path.slug,
+      query: "",
+      label: path.name,
+      origin: "knowledge-atlas",
+    };
+    setCarriedIntent(detail);
+    publishInsightsIntent(detail);
+  }
+
+  function previewPath(index: number) {
+    const page = document.querySelector<HTMLElement>(".insights-page");
+    const scrollVelocity = Number.parseFloat(
+      page?.style.getPropertyValue("--insights-scroll-velocity") ?? "0",
+    );
+    if (Number.isFinite(scrollVelocity) && Math.abs(scrollVelocity) > 0.08) return;
+    if (sectionRef.current?.querySelector(":focus-visible, .insights-atlas__panel:focus-within")) return;
+    selectPath(index);
+    lockSelection(index);
+    carryPath(index);
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let nextIndex: number | null = null;
+    const forwardKey = usesHorizontalRail ? "ArrowRight" : "ArrowDown";
+    const backwardKey = usesHorizontalRail ? "ArrowLeft" : "ArrowUp";
+
+    if (event.key === forwardKey) {
+      nextIndex = (index + 1) % paths.length;
+    }
+    if (event.key === backwardKey) {
+      nextIndex = (index - 1 + paths.length) % paths.length;
+    }
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = paths.length - 1;
+
+    if (nextIndex !== null) {
+      event.preventDefault();
+      lockSelection(nextIndex);
+      selectPath(nextIndex, true);
+      carryPath(nextIndex);
+    }
+  }
+
+  if (!activePath) return null;
+
+  const accent = ELEMENT_COLORS[activePath.element];
+  const threadAccent = carriedPath
+    ? ELEMENT_COLORS[carriedPath.element]
+    : accent;
+
+  return (
+    <section
+      ref={sectionRef}
+      className="insights-atlas"
+      aria-labelledby="insights-atlas-title"
+      data-thread-active={Boolean(carriedPath)}
+      data-thread-origin={carriedIntent?.origin ?? "open"}
+      style={
+        {
+          "--atlas-accent": accent,
+          "--atlas-thread-accent": threadAccent,
+        } as CSSProperties
+      }
+      onFocusCapture={(event) => {
+        const target = event.target as HTMLElement;
+        if (target.matches(":focus-visible")) setPaused(true);
+      }}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setPaused(false);
+        }
+      }}
+    >
+      <div className="insights-atlas__arrival" aria-hidden="true">
+        <span>
+          {carriedPath && carriedIntent?.origin === "decision-mirror" ? (
+            <>
+              <ElementGlyph
+                slug={carriedPath.element}
+                className="h-4 w-4"
+                strokeWidth={1.35}
+              />
+              <small>Problem selected · {carriedPath.name}</small>
+            </>
+          ) : null}
+        </span>
+        <i />
+      </div>
+      <div className="insights-atlas__handoff" aria-hidden="true">
+        <span>
+          {carriedPath ? (
+            <>
+              <ElementGlyph
+                slug={carriedPath.element}
+                className="h-4 w-4"
+                strokeWidth={1.35}
+              />
+              <small>{carriedPath.name}</small>
+            </>
+          ) : null}
+        </span>
+        <i />
+      </div>
+
+      <Container className="insights-atlas__container">
+        <p className="insights-section-kicker"><span>02 / Topic map</span><i aria-hidden="true" /><span>05 connected topics</span></p>
+        <header className="insights-atlas__header">
+          <div>
+            <h2 id="insights-atlas-title">
+              Find the question behind the problem.
+            </h2>
+          </div>
+          <p>
+            {carriedPath
+              ? `${carriedPath.name} is selected. Its questions, evidence, essays, and relevant engagement are gathered here.`
+              : "Start from the question buyers leave you with. Each topic gathers the reading, client work, and service that can help."}
+          </p>
+        </header>
+
+        <div className="insights-atlas__stage">
+          <motion.div
+            ref={pathRailRef}
+            layoutScroll
+            className="insights-atlas__paths"
+            role="tablist"
+            aria-label="Brand decision paths"
+            aria-orientation={usesHorizontalRail ? "horizontal" : "vertical"}
+            onPointerEnter={(event) => {
+              if (event.pointerType !== "touch") setPaused(true);
+            }}
+            onPointerLeave={(event) => {
+              if (event.pointerType !== "touch") {
+                setPaused(false);
+              }
+            }}
+            onPointerUp={(event) => {
+              if (event.pointerType === "touch") setPaused(false);
+            }}
+            onPointerCancel={() => setPaused(false)}
+          >
+            {paths.map((path, index) => {
+              const selected = index === activeIndex;
+              const color = ELEMENT_COLORS[path.element];
+
+              return (
+                <button
+                  key={path.slug}
+                  ref={(node) => {
+                    tabRefs.current[index] = node;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`atlas-tab-${path.slug}`}
+                  aria-selected={selected}
+                  aria-controls={selected ? `atlas-panel-${path.slug}` : undefined}
+                  tabIndex={selected ? 0 : -1}
+                  className={selected ? "is-active" : undefined}
+                  onClick={() => {
+                    lockSelection(index);
+                    selectPath(index);
+                    carryPath(index);
+                  }}
+                  onPointerEnter={(event) => {
+                    if (event.pointerType !== "touch") previewPath(index);
+                  }}
+                  onFocus={() => {
+                    selectPath(index);
+                    lockSelection(index);
+                    carryPath(index);
+                  }}
+                  onKeyDown={(event) => handleKeyDown(event, index)}
+                >
+                  {selected ? (
+                    <motion.span
+                      className="insights-choice-selection"
+                      aria-hidden="true"
+                      layoutId={prefersReducedMotion ? undefined : `${selectionId}-topic`}
+                      initial={false}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  ) : null}
+                  <span className="insights-atlas__path-index">0{index + 1}</span>
+                  <span
+                    className="insights-atlas__path-glyph"
+                    style={{ color }}
+                  >
+                    <ElementGlyph
+                      slug={path.element}
+                      className="h-5 w-5"
+                      strokeWidth={1.35}
+                    />
+                  </span>
+                  <span className="insights-atlas__path-name">{path.name}</span>
+                  <span className="insights-atlas__path-count">
+                    {path.articleCount} reads
+                  </span>
+                </button>
+              );
+            })}
+          </motion.div>
+
+          <div
+            className="insights-atlas__panel-wrap"
+            onPointerEnter={(event) => {
+              if (event.pointerType !== "touch") setPaused(true);
+            }}
+            onPointerLeave={(event) => {
+              if (event.pointerType !== "touch") setPaused(false);
+            }}
+            onPointerUp={(event) => {
+              if (event.pointerType === "touch") setPaused(false);
+            }}
+            onPointerCancel={() => setPaused(false)}
+          >
+            <article
+              key={activePath.slug}
+              id={`atlas-panel-${activePath.slug}`}
+              role="tabpanel"
+              aria-labelledby={`atlas-tab-${activePath.slug}`}
+              className="insights-atlas__panel"
+              data-choice-motion={prefersReducedMotion ? "reduced" : "full"}
+              style={{
+                "--choice-entry-x": `${usesHorizontalRail ? transitionDirectionRef.current * 12 : 0}px`,
+                "--choice-entry-y": `${usesHorizontalRail ? 0 : transitionDirectionRef.current * 10}px`,
+              } as CSSProperties}
+            >
+                <div className="insights-atlas__panel-head">
+                  <p style={{ color: accent }}>{activePath.eyebrow}</p>
+                  <span>{activePath.articleCount} essays</span>
+                </div>
+                <h3>{activePath.name}</h3>
+                <p className="insights-atlas__promise">{activePath.promise}</p>
+
+                <div className="insights-atlas__panel-grid">
+                  <div>
+                    <p className="insights-atlas__label">Questions in this path</p>
+                    <ol className="insights-atlas__questions">
+                      {activePath.diagnosticQuestions.map((question, index) => (
+                        <li key={question}>
+                          <span>0{index + 1}</span>
+                          <p>{question}</p>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  <div>
+                    <p className="insights-atlas__label">Recent essays</p>
+                    <div className="insights-atlas__articles">
+                      {activePath.articles.map((article, articleIndex) => (
+                        <TrackedLink
+                          key={article.slug}
+                          href={`/insights/${article.slug}`}
+                          onClick={() => carryPath(activeIndex)}
+                          event="insights_article_selected"
+                          eventProps={{
+                            source: "knowledge_atlas",
+                            article: article.slug,
+                            path: activePath.slug,
+                            position: articleIndex + 1,
+                            match_reason: "path_recent_read",
+                          }}
+                        >
+                          <span>{article.title}</span>
+                          <small>{article.readingTime}</small>
+                        </TrackedLink>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="insights-atlas__application">
+                  <Link
+                    href={`/work/${activePath.proof.slug}`}
+                    onClick={() => carryPath(activeIndex)}
+                  >
+                    <small>Published project record</small>
+                    <strong>{activePath.proof.title}</strong>
+                    <p>{activePath.proof.frame}</p>
+                    <span>
+                      See the project
+                      <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                    </span>
+                  </Link>
+                  <Link
+                    href={`/services#package-${activePath.service.slug}`}
+                    onClick={() => carryPath(activeIndex)}
+                  >
+                    <small>Matching engagement</small>
+                    <strong>{activePath.service.name}</strong>
+                    <p>{activePath.service.frame}</p>
+                    <span>
+                      Open the service
+                      <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                    </span>
+                  </Link>
+                </div>
+
+                <Link
+                  href={`/insights/topic/${activePath.slug}`}
+                  className="insights-atlas__cta"
+                  onClick={() => carryPath(activeIndex)}
+                >
+                  Read all {activePath.name.toLowerCase()} essays
+                  <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                </Link>
+            </article>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}

@@ -1,0 +1,244 @@
+/* The compounding-cost chapter.
+ *
+ * Structure mined from heyparker.ai's step sequence, which is the
+ * reference Suman gave for scroll: a short run of cards that each pin
+ * and let the next one arrive on top, so the reader ends up looking at
+ * a pile rather than a row. Same stack this site already runs on
+ * (Lenis + Framer Motion + real CSS sticky, no ScrollTrigger pinning,
+ * which has been built and rolled back twice here).
+ *
+ * Why this content and not a decorative copy of the reference: these
+ * three costs compound, and a row of three columns states that while
+ * showing the opposite. Stacked, the form carries the argument — by the
+ * third card the first two are still physically there, under it. That
+ * is the local bar: a section that still means the same thing with the
+ * animation removed has failed.
+ *
+ * Mechanism, deliberately CSS only. Every card is a sticky sibling in
+ * one tall list with a staggered `top`, so earlier cards stay pinned
+ * while later ones slide over them. No scroll listener, no rAF, no
+ * measurement that can go stale — this is the same reason the rest of
+ * the site's pinned sections use sticky rather than a cached trigger
+ * position.
+ *
+ * Sticky safety: nothing here sets `overflow: hidden`. The two
+ * ancestors that do clip (.home-v4 and .home-v4-chapter) use
+ * `overflow: clip`, which per spec does NOT create a scroll container
+ * and so leaves sticky working — the same thing HomePaths already
+ * relies on.
+ */
+
+.scene {
+  position: relative;
+  isolation: isolate;
+  color: #f2f0e8;
+  background: #14180f;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 74rem);
+  margin-inline: auto;
+  padding: clamp(5rem, 11svh, 8rem) clamp(1.5rem, 5.5vw, 5.5rem) clamp(5rem, 12svh, 9rem);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: #d4b99a;
+  font-size: .75rem;
+  line-height: 1.5;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 19ch;
+  margin: 0;
+  font: 400 clamp(2.5rem, 5vw, 4.5rem)/1.02 var(--font-display), Georgia, serif;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+
+.title em {
+  color: #d4b99a;
+  font-weight: 400;
+}
+
+.lede {
+  max-width: 44ch;
+  margin: 1.25rem 0 0;
+  color: rgb(242 240 232 / 72%);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+/* Grid row-gap, deliberately, rather than margin on the cards.
+ *
+ * A sticky element stops sticking when its own MARGIN box runs out of
+ * room in the container, so spacing the cards with margin-bottom caps
+ * each card's hold at roughly the size of that margin: card one
+ * released exactly as card two arrived, and the result was a hand off,
+ * one card at a time, with empty field between them. Verified that way
+ * on a real render before this was written.
+ *
+ * row-gap puts the same space in the container instead, leaving each
+ * card's margin box equal to its own height, so every card holds until
+ * the list itself ends. That is what makes the three actually pile up
+ * rather than take turns. */
+.stack {
+  display: grid;
+  row-gap: 74svh;
+  margin: clamp(2.5rem, 7svh, 4.5rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The stagger is what makes the pile legible, and 4.2rem is not an
+   arbitrary gap: it is deep enough to clear a card's top padding plus
+   its number row, so a covered card keeps showing its own numeral. By
+   the third card the reader sees 01 and 02 still sitting underneath 03,
+   which is the whole argument of the chapter stated as layout. A
+   smaller offset left only a blank rounded edge showing, which says
+   nothing. */
+.card {
+  position: sticky;
+  top: calc(15svh + var(--i) * 4.2rem);
+  padding: clamp(1.75rem, 3.4vw, 2.9rem);
+  border: 1px solid rgb(242 240 232 / 14%);
+  border-radius: 1.75rem;
+  /* Held near opaque on purpose. A translucent card over an already
+     stacked card reads as mud rather than depth. */
+  background: linear-gradient(148deg, rgb(28 34 26 / 94%) 0%, rgb(20 24 18 / 96%) 100%);
+  box-shadow: 0 32px 90px rgb(6 10 8 / 52%), 0 2px 0 rgb(242 240 232 / 6%) inset;
+  backdrop-filter: blur(16px);
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  gap: 1.1rem;
+  margin-bottom: .9rem;
+}
+
+.number {
+  color: #c6a97a;
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .1em;
+}
+
+.meter {
+  flex: 1;
+  height: 1px;
+  background: rgb(242 240 232 / 14%);
+}
+
+.card h3 {
+  margin: 0;
+  font: 400 clamp(1.85rem, 3.3vw, 2.9rem)/1.08 var(--font-display), Georgia, serif;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+
+.card p {
+  max-width: 52ch;
+  margin: .85rem 0 0;
+  color: rgb(242 240 232 / 74%);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: clamp(3rem, 8svh, 5rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(242 240 232 / 16%);
+}
+
+.footer > p {
+  max-width: 46ch;
+  margin: 0;
+  color: rgb(242 240 232 / 78%);
+  font-size: .95rem;
+  line-height: 1.6;
+}
+
+.link {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  min-height: 3rem;
+  padding: .75rem 1.35rem;
+  border: 1px solid rgb(242 240 232 / 30%);
+  border-radius: 999px;
+  color: #14180f;
+  background: #e9e2d4;
+  font-size: .9rem;
+  line-height: 1.4;
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.link:hover {
+  background: #fff9ed;
+  transform: translateY(-2px);
+}
+
+.link:focus-visible {
+  outline: 2px solid #d4b99a;
+  outline-offset: 4px;
+}
+
+/* Below this width a card plus its heading stops fitting inside one
+   viewport, and a sticky frame whose content overflows the screen
+   cannot hold cleanly — it just clips. Measured rule from this
+   project, so the stack degrades to ordinary flow rather than pinning
+   something the reader cannot finish reading. */
+@media (max-width: 900px) {
+  .stack { row-gap: 1.1rem; }
+  .card {
+    position: static;
+    padding: 1.5rem 1.35rem;
+    border-radius: 1.35rem;
+    backdrop-filter: none;
+  }
+  .card h3 { font-size: clamp(1.7rem, 6.4vw, 2.2rem); }
+  .card p { font-size: .95rem; }
+  .footer { flex-direction: column; align-items: flex-start; }
+  .link { width: 100%; }
+}
+
+/* A short viewport has the same problem for a different reason. */
+@media (min-width: 901px) and (max-height: 700px) {
+  .stack { row-gap: 62svh; }
+  .card { top: calc(9svh + var(--i) * 3.6rem); }
+}
+
+/* Reduced motion: the pile is scroll position rather than animation, so
+   nothing here is strictly motion. It still reads as movement though,
+   so the standing per component rule applies and it resolves to a plain
+   readable list. */
+@media (prefers-reduced-motion: reduce) {
+  .stack { row-gap: 1.1rem; }
+  .card {
+    position: static;
+    backdrop-filter: none;
+  }
+  .link { transition: none; }
+}
+
+:global(html[data-motion="reduced"]) .stack { row-gap: 1.1rem; }
+
+:global(html[data-motion="reduced"]) .card {
+  position: static;
+  backdrop-filter: none;
+}
+
+:global(html[data-motion="reduced"]) .link {
+  transition: none;
+}

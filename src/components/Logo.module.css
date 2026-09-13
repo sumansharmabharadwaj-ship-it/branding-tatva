@@ -1,0 +1,187 @@
+.mark {
+  --brand-ink: #1f3a28;
+  --brand-brass: #6f4e37;
+  --brand-light: #c6a97a;
+  position: relative;
+  display: inline-block;
+  flex: none;
+  user-select: none;
+  vertical-align: middle;
+}
+.mark[data-light="true"] {
+  --brand-ink: #f2f0e8;
+  --brand-brass: #c6a97a;
+  --brand-light: #f2f0e8;
+}
+.sculpture, .perspective, .breath {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.sculpture {
+  transform: rotate(-4deg);
+  transition: transform 800ms cubic-bezier(.22, 1, .36, 1);
+}
+.mark[data-animated="true"] .sculpture {
+  transform: rotate(calc(-4deg + var(--brand-scroll, 0) * 4deg + var(--brand-open, 0) * 4deg))
+    scale(calc(1 - var(--brand-scroll, 0) * .1 + var(--brand-open, 0) * .14));
+}
+.mark[data-animated="true"] .perspective {
+  transform: perspective(220px)
+    translate3d(calc(var(--brand-pointer-x, 0) * 2.5px), calc(var(--brand-pointer-y, 0) * 2px), 0)
+    rotateX(calc(var(--brand-pointer-y, 0) * -9deg))
+    rotateY(calc(var(--brand-pointer-x, 0) * 12deg));
+  transition: transform 450ms cubic-bezier(.22, 1, .36, 1);
+}
+.sculpture svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.upper, .lower { fill: var(--brand-ink); }
+.trunk { fill: var(--brand-brass); }
+.upper, .lower, .trunk {
+  transform-box: view-box;
+  transform-origin: 35px 56px;
+  transition: transform 800ms cubic-bezier(.22, 1, .36, 1);
+}
+.mark[data-animated="true"] .upper {
+  transform: translate(calc(var(--brand-open, 0) * 8px), calc(var(--brand-open, 0) * -3px))
+    rotate(calc(var(--brand-open, 0) * -7deg));
+}
+.mark[data-animated="true"] .lower {
+  transform: translate(calc(var(--brand-open, 0) * 10px), calc(var(--brand-open, 0) * 3px))
+    rotate(calc(var(--brand-open, 0) * 7deg));
+}
+.upperBloom, .lowerBloom, .upper path, .lower path, .trunk path {
+  transform-box: view-box;
+  transform-origin: 35px 56px;
+}
+.trace, .glint {
+  fill: none;
+  stroke: var(--brand-light);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  opacity: 0;
+}
+.wordmark { padding-block: .16em; }
+.lettering { display: block; white-space: nowrap; }
+.wordClip { display: inline-block; overflow: hidden; vertical-align: top; padding-block: .08em; }
+.word { display: inline-block; }
+
+/* Separate layers let arrival, breathing and interaction move independently. */
+.mark[data-animated="true"] .upper path {
+  animation: upper-arrive 1800ms cubic-bezier(.22, 1, .36, 1) 280ms both;
+}
+.mark[data-animated="true"] .lower path {
+  animation: lower-arrive 1900ms cubic-bezier(.22, 1, .36, 1) 400ms both;
+}
+.mark[data-animated="true"] .trunk path {
+  animation: trunk-arrive 1400ms cubic-bezier(.22, 1, .36, 1) 120ms both;
+}
+.mark[data-animated="true"] .trace {
+  animation: trace-arrive 2100ms cubic-bezier(.22, .6, .36, 1) 100ms both;
+}
+.wordmark[data-animated="true"] .word {
+  animation: name-arrive 1400ms cubic-bezier(.22, 1, .36, 1) both;
+}
+.mark[data-animated="true"] .breath {
+  animation: mark-breathe 8400ms ease-in-out 2300ms infinite;
+}
+.mark[data-animated="true"] .upperBloom {
+  animation: upper-bloom 8400ms cubic-bezier(.45, 0, .25, 1) 2300ms infinite;
+}
+.mark[data-animated="true"] .lowerBloom {
+  animation: lower-bloom 8400ms cubic-bezier(.45, 0, .25, 1) 2300ms infinite;
+}
+.mark[data-animated="true"] .glint {
+  stroke-dasharray: .18 .82;
+  animation: signature-light 8400ms ease-in-out 2300ms infinite;
+}
+
+/* Scroll settles the identity. Focus and hover open its two curves. */
+:global(.site-header__brand[data-brand-compact="true"]) .breath,
+:global(.site-header__brand[data-brand-compact="true"]) .upperBloom,
+:global(.site-header__brand[data-brand-compact="true"]) .lowerBloom,
+:global(.site-header__brand[data-brand-compact="true"]) .glint,
+:global(.site-header__brand:focus-visible) .breath,
+:global(.site-header__brand:focus-visible) .upperBloom,
+:global(.site-header__brand:focus-visible) .lowerBloom {
+  animation-play-state: paused;
+}
+:global(.site-header__brand:focus-visible) .mark[data-animated="true"] {
+  --brand-open: 1;
+}
+:global(.site-header__brand:focus-visible) .mark[data-animated="true"] .glint {
+  stroke-dasharray: 1;
+  animation: trace-arrive 1800ms ease both;
+}
+@media (hover: hover) and (pointer: fine) {
+  :global(.site-header__brand:hover) .mark[data-animated="true"] {
+    --brand-open: 1;
+  }
+  :global(.site-header__brand:hover) .breath,
+  :global(.site-header__brand:hover) .upperBloom,
+  :global(.site-header__brand:hover) .lowerBloom {
+    animation-play-state: paused;
+  }
+  :global(.site-header__brand:hover) .mark[data-animated="true"] .glint {
+    stroke-dasharray: 1;
+    animation: trace-arrive 1800ms ease both;
+  }
+}
+@keyframes upper-arrive {
+  from { opacity: .15; transform: translate(24px, -18px) rotate(-28deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes lower-arrive {
+  from { opacity: .15; transform: translate(26px, 17px) rotate(22deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes trunk-arrive {
+  from { opacity: .3; transform: translateY(15px) scaleY(.8); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes trace-arrive {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  20% { opacity: 1; }
+  72% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes name-arrive {
+  from { opacity: .3; transform: translateY(115%) rotate(3deg); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes mark-breathe {
+  0%, 100% { transform: none; }
+  36% { transform: translateY(-1px) rotate(2deg) scale(1.03); }
+  68% { transform: translateY(.2px) rotate(-1deg); }
+}
+@keyframes upper-bloom {
+  0%, 72%, 100% { transform: none; }
+  32% { transform: translate(5px, -3px) rotate(-5deg); }
+}
+@keyframes lower-bloom {
+  0%, 12%, 88%, 100% { transform: none; }
+  48% { transform: translate(6px, 3px) rotate(4deg); }
+}
+@keyframes signature-light {
+  0%, 16% { stroke-dashoffset: 1; opacity: 0; }
+  28% { opacity: .85; }
+  58% { stroke-dashoffset: -1; opacity: 0; }
+  100% { stroke-dashoffset: -1; opacity: 0; }
+}
+:global(:root[data-motion="reduced"]) .mark *,
+:global(:root[data-motion="reduced"]) .wordmark * {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+:global(:root[data-motion="reduced"]) .trace,
+:global(:root[data-motion="reduced"]) .glint { opacity: 0 !important; }
+@media (prefers-reduced-motion: reduce) {
+  .mark *, .wordmark * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .trace, .glint { opacity: 0 !important; }
+}

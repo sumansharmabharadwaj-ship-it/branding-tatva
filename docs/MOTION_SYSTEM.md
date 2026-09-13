@@ -28,3 +28,32 @@ Fragment count drops from five to three (earth, air, space) to keep the composit
 - No scroll hijacking
 - Nothing that blocks or delays reading the headline
 - Every animated component must have a reduced-motion equivalent before it ships
+
+## Known defect: reduced motion hydrates twice (Aug 2026)
+
+`useReducedMotion()` returns `false` on the server, because there is no
+`matchMedia` there, and `true` on a reduced motion client's very first
+render. Any component that uses it to decide **what markup to render**
+therefore produces one tree on the server and a different one during
+hydration, and React throws a recoverable mismatch.
+
+Confirmed with Playwright under `reducedMotion: 'reduce'`: React error
+418 fires on every route, on every page load, for reduced motion
+visitors only. Content still renders correctly, because React recovers
+by re-rendering on the client, so nothing looks broken. The cost is a
+full client re-render on load for the people least likely to want one.
+
+`PageLoadVeil` was fixed properly and is the model: start state where
+the server left it, then tear down in a layout effect before paint.
+
+Still branching markup on `useReducedMotion` and still mismatching:
+`VideoBreak`, `ImageBreak`, `ClipReveal`, `ScatterReveal`,
+`PerspectiveReveal`, `GradientSections`, `DustMotes`, `ParallaxDrift`,
+`SkyLife`, `HoverGlyph`, `ScrollProgress`, `NewsletterForm`.
+
+The wrong fix is deferring the branch to after mount everywhere: that
+would show reduced motion visitors a frame of the animated markup they
+asked to avoid. The right fix is moving these branches out of JS and
+into the `prefers-reduced-motion` CSS already in `globals.css`, so the
+server and the client render identical markup and the media query
+decides what moves. That is a dedicated pass, not a patch.

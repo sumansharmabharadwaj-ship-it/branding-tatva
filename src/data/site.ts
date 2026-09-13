@@ -1,22 +1,24 @@
 // Central site configuration. Edit this file to change copy that appears
 // in multiple places (nav, footer, metadata) without hunting through pages.
-//
-// NOTE: positioning below is provisional — see BRAND_STRATEGY.md for the
-// five options. Update `positioning` once Suman confirms a final direction.
 
 export const site = {
   name: "Branding Tatva",
   founder: "Suman Sharma",
-  // See HERO_HEADLINES.md for five alternatives and the reasoning behind
-  // this pairing (option B for hook, A for resolution).
   heroHeadline: "Most brands are visible. Very few are remembered.",
-  tagline: "Every memorable brand begins with the right elements.",
+  tagline: "Essence first. Recognition follows.",
   positioning:
-    "Branding Tatva finds the elements that make a business worth noticing, and shapes them into a brand people recognise, trust, and remember.",
+    "Branding Tatva finds the reason buyers choose a business, then gives that reason language, identity, and repetition.",
   description:
-    "A personal branding practice led by Suman Sharma, helping founders and existing businesses find clarity, voice, and consistency through an elemental approach to brand strategy.",
+    "Most brands are visible. Very few are remembered. Suman Sharma works directly with founders to rebuild positioning, voice, identity, and content around the reason buyers choose.",
   url: "https://brandingtatva.com",
   email: "suman@brandingtatva.com",
+  phone: {
+    display: "+91 84477 25381",
+    tel: "+918447725381",
+    whatsappUrl:
+      "https://wa.me/918447725381?text=Hello%20Suman%2C%20I%27d%20like%20to%20discuss%20my%20brand.",
+  },
+  consultationMinutes: 30,
   calendlyUrl: "https://calendly.com/suman-brandingtatva",
   social: {
     linkedin: "https://linkedin.com/in/suman-sharma-b6a682232",
@@ -25,16 +27,32 @@ export const site = {
   },
 } as const;
 
+export const consultation = {
+  minutes: site.consultationMinutes,
+  actionLabel: `Book the ${site.consultationMinutes} minute diagnosis`,
+  preparation: "Bring the question as it stands. The deck can wait.",
+  steps: [
+    "Describe what is no longer working",
+    "Test the assumption beneath it",
+    "Leave knowing what deserves attention first",
+  ],
+  fullSteps: [
+    "You describe what has changed in the business and what the brand is failing to carry.",
+    "Suman tests the question against the buyer, the category, and the evidence already available.",
+    "You leave knowing which brand decision deserves attention before the rest.",
+  ],
+} as const;
+
 export const navigation = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Work", href: "/work" },
-  { label: "Blog", href: "/blog" },
+  { label: "Meet Your Strategist", href: "/about" },
+  { label: "Brand Strategy & Systems", href: "/services" },
+  { label: "Insights", href: "/insights" },
   { label: "Contact", href: "/contact" },
 ] as const;
 
 export const footerLinks = [
+  { label: "Editorial Policy", href: "/editorial-policy" },
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
 ] as const;

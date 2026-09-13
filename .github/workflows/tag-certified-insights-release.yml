@@ -1,0 +1,43 @@
+name: Tag the hosted-certified Insights source
+
+on:
+  workflow_run:
+    workflows:
+      - Insights hosted permanent-alias certification
+    types:
+      - completed
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'homepage-cinematic-recovery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+
+    steps:
+      - name: Check out the hosted-certified source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Create an immutable certification tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          short="${GITHUB_EVENT_WORKFLOW_SHA:0:12}"
+          tag="insights-hosted-certified-${short}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --tags origin "refs/tags/${tag}" >/dev/null 2>&1; then
+            echo "Certification tag ${tag} already exists."
+            exit 0
+          fi
+          git tag -a "$tag" "$GITHUB_EVENT_WORKFLOW_SHA" -m "29-guide Insights library certified on the permanent Vercel alias"
+          git push origin "$tag"
+        env:
+          GITHUB_EVENT_WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
