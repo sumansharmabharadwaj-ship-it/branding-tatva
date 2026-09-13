@@ -1,6 +1,7 @@
 "use client";
 
 import { Reveal } from "@/components/Reveal";
+import { consultation } from "@/data/site";
 
 // Direct feedback wanted the visitor to feel invested before the
 // booking calendar appears. Every line below describes the actual
@@ -8,13 +9,6 @@ import { Reveal } from "@/components/Reveal";
 // and focus questions StrategyRoomCTA itself asks; the same "twenty
 // minutes, no pitch deck" framing already established) — a preview of
 // something real, not a new promise invented for this section alone.
-const STEPS = [
-  "You describe where the brand stands today, in your own words.",
-  "I ask direct questions about positioning, audience, and where recognition is actually falling short.",
-  "You get honest feedback either way, no sales pitch.",
-  "If it makes sense to continue, we agree on what the first thirty days would actually look like.",
-] as const;
-
 // `dark` — see RiskRemovalFAQ's own comment; both moved off the light
 // bg-background-alt tier together. No longer wraps itself in its own
 // `<Container>` — this now sits as the left column of the FAQ section's
@@ -37,7 +31,7 @@ export function StrategySessionPreview({ dark = false }: { dark?: boolean }) {
           inside the ol, a real accessibility violation Lighthouse
           caught (list/listitem audits). */}
       <ol className="mt-8 space-y-5">
-        {STEPS.map((step, i) => (
+        {consultation.fullSteps.map((step, i) => (
           <li key={step}>
             <Reveal delay={i * 0.08} className="flex items-start gap-4">
               <span className={`pt-0.5 font-display text-2xl font-normal leading-none ${dark ? "text-ivory/25" : "text-soil/25"}`}>

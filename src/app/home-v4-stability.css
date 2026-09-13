@@ -1,0 +1,24 @@
+/* Final homepage owner: readable light Recognition, measured scene floors,
+   and one visible playback language across the interactive diagrams. */
+
+.home-v4-opening,
+.home-v4-opening__shell {
+  min-height: max(100svh, 42rem);
+}
+
+/* The earlier short-laptop patch forced authored content into the physical
+   browser height. A 518px viewport cannot contain a cinematic scene, so these
+   chapters now keep a calm minimum canvas and scroll naturally instead of
+   clipping copy or leaving half-rendered states. */
+@media (min-width: 821px) {
+  .home-v4 [data-home-v4-chapter] {
+    scroll-margin-top: 0;
+  }
+
+  .home-v4-chapter--studio {
+    height: auto !important;
+    min-height: max(100svh, 48rem) !important;
+  }
+}
+
+@keyframes home-v4-stable-progress { to { transform: scaleX(1); } }

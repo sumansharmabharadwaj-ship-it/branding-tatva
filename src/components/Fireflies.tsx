@@ -1,6 +1,7 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+
 
 // Warm, wandering glow points for the About hero's forest backdrop —
 // a livelier, greener cousin of DustMotes (which drifts straight up in
@@ -20,7 +21,7 @@ const FIREFLIES = [
 ];
 
 export function Fireflies() {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   if (prefersReducedMotion) return null;
 
   return (

@@ -1,11 +1,14 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { kenBurnsAnimation } from "@/animations/kenBurns";
+import { LivingImage } from "@/components/LivingImage";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { BREAK_OVERLAY_GRADIENT } from "@/lib/media";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 const KEN_BURNS = kenBurnsAnimation({ scale: 1.06, duration: 26 });
 
@@ -19,18 +22,18 @@ const KEN_BURNS = kenBurnsAnimation({ scale: 1.06, duration: 26 });
 // why the row's text also flips to ivory in page.tsx — dark text was
 // only ever legible against the old cream wash, not against a photo
 // that's actually visible. Photo shows at real opacity, and where a
-// matching clip exists (video), cross-fades into a continuously-
-// playing loop once the row nears the viewport instead of just
-// drifting via Ken Burns — the image alone still carries the Ken
-// Burns drift as the poster/fallback. A light tint in the element's
-// own color keeps the five rows reading as one coherent set rather
-// than five unrelated photos or clips.
+// matching clip exists (video), longer documentary footage cross-fades
+// in once the row nears the viewport. Reviewed short clips with visible
+// resets stay as visitor-driven living images instead. A light tint in
+// the element's own color keeps the five rows reading as one coherent
+// set rather than five unrelated photos or clips.
 export function ElementRowBackground({
   image,
   video,
   color,
   imagePosition = "center",
   active = true,
+  gate = false,
 }: {
   image: string;
   video?: string;
@@ -43,20 +46,45 @@ export function ElementRowBackground({
   // once. Defaults to true so the row-list usage (VerticalUnfold),
   // where every mounted row is genuinely meant to play, is unaffected.
   active?: boolean;
+  // Scroll OS video budget: the stacked row-list usage (VerticalUnfold)
+  // renders five of these in normal flow, and on the fatigue audit
+  // several were decoding at once whenever the list straddled the
+  // viewport. With gate on, this component watches its own root and
+  // only plays while the row is at least half on screen — a server
+  // component caller gets centrality gating without needing its own
+  // client wrapper. VideoWarden still handles the fully-offscreen case;
+  // this narrows "near the viewport" down to "actually the row you are
+  // reading".
+  gate?: boolean;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ref, shouldLoad] = useLazyMount();
   const [videoReady, setVideoReady] = useState(false);
+  const livingStill = usesLivingStill(video);
   // Tracks the in-flight play() promise so a pause() that lands while
   // it's still pending waits for it to settle first, instead of firing
   // immediately.
   const playPromiseRef = useRef<Promise<void> | null>(null);
+  const [inFocus, setInFocus] = useState(!gate);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!gate || !el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setInFocus(entry.isIntersecting),
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [gate, ref]);
+
+  const playing = active && inFocus;
 
   useEffect(() => {
     const el = videoRef.current;
-    if (!el || !shouldLoad || prefersReducedMotion) return;
-    if (active) {
+    if (!el || !shouldLoad || prefersReducedMotion || livingStill) return;
+    if (playing) {
       playPromiseRef.current = el.play().catch(() => {});
     } else {
       // PinnedSlider mounts all five rows at once and toggles `active`
@@ -70,7 +98,7 @@ export function ElementRowBackground({
       // avoids that race entirely.
       Promise.resolve(playPromiseRef.current).finally(() => el.pause());
     }
-  }, [shouldLoad, prefersReducedMotion, active]);
+  }, [livingStill, playing, prefersReducedMotion, shouldLoad]);
 
   return (
     // backgroundColor here (not just the tint overlay below) so there's
@@ -101,18 +129,30 @@ export function ElementRowBackground({
             needs the eager/high-priority fetch; the rest can lazy-load
             normally since they won't be seen until scrolled into their
             turn anyway. */}
-        <Image
-          src={image}
-          alt=""
-          fill
-          priority={active}
-          loading={active ? undefined : "lazy"}
-          sizes="100vw"
-          style={{ objectFit: "cover", objectPosition: imagePosition }}
-        />
+        {livingStill ? (
+          <LivingImage
+            src={image}
+            priority={active}
+            sizes="100vw"
+            imagePosition={imagePosition}
+            intensity="cinematic"
+            className="absolute inset-0"
+          />
+        ) : (
+          <Image
+            src={image}
+            alt=""
+            fill
+            priority={active}
+            loading={active ? undefined : "lazy"}
+            sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: imagePosition }}
+          />
+        )}
       </motion.div>
-      {video && shouldLoad && !prefersReducedMotion && (
+      {video && shouldLoad && !prefersReducedMotion && !livingStill && (
         <video
+          aria-hidden="true"
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
           style={{ opacity: videoReady ? 1 : 0, objectPosition: imagePosition }}

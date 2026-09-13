@@ -1,0 +1,1711 @@
+/* Homepage experience upgrade
+   One visitor controlled camera language across every existing scene. The
+   page keeps native scroll, readable resting states and the single film media
+   budget; this layer only translates already rendered scenery and adds quiet
+   progress feedback. */
+
+.home-v4 {
+  --home-page-progress: 0;
+  --home-pointer-x: 0px;
+  --home-pointer-y: 0px;
+  --home-scroll-velocity: 0;
+  --home-velocity-y: 0px;
+}
+
+/* Only the chapter in view should spend a frame budget on ambient motion.
+   Resting chapters keep their exact visual state, then resume naturally when
+   HomePacingDirector marks them active again. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-v4 :where(
+    [data-home-scene-state="resting"],
+    [data-home-scene-state="resting"] *
+  ) {
+    animation-play-state: paused !important;
+  }
+}
+
+.home-v4[data-home-motion="live"]::before {
+  content: "";
+  position: fixed;
+  z-index: 70;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, #a86645, #c6a97a 64%, #8fae83);
+  box-shadow: 0 0 18px rgba(198, 169, 122, 0.34);
+  transform: scaleX(var(--home-page-progress));
+  transform-origin: left;
+}
+
+.home-v4-opening__proof-link {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+  color: rgba(244, 239, 230, 0.78);
+  font-size: 0.57rem;
+  font-weight: 650;
+  letter-spacing: 0.11em;
+  line-height: 1.45;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 280ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-v4-opening__proof-link:hover,
+.home-v4-opening__proof-link:focus-visible {
+  color: #f4efe6;
+  outline: none;
+  transform: translateX(3px);
+}
+
+.home-v4-opening__proof-link:focus-visible {
+  box-shadow: 0 2px 0 #d4b99a;
+}
+
+@media (min-width: 901px) and (min-height: 640px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .home-v4[data-home-motion="live"] .home-v4-opening[data-home-scene-state="active"] .home-v4-opening__media,
+  .home-v4[data-home-motion="live"] #evidence[data-home-scene-state="active"] .evidence-cinematic__backdrop,
+  .home-v4[data-home-motion="live"] #paths[data-home-scene-state="active"] .paths-film__media,
+  .home-v4[data-home-motion="live"] #process[data-home-scene-state="active"] .decision-flow__media,
+  .home-v4[data-home-motion="live"] #studio[data-home-scene-state="active"] .studio-film__media,
+  .home-v4[data-home-motion="live"] #decision[data-home-scene-state="active"] .questions-editorial > div:first-child {
+    transform: translate3d(
+      var(--home-pointer-x),
+      calc(var(--home-media-y, 0px) + var(--home-pointer-y) + var(--home-velocity-y)),
+      0
+    ) scale(1.025);
+    will-change: transform;
+  }
+
+  .home-v4[data-home-motion="live"] [data-home-v4-chapter] {
+    --home-scene-progress: 0;
+    --home-scene-presence: 0;
+    --home-media-y: 0px;
+    --home-content-y: 0px;
+  }
+
+  .home-v4[data-home-motion="live"] .brand-orbit[data-home-scene-state="active"] .brand-orbit__landscape {
+    transform: scale(1.035) translate3d(
+      calc(var(--orbit-pointer-x) * -7px + var(--home-pointer-x)),
+      calc(var(--orbit-pointer-y) * -5px + var(--home-media-y, 0px) + var(--home-pointer-y) + var(--home-velocity-y)),
+      0
+    );
+  }
+
+  .home-v4[data-home-motion="live"] [data-home-v4-chapter][data-home-scene-state="active"] :is(
+    .brand-orbit__header,
+    .cost-film__header,
+    .evidence-cinematic__header,
+    .paths-film__header,
+    .decision-flow__header,
+    .studio-film__topline,
+    .questions-editorial__header,
+    .final-invitation__topline
+  ) {
+    transform: translate3d(0, var(--home-content-y, 0px), 0);
+    transition: transform 180ms linear;
+  }
+
+  .home-v4[data-home-motion="live"] [data-home-v4-chapter][data-home-scene-state="active"] :is(
+    button,
+    a
+  )[data-magnetic] {
+    box-shadow: 0 16px 48px rgba(62, 46, 28, 0.12);
+  }
+}
+
+/* Selected work carries the strongest proof burden. Give its small evidence
+   labels enough size and contrast to read at a glance without adding copy. */
+.home-v4 #evidence .evidence-cinematic__trail-grid {
+  text-shadow: 0 1px 14px rgba(246, 241, 230, 0.34);
+}
+
+.home-v4 :is(
+  #evidence .evidence-cinematic__actions :is(button, a),
+  #paths .paths-film__choices button,
+  #process .decision-flow__rail button,
+  #studio .studio-film__chapters button,
+  #decision .questions-editorial__choices button
+) {
+  min-height: 3rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-v4 [role="tab"] {
+    transition:
+      color 320ms ease,
+      background-color 320ms ease,
+      border-color 320ms ease,
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 420ms ease;
+  }
+
+  .home-v4 [role="tab"]:is(:hover, :focus-visible) {
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 900px), (max-height: 639px) {
+  .home-v4-opening__proof-link {
+    min-height: 2.75rem;
+  }
+
+  .home-v4 :is(
+    #evidence .evidence-cinematic__actions :is(button, a),
+    #paths .paths-film__choices button,
+    #process .decision-flow__rail button,
+    #studio .studio-film__chapters button,
+    #decision .questions-editorial__choices button
+  ) {
+    min-height: 3.25rem;
+  }
+}
+
+@media (max-width: 560px) and (orientation: portrait) {
+  .home-v4-opening__proof-link {
+    margin-top: 0.38rem;
+    font-size: 0.5rem;
+    line-height: 1.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4::before {
+    display: none !important;
+  }
+
+  .home-v4-opening__proof-link,
+  .home-v4 [role="tab"] {
+    transform: none !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Living chapter choreography                                                 */
+/* -------------------------------------------------------------------------- */
+
+/* HomePacingDirector already owns the page's scroll and visibility signals.
+   These transitions let every post-opening chapter answer that one signal in
+   its own way, without adding another observer, timer, or scroll controller.
+   Content remains fully rendered before hydration and settles completely once
+   the chapter becomes readable. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-v4 [data-home-scene-observed="true"] :is(
+    .brand-orbit__header,
+    .brand-orbit__question,
+    .brand-orbit__result,
+    .cost-film__header,
+    .cost-film__lead,
+    .cost-film__rail,
+    .cost-film__resolution,
+    .evidence-cinematic__header,
+    .evidence-cinematic__stage,
+    .evidence-cinematic__index-area,
+    .paths-film__header,
+    .paths-film__lead,
+    .paths-film__chooser,
+    .paths-film__answer,
+    .decision-flow__header,
+    .decision-flow__stage,
+    .decision-flow__selector,
+    .studio-film__topline,
+    .studio-film__statement,
+    .studio-film__reading,
+    .studio-film__footer,
+    .questions-editorial__header,
+    .questions-editorial__choices,
+    .questions-editorial__answer,
+    .final-invitation__topline,
+    .final-invitation__copy,
+    .final-invitation__promise
+  ) {
+    transition:
+      opacity 680ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 820ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 720ms cubic-bezier(0.22, 1, 0.36, 1),
+      clip-path 880ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* The diagnosis arrives like a lens finding focus. */
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__header {
+    opacity: 0.34;
+    transform: translate3d(-1.4rem, -0.35rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    :is(.brand-orbit__question, .brand-orbit__result) {
+    opacity: 0.38;
+    filter: blur(5px) saturate(0.72);
+    transform: translate3d(0, 1.1rem, 0) scale(0.975);
+  }
+
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="active"]
+    :is(.brand-orbit__question, .brand-orbit__result) {
+    transition-delay: 90ms;
+  }
+
+  /* Cost enters as an editorial shutter: story and controls resolve from
+     opposite sides while the reading plane stays stable. */
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__header {
+    opacity: 0.38;
+    transform: translate3d(0, -0.9rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__lead {
+    opacity: 0.32;
+    filter: blur(4px);
+    transform: translate3d(-1.7rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    :is(.cost-film__rail, .cost-film__resolution) {
+    opacity: 0.3;
+    transform: translate3d(1.7rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="active"]
+    .cost-film__lead {
+    transition-delay: 70ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="active"]
+    :is(.cost-film__rail, .cost-film__resolution) {
+    transition-delay: 140ms;
+  }
+
+  /* Evidence opens like a project file: context, proof, then the index. */
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__header {
+    opacity: 0.34;
+    transform: translate3d(0, -0.8rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__stage {
+    opacity: 0.3;
+    clip-path: inset(0 9% 0 0 round 0.45rem);
+    filter: saturate(0.76);
+    transform: translate3d(-1rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-area {
+    opacity: 0.28;
+    transform: translate3d(1.5rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="active"]
+    .evidence-cinematic__stage {
+    transition-delay: 80ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="active"]
+    .evidence-cinematic__index-area {
+    transition-delay: 160ms;
+  }
+
+  /* The choice chapter parts like two banks of a river. */
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__header {
+    opacity: 0.36;
+    transform: translate3d(0, -0.8rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    :is(.paths-film__lead, .paths-film__chooser) {
+    opacity: 0.3;
+    transform: translate3d(-1.5rem, 0.7rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__answer {
+    opacity: 0.26;
+    filter: blur(4px);
+    transform: translate3d(1.7rem, 0.7rem, 0) scale(0.985);
+  }
+
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="active"]
+    :is(.paths-film__lead, .paths-film__chooser) {
+    transition-delay: 70ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="active"]
+    .paths-film__answer {
+    transition-delay: 150ms;
+  }
+
+  /* The method grows upward: headline, active stage, then its root rail. */
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__header {
+    opacity: 0.34;
+    transform: translate3d(0, -0.75rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__stage {
+    opacity: 0.3;
+    filter: blur(4px);
+    transform: translate3d(0, 1.4rem, 0) scale(0.98);
+  }
+
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__selector {
+    opacity: 0.25;
+    transform: translate3d(0, 1rem, 0) scaleX(0.94);
+  }
+
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="active"]
+    .decision-flow__stage {
+    transition-delay: 80ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="active"]
+    .decision-flow__selector {
+    transition-delay: 160ms;
+  }
+
+  /* Psychology and literature meet through a quiet cross-axis reveal. */
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__topline {
+    opacity: 0.34;
+    transform: translate3d(0, -0.75rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__statement {
+    opacity: 0.28;
+    transform: translate3d(-1.55rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__reading {
+    opacity: 0.3;
+    filter: blur(4px);
+    transform: translate3d(1.55rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__footer {
+    opacity: 0.24;
+    transform: translate3d(0, 0.9rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="active"]
+    .studio-film__reading {
+    transition-delay: 90ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="active"]
+    .studio-film__footer {
+    transition-delay: 170ms;
+  }
+
+  /* Practical answers behave like a page turning toward the reader. */
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__header {
+    opacity: 0.34;
+    transform: translate3d(0, -0.75rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__choices {
+    opacity: 0.28;
+    transform: translate3d(-1.4rem, 0.65rem, 0) rotate(-0.45deg);
+  }
+
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__answer {
+    opacity: 0.28;
+    filter: blur(4px);
+    transform: translate3d(1.4rem, 0.65rem, 0) rotate(0.45deg);
+  }
+
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="active"]
+    .questions-editorial__choices {
+    transition-delay: 70ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="active"]
+    .questions-editorial__answer {
+    transition-delay: 145ms;
+  }
+
+  /* The invitation closes the camera inward instead of repeating another
+     upward reveal. */
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__topline {
+    opacity: 0.34;
+    transform: translate3d(0, -0.75rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__copy {
+    opacity: 0.28;
+    filter: blur(4px);
+    transform: translate3d(-1.5rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise {
+    opacity: 0.25;
+    transform: translate3d(1.5rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__copy {
+    transition-delay: 75ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise {
+    transition-delay: 150ms;
+  }
+
+  /* Returning through the story reverses the camera grammar. The active
+     composition still resolves to the same stable layout; only its offstage
+     origin changes, so upward exploration feels like a deliberate rewind. */
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__header {
+    transform: translate3d(1.4rem, 0.35rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    :is(.brand-orbit__question, .brand-orbit__result) {
+    transform: translate3d(0, -1.1rem, 0) scale(0.975);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__topline,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__header,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__topline {
+    transform: translate3d(0, 0.8rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__lead {
+    transform: translate3d(1.7rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-area {
+    transform: translate3d(-1.5rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__answer {
+    transform: translate3d(-1.7rem, -0.7rem, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__statement {
+    transform: translate3d(1.55rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__choices {
+    transform: translate3d(1.4rem, -0.65rem, 0) rotate(0.45deg);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__copy {
+    transform: translate3d(1.5rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    :is(.cost-film__rail, .cost-film__resolution) {
+    transform: translate3d(-1.7rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__stage {
+    transform: translate3d(1rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    :is(.paths-film__lead, .paths-film__chooser) {
+    transform: translate3d(1.5rem, -0.7rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__reading {
+    transform: translate3d(-1.55rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__answer {
+    transform: translate3d(-1.4rem, -0.65rem, 0) rotate(-0.45deg);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise {
+    transform: translate3d(-1.5rem, 0, 0) scale(0.985);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__stage {
+    transform: translate3d(0, -1.4rem, 0) scale(0.98);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__selector {
+    transform: translate3d(0, -1rem, 0) scaleX(0.94);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__footer {
+    transform: translate3d(0, -0.9rem, 0);
+  }
+
+  /* Every chapter resolves to its authored, fully legible composition. */
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__header,
+    .brand-orbit__question,
+    .brand-orbit__result,
+    .cost-film__header,
+    .cost-film__lead,
+    .cost-film__rail,
+    .cost-film__resolution,
+    .evidence-cinematic__header,
+    .evidence-cinematic__stage,
+    .evidence-cinematic__index-area,
+    .paths-film__header,
+    .paths-film__lead,
+    .paths-film__chooser,
+    .paths-film__answer,
+    .decision-flow__header,
+    .decision-flow__stage,
+    .decision-flow__selector,
+    .studio-film__topline,
+    .studio-film__statement,
+    .studio-film__reading,
+    .studio-film__footer,
+    .questions-editorial__header,
+    .questions-editorial__choices,
+    .questions-editorial__answer,
+    .final-invitation__topline,
+    .final-invitation__copy,
+    .final-invitation__promise
+  ) {
+    opacity: 1;
+    filter: none;
+    clip-path: inset(0 0 0 0 round 0);
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+}
+
+/* Desktop scroll energy now reaches every film plate, not only a subset of
+   chapters. The amplitudes stay deliberately small so typography and targets
+   never wobble while the visitor is deciding. */
+@media (min-width: 901px) and (min-height: 640px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .home-v4[data-home-motion="live"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="active"]
+    .brand-orbit__landscape,
+  .home-v4[data-home-motion="live"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="active"]
+    .cost-film__media,
+  .home-v4[data-home-motion="live"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    [data-cursor-media] > video {
+    transform: translate3d(
+      var(--home-pointer-x),
+      calc(var(--home-media-y, 0px) + var(--home-pointer-y) + var(--home-velocity-y)),
+      0
+    ) scale(1.035);
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .home-v4[data-home-motion="live"]
+    [data-home-v4-chapter][data-home-scene-state="active"]
+    :is(
+      .cost-film__lead,
+      .evidence-cinematic__stage,
+      .paths-film__story,
+      .decision-flow__stage,
+      .studio-film__body,
+      .questions-editorial__experience,
+      .final-invitation__composition
+    ) {
+    transform: translate3d(0, var(--home-content-y, 0px), 0);
+    transition:
+      opacity 680ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 180ms linear,
+      filter 720ms cubic-bezier(0.22, 1, 0.36, 1),
+      clip-path 880ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-v4[data-home-motion="live"]
+    [data-home-v4-chapter][data-home-scene-state="active"]:has(:focus-visible)
+    :is(
+      .cost-film__lead,
+      .evidence-cinematic__stage,
+      .paths-film__story,
+      .decision-flow__stage,
+      .studio-film__body,
+      .questions-editorial__experience,
+      .final-invitation__composition
+    ) {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 [data-home-scene-observed="true"] :is(
+    .brand-orbit__header,
+    .brand-orbit__question,
+    .brand-orbit__result,
+    .cost-film__header,
+    .cost-film__lead,
+    .cost-film__rail,
+    .cost-film__resolution,
+    .evidence-cinematic__header,
+    .evidence-cinematic__stage,
+    .evidence-cinematic__index-area,
+    .paths-film__header,
+    .paths-film__lead,
+    .paths-film__chooser,
+    .paths-film__answer,
+    .decision-flow__header,
+    .decision-flow__stage,
+    .decision-flow__selector,
+    .studio-film__topline,
+    .studio-film__statement,
+    .studio-film__reading,
+    .studio-film__footer,
+    .questions-editorial__header,
+    .questions-editorial__choices,
+    .questions-editorial__answer,
+    .final-invitation__topline,
+    .final-invitation__copy,
+    .final-invitation__promise
+  ) {
+    opacity: 1 !important;
+    filter: none !important;
+    clip-path: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Decision-detail choreography                                                */
+/* -------------------------------------------------------------------------- */
+
+/* The previous pass brought each composition into the frame. This layer lets
+   the information inside its decision controls resolve in a second, shorter
+   beat. Only labels move, so the buttons themselves never drift away from the
+   visitor's pointer or thumb. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-v4 [data-home-scene-observed="true"] :is(
+    .brand-orbit__choice-number,
+    .brand-orbit__choices button > strong,
+    .brand-orbit__choice-action,
+    .cost-film__rail button > span,
+    .cost-film__rail-copy,
+    .evidence-cinematic__index-number,
+    .evidence-cinematic__index-copy,
+    .paths-film__choice-number,
+    .paths-film__choices button > strong,
+    .paths-film__choice-cue,
+    .decision-flow__rail button > span,
+    .decision-flow__rail button > strong,
+    .decision-flow__rail-cue,
+    .studio-film__chapters button > span,
+    .studio-film__chapters button > strong,
+    .studio-film__chapters button > small,
+    .questions-editorial__choices button > span,
+    .questions-editorial__choices button > strong,
+    .questions-editorial__choices button > svg,
+    .final-invitation__promise li button > span,
+    .final-invitation__promise li button > strong
+  ) {
+    transition:
+      opacity 520ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 620ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 360ms ease;
+  }
+
+  /* Diagnosis: the number descends while the decision rises to meet it. */
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choice-number {
+    opacity: 0;
+    transform: translate3d(0, -0.7rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choices button > strong {
+    opacity: 0;
+    transform: translate3d(0, 0.85rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choice-action {
+    opacity: 0;
+    transform: translate3d(-0.65rem, 0, 0);
+  }
+
+  /* Cost: each moment assembles around its numbered marker. */
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__rail button > span {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  .home-v4 [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__rail-copy {
+    opacity: 0;
+    transform: translate3d(0, 0.65rem, 0);
+  }
+
+  /* Evidence: project names read like files being drawn from an index. */
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-number {
+    opacity: 0;
+    transform: translate3d(0, -0.55rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-copy {
+    opacity: 0;
+    transform: translate3d(0.75rem, 0, 0);
+  }
+
+  /* Paths: the three situation labels converge from opposite banks. */
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__choice-number {
+    opacity: 0;
+    transform: translate3d(-0.55rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    :is(.paths-film__choices button > strong, .paths-film__choice-cue) {
+    opacity: 0;
+    transform: translate3d(0.7rem, 0, 0);
+  }
+
+  /* Method: the stage marker lands before its explanation. */
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__rail button > span {
+    opacity: 0;
+    transform: translate3d(0, -0.55rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    :is(.decision-flow__rail button > strong, .decision-flow__rail-cue) {
+    opacity: 0;
+    transform: translate3d(0, 0.65rem, 0);
+  }
+
+  /* Studio: discipline, name and outcome resolve as three editorial lines. */
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > span {
+    opacity: 0;
+    transform: translate3d(-0.55rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > strong {
+    opacity: 0;
+    transform: translate3d(0, 0.6rem, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > small {
+    opacity: 0;
+    transform: translate3d(0.55rem, 0, 0);
+  }
+
+  /* Questions: number and question close toward the centre line. */
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__choices button > span {
+    opacity: 0;
+    transform: translate3d(-0.55rem, 0, 0);
+  }
+
+  .home-v4 [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    :is(
+      .questions-editorial__choices button > strong,
+      .questions-editorial__choices button > svg
+    ) {
+    opacity: 0;
+    transform: translate3d(0.6rem, 0, 0);
+  }
+
+  /* Invitation: each part of the conversation joins the living thread. */
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise li button > span {
+    opacity: 0;
+    transform: scale(0.68);
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise li button > strong {
+    opacity: 0;
+    transform: translate3d(0.65rem, 0, 0);
+  }
+
+  /* The smaller decision details now rewind with their parent composition.
+     Their hit areas never move; only the text retraces the incoming axis. */
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choice-number,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-number,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    .decision-flow__rail button > span {
+    transform: translate3d(0, 0.6rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choices button > strong,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="cost"][data-home-scene-state="resting"]
+    .cost-film__rail-copy,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="process"][data-home-scene-state="resting"]
+    :is(.decision-flow__rail button > strong, .decision-flow__rail-cue),
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > strong {
+    transform: translate3d(0, -0.7rem, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="diagnostic"][data-home-scene-state="resting"]
+    .brand-orbit__choice-action,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    .paths-film__choice-number,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > span,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    .questions-editorial__choices button > span {
+    transform: translate3d(0.6rem, 0, 0);
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="evidence"][data-home-scene-state="resting"]
+    .evidence-cinematic__index-copy,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="paths"][data-home-scene-state="resting"]
+    :is(.paths-film__choices button > strong, .paths-film__choice-cue),
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="studio"][data-home-scene-state="resting"]
+    .studio-film__chapters button > small,
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="decision"][data-home-scene-state="resting"]
+    :is(
+      .questions-editorial__choices button > strong,
+      .questions-editorial__choices button > svg
+    ),
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="resting"]
+    .final-invitation__promise li button > strong {
+    transform: translate3d(-0.65rem, 0, 0);
+  }
+
+  /* All labels resolve to their authored resting state. */
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choice-number,
+    .brand-orbit__choices button > strong,
+    .brand-orbit__choice-action,
+    .cost-film__rail button > span,
+    .cost-film__rail-copy,
+    .evidence-cinematic__index-number,
+    .evidence-cinematic__index-copy,
+    .paths-film__choice-number,
+    .paths-film__choices button > strong,
+    .paths-film__choice-cue,
+    .decision-flow__rail button > span,
+    .decision-flow__rail button > strong,
+    .decision-flow__rail-cue,
+    .studio-film__chapters button > span,
+    .studio-film__chapters button > strong,
+    .studio-film__chapters button > small,
+    .questions-editorial__choices button > span,
+    .questions-editorial__choices button > strong,
+    .questions-editorial__choices button > svg,
+    .final-invitation__promise li button > span,
+    .final-invitation__promise li button > strong
+  ) {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* A compact cascade creates anticipation without turning the controls into
+     an autoplaying carousel. Each group remains immediately clickable. */
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(1) > * {
+    transition-delay: 110ms;
+  }
+
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(2) > * {
+    transition-delay: 160ms;
+  }
+
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(3) > * {
+    transition-delay: 210ms;
+  }
+
+  .home-v4 [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .decision-flow__rail,
+    .questions-editorial__choices
+  ) > :nth-child(n + 4) > * {
+    transition-delay: 260ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(1) button > * {
+    transition-delay: 110ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(2) button > * {
+    transition-delay: 160ms;
+  }
+
+  .home-v4 [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(3) button > * {
+    transition-delay: 210ms;
+  }
+
+  /* Reverse exploration also reverses the cascade, so the nearest lower
+     decision resolves first as the visitor returns to an earlier chapter. */
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-scene-state="active"] :is(
+      .brand-orbit__choices,
+      .cost-film__rail,
+      .evidence-cinematic__index,
+      .paths-film__choices,
+      .decision-flow__rail,
+      .studio-film__chapters,
+      .questions-editorial__choices,
+      .final-invitation__promise ol
+    ) > :nth-last-child(1) > * {
+    transition-delay: 110ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-scene-state="active"] :is(
+      .brand-orbit__choices,
+      .cost-film__rail,
+      .evidence-cinematic__index,
+      .paths-film__choices,
+      .decision-flow__rail,
+      .studio-film__chapters,
+      .questions-editorial__choices,
+      .final-invitation__promise ol
+    ) > :nth-last-child(2) > * {
+    transition-delay: 160ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-scene-state="active"] :is(
+      .brand-orbit__choices,
+      .cost-film__rail,
+      .evidence-cinematic__index,
+      .paths-film__choices,
+      .decision-flow__rail,
+      .studio-film__chapters,
+      .questions-editorial__choices,
+      .final-invitation__promise ol
+    ) > :nth-last-child(3) > * {
+    transition-delay: 210ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-scene-state="active"] :is(
+      .cost-film__rail,
+      .evidence-cinematic__index,
+      .decision-flow__rail,
+      .questions-editorial__choices
+    ) > :nth-last-child(n + 4) > * {
+    transition-delay: 260ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-last-child(1) button > * {
+    transition-delay: 110ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-last-child(2) button > * {
+    transition-delay: 160ms;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"]
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-last-child(3) button > * {
+    transition-delay: 210ms;
+  }
+}
+
+/* Readability-first motion finish. The chapter plane still carries the
+   directional camera move, but copy and controls never become illegible while
+   a hash jump or smooth-scroll arrival waits for the observer to attach. */
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter] :is(
+    .brand-orbit__header,
+    .brand-orbit__question,
+    .brand-orbit__result,
+    .cost-film__header,
+    .cost-film__lead,
+    .cost-film__rail,
+    .cost-film__resolution,
+    .evidence-cinematic__header,
+    .evidence-cinematic__stage,
+    .evidence-cinematic__index-area,
+    .paths-film__header,
+    .paths-film__lead,
+    .paths-film__chooser,
+    .paths-film__answer,
+    .decision-flow__header,
+    .decision-flow__stage,
+    .decision-flow__selector,
+    .studio-film__topline,
+    .studio-film__statement,
+    .studio-film__reading,
+    .studio-film__footer,
+    .questions-editorial__header,
+    .questions-editorial__choices,
+    .questions-editorial__answer,
+    .final-invitation__topline,
+    .final-invitation__copy,
+    .final-invitation__promise
+  ) {
+    transition:
+      opacity 340ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 360ms cubic-bezier(0.22, 1, 0.36, 1),
+      clip-path 560ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter][data-home-scene-state="resting"] :is(
+    .brand-orbit__header,
+    .brand-orbit__question,
+    .brand-orbit__result,
+    .cost-film__header,
+    .cost-film__lead,
+    .cost-film__rail,
+    .cost-film__resolution,
+    .evidence-cinematic__header,
+    .evidence-cinematic__stage,
+    .evidence-cinematic__index-area,
+    .paths-film__header,
+    .paths-film__lead,
+    .paths-film__chooser,
+    .paths-film__answer,
+    .decision-flow__header,
+    .decision-flow__stage,
+    .decision-flow__selector,
+    .studio-film__topline,
+    .studio-film__statement,
+    .studio-film__reading,
+    .studio-film__footer,
+    .questions-editorial__header,
+    .questions-editorial__choices,
+    .questions-editorial__answer,
+    .final-invitation__topline,
+    .final-invitation__copy,
+    .final-invitation__promise
+  ) {
+    opacity: 1;
+    filter: none;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter] :is(
+    .brand-orbit__choice-number,
+    .brand-orbit__choices button > strong,
+    .brand-orbit__choice-action,
+    .cost-film__rail button > span,
+    .cost-film__rail-copy,
+    .evidence-cinematic__index-number,
+    .evidence-cinematic__index-copy,
+    .paths-film__choice-number,
+    .paths-film__choices button > strong,
+    .paths-film__choice-cue,
+    .decision-flow__rail button > span,
+    .decision-flow__rail button > strong,
+    .decision-flow__rail-cue,
+    .studio-film__chapters button > span,
+    .studio-film__chapters button > strong,
+    .studio-film__chapters button > small,
+    .questions-editorial__choices button > span,
+    .questions-editorial__choices button > strong,
+    .questions-editorial__choices button > svg,
+    .final-invitation__promise li button > span,
+    .final-invitation__promise li button > strong
+  ) {
+    transition:
+      opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 260ms ease;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter][data-home-scene-state="resting"] :is(
+    .brand-orbit__choice-number,
+    .brand-orbit__choices button > strong,
+    .brand-orbit__choice-action,
+    .cost-film__rail button > span,
+    .cost-film__rail-copy,
+    .evidence-cinematic__index-number,
+    .evidence-cinematic__index-copy,
+    .paths-film__choice-number,
+    .paths-film__choices button > strong,
+    .paths-film__choice-cue,
+    .decision-flow__rail button > span,
+    .decision-flow__rail button > strong,
+    .decision-flow__rail-cue,
+    .studio-film__chapters button > span,
+    .studio-film__chapters button > strong,
+    .studio-film__chapters button > small,
+    .questions-editorial__choices button > span,
+    .questions-editorial__choices button > strong,
+    .questions-editorial__choices button > svg,
+    .final-invitation__promise li button > span,
+    .final-invitation__promise li button > strong
+  ) {
+    opacity: 1;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter][data-home-scene-state="active"] :is(
+    .brand-orbit__question,
+    .brand-orbit__result,
+    .cost-film__lead,
+    .evidence-cinematic__stage,
+    .paths-film__lead,
+    .paths-film__chooser,
+    .decision-flow__stage,
+    .studio-film__reading,
+    .questions-editorial__choices,
+    .final-invitation__copy
+  ) {
+    transition-delay: 0ms;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter][data-home-scene-state="active"] :is(
+    .cost-film__rail,
+    .cost-film__resolution,
+    .evidence-cinematic__index-area,
+    .paths-film__answer,
+    .decision-flow__selector,
+    .studio-film__footer,
+    .questions-editorial__answer,
+    .final-invitation__promise
+  ) {
+    transition-delay: 45ms;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(1) > * {
+    transition-delay: 35ms;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(2) > * {
+    transition-delay: 70ms;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) > :nth-child(3) > * {
+    transition-delay: 105ms;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-scene-observed="true"][data-home-scene-state="active"] :is(
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .decision-flow__rail,
+    .questions-editorial__choices
+  ) > :nth-child(n + 4) > * {
+    transition-delay: 125ms;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(1) button > * {
+    transition-delay: 35ms;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(2) button > * {
+    transition-delay: 70ms;
+  }
+
+  html:not([data-motion="reduced"])
+    .home-v4
+    [data-home-v4-chapter="invitation"][data-home-scene-state="active"]
+    .final-invitation__promise li:nth-child(3) button > * {
+    transition-delay: 105ms;
+  }
+}
+
+/* Once a chapter has arrived, the label nearest the pointer takes one small
+   step forward. Keyboard focus receives the exact same response. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .home-v4 [data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) button:is(:hover, :focus-visible) strong {
+    transform: translate3d(0.18rem, 0, 0);
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ):has(button:hover) button:not(:hover):not(.is-active):not([aria-selected="true"]) {
+    opacity: 0.72;
+  }
+}
+
+/* Touch feedback stays on the label rather than shrinking the full target,
+   preventing a visible jump at the moment of selection. */
+@media (hover: none) and (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .home-v4 :is(
+    .brand-orbit__choices,
+    .cost-film__rail,
+    .evidence-cinematic__index,
+    .paths-film__choices,
+    .decision-flow__rail,
+    .studio-film__chapters,
+    .questions-editorial__choices,
+    .final-invitation__promise ol
+  ) button:active strong {
+    transform: scale(0.975);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 :is(
+    .brand-orbit__choice-number,
+    .brand-orbit__choices button > strong,
+    .brand-orbit__choice-action,
+    .cost-film__rail button > span,
+    .cost-film__rail-copy,
+    .evidence-cinematic__index-number,
+    .evidence-cinematic__index-copy,
+    .paths-film__choice-number,
+    .paths-film__choices button > strong,
+    .paths-film__choice-cue,
+    .decision-flow__rail button > span,
+    .decision-flow__rail button > strong,
+    .decision-flow__rail-cue,
+    .studio-film__chapters button > span,
+    .studio-film__chapters button > strong,
+    .studio-film__chapters button > small,
+    .questions-editorial__choices button > span,
+    .questions-editorial__choices button > strong,
+    .questions-editorial__choices button > svg,
+    .final-invitation__promise li button > span,
+    .final-invitation__promise li button > strong
+  ) {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reading-line choreography                                                   */
+/* -------------------------------------------------------------------------- */
+
+/* Selected answers are short editorial sequences rather than one flat swap.
+   Only non-interactive reading lines animate, keeping links, buttons and tab
+   targets anchored beneath the pointer or thumb. */
+@keyframes home-v4-reading-line-quick-forward {
+  from {
+    opacity: 0.76;
+    filter: none;
+    transform: translate3d(0, 0.28rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    filter: none;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes home-v4-reading-line-quick-backward {
+  from {
+    opacity: 0.76;
+    filter: none;
+    transform: translate3d(0, -0.28rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    filter: none;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-v4 {
+    --home-reading-line-animation: home-v4-reading-line-quick-forward;
+  }
+
+  .home-v4[data-home-scroll-direction="backward"] {
+    --home-reading-line-animation: home-v4-reading-line-quick-backward;
+  }
+
+  .home-v4 [data-home-selection-direction="forward"] {
+    --home-reading-line-animation: home-v4-reading-line-quick-forward;
+  }
+
+  .home-v4 [data-home-selection-direction="backward"] {
+    --home-reading-line-animation: home-v4-reading-line-quick-backward;
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .evidence-cinematic__summary > p:first-child,
+    .paths-film__answer > .paths-film__answer-eyebrow,
+    .decision-flow__stage > article > .decision-flow__topline,
+    .studio-film__reading > .studio-film__reading-label,
+    .questions-editorial__answer > .questions-editorial__answer-index,
+    .evidence-cinematic__summary > strong,
+    .paths-film__answer > h3,
+    .decision-flow__stage > article > h3,
+    .studio-film__reading > h3,
+    .questions-editorial__answer > h3,
+    .evidence-cinematic__summary > span,
+    .paths-film__answer > .paths-film__answer-body,
+    .decision-flow__stage > article > .decision-flow__explanation,
+    .studio-film__reading > p,
+    .questions-editorial__answer > p,
+    .evidence-cinematic__summary > .evidence-cinematic__source,
+    .paths-film__answer > dl,
+    .decision-flow__stage > article > .decision-flow__result,
+    .studio-film__reading > .studio-film__outcome,
+    .questions-editorial__answer > .questions-editorial__fit
+  ) {
+    animation: var(--home-reading-line-animation) 370ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--home-reading-line-delay, 18ms);
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .evidence-cinematic__summary > strong,
+    .paths-film__answer > h3,
+    .decision-flow__stage > article > h3,
+    .studio-film__reading > h3,
+    .questions-editorial__answer > h3
+  ) {
+    --home-reading-line-delay: 42ms;
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .evidence-cinematic__summary > span,
+    .paths-film__answer > .paths-film__answer-body,
+    .decision-flow__stage > article > .decision-flow__explanation,
+    .studio-film__reading > p,
+    .questions-editorial__answer > p
+  ) {
+    --home-reading-line-delay: 68ms;
+  }
+
+  .home-v4 [data-home-scene-state="active"] :is(
+    .evidence-cinematic__summary > .evidence-cinematic__source,
+    .paths-film__answer > dl,
+    .decision-flow__stage > article > .decision-flow__result,
+    .studio-film__reading > .studio-film__outcome,
+    .questions-editorial__answer > .questions-editorial__fit
+  ) {
+    --home-reading-line-delay: 94ms;
+  }
+}
+
+/* Keep the proof legible when the leaf film crosses its brightest frames. */
+html body .home-v4 #evidence .evidence-cinematic__proof-line small {
+  color: color-mix(in srgb, var(--evidence-accent) 62%, #203228);
+}
+
+html body .home-v4 #evidence .evidence-cinematic__proof-line p {
+  color: rgba(32, 50, 40, 0.92);
+  text-shadow: 0 1px 0 rgba(249, 245, 236, 0.62);
+}
+
+html body .home-v4 #evidence .evidence-cinematic__source {
+  border-color: rgba(32, 50, 40, 0.2);
+  background: rgba(249, 245, 236, 0.66);
+  color: rgba(32, 50, 40, 0.82);
+}
+
+html body .home-v4 #evidence .evidence-cinematic__index-guide {
+  color: rgba(32, 50, 40, 0.72);
+}
+
+html body .home-v4 #evidence .evidence-cinematic__index button {
+  color: rgba(32, 50, 40, 0.76);
+}
+
+html body .home-v4 #evidence .evidence-cinematic__index-copy em {
+  color: rgba(32, 50, 40, 0.7);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Founder-led studio handoff                                                  */
+/* -------------------------------------------------------------------------- */
+
+.home-v4 .studio-film__strategist {
+  display: grid;
+  width: min(25rem, 36vw);
+  grid-template-columns: 3.15rem minmax(0, 1fr) 1.8rem;
+  align-items: center;
+  gap: .65rem;
+  padding: .48rem .58rem;
+  border: 1px solid rgba(35, 54, 43, .28);
+  border-radius: 999px;
+  background: rgba(250, 244, 231, .78);
+  text-decoration: none;
+  text-transform: none;
+  transition: transform .5s cubic-bezier(.22, 1, .36, 1), border-color .35s ease, box-shadow .35s ease;
+}
+
+.home-v4 .studio-film__strategist-portrait {
+  position: relative;
+  width: 3.15rem;
+  height: 3.15rem;
+  overflow: hidden;
+  border: 2px solid var(--studio-film-accent);
+  border-radius: 50%;
+}
+
+.home-v4 .studio-film__strategist-portrait img {
+  object-fit: cover;
+  object-position: 53% 27%;
+  transform: scale(1.36);
+  transition: transform .6s cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-v4 .studio-film__strategist-copy {
+  display: grid;
+  min-width: 0;
+  gap: .08rem;
+}
+
+.home-v4 .studio-film__strategist-copy small {
+  color: #526458;
+  font: 700 .5rem/1.2 var(--font-sans, sans-serif);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.home-v4 .studio-film__strategist-copy strong {
+  color: #23362b;
+  font: 400 1.08rem/1.05 var(--font-display, serif);
+}
+
+.home-v4 .studio-film__strategist-copy > span {
+  color: #526458;
+  font: 500 .61rem/1.25 var(--font-sans, sans-serif);
+  white-space: normal;
+}
+
+.home-v4 .studio-film__strategist > svg {
+  width: 1.8rem;
+  height: 1.8rem;
+  padding: .42rem;
+  border-radius: 50%;
+  background: var(--studio-film-accent);
+  color: #fff8e9;
+  transition: transform .4s cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-v4 .studio-film__strategist:is(:hover, :focus-visible) {
+  border-color: var(--studio-film-accent);
+  outline: none;
+  box-shadow: 0 14px 38px rgba(35, 54, 43, .14);
+  transform: translate3d(0, -3px, 0);
+}
+
+.home-v4 .studio-film__strategist:is(:hover, :focus-visible) .studio-film__strategist-portrait img {
+  transform: scale(1.43);
+}
+
+.home-v4 .studio-film__strategist:is(:hover, :focus-visible) > svg {
+  transform: translateX(2px) rotate(-7deg);
+}
+
+.home-v4 .studio-film__footer {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 760px) {
+  .home-v4 .studio-film__topline {
+    flex-wrap: wrap;
+    gap: .75rem;
+  }
+
+  .home-v4 .studio-film__topline > span:first-child {
+    font-size: .53rem;
+  }
+
+  .home-v4 .studio-film__strategist {
+    width: min(25rem, 100%);
+    min-height: 3rem;
+    grid-template-columns: 2rem minmax(0, 1fr) 1.5rem;
+    gap: .42rem;
+    padding: .3rem .34rem;
+  }
+
+  .home-v4 .studio-film__strategist-portrait {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .home-v4 .studio-film__strategist-copy small { font-size: .43rem; }
+  .home-v4 .studio-film__strategist-copy strong { font-size: .82rem; }
+
+  .home-v4 .studio-film__strategist-copy > span {
+    font-size: .47rem;
+    line-height: 1.22;
+  }
+
+  .home-v4 .studio-film__strategist > svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: .34rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 .studio-film__strategist,
+  .home-v4 .studio-film__strategist-portrait img {
+    transition: none !important;
+  }
+}

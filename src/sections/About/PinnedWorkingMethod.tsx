@@ -1,48 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { ClipReveal } from "@/components/ClipReveal";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { PinnedHold } from "@/components/PinnedHold";
 import { experience } from "@/data/about";
 
-// "Working method" + "Recent experience" — a single beat (portrait,
-// method text, and the experience list all shown together, nothing
-// sequential), so it fits PinnedHold directly rather than needing the
-// full multi-stage crossfade machinery. The section's own
-// overflow-hidden (kept for the redwood-canopy video) is safe to wrap
-// here — it's PinnedHold's sticky child that would break under an
-// overflow-hidden ANCESTOR, not the other way around; this section's
-// own overflow-hidden is a descendant of the sticky wrapper, not an
-// ancestor of it.
+// "Working method" + "Recent experience" — portrait, method text and
+// the experience list all shown together, nothing sequential.
+//
+// This used to be wrapped in PinnedHold. The pinning budget says one
+// immersive held sequence per key page, and the test for whether a pin
+// earns its scroll is whether each held viewport reveals something new.
+// This one never did: it stopped the page dead on a beat the visitor
+// had already finished reading, which is the cost of a pin with none of
+// the payoff. It now sits in normal flow and the About page keeps its
+// one real held sequence for the closing meadow.
 export function PinnedWorkingMethod() {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) {
-    return <WorkingMethodSection />;
-  }
-
-  return (
-    <>
-      <div className="hidden sm:block">
-        <PinnedHold>
-          <WorkingMethodSection pinned />
-        </PinnedHold>
-      </div>
-      <div className="sm:hidden">
-        <WorkingMethodSection />
-      </div>
-    </>
-  );
+  return <WorkingMethodSection />;
 }
 
 function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
   return (
     <section
-      className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20"}`}
+      className={`relative flex overflow-hidden bg-soil ${pinned ? "min-h-screen items-center" : "py-20 sm:py-28"}`}
     >
       <BackgroundVideo video="/videos/higgsfield-redwood-canopy.mp4" poster="/images/higgsfield-redwood-canopy-poster.jpg" />
       <div className="absolute inset-0 bg-soil/80" />
@@ -58,44 +40,41 @@ function WorkingMethodSection({ pinned = false }: { pinned?: boolean }) {
               className="aspect-square w-40 rounded-full object-cover sm:w-48"
             />
           </Reveal>
-          <div className="grid gap-12 sm:grid-cols-2">
+          <div className="grid gap-10 sm:grid-cols-2 sm:gap-12">
             <Reveal delay={0.1}>
-              <h2 className="text-display-sm font-display font-normal text-ivory">
-                Working method
-              </h2>
-              <p className="mt-4 text-ivory/85">
-                I start by asking what
-                a business believes, who it&apos;s actually speaking to,
-                and where its current story stops making sense, well
-                before any mood board enters the room. The
-                elemental system, earth, water, fire, air, space, is how I
-                keep track of which part of that is solved and which
-                still needs work.
-              </p>
-              <p className="mt-4 text-ivory/85">
-                I use &ldquo;I&rdquo; instead of &ldquo;we.&rdquo; Branding
-                Tatva is a personal practice, and every project has my
-                direct attention.
-              </p>
+              <div>
+                <h2 className="text-display-sm font-display font-normal text-ivory">
+                  Working method
+                </h2>
+                <p className="mt-4 text-ivory/85">
+                  I start by asking what a business believes, who it is
+                  actually speaking to, and where its current story stops
+                  making sense. Design begins only after that decision is clear.
+                </p>
+                <p className="mt-4 text-ivory/85">
+                  Branding Tatva is a personal practice, so every project keeps
+                  my direct attention from diagnosis through delivery.
+                </p>
+              </div>
             </Reveal>
 
             <Reveal delay={0.15}>
-              <h2 className="text-display-sm font-display font-normal text-ivory">
-                Recent experience
-              </h2>
+              <div>
+                <h2 className="text-display-sm font-display font-normal text-ivory">
+                  Recent experience
+                </h2>
+                <ul className="mt-4 space-y-4">
+                  {experience.map((role) => (
+                    <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
+                      <p className="font-medium text-ivory">{role.role}</p>
+                      <p className="text-sm text-ivory/70">
+                        {role.org} &middot; {role.period}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </Reveal>
-            <ul className="mt-4 space-y-4">
-              {experience.map((role, i) => (
-                <li key={`${role.org}-${role.period}`} className="border-l-2 border-ivory/30 pl-4">
-                  <Reveal delay={0.18 + i * 0.06}>
-                    <p className="font-medium text-ivory">{role.role}</p>
-                    <p className="text-sm text-ivory/70">
-                      {role.org} &middot; {role.period}
-                    </p>
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
           </div>
         </Container>
       </ClipReveal>

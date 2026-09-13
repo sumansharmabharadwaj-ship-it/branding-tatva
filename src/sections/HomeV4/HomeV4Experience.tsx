@@ -1,0 +1,154 @@
+"use client";
+
+import { useEffect } from "react";
+import { ProcessSection } from "@/sections/Process";
+import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
+import { EvidenceWall } from "@/sections/Home/EvidenceWall";
+import { FinalInvitation } from "@/sections/Home/FinalInvitation";
+import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
+import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
+import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
+import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
+import { TatvaStrip } from "@/sections/Home/TatvaStrip";
+import { TatvaSystemLab } from "@/sections/Home/TatvaSystemLab";
+import { process as processStages } from "./homeSnapshotProcess";
+import { elementColor } from "@/lib/elementColor";
+import { HomeV4HeaderDirector } from "./HomeV4HeaderDirector";
+import { GuidedView, SceneHandoff } from "./HomeV4Interface";
+import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
+import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
+import { HomeV4SceneRhythm } from "./HomeV4SceneRhythm";
+import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
+
+export function HomeV4Experience() {
+  useEffect(() => {
+    document.documentElement.classList.add("home-v4-mounted");
+    return () => document.documentElement.classList.remove("home-v4-mounted");
+  }, []);
+
+  return (
+    <div className="home-v4" data-home-v4>
+      <HomeV4PreludeBridge />
+      <HomeV4MediaDirector />
+      <HomeV4HeaderDirector />
+      <HomeV4SceneRhythm />
+      <GuidedView />
+
+      <V4OpeningScene />
+      <SceneHandoff motif="mist" />
+
+      <V4RecognitionScene />
+      <SceneHandoff motif="river" />
+
+      <V4HiddenCostScene />
+      <SceneHandoff motif="root" />
+
+      <div
+        id="foundation"
+        tabIndex={-1}
+        data-home-v4-chapter="foundation"
+        data-home-chapter="foundation"
+        data-home-section="foundation"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--foundation"
+      >
+        <BrandFoundationScene />
+      </div>
+
+      <SceneHandoff motif="aperture" />
+
+      <div
+        data-home-v4-chapter="paths"
+        data-home-section="paths"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--paths"
+      >
+        <PathsCinematicChapter />
+      </div>
+
+      <SceneHandoff motif="light" />
+
+      <section
+        id="process"
+        data-home-v4-chapter="process"
+        data-home-chapter="process"
+        data-home-section="process"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--process"
+        aria-label="How the Branding Tatva method moves"
+      >
+        <ProcessSection stages={processStages} elementColor={elementColor} />
+      </section>
+
+      <SceneHandoff motif="paper" />
+
+      <div
+        id="evidence"
+        tabIndex={-1}
+        data-home-v4-chapter="evidence"
+        data-home-chapter="evidence"
+        data-home-section="evidence"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--evidence"
+      >
+        <EvidenceWall />
+      </div>
+
+      <SceneHandoff motif="constellation" />
+
+      <section
+        id="tatva"
+        data-home-v4-chapter="tatva"
+        data-home-chapter="tatva"
+        data-home-section="tatva"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--tatva"
+        aria-label="The five Tatvas as one operating system"
+      >
+        <TatvaStrip />
+        <TatvaSystemLab />
+      </section>
+
+      <SceneHandoff motif="river" />
+
+      <div
+        data-home-v4-chapter="studio"
+        data-home-section="studio"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--studio"
+      >
+        <StudioCinematicChapter />
+      </div>
+
+      <SceneHandoff motif="mist" />
+
+      <div
+        id="decision"
+        data-home-v4-chapter="decision"
+        data-home-chapter="decision"
+        data-home-section="decision"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--decision"
+      >
+        <HomeQuestionsScene />
+      </div>
+
+      <SceneHandoff motif="light" />
+
+      <section
+        id="invitation"
+        tabIndex={-1}
+        data-home-v4-chapter="invitation"
+        data-home-chapter="invitation"
+        data-home-section="invitation"
+        data-cursor-world="dark"
+        className="home-v4-chapter home-v4-chapter--invitation"
+        aria-label="Begin a conversation with Branding Tatva"
+      >
+        <FinalInvitation />
+      </section>
+
+      <HomePacingDirector />
+    </div>
+  );
+}

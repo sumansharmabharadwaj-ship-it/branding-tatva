@@ -1,12 +1,15 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { LinkButton } from "@/components/Button";
+import { LivingImage } from "@/components/LivingImage";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { useLazyMount } from "@/hooks/useLazyMount";
 import { EASE_AIR } from "@/lib/motion";
+import { usesLivingStill } from "@/lib/mediaMode";
 import type { ThresholdPanelData } from "./types";
 import {
   ACTIVE_IMAGE_SCALE,
@@ -36,6 +39,7 @@ function PanelVideo({ src }: { src: string }) {
     <div ref={ref} className="absolute inset-0">
       {shouldLoad && (
         <video
+          aria-hidden="true"
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
           style={{ opacity: ready ? 1 : 0 }}
@@ -65,7 +69,8 @@ export function ThresholdPanel({
   onHoverEnd: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const livingStill = usesLivingStill(panel.video);
   const spotlightRef = useSpotlight(ref, Boolean(prefersReducedMotion));
 
   const imageScale = prefersReducedMotion
@@ -89,15 +94,25 @@ export function ThresholdPanel({
         animate={{ scale: imageScale, opacity: dimmed ? INACTIVE_DIM_OPACITY : 1 }}
         transition={{ duration: PANEL_TRANSITION_MS / 1000, ease: EASE_AIR }}
       >
-        <Image
-          src={panel.image}
-          alt=""
-          fill
-          priority
-          sizes="(min-width: 640px) 50vw, 100vw"
-          style={{ objectFit: "cover" }}
-        />
-        {panel.video && !prefersReducedMotion && <PanelVideo src={panel.video} />}
+        {livingStill ? (
+          <LivingImage
+            src={panel.image}
+            priority
+            sizes="(min-width: 640px) 50vw, 100vw"
+            intensity="cinematic"
+            className="absolute inset-0"
+          />
+        ) : (
+          <Image
+            src={panel.image}
+            alt=""
+            fill
+            priority
+            sizes="(min-width: 640px) 50vw, 100vw"
+            style={{ objectFit: "cover" }}
+          />
+        )}
+        {panel.video && !prefersReducedMotion && !livingStill && <PanelVideo src={panel.video} />}
         <div className="absolute inset-0" style={{ backgroundImage: panel.gradient }} />
       </motion.div>
 
@@ -112,7 +127,7 @@ export function ThresholdPanel({
       <motion.div
         className="relative"
         animate={{ y: isActive ? -4 : 0 }}
-        transition={{ duration: 0.4, ease: EASE_AIR }}
+        transition={{ duration: 0.35, ease: EASE_AIR }}
       >
         <p className="text-xs font-medium uppercase tracking-[0.3em] text-sandstone">
           {panel.eyebrow}

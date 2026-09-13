@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ProcessSectionProps } from "./types";
 import { useVerticalLineProgress } from "./animations";
 import { JourneyStage } from "./JourneyStage";
@@ -21,15 +22,15 @@ import { JourneyStage } from "./JourneyStage";
 // stage while mobile stayed on a single static backdrop, reading as an
 // unfinished/older version of the same section rather than a deliberate
 // mobile-specific treatment. bg-soil stays on this wrapper as a plain
-// fallback fill so the rounded-xl container never shows transparent
+// fallback fill so the rounded-2xl container never shows transparent
 // even before any individual stage's own poster has loaded.
 export function VerticalJourney({ stages, elementColor }: ProcessSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const lineHeight = useVerticalLineProgress(ref);
 
   return (
-    <div ref={ref} className="relative mt-16 overflow-hidden rounded-xl bg-soil px-4 py-10 pl-16 sm:px-8 sm:pl-20">
+    <div ref={ref} className="relative mt-16 overflow-hidden rounded-2xl bg-soil px-4 py-10 pl-16 sm:px-8 sm:pl-20">
       <div className="absolute left-[23px] top-12 bottom-12 w-px sm:left-[27px] bg-ivory/20" aria-hidden="true" />
       <motion.div
         className="absolute left-[23px] top-12 w-px origin-top sm:left-[27px] bg-sandstone"

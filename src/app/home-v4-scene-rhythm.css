@@ -1,0 +1,55 @@
+/* One native scroll signal; each scene keeps its own composition and controls.
+   Individual transforms compose with Framer's existing transform property. */
+html.home-v4-mounted [data-home-motion-layer] {
+  translate: var(--scene-x, 0px) var(--scene-y, 0px);
+  rotate: var(--scene-turn, 0deg);
+  scale: var(--scene-scale, 1);
+  transform-origin: 50% 65%;
+}
+
+/* Keep the actual hit target still as soon as a visitor starts interacting. */
+html.home-v4-mounted [data-home-motion-layer]:is(:focus-within, :focus-visible) {
+  translate: none;
+  rotate: none;
+  scale: 1;
+}
+
+.home-v4[data-scene-choreography="ready"] .home-v4-handoff {
+  overflow: clip;
+}
+.home-v4[data-scene-choreography="ready"] .home-v4-handoff::after {
+  content: "";
+  position: absolute;
+  inset: 50% 8% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--handoff-line) 30%, var(--handoff-line) 70%, transparent);
+  opacity: .5;
+  transform: scaleX(var(--scene-thread, 0));
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* Compact viewports keep a short, vertical arrival for every individual layer.
+   They never inherit a wide-screen card spread or a tilted reading surface. */
+@media (max-width: 1180px), (max-height: 760px), (pointer: coarse) {
+  html.home-v4-mounted [data-home-motion-layer] {
+    rotate: none;
+    scale: 1;
+  }
+}
+
+html[data-motion="reduced"].home-v4-mounted [data-home-motion-layer] {
+  translate: none !important;
+  rotate: none !important;
+  scale: 1 !important;
+}
+html[data-motion="reduced"] .home-v4 .home-v4-handoff::after { content: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html.home-v4-mounted [data-home-motion-layer] {
+    translate: none !important;
+    rotate: none !important;
+    scale: 1 !important;
+  }
+  .home-v4 .home-v4-handoff { display: none !important; }
+}

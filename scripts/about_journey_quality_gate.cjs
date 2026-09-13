@@ -1,0 +1,725 @@
+const fs = require("node:fs");
+const path = require("node:path");
+const { execFileSync } = require("node:child_process");
+
+const root = path.resolve(__dirname, "..");
+const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
+const readTrackedBinary = (relative) => {
+  const filePath = path.join(root, relative);
+  if (fs.existsSync(filePath)) return fs.readFileSync(filePath);
+
+  return execFileSync("git", ["show", `HEAD:${relative}`], {
+    cwd: root,
+    encoding: "buffer",
+    maxBuffer: 8 * 1024 * 1024,
+  });
+};
+const runtime = read("src/components/AboutCinematicRuntime.tsx");
+const videoWarden = read("src/components/VideoWarden.tsx");
+const splitHero = read("src/components/AboutSplitHero.tsx");
+const header = read("src/layouts/Header/index.tsx");
+const aboutPage = read("src/app/about/page.tsx");
+const globalStyles = read("src/app/globals.css");
+const anchorContract = read("src/app/about/about-anchor-contract.css");
+const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
+const smoothScroll = read("src/components/SmoothScrollProvider.tsx");
+const runtimeStyles = read("src/components/AboutCinematicRuntime.module.css");
+const consent = read("src/components/ConsentManager.tsx");
+const origin = read("src/sections/About/FounderFieldNotes.tsx");
+const atlas = read("src/sections/About/BrandSignalAtlas.tsx");
+const pointOfView = read("src/sections/About/PointOfView.tsx");
+const convergence = read("src/sections/About/Convergence.tsx");
+const evidence = read("src/sections/About/Evidence.tsx");
+const standards = read("src/sections/About/Behaviours.tsx");
+const workingDirectly = read("src/sections/About/WorkingDirectly.tsx");
+const originStyles = read("src/sections/About/FounderFieldNotes.module.css");
+const pointOfViewStyles = read("src/sections/About/PointOfView.module.css");
+const atlasStyles = read("src/sections/About/BrandSignalAtlas.module.css");
+const convergenceStyles = read("src/sections/About/Convergence.module.css");
+const evidenceStyles = read("src/sections/About/Evidence.module.css");
+const standardsStyles = read("src/sections/About/Behaviours.module.css");
+const workingDirectlyStyles = read("src/sections/About/WorkingDirectly.module.css");
+const heroPortraitVideo = readTrackedBinary("public/videos/own-companions-split.mp4");
+const heroPortraitVideoPrefix = heroPortraitVideo.subarray(0, 64 * 1024);
+const heroPortraitVideoBytes = heroPortraitVideo.length;
+
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
+function fontSizeRem(source, selector) {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const declaration = source.match(new RegExp(`${escaped}\\s*\\{[^}]*font-size:\\s*([0-9.]+)rem`));
+  assert(declaration, `Missing rem font size for: ${selector}`);
+  return Number(declaration[1]);
+}
+
+assert(
+  aboutPage.includes('import "./about-anchor-contract.css";') &&
+    (aboutPage.match(/data-about-chapter=/g) || []).length === 8,
+  "The complete About chapter set no longer loads its anchor-alignment contract.",
+);
+assert(
+  aboutPage.includes("data-reading-scene") &&
+    /\[data-about-film-scene\]\[data-reading-scene\] \[data-about-film-plane\]\s*\{[^}]*opacity:\s*calc\(0\.93 \+ var\(--scene-focus\) \* 0\.07\);/.test(globalStyles),
+  "The copy dense origin chapter can fade below its protected reading exposure.",
+);
+assert(
+  /id="about-convergence"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense synthesis chapter can fade below the protected reading exposure.",
+);
+assert(
+  /id="about-system"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense brand-system chapter can fade below the protected reading exposure.",
+);
+assert(
+  /id="about-principles"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense working-standards chapter can fade below the protected reading exposure.",
+);
+assert(
+  /id="about-founder-led"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense founder-led chapter can fade below the protected reading exposure.",
+);
+assert(
+  /id="about-evidence"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense evidence chapter can fade below the protected reading exposure.",
+);
+assert(
+  /id="about-resolution"[^>]*data-reading-scene/.test(aboutPage),
+  "The copy dense closing chapter can fade below the protected reading exposure.",
+);
+assert(
+  (anchorContract.match(/scroll-margin-top:\s*0;/g) || []).length === 2 &&
+    anchorContract.includes("Each full-frame chapter already keeps its content below the fixed header"),
+  "About chapter hashes can expose the previous cinematic scene instead of landing on a clean frame.",
+);
+assert(
+  smoothScroll.includes("if (!hydrated || !prefersReducedMotion || !window.location.hash) return;") &&
+    smoothScroll.includes('target.scrollIntoView({ behavior: "auto", block: "start" })') &&
+    smoothScroll.includes("document.fonts?.ready?.then(alignHashWithoutMotion)") &&
+    smoothScroll.includes('window.addEventListener("wheel", cancelHashRecovery, { passive: true })'),
+  "Reduced-motion About deep links no longer recover their fixed-header-safe position after hydration.",
+);
+
+assert(
+  runtime.includes('data-state={index < activeChapter ? "passed" : index === activeChapter ? "active" : "waiting"}'),
+  "About chapter spine no longer distinguishes passed, active, and waiting chapters.",
+);
+assert(
+  runtime.includes("aria-controls={chapter.id}"),
+  "About chapter controls no longer expose their destination relationship.",
+);
+assert(
+  runtime.includes('window.addEventListener("popstate", restoreChapterFromHistory)') &&
+    runtime.includes('window.removeEventListener("popstate", restoreChapterFromHistory)'),
+  "About browser Back and Forward no longer restore chapter position.",
+);
+assert(
+  runtime.includes('window.history.pushState({ aboutChapter: chapter.id }, "", nextHash)'),
+  "Explicit About chapter journeys no longer create a browser-history entry.",
+);
+assert(
+  runtime.includes("programmaticChapterRef.current = index") &&
+    runtime.includes("const displayedChapter = programmaticChapterRef.current ?? nextActive") &&
+    runtime.includes("const currentChapter = programmaticChapterRef.current ?? activeChapter"),
+  "Compact About controls can repeat or skip a chapter while a smooth chapter move is settling.",
+);
+assert(
+  (runtime.match(/data-about-chapter-navigation/g) || []).length >= 2 &&
+    runtime.includes('window.addEventListener("scrollend", releaseProgrammaticChapter)') &&
+    runtime.includes('window.addEventListener("wheel", releaseFromPointerIntent, { passive: true })') &&
+    runtime.includes('window.addEventListener("touchstart", releaseFromPointerIntent, { passive: true })') &&
+    runtime.includes("MANUAL_SCROLL_KEYS.has(event.key)"),
+  "About chapter motion can trap manual pointer, touch, or keyboard scroll intent.",
+);
+assert(
+  (runtime.match(/if \(!cameraReady\.matches\) return;/g) || []).length === 1 &&
+    !/requestRender\(\);\s*requestRender\(\);/.test(runtime),
+  "The About pointer runtime is scheduling redundant animation work.",
+);
+assert(
+  runtime.includes("sceneMeasurementsRef.current = {") &&
+    runtime.includes("cachedMeasurements.scrollY === currentScrollY") &&
+    runtime.includes("cachedMeasurements.viewportHeight === viewportHeight") &&
+    runtime.includes("? cachedMeasurements.sceneRects"),
+  "The About chapter navigator and cinematic thread no longer share their per-frame scene measurements.",
+);
+assert(
+  runtime.includes("publishedChapterRef.current !== displayedChapter") &&
+    runtime.includes("publishedNavigatorActiveRef.current !== active") &&
+    runtime.includes("publishedNavigatorToneRef.current !== tone") &&
+    runtime.includes("publishedChapterRef.current = index"),
+  "The About navigator can republish unchanged React state throughout a scroll gesture.",
+);
+assert(
+  runtime.includes("publishedSceneRef.current !== nextActive") &&
+    runtime.includes('scenes[previousScene].dataset.sceneActive = "false"') &&
+    runtime.includes('scenes[nextActive].dataset.sceneActive = "true"') &&
+    runtime.includes("publishedSceneRef.current = -1") &&
+    runtime.includes("runtime.dataset.navigatorActive = String(active)") &&
+    runtime.includes("runtime.dataset.navigatorTone = tone"),
+  "The About navigator can rewrite unchanged scene and tone attributes on every scroll frame.",
+);
+assert(
+  runtime.includes('href={`#${chapter.id}`}') && runtime.includes("event.preventDefault();"),
+  "Desktop About chapters no longer expose native hash links before cinematic enhancement.",
+);
+assert(
+  runtime.includes("goToChapter(index, event.detail === 0)"),
+  "Keyboard activation of a desktop About chapter no longer moves focus to its destination.",
+);
+assert(
+  runtime.includes('id="about-mobile-chapter-list"') &&
+    runtime.includes("aria-expanded={mobileMenuOpen}") &&
+    runtime.includes("tabIndex={mobileMenuOpen ? 0 : -1}"),
+  "Mobile visitors can no longer open and keyboard through the complete About chapter list.",
+);
+assert(
+  runtime.includes("className={styles.mobileChapterProgress}") &&
+    /\.mobileChapterProgress b\s*\{[^}]*transform:\s*scaleX\(var\(--navigator-progress\)\);/.test(runtimeStyles),
+  "The mobile About navigator no longer exposes continuous journey progress.",
+);
+assert(
+  videoWarden.includes('document.addEventListener("play", enforcePlaybackBudget, true)') &&
+    videoWarden.includes('document.removeEventListener("play", enforcePlaybackBudget, true)') &&
+    videoWarden.includes("cancelAnimationFrame(frame)") &&
+    videoWarden.includes("arbitrate();") &&
+    /window\.addEventListener\("scroll", schedule, \{ passive: true \}\);\s*\/\/ Autoplay[\s\S]*?enforcePlaybackBudget\(\);/.test(videoWarden),
+  "Adjacent About films can briefly decode together instead of handing playback over atomically.",
+);
+assert(
+  (splitHero.match(/data-video-warden-group=\{ABOUT_HERO_VIDEO_GROUP\}/g) || []).length === 2 &&
+    (splitHero.match(/useVideoFadeIn\([^;]+, true\);/g) || []).length === 2 &&
+    videoWarden.includes("const primaryGroup = primary?.dataset.videoWardenGroup;") &&
+    videoWarden.includes("video.dataset.videoWardenGroup === primaryGroup"),
+  "The About hero films can lose their shared playback director or start competing viewport observers.",
+);
+assert(
+  heroPortraitVideoPrefix.indexOf(Buffer.from("moov")) >= 0 &&
+    heroPortraitVideoPrefix.indexOf(Buffer.from("moov")) < heroPortraitVideoPrefix.indexOf(Buffer.from("mdat")) &&
+    heroPortraitVideoBytes < 5 * 1024 * 1024,
+  "The About portrait film can require a complete or oversized download before playback begins.",
+);
+assert(
+  videoWarden.includes(".map(measureVideo)") &&
+    videoWarden.includes("const all = [...watched];") &&
+    videoWarden.includes("if (document.hidden)") &&
+    videoWarden.includes("video.dataset[FLAG] = \"1\";") &&
+    !videoWarden.includes("function viewportCoverage") &&
+    !videoWarden.includes("function distanceFromViewportCentre"),
+  "The shared film budget can multiply layout reads or leave a hidden-tab decoder running.",
+);
+assert(
+  runtime.includes("const mobileNavigatorActive = navigatorActive;") &&
+    runtime.includes("disabled={activeChapter === CHAPTERS.length - 1}") &&
+    runtime.includes("disabled={activeChapter === 0}"),
+  "The mobile About navigator no longer preserves its 08 / 08 ending state with safe previous and next boundaries.",
+);
+assert(
+  runtime.includes('if (event.key !== "Escape") return;') &&
+    runtime.includes("mobileMenuButtonRef.current?.focus()"),
+  "The mobile About chapter chooser no longer closes and returns focus on Escape.",
+);
+assert(
+  runtime.includes('document.addEventListener("pointerdown", closeOnOutsidePointer)') &&
+    runtime.includes('document.removeEventListener("pointerdown", closeOnOutsidePointer)') &&
+    runtime.includes('window.addEventListener("scroll", closeOnScroll, { passive: true })') &&
+    runtime.includes('window.removeEventListener("scroll", closeOnScroll)'),
+  "The mobile About chapter chooser no longer yields when attention leaves it.",
+);
+assert(
+  consent.includes('root.dataset.consentBanner = "visible"') &&
+    /:global\(html\[data-consent-banner="visible"\]\) \.mobileChapterControls\s*\{[^}]*bottom:\s*calc\(/.test(runtimeStyles),
+  "The mobile About chapter chooser can collide with the unresolved consent banner.",
+);
+assert(
+  runtime.includes("if (lenis && !reducedMotion)"),
+  "About chapter history no longer hands restoration to the active scroll runtime.",
+);
+assert(
+  runtime.includes("const THREAD_ACTIVE_FRAME_MS = 32;") &&
+    runtime.includes("const THREAD_IDLE_FRAME_MS = 64;") &&
+    runtime.includes("now - lastThreadPaintAt >= threadFrameInterval") &&
+    runtime.includes("lastThreadPaintAt = performance.now()") &&
+    runtime.includes("const responseBlend = 1 - Math.pow(0.82, frameElapsed / (1000 / 60))") &&
+    runtime.includes("velocityValue !== previousVelocityValue") &&
+    runtime.includes("pointerXValue !== previousPointerXValue") &&
+    runtime.includes("if ((Math.abs(smoothedVelocity) > 0.0002 || pointerSettling) && !document.hidden)"),
+  "The living About thread can monopolise every display frame while the visitor is reading.",
+);
+assert(
+  runtime.includes("const sceneStyleSnapshots = scenes.map(() => ({") &&
+    runtime.includes("snapshot.progress !== progressValue") &&
+    runtime.includes("snapshot.focus !== focusValue") &&
+    runtime.includes("snapshot.enter !== enterValue") &&
+    runtime.includes("snapshot.exit !== exitValue") &&
+    runtime.includes("snapshot.phase !== phase"),
+  "The About film can republish unchanged per-scene motion values throughout a scroll gesture.",
+);
+assert(
+  (runtime.match(/const sceneRects = scenes\.map\(\(scene\) => scene\.getBoundingClientRect\(\)\);/g) || []).length === 1 &&
+    runtime.includes("const firstSceneTop = currentScrollY + sceneRects[0].top;") &&
+    runtime.includes("const finalSceneBottom = currentScrollY + sceneRects[sceneRects.length - 1].bottom;") &&
+    !runtime.includes(".offsetTop") &&
+    !runtime.includes(".offsetHeight"),
+  "The About navigator and living thread can repeat layout reads inside one scroll frame.",
+);
+assert(
+  runtime.includes('root.dataset.aboutFilm = "true"') &&
+    runtime.includes("delete root.dataset.aboutFilm") &&
+    /html\[data-about-film="true"\] \.gradient-mesh\s*\{[^}]*animation-play-state:\s*paused;/.test(globalStyles),
+  "The global fixed mesh can keep compositing beneath the entire About film.",
+);
+assert(
+  splitHero.includes("const heroInView = useInView(ref") &&
+    splitHero.includes("data-about-hero-active={heroInView}") &&
+    /\[data-about-hero-active="false"\] \.hero-fog,[\s\S]*?\[data-about-hero-active="false"\] \.card-float\s*\{[^}]*animation-play-state:\s*paused;/.test(globalStyles),
+  "The About hero can keep its decorative animation stack running far off-screen.",
+);
+assert(
+  header.includes('pathname.startsWith("/about") ? "#795A43"'),
+  "The persistent About header can expose a low-contrast booking action over its ivory surface.",
+);
+assert(
+  !pointOfViewStyles.includes("@keyframes resolveLine") &&
+    pointOfView.includes("scaleX: frameShiftProgress") &&
+    !pointOfViewStyles.includes("transition: transform 720ms cubic-bezier(0.22, 1, 0.36, 1)") &&
+    !convergenceStyles.includes("animation:") &&
+    /data-scene-active="false"[^}]*\.core::before\s*\{[^}]*animation-play-state:\s*paused;/.test(atlasStyles),
+  "Off-screen About chapters can keep their ambient CSS loops running.",
+);
+assert(
+  origin.includes("when a founder is beginning") &&
+    origin.includes("a capable business is difficult to") &&
+    origin.includes("every channel has started to sound different"),
+  "The first post-hero chapter no longer connects Suman's formative fields to a buyer's situation.",
+);
+assert(
+  pointOfView.includes("Suman&apos;s point of view") &&
+    pointOfView.includes("The work becomes easier to choose.") &&
+    pointOfView.includes("They know where you belong.") &&
+    pointOfView.includes("They know why you matter.") &&
+    pointOfView.includes("They remember what to return to."),
+  "Suman's point of view no longer resolves its three buyer decisions into a hiring outcome.",
+);
+assert(
+  !pointOfView.includes("AboutSignalField3D") &&
+    !pointOfView.includes('from "next/image"') &&
+    pointOfView.includes("styles.decisionLedger") &&
+    pointOfView.includes("styles.ledgerFocus") &&
+    pointOfView.includes("left: ledgerCursorX") &&
+    pointOfViewStyles.includes(".scrollStory { height: 190svh; }"),
+  "The point-of-view sequence lost its restrained editorial ledger or deliberate scroll runway.",
+);
+assert(
+  convergence.includes("const readProgress = useTransform") &&
+    convergence.includes("<motion.i") &&
+    pointOfView.includes("const categoryProgress = useTransform") &&
+    pointOfView.includes("<motion.b") &&
+    convergence.includes("style={prefersReducedMotion ? undefined : { scaleX: progress }}") &&
+    pointOfView.includes("style={prefersReducedMotion ? undefined : { scaleX: progress }}"),
+  "The About stage rails no longer report continuous physical scroll progress.",
+);
+assert(
+  convergence.includes("const registerProgress = useTransform") &&
+    convergence.includes("scaleX: registerProgress") &&
+    pointOfView.includes("const ledgerFocusY = useTransform") &&
+    pointOfView.includes("const ledgerCursorX = useTransform") &&
+    pointOfView.includes("scaleX: frameShiftProgress"),
+  "The About editorial indicators no longer move continuously with the physical scroll position.",
+);
+assert(
+  convergence.includes("const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1]") &&
+    convergence.includes("const pacedScrollProgress = useSpring") &&
+    pointOfView.includes("const SCROLL_BEATS = [0, 0.29, 0.36, 0.62, 0.69, 1]") &&
+    pointOfView.includes("const pacedScrollProgress = useSpring"),
+  "The About editorial timelines lost their damped movement or deliberate chapter breathing zones.",
+);
+assert(
+  convergence.includes("const previousStageRef = useRef(0)") &&
+    convergence.includes("const transitionDirection = stage >= previousStageRef.current ? 1 : -1") &&
+    convergence.includes("custom={transitionDirection}") &&
+    convergence.includes("variants={VERTICAL_SWAP}") &&
+    convergence.includes("variants={HORIZONTAL_SWAP}"),
+  "The convergence scene no longer reverses its editorial transitions with scroll direction.",
+);
+assert(
+  convergence.includes("<motion.small") &&
+    convergence.includes("<motion.span") &&
+    convergence.includes("key={stage === 1 ? activePair.coreLine : activeStage.centreLine}") &&
+    pointOfView.includes("const HORIZONTAL_SWAP") &&
+    pointOfView.includes("key={active.from}") &&
+    pointOfView.includes("key={active.to}"),
+  "The About centre readouts lost their synchronized direction-aware transitions.",
+);
+assert(
+  pointOfView.includes("const recognitionPlaceProgress = useTransform") &&
+    pointOfView.includes("const recognitionValueProgress = useTransform") &&
+    pointOfView.includes("const finalOutcomeOpacity = useTransform") &&
+    pointOfView.includes("scaleX: recognitionPlaceProgress") &&
+    pointOfView.includes("scaleX: recognitionValueProgress") &&
+    pointOfView.includes("opacity: finalOutcomeOpacity"),
+  "The recognition path no longer resolves continuously with the About scroll timeline.",
+);
+assert(
+  pointOfView.includes("const chamberX = useTransform") &&
+    pointOfView.includes("const chamberOpacity = useTransform") &&
+    pointOfView.includes("const recordX = useTransform") &&
+    pointOfView.includes("const recordOpacity = useTransform") &&
+    pointOfView.includes("x: chamberX, opacity: chamberOpacity") &&
+    pointOfView.includes("x: recordX, opacity: recordOpacity"),
+  "The recognition evidence surfaces no longer move as one scroll-controlled camera composition.",
+);
+assert(
+  pointOfView.includes("const STAGE_CUTS = [0, 0.28, 0.32, 0.35, 0.39, 0.61, 0.65, 0.68, 0.72, 1]") &&
+    pointOfView.includes("const stageContentOpacity = useTransform") &&
+    pointOfView.includes("const stageContentScale = useTransform") &&
+    pointOfView.includes("opacity: stageContentOpacity, scale: stageContentScale") &&
+    !pointOfView.includes('animate={{ opacity: 1, y: 0, clipPath: "inset(0% 0 0% 0)" }}'),
+  "The recognition stage changes no longer pass through a scroll-controlled focus gate.",
+);
+assert(
+  !pointOfViewStyles.includes('.stageRail button[data-resolved="true"] b') &&
+    !pointOfViewStyles.includes('.scrollStory[data-recognition-stage="2"] .ledgerFocus') &&
+    !pointOfViewStyles.includes('.scrollStory[data-recognition-stage="3"] .ledgerCursor') &&
+    !pointOfViewStyles.includes('.scrollStory[data-recognition-stage="2"] .frameShift i') &&
+    /\.ledgerFocus\s*\{[^}]*will-change:\s*transform;/.test(pointOfViewStyles) &&
+    /\.ledgerCursor\s*\{[^}]*will-change:\s*left;/.test(pointOfViewStyles),
+  "The recognition indicators can lag behind their scroll motion because CSS state transitions compete with MotionValues.",
+);
+assert(
+  convergence.includes("const psychologyX = useTransform") &&
+    convergence.includes("const literatureX = useTransform") &&
+    convergence.includes("const disciplineOpacity = useTransform") &&
+    convergence.includes("const signalScale = useTransform") &&
+    convergence.includes("const signalY = useTransform") &&
+    convergence.includes("const signalOpacity = useTransform") &&
+    convergence.includes("const DEPTH_BEATS = [0, 0.29, 0.36, 0.62, 0.84, 1]") &&
+    (convergence.match(/\n    DEPTH_BEATS,/g) || []).length === 6 &&
+    convergence.includes("[1, 1, 1, 1, 0.14, 0.14]") &&
+    convergence.includes("[0.96, 0.96, 1, 1, 0.94, 0.94]") &&
+    convergence.includes("[8, 8, 0, 0, -10, -10]") &&
+    convergence.includes("[1, 1, 1, 1, 0.12, 0.12]") &&
+    convergence.includes("x: psychologyX, opacity: disciplineOpacity") &&
+    convergence.includes("x: literatureX, opacity: disciplineOpacity") &&
+    convergence.includes("scale: signalScale, y: signalY, opacity: signalOpacity"),
+  "The convergence composition no longer scrubs continuously with the About scroll timeline.",
+);
+assert(
+  convergence.includes("const outcomeGroupOpacity = useTransform") &&
+    convergence.includes("const outcomeGroupClipPath = useTransform") &&
+    convergence.includes("[0.69, 0.76, 0.84]") &&
+    convergence.includes('["inset(0 50% 0 50%)", "inset(0 0% 0 0%)"]') &&
+    convergence.includes("opacity: outcomeGroupOpacity") &&
+    convergence.includes("clipPath: outcomeGroupClipPath") &&
+    !convergence.includes("delay: prefersReducedMotion ? 0 : index * 0.06"),
+  "The convergence outcome no longer resolves as one masked scroll-controlled editorial record.",
+);
+assert(
+  convergence.includes("const threadFieldOpacity = useTransform") &&
+    convergence.includes("const threadFieldScale = useTransform") &&
+    convergence.includes("const threadFieldClipPath = useTransform") &&
+    convergence.includes('"inset(0 49% 0 49%)"') &&
+    convergence.includes("opacity: threadFieldOpacity") &&
+    convergence.includes("scaleX: threadFieldScale") &&
+    convergence.includes("clipPath: threadFieldClipPath"),
+  "The convergence threads no longer assemble and recede with direct scroll control.",
+);
+assert(
+  convergence.includes("const STAGE_CUTS = [0, 0.28, 0.32, 0.35, 0.39, 0.61, 0.65, 0.68, 0.72, 1]") &&
+    convergence.includes("const stageContentOpacity = useTransform") &&
+    convergence.includes("const stageContentClipPath = useTransform") &&
+    (convergence.match(/visualizer\.scrollYProgress,\s*STAGE_CUTS,/g) || []).length === 2 &&
+    !convergence.includes("const stageContentScale = useTransform") &&
+    (convergence.match(/opacity: stageContentOpacity/g) || []).length === 3 &&
+    !convergence.includes("scale: stageContentScale") &&
+    (convergence.match(/clipPath: stageContentClipPath/g) || []).length === 3,
+  "The convergence cue and readout no longer pass through one raw-scroll editorial aperture without lag or a card-like scale pulse.",
+);
+assert(
+  !convergenceStyles.includes("transition: color 420ms ease;") &&
+    !convergenceStyles.includes("transition: background-color 420ms ease;"),
+  "The convergence register can lag behind its masked scroll transition because timed color changes still compete with it.",
+);
+assert(
+  !origin.includes('className={styles.recordSlot} aria-live="polite"') &&
+    origin.includes('role="tabpanel"') &&
+    origin.includes("aria-labelledby={`origin-field-${activeIndex}`}"),
+  "The origin record can announce its full animated contents instead of relying on its labelled tab relationship.",
+);
+assert(
+  !atlas.includes('className={styles.recordSlot} aria-live="polite"') &&
+    atlas.includes('role="tabpanel"') &&
+    atlas.includes("aria-labelledby={`brand-surface-${selectedSurface}`}"),
+  "The brand-system record can announce its full animated contents instead of relying on its labelled tab relationship.",
+);
+assert(
+  visualizer.includes("previewingRef.current || manualChoiceRef.current") &&
+    visualizer.includes('window.addEventListener("wheel", releaseManualChoice, { passive: true })') &&
+    visualizer.includes('window.addEventListener("touchstart", releaseManualChoice, { passive: true })') &&
+    visualizer.includes('window.addEventListener("keydown", releaseManualChoiceFromKeyboard)') &&
+    visualizer.includes("target.current?.contains(event.target)") &&
+    visualizer.includes("setActiveIndex(manualChoiceIndexRef.current)"),
+  "Shared About visualizers no longer protect an explicit choice until genuine scroll movement resumes.",
+);
+for (const [name, component, handler] of [
+  ["origin", origin, "onPointerDown={() => visualizer.choose(index)}"],
+  ["point of view", pointOfView, "onPointerDown={() => sequence.choose(index)}"],
+  ["convergence", convergence, "onPointerDown={() => visualizer.choose(index)}"],
+  ["evidence", evidence, "onPointerDown={() => sequence.choose(index)}"],
+  ["standards", standards, "onPointerDown={() => sequence.choose(index)}"],
+  ["founder-led", workingDirectly, "onPointerDown={() => sequence.choose(index)}"],
+]) {
+  assert(
+    component.includes(handler),
+    `The ${name} scene can mistake an intentional pointer press for a temporary preview.`,
+  );
+}
+assert(
+  /\.chapterSpine li\[data-active="true"\] a\s*\{[^}]*width:\s*min\(/.test(runtimeStyles),
+  "The active desktop About chapter no longer keeps its label exposed.",
+);
+assert(
+  /\.chapterSpine li\[data-active="true"\] a strong\s*\{[^}]*opacity:\s*1;[^}]*transform:\s*translateX\(0\);/.test(runtimeStyles),
+  "The active desktop About chapter label can collapse back into an unlabeled number.",
+);
+
+const protectedNavigatorType = [
+  [".chapterSpine a span", 0.55],
+  [".mobileChapterControls small", 0.55],
+];
+
+for (const [selector, minimum] of protectedNavigatorType) {
+  const size = fontSizeRem(runtimeStyles, selector);
+  assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
+}
+
+const protectedOriginType = [
+  [".headerAside > p:first-child", 0.8],
+  [".fieldRail button small", 0.55],
+  [".fieldRail button em", 0.58],
+  [".portrait figcaption strong", 0.58],
+  [".synthesisSeal span", 0.55],
+  [".cardTopline small,\n.credential > span,\n.application > span", 0.58],
+  [".credential p", 0.7],
+  [".credential small", 0.6],
+  [".application p", 0.78],
+  [".recordCard footer", 0.58],
+  [".progressRail", 0.55],
+  [".staticExperience small", 0.55],
+];
+
+for (const [selector, minimum] of protectedOriginType) {
+  const size = fontSizeRem(originStyles, selector);
+  assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
+}
+assert(
+  originStyles.includes("--origin-navigation-gutter:") &&
+    originStyles.includes("padding-right: var(--origin-navigation-gutter);") &&
+    /@media \(max-width: 900px\)[\s\S]*?padding-right:\s*0;/.test(originStyles),
+  "The desktop About chapter navigator can overlap the origin reading frame or leave a mobile gutter behind.",
+);
+
+const protectedPointOfViewType = [
+  [".stageRail small", 0.58],
+  [".signalStage > small", 0.58],
+  [".signalStage > div span", 0.58],
+  [".recordKicker", 0.58],
+  [".record dt,\n.proofRecord > span", 0.58],
+  [".record dd", 0.72],
+  [".proofRecord p", 0.76],
+  [".proofRecord small", 0.58],
+  [".recognitionLine", 0.58],
+  [".staticLedgerHead small", 0.55],
+  [".staticIndex small,\n.staticProof > small", 0.55],
+  [".staticLedger article > p", 0.74],
+  [".staticProof > p", 0.72],
+  [".staticProof > a", 0.58],
+];
+
+for (const [selector, minimum] of protectedPointOfViewType) {
+  const size = fontSizeRem(pointOfViewStyles, selector);
+  assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
+}
+assert(
+  /@media \(min-width: 981px\) and \(max-width: 1180px\)[\s\S]*?\.shell\s*\{\s*padding-right:/.test(pointOfViewStyles),
+  "The point-of-view chapter does not reserve room for the desktop chapter navigator at compact widths.",
+);
+assert(
+  pointOfViewStyles.includes("scroll-snap-type: inline mandatory;") &&
+    pointOfViewStyles.includes("scroll-snap-align: start;"),
+  "The touch recognition ledger lost its deliberate card-by-card resting points.",
+);
+assert(
+  pointOfViewStyles.includes(':global(html[data-consent-banner="visible"]) .root') &&
+    pointOfViewStyles.includes("padding-bottom: clamp(4.2rem, 7svh, 5rem);"),
+  "The point-of-view record can fall beneath the visible consent notice.",
+);
+
+const protectedAtlasType = [
+  [".headerAside > p:first-child", 0.76],
+  [".stageReadout", 0.6],
+  [".core small", 0.55],
+  [".surfaceNodes button small", 0.6],
+  [".surfaceNodes button em", 0.58],
+  [".recordTopline small", 0.6],
+  [".record > p", 0.76],
+  [".record dt", 0.6],
+  [".recordFoot", 0.58],
+  [".touchRail button small", 0.6],
+  [".touchRail button strong", 0.6],
+  [".touchRecordIndex small", 0.6],
+  [".touchRecord > p", 0.76],
+  [".touchTest small", 0.6],
+  [".staticCore small", 0.6],
+  [".staticAtlas li small", 0.6],
+  [".staticAtlas li p", 0.74],
+];
+
+for (const [selector, minimum] of protectedAtlasType) {
+  const size = fontSizeRem(atlasStyles, selector);
+  assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
+}
+
+const protectedConvergenceType = [
+  [".disciplineHeading small", 0.6],
+  [".discipline > p", 0.76],
+  [".discipline li span", 0.58],
+  [".thread button small", 0.58],
+  [".thread button strong", 0.58],
+  [".folioCopy > small", 0.58],
+  [".outputs span", 0.58],
+  [".outputs p", 0.7],
+  [".tabs button span", 0.58],
+  [".mobileSynthesis > ol > li > div p", 0.76],
+  [".mobileResolution small", 0.58],
+];
+
+for (const [selector, minimum] of protectedConvergenceType) {
+  const size = fontSizeRem(convergenceStyles, selector);
+  assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
+}
+assert(
+  convergenceStyles.includes("--convergence-navigation-gutter:") &&
+    convergenceStyles.includes("padding-right: var(--convergence-navigation-gutter);") &&
+    /@media \(max-width: 900px\)[\s\S]*?padding-right:\s*0;/.test(convergenceStyles),
+  "The chapter spine can overlap the Synthesis reading frame or leave a mobile gutter behind.",
+);
+assert(
+  convergenceStyles.includes(".signalCore") &&
+    convergenceStyles.includes("pointer-events: none;") &&
+    convergence.includes("const leftPairX = useTransform") &&
+    convergence.includes("const rightPairX = useTransform") &&
+    convergence.includes("index === 1") &&
+    convergence.includes("index === 2"),
+  "The centre seal can block the interactive Synthesis pairings.",
+);
+assert(
+  !convergence.includes("AboutSignalField3D") &&
+    !convergence.includes('from "next/image"') &&
+    convergence.includes("styles.decisionRegister") &&
+    convergence.includes('data-register-stage={activeStage.number}') &&
+    convergenceStyles.includes('.signalCore[data-register-stage="03"] .registerMeasure span') &&
+    convergenceStyles.includes(".section { height: 190svh; min-height: 190svh; }") &&
+    convergence.includes("One position the whole brand can carry.") &&
+    convergence.includes("A sharper decision your team can use."),
+  "The synthesis chapter lost its editorial decision register, deliberate scroll runway, or explicit hiring payoff.",
+);
+assert(
+  convergence.includes("const threadLineScale = useTransform") &&
+    convergence.includes("const topThreadY = useTransform") &&
+    convergence.includes("const bottomThreadY = useTransform") &&
+    convergence.includes("scaleX: threadLineScale") &&
+    convergence.includes("y: topThreadY") &&
+    convergence.includes("y: bottomThreadY") &&
+    !convergenceStyles.includes('.section[data-convergence-stage="02"] .thread span') &&
+    !convergenceStyles.includes('.tabs button[data-active="true"] i'),
+  "The convergence pairings can fall back to separate staged CSS movements instead of following the shared scroll timeline.",
+);
+
+assert(
+  atlasStyles.includes("--atlas-navigation-gutter:") &&
+    atlasStyles.includes("var(--atlas-navigation-gutter)") &&
+    /@media \(max-width: 980px\)[\s\S]*?padding:\s*6\.8rem 0 3\.7rem;/.test(atlasStyles),
+  "The brand atlas chapter spine can overlap its record or leave a touch-layout gutter behind.",
+);
+
+const protectedEvidenceType = [
+  [".caseIdentity small, .caseIdentity em", 0.6],
+  [".recordBasis strong", 0.78],
+  [".pathStep > span", 0.6],
+  [".outcome small", 0.64],
+  [".caseControls button em", 0.6],
+  [".caseLink", 0.6],
+  [".staticTrace", 0.7],
+  [".staticResolution span", 0.58],
+];
+
+for (const [selector, minimum] of protectedEvidenceType) {
+  const size = fontSizeRem(evidenceStyles, selector);
+  assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
+}
+assert(
+  evidenceStyles.includes('html[data-consent-banner="visible"]') &&
+    evidenceStyles.includes(".caseLink { right: clamp(14rem, 18vw, 16rem);") &&
+    evidenceStyles.includes(".proofResolution { display: none;"),
+  "The evidence case action can settle beneath the consent notice.",
+);
+
+const protectedStandardsType = [
+  [".instrumentTopline", 0.6],
+  [".gateTrack button small", 0.6],
+  [".gateTrack button em", 0.58],
+  [".testStatement span,\n.testResult dt,\n.testStamp small", 0.6],
+  [".testResult dd", 0.76],
+  [".instrumentFooter > div span", 0.58],
+  [".verdict", 0.58],
+];
+
+for (const [selector, minimum] of protectedStandardsType) {
+  const size = fontSizeRem(standardsStyles, selector);
+  assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
+}
+assert(
+  standardsStyles.includes(':global(html[data-consent-banner="visible"]) .root') &&
+    standardsStyles.includes("padding-bottom: calc(clamp(4.75rem, 8svh, 5.75rem) + env(safe-area-inset-bottom, 0px));") &&
+    standardsStyles.includes(':global(html[data-consent-banner="visible"]) .instrumentFooter') &&
+    standardsStyles.includes("padding-right: clamp(13rem, 18vw, 15.5rem);"),
+  "The Working Standards evidence-policy action can settle beneath the consent notice.",
+);
+
+const protectedWorkingDirectlyType = [
+  [".headerAside > p", 0.76],
+  [".headerAside > div", 0.6],
+  [".sheetHeader span", 0.6],
+  [".stageRail button small", 0.6],
+  [".decision p", 0.78],
+  [".sheetFooter > div span", 0.58],
+  [".continuityVerdict", 0.58],
+  [".sheetFooter > a", 0.6],
+  [".recordedOutput p", 0.66],
+  [".staticPromise span", 0.61],
+  [".staticPromise p", 0.72],
+];
+
+for (const [selector, minimum] of protectedWorkingDirectlyType) {
+  const size = fontSizeRem(workingDirectlyStyles, selector);
+  assert(size >= minimum, `${selector} fell below the protected ${minimum}rem reading floor.`);
+}
+assert(
+  workingDirectly.includes("Meet your brand strategist") &&
+    workingDirectly.includes("You never brief the thinking twice.") &&
+    workingDirectly.includes("One brief. One strategist. Every decision connected.") &&
+    workingDirectlyStyles.includes('.recordedOutput[data-final="true"]') &&
+    workingDirectlyStyles.includes(".staticPromise"),
+  "The founder-led chapter lost its direct-access hiring promise or final record treatment.",
+);
+assert(
+  workingDirectlyStyles.includes(':global(html[data-consent-banner="visible"]) .sheetFooter') &&
+    workingDirectlyStyles.includes("padding-right: clamp(13rem, 18vw, 15.5rem);"),
+  "The founder-led engagement action can settle beneath the consent notice.",
+);
+
+console.log(
+  "About journey quality gate passed: persistent chapter orientation, destination relationships, and readable evidence labels verified.",
+);

@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { BREAK_OVERLAY_GRADIENT, toSvh } from "@/lib/media";
 import { EASE_AIR } from "@/lib/motion";
 import { useLazyMount } from "@/hooks/useLazyMount";
@@ -30,7 +31,7 @@ export function ImageBreak({
   overlayGradient?: string;
   quoteVariant?: QuoteVariant;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [ref, shouldLoad] = useLazyMount();
   const [revealRef, revealed] = useRevealTrigger();
 
@@ -42,7 +43,7 @@ export function ImageBreak({
         style={{ backgroundImage: shouldLoad ? undefined : overlayGradient }}
         initial={prefersReducedMotion ? undefined : { scale: 1.12 }}
         animate={prefersReducedMotion ? undefined : revealed ? { scale: 1 } : undefined}
-        transition={{ duration: 2.2, ease: EASE_AIR }}
+        transition={{ duration: 2.4, ease: EASE_AIR }}
       >
         {shouldLoad && (
           <>

@@ -1,12 +1,10 @@
-import { ReactNode } from "react";
+import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 export function Container({
   children,
   className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return <div className={cn("container-page", className)}>{children}</div>;
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("container-page", className)} {...props}>{children}</div>;
 }

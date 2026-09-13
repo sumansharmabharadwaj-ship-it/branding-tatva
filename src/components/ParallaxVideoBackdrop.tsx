@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { BackgroundVideo } from "./BackgroundVideo";
 
 // Same scroll-linked drift VideoBreak's own `parallax` prop already uses
@@ -30,7 +31,7 @@ export function ParallaxVideoBackdrop({
   imagePosition?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const mediaY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
 

@@ -1,0 +1,55 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 Studio portrait framing                                         */
+/* -------------------------------------------------------------------------- */
+
+.studio-cinematic__portrait-photo {
+  object-position: center 78%;
+  transform: translateY(-18%) scale(1.12);
+  transform-origin: center center;
+}
+
+.studio-cinematic__portrait-wash {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(9, 13, 12, 0.01) 10%,
+      rgba(9, 13, 12, 0.08) 34%,
+      rgba(9, 13, 12, 0.34) 58%,
+      rgba(9, 13, 12, 0.96) 100%
+    ),
+    radial-gradient(
+      circle at 72% 18%,
+      color-mix(in srgb, var(--studio-accent) 11%, transparent),
+      transparent 42%
+    );
+}
+
+@media (max-width: 900px) {
+  .studio-cinematic__portrait-photo {
+    object-position: center 82%;
+    transform: translateY(-19%) scale(1.12);
+  }
+}
+
+@media (max-width: 640px) {
+  .studio-cinematic__portrait-photo {
+    object-position: center 86%;
+    transform: translateY(-21%) scale(1.14);
+  }
+
+  .studio-cinematic__portrait-wash {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(9, 13, 12, 0.01) 8%,
+        rgba(9, 13, 12, 0.05) 28%,
+        rgba(9, 13, 12, 0.28) 55%,
+        rgba(9, 13, 12, 0.97) 100%
+      ),
+      radial-gradient(
+        circle at 72% 16%,
+        color-mix(in srgb, var(--studio-accent) 10%, transparent),
+        transparent 42%
+      );
+  }
+}

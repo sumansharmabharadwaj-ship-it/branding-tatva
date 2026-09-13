@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+
 // Palette re-keyed (Aug 2026) from the warm five-element hexes to the
 // codified earth-first desaturated greens (CLAUDE.md design language).
 // Root cause of a recurring "why is this section orangish" bug class:
@@ -101,7 +102,7 @@ function hexToVec3(hex: string): [number, number, number] {
 
 export function AmbientElementShader({ className, opacity = 0.35 }: { className?: string; opacity?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [supported, setSupported] = useState(true);
 
   useEffect(() => {

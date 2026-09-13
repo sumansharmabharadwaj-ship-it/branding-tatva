@@ -1,0 +1,59 @@
+name: Canonical site smoke
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Permanent preview source gate
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canonical-site-smoke
+  cancel-in-progress: true
+
+jobs:
+  browser-smoke:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out canonical preview source
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run the integrated route, responsive, accessibility, redirect, and RSS smoke
+        env:
+          PREVIEW_URL: https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app
+          SMOKE_OUTPUT_DIR: artifacts/canonical-site-smoke
+        run: node scripts/canonical_site_smoke.cjs
+
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-site-smoke-${{ github.run_id }}
+          path: artifacts/canonical-site-smoke
+          if-no-files-found: warn
+          retention-days: 14

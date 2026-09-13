@@ -1,7 +1,8 @@
 "use client";
 
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+
 
 // Tertiary environmental life (direct creative direction: "the
 // environment exists independently of the visitor"). Distant birds
@@ -57,7 +58,7 @@ export function SkyLife({
   color?: string;
   solitary?: boolean;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const [birds, setBirds] = useState<Bird[]>([]);
   const nextId = useRef(0);
 

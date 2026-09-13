@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "alias": [
+    "branding-tatva-git-august-8-isolated-suman22.vercel.app"
+  ],
+  "ignoreCommand": "node scripts/vercel_preview_deploy_gate.cjs",
+  "git": {
+    "deploymentEnabled": {
+      "august-8-isolated": false
+    }
+  },
+  "github": {
+    "autoJobCancelation": true
+  },
+  "crons": [
+    {
+      "path": "/api/cron/contact-delivery",
+      "schedule": "17 4 * * *"
+    }
+  ]
+}
