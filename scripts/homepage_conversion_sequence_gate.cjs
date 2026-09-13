@@ -22,6 +22,7 @@ const sequence = [
   "<V4OpeningScene />",
   "<V4RecognitionScene />",
   "<V4HiddenCostScene />",
+  "<V4CostStackScene />",
   'id="foundation"',
   'data-home-v4-chapter="paths"',
   'id="process"',
@@ -39,8 +40,12 @@ for (const marker of sequence) {
   previous = index;
 }
 
+// One handoff per chapter transition. The compounding-cost stack added a
+// twelfth chapter between the hidden cost scene and the foundation, so
+// there are eleven transitions to cover rather than ten. The invariant is
+// unchanged; only the chapter count moved.
 assert(
-  (experience.match(/<SceneHandoff motif=/g) || []).length === 10,
+  (experience.match(/<SceneHandoff motif=/g) || []).length === 11,
   "Every homepage chapter transition must keep one quiet handoff.",
 );
 for (const runtime of [
@@ -183,4 +188,4 @@ assert(
   "The browser-zoom opening must reflow past clipped cinematic spacing.",
 );
 
-console.log("Homepage source gate passed: eleven ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");
+console.log("Homepage source gate passed: twelve ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");

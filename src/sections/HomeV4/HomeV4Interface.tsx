@@ -11,12 +11,18 @@ import {
 } from "@/hooks/useHomeGuideMode";
 
 const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
-const DWELL_MS = [4700, 4400, 4700, 5300, 4700, 4900, 5300, 4900, 4600, 4600, 5200];
+/* Both arrays are positional: entry N describes the Nth element matching
+   CHAPTER_SELECTOR. Inserting a chapter without inserting here shifts
+   every later label onto the wrong scene, so they are kept in step.
+   The compounding-cost entry sits third because that stack pins three
+   cards in turn and needs a longer dwell than a single-frame scene. */
+const DWELL_MS = [4700, 4400, 4700, 5600, 5300, 4700, 4900, 5300, 4900, 4600, 4600, 5200];
 const GUIDE_HINT_MS = 8200;
 const CHAPTER_NAMES = [
   "opening signal",
   "recognition",
   "hidden cost",
+  "compounding cost",
   "foundation",
   "three paths",
   "working method",

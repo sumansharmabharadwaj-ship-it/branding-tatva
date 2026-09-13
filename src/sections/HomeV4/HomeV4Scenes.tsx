@@ -60,24 +60,6 @@ const RECOGNITION_STATES = [
   },
 ] as const;
 
-const BRAND_RESET_COSTS = [
-  {
-    number: "01",
-    title: "More explaining.",
-    body: "Each touchpoint makes a different promise. People need another explanation before they understand why they should choose you.",
-  },
-  {
-    number: "02",
-    title: "Work repeated.",
-    body: "Every brief reopens the language, look, and tone. The team remakes decisions that could have carried forward.",
-  },
-  {
-    number: "03",
-    title: "Recognition lost.",
-    body: "A campaign earns attention. A different identity next time makes the connection harder for people to recognise.",
-  },
-] as const;
-
 const MESSAGE_TOUCHPOINTS = [
   { channel: "Website", separate: "Eat for your goals.", shared: "Dinner, decided before six." },
   { channel: "Email", separate: "Recipes for everyone.", shared: "A week of dinners. One short list." },
@@ -450,24 +432,13 @@ export function V4HiddenCostScene() {
           <motion.span style={{ scaleX: prefersReducedMotion ? 1 : lineProgress }} />
         </div>
 
-        <ol className={costStyles.costs} aria-label="Where an inconsistent brand costs time and attention">
-          {BRAND_RESET_COSTS.map((cost) => (
-            <li data-home-cost-item key={cost.number}>
-              <span className={costStyles.number} aria-hidden="true">{cost.number}</span>
-              <div>
-                <h3>{cost.title}</h3>
-                <p>{cost.body}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-
-        <div className={costStyles.footer}>
-          <p>A clear position gives every campaign something to build on.</p>
-          <a href="#foundation" className={costStyles.link} data-magnetic data-cursor-label="foundation">
-            Build the foundation <ArrowDownRight size={18} aria-hidden="true" />
-          </a>
-        </div>
+        {/* The three costs and the closing link moved to
+            V4CostStackScene, the dark chapter directly below this one.
+            They were a three column row, which states that the costs
+            compound while showing the opposite; stacked, the earlier
+            costs are still physically under the later ones by the time
+            the reader reaches the third. This scene keeps the argument
+            and the worked example that sets them up. */}
       </div>
     </section>
   );

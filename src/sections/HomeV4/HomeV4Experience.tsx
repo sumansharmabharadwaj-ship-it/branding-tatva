@@ -18,6 +18,7 @@ import { GuidedView, SceneHandoff } from "./HomeV4Interface";
 import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { HomeV4SceneRhythm } from "./HomeV4SceneRhythm";
+import { V4CostStackScene } from "./CostStackScene";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
 export function HomeV4Experience() {
@@ -41,6 +42,14 @@ export function HomeV4Experience() {
       <SceneHandoff motif="river" />
 
       <V4HiddenCostScene />
+      <SceneHandoff motif="light" />
+
+      {/* The three costs, stacked, on the orangery field. Gives the front
+          half of Home the dark chapter it was missing: hero, cream,
+          cream, cream was most of why the early scroll read as flat.
+          The handoff above blends cream into this ground, the one below
+          carries it on into the foundation chapter. */}
+      <V4CostStackScene />
       <SceneHandoff motif="root" />
 
       <div
