@@ -106,6 +106,12 @@ export default function ContactPage() {
                 keeps reading as morning light on a working surface. */}
             <span data-contact-hero-sun />
           </div>
+          {/* A wordless invitation at the foot of the frame: a fine gold
+              thread with a drop of light travelling down it, pointing the
+              way into the film below. */}
+          <div data-contact-hero-cue aria-hidden="true">
+            <span />
+          </div>
           <Container data-contact-hero className="relative py-16 sm:py-24">
             <div data-contact-hero-grid className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <Reveal className="relative">

@@ -201,6 +201,16 @@ export function ContactCinematicScene({
   const playbackLift = useSpring(playbackLiftRaw, { stiffness: 92, damping: 24, mass: 0.38 });
   const pointerXSmooth = useSpring(pointerX, { stiffness: 105, damping: 22, mass: 0.32 });
   const pointerYSmooth = useSpring(pointerY, { stiffness: 105, damping: 22, mass: 0.32 });
+  // The visitor carries a patch of sunlight through every chapter: a soft
+  // warm pool trails the pointer across the scene on fine-pointer desktops.
+  // Deliberately underdamped springs give it the lag of light through
+  // leaves rather than a hard spotlight lock. It rests at centre, fades
+  // while a field is being read, and never exists for touch or reduced
+  // motion, where the exposure layer alone carries the light story.
+  const sunlightX = useMotionValue(0);
+  const sunlightY = useMotionValue(0);
+  const sunlightXSmooth = useSpring(sunlightX, { stiffness: 52, damping: 19, mass: 0.6 });
+  const sunlightYSmooth = useSpring(sunlightY, { stiffness: 52, damping: 19, mass: 0.6 });
 
   const cameraX = useTransform(progress, BEATS, config.cameraX);
   const cameraY = useTransform(progress, BEATS, config.cameraY);
@@ -331,11 +341,15 @@ export function ContactCinematicScene({
     const normalizedY = (event.clientY - rect.top) / rect.height - 0.5;
     pointerX.set(normalizedX * 16);
     pointerY.set(normalizedY * 12);
+    sunlightX.set(normalizedX * rect.width * 0.72);
+    sunlightY.set(normalizedY * rect.height * 0.72);
   }
 
   function settlePointer() {
     pointerX.set(0);
     pointerY.set(0);
+    sunlightX.set(0);
+    sunlightY.set(0);
   }
 
   function handleFocusCapture(event: FocusEvent<HTMLElement>) {
@@ -406,6 +420,30 @@ export function ContactCinematicScene({
       >
         {media}
       </motion.div>
+
+      {motionEnabled && !simplifiedCamera ? (
+        <motion.div
+          aria-hidden="true"
+          data-contact-scene-sunlight="true"
+          className="pointer-events-none absolute inset-0 z-[4] overflow-hidden mix-blend-screen"
+          initial={false}
+          animate={{ opacity: hasReadingFocus ? 0 : 0.34 }}
+          transition={{ duration: 0.5, ease: EASE_AIR }}
+        >
+          <motion.div
+            className="absolute left-1/2 top-1/2 h-[72vmin] w-[72vmin] rounded-full"
+            style={{
+              x: sunlightXSmooth,
+              y: sunlightYSmooth,
+              translateX: "-50%",
+              translateY: "-50%",
+              background:
+                "radial-gradient(circle, rgba(255,228,176,0.5) 0%, rgba(255,218,158,0.16) 42%, transparent 70%)",
+              willChange: "transform",
+            }}
+          />
+        </motion.div>
+      ) : null}
 
       {/* Scroll behaves like an exposure pull: each shot opens through its
           own practical light source, settles for reading, then blooms again
