@@ -11,6 +11,13 @@ html:has(.insights-worksheet:focus-within) {
   scroll-snap-type: none;
 }
 
+/* The scene director already drives --scene-anticipation, --scene-activation,
+   and --scene-discovery for this scene; before this pass they only scaled two
+   hairline rules, so the worksheet read as the one still chapter on the page.
+   These bind the real content to the same envelopes. Every var falls back to
+   its resolved value, and the director pins all envelopes to 1 under reduced
+   motion, so both fallbacks render the finished state. No child of these
+   wrappers is sticky or fixed, so the transforms are containment safe. */
 .insights-worksheet-eyebrow {
   display: flex;
   align-items: center;
@@ -20,6 +27,8 @@ html:has(.insights-worksheet:focus-within) {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  opacity: calc(0.25 + var(--scene-anticipation, 1) * 0.75);
+  transform: translateY(calc((1 - var(--scene-anticipation, 1)) * 0.8rem));
 }
 
 .insights-worksheet-eyebrow i {
@@ -53,6 +62,8 @@ html:has(.insights-worksheet:focus-within) {
   line-height: 1.04;
   letter-spacing: -0.035em;
   text-wrap: balance;
+  opacity: calc(0.12 + var(--scene-activation, 1) * 0.88);
+  transform: translateY(calc((1 - var(--scene-activation, 1)) * 1.6rem));
 }
 
 .insights-worksheet-intro > p {
@@ -61,6 +72,8 @@ html:has(.insights-worksheet:focus-within) {
   color: var(--worksheet-muted);
   font-size: 1rem;
   line-height: 1.65;
+  opacity: calc(0.1 + var(--scene-activation, 1) * 0.9);
+  transform: translateY(calc((1 - var(--scene-activation, 1)) * 2.1rem));
 }
 
 .insights-worksheet {
@@ -68,6 +81,19 @@ html:has(.insights-worksheet:focus-within) {
   display: grid;
   grid-template-columns: minmax(14rem, 0.75fr) minmax(0, 1.7fr);
   border-top: 1px solid var(--worksheet-rule);
+}
+
+/* The two worksheet columns arrive on the discovery envelope with a
+   slight offset between them, so the checks list leads and the open
+   check follows, the way a page of a workbook turns. */
+.insights-worksheet > :first-child {
+  opacity: calc(0.18 + var(--scene-discovery, 1) * 0.82);
+  transform: translateY(calc((1 - var(--scene-discovery, 1)) * 1.4rem));
+}
+
+.insights-worksheet > :last-child {
+  opacity: calc(0.12 + var(--scene-discovery, 1) * 0.88);
+  transform: translateY(calc((1 - var(--scene-discovery, 1)) * 2.2rem));
 }
 
 .insights-worksheet::before {

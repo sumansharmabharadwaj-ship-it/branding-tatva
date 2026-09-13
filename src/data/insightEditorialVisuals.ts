@@ -40,6 +40,33 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "recall",
     aspectRatio: 990 / 211,
   },
+  // The AI era set's diagrams, drawn in the same annotated-worksheet
+  // language as the three above: paper ground, small-caps structure,
+  // red hand annotations carrying the argument.
+  "how-ai-assistants-choose-brands-to-recommend": {
+    src: "/images/generated/insights-editorial/ai-retrieval-path.png",
+    alt: "A buyer's prompt above the four memory checks an AI assistant runs: entity, category, situations, and evidence",
+    shortTitle: "The assistant answers from memory",
+    description: "Four checks decide whether your brand gets named.",
+    depthKind: "image",
+    aspectRatio: 990 / 362,
+  },
+  "why-ai-content-makes-brands-average": {
+    src: "/images/generated/insights-editorial/ai-modal-trap.png",
+    alt: "A generic AI written tagline annotated as the statistical centre of the category, above the four decisions that escape it",
+    shortTitle: "The tool returns the category average",
+    description: "See the modal trap, then the escape.",
+    depthKind: "image",
+    aspectRatio: 990 / 334,
+  },
+  "what-rebrand-backlashes-teach-about-brand-memory": {
+    src: "/images/generated/insights-editorial/rebrand-change-budget.png",
+    alt: "A cue ledger separating equity to conserve from debt to spend, above the sequence for changing an established brand",
+    shortTitle: "Rebrands spend a change budget",
+    description: "Sort equity from debt before any redesign.",
+    depthKind: "image",
+    aspectRatio: 990 / 296,
+  },
 };
 
 export function buildInsightEditorialVisuals(
