@@ -19,7 +19,6 @@ import { HomeV4MediaDirector } from "./HomeV4MediaDirector";
 import { HomeV4PreludeBridge } from "./HomeV4PreludeBridge";
 import { HomeV4SceneRhythm } from "./HomeV4SceneRhythm";
 import { HomeV4ScrollCamera } from "./HomeV4ScrollCamera";
-import { HomeV4SeamDirector } from "./HomeV4SeamDirector";
 import { V4CostStackScene } from "./CostStackScene";
 import { V4HiddenCostScene, V4OpeningScene, V4RecognitionScene } from "./HomeV4Scenes";
 
@@ -35,8 +34,20 @@ export function HomeV4Experience() {
       <HomeV4MediaDirector />
       <HomeV4HeaderDirector />
       <HomeV4SceneRhythm />
+      {/* HomeV4SeamDirector is deliberately left unmounted. It writes the
+          same seven --home-handoff-* custom properties to the same
+          .home-v4-handoff elements that HomeV4ScrollCamera already
+          writes (ScrollCamera's set is a strict superset, adding
+          --home-handoff-phase), so mounting both puts two rAF loops in a
+          race over the same properties every frame, where whichever
+          writes last wins and neither director's intent is reliable.
+          It was mounted to restore motion to chapters measured as
+          static on a local dev server that was serving zero hydrated
+          JavaScript at the time, because the site's own CSP was
+          blocking it. Measured against production instead, nine of
+          eleven chapters were already scroll responsive with NEITHER
+          director mounted, so the motion never depended on this. */}
       <HomeV4ScrollCamera />
-      <HomeV4SeamDirector />
       <GuidedView />
 
       <V4OpeningScene />
