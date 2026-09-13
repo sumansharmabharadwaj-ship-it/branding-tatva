@@ -28,8 +28,19 @@
 .link:hover { border-color: #d1ba8f; background: #1d271f; }
 .tab:focus-visible, .panel:focus-visible, .link:focus-visible { outline: 2px solid #805239; outline-offset: 4px; }
 
-/* Reserve the sticky film treatment for screens with room for the reading card. */
-@media (min-width: 1181px) and (min-height: 901px) and (pointer: fine) {
+/* Reserve the sticky film treatment for screens with room for the reading
+   card. This query MUST stay identical to the hasScrollRunway media query
+   in BrandFoundationScene.tsx: that one gates whether the motion runs,
+   this one builds the runway it needs, and a mismatch gives you one
+   without the other.
+   Lowered from 901px to 761px, the site's own convention. At 901px an
+   ordinary laptop got the static fallback, which is why this chapter
+   measured zero motion on production. Note a 1440x900 screen reports
+   only ~790px of viewport once browser chrome is subtracted, so an
+   intermediate 801px would still have excluded it. The reading card
+   renders 671px at a 790px viewport and 637px at 690px, clearing the
+   screen in both, and first clips at 658px. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
   .section { height: 220svh; min-height: 220svh; overflow: clip; }
   .scene { position: sticky; top: 0; min-height: 100svh; }
   .shell { min-height: 100svh; }

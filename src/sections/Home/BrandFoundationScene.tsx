@@ -90,7 +90,25 @@ export function BrandFoundationScene() {
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const selectionId = useId();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const hasScrollRunway = useMediaQuery("(min-width: 1181px) and (min-height: 901px) and (pointer: fine)");
+  /* 761px, lowered from 901px. This MUST stay identical to the matching
+     media query in BrandFoundation.module.css: the JS gates whether the
+     motion runs, the CSS builds the runway it needs, and a mismatch gives
+     you a runway with nothing moving in it, or motion with nowhere to go.
+     At 901px this chapter was dead on ordinary laptops. Confirmed on
+     production, where data-foundation-motion read "static" at 900px tall
+     and "scroll" at 1000px; two sessions independently measured this
+     chapter at zero motion on every axis because of it.
+     The number is measured, and the first correction was still wrong. A
+     1440x900 SCREEN is not a 900px viewport: browser chrome takes roughly
+     110px, so that laptop reports about 790px. An intermediate value of
+     801px, derived against a synthetic 900px viewport, would therefore
+     still have excluded the exact machine it was meant to fix.
+     Re-measured at real viewport heights, the scene's content column
+     renders 671px at 790px and 637px at 690px and clears the screen in
+     both; it first clips at 658px. 761px sits above the clipping point,
+     below every common laptop, and matches the site's own convention,
+     which is 761px in seventeen other places. */
+  const hasScrollRunway = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
   const cinematicMotion = hasScrollRunway && !prefersReducedMotion;
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
   const previousIndexRef = useRef(0);
