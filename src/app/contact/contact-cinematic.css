@@ -186,6 +186,34 @@
   filter: saturate(1.12) brightness(1.05);
 }
 
+/* The portrait hero crop drops the desktop ellipse scrim (see the
+   overlayGradientMobile handoff in the page) in favour of one even wash,
+   so the footage carries the phone frame. The glyphs then bring their own
+   contrast: a soft ink shadow does the localized scrim's job at letter
+   level, and the mobile plate takes a slightly stronger lift. */
+@media (max-width: 639px) {
+  [data-contact-film] .contact-hero-film video,
+  [data-contact-film] .contact-hero-film > img {
+    filter: saturate(1.16) brightness(1.12);
+  }
+
+  [data-contact-film] [data-contact-hero] h1,
+  [data-contact-film] [data-contact-hero-intro],
+  [data-contact-film] [data-contact-hero-trust],
+  [data-contact-film] [data-contact-hero-direct] {
+    text-shadow:
+      0 1px 22px rgba(23, 17, 10, 0.55),
+      0 1px 4px rgba(23, 17, 10, 0.4);
+  }
+}
+
+/* In the closing invitation the motes drift between the photographed
+   valley and the botanical frames, so the depth stack reads as air
+   between real layers rather than an effect on top of them. */
+[data-contact-film] [data-contact-gratitude] [data-contact-sundust] {
+  z-index: 0;
+}
+
 /* Sun dust. Two tiled layers of soft pollen motes rise at different speeds
    through the light chapters, so standing still the scene is already
    breathing. Transform-only tile loops; each layer's slack covers its own

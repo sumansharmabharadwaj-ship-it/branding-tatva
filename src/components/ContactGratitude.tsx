@@ -222,6 +222,14 @@ export function ContactGratitude() {
         <motion.path d={frameShape} fill="none" vectorEffect="non-scaling-stroke" className={styles.frameLine} style={{ pathLength: motionEnabled ? frameDraw : 1 }} />
       </svg>
 
+      {/* The same sun dust that drifts through the earlier chapters rises
+          here between the valley and the botanical frames (scoped z-index
+          in contact-cinematic.css keeps it beneath type and foliage). */}
+      <div data-contact-sundust aria-hidden="true">
+        <span />
+        <span />
+      </div>
+
       <motion.div aria-hidden="true" data-invitation-layer="foreground-pointer" className={styles.botanicalForeground} style={pointerEnabled ? { x: foregroundX, y: foregroundY } : { x: 0, y: 0 }}>
         <motion.div data-invitation-botany="left" className={`${styles.botanicalSide} ${styles.botanicalLeft}`} style={motionEnabled ? { x: botanicalLeftX, y: botanicalLeftY, scale: botanicalScale, rotate: botanicalLeftRotate, opacity: botanicalOpacity } : { x: "-78%", y: 32, scale: 1.15, rotate: -8, opacity: 0.76 }}>
           <Image src={botanicalImage} alt="" fill unoptimized className={styles.botanicalImage} sizes="40vw" />

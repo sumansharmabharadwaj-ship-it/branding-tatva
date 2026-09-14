@@ -96,6 +96,7 @@ export default function ContactPage() {
           playbackRate={0.84}
           className="contact-hero-film"
           overlayGradient="linear-gradient(180deg, rgba(43,32,20,0.08) 0%, rgba(43,32,20,0.18) 48%, rgba(38,28,18,0.54) 100%), radial-gradient(95% 85% at 12% 52%, rgba(40,29,18,0.58) 0%, rgba(40,29,18,0.3) 42%, rgba(40,29,18,0) 74%)"
+          overlayGradientMobile="linear-gradient(180deg, rgba(43,32,20,0.28) 0%, rgba(43,32,20,0.34) 55%, rgba(38,28,18,0.52) 100%)"
         >
           <div data-contact-hero-frame aria-hidden="true">
             <span />

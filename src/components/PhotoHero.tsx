@@ -49,6 +49,7 @@ export function PhotoHero({
   className,
   accentColor,
   overlayGradient = gradient,
+  overlayGradientMobile,
   playbackRate = 1,
 }: {
   children?: React.ReactNode;
@@ -65,6 +66,11 @@ export function PhotoHero({
   className?: string;
   accentColor?: string;
   overlayGradient?: string;
+  // A hero graded for a wide frame can over-veil the same footage's
+  // portrait crop, where one desktop scrim ends up covering the whole
+  // phone screen. When provided, this gradient replaces the desktop one
+  // below the sm breakpoint; every existing call site is untouched.
+  overlayGradientMobile?: string;
   playbackRate?: number;
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -136,7 +142,14 @@ export function PhotoHero({
             <source src={video} type="video/mp4" />
           </video>
           {accentWash}
-          <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          {overlayGradientMobile ? (
+            <>
+              <div className="absolute inset-0 hidden sm:block" style={{ backgroundImage: overlayGradient }} />
+              <div className="absolute inset-0 sm:hidden" style={{ backgroundImage: overlayGradientMobile }} />
+            </>
+          ) : (
+            <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          )}
         </>
       ) : (
         <>
@@ -147,7 +160,14 @@ export function PhotoHero({
             intensity="hero"
           />
           {accentWash}
-          <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          {overlayGradientMobile ? (
+            <>
+              <div className="absolute inset-0 hidden sm:block" style={{ backgroundImage: overlayGradient }} />
+              <div className="absolute inset-0 sm:hidden" style={{ backgroundImage: overlayGradientMobile }} />
+            </>
+          ) : (
+            <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          )}
         </>
       )}
       {children}
