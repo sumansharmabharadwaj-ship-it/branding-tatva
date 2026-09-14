@@ -14,6 +14,7 @@ import { customerJourneyInsightPosts } from "@/data/customerJourneyInsights";
 import { differentiationInsightPosts } from "@/data/differentiationInsights";
 import { distinctiveAssetInsightPosts } from "@/data/distinctiveAssetInsights";
 import { forgettableIdentityInsightPosts } from "@/data/forgettableIdentityInsights";
+import { founderBrandInsightPosts } from "@/data/founderBrandInsights";
 import { homepageMessagingInsightPosts } from "@/data/homepageMessagingInsights";
 import { interviewSynthesisInsightPosts } from "@/data/interviewSynthesisInsights";
 import { positioningStatementInsightPosts } from "@/data/positioningStatementInsights";
@@ -65,6 +66,7 @@ const combinedPosts = [
   ...caseStudyInsightPosts,
   ...testimonialEvidenceInsightPosts,
   ...aiEraInsightPosts,
+  ...founderBrandInsightPosts,
 ];
 
 const uniquePosts = combinedPosts.filter(
@@ -112,6 +114,7 @@ const relatedRegistrations = [
   { supportingSlug: "how-ai-assistants-choose-brands-to-recommend", pillarSlugs: ["brand-awareness-vs-brand-recall", "measure-brand-recall-limited-budget", "distinctive-brand-assets-audit"] },
   { supportingSlug: "why-ai-content-makes-brands-average", pillarSlugs: ["why-beautiful-brand-identity-can-be-forgettable", "brand-voice-guidelines-writers-can-use", "find-real-differentiator-crowded-service-market"] },
   { supportingSlug: "what-rebrand-backlashes-teach-about-brand-memory", pillarSlugs: ["brand-refresh-vs-rebrand-how-much-change", "reposition-established-service-business-without-losing-recognition", "brand-audit-checklist-before-rebrand"] },
+  { supportingSlug: "founder-brand-vs-company-brand", pillarSlugs: ["brand-architecture-service-businesses", "brand-positioning-strategy-service-businesses", "turn-client-proof-into-positioning-advantage"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {

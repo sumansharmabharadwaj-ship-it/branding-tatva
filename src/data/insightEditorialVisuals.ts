@@ -59,6 +59,14 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "image",
     aspectRatio: 990 / 334,
   },
+  "founder-brand-vs-company-brand": {
+    src: "/images/generated/insights-editorial/founder-company-ledger.png",
+    alt: "A two column ledger weighing the founder's name against the company's name, above the three shared cues that bridge them",
+    shortTitle: "Two names, one memory system",
+    description: "Decide which name the trust should accrue to.",
+    depthKind: "image",
+    aspectRatio: 990 / 296,
+  },
   "what-rebrand-backlashes-teach-about-brand-memory": {
     src: "/images/generated/insights-editorial/rebrand-change-budget.png",
     alt: "A cue ledger separating equity to conserve from debt to spend, above the sequence for changing an established brand",
