@@ -42,6 +42,10 @@ export const metadata: Metadata = {
     title: `Contact | ${site.name}`,
     description: "Schedule thirty minutes with Suman Sharma for a brand strategy consultation, call or WhatsApp directly, or send a written enquiry.",
     type: "website",
+    // A shared Contact link now carries the page's own sunlit closing frame
+    // instead of the generic site card — the first impression of the page
+    // arrives before the click. Cropped from the approved invitation still.
+    images: [{ url: "/images/generated/bt-contact-og.jpg", width: 1200, height: 630 }],
   },
 };
 
