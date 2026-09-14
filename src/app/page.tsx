@@ -27,6 +27,10 @@ import "./home-v4-forward-motion.css";
 import "./home-v4-scene-rhythm.css";
 import "./home-v4-evidence-scroll.css";
 import "./home-v4-studio-scroll.css";
+// The brand health check's stylesheet was orphaned alongside the component
+// itself: 127 .brand-orbit rules imported by nothing. Mounting the quiz
+// without this gives an unstyled chapter, so the two belong together.
+import "./home-v4-orbit-redesign.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";

@@ -16,7 +16,7 @@ const CHAPTER_SELECTOR = "[data-home-v4-chapter]";
    every later label onto the wrong scene, so they are kept in step.
    The compounding-cost entry sits third because that stack pins three
    cards in turn and needs a longer dwell than a single-frame scene. */
-const DWELL_MS = [4700, 4400, 4700, 5600, 5300, 4700, 4900, 5300, 4900, 4600, 4600, 5200];
+const DWELL_MS = [4700, 4400, 4700, 5600, 5300, 4700, 4900, 5300, 4900, 4600, 4600, 6000, 5200];
 const GUIDE_HINT_MS = 8200;
 const CHAPTER_NAMES = [
   "opening signal",
@@ -30,6 +30,7 @@ const CHAPTER_NAMES = [
   "tatva system",
   "studio",
   "decision",
+  "brand diagnostic",
   "invitation",
 ] as const;
 const TAB_STOP_SELECTOR = "a[href], button, input, select, textarea, [tabindex]";

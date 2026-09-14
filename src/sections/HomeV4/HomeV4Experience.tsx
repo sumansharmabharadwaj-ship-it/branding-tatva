@@ -6,6 +6,7 @@ import { BrandFoundationScene } from "@/sections/Home/BrandFoundationScene";
 import { EvidenceWall } from "@/sections/Home/EvidenceWall";
 import { FinalInvitation } from "@/sections/Home/FinalInvitation";
 import { HomePacingDirector } from "@/sections/Home/HomePacingDirector";
+import { HomeBrandHealthCheck } from "@/sections/Home/HomeBrandHealthCheck";
 import { HomeQuestionsScene } from "@/sections/Home/HomeQuestionsScene";
 import { PathsCinematicChapter } from "@/sections/Home/PathsCinematicChapter";
 import { StudioCinematicChapter } from "@/sections/Home/StudioCinematicChapter";
@@ -156,6 +157,21 @@ export function HomeV4Experience() {
       >
         <HomeQuestionsScene />
       </div>
+
+      <SceneHandoff motif="constellation" />
+
+      {/* The brand health check, back on the page. It was a complete,
+          working conversion feature sitting in the codebase imported by
+          nothing, so no visitor could reach it.
+          Placed here rather than earlier on purpose: the recognition
+          chapter near the top already asks the visitor to name their own
+          situation, so a self diagnostic up there would make the page
+          classify the same person twice. After the decision chapter it
+          is a verdict on what they have just been taught, and it hands
+          straight into the invitation.
+          It renders its own <section> with data-home-v4-chapter, so it
+          needs no wrapper; its stylesheet is imported in page.tsx. */}
+      <HomeBrandHealthCheck />
 
       <SceneHandoff motif="light" />
 

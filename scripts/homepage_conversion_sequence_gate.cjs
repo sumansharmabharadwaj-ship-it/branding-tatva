@@ -30,6 +30,7 @@ const sequence = [
   'id="tatva"',
   'data-home-v4-chapter="studio"',
   'id="decision"',
+  "<HomeBrandHealthCheck />",
   'id="invitation"',
 ];
 
@@ -40,12 +41,13 @@ for (const marker of sequence) {
   previous = index;
 }
 
-// One handoff per chapter transition. The compounding-cost stack added a
-// twelfth chapter between the hidden cost scene and the foundation, so
-// there are eleven transitions to cover rather than ten. The invariant is
+// One handoff per chapter transition. Two chapters have been added since
+// this was ten: the compounding-cost stack between the hidden cost scene
+// and the foundation, and the brand health check between decision and
+// invitation. Thirteen chapters means twelve transitions. The invariant is
 // unchanged; only the chapter count moved.
 assert(
-  (experience.match(/<SceneHandoff motif=/g) || []).length === 11,
+  (experience.match(/<SceneHandoff motif=/g) || []).length === 12,
   "Every homepage chapter transition must keep one quiet handoff.",
 );
 for (const runtime of [
@@ -188,4 +190,4 @@ assert(
   "The browser-zoom opening must reflow past clipped cinematic spacing.",
 );
 
-console.log("Homepage source gate passed: twelve ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");
+console.log("Homepage source gate passed: thirteen ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");
