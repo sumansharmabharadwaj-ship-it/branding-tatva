@@ -48,7 +48,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
 
   useEffect(() => {
-    if (pathname === "/contact" || !hydrated || !prefersReducedMotion || !window.location.hash) return;
+    // Home owns hydration-only fragment recovery in HomeV4ScrollCamera.
+    // Replaying this fallback on pause fights its reading-position correction.
+    if (pathname === "/" || pathname === "/contact" || !hydrated || !prefersReducedMotion || !window.location.hash) return;
 
     let cancelled = false;
     let attempts = 0;

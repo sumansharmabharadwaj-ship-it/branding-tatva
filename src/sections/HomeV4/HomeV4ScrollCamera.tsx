@@ -273,7 +273,7 @@ export function HomeV4ScrollCamera() {
       hashAttempts += 1;
       window.scrollTo({
         top: Math.max(0, window.scrollY + top),
-        behavior: "auto",
+        behavior: "instant",
       });
 
       if (hashAttempts < 6 && !hashCancelled) {
