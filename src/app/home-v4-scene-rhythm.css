@@ -11,6 +11,75 @@ html.home-v4-mounted [data-home-motion-layer] {
    The director changes transforms, never the heading's formatting context. */
 .home-v4 h2 em { display: inline-block; }
 
+/* Ink follows the reading position, sharing the scene director's existing RAF.
+   Opaque earth tones keep every word readable throughout the sweep. The
+   original color remains the fallback if text clipping is unavailable. */
+html.home-v4-mounted .home-v4 [data-scroll-ink] {
+  --ink-rest: #805239;
+  --ink-light: #342f27;
+  position: relative;
+}
+html.home-v4-mounted .home-v4 h2[data-scroll-ink="clay"] {
+  --ink-rest: #342f27;
+  --ink-light: #805239;
+}
+html.home-v4-mounted .home-v4 [data-scroll-ink="sand"] {
+  --ink-rest: #d4b99a;
+  --ink-light: #fff8eb;
+}
+html.home-v4-mounted .home-v4 h2[data-scroll-ink="sand"] {
+  --ink-rest: #f4efe6;
+  --ink-light: #c6a97a;
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  html.home-v4-mounted .home-v4 [data-scroll-ink] {
+    /* This explicit motion owner supersedes the older looping ink skins. */
+    background-image: linear-gradient(105deg,
+      var(--ink-rest) 34%, var(--ink-light) 50%, var(--ink-rest) 66%) !important;
+    background-size: 260% 100% !important;
+    background-position: calc(100% - var(--ink-progress, 1) * 100%) 50% !important;
+    background-repeat: no-repeat !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent;
+    animation: none !important;
+    filter: none !important;
+  }
+}
+html.home-v4-mounted .home-v4 [data-scroll-ink]::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: -.13em;
+  width: min(6rem, 32%);
+  height: 2px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--ink-rest), var(--ink-light));
+  opacity: .65;
+  transform: scaleX(var(--ink-progress, 1));
+  transform-origin: left center;
+  pointer-events: none;
+}
+/* Selection, system contrast and either motion preference retain native ink.
+   None of these fallbacks changes line wrapping or the surrounding layout. */
+html.home-v4-mounted .home-v4 [data-scroll-ink]::selection {
+  -webkit-text-fill-color: currentColor;
+}
+html[data-motion="reduced"].home-v4-mounted .home-v4 [data-scroll-ink] {
+  -webkit-text-fill-color: currentColor;
+  background-image: none !important;
+}
+html[data-motion="reduced"].home-v4-mounted .home-v4 [data-scroll-ink]::after {
+  content: none;
+}
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  html.home-v4-mounted .home-v4 [data-scroll-ink] {
+    -webkit-text-fill-color: currentColor;
+    background-image: none !important;
+  }
+  html.home-v4-mounted .home-v4 [data-scroll-ink]::after { content: none; }
+}
+
 /* Keep the actual hit target still as soon as a visitor starts interacting. */
 html.home-v4-mounted [data-home-motion-layer]:is(:focus-within, :focus-visible) {
   translate: none;

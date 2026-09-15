@@ -6,7 +6,7 @@ import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
 type Treatment = "title" | "heading" | "fan" | "plate" | "portrait" | "row" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
-type SceneSpec = { selector: string; layers: readonly LayerSpec[] };
+type SceneSpec = { selector: string; ink?: "clay" | "sand"; layers: readonly LayerSpec[] };
 
 // Stable semantic hooks keep CSS-module names and the scenes' tab state private.
 // Each plate settles before its reading interval. Existing sticky stories retain
@@ -15,42 +15,42 @@ const SCENES: readonly SceneSpec[] = [
   { selector: '[data-home-v4-chapter="opening"]', layers: [
     [".home-v4-opening__proof", "plate"],
   ] },
-  { selector: '[data-home-v4-chapter="recognition"]', layers: [
+  { selector: '[data-home-v4-chapter="recognition"]', ink: "clay", layers: [
     [".home-v4-recognition__header > div", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '[data-home-v4-chapter="cost"]', layers: [
+  { selector: '[data-home-v4-chapter="cost"]', ink: "clay", layers: [
     ["header > div:first-child", "heading"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
   ] },
-  { selector: '[data-home-v4-chapter="cost-stack"]', layers: [
+  { selector: '[data-home-v4-chapter="cost-stack"]', ink: "sand", layers: [
     ["[data-cost-intro]", "heading"],
   ] },
-  { selector: '[data-scroll-story="foundation"]', layers: [
+  { selector: '[data-scroll-story="foundation"]', ink: "clay", layers: [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '[data-scroll-story="paths"]', layers: [
+  { selector: '[data-scroll-story="paths"]', ink: "clay", layers: [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '[data-scroll-story="process"]', layers: [
+  { selector: '[data-scroll-story="process"]', ink: "clay", layers: [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '[data-home-v4-chapter="evidence"]', layers: [
+  { selector: '[data-home-v4-chapter="evidence"]', ink: "sand", layers: [
     [".evidence-cinematic__header", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '.tatva-observatory', layers: [
+  { selector: '.tatva-observatory', ink: "sand", layers: [
     [".tatva-observatory__copy", "heading"], [".tatva-observatory__force", "fan"],
   ] },
-  { selector: '.tatva-pressure-lab', layers: [
+  { selector: '.tatva-pressure-lab', ink: "sand", layers: [
     [".tatva-pressure-lab__copy", "heading"], [".tatva-pressure-lab__board", "plate"],
   ] },
-  { selector: '.studio-cinematic', layers: [
+  { selector: '.studio-cinematic', ink: "sand", layers: [
     // One reading column preserves the title/intro and proof/footer gaps.
     // Its own discipline transition stays inside this shared entrance.
     [".studio-cinematic__content", "heading"], [".studio-cinematic__portrait", "portrait"],
   ] },
-  { selector: '[data-home-v4-chapter="decision"]', layers: [
+  { selector: '[data-home-v4-chapter="decision"]', ink: "clay", layers: [
     ["header", "heading"], ["[data-open]", "row"],
   ] },
-  { selector: '[data-home-v4-chapter="invitation"]', layers: [
+  { selector: '[data-home-v4-chapter="invitation"]', ink: "clay", layers: [
     ["[data-invitation-copy]", "heading"], ["aside", "plate"],
   ] },
   { selector: '[data-home-v4-chapter="diagnostic"]', layers: [
@@ -82,11 +82,19 @@ export function HomeV4SceneRhythm() {
           side: sceneIndex % 2 ? 1 : -1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
         }));
       });
-      return [{ element, layers, active: true }];
+      // Paint the original semantic text. No split words, duplicate accessible
+      // names or formatting changes: wrapping and selection stay browser owned.
+      const ink = spec.ink ? Array.from(element.querySelectorAll<HTMLElement>("h2")).map((heading) => ({
+        heading,
+        node: heading.querySelector<HTMLElement>("em") ?? heading,
+        layer: layers.find(({ node }) => node === heading || node.contains(heading)),
+        tone: spec.ink!, progress: 0, last: "",
+      })) : [];
+      return [{ element, layers, ink, active: true }];
     });
     const footerTitle = document.querySelector<HTMLElement>("footer h2");
     // The footer title is a separate reading beat, scoped to the mounted home.
-    if (footerTitle) scenes.push({ element: footerTitle.parentElement!, active: true, layers: [{
+    if (footerTitle) scenes.push({ element: footerTitle.parentElement!, active: true, ink: [], layers: [{
       node: footerTitle, treatment: "title", index: 0, spread: 0, side: 1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
     }] });
 
@@ -102,6 +110,13 @@ export function HomeV4SceneRhythm() {
       // Finish all reads before writes, including compact per-element geometry.
       const measurements = scenes.filter((scene) => scene.active || scene.element.contains(focused)).map((scene) => ({
         scene, top: scene.element.getBoundingClientRect().top,
+        ink: scene.ink.map((text) => {
+          const rect = text.heading.getBoundingClientRect();
+          // Subtract our reading group's entrance so paint never feeds back
+          // into its own progress. Sticky headings retain their local position.
+          return { text, top: rect.top - (text.layer?.appliedY ?? 0), height: rect.height,
+            visible: rect.bottom > 0 && rect.top < viewport };
+        }),
         layers: scene.layers.map((layer) => ({
           layer,
           top: wide ? 0 : layer.node.getBoundingClientRect().top - layer.appliedY,
@@ -109,7 +124,7 @@ export function HomeV4SceneRhythm() {
         })),
       }));
 
-      measurements.forEach(({ scene, top, layers }) => {
+      measurements.forEach(({ top, layers, ink }) => {
         const entering = 1 - ease((viewport * 0.96 - top) / (viewport * 0.74));
         layers.forEach(({ layer, top: layerTop, focused: hasFocus }) => {
           const { node, treatment, index, spread, side } = layer;
@@ -179,6 +194,20 @@ export function HomeV4SceneRhythm() {
           node.style.setProperty("--scene-turn", `${rotate.toFixed(3)}deg`);
           node.style.setProperty("--scene-scale", scale.toFixed(4));
         });
+        ink.forEach(({ text, top: textTop, height, visible }) => {
+          if (!visible) return;
+          // The sweep completes in the reading zone and reverses with native
+          // scroll. Pausing scroll also pauses the ink after a short settle.
+          const target = ease((viewport * 0.94 - textTop) / Math.max(viewport * 0.62, height + viewport * 0.16));
+          const next = text.last ? text.progress + (target - text.progress) * damping : target;
+          text.progress = Math.abs(target - next) < 0.001 ? target : next;
+          if (text.progress !== target) settling = true;
+          const value = text.progress.toFixed(3);
+          if (text.last === value) return;
+          text.last = value;
+          text.node.dataset.scrollInk = text.tone;
+          text.node.style.setProperty("--ink-progress", value);
+        });
       });
       if (settling) schedule();
     }
@@ -222,8 +251,12 @@ export function HomeV4SceneRhythm() {
       document.removeEventListener("visibilitychange", schedule);
       desktop.removeEventListener("change", schedule);
       delete root.dataset.sceneChoreography;
-      scenes.forEach(({ element, layers }) => {
+      scenes.forEach(({ element, layers, ink }) => {
         delete element.dataset.homeMotionScene;
+        ink.forEach(({ node }) => {
+          delete node.dataset.scrollInk;
+          node.style.removeProperty("--ink-progress");
+        });
         layers.forEach(({ node }) => {
           delete node.dataset.homeMotionLayer;
           ["--scene-x", "--scene-y", "--scene-turn", "--scene-scale"].forEach((property) => node.style.removeProperty(property));
