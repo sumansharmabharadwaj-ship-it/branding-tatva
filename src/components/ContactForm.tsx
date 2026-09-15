@@ -244,6 +244,7 @@ export function ContactForm() {
   // optional details stay one click away rather than gone, so a
   // visitor who wants to say more still can.
   const [showMore, setShowMore] = useState(false);
+  const pendingOptionalFocusRef = useRef<Path<ContactFormValues> | null>(null);
   const [activeRequiredField, setActiveRequiredField] = useState<RequiredContactField | null>(null);
   const hasDraft = draftStatus !== "empty";
   const draftStatusCopy =
@@ -292,6 +293,8 @@ export function ContactForm() {
   }
 
   function handleRequiredFieldFocus(event: FocusEvent<HTMLFormElement>) {
+    // A visitor who moves to another control owns focus from that point.
+    pendingOptionalFocusRef.current = null;
     const target = event.target;
     const fieldName =
       target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement
@@ -306,6 +309,7 @@ export function ContactForm() {
 
   function handleRequiredFieldBlur(event: FocusEvent<HTMLFormElement>) {
     if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      pendingOptionalFocusRef.current = null;
       setActiveRequiredField(null);
     }
   }
@@ -510,11 +514,21 @@ export function ContactForm() {
     };
 
     if (!REQUIRED_FIELD_NAMES.has(firstInvalidField.name) && !showMore) {
+      // Wait for the disclosure to expose the field. Two animation frames
+      // could focus inside a panel that was still clipped to a few pixels.
+      pendingOptionalFocusRef.current = firstInvalidField.name;
       setShowMore(true);
-      window.requestAnimationFrame(() => window.requestAnimationFrame(focusControl));
       return;
     }
     focusControl();
+  }
+
+  function finishOptionalReveal() {
+    const field = pendingOptionalFocusRef.current;
+    if (!showMore || !field) return;
+    pendingOptionalFocusRef.current = null;
+    const control = formRef.current?.elements.namedItem(field);
+    if (control instanceof HTMLElement) control.focus();
   }
 
   function startAnotherNote() {
@@ -531,6 +545,7 @@ export function ContactForm() {
     reset(emptyContactFormValues(servicePackage ?? undefined));
     setDraftStatus("empty");
     setShowMore(false);
+    pendingOptionalFocusRef.current = null;
     setServerError(null);
     setServerRequestId(null);
     setReceiptEmail(null);
@@ -853,9 +868,9 @@ export function ContactForm() {
           data-active={activeRequiredField === "name" ? "true" : undefined}
           data-complete={requiredDetailChecks[0] ? "true" : undefined}
           className={cn(
-            "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow,transform] duration-500 ease-earth",
+            "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow] duration-500 ease-earth",
             activeRequiredField === "name" &&
-              "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)] sm:-translate-y-0.5",
+              "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)]",
           )}
         >
           <Field label="01 Your name" error={errors.name?.message}>
@@ -878,9 +893,9 @@ export function ContactForm() {
           data-active={activeRequiredField === "email" ? "true" : undefined}
           data-complete={requiredDetailChecks[1] ? "true" : undefined}
           className={cn(
-            "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow,transform] duration-500 ease-earth",
+            "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow] duration-500 ease-earth",
             activeRequiredField === "email" &&
-              "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)] sm:-translate-y-0.5",
+              "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)]",
           )}
         >
           <Field label="02 Your email" error={errors.email?.message}>
@@ -910,9 +925,9 @@ export function ContactForm() {
         data-active={activeRequiredField === "description" ? "true" : undefined}
         data-complete={requiredDetailChecks[2] ? "true" : undefined}
         className={cn(
-          "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow,transform] duration-500 ease-earth",
+          "-m-2 rounded-[1.2rem] p-2 transition-[background-color,box-shadow] duration-500 ease-earth",
           activeRequiredField === "description" &&
-            "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)] sm:-translate-y-0.5",
+            "bg-white/36 shadow-[0_14px_38px_rgba(104,75,49,0.06)]",
         )}
       >
         <Field
@@ -939,7 +954,10 @@ export function ContactForm() {
           type="button"
           aria-expanded={showMore}
           aria-controls="contact-more"
-          onClick={() => setShowMore((v) => !v)}
+          onClick={() => {
+            pendingOptionalFocusRef.current = null;
+            setShowMore((v) => !v);
+          }}
           data-cursor-label={showMore ? "Close details" : "Add details"}
           className="group flex min-h-14 w-full items-center justify-between gap-4 rounded-xl py-2 text-left text-clay transition-colors duration-300 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay"
         >
@@ -965,7 +983,11 @@ export function ContactForm() {
           aria-hidden={!showMore}
           initial={false}
           animate={{ height: showMore ? "auto" : 0, opacity: showMore ? 1 : 0 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: EASE_AIR }}
+          transition={{
+            height: { duration: prefersReducedMotion ? 0 : 0.45, ease: EASE_AIR },
+            opacity: { duration: prefersReducedMotion ? 0 : showMore ? 0.2 : 0.12, ease: EASE_AIR },
+          }}
+          onAnimationComplete={finishOptionalReveal}
           className="-mx-2 overflow-hidden px-2"
         >
           <div className="space-y-7 pb-2 pt-5">
@@ -1243,15 +1265,18 @@ function Field({
     .join(" ") || undefined;
 
   return (
-    <label className="block min-w-0 text-xs font-medium uppercase tracking-wide text-foreground-secondary">
+    <label data-contact-field className="block min-w-0 text-xs font-medium uppercase tracking-wide text-foreground-secondary">
       {label}
-      {isValidElement(children)
-        ? cloneElement(children, {
-            "aria-invalid": Boolean(error),
-            "aria-describedby": describedBy,
-            "aria-errormessage": error ? errorId : undefined,
-          })
-        : children}
+      <span data-contact-field-control>
+        {isValidElement(children)
+          ? cloneElement(children, {
+              "aria-invalid": Boolean(error),
+              "aria-describedby": describedBy,
+              "aria-errormessage": error ? errorId : undefined,
+            })
+          : children}
+        <span data-contact-field-ink aria-hidden="true" />
+      </span>
       {hint ? (
         <span id={hintId} className="mt-1.5 block text-xs font-normal normal-case leading-relaxed tracking-normal text-soil/52">
           {hint}

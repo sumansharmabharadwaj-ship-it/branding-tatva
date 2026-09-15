@@ -168,6 +168,47 @@
   transition: border-color 0.42s ease, box-shadow 0.42s ease, background-color 0.42s ease;
 }
 
+/* Ink moves along the writing baseline while the input and caret stay still.
+   The same focus response carries into the optional context fields. */
+[data-contact-film] [data-contact-field-control] {
+  position: relative;
+  display: block;
+}
+[data-contact-film] [data-contact-field-control] > :is(input, textarea, select) {
+  display: block;
+}
+[data-contact-film] [data-contact-field-ink] {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, #a3674a, #c6a97a 76%, #c6a97a44);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease;
+}
+[data-contact-film] [data-contact-required-field][data-complete="true"] [data-contact-field-ink] {
+  opacity: 0.4;
+  transform: scaleX(1);
+}
+[data-contact-film] [data-contact-field-control]:focus-within > [data-contact-field-ink] {
+  opacity: 0.9;
+  transform: scaleX(1);
+}
+[data-contact-film] [data-contact-field-control]:has(> [aria-invalid="true"]) > [data-contact-field-ink] {
+  background: var(--color-state-error, #a5433d);
+  opacity: 0.8;
+  transform: scaleX(1);
+}
+html[data-motion="reduced"] [data-contact-film] [data-contact-field-ink] {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-contact-film] [data-contact-field-ink] { transition: none; }
+}
+
 [data-contact-film] [data-contact-form-completion="3"] [data-contact-form-progress] {
   border-color: rgba(163, 103, 74, 0.22);
   background-color: rgba(255, 255, 255, 0.4);

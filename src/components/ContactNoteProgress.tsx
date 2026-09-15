@@ -1,6 +1,5 @@
 "use client";
 
-import { useId } from "react";
 import { motion } from "framer-motion";
 import { EASE_AIR } from "@/lib/motion";
 import { cn } from "@/lib/utils";
@@ -28,7 +27,6 @@ export function ContactNoteProgress({
   reducedMotion: boolean;
   onSelect: (field: NoteField) => void;
 }) {
-  const id = useId();
   const complete = checks.filter(Boolean).length;
   const duration = reducedMotion ? 0 : 0.4;
 
@@ -58,7 +56,7 @@ export function ContactNoteProgress({
           const active = activeField === field;
           const ready = checks[index];
           return (
-            <motion.button
+            <button
               key={field}
               type="button"
               onClick={() => onSelect(field)}
@@ -67,23 +65,20 @@ export function ContactNoteProgress({
               aria-current={active ? "step" : undefined}
               data-contact-note-step={field}
               data-complete={ready ? "true" : "false"}
-              whileHover={reducedMotion || submitting ? undefined : { y: -2 }}
-              whileTap={reducedMotion || submitting ? undefined : { scale: 0.97 }}
-              transition={{ duration: reducedMotion ? 0 : 0.2 }}
               className={cn(
                 "relative flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1.5 py-1.5 text-soil/65 outline-offset-2 hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-clay disabled:cursor-wait sm:min-h-12 sm:flex-row sm:gap-2.5",
                 active && "text-soil",
                 ready && "text-clay",
               )}
             >
-              {active ? (
-                <motion.span
-                  layoutId={`${id}-field`}
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 rounded-xl border border-clay/20 bg-gradient-to-br from-white/65 to-clay/10 shadow-[0_4px_16px_rgba(104,75,49,0.06)]"
-                  transition={{ duration, ease: EASE_AIR }}
-                />
-              ) : null}
+              <motion.span
+                aria-hidden="true"
+                data-contact-note-wash
+                className="pointer-events-none absolute inset-0 rounded-xl border border-clay/20 bg-gradient-to-br from-white/65 to-clay/10 shadow-[0_4px_16px_rgba(104,75,49,0.06)]"
+                initial={false}
+                animate={{ opacity: active ? 1 : 0 }}
+                transition={{ duration, ease: EASE_AIR }}
+              />
               <span aria-hidden="true" className="relative grid h-5 w-5 shrink-0 place-items-center">
                 <motion.span
                   className="font-display text-xl leading-none"
@@ -109,12 +104,13 @@ export function ContactNoteProgress({
               <span className="relative text-[0.68rem] font-medium tracking-[0.03em]">{label}</span>
               <motion.span
                 aria-hidden="true"
+                data-contact-note-ink
                 className="pointer-events-none absolute inset-x-3 bottom-0 h-px origin-left bg-clay/55"
                 initial={false}
-                animate={{ scaleX: ready || active ? 1 : 0 }}
+                animate={{ scaleX: ready ? 1 : active ? 0.32 : 0, opacity: ready ? 1 : 0.5 }}
                 transition={{ duration, ease: EASE_AIR }}
               />
-            </motion.button>
+            </button>
           );
         })}
       </div>
