@@ -217,6 +217,96 @@
   z-index: 0;
 }
 
+/* Living ground. Beneath the dust, two broad fields of colour wander the
+   light chapters on minute long paths — morning gold from one corner, a
+   cool sage answer from the other — so the wash behind the glass is never
+   a still gradient. Transform only, both layers overscanned past every
+   edge their drift can reach. */
+[data-contact-film] [data-contact-ambient] {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+[data-contact-film] [data-contact-ambient] > span {
+  position: absolute;
+  inset: -34%;
+  will-change: transform;
+}
+
+[data-contact-film] [data-contact-ambient] > span:first-child {
+  opacity: 0.5;
+  background: radial-gradient(
+    42% 38% at 26% 30%,
+    rgba(255, 220, 158, 0.34) 0%,
+    rgba(255, 220, 158, 0.1) 52%,
+    transparent 74%
+  );
+  animation: contact-ambient-gold 52s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+[data-contact-film] [data-contact-ambient] > span:last-child {
+  opacity: 0.4;
+  background: radial-gradient(
+    46% 40% at 74% 72%,
+    rgba(143, 174, 131, 0.26) 0%,
+    rgba(143, 174, 131, 0.08) 50%,
+    transparent 72%
+  );
+  animation: contact-ambient-sage 67s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+@keyframes contact-ambient-gold {
+  from {
+    transform: translate3d(-4%, -3%, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(6%, 5%, 0) scale(1.14);
+  }
+}
+
+@keyframes contact-ambient-sage {
+  from {
+    transform: translate3d(5%, 4%, 0) scale(1.1);
+  }
+
+  to {
+    transform: translate3d(-5%, -4%, 0) scale(0.98);
+  }
+}
+
+/* Chapter jumps glide instead of teleporting. Scoped to the snap state so
+   this never reaches routes where Lenis owns easing; inline behavior on the
+   runtime's own corrective scrolls still overrides it. */
+html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
+  scroll-behavior: smooth;
+}
+
+/* The two quiet anchors of each decision surface breathe at rest: the
+   calendar seal on the booking card and the active route's icon lift and
+   settle on a slow tide, so the click targets read as alive rather than
+   printed. */
+[data-contact-film] [data-contact-booking-header] > span {
+  animation: contact-anchor-breathe 7.5s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+[data-contact-film] [data-contact-pathway-tabs] > button[aria-selected="true"] [data-contact-pathway-tab-icon] {
+  animation: contact-anchor-breathe 6.5s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+@keyframes contact-anchor-breathe {
+  from {
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    transform: translateY(-2px) scale(1.04);
+  }
+}
+
 /* Sun dust. Two tiled layers of soft pollen motes rise at different speeds
    through the light chapters, so standing still the scene is already
    breathing. Transform-only tile loops; each layer's slack covers its own
@@ -1814,6 +1904,9 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-scene-heading] {
 }
 
 html[data-motion="reduced"] [data-contact-film] [data-contact-sundust] > span,
+html[data-motion="reduced"] [data-contact-film] [data-contact-ambient] > span,
+html[data-motion="reduced"] [data-contact-film] [data-contact-booking-header] > span,
+html[data-motion="reduced"] [data-contact-film] [data-contact-pathway-tab-icon],
 html[data-motion="reduced"] [data-contact-film] [data-contact-hero-sun] {
   animation: none !important;
   transform: none !important;
@@ -1944,6 +2037,9 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   [data-contact-film] [data-contact-hero-light-open],
   [data-contact-film] [data-contact-hero-sun],
   [data-contact-film] [data-contact-sundust] > span,
+  [data-contact-film] [data-contact-ambient] > span,
+  [data-contact-film] [data-contact-booking-header] > span,
+  [data-contact-film] [data-contact-pathway-tab-icon],
   [data-contact-film] [data-contact-pathway-shot]::after {
     animation: none !important;
     transform: none !important;

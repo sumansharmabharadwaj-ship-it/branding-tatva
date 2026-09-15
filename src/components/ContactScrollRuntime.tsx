@@ -42,6 +42,8 @@ export function ContactScrollRuntime() {
     let hashCancelled = false;
     let hashFrame = 0;
     let hashTimer = 0;
+    let hashLastScrollY = -1;
+    let hashMotionWaits = 0;
 
     const syncFormOwnership = () => {
       const formCard = contactFilm.querySelector<HTMLElement>("[data-contact-form-card]");
@@ -93,7 +95,11 @@ export function ContactScrollRuntime() {
       const firstSceneTop = scenes[0].offsetTop;
       const lastScene = scenes[scenes.length - 1];
       const releasePoint = lastScene.offsetTop + lastScene.offsetHeight - viewportHeight * 0.5;
-      const insideFilm = window.scrollY >= firstSceneTop - 2 && window.scrollY < releasePoint;
+      // Anchor landings sit up to the scenes' scroll margin (8px) above the
+      // frame boundary, so the entry threshold absorbs it — otherwise a
+      // visitor arriving via #choose sits just outside the film and neither
+      // snap nor the smooth chapter glide engages until they nudge scroll.
+      const insideFilm = window.scrollY >= firstSceneTop - 12 && window.scrollY < releasePoint;
 
       if (insideFilm && root.dataset.contactFilmSnap !== "true") {
         root.dataset.contactFilmSnap = "true";
@@ -135,6 +141,20 @@ export function ContactScrollRuntime() {
       const target = resolveHashTarget();
       if (!target) return;
 
+      // A chapter glide may still be in flight — the film scrolls smoothly
+      // between anchors now — and correcting mid flight with an auto scroll
+      // would teleport straight through the animation. While the viewport is
+      // still moving, wait; recovery only measures once the scroll has
+      // settled. The wait has its own cap so a runaway animation can never
+      // pin recovery forever.
+      const currentScrollY = window.scrollY;
+      if (Math.abs(currentScrollY - hashLastScrollY) > 2 && hashMotionWaits < 24) {
+        hashLastScrollY = currentScrollY;
+        hashMotionWaits += 1;
+        hashTimer = window.setTimeout(recoverHash, 180);
+        return;
+      }
+
       const top = target.getBoundingClientRect().top;
       const scrollMarginTop = Number.parseFloat(
         window.getComputedStyle(target).scrollMarginTop,
@@ -163,6 +183,8 @@ export function ContactScrollRuntime() {
 
     function restartHashRecovery() {
       hashAttempts = 0;
+      hashLastScrollY = -1;
+      hashMotionWaits = 0;
       hashCancelled = false;
       window.clearTimeout(hashTimer);
       window.cancelAnimationFrame(hashFrame);

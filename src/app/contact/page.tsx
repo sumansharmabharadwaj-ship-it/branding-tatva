@@ -242,6 +242,10 @@ export default function ContactPage() {
                     "radial-gradient(120% 92% at 6% 46%, rgba(240,230,212,0.92) 0%, rgba(240,230,212,0.56) 36%, rgba(240,230,212,0) 68%), radial-gradient(70% 55% at 82% 8%, rgba(255,226,178,0.3) 0%, rgba(255,226,178,0.1) 45%, rgba(255,226,178,0) 72%), linear-gradient(110deg, rgba(240,230,212,0.4) 0%, rgba(238,230,216,0.24) 55%, rgba(226,228,214,0.18) 100%)",
                 }}
               />
+              <div data-contact-ambient aria-hidden="true">
+                <span />
+                <span />
+              </div>
               <div data-contact-sundust aria-hidden="true">
                 <span />
                 <span />
@@ -290,6 +294,10 @@ export default function ContactPage() {
                     "radial-gradient(120% 95% at 5% 44%, rgba(238,233,219,0.93) 0%, rgba(238,233,219,0.56) 34%, rgba(238,233,219,0) 66%), radial-gradient(62% 52% at 88% 78%, rgba(255,218,166,0.26) 0%, rgba(255,218,166,0.08) 46%, rgba(255,218,166,0) 70%), linear-gradient(100deg, rgba(238,233,219,0.4) 0%, rgba(234,230,218,0.24) 48%, rgba(222,226,214,0.16) 100%)",
                 }}
               />
+              <div data-contact-ambient aria-hidden="true">
+                <span />
+                <span />
+              </div>
               <div data-contact-sundust aria-hidden="true">
                 <span />
                 <span />
@@ -384,6 +392,10 @@ export default function ContactPage() {
                     "radial-gradient(115% 92% at 8% 46%, rgba(236,229,214,0.92) 0%, rgba(236,229,214,0.55) 38%, rgba(236,229,214,0) 68%), radial-gradient(66% 54% at 86% 12%, rgba(255,228,182,0.3) 0%, rgba(255,228,182,0.1) 44%, rgba(255,228,182,0) 70%), linear-gradient(105deg, rgba(236,229,214,0.36) 0%, rgba(234,227,212,0.22) 48%, rgba(230,226,212,0.16) 100%)",
                 }}
               />
+              <div data-contact-ambient aria-hidden="true">
+                <span />
+                <span />
+              </div>
               <div data-contact-sundust aria-hidden="true">
                 <span />
                 <span />
