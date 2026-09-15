@@ -50,3 +50,47 @@ sign-in. No old-page screenshot is evidence for release 299. When review
 access is available, check forward and reverse scrolling through all three
 disciplines, click and keyboard selection without document jumps, a focused
 proof link during scroll, and mobile/short-screen/reduced-motion flow.
+
+## Release 300 hosted follow-up
+
+The reading-group refinement at `fa3ff6ab95aa40c41a814cd5aa4ed27ba29194ab`
+keeps the cost introduction, both Tatva copy columns and the complete Studio
+reading column together during entry. Independent portrait, diagram, card and
+discipline motion remains. The unused nested accent motion was removed.
+
+Release 300 is READY at
+`https://branding-tatva-9tn3ucrdc-suman22.vercel.app/#studio`.
+Its `/api/release` endpoint returned HTTP 200 with trigger
+`b20edf58532c3ebec9800eddef011a22fba4b304`, branch `august-8-isolated`, and
+environment `preview`. The controlled deployment workflow `34995019976`,
+homepage workflow `34995019799`, and Contact workflow `34995019964` passed.
+TypeScript, changed-file ESLint, homepage source/rendered gates, type floor and
+the 86-route production build also passed locally.
+
+Temporary review access succeeded for this deployment. Desktop, mobile and
+short-screen acceptance therefore covers the release 299 Studio changes too:
+
+- At 1363 × 936, Studio measures 2246.39px with a 936px sticky frame and a
+  `held` story. The previous zero-length scroll interval is restored.
+- At a 536.30px section entrance, the unfocused reading group was moving by
+  18.62px while preserving a 14.39px headline/intro gap and a 16px panel/footer
+  gap. The old page at the equivalent entrance overlapped those pairs.
+- Real scrolling reversed the selected discipline through 03, 02 and 01.
+- Native pointer selection and Home, ArrowRight and End keys kept scrollY
+  exactly 16359 while selecting Psychology, Literature and Strategy. Native
+  events isolated application behavior from locator-assisted scrolling.
+- Keyboard focus reached the HerbalCart proof link. A further 900px scroll
+  preserved both focus and that destination while Psychology stayed selected.
+- At 390 × 844, content and scroll widths were both 375px. Studio uses normal
+  flow, with a 20.80px headline/intro gap and a 24.80px panel/footer gap.
+  Literature and Strategy choices update their corresponding proof links.
+- Pausing page motion clears the reading-column translation and portrait
+  transform; tab choices remain functional. Full motion was restored.
+- At 1280 × 720, the natural frame grows to 949.45px in normal flow, keeping
+  the entire reading column reachable. Content and scroll widths are 1265px.
+- At 320 × 720, content and scroll widths are 305px, the headline/intro gap
+  remains 20.80px, and no Studio link or button extends outside the viewport.
+
+The protected responsive QA route needed its own freshly generated official
+review link. After that, the mobile, laptop and narrow presets opened within
+the same tab. Review tokens are deliberately omitted from this record.
