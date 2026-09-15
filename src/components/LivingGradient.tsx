@@ -86,6 +86,8 @@ export type LivingGradientProps = {
   preset?: LivingGradientPreset;
   /** Drop the light shaft on fields where a sweep would fight the content. */
   shaft?: boolean;
+  /** Scroll drawn contours, enabled only by the homepage director. */
+  contours?: boolean;
   /** Override the preset's grain, 0 to disable. */
   grain?: number;
   /**
@@ -114,6 +116,7 @@ export type LivingGradientProps = {
 export function LivingGradient({
   preset = "canopy",
   shaft = true,
+  contours = false,
   grain,
   plain = false,
   opacity,
@@ -129,6 +132,7 @@ export function LivingGradient({
     "--lg-c": field.c,
     "--lg-light": field.light,
     "--lg-grain": grainAmount,
+    "--lg-ink": field.carries === "soil" ? "#6F4E37" : "#C6A97A",
     ...(opacity === undefined ? null : { opacity }),
   } as CSSProperties;
 
@@ -145,6 +149,18 @@ export function LivingGradient({
       <div data-gradient-layer="far" className={`${styles.blob} ${styles.blobB}`} />
       <div data-gradient-layer="ground" className={`${styles.blob} ${styles.blobC}`} />
       {shaft ? <div data-gradient-layer="light" className={styles.shaft} /> : null}
+      {contours ? (
+        <>
+          <div className="home-v4-current">
+          <svg viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <path className="home-v4-current__trace" pathLength="1" d="M-100 820C120 790 40 440 360 420S680 840 870 520S1130 80 1500 140" />
+            <path className="home-v4-current__echo" pathLength="1" d="M-100 860C150 810 70 480 370 458S700 890 910 555S1170 120 1500 180" />
+            <path className="home-v4-current__echo" pathLength="1" d="M-100 900C170 850 100 525 390 498S730 940 950 590S1210 160 1500 220" />
+          </svg>
+          </div>
+          <div className="home-v4-current-light" />
+        </>
+      ) : null}
       <div className={styles.vignette} />
       {grainAmount > 0 ? <div className={styles.grain} /> : null}
     </div>

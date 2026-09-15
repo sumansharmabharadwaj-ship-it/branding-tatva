@@ -103,3 +103,54 @@ html[data-motion="reduced"] .home-v4 .home-v4-button svg { transition: none; }
     will-change: auto;
   }
 }
+
+/* A single current gathers three loose paths into one direction. These are
+   decorative SVG strokes, never masks on copy or interactive hit targets. */
+.home-v4-current {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--lg-ink);
+  stroke-width: 1.25;
+  opacity: .32;
+  translate: calc(var(--field-x, 0px) * -.6) calc(var(--field-y, 0px) * .5);
+  rotate: calc(var(--field-turn, 0deg) * -.6);
+  scale: var(--current-breath, 1);
+  pointer-events: none;
+}
+.home-v4-current svg { width: 100%; height: 100%; }
+.home-v4-current path { vector-effect: non-scaling-stroke; }
+.home-v4-current__trace {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--current-draw, 1));
+}
+.home-v4-current__echo {
+  opacity: .35;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--current-draw, 1) * .92);
+}
+.home-v4-current-light {
+  position: absolute;
+  inset: -10% -30%;
+  background: radial-gradient(ellipse at 50% 65%, color-mix(in srgb, var(--lg-light) 38%, transparent), transparent 60%);
+  translate: var(--current-sweep, 0%) 0;
+  pointer-events: none;
+}
+.home-v4 [data-gradient-active="true"] :is(.home-v4-current, .home-v4-current-light) { will-change: transform; }
+@media (max-width: 820px) {
+  .home-v4-current { opacity: .22; }
+  .home-v4-current__echo:last-child { display: none; }
+}
+html[data-motion="reduced"] .home-v4 :is(.home-v4-current, .home-v4-current-light) {
+  translate: none;
+  rotate: none;
+  scale: 1;
+  will-change: auto;
+}
+html[data-motion="reduced"] .home-v4-current path { stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .home-v4 :is(.home-v4-current, .home-v4-current-light) { translate: none; rotate: none; scale: 1; will-change: auto; }
+  .home-v4-current path { stroke-dashoffset: 0; }
+}

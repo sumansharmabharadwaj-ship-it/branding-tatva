@@ -51,7 +51,7 @@ export function V4CostStackScene() {
     >
       {/* First child, content after: DOM order does the layering, so no
           negative z-index is involved anywhere in this scene. */}
-      <LivingGradient preset="orangery" />
+      <LivingGradient contours preset="orangery" />
 
       <div className={styles.inner}>
         <p className={styles.eyebrow}>02 · What the reset costs</p>

@@ -258,7 +258,7 @@ export function V4RecognitionScene() {
       aria-labelledby="home-v4-recognition-title"
       style={{ "--recognition-accent": active.accent } as React.CSSProperties}
     >
-      <LivingGradient preset="meadow" shaft={false} />
+      <LivingGradient contours preset="meadow" shaft={false} />
       <div className="home-v4-recognition__media" aria-hidden="true">
         <video
           muted
@@ -388,7 +388,7 @@ export function V4HiddenCostScene() {
       className={costStyles.section}
       aria-labelledby="home-v4-cost-title"
     >
-      <LivingGradient preset="wanderlust" />
+      <LivingGradient contours preset="wanderlust" />
       <div className={costStyles.shell}>
         <header className={costStyles.header}>
           <div>

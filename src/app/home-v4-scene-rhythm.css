@@ -7,6 +7,9 @@ html.home-v4-mounted [data-home-motion-layer] {
   transform-origin: 50% 65%;
 }
 
+/* Inline emphasis needs a transformable box for the opposing type movement. */
+html.home-v4-mounted [data-home-motion-layer="accent"] { display: inline-block; }
+
 /* Keep the actual hit target still as soon as a visitor starts interacting. */
 html.home-v4-mounted [data-home-motion-layer]:is(:focus-within, :focus-visible) {
   translate: none;

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
-type Treatment = "title" | "fan" | "plate" | "portrait" | "row" | "rail";
+type Treatment = "accent" | "title" | "fan" | "plate" | "portrait" | "row" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
 type SceneSpec = { selector: string; layers: readonly LayerSpec[] };
 
@@ -16,40 +16,40 @@ const SCENES: readonly SceneSpec[] = [
     [".home-v4-opening__proof", "plate"],
   ] },
   { selector: '[data-home-v4-chapter="recognition"]', layers: [
-    ["h2", "title"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    ["h2", "title"], ["h2 em", "accent"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-home-v4-chapter="cost"]', layers: [
-    ["h2", "title"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
+    ["h2", "title"], ["h2 em", "accent"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
   ] },
   { selector: '[data-home-v4-chapter="cost-stack"]', layers: [
-    ["h2", "title"],
+    ["h2", "title"], ["h2 em", "accent"],
   ] },
   { selector: '[data-scroll-story="foundation"]', layers: [
-    ["h2", "title"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    ["h2", "title"], ["h2 em", "accent"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-scroll-story="paths"]', layers: [
-    ["h2", "title"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    ["h2", "title"], ["h2 em", "accent"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-scroll-story="process"]', layers: [
-    ["h2", "title"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    ["h2", "title"], ["h2 em", "accent"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-home-v4-chapter="evidence"]', layers: [
-    ["h2", "title"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    ["h2", "title"], ["h2 em", "accent"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '.tatva-observatory', layers: [
-    ["h2", "title"], [".tatva-observatory__force", "fan"],
+    ["h2", "title"], ["h2 em", "accent"], [".tatva-observatory__force", "fan"],
   ] },
   { selector: '.tatva-pressure-lab', layers: [
-    ["h2", "title"], [".tatva-pressure-lab__board", "plate"],
+    ["h2", "title"], ["h2 em", "accent"], [".tatva-pressure-lab__board", "plate"],
   ] },
   { selector: '.studio-cinematic', layers: [
-    ["h2", "title"], ['[role="tabpanel"]', "plate"], [".studio-cinematic__portrait", "portrait"],
+    ["h2", "title"], ["h2 em", "accent"], ['[role="tabpanel"]', "plate"], [".studio-cinematic__portrait", "portrait"],
   ] },
   { selector: '[data-home-v4-chapter="decision"]', layers: [
-    ["h2", "title"], ["[data-open]", "row"],
+    ["h2", "title"], ["h2 em", "accent"], ["[data-open]", "row"],
   ] },
   { selector: '[data-home-v4-chapter="invitation"]', layers: [
-    ["h2", "title"], ["aside", "plate"],
+    ["h2", "title"], ["h2 em", "accent"], ["aside", "plate"],
   ] },
   { selector: '[data-home-v4-chapter="diagnostic"]', layers: [
     ["h3", "title"],
@@ -118,32 +118,40 @@ export function HomeV4SceneRhythm() {
             ? clamp(entering * (1 + (treatment === "fan" || treatment === "row" ? index * 0.09 : 0)))
             : 1 - ease((viewport * 0.96 - layerTop) / (viewport * 0.3));
           let x = 0;
-          let y = amount * (wide ? 68 : 22);
+          let y = amount * (wide ? 106 : 32);
           let rotate = 0;
           let scale = 1;
           if (wide) {
-            if (treatment === "rail") {
-              y = 28 * amount;
-            } else if (treatment === "fan") {
-              x = spread * 42 * amount;
-              y = (74 + Math.abs(spread) * 18) * amount;
-              rotate = spread * 3.2 * amount;
-              scale = 1 - 0.06 * amount;
-            } else if (treatment === "plate") {
-              x = side * 72 * amount;
-              y = 100 * amount;
-              rotate = side * 2.2 * amount;
-              scale = 1 - 0.075 * amount;
-            } else if (treatment === "portrait") {
-              x = 86 * amount;
+            if (treatment === "title") {
+              x = side * -44 * amount;
+            } else if (treatment === "accent") {
+              x = side * 112 * amount;
+              y = 12 * amount;
+            } else if (treatment === "rail") {
+              x = side * -64 * amount;
               y = 40 * amount;
-              rotate = -4 * amount;
-              scale = 1 - 0.12 * amount;
+            } else if (treatment === "fan") {
+              x = spread * 76 * amount;
+              y = (120 + Math.abs(spread) * 30) * amount;
+              rotate = spread * 6.5 * amount;
+              scale = 1 - 0.09 * amount;
+            } else if (treatment === "plate") {
+              x = side * 132 * amount;
+              y = 150 * amount;
+              rotate = side * 4.5 * amount;
+              scale = 1 - 0.11 * amount;
+            } else if (treatment === "portrait") {
+              x = 128 * amount;
+              y = 40 * amount;
+              rotate = -7 * amount;
+              scale = 1 - 0.17 * amount;
             } else if (treatment === "row") {
               x = (36 + index * 12) * amount;
               y = (28 + index * 9) * amount;
             }
           }
+          // Inline accents compose with their heading only on wide screens.
+          if (!wide && treatment === "accent") y = 0;
           // Ease the visual response, never the document's scroll position.
           // First paint and focused controls settle immediately. Following
           // frames converge quickly and stop scheduling when at rest.

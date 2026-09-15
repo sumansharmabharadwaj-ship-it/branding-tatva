@@ -83,7 +83,10 @@ export function HomeV4ScrollCamera() {
         if (field.dataset.gradientActive !== String(active)) field.dataset.gradientActive = String(active);
         if (!active) return;
         const phase = clamp((viewport - rect.top) / (viewport + rect.height));
-        const travel = finePointer.matches ? 42 : 14;
+        const travel = finePointer.matches ? 100 : 28;
+        field.style.setProperty("--current-draw", clamp((phase - 0.08) / 0.65).toFixed(4));
+        field.style.setProperty("--current-sweep", `${((phase - 0.5) * 70).toFixed(2)}%`);
+        field.style.setProperty("--current-breath", (1 + easedVelocity * 0.045).toFixed(4));
         field.style.setProperty("--field-x", `${(pointerX * 16).toFixed(2)}px`);
         field.style.setProperty("--field-y", `${((phase - 0.5) * travel + pointerY * 9).toFixed(2)}px`);
         field.style.setProperty("--field-turn", `${((phase - 0.5) * 9 + pointerX).toFixed(2)}deg`);
@@ -258,7 +261,7 @@ export function HomeV4ScrollCamera() {
       resize.disconnect();
       fields.forEach((field) => {
         delete field.dataset.gradientActive;
-        ["--field-x", "--field-y", "--field-turn"].forEach((property) => field.style.removeProperty(property));
+        ["--field-x", "--field-y", "--field-turn", "--current-draw", "--current-sweep", "--current-breath"].forEach((property) => field.style.removeProperty(property));
       });
       window.removeEventListener("wheel", cancelHashRecovery);
       window.removeEventListener("touchstart", cancelHashRecovery);
