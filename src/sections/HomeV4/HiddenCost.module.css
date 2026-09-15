@@ -69,3 +69,75 @@
   .link, .modeChoices button { transition: none; }
 }
 :global(html[data-motion="reduced"]) .modeChoices button { transition: none; }
+
+/* One moving selection surface keeps both buttons and their hit targets still. */
+.modeChoices { position: relative; isolation: isolate; }
+.modeChoices::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: .25rem auto .25rem .25rem;
+  width: calc((100% - .75rem) / 2);
+  border-radius: inherit;
+  border: 1px solid rgb(128 82 57 / 35%);
+  background: #dfd0b6;
+  transform: translateX(0);
+  transition: transform 480ms cubic-bezier(.22, 1, .36, 1);
+  pointer-events: none;
+}
+.comparison[data-message-mode="shared"] .modeChoices::before {
+  transform: translateX(calc(100% + .25rem));
+}
+.modeChoices button[aria-pressed="true"] { color: #342f27; background: transparent; }
+
+/* The three channel rules draw in order as the comparison arrives. Their
+   different earth tones become one shared tone when the promise aligns. */
+.touchpoints > div { position: relative; --message-line: #805239; }
+.touchpoints > div:nth-child(2) { --message-line: #556b4a; }
+.touchpoints > div:nth-child(3) { --message-line: #52756f; }
+.touchpoints > div::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 1px;
+  background: var(--message-line);
+  opacity: .55;
+  transform: scaleX(clamp(0, calc(var(--comparison-arrival, 1) * 1.4 - var(--message-order, 0) * .16), 1));
+  transform-origin: left center;
+  transition: background-color 480ms ease;
+  pointer-events: none;
+}
+.comparison[data-message-mode="shared"] .touchpoints > div { --message-line: #805239; }
+.touchpoints dd { perspective: 700px; }
+.messageText { --message-tilt: -12deg; --message-rise: 4px; transform-origin: left center; }
+.messageText[data-message-transition="forward"] {
+  --message-travel: 12px;
+  animation: message-arrive 480ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(var(--message-order, 0) * 55ms);
+}
+.messageText[data-message-transition="reverse"] {
+  --message-travel: -12px;
+  animation: message-arrive 480ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc((2 - var(--message-order, 0)) * 55ms);
+}
+@keyframes message-arrive {
+  from { transform: translate3d(var(--message-travel), var(--message-rise), 0) rotateX(var(--message-tilt)); }
+  to { transform: none; }
+}
+@media (max-width: 820px), (pointer: coarse) {
+  .touchpoints dd { perspective: none; }
+  .messageText { --message-tilt: 0deg; --message-rise: 2px; }
+  .messageText[data-message-transition="forward"] { --message-travel: 5px; }
+  .messageText[data-message-transition="reverse"] { --message-travel: -5px; }
+}
+/* CSS owns these finite transitions so a preference change cancels an
+   in-flight animation immediately, even when the selected mode stays put. */
+@media (prefers-reduced-motion: reduce) {
+  .modeChoices::before, .touchpoints > div::after { transition: none; }
+  .touchpoints > div::after { transform: none; }
+  .messageText[data-message-transition] { animation: none; transform: none; }
+}
+:global(html[data-motion="reduced"]) .modeChoices::before,
+:global(html[data-motion="reduced"]) .touchpoints > div::after { transition: none; }
+:global(html[data-motion="reduced"]) .touchpoints > div::after { transform: none; }
+:global(html[data-motion="reduced"]) .messageText[data-message-transition] { animation: none; transform: none; }

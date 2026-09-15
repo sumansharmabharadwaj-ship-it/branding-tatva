@@ -193,6 +193,11 @@ export function HomeV4SceneRhythm() {
           node.style.setProperty("--scene-y", `${y.toFixed(2)}px`);
           node.style.setProperty("--scene-turn", `${rotate.toFixed(3)}deg`);
           node.style.setProperty("--scene-scale", scale.toFixed(4));
+          if (node.hasAttribute("data-home-cost-comparison")) {
+            // Follow the card's actual eased position, including reverse scroll
+            // and focus settling. The row accents use no second scroll loop.
+            node.style.setProperty("--comparison-arrival", clamp(1 - y / (wide ? 150 : 32)).toFixed(4));
+          }
         });
         ink.forEach(({ text, top: textTop, height, visible }) => {
           if (!visible) return;
@@ -259,7 +264,7 @@ export function HomeV4SceneRhythm() {
         });
         layers.forEach(({ node }) => {
           delete node.dataset.homeMotionLayer;
-          ["--scene-x", "--scene-y", "--scene-turn", "--scene-scale"].forEach((property) => node.style.removeProperty(property));
+          ["--scene-x", "--scene-y", "--scene-turn", "--scene-scale", "--comparison-arrival"].forEach((property) => node.style.removeProperty(property));
         });
       });
     };

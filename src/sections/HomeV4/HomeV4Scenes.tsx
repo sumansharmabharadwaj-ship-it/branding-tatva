@@ -412,22 +412,20 @@ export function V4HiddenCostScene() {
             <div id="brand-message-example" className={costStyles.messageExample}>
               <dl className={costStyles.touchpoints}>
                 {MESSAGE_TOUCHPOINTS.map((touchpoint, index) => (
-                  <div key={touchpoint.channel}>
+                  <div key={touchpoint.channel} style={{ "--message-order": index } as React.CSSProperties}>
                     <dt><span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{touchpoint.channel}</dt>
                     <dd>
                       <span className={costStyles.messageMeasure} aria-hidden="true">
                         <span>{touchpoint.separate}</span>
                         <span>{touchpoint.shared}</span>
                       </span>
-                      <motion.span
+                      <span
                         className={costStyles.messageText}
                         key={comparison.mode}
-                        initial={prefersReducedMotion || comparison.direction === 0 ? false : { x: comparison.direction * 8 }}
-                        animate={{ x: 0 }}
-                        transition={{ duration: prefersReducedMotion ? 0 : .3, ease: EASE }}
+                        data-message-transition={comparison.direction === 0 ? "idle" : comparison.direction > 0 ? "forward" : "reverse"}
                       >
                         {touchpoint[comparison.mode]}
-                      </motion.span>
+                      </span>
                     </dd>
                   </div>
                 ))}

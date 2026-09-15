@@ -4,7 +4,7 @@
 .section:global(.home-v4-recognition) :global(.home-v4-recognition__media) video { opacity: .5; filter: saturate(.7); }
 .section:global(.home-v4-recognition) :global(.home-v4-recognition__media) > span { background: linear-gradient(90deg, #eee7da 4%, rgb(238 231 218 / 90%) 45%, rgb(238 231 218 / 35%)), linear-gradient(0deg, #eee7da, transparent 40%); }
 .section:global(.home-v4-recognition) :global(.home-v4-recognition__header) h2 { max-width: 20ch; color: #342f27; font-size: clamp(2.75rem, 4.8vw, 5rem); line-height: 1.04; text-shadow: none; }
-.section:global(.home-v4-recognition) :global(.home-v4-recognition__header) h2 em { color: #805239; -webkit-text-fill-color: currentColor; background: none; animation: none; line-height: 1.15; }
+.section:global(.home-v4-recognition) :global(.home-v4-recognition__header) h2 em { color: #805239; background: none; animation: none; line-height: 1.15; }
 .section:global(.home-v4-recognition) :global(.home-v4-recognition__header) p { color: #805239; font-size: .8rem; }
 .section:global(.home-v4-recognition) :global(.home-v4-recognition__header) > span { color: #595246; font-size: 1rem; }
 
