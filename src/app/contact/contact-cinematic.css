@@ -770,27 +770,38 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-form-success]::bef
   }
 }
 
-[data-contact-film] .contact-pathway-film-video {
-  will-change: transform;
+[data-contact-film] [data-contact-pathway-plane] {
+  position: absolute;
+  inset: 0;
 }
 
-[data-contact-film] [data-contact-pathway-camera="folio"] .contact-pathway-film-video {
+[data-contact-film] [data-contact-pathway-camera="folio"] [data-contact-pathway-plane] {
   transform-origin: 36% 50%;
-  animation: contact-pathway-camera-folio 22s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
-[data-contact-film] [data-contact-pathway-camera="conversation"] .contact-pathway-film-video {
+[data-contact-film] [data-contact-pathway-camera="conversation"] [data-contact-pathway-plane] {
   transform-origin: 52% 56%;
-  animation: contact-pathway-camera-conversation 17s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
 }
 
-[data-contact-film] [data-contact-pathway-camera="letter"] .contact-pathway-film-video {
+[data-contact-film] [data-contact-pathway-camera="letter"] [data-contact-pathway-plane] {
   transform-origin: 68% 50%;
-  animation: contact-pathway-camera-letter 24s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
-[data-contact-film] [data-contact-pathway-film]:hover .contact-pathway-film-glint {
-  animation: contact-pathway-glint 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+[data-contact-film] [data-contact-pathway-light] {
+  position: absolute;
+  inset: -15%;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 22%, #fff4d5 50%, transparent 78%);
+}
+html[data-motion="reduced"] [data-contact-film] [data-contact-pathway-plane] {
+  transform: none !important;
+}
+html[data-motion="reduced"] [data-contact-film] [data-contact-pathway-light] {
+  opacity: 0 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-contact-film] [data-contact-pathway-plane] { transform: none !important; }
+  [data-contact-film] [data-contact-pathway-light] { opacity: 0 !important; }
 }
 
 [data-contact-film] [data-contact-pathway-shot]::after {
@@ -880,46 +891,6 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-form-success]::bef
   to {
     transform: scaleX(1);
     transform-origin: 0 50%;
-  }
-}
-
-@keyframes contact-pathway-camera-folio {
-  from {
-    transform: scale(1.025) translate3d(-0.65%, 0.15%, 0);
-  }
-
-  to {
-    transform: scale(1.08) translate3d(0.7%, -0.4%, 0);
-  }
-}
-
-@keyframes contact-pathway-camera-conversation {
-  from {
-    transform: scale(1.03) translate3d(0, 0.5%, 0);
-  }
-
-  to {
-    transform: scale(1.065) translate3d(0.18%, -0.55%, 0);
-  }
-}
-
-@keyframes contact-pathway-camera-letter {
-  from {
-    transform: scale(1.03) translate3d(0.7%, -0.1%, 0);
-  }
-
-  to {
-    transform: scale(1.075) translate3d(-0.55%, -0.45%, 0);
-  }
-}
-
-@keyframes contact-pathway-glint {
-  from {
-    transform: translateX(0) rotate(11deg);
-  }
-
-  to {
-    transform: translateX(340%) rotate(11deg);
   }
 }
 
