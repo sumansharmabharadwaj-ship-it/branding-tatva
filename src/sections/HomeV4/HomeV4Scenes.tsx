@@ -93,15 +93,25 @@ export function V4OpeningScene() {
           data-opening-landscape
           style={{ scale: prefersReducedMotion ? 1 : landscapeScale, y: prefersReducedMotion ? 0 : landscapeY }}
         >
+          {/* The `src` attribute is deliberately gone. A <video> with src set
+              ignores its <source> children entirely, so the mobile
+              derivative could never win while src was present. Sources
+              only, narrowest first, since the browser takes the first
+              whose media and type both match.
+              The mobile file is the same framing at 768 wide rather than a
+              reframe, so the shot is unchanged: 2.03MB down to 0.25MB on
+              the hero, which is the first thing a phone downloads. */}
           <video
-            src="/videos/hero-forest-sanctuary.mp4"
             poster="/images/hero-forest-sanctuary-poster.jpg"
             muted
             autoPlay={!prefersReducedMotion}
             loop
             playsInline
             preload="auto"
-          />
+          >
+            <source src="/videos/hero-forest-sanctuary-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
+            <source src="/videos/hero-forest-sanctuary.mp4" type="video/mp4" />
+          </video>
         </motion.div>
         <span className="home-v4-opening__wash" />
       </div>

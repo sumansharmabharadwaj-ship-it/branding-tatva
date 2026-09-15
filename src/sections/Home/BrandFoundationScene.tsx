@@ -188,6 +188,13 @@ export function BrandFoundationScene() {
             preload={sceneInView ? "metadata" : "none"}
             poster="/images/pexels-root-network-poster.jpg"
           >
+            {/* Mobile derivative FIRST: a browser takes the first <source>
+                whose media and type both match, so a narrow-screen entry
+                placed after the full size ones would never be reached.
+                768 wide, same framing as the approved clip rather than a
+                reframe, so this is purely weight and changes nothing about
+                what the shot shows. 3.00MB webm down to 1.05MB. */}
+            <source src="/videos/pexels-root-network-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
             <source src="/videos/pexels-root-network.webm" type="video/webm" />
             <source src="/videos/pexels-root-network.mp4" type="video/mp4" />
           </video>
