@@ -18,6 +18,8 @@ import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
 import { PricingProvider } from "@/components/PricingProvider";
 import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
+import { WorkIndex } from "@/sections/Work/WorkIndex";
+import { projects } from "@/data/projects";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
 import { SplitReveal } from "@/components/SplitReveal";
@@ -161,6 +163,7 @@ const JUMP_ITEMS = [
   { href: "#offerings", label: "What the work covers" },
   { href: "#desire", label: "Ways to work" },
   { href: "#proof", label: "Client evidence" },
+  { href: "#index", label: "Every case" },
   { href: "#authority", label: "What holds the brand" },
   { href: "#education", label: "How buyers remember" },
   { href: "#audit", label: "Brand check" },
@@ -470,6 +473,16 @@ export default async function ServicesPage() {
             <VerifiedOutcome />
           </div>
         </section>
+
+        {/* The case index, restored. /work redirects here to #proof, which left
+            a single flagship outcome as the only reachable evidence: a visitor
+            convinced by it had nowhere to go to see the rest. WorkIndex was
+            built for the old /work page and stranded complete and unimported
+            when that route was folded in, so this rewires the existing
+            component rather than rebuilding it (M4: "Build case index"). It
+            carries its own <section id="index">, filters from data/workTaxonomy
+            and renders only verified projects from data/projects. */}
+        <WorkIndex projects={projects} />
 
         {/* Authority now resolves inside one viewport. The shared services
             camera assembles its five layers during entry, discovery, and
