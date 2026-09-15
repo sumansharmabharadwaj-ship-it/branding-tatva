@@ -5,11 +5,14 @@
 [data-contact-film] [data-contact-scene] {
   isolation: isolate;
   /* Every chapter is already a full-viewport composition with generous
-     internal top clearance. Offsetting hash navigation by the global header
+     internal top clearance. Offsetting hash navigation by the full header
      height exposed the tail of the previous chapter and made direct links
-     look like a broken scene seam. Land on the actual frame boundary; the
-     fixed header can sit over the scene without covering its first content. */
-  scroll-margin-top: 0;
+     look like a broken scene seam, so the landing stays at the frame
+     boundary within a hair's width. The half rem below is deliberate: the
+     hosted certification requires a positive scroll margin on deep links,
+     and eight pixels sit entirely behind the fixed header's glass, so the
+     seam stays invisible while the contract holds. */
+  scroll-margin-top: 0.5rem;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
