@@ -46,7 +46,7 @@ const SCENES: readonly SceneSpec[] = [
     ["h2", "title"], ["h2 em", "accent"], ['[role="tabpanel"]', "plate"], [".studio-cinematic__portrait", "portrait"],
   ] },
   { selector: '[data-home-v4-chapter="decision"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ["[data-open]", "row"],
+    ["header", "heading"], ["[data-open]", "row"],
   ] },
   { selector: '[data-home-v4-chapter="invitation"]', layers: [
     ["h2", "title"], ["h2 em", "accent"], ["aside", "plate"],

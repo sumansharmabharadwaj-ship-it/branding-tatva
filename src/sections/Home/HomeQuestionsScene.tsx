@@ -38,8 +38,6 @@ export function HomeQuestionsScene() {
     offset: ["start start", "end start"],
   });
   const mediaScale = useTransform(scrollYProgress, [0, 0.68, 1], [1, 1, 1.035]);
-  const frameY = useTransform(scrollYProgress, [0, 0.68, 1], [0, 0, -18]);
-  const frameScale = useTransform(scrollYProgress, [0, 0.68, 1], [1, 1, 0.985]);
 
   function onQuestionKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
@@ -66,13 +64,7 @@ export function HomeQuestionsScene() {
           poster="/images/pexels-golden-fog-sea-poster.jpg"
         />
       </motion.div>
-      <motion.div
-        className={styles.questionFrame}
-        style={{
-          y: cinematicMotion && !reducedMotion ? frameY : 0,
-          scale: cinematicMotion && !reducedMotion ? frameScale : 1,
-        }}
-      >
+      <div className={styles.questionFrame}>
         <header className={styles.questionIntro}>
           <p className={styles.eyebrow}>Before we work together</p>
           <h2 id="home-questions-title">Know what you’re <em>saying yes to.</em></h2>
@@ -152,7 +144,7 @@ export function HomeQuestionsScene() {
             </Link>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
