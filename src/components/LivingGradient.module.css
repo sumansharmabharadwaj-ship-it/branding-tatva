@@ -57,7 +57,8 @@
    most expensive things a compositor can be asked to hold. */
 .blob {
   position: absolute;
-  border-radius: 50%;
+  /* Elliptical gradients fade inside the layer bounds; clipping a circular
+     gradient to a rounded rectangle produced a visible arc on light fields. */
   will-change: transform;
   transform: translate3d(0, 0, 0);
 }
@@ -67,7 +68,7 @@
   height: 120%;
   top: -30%;
   left: -18%;
-  background: radial-gradient(circle at 50% 50%, var(--lg-a) 0%, color-mix(in oklab, var(--lg-a) 55%, transparent) 38%, transparent 68%);
+  background: radial-gradient(ellipse at 50% 50%, var(--lg-a) 0%, color-mix(in oklab, var(--lg-a) 55%, transparent) 38%, transparent 68%);
   animation: driftA 46s ease-in-out infinite alternate;
 }
 
@@ -76,7 +77,7 @@
   height: 105%;
   top: -10%;
   right: -20%;
-  background: radial-gradient(circle at 50% 50%, var(--lg-b) 0%, color-mix(in oklab, var(--lg-b) 50%, transparent) 40%, transparent 70%);
+  background: radial-gradient(ellipse at 50% 50%, var(--lg-b) 0%, color-mix(in oklab, var(--lg-b) 50%, transparent) 40%, transparent 68%);
   animation: driftB 61s ease-in-out infinite alternate;
 }
 
@@ -85,7 +86,7 @@
   height: 90%;
   bottom: -34%;
   left: 8%;
-  background: radial-gradient(circle at 50% 50%, var(--lg-c) 0%, color-mix(in oklab, var(--lg-c) 45%, transparent) 42%, transparent 72%);
+  background: radial-gradient(ellipse at 50% 50%, var(--lg-c) 0%, color-mix(in oklab, var(--lg-c) 45%, transparent) 42%, transparent 68%);
   animation: driftC 53s ease-in-out infinite alternate;
 }
 
