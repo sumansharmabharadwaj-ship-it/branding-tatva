@@ -49,7 +49,7 @@ const SCENES: readonly SceneSpec[] = [
     ["header", "heading"], ["[data-open]", "row"],
   ] },
   { selector: '[data-home-v4-chapter="invitation"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ["aside", "plate"],
+    ["[data-invitation-copy]", "heading"], ["aside", "plate"],
   ] },
   { selector: '[data-home-v4-chapter="diagnostic"]', layers: [
     ["h3", "title"],

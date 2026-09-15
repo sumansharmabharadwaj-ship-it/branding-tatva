@@ -78,9 +78,11 @@ function readSituation(): Situation {
 
 export function FinalInvitation() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const agendaId = useId();
   const [situation, setSituation] = useState<Situation>("default");
   const [activeStep, setActiveStep] = useState(0);
+  const [frameFits, setFrameFits] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
   const cinematicMotion = useMediaQuery(
     "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
@@ -98,7 +100,24 @@ export function FinalInvitation() {
   const mediaX = useTransform(storyProgress, [0, 0.52, 1], ["0.8%", "0.25%", "0%"]);
   const signoffOpacity = useTransform(storyProgress, [0, 0.66, 0.84, 1], [0, 0, 1, 1]);
   const signoffY = useTransform(storyProgress, [0, 0.66, 0.84, 1], [10, 10, 0, 0]);
-  const desktopStory = cinematicMotion && !reducedMotion;
+  const desktopStory = cinematicMotion && !reducedMotion && frameFits;
+
+  // The frame always keeps its natural height, even while sticky. Measuring
+  // that height prevents longer personalised copy, zoom or font changes from
+  // trapping the booking links and signoff below the reading viewport.
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const measure = () => setFrameFits(frame.offsetHeight <= window.innerHeight + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(frame);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
 
   useMotionValueEvent(storyProgress, "change", (progress) => {
     setActiveStep((current) => desktopStory
@@ -107,13 +126,22 @@ export function FinalInvitation() {
     );
   });
 
-  // A preference or breakpoint change must settle without another scroll event.
+  // Refresh the two local timelines after the hold changes the scene height.
+  // A font, viewport or preference change can happen while scrolling is idle.
   useEffect(() => {
+    const root = rootRef.current;
+    if (root) {
+      const { top, height } = root.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      const clamp = (value: number) => Math.min(1, Math.max(0, value));
+      entranceProgress.set(clamp((viewport - top) / Math.max(1, height)));
+      storyProgress.set(clamp(-top / Math.max(1, height - viewport)));
+    }
     setActiveStep((current) => desktopStory
       ? invitationStep(storyProgress.get(), current, STEP_LABELS.length)
       : 0,
     );
-  }, [desktopStory, storyProgress]);
+  }, [desktopStory, entranceProgress, storyProgress]);
 
   useEffect(() => {
     function sync() { setSituation(readSituation()); }
@@ -159,14 +187,15 @@ export function FinalInvitation() {
       data-cursor-world="light"
       data-invitation-situation={situation}
       data-invitation-step={activeStep + 1}
+      data-invitation-story={desktopStory ? "held" : "flow"}
     >
       <LivingGradient contours preset="wanderlust" plain opacity={0.5} />
       <div className={styles.invitationMedia} aria-hidden="true">
         <motion.div
           className={styles.invitationMediaCamera}
           style={{
-            scale: cinematicMotion && !reducedMotion ? mediaScale : 1,
-            x: cinematicMotion && !reducedMotion ? mediaX : 0,
+            scale: desktopStory ? mediaScale : 1,
+            x: desktopStory ? mediaX : 0,
           }}
         >
           <BackgroundVideo
@@ -177,9 +206,9 @@ export function FinalInvitation() {
           />
         </motion.div>
       </div>
-      <div className={styles.invitationFrame}>
+      <div ref={frameRef} className={styles.invitationFrame}>
         <motion.div className={styles.invitationRule} style={{ scaleX: reducedMotion ? 1 : lineProgress }} aria-hidden="true" />
-        <div className={styles.invitationCopy}>
+        <div className={styles.invitationCopy} data-invitation-copy>
           <p className={styles.eyebrow}>{invitation.eyebrow}</p>
           <h2>{invitation.headline}</h2>
           <p className={styles.lede}>{invitation.body}</p>
@@ -222,8 +251,8 @@ export function FinalInvitation() {
         <motion.p
           className={styles.signoff}
           style={{
-            opacity: cinematicMotion && !reducedMotion ? signoffOpacity : 1,
-            y: cinematicMotion && !reducedMotion ? signoffY : 0,
+            opacity: desktopStory ? signoffOpacity : 1,
+            y: desktopStory ? signoffY : 0,
           }}
         >
           Thank you for giving your brand the attention it deserves.

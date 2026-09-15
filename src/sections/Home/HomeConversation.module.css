@@ -114,13 +114,13 @@
 .invitationFrame {
   min-height: 100svh; display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
-  column-gap: clamp(3rem, 7vw, 7rem); row-gap: 2.5rem;
+  column-gap: clamp(3rem, 7vw, 7rem); row-gap: clamp(1.5rem, 4svh, 2.5rem);
   align-content: center; align-items: start;
 }
 .invitationRule {
   grid-column: 1 / -1; height: 1px; background: #98623f; transform-origin: left;
 }
-.invitationCopy h2 { max-width: 13ch; font-size: clamp(2.8rem, 5vw, 5rem); }
+.invitationCopy h2 { max-width: 13ch; font-size: clamp(2.8rem, min(5vw, 7.5svh), 5rem); }
 .invitationCopy .lede { max-width: 42ch; }
 .bookButton {
   display: inline-flex; align-items: center; justify-content: space-between;
@@ -198,19 +198,20 @@
 
 /* Parker-inspired pacing for the final conversation: the composed invitation
    holds while the visitor's scroll moves through the three agenda steps.
-   Touch, compact, and reduced-motion contexts keep the original document flow. */
+   The natural frame height decides whether it fits. Tall copy, touch, compact,
+   and reduced-motion contexts keep the original document flow. */
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   :global(html:not([data-motion="reduced"])) .questionMedia,
-  :global(html:not([data-motion="reduced"])) .invitationMediaCamera {
+  :global(html:not([data-motion="reduced"])) .invitation[data-invitation-story="held"] .invitationMediaCamera {
     will-change: transform;
   }
 
-  :global(html:not([data-motion="reduced"])) .invitation {
+  :global(html:not([data-motion="reduced"])) .invitation[data-invitation-story="held"] {
     height: 210svh;
     min-height: 210svh;
   }
 
-  :global(html:not([data-motion="reduced"])) .invitationMedia {
+  :global(html:not([data-motion="reduced"])) .invitation[data-invitation-story="held"] .invitationMedia {
     position: sticky;
     inset: auto;
     top: 0;
@@ -219,10 +220,10 @@
     margin-bottom: -100svh;
   }
 
-  :global(html:not([data-motion="reduced"])) .invitationFrame {
+  :global(html:not([data-motion="reduced"])) .invitation[data-invitation-story="held"] .invitationFrame {
     position: sticky;
     top: 0;
-    height: 100svh;
+    height: auto;
     min-height: 100svh;
     box-sizing: border-box;
   }
