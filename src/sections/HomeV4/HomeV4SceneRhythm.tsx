@@ -19,7 +19,7 @@ const SCENES: readonly SceneSpec[] = [
     [".home-v4-recognition__header > div", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-home-v4-chapter="cost"]', ink: "clay", layers: [
-    ["header > div:first-child", "heading"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
+    ["[data-home-cost-heading]", "heading"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
   ] },
   { selector: '[data-home-v4-chapter="cost-stack"]', ink: "sand", layers: [
     ["[data-cost-intro]", "heading"],

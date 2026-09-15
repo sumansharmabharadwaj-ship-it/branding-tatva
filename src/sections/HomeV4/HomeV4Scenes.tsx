@@ -391,7 +391,7 @@ export function V4HiddenCostScene() {
       <LivingGradient contours preset="wanderlust" />
       <div className={costStyles.shell}>
         <header className={costStyles.header}>
-          <div>
+          <div data-home-cost-heading>
             <p className={costStyles.eyebrow}>02 · The hidden cost</p>
             <h2 id="home-v4-cost-title">More content.<br /><em>The same introduction.</em></h2>
             <p className={costStyles.intro}>

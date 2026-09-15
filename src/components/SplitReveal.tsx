@@ -19,11 +19,14 @@ import { initSplitTextReveal } from "@/animations/splitTextReveal";
 export function SplitReveal({
   children,
   className,
+  id,
   as: Tag = "h2",
   splitType = "words",
 }: {
   children: React.ReactNode;
   className?: string;
+  /** Forwarded for aria-labelledby targets; the split leaves it intact. */
+  id?: string;
   as?: "h1" | "h2";
   splitType?: "words" | "chars";
 }) {
@@ -46,7 +49,7 @@ export function SplitReveal({
   }, [prefersReducedMotion, splitType]);
 
   return (
-    <Tag ref={ref} className={className}>
+    <Tag ref={ref} id={id} className={className}>
       {children}
     </Tag>
   );

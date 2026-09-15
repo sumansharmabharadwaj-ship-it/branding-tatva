@@ -90,7 +90,10 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       if (alreadyThere && attempts > 0) return;
 
       attempts += 1;
-      target.scrollIntoView({ behavior: "auto", block: "start" });
+      /* "instant", not "auto": auto defers to the document's CSS
+         scroll-behavior, and Home now declares smooth for visitor
+         anchors — this re-alignment must never animate. */
+      target.scrollIntoView({ behavior: "instant", block: "start" });
       if (attempts < 6 && !cancelled) {
         timer = window.setTimeout(() => {
           timer = null;

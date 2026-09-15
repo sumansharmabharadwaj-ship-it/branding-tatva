@@ -1632,3 +1632,27 @@ html[data-motion="reduced"] .home-v4-chapter--process::before {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
+
+/* In-page anchors glide instead of teleporting. Lenis is deliberately
+   off on Home so wheel input stays 1:1, but that left every fragment
+   link — the hero's "Find the gap", the cost stack's "Build the
+   foundation", the decision chapter's routing — jumping thousands of
+   pixels in one frame, which is the reported scroll jump. CSS smooth
+   scrolling covers exactly the anchor case without touching wheel
+   feel, and every programmatic scroll in the codebase already asks for
+   "instant"/"smooth" explicitly, so nothing that must snap will drift.
+   Scoped with :has to documents actually showing Home, and switched
+   off under both reduced-motion signals. */
+html:has(.home-v4) {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.home-v4) {
+    scroll-behavior: auto;
+  }
+}
+
+html[data-motion="reduced"]:has(.home-v4) {
+  scroll-behavior: auto;
+}

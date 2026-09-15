@@ -4,6 +4,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { ArrowDownRight } from "lucide-react";
 import { LivingGradient } from "@/components/LivingGradient";
+import { SplitReveal } from "@/components/SplitReveal";
 import styles from "./CostStack.module.css";
 
 /* Moved here from the cream hidden-cost scene rather than rewritten.
@@ -124,9 +125,15 @@ export function V4CostStackScene() {
           <p className={styles.eyebrow}>02 · What the reset costs</p>
           {/* The title and introduction share one scroll entrance so the
               heading keeps its reading space above the supporting copy. */}
-          <h2 id="home-v4-cost-stack-title" className={styles.title}>
+          {/* Word-staggered entrance rather than a block fade. The split
+              keeps the <em> intact, renders plain text immediately, stays
+              static under reduced motion, and skips itself on compact
+              screens. A rebase reverted this to a plain h2 once while
+              leaving the import stranded — if the title ever stops
+              splitting, check this element before suspecting the engine. */}
+          <SplitReveal as="h2" id="home-v4-cost-stack-title" className={styles.title}>
             Three costs. <em>Every reset renews them.</em>
-          </h2>
+          </SplitReveal>
           <p className={styles.lede}>
             Starting the brand again looks free. The bill arrives later, in the work
             people repeat and the recognition that never compounds.
