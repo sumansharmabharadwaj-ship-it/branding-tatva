@@ -1037,7 +1037,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   gap: 0.35rem;
   border-radius: 999px;
   color: rgba(39, 34, 30, 0.56);
-  font-size: 0.64rem;
+  font-size: 0.7rem;
   transition:
     color 240ms ease,
     background-color 240ms ease;
@@ -1382,14 +1382,14 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
      The larger founder card stays removed so the first frame remains calm. */
   [data-contact-film] [data-contact-hero-trust] {
     margin-top: 0.75rem;
-    font-size: 0.58rem;
+    font-size: 0.7rem;
     line-height: 1.45;
     letter-spacing: 0.14em;
   }
 
   [data-contact-film] [data-contact-hero-direct] {
     margin-top: 0.45rem;
-    font-size: 0.76rem;
+    font-size: 0.875rem;
   }
 
   [data-contact-film] .contact-write-layout {
@@ -1566,7 +1566,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 
   [data-contact-film] [data-contact-hero-trust] {
-    font-size: 0.54rem;
+    font-size: 0.7rem;
     letter-spacing: 0.1em;
   }
 
@@ -1586,7 +1586,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 
   [data-contact-chapter-rail] a {
     gap: 0.2rem;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
   }
 }
 

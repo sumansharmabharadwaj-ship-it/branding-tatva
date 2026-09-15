@@ -196,7 +196,7 @@ function PathwayHandoff({
         className="grid grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-2 sm:gap-3"
         aria-label={`${pathway.label} carries the issue you bring toward the decision you need.`}
       >
-        <span aria-hidden="true" className="text-[0.56rem] font-medium uppercase tracking-[0.15em] text-soil/42 sm:text-[0.62rem]">
+        <span aria-hidden="true" className="text-[0.62rem] font-medium uppercase tracking-[0.15em] text-soil/42 sm:text-[0.7rem]">
           Your question
         </span>
         <span aria-hidden="true" className="relative h-px overflow-hidden bg-soil/12">
@@ -218,7 +218,7 @@ function PathwayHandoff({
           }
           animate={{ clipPath: "inset(0 0% 0 0% round 999px)", scaleX: 1 }}
           transition={{ duration: reducedMotion ? 0 : 0.44, ease: EASE_AIR }}
-          className="rounded-full border border-clay/20 bg-clay/[0.08] px-2.5 py-1 text-[0.56rem] font-medium uppercase tracking-[0.15em] text-clay sm:px-3 sm:text-[0.62rem]"
+          className="rounded-full border border-clay/20 bg-clay/[0.08] px-2.5 py-1 text-[0.62rem] font-medium uppercase tracking-[0.15em] text-clay sm:px-3 sm:text-[0.7rem]"
         >
           {pathway.tempo}
         </motion.span>
@@ -231,12 +231,12 @@ function PathwayHandoff({
             transition={{ ...lineTransition, delay: reducedMotion ? 0 : 0.1 }}
           />
         </span>
-        <span aria-hidden="true" className="text-right text-[0.56rem] font-medium uppercase tracking-[0.15em] text-soil/42 sm:text-[0.62rem]">
+        <span aria-hidden="true" className="text-right text-[0.62rem] font-medium uppercase tracking-[0.15em] text-soil/42 sm:text-[0.7rem]">
           Next move
         </span>
       </div>
 
-      <p className="mt-2.5 text-[0.6rem] font-medium uppercase tracking-[0.14em] text-soil/48 sm:mt-3 sm:text-[0.68rem] sm:tracking-[0.18em]">
+      <p className="mt-2.5 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-soil/48 sm:mt-3 sm:text-[0.7rem] sm:tracking-[0.18em]">
         {detail ?? pathway.detail}
       </p>
     </div>

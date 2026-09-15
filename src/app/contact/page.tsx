@@ -141,7 +141,7 @@ export default function ContactPage() {
                   data-contact-hero-signal
                   role="img"
                   aria-label="The conversation moves from reading the signal, to naming the tension, to shaping the decision."
-                  className="mt-5 grid max-w-xl grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2 text-[0.56rem] font-medium uppercase tracking-[0.16em] text-ivory/62 sm:gap-3 sm:text-[0.62rem] sm:tracking-[0.2em]"
+                  className="mt-5 grid max-w-xl grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-ivory/62 sm:gap-3 sm:text-[0.7rem] sm:tracking-[0.2em]"
                 >
                   <span>Read the signal</span>
                   <span aria-hidden="true" className="contact-hero-signal-line h-px overflow-hidden bg-ivory/18"><span className="block h-full origin-left bg-sandstone/80" /></span>
@@ -161,7 +161,7 @@ export default function ContactPage() {
                     Write a note
                   </TrackedLink>
                 </div>
-                <p data-contact-hero-trust className="mt-4 text-[0.64rem] font-medium uppercase tracking-[0.18em] text-ivory/62">
+                <p data-contact-hero-trust className="mt-4 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-ivory/62">
                   {site.consultationMinutes} minutes · with Suman · your timezone
                 </p>
                 <div
@@ -451,7 +451,7 @@ export default function ContactPage() {
                 />
 
                 <div data-contact-booking-options className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-soil/10 pt-5">
-                  <p data-contact-booking-meta className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-soil/45">
+                  <p data-contact-booking-meta className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-soil/45">
                     Calendly · opens in a new tab
                   </p>
                   <div data-contact-booking-direct className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:flex sm:flex-wrap sm:items-center sm:gap-4">
@@ -468,7 +468,7 @@ export default function ContactPage() {
                         <span className="block">Call Suman</span>
                         <span
                           data-contact-phone-number
-                          className="mt-0.5 block text-[0.62rem] font-normal tracking-[0.04em] text-soil/55"
+                          className="mt-0.5 block text-[0.7rem] font-normal tracking-[0.04em] text-soil/55"
                         >
                           {site.phone.display}
                         </span>

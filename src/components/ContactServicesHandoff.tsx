@@ -44,7 +44,7 @@ export function ContactHeroContextCard() {
           <MessageCircle aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
         </span>
         <div aria-live="polite">
-          <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/55">
+          <p className="text-[0.7rem] font-medium uppercase tracking-[0.2em] text-ivory/55">
             {selectedPackage ? "Carried from Brand Strategy" : "Read by the founder"}
           </p>
           <p className="mt-1 font-display text-lg text-ivory">
