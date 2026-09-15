@@ -3,9 +3,9 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
-import { useEffect, useId, useRef, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useRef, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion, useInView, useTransform } from "framer-motion";
+import { motion, useAnimationControls, useInView, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import styles from "./BrandFoundation.module.css";
 
@@ -51,25 +51,42 @@ function FoundationDecision({ layer, direction, reducedMotion }: {
   direction: number;
   reducedMotion: boolean;
 }) {
-  const arrival = reducedMotion ? false : { y: direction * 16 };
+  const controls = useAnimationControls();
+  const previousLayer = useRef(layer.id);
+  const settle = useCallback(() => {
+    controls.stop();
+    controls.set({ x: 0, y: 0 });
+  }, [controls]);
+
+  useEffect(() => {
+    const changed = previousLayer.current !== layer.id;
+    previousLayer.current = layer.id;
+    settle();
+    if (reducedMotion || !changed) return;
+    controls.set({ x: direction * 12, y: 8 });
+    void controls.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
+    return () => controls.stop();
+  }, [controls, direction, layer.id, reducedMotion, settle]);
 
   return (
     <motion.div
       className={styles.panelCopy}
       initial={false}
+      animate={controls}
+      onFocusCapture={settle}
     >
-      <motion.h3 initial={arrival} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.42, ease: EASE }}>
+      <h3>
         {layer.title}
-      </motion.h3>
-      <motion.p className={styles.description} initial={arrival} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.42, delay: reducedMotion ? 0 : 0.045, ease: EASE }}>
+      </h3>
+      <p className={styles.description}>
         {layer.description}
-      </motion.p>
-      <motion.div initial={arrival} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.42, delay: reducedMotion ? 0 : 0.09, ease: EASE }}>
+      </p>
+      <div>
         <p className={styles.outputLabel}>What we define</p>
         <ul className={styles.outputs}>
           {layer.produces.map((item) => <li key={item}>{item}</li>)}
         </ul>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -104,6 +121,7 @@ export function BrandFoundationScene() {
   const previousIndexRef = useRef(0);
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
+    preservePanelFocus: true,
     count: FOUNDATION_LAYERS.length,
     target: wrapperRef,
     enabled: sceneInView && cinematicMotion,
@@ -156,7 +174,7 @@ export function BrandFoundationScene() {
     else return;
     event.preventDefault();
     choose(next);
-    tabRefs.current[next]?.focus();
+    tabRefs.current[next]?.focus({ preventScroll: true });
   }
 
   return (
@@ -236,7 +254,7 @@ export function BrandFoundationScene() {
             </div>
 
             <div id="foundation-layer-panel" role="tabpanel" aria-labelledby={`foundation-tab-${active.id}`} tabIndex={0} className={styles.panel}>
-              <FoundationDecision key={active.id} layer={active} direction={direction} reducedMotion={prefersReducedMotion} />
+              <FoundationDecision layer={active} direction={direction} reducedMotion={prefersReducedMotion} />
             </div>
 
             <Link href="/services#package-brand-beginning" className={styles.link} data-magnetic data-cursor-label="foundation">

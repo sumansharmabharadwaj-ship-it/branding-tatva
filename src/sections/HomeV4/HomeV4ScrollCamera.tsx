@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { flushSync } from "react-dom";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMotionPreference } from "@/components/MotionPreference";
 import { Pause, Play } from "lucide-react";
@@ -57,10 +58,6 @@ export function HomeV4ScrollCamera() {
     let easedVelocity = 0;
     let easedShift = 0;
     let lastDirection = 1;
-    let hashAttempts = 0;
-    let hashCancelled = false;
-    let hashTimer = 0;
-    let hashFrame = 0;
 
     function renderCamera(now: number) {
       frame = 0;
@@ -190,6 +187,58 @@ export function HomeV4ScrollCamera() {
       }
     }
 
+    root.dataset.cameraReady = "true";
+    scheduleCamera();
+
+    window.addEventListener("scroll", scheduleCamera, { passive: true });
+    window.addEventListener("resize", scheduleCamera, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.documentElement.addEventListener("pointerleave", onPointerLeave);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    const resize = new ResizeObserver(scheduleCamera);
+    resize.observe(root);
+
+    return () => {
+      disposed = true;
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleCamera);
+      window.removeEventListener("resize", scheduleCamera);
+      window.removeEventListener("pointermove", onPointerMove);
+      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      resize.disconnect();
+      surfaces.forEach((field) => {
+        delete field.dataset.gradientActive;
+        ["--field-x", "--field-y", "--field-turn", "--field-speed", "--field-lean", "--current-draw", "--current-sweep", "--current-breath"].forEach((property) => field.style.removeProperty(property));
+      });
+      delete root.dataset.cameraReady;
+      delete root.dataset.cameraDirection;
+      handoffs.forEach((handoff) => {
+        delete handoff.dataset.cameraVisible;
+        handoff.style.removeProperty("--home-handoff-presence");
+        handoff.style.removeProperty("--home-handoff-phase");
+        handoff.style.removeProperty("--home-handoff-opacity");
+        handoff.style.removeProperty("--home-handoff-shift");
+        handoff.style.removeProperty("--home-handoff-scale");
+        handoff.style.removeProperty("--home-handoff-star-opacity");
+        handoff.style.removeProperty("--home-handoff-star-scale");
+        handoff.style.removeProperty("--home-handoff-dash");
+      });
+    };
+  }, [hydrated, prefersReducedMotion]);
+
+  // Fragment recovery belongs to initial hydration, not the motion lifecycle.
+  // Pausing and resuming must never replay a fragment from earlier in the visit.
+  useEffect(() => {
+    const rootElement = document.querySelector<HTMLElement>("[data-home-v4]");
+    if (!rootElement || !hydrated) return;
+    const root = rootElement;
+    let disposed = false;
+    let hashAttempts = 0;
+    let hashCancelled = false;
+    let hashTimer = 0;
+    let hashFrame = 0;
+
     function cancelHashRecovery() {
       hashCancelled = true;
       window.clearTimeout(hashTimer);
@@ -197,7 +246,7 @@ export function HomeV4ScrollCamera() {
     }
 
     function onManualKey(event: KeyboardEvent) {
-      if (SCROLL_KEYS.has(event.key)) cancelHashRecovery();
+      if (SCROLL_KEYS.has(event.key) || event.key === "Tab" || event.key === "Escape") cancelHashRecovery();
     }
 
     function resolveHashTarget() {
@@ -226,7 +275,6 @@ export function HomeV4ScrollCamera() {
         top: Math.max(0, window.scrollY + top),
         behavior: "auto",
       });
-      scheduleCamera();
 
       if (hashAttempts < 6 && !hashCancelled) {
         hashTimer = window.setTimeout(recoverHash, 350);
@@ -239,17 +287,7 @@ export function HomeV4ScrollCamera() {
       hashFrame = window.requestAnimationFrame(recoverHash);
     }
 
-    root.dataset.cameraReady = "true";
-    scheduleCamera();
     scheduleHashRecovery();
-
-    window.addEventListener("scroll", scheduleCamera, { passive: true });
-    window.addEventListener("resize", scheduleCamera, { passive: true });
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    document.documentElement.addEventListener("pointerleave", onPointerLeave);
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    const resize = new ResizeObserver(scheduleCamera);
-    resize.observe(root);
     window.addEventListener("wheel", cancelHashRecovery, { passive: true });
     window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
     window.addEventListener("pointerdown", cancelHashRecovery, { passive: true });
@@ -262,41 +300,43 @@ export function HomeV4ScrollCamera() {
       if (!disposed) scheduleHashRecovery();
     });
 
+    window.addEventListener("focusin", cancelHashRecovery);
     return () => {
       disposed = true;
-      window.cancelAnimationFrame(frame);
-      window.cancelAnimationFrame(hashFrame);
-      window.clearTimeout(hashTimer);
-      window.removeEventListener("scroll", scheduleCamera);
-      window.removeEventListener("resize", scheduleCamera);
-      window.removeEventListener("pointermove", onPointerMove);
-      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-      resize.disconnect();
-      surfaces.forEach((field) => {
-        delete field.dataset.gradientActive;
-        ["--field-x", "--field-y", "--field-turn", "--field-speed", "--field-lean", "--current-draw", "--current-sweep", "--current-breath"].forEach((property) => field.style.removeProperty(property));
-      });
+      cancelHashRecovery();
       window.removeEventListener("wheel", cancelHashRecovery);
       window.removeEventListener("touchstart", cancelHashRecovery);
       window.removeEventListener("pointerdown", cancelHashRecovery);
       window.removeEventListener("keydown", onManualKey);
       window.removeEventListener("load", scheduleHashRecovery);
-      delete root.dataset.cameraReady;
-      delete root.dataset.cameraDirection;
-      handoffs.forEach((handoff) => {
-        delete handoff.dataset.cameraVisible;
-        handoff.style.removeProperty("--home-handoff-presence");
-        handoff.style.removeProperty("--home-handoff-phase");
-        handoff.style.removeProperty("--home-handoff-opacity");
-        handoff.style.removeProperty("--home-handoff-shift");
-        handoff.style.removeProperty("--home-handoff-scale");
-        handoff.style.removeProperty("--home-handoff-star-opacity");
-        handoff.style.removeProperty("--home-handoff-star-scale");
-        handoff.style.removeProperty("--home-handoff-dash");
-      });
+      window.removeEventListener("focusin", cancelHashRecovery);
     };
-  }, [hydrated, prefersReducedMotion]);
+  }, [hydrated]);
+
+  function toggleMotion() {
+    // Pausing collapses desktop story runways. Keep a visible reading landmark
+    // at the same screen position through that one deliberate layout change.
+    const landmarks = Array.from(document.querySelectorAll<HTMLElement>(
+      ".home-v4 h1, .home-v4 h2:not(.sr-only), .home-v4 h3, .home-v4 [role='tabpanel'], footer h2",
+    ));
+    const visible = landmarks.map((node) => ({ node, rect: node.getBoundingClientRect() }))
+      .filter(({ node, rect }) => {
+        if (rect.height <= 0 || rect.top < 0 || rect.top >= window.innerHeight * .8) return false;
+        const hit = document.elementFromPoint(
+          clamp(rect.left + rect.width / 2, 1, window.innerWidth - 1),
+          rect.top + Math.min(rect.height / 2, 16),
+        );
+        return hit === node || (hit !== null && node.contains(hit));
+      });
+    const anchor = visible.sort((a, b) => a.rect.top - b.rect.top)[0];
+    // Only this explicit control flushes synchronously; scroll frames never do.
+    flushSync(() => setPref(prefersReducedMotion ? "full" : "reduced"));
+    if (!anchor?.node.isConnected) return;
+    const drift = anchor.node.getBoundingClientRect().top - anchor.rect.top;
+    if (Math.abs(drift) > 1) {
+      window.scrollTo({ top: Math.max(0, window.scrollY + drift), behavior: "instant" });
+    }
+  }
 
   return (
     <button
@@ -305,7 +345,7 @@ export function HomeV4ScrollCamera() {
       aria-label={followsSystem ? "Reduced motion follows your device setting" : prefersReducedMotion ? "Resume page motion" : "Pause page motion"}
       disabled={followsSystem}
       aria-pressed={prefersReducedMotion}
-      onClick={() => setPref(prefersReducedMotion ? "full" : "reduced")}
+      onClick={toggleMotion}
     >
       {prefersReducedMotion ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
       <span>{followsSystem ? "Reduced motion" : prefersReducedMotion ? "Motion paused" : "Pause motion"}</span>

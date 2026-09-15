@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 const SECTION_SELECTOR = "[data-home-v4-chapter]";
 const SCROLL_INTENT_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "]);
@@ -16,7 +17,9 @@ function clamp(value: number, min = 0, max = 1) {
  * signal for the restored handoffs.
  */
 export function HomePacingDirector() {
+  const paused = useHydratedReducedMotion();
   useEffect(() => {
+    if (paused) return;
     const main = document.getElementById("main-content");
     const homeRoot = main?.querySelector<HTMLElement>("[data-home-v4]");
     if (!main || !homeRoot) return;
@@ -180,7 +183,7 @@ export function HomePacingDirector() {
       observed.clear();
       clearMotionState();
     };
-  }, []);
+  }, [paused]);
 
   return null;
 }

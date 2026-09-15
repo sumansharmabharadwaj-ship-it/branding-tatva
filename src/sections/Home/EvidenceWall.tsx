@@ -3,10 +3,10 @@
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView, useIsPresent, type HTMLMotionProps } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls, useInView, useIsPresent, type HTMLMotionProps } from "framer-motion";
 import { Container } from "@/components/Container";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import {
@@ -122,6 +122,8 @@ export function EvidenceWall() {
   const activeVideoRef = useRef<HTMLVideoElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const previousIndexRef = useRef(0);
+  const copyMotion = useAnimationControls();
+  const trailMotion = useAnimationControls();
   const fileRequestRef = useRef(0);
   const [ProjectFile, setProjectFile] = useState<ProjectFileModule["ProjectFile"] | null>(null);
   const [openingSlug, setOpeningSlug] = useState<string | null>(null);
@@ -132,6 +134,7 @@ export function EvidenceWall() {
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
+    preservePanelFocus: true,
     count: projects.length,
     target: sectionRef,
     enabled: inView && desktopMotion,
@@ -187,7 +190,7 @@ export function EvidenceWall() {
       : event.key === "ArrowRight" ? (index + 1) % projects.length
       : (index - 1 + projects.length) % projects.length;
     chooseProject(next);
-    tabsRef.current[next]?.focus();
+    tabsRef.current[next]?.focus({ preventScroll: true });
   }
 
   useEffect(() => {
@@ -210,9 +213,26 @@ export function EvidenceWall() {
     };
   }, [activeIndex, inView, prefersReducedMotion]);
 
+  const settleReading = useCallback(() => {
+    copyMotion.stop();
+    trailMotion.stop();
+    copyMotion.set({ x: 0, y: 0 });
+    trailMotion.set({ x: 0, y: 0 });
+  }, [copyMotion, trailMotion]);
+
   useEffect(() => {
+    const previous = previousIndexRef.current;
     previousIndexRef.current = activeIndex;
-  }, [activeIndex]);
+    settleReading();
+    if (prefersReducedMotion || previous === activeIndex) return;
+    const direction = activeIndex > previous ? 1 : -1;
+    // Keep original text nodes and reading gaps while the two columns arrive.
+    copyMotion.set({ x: -direction * (desktopMotion ? 18 : 8), y: desktopMotion ? 10 : 0 });
+    trailMotion.set({ x: direction * (desktopMotion ? 24 : 8), y: 0 });
+    void copyMotion.start({ x: 0, y: 0, transition: { duration: .44, ease: EASE } });
+    void trailMotion.start({ x: 0, y: 0, transition: { duration: .52, ease: EASE } });
+    return () => { copyMotion.stop(); trailMotion.stop(); };
+  }, [activeIndex, copyMotion, desktopMotion, prefersReducedMotion, settleReading, trailMotion]);
 
   return (
     <section
@@ -322,6 +342,7 @@ export function EvidenceWall() {
           aria-labelledby={`evidence-tab-${activeProject.slug}`}
           tabIndex={0}
           className="evidence-cinematic__stage"
+          onFocusCapture={settleReading}
         >
           <article className="evidence-cinematic__media">
             {/* Only the scenery overlaps. Copy and actions retain one owner. */}
@@ -374,15 +395,15 @@ export function EvidenceWall() {
                   poster={activeProject.cardImage}
                   muted
                   loop
-                  autoPlay
+                  autoPlay={!prefersReducedMotion}
                   playsInline
                   preload={inView ? "metadata" : "none"}
                   data-home-playback-rate="1.2"
                   data-evidence-project={activeProject.slug}
                   aria-hidden="true"
-                  initial={{ opacity: 0, scale: 1.035 }}
-                  animate={{ opacity: 1, scale: inView ? 1.1 : 1.04 }}
-                  transition={{ opacity: { duration: 0.72 }, scale: { duration: 8, ease: "linear" } }}
+                  initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.035 }}
+                  animate={{ opacity: 1, scale: prefersReducedMotion ? 1 : inView ? 1.1 : 1.04 }}
+                  transition={{ opacity: { duration: prefersReducedMotion ? 0 : .72 }, scale: { duration: prefersReducedMotion ? 0 : 8, ease: "linear" } }}
                 />
               )}
             </EvidenceMediaLayer>
@@ -393,11 +414,9 @@ export function EvidenceWall() {
               <span>{activeProject.industry}</span>
             </div>
             <motion.div
-              key={`copy-${activeProject.slug}`}
               className="evidence-cinematic__media-copy"
-              initial={prefersReducedMotion ? false : { y: 16 }}
-              animate={{ y: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: EASE }}
+              initial={false}
+              animate={copyMotion}
             >
               <p>{activeProject.title}</p>
               <strong>{activeMetric.big}</strong>
@@ -427,7 +446,7 @@ export function EvidenceWall() {
             </div>
           </article>
 
-          <aside className="evidence-cinematic__dossier">
+          <motion.aside className="evidence-cinematic__dossier" initial={false} animate={trailMotion}>
             <div className="evidence-cinematic__dossier-topline">
               <span>Decision record</span>
               <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</strong>
@@ -437,27 +456,24 @@ export function EvidenceWall() {
               ["01 · The signal", activeTrail.signal],
               ["02 · The decision", activeTrail.decision],
               ["03 · Recorded proof", activeTrail.proof],
-            ].map(([label, value], index) => (
-              <motion.div
-                key={`${activeProject.slug}-${label}`}
+            ].map(([label, value]) => (
+              <div
+                key={label}
                 className="evidence-cinematic__trail-step"
-                initial={prefersReducedMotion ? false : { x: selectionDirection * 14 }}
-                animate={{ x: 0 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.44, delay: prefersReducedMotion ? 0 : index * 0.07, ease: EASE }}
               >
                 <div>
                   <span>{label}</span>
                   <i aria-hidden="true" />
                 </div>
                 <p>{value}</p>
-              </motion.div>
+              </div>
             ))}
 
             <div className="evidence-cinematic__dossier-footer">
               <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
               <Link href="/work">Open the full archive <span aria-hidden="true">→</span></Link>
             </div>
-          </aside>
+          </motion.aside>
         </div>
       </Container>
 

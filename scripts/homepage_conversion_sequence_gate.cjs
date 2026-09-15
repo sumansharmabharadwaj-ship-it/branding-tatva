@@ -116,7 +116,9 @@ assert(
 );
 assert(
   evidenceWall.includes('<article className="evidence-cinematic__media">') &&
-    evidenceWall.includes('<aside className="evidence-cinematic__dossier">') &&
+    evidenceWall.includes('<motion.aside className="evidence-cinematic__dossier"') &&
+    !evidenceWall.includes('key={`copy-${activeProject.slug}`}') &&
+    evidenceWall.includes("preservePanelFocus: true") &&
     !evidenceWall.includes('filter: "blur('),
   "Evidence copy and actions must stay mounted and sharp during project changes.",
 );

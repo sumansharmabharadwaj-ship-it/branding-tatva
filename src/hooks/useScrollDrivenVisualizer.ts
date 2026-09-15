@@ -49,6 +49,14 @@ export function useScrollDrivenVisualizer({
     offset: ["start start", "end end"],
   });
 
+  useEffect(() => {
+    if (!preservePanelFocus || !reducedMotion) return;
+    // Layout contraction on pause is not a new reading decision. Hold the
+    // visible stage on resume until the next real scroll gesture takes over.
+    manualChoiceRef.current = true;
+    manualChoiceIndexRef.current = activeIndex;
+  }, [activeIndex, preservePanelFocus, reducedMotion]);
+
   const panelOwnsFocus = useCallback(() => {
     if (!preservePanelFocus || typeof document === "undefined") return false;
     const focused = document.activeElement;
