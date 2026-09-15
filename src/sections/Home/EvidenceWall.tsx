@@ -87,26 +87,13 @@ const TRAILS: Record<string, { signal: string; decision: string; proof: string }
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-function EvidenceMedia(props: HTMLMotionProps<"article">) {
+function EvidenceMediaLayer(props: HTMLMotionProps<"div">) {
   const isPresent = useIsPresent();
   return (
-    <motion.article
+    <motion.div
       {...props}
-      inert={!isPresent}
-      aria-hidden={!isPresent}
-      style={{ ...props.style, pointerEvents: isPresent ? props.style?.pointerEvents : "none" }}
-    />
-  );
-}
-
-function EvidenceDossier(props: HTMLMotionProps<"aside">) {
-  const isPresent = useIsPresent();
-  return (
-    <motion.aside
-      {...props}
-      inert={!isPresent}
-      aria-hidden={!isPresent}
-      style={{ ...props.style, pointerEvents: isPresent ? props.style?.pointerEvents : "none" }}
+      aria-hidden="true"
+      style={{ ...props.style, zIndex: isPresent ? 1 : 0, pointerEvents: "none" }}
     />
   );
 }
@@ -155,6 +142,7 @@ export function EvidenceWall() {
   const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = trailFor(activeProject);
   const activeMetric = metricFor(activeProject);
+  const mediaDuration = prefersReducedMotion ? 0 : desktopMotion ? 0.7 : 0.35;
 
   useEffect(() => () => { fileRequestRef.current += 1; }, []);
 
@@ -335,21 +323,30 @@ export function EvidenceWall() {
           tabIndex={0}
           className="evidence-cinematic__stage"
         >
-          <AnimatePresence mode="sync" initial={false}>
-          <EvidenceMedia
-            key={`media-${activeProject.slug}`}
-            className="evidence-cinematic__media"
-            initial={prefersReducedMotion ? false : { opacity: 0.68, x: selectionDirection * 28, scale: 1.018, filter: "blur(2px)" }}
-            animate={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
-            exit={prefersReducedMotion ? undefined : { opacity: 0.78, x: selectionDirection * -18, scale: 1.006, filter: "blur(2px)" }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.58, ease: EASE }}
-          >
-            <motion.div
+          <article className="evidence-cinematic__media">
+            {/* Only the scenery overlaps. Copy and actions retain one owner. */}
+            <AnimatePresence mode="sync" initial={false}>
+            <EvidenceMediaLayer
+              key={`media-${activeProject.slug}`}
               className="evidence-cinematic__media-layer"
               data-evidence-camera
-              initial={prefersReducedMotion ? false : { scale: desktopMotion ? 1.16 : 1.035, rotate: desktopMotion ? selectionDirection * -0.8 : 0 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.9, ease: EASE }}
+              initial={prefersReducedMotion ? false : {
+                opacity: desktopMotion ? 1 : 0,
+                clipPath: desktopMotion
+                  ? selectionDirection > 0 ? "inset(0% 0% 0% 100%)" : "inset(0% 100% 0% 0%)"
+                  : "inset(0% 0% 0% 0%)",
+                scale: desktopMotion ? 1.1 : 1.025,
+              }}
+              animate={{ opacity: 1, clipPath: "inset(0% 0% 0% 0%)", scale: 1 }}
+              exit={{
+                opacity: 0,
+                clipPath: "inset(0% 0% 0% 0%)",
+                transition: {
+                  clipPath: { duration: 0 },
+                  opacity: { delay: mediaDuration, duration: 0 },
+                },
+              }}
+              transition={{ duration: mediaDuration, ease: EASE }}
             >
               {activeProject.cardImage && (
                 <Image
@@ -364,7 +361,13 @@ export function EvidenceWall() {
 
               {!prefersReducedMotion && activeProject.cardVideo && (
                 <motion.video
-                  ref={activeVideoRef}
+                  ref={(video) => {
+                    if (video) activeVideoRef.current = video;
+                    // A departing film must not clear the next film's ref.
+                    else if (activeVideoRef.current?.dataset.evidenceProject === activeProject.slug) {
+                      activeVideoRef.current = null;
+                    }
+                  }}
                   key={activeProject.cardVideo}
                   className="evidence-cinematic__media-video"
                   src={activeProject.cardVideo}
@@ -375,23 +378,31 @@ export function EvidenceWall() {
                   playsInline
                   preload={inView ? "metadata" : "none"}
                   data-home-playback-rate="1.2"
+                  data-evidence-project={activeProject.slug}
                   aria-hidden="true"
                   initial={{ opacity: 0, scale: 1.035 }}
                   animate={{ opacity: 1, scale: inView ? 1.1 : 1.04 }}
                   transition={{ opacity: { duration: 0.72 }, scale: { duration: 8, ease: "linear" } }}
                 />
               )}
-            </motion.div>
+            </EvidenceMediaLayer>
+            </AnimatePresence>
             <div className="evidence-cinematic__media-wash" aria-hidden="true" />
             <div className="evidence-cinematic__media-topline">
               <span>Case file {String(activeIndex + 1).padStart(2, "0")}</span>
               <span>{activeProject.industry}</span>
             </div>
-            <div className="evidence-cinematic__media-copy">
+            <motion.div
+              key={`copy-${activeProject.slug}`}
+              className="evidence-cinematic__media-copy"
+              initial={prefersReducedMotion ? false : { y: 16 }}
+              animate={{ y: 0 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: EASE }}
+            >
               <p>{activeProject.title}</p>
               <strong>{activeMetric.big}</strong>
               <span>{activeMetric.label}</span>
-            </div>
+            </motion.div>
             <div className="evidence-cinematic__media-actions">
               <button
                 type="button"
@@ -414,18 +425,9 @@ export function EvidenceWall() {
                 </p>
               )}
             </div>
-          </EvidenceMedia>
-          </AnimatePresence>
+          </article>
 
-          <AnimatePresence mode="sync" initial={false}>
-          <EvidenceDossier
-            key={`trail-${activeProject.slug}`}
-            className="evidence-cinematic__dossier"
-            initial={prefersReducedMotion ? false : { opacity: 0.62, y: selectionDirection * 18, filter: "blur(2px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={prefersReducedMotion ? undefined : { opacity: 0.8, y: selectionDirection * -12, filter: "blur(2px)" }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
-          >
+          <aside className="evidence-cinematic__dossier">
             <div className="evidence-cinematic__dossier-topline">
               <span>Decision record</span>
               <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</strong>
@@ -437,9 +439,9 @@ export function EvidenceWall() {
               ["03 · Recorded proof", activeTrail.proof],
             ].map(([label, value], index) => (
               <motion.div
-                key={label}
+                key={`${activeProject.slug}-${label}`}
                 className="evidence-cinematic__trail-step"
-                initial={prefersReducedMotion ? false : { x: selectionDirection * 20 }}
+                initial={prefersReducedMotion ? false : { x: selectionDirection * 14 }}
                 animate={{ x: 0 }}
                 transition={{ duration: prefersReducedMotion ? 0 : 0.44, delay: prefersReducedMotion ? 0 : index * 0.07, ease: EASE }}
               >
@@ -455,8 +457,7 @@ export function EvidenceWall() {
               <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
               <Link href="/work">Open the full archive <span aria-hidden="true">→</span></Link>
             </div>
-          </EvidenceDossier>
-          </AnimatePresence>
+          </aside>
         </div>
       </Container>
 

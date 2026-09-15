@@ -94,20 +94,22 @@ assert(interfaceSource.includes('aria-label="Guided homepage controls"'), "Guide
 assert(interfaceSource.includes('aria-pressed={mode === "guided"}'), "Guided journey does not expose its state.");
 assert(mediaDirector.includes("IntersectionObserver"), "Homepage media no longer follows viewport admission.");
 assert(
-  evidenceWall.includes('exit={prefersReducedMotion ? undefined : { opacity: 0.78'),
+  evidenceWall.includes('opacity: { delay: mediaDuration, duration: 0 }'),
   "Evidence media transition can fall through to a blank project frame.",
 );
 assert(
-  evidenceWall.includes('exit={prefersReducedMotion ? undefined : { opacity: 0.8'),
-  "Evidence dossier transition can fall through to a blank decision record.",
+  evidenceWall.includes('<article className="evidence-cinematic__media">') &&
+    evidenceWall.includes('<aside className="evidence-cinematic__dossier">') &&
+    !evidenceWall.includes('filter: "blur('),
+  "Evidence copy and actions must stay mounted and sharp during project changes.",
 );
 assert(
-  (evidenceWall.match(/<AnimatePresence mode="sync" initial=\{false\}>/g) || []).length === 2,
-  "Evidence media and dossier must crossfade concurrently without a wait-mode blank gap.",
+  (evidenceWall.match(/<AnimatePresence mode="sync" initial=\{false\}>/g) || []).length === 1,
+  "Only evidence scenery may overlap during a project transition.",
 );
 assert(
   evidenceDepth.includes("grid-column: 1;") && evidenceDepth.includes("grid-column: 2;"),
-  "Evidence crossfade layers must share stable grid cells while both files are mounted.",
+  "Evidence media and decision record must keep their stable grid cells.",
 );
 assert(
   page.includes('import "./home-v4-scene-rhythm.css";'),
