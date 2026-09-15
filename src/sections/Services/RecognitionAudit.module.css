@@ -128,7 +128,7 @@
   padding-bottom: 0.75cqw;
   border-bottom: 1px solid rgba(23, 38, 30, 0.32);
   color: #3f463c;
-  font-size: clamp(0.48rem, 0.59cqw, 0.6rem);
+  font-size: clamp(var(--text-label-min), 0.59cqw, 0.6rem);
   font-weight: 700;
   letter-spacing: 0.19em;
   text-transform: uppercase;
@@ -345,7 +345,7 @@
   right: 0;
   bottom: 22%;
   left: 0;
-  font-size: clamp(0.48rem, 0.62cqw, 0.64rem);
+  font-size: clamp(var(--text-label-min), 0.62cqw, 0.64rem);
   font-weight: 700;
   letter-spacing: 0.16em;
   text-align: center;
@@ -360,7 +360,7 @@
 .signalCopy p {
   margin: 0;
   color: #c6a777;
-  font-size: clamp(0.48rem, 0.59cqw, 0.6rem);
+  font-size: clamp(var(--text-label-min), 0.59cqw, 0.6rem);
   font-weight: 700;
   letter-spacing: 0.17em;
   text-transform: uppercase;
@@ -417,7 +417,7 @@
   margin-top: 0.45cqw;
   color: #bba98a;
   font-family: var(--font-sans);
-  font-size: clamp(0.46rem, 0.56cqw, 0.58rem);
+  font-size: clamp(var(--text-reading-min), 0.56cqw, 0.72rem);
   letter-spacing: 0.06em;
 }
 
@@ -430,7 +430,7 @@
 .railAction > p {
   margin: 0.25cqw 0 0;
   color: #c8b58e;
-  font-size: clamp(0.48rem, 0.58cqw, 0.6rem);
+  font-size: clamp(var(--text-reading-min), 0.58cqw, 0.74rem);
   line-height: 1.4;
 }
 

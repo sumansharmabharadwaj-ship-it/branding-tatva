@@ -127,7 +127,14 @@ for (const file of SOURCE_ROOTS.flatMap((dir) => walk(path.join(ROOT, dir)))) {
  * regenerate the file to make a failure disappear.
  */
 const BASELINE_PATH = path.join(__dirname, "type-floor-baseline.json");
-const key = (v) => `${v.rel}:${v.line}`;
+/*
+ * The key includes the offending size, not just file:line. Many rules in this
+ * codebase are written on one line and carry several font-size declarations, so
+ * a file:line key collides — and a NEW violation landing on an already
+ * baselined line would be silently grandfathered. Including the value makes the
+ * baseline entry specific to the declaration it actually recorded.
+ */
+const key = (v) => `${v.rel}:${v.line}:${v.rem}`;
 
 let baseline = new Set();
 if (fs.existsSync(BASELINE_PATH)) {
@@ -140,6 +147,24 @@ if (process.argv.includes("--write-baseline")) {
     `${JSON.stringify({ recorded: violations.length, entries: violations.map(key).sort() }, null, 2)}\n`,
   );
   console.log(`Baseline written: ${violations.length} pre-existing declaration(s) recorded.`);
+  process.exit(0);
+}
+
+/*
+ * --prune removes baseline entries that no longer violate, so fixing type
+ * actually shrinks the recorded debt. It only ever REMOVES; it can never add a
+ * new violation to the baseline, which is what keeps `--write-baseline` from
+ * being the lazy way out of a failure.
+ */
+if (process.argv.includes("--prune")) {
+  const stillViolating = new Set(violations.map(key));
+  const kept = [...baseline].filter((entry) => stillViolating.has(entry)).sort();
+  const removed = baseline.size - kept.length;
+  fs.writeFileSync(
+    BASELINE_PATH,
+    `${JSON.stringify({ recorded: kept.length, entries: kept }, null, 2)}\n`,
+  );
+  console.log(`Baseline pruned: ${removed} fixed, ${kept.length} remaining.`);
   process.exit(0);
 }
 
