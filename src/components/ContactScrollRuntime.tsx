@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { preconnect } from "react-dom";
 
 const CAMERA_QUERY = "(min-width: 941px) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 const SCROLL_KEYS = new Set([
@@ -21,6 +22,12 @@ const SCROLL_KEYS = new Set([
  * content, and owns hash recovery now that Lenis stands down on this route.
  */
 export function ContactScrollRuntime() {
+  // Every primary action on Contact opens Calendly. Warming the connection
+  // while the visitor is still reading means the DNS and TLS round trips are
+  // already paid by the time they commit to a time.
+  preconnect("https://calendly.com");
+  preconnect("https://assets.calendly.com");
+
   useEffect(() => {
     const root = document.documentElement;
     const film = document.querySelector<HTMLElement>("[data-contact-film]");

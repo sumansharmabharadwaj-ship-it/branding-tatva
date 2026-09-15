@@ -480,6 +480,63 @@
   }
 }
 
+/* The moment a note lands, one soft golden bloom opens behind the
+   confirmation and settles — the page's light answers the send. It plays
+   once, never loops, and reduced motion holds the settled glow. */
+[data-contact-film] [data-contact-form-success] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+[data-contact-film] [data-contact-form-success]::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 26%,
+    rgba(255, 226, 168, 0.55) 0%,
+    rgba(244, 208, 146, 0.2) 32%,
+    transparent 62%
+  );
+  opacity: 0.34;
+  transform: scale(1);
+  animation: contact-success-bloom 1.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes contact-success-bloom {
+  0% {
+    opacity: 0;
+    transform: scale(0.62);
+  }
+
+  38% {
+    opacity: 0.85;
+  }
+
+  100% {
+    opacity: 0.34;
+    transform: scale(1);
+  }
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-form-success]::before {
+  animation: none !important;
+  transform: scale(1) !important;
+  opacity: 0.3 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-contact-film] [data-contact-form-success]::before {
+    animation: none !important;
+    transform: scale(1) !important;
+    opacity: 0.3 !important;
+  }
+}
+
 /* Once the three required details hold, the send button takes the same
    standing warmth as the booking commitments: the page visibly says the
    note is ready before a single validation message is needed. */
