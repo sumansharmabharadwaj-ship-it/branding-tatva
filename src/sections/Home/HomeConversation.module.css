@@ -226,13 +226,30 @@
     position: relative;
   }
 
-  /* One rule carries the reader between steps, in either scroll direction. */
+  /* A warm reading light follows the agenda in either scroll direction.
+     It sits behind the copy, without moving text or changing row heights. */
   :global(html:not([data-motion="reduced"])) .conversationRule {
     position: absolute;
-    inset: -1px 0 auto;
-    height: 1px;
-    background: #98623f;
+    inset: 0 -.85rem;
+    border-radius: .35rem;
+    background: linear-gradient(100deg, rgb(152 98 63 / 12%), rgb(152 98 63 / 3%) 80%, transparent);
     pointer-events: none;
+  }
+
+  :global(html:not([data-motion="reduced"])) .conversationRule::before {
+    content: "";
+    position: absolute;
+    inset: 0 .85rem auto;
+    height: 1px;
+    background: linear-gradient(90deg, #98623f, rgb(152 98 63 / 12%));
+  }
+
+  :global(html:not([data-motion="reduced"])) .conversation li > :not(.conversationRule) {
+    position: relative;
+  }
+
+  :global(html:not([data-motion="reduced"])) .conversation :is(h3, .stepNumber) {
+    transition: color 240ms ease;
   }
 
   :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] .stepNumber {
@@ -249,5 +266,9 @@
 }
 
 :global(html[data-motion="reduced"]) .questions :is(.questionNumber, .questionIcon, .questionButton, .textLink svg) {
+  transition: none;
+}
+
+:global(html[data-motion="reduced"]) .invitation :is(.textLink svg, .bookButton, .bookButton svg) {
   transition: none;
 }

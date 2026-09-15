@@ -2,14 +2,28 @@
    The archive holds as one composed plate while scroll chooses each case.
    Touch, short screens and reduced motion retain the ordinary reading flow. */
 
-@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
-  html body .home-v4 #evidence {
+html body .home-v4 #evidence,
+html body .home-v4 #evidence > .evidence-cinematic,
+html body .home-v4 #evidence .evidence-cinematic__shell {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+html body .home-v4 #evidence .evidence-cinematic__shell {
+  position: relative !important;
+  top: auto !important;
+}
+
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="reduced"]) body .home-v4 #evidence {
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;
   }
 
-  html body .home-v4 #evidence > .evidence-cinematic {
+  html:not([data-motion="reduced"]) body .home-v4 #evidence > .evidence-cinematic {
     display: block !important;
     height: 285svh !important;
     min-height: 285svh !important;
@@ -17,7 +31,7 @@
     overflow: clip !important;
   }
 
-  html body .home-v4 #evidence .evidence-cinematic__shell {
+  html:not([data-motion="reduced"]) body .home-v4 #evidence .evidence-cinematic__shell {
     position: sticky !important;
     top: 0 !important;
     height: 100svh !important;
@@ -26,14 +40,16 @@
     padding-block: clamp(4.4rem, 6.5svh, 5.5rem) 1rem !important;
   }
 
-  .home-v4 #evidence .evidence-cinematic__media-layer,
-  .home-v4 #evidence .evidence-cinematic__media-wash,
-  .home-v4 #evidence .evidence-cinematic__trail-step,
-  .home-v4 #evidence .evidence-cinematic__index button {
+  html:not([data-motion="reduced"]) .home-v4 #evidence :is(
+    .evidence-cinematic__media-layer,
+    .evidence-cinematic__media-wash,
+    .evidence-cinematic__trail-step,
+    .evidence-cinematic__index button
+  ) {
     will-change: transform, opacity;
   }
 
-  .home-v4 #evidence .evidence-cinematic__index button.is-active {
+  html:not([data-motion="reduced"]) .home-v4 #evidence .evidence-cinematic__index button.is-active {
     transform: translateY(-4px);
   }
 }

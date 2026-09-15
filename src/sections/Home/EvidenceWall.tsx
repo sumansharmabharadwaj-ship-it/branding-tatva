@@ -278,7 +278,9 @@ export function EvidenceWall() {
               Five real engagements. Each file begins with a signal that was misread,
               then records the decision that changed the direction.
             </p>
-            <span>Choose a project to follow the decision and its result.</span>
+            <span>{desktopMotion && !prefersReducedMotion
+              ? "Scroll through five project files, or choose one to explore."
+              : "Choose a project to follow the decision and its result."}</span>
           </div>
         </header>
 
