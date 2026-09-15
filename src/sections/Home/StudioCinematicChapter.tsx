@@ -2,11 +2,11 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { useLenis } from "@/components/SmoothScrollProvider";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { studioProgress, studioStep } from "./studioScroll";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls, useScroll, useTransform } from "framer-motion";
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const DISCIPLINES = [
@@ -62,6 +62,7 @@ const DISCIPLINES = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const DESKTOP_STORY = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
+const SCROLL_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "]);
 const MEDIA_TRANSITION = {
   enter: (direction: number) => ({ opacity: 0.82, y: direction * 16, scale: 1.035 }),
   visible: { opacity: 1, y: 0, scale: 1.015 },
@@ -69,20 +70,25 @@ const MEDIA_TRANSITION = {
 };
 
 export function StudioCinematicChapter() {
-  const lenis = useLenis();
   const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const selectionId = useId();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const cinematicViewport = useMediaQuery(DESKTOP_STORY);
+  const [frameFits, setFrameFits] = useState(false);
+  const desktopMotion = cinematicViewport && !prefersReducedMotion && frameFits;
+  const decisionControls = useAnimationControls();
+  const resultControls = useAnimationControls();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
   const portraitY = useTransform(scrollYProgress, [0, 0.5, 1], [18, -8, 8]);
   const portraitScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.035, 1.14, 1.06]);
   const portraitX = useTransform(scrollYProgress, [0, 0.5, 1], ["-1%", "1.5%", "-1.5%"]);
   const portraitTurn = useTransform(scrollYProgress, [0, 0.5, 1], [-1.2, 0.8, 0]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [desktopMotion, setDesktopMotion] = useState(false);
   const selectionRef = useRef({ index: 0, direction: 0 });
+  const manualChoiceRef = useRef(false);
+  const animatedIndexRef = useRef(0);
   const active = DISCIPLINES[activeIndex];
 
   const select = useCallback((index: number) => {
@@ -91,22 +97,57 @@ export function StudioCinematicChapter() {
     setActiveIndex(index);
   }, []);
 
+  // The natural frame height includes the portrait and the complete proof.
+  // Release the hold when a shorter viewport or larger type needs more room.
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const measure = () => setFrameFits(grid.offsetHeight <= window.innerHeight + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(grid);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  // Animate the mounted reading surface so a change preserves the proof link
+  // and keyboard focus. Repeated forward steps still get their own entrance.
+  useEffect(() => {
+    const changed = animatedIndexRef.current !== activeIndex;
+    animatedIndexRef.current = activeIndex;
+    if (prefersReducedMotion || !changed) {
+      decisionControls.set({ y: 0, rotateX: 0 });
+      resultControls.set({ x: 0 });
+    } else {
+      const direction = selectionRef.current.direction;
+      void decisionControls.start({
+        y: [direction * (desktopMotion ? 26 : 10), 0],
+        rotateX: [desktopMotion ? direction * 9 : 0, 0],
+        transition: { duration: 0.52, ease: EASE },
+      });
+      void resultControls.start({
+        x: [direction * 28, 0],
+        transition: { duration: 0.48, delay: 0.08, ease: EASE },
+      });
+    }
+    return () => {
+      decisionControls.stop();
+      resultControls.stop();
+    };
+  }, [activeIndex, desktopMotion, prefersReducedMotion, decisionControls, resultControls]);
+
   useEffect(() => {
     const section = sectionRef.current;
     const grid = gridRef.current;
-    if (!section || !grid || prefersReducedMotion) return;
+    if (!section || !grid || !desktopMotion) return;
 
-    const desktopStory = window.matchMedia(DESKTOP_STORY);
     let frameRequest = 0;
 
     function render() {
       frameRequest = 0;
-      setDesktopMotion(desktopStory.matches);
-      if (!desktopStory.matches) {
-        grid?.style.removeProperty("--studio-scroll-progress");
-        return;
-      }
-
       const bounds = section?.getBoundingClientRect();
       if (!bounds) return;
 
@@ -114,8 +155,9 @@ export function StudioCinematicChapter() {
       if (progress === null) return;
 
       grid?.style.setProperty("--studio-scroll-progress", progress.toFixed(4));
+      if (manualChoiceRef.current) return;
       // A keyboard user owns the selected panel until focus leaves it.
-      // Otherwise a scroll can unmount the very proof link they are reading.
+      // Scrolling must preserve the destination of the proof they are reading.
       const focused = document.activeElement;
       if (focused instanceof HTMLElement && section?.contains(focused) && focused.matches(":focus-visible")) return;
       select(studioStep(progress, selectionRef.current.index, DISCIPLINES.length));
@@ -126,38 +168,39 @@ export function StudioCinematicChapter() {
       frameRequest = window.requestAnimationFrame(render);
     }
 
+    function releaseManualChoice() {
+      manualChoiceRef.current = false;
+      // The next scroll event resumes the sequence; intent alone stays still.
+    }
+
+    function onScrollKey(event: globalThis.KeyboardEvent) {
+      if (event.defaultPrevented || !SCROLL_KEYS.has(event.key)) return;
+      if (event.target instanceof Element && event.target.closest('[role="tablist"], input, textarea, select, [contenteditable="true"]')) return;
+      releaseManualChoice();
+    }
+
     render();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
-    desktopStory.addEventListener("change", schedule);
+    window.addEventListener("wheel", releaseManualChoice, { passive: true });
+    window.addEventListener("touchstart", releaseManualChoice, { passive: true });
+    window.addEventListener("keydown", onScrollKey);
     section.addEventListener("focusout", schedule);
 
     return () => {
       if (frameRequest) window.cancelAnimationFrame(frameRequest);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
-      desktopStory.removeEventListener("change", schedule);
+      window.removeEventListener("wheel", releaseManualChoice);
+      window.removeEventListener("touchstart", releaseManualChoice);
+      window.removeEventListener("keydown", onScrollKey);
       section.removeEventListener("focusout", schedule);
       grid.style.removeProperty("--studio-scroll-progress");
     };
-  }, [prefersReducedMotion, select]);
+  }, [desktopMotion, select]);
 
   function choose(index: number) {
-    const section = sectionRef.current;
-    const desktopStory = window.matchMedia(DESKTOP_STORY);
-
-    if (section && desktopStory.matches && !prefersReducedMotion) {
-      const bounds = section.getBoundingClientRect();
-      const runway = Math.max(0, bounds.height - window.innerHeight);
-      if (runway > 0) {
-        // Align the held frame directly so a choice never displays the
-        // intervening disciplines while the browser catches up.
-        const top = window.scrollY + bounds.top + runway * ((index + 0.5) / DISCIPLINES.length);
-        if (lenis) lenis.scrollTo(top, { immediate: true });
-        else window.scrollTo({ top, behavior: "instant" });
-      }
-    }
-
+    manualChoiceRef.current = true;
     select(index);
   }
 
@@ -179,6 +222,7 @@ export function StudioCinematicChapter() {
       data-home-chapter="studio"
       data-home-section="studio"
       data-studio-state={active.number}
+      data-studio-story={desktopMotion ? "held" : "flow"}
       className="studio-cinematic home-scene"
       aria-labelledby="studio-cinematic-title"
       style={{ "--studio-accent": active.accent } as CSSProperties}
@@ -259,11 +303,9 @@ export function StudioCinematicChapter() {
             className="studio-cinematic__panel"
           >
             <motion.div
-              key={active.number}
               data-studio-decision
-              initial={prefersReducedMotion ? false : { y: selectionRef.current.direction * (desktopMotion ? 26 : 10), rotateX: desktopMotion ? selectionRef.current.direction * 9 : 0 }}
-              animate={{ y: 0, rotateX: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.52, ease: EASE }}
+              initial={false}
+              animate={decisionControls}
               style={{ transformPerspective: 1000, transformOrigin: "50% 0%" }}
             >
               <p className="studio-cinematic__credential">{active.eyebrow}</p>
@@ -271,9 +313,8 @@ export function StudioCinematicChapter() {
               <p className="studio-cinematic__panel-copy">{active.line}</p>
               <motion.div
                 className="studio-cinematic__result"
-                initial={prefersReducedMotion ? false : { x: selectionRef.current.direction * 28 }}
-                animate={{ x: 0 }}
-                transition={{ duration: prefersReducedMotion ? 0 : 0.48, delay: prefersReducedMotion ? 0 : 0.08, ease: EASE }}
+                initial={false}
+                animate={resultControls}
               >
                 <span>What the client receives</span>
                 <strong>{active.result}</strong>

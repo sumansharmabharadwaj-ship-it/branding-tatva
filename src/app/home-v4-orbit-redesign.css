@@ -363,19 +363,17 @@
   .brand-orbit__petal { display:none; }
 }
 
-/* These manual chapters fit one scene. The evidence archive owns its
-   responsive scroll sequence in home-v4-evidence-scroll.css. */
+/* These manual chapters fit one scene. Evidence and Studio own their
+   responsive scroll sequences in their respective scroll stylesheets. */
 html body .home-v4 section#recognition,
-html body .home-v4 section#process,
-html body .home-v4 #studio {
+html body .home-v4 section#process {
   height: 100svh !important;
   min-height: 100svh !important;
 }
 
 @media (max-width: 820px) {
   html body .home-v4 section#recognition,
-  html body .home-v4 section#process,
-  html body .home-v4 #studio {
+  html body .home-v4 section#process {
     height: auto !important;
     min-height: 100svh !important;
   }

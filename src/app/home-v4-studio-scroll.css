@@ -1,8 +1,34 @@
-/* Keep the thinking room composed throughout its three scroll-led beats.
-   Existing imagery, copy, surfaces and the 240svh runway remain intact. */
+/* The frame keeps its natural height. Only a complete frame that fits the
+   viewport gets the three-beat hold; compact and larger-type views flow. */
+.home-v4 #studio {
+  height: auto;
+  min-height: 100svh;
+  overflow: clip;
+}
+
+.home-v4 #studio .studio-cinematic__grid {
+  position: relative;
+  top: auto;
+  height: auto;
+}
+
+.home-v4 #studio[data-studio-story="flow"] .studio-cinematic__media-topline::after {
+  display: none;
+}
+
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
   html body .home-v4 #studio {
     scroll-margin-top: 0;
+  }
+
+  .home-v4 #studio[data-studio-story="held"] {
+    height: 240svh;
+    min-height: 240svh;
+  }
+
+  .home-v4 #studio[data-studio-story="held"] .studio-cinematic__grid {
+    position: sticky;
+    top: 0;
   }
 
   .home-v4 #studio .studio-cinematic__grid {
