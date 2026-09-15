@@ -32,14 +32,16 @@ export function ContactFooterMotion({ children }: { children: ReactNode }) {
       ref={footerRef}
       data-contact-footer-motion={enabled ? "full" : "reduced"}
       data-contact-footer-timeline="entry"
-      style={enabled ? {
-        "--contact-footer-progress": progress,
-        "--contact-footer-horizon-scale": horizonScale,
-        "--contact-footer-horizon-opacity": horizonOpacity,
-        "--contact-footer-light-y": lightY,
-        "--contact-footer-light-scale": lightScale,
-        "--contact-footer-light-opacity": lightOpacity,
-      } as MotionStyle : undefined}
+      style={{
+        // Explicit resting values replace live bindings. Removing the style
+        // object can leave a spring's last custom-property values behind.
+        "--contact-footer-progress": enabled ? progress : 1,
+        "--contact-footer-horizon-scale": enabled ? horizonScale : 0.62,
+        "--contact-footer-horizon-opacity": enabled ? horizonOpacity : 0.45,
+        "--contact-footer-light-y": enabled ? lightY : "0%",
+        "--contact-footer-light-scale": enabled ? lightScale : 1.08,
+        "--contact-footer-light-opacity": enabled ? lightOpacity : 0.14,
+      } as MotionStyle}
     >
       {children}
     </motion.div>
