@@ -1,5 +1,5 @@
 {
-  "recorded": 244,
+  "recorded": 239,
   "entries": [
     "src/app/contact/contact-cinematic.css:1058:0.55",
     "src/app/contact/contact-cinematic.css:1730:0.69",
@@ -103,11 +103,6 @@
     "src/app/home-v4-tatva-living-final.css:77:0.61",
     "src/app/home-v4-tatva-living-final.css:82:0.52",
     "src/app/home-v4-tatva-mobile-fix.css:61:0.64",
-    "src/app/home-v4.css:1072:0.67",
-    "src/app/home-v4.css:207:0.55",
-    "src/app/home-v4.css:547:0.68",
-    "src/app/home-v4.css:738:0.54",
-    "src/app/home-v4.css:842:0.55",
     "src/app/insights-cinematic.css:1132:0.58",
     "src/app/insights-cinematic.css:113:0.6875",
     "src/app/insights-cinematic.css:1157:0.64",

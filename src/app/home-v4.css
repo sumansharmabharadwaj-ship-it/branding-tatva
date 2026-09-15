@@ -30,9 +30,14 @@
 }
 
 .home-v4 h1,
-.home-v4 h2,
-.home-v4 h3,
-.home-v4 p {
+.home-v4 :where([data-home-v4-chapter="opening"]) p {
+  max-width: 100%;
+}
+
+/* A default must not outrank the chapters' authored reading measures.
+   Keep the opening's established cascade while letting later titles and
+   paragraphs use their own character-based widths. */
+:where(.home-v4) :where(h2, h3, p) {
   max-width: 100%;
 }
 
@@ -204,7 +209,7 @@
 
 .home-v4-guide__copy strong {
   color: rgba(212, 185, 154, 0.84);
-  font-size: 0.55rem;
+  font-size: var(--text-reading-min);
   font-weight: 650;
   letter-spacing: 0.13em;
 }
@@ -544,7 +549,7 @@
 .home-v4-opening__proof p {
   margin: 0.6rem 0 0;
   color: rgba(244, 239, 230, 0.62);
-  font-size: 0.68rem;
+  font-size: var(--text-reading-min);
   line-height: 1.55;
 }
 
@@ -735,7 +740,7 @@
 
 .home-v4-recognition__answer > span {
   color: rgba(23, 26, 28, 0.48);
-  font-size: 0.54rem;
+  font-size: var(--text-reading-min);
 }
 
 .home-v4-recognition__answer strong {
@@ -839,7 +844,7 @@
 
 .home-v4-recognition__diagram button > span {
   color: var(--recognition-accent);
-  font-size: 0.55rem;
+  font-size: var(--text-reading-min);
   font-weight: 650;
   letter-spacing: 0.15em;
 }
@@ -1069,7 +1074,7 @@
   max-width: 46ch;
   margin: -0.3rem 0 0;
   color: rgba(244, 239, 230, 0.5);
-  font-size: 0.67rem;
+  font-size: var(--text-reading-min);
   line-height: 1.55;
 }
 

@@ -1,4 +1,6 @@
 .journey {
+  --journey-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+  --journey-gap: clamp(2rem, 4vw, 4rem);
   position: relative; isolation: isolate; overflow: hidden;
   color: #342f27; background: #eee7da;
 }
@@ -8,7 +10,7 @@
   min-height: 100svh;
   padding: clamp(5.5rem, 9svh, 7rem) clamp(1.5rem, 5.5vw, 5.5rem) clamp(2.5rem, 5svh, 4rem);
 }
-.header { display: grid; grid-template-columns: 1.1fr .9fr; gap: 3rem; align-items: end; }
+.header { display: grid; grid-template-columns: var(--journey-columns); gap: var(--journey-gap); align-items: end; }
 .eyebrow {
   margin: 0 0 .7rem; color: #805239; font-size: .875rem; font-weight: 500;
   line-height: 1.5; letter-spacing: .12em; text-transform: uppercase;
@@ -32,7 +34,7 @@
 .tabLabel { font-size: .9375rem; line-height: 1.4; overflow-wrap: anywhere; }
 .tab[aria-selected="true"] { color: #fff9ed; }
 .tab:not([aria-selected="true"]):hover { background: rgb(94 76 51 / 8%); }
-.panel { display: grid; grid-template-columns: .95fr 1.05fr; gap: clamp(2rem, 4vw, 4rem); min-width: 0; align-items: center; }
+.panel { display: grid; grid-template-columns: var(--journey-columns); gap: var(--journey-gap); min-width: 0; align-items: center; }
 .media { position: relative; align-self: stretch; min-height: 27rem; overflow: hidden; border-radius: 1.4rem; background: #514936; }
 .imagePlane { position: absolute; inset: -1rem; }
 .image { object-fit: cover; }

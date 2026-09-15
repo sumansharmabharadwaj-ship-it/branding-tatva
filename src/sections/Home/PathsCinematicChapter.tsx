@@ -269,7 +269,7 @@ export function PathsCinematicChapter() {
         </div>
 
         <footer className={styles.footer}>
-          <p>Not sure which fits yet?</p>
+          <p>Find the scope your brand needs.</p>
           <Link href="/services#audit">
             Start with the recognition audit <ArrowRight size={17} aria-hidden="true" />
           </Link>

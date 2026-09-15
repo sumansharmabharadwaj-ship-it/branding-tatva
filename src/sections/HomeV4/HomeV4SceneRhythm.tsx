@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
-type Treatment = "accent" | "title" | "fan" | "plate" | "portrait" | "row" | "rail";
+type Treatment = "accent" | "title" | "heading" | "fan" | "plate" | "portrait" | "row" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
 type SceneSpec = { selector: string; layers: readonly LayerSpec[] };
 
@@ -16,25 +16,25 @@ const SCENES: readonly SceneSpec[] = [
     [".home-v4-opening__proof", "plate"],
   ] },
   { selector: '[data-home-v4-chapter="recognition"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    [".home-v4-recognition__header > div", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-home-v4-chapter="cost"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
+    ["header > div:first-child", "heading"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
   ] },
   { selector: '[data-home-v4-chapter="cost-stack"]', layers: [
     ["h2", "title"], ["h2 em", "accent"],
   ] },
   { selector: '[data-scroll-story="foundation"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-scroll-story="paths"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-scroll-story="process"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-home-v4-chapter="evidence"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    [".evidence-cinematic__header", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '.tatva-observatory', layers: [
     ["h2", "title"], ["h2 em", "accent"], [".tatva-observatory__force", "fan"],
@@ -119,7 +119,13 @@ export function HomeV4SceneRhythm() {
           let rotate = 0;
           let scale = 1;
           if (wide) {
-            if (treatment === "title") {
+            if (treatment === "heading") {
+              // Eyebrow, title and introduction arrive as one reading group.
+              // Match the rail's vertical travel so the heading cannot cross
+              // its controls while the chapter is entering the viewport.
+              x = side * -44 * amount;
+              y = 40 * amount;
+            } else if (treatment === "title") {
               x = side * -44 * amount;
             } else if (treatment === "accent") {
               x = side * 112 * amount;
