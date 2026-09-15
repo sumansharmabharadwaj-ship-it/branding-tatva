@@ -1859,17 +1859,13 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   }
 }
 
-/* The final afterglow does not cut to a generic footer strip. Light from the
-   gratitude landscape narrows into one horizon, then settles behind the
-   practical links. View progress makes this a single finite closing shot. */
+/* Light from the gratitude landscape narrows into a horizon behind the
+   practical links. The shared entry timeline reaches its final pose at the
+   actual page endpoint and retraces naturally when the visitor scrolls back. */
 .contact-footer-afterglow {
   position: relative;
   isolation: isolate;
   overflow: clip;
-  /* Give wheel scrolling a reachable endpoint beyond the final scene.
-     Without it, proximity snapping can return to that scene's start before
-     the fourth acknowledgement has time to resolve. */
-  scroll-snap-align: end;
   margin-top: -1px;
   background: #27221e;
 }
@@ -1896,8 +1892,8 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
     transparent
   );
   box-shadow: 0 0 36px rgba(224, 190, 139, 0.24);
-  opacity: 0.6;
-  transform: scaleX(0.42);
+  opacity: var(--contact-footer-horizon-opacity, 0.45);
+  transform: scaleX(var(--contact-footer-horizon-scale, 0.62));
   transform-origin: 50% 50%;
 }
 
@@ -1913,8 +1909,8 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
     transparent 68%
   );
   mix-blend-mode: screen;
-  opacity: 0.22;
-  transform: translate3d(0, -14%, 0) scaleX(0.84);
+  opacity: var(--contact-footer-light-opacity, 0.14);
+  transform: translate3d(0, var(--contact-footer-light-y, 0%), 0) scaleX(var(--contact-footer-light-scale, 1.08));
   transform-origin: 50% 0%;
 }
 
@@ -1922,49 +1918,6 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   position: relative;
   z-index: 1;
   background: linear-gradient(180deg, rgba(39, 34, 30, 0.68), #27221e 72%);
-}
-
-@supports (animation-timeline: view()) {
-  .contact-footer-afterglow::before {
-    animation: contact-footer-horizon linear both;
-    animation-timeline: view(block);
-    animation-range: entry 0% cover 72%;
-  }
-
-  .contact-footer-afterglow::after {
-    animation: contact-footer-afterglow linear both;
-    animation-timeline: view(block);
-    animation-range: entry 0% cover 88%;
-  }
-}
-
-@keyframes contact-footer-horizon {
-  0% {
-    opacity: 0.12;
-    transform: scaleX(0.12);
-  }
-
-  46% {
-    opacity: 0.76;
-    transform: scaleX(1);
-  }
-
-  100% {
-    opacity: 0.34;
-    transform: scaleX(0.42);
-  }
-}
-
-@keyframes contact-footer-afterglow {
-  0% {
-    opacity: 0.3;
-    transform: translate3d(0, -28%, 0) scaleX(0.78);
-  }
-
-  100% {
-    opacity: 0.08;
-    transform: translate3d(0, 16%, 0) scaleX(1.08);
-  }
 }
 
 html[data-motion="reduced"] [data-contact-film] [data-contact-scene-heading] {

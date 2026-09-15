@@ -10,6 +10,7 @@ import { ContactGratitude } from "@/components/ContactGratitude";
 import { ContactCallSequence } from "@/components/ContactCallSequence";
 import { ContactScrollRuntime } from "@/components/ContactScrollRuntime";
 import { ContactChapterRail } from "@/components/ContactChapterRail";
+import { ContactFooterMotion } from "@/components/ContactFooterMotion";
 import { ContactBookingAction } from "@/components/ContactBookingAction";
 import { ContactHeroBookingLink, ContactHeroContextCard } from "@/components/ContactServicesHandoff";
 import { TrackedLink } from "@/components/TrackedLink";
@@ -496,7 +497,9 @@ export default function ContactPage() {
 
         <ContactGratitude />
       </main>
-      <Footer compact className="contact-footer-afterglow" />
+      <ContactFooterMotion>
+        <Footer compact className="contact-footer-afterglow" />
+      </ContactFooterMotion>
     </>
   );
 }
