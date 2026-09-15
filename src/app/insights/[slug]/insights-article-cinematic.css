@@ -184,7 +184,7 @@
   gap: 0.42rem;
   padding-inline: 0.72rem;
   color: rgb(39 34 30 / 48%);
-  font-size: 0.69rem;
+  font-size: 0.7rem;
   white-space: nowrap;
   transition: color 220ms ease;
 }
@@ -202,7 +202,7 @@
 
 .insight-reading-rail__items a span {
   color: var(--reading-accent);
-  font-size: 0.52rem;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
 }
 
@@ -245,7 +245,7 @@
 
 .insight-reading-index__head span {
   color: rgb(39 34 30 / 40%);
-  font-size: 0.56rem;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
 }
 
@@ -315,7 +315,7 @@
   display: -webkit-box;
   overflow: hidden;
   color: rgb(39 34 30 / 68%);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 500;
   line-height: 1.38;
   -webkit-box-orient: vertical;
@@ -362,7 +362,7 @@
 
 .insight-reading-index__all summary small {
   color: var(--reading-accent);
-  font-size: 0.56rem;
+  font-size: 0.7rem;
 }
 
 .insight-reading-index__all ol {
@@ -384,14 +384,14 @@
   padding: 0.52rem 0.35rem;
   border-radius: 0.6rem;
   color: rgb(39 34 30 / 48%);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   line-height: 1.42;
   transition: background-color 220ms ease, color 220ms ease;
 }
 
 .insight-reading-index__all a > span {
   color: rgb(39 34 30 / 34%);
-  font-size: 0.53rem;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
   transition: color 220ms ease;
 }
@@ -771,7 +771,7 @@
 
 .insight-framework__steps span {
   color: var(--framework-accent);
-  font-size: 0.58rem;
+  font-size: 0.7rem;
   letter-spacing: 0.12em;
 }
 
@@ -1157,7 +1157,7 @@
   overflow: hidden;
   margin-top: 0.4rem;
   color: rgb(39 34 30 / 56%);
-  font-size: 0.66rem;
+  font-size: 0.7rem;
   line-height: 1.45;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
