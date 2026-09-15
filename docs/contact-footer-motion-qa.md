@@ -67,3 +67,8 @@ The permanent alias remains on Release 292. The completed workflow confirms its
 existing VERCEL_TOKEN repository secret is absent, preventing alias reassignment.
 Review uses temporary access to the exact release deployment. Production remains
 unchanged. No enquiry, booking, phone call or WhatsApp message was sent.
+
+After the completed hosted checks, both renewed direct Contact share links
+redirected to Vercel sign-in. The exact deployment remains READY, but the final
+review link currently requires Vercel authentication. This access limitation is
+reported separately from the successful application checks above.
