@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
-import { useMotionValueEvent, useScroll } from "framer-motion";
+import { useMotionValue, useMotionValueEvent, useScroll } from "framer-motion";
 
 const MANUAL_HOLD_MS = 1800;
 const SCROLL_RECLAIM_THRESHOLD = 0.012;
@@ -33,12 +33,16 @@ export function useContactSceneStage({
 }) {
   const safeCount = Math.max(1, count);
   const [activeIndex, setActiveIndex] = useState(0);
+  // Decorative traces share the same owner as the selected step. A pointer
+  // preview must move the light and the ledger together, even without scroll.
+  const stageProgress = useMotionValue(0);
   const manualUntilRef = useRef(0);
   const manualProgressRef = useRef<number | null>(null);
   const hasManualSelectionRef = useRef(false);
   const { scrollYProgress } = useScroll({
     target,
     offset: ["start 0.82", "end 0.18"],
+    trackContentSize: true,
   });
 
   const syncToProgress = useCallback(
@@ -57,10 +61,17 @@ export function useContactSceneStage({
         manualProgressRef.current = null;
       }
 
+      stageProgress.set(progress);
       const nextIndex = stageFromProgress(progress, safeCount);
-      setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
+      setActiveIndex((current) => {
+        // A small dead band prevents trackpad settling at a boundary from
+        // repeatedly exchanging the two highlighted rows.
+        const lower = current / safeCount - SCROLL_RECLAIM_THRESHOLD;
+        const upper = (current + 1) / safeCount + SCROLL_RECLAIM_THRESHOLD;
+        return progress >= lower && progress <= upper ? current : nextIndex;
+      });
     },
-    [followScroll, persistManualSelection, reducedMotion, safeCount],
+    [followScroll, persistManualSelection, reducedMotion, safeCount, stageProgress],
   );
 
   useMotionValueEvent(scrollYProgress, "change", syncToProgress);
@@ -75,10 +86,11 @@ export function useContactSceneStage({
       hasManualSelectionRef.current = true;
       manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       manualProgressRef.current = scrollYProgress.get();
+      stageProgress.set((nextIndex + 0.5) / safeCount);
       setActiveIndex(nextIndex);
     },
-    [safeCount, scrollYProgress],
+    [safeCount, scrollYProgress, stageProgress],
   );
 
-  return { activeIndex, choose, scrollYProgress };
+  return { activeIndex, choose, scrollYProgress, stageProgress };
 }

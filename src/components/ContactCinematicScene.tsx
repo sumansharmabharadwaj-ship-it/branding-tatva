@@ -50,6 +50,13 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
   const pointerY = useMotionValue(0);
   const lightX = useSpring(pointerX, { stiffness: 65, damping: 24, mass: 0.6 });
   const lightY = useSpring(pointerY, { stiffness: 65, damping: 24, mass: 0.6 });
+  // Window light crosses the same timeline as the camera. Pointer movement
+  // only nudges that path; reversing the scroll retraces the whole exposure.
+  const sunlightTravelX = useTransform(progress, [0, 0.48, 1], compact ? [-32, 0, 32] : [-150, 0, 150]);
+  const sunlightTravelY = useTransform(progress, [0, 1], compact ? [-12, 12] : [-36, 36]);
+  const sunlightX = useTransform(() => sunlightTravelX.get() + (compact ? 0 : lightX.get()));
+  const sunlightY = useTransform(() => sunlightTravelY.get() + (compact ? 0 : lightY.get()));
+  const sunlightScale = useTransform(progress, [0, 0.48, 1], [1.12, 0.92, 1.08]);
   const cameraY = useTransform(progress, [0, 0.46, 1], compact ? [-8, 0, 8] : [-24, 0, 24]);
   const cameraScale = useTransform(progress, [0, 0.46, 1], compact ? [1.045, 1.03, 1.045] : [1.1, 1.045, 1.075]);
   const currentX = useTransform(progress, [0, 1], variant === "paper" ? ["14%", "-14%"] : ["-14%", "14%"]);
@@ -121,7 +128,10 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
         <motion.div
           aria-hidden="true"
           data-contact-scene-sunlight="true"
-          style={{ x: enabled && !compact ? lightX : 0, y: enabled && !compact ? lightY : 0, opacity: hasReadingFocus ? 0 : 0.4 }}
+          data-contact-light-timeline="shared"
+          style={enabled
+            ? { x: sunlightX, y: sunlightY, scale: sunlightScale, opacity: hasReadingFocus ? 0 : 0.42 }
+            : { transform: "none", opacity: 0.16 }}
         />
         <div data-contact-scene-plane="true" data-contact-focus-pull="crisp" className="relative z-10 flex min-h-[100svh] w-full items-center">
           {children}
