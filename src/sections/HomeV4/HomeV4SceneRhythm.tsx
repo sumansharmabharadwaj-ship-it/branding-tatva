@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
-type Treatment = "accent" | "title" | "heading" | "fan" | "plate" | "portrait" | "row" | "rail";
+type Treatment = "title" | "heading" | "fan" | "plate" | "portrait" | "row" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
 type SceneSpec = { selector: string; layers: readonly LayerSpec[] };
 
@@ -22,7 +22,7 @@ const SCENES: readonly SceneSpec[] = [
     ["header > div:first-child", "heading"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
   ] },
   { selector: '[data-home-v4-chapter="cost-stack"]', layers: [
-    ["h2", "title"], ["h2 em", "accent"],
+    ["[data-cost-intro]", "heading"],
   ] },
   { selector: '[data-scroll-story="foundation"]', layers: [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
@@ -37,13 +37,15 @@ const SCENES: readonly SceneSpec[] = [
     [".evidence-cinematic__header", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '.tatva-observatory', layers: [
-    ["h2", "title"], ["h2 em", "accent"], [".tatva-observatory__force", "fan"],
+    [".tatva-observatory__copy", "heading"], [".tatva-observatory__force", "fan"],
   ] },
   { selector: '.tatva-pressure-lab', layers: [
-    ["h2", "title"], ["h2 em", "accent"], [".tatva-pressure-lab__board", "plate"],
+    [".tatva-pressure-lab__copy", "heading"], [".tatva-pressure-lab__board", "plate"],
   ] },
   { selector: '.studio-cinematic', layers: [
-    ["h2", "title"], ["h2 em", "accent"], ['[role="tabpanel"]', "plate"], [".studio-cinematic__portrait", "portrait"],
+    // One reading column preserves the title/intro and proof/footer gaps.
+    // Its own discipline transition stays inside this shared entrance.
+    [".studio-cinematic__content", "heading"], [".studio-cinematic__portrait", "portrait"],
   ] },
   { selector: '[data-home-v4-chapter="decision"]', layers: [
     ["header", "heading"], ["[data-open]", "row"],
@@ -127,9 +129,6 @@ export function HomeV4SceneRhythm() {
               y = 40 * amount;
             } else if (treatment === "title") {
               x = side * -44 * amount;
-            } else if (treatment === "accent") {
-              x = side * 112 * amount;
-              y = 12 * amount;
             } else if (treatment === "rail") {
               x = side * -64 * amount;
               y = 40 * amount;
@@ -153,8 +152,6 @@ export function HomeV4SceneRhythm() {
               y = (28 + index * 9) * amount;
             }
           }
-          // Inline accents compose with their heading only on wide screens.
-          if (!wide && treatment === "accent") y = 0;
           // Ease the visual response, never the document's scroll position.
           // First paint and focused controls settle immediately. Following
           // frames converge quickly and stop scheduling when at rest.

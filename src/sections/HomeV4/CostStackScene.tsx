@@ -120,18 +120,18 @@ export function V4CostStackScene() {
       <LivingGradient contours preset="orangery" />
 
       <div className={styles.inner}>
-        <p className={styles.eyebrow}>02 · What the reset costs</p>
-        {/* Matches the two beat declarative rhythm the rest of Home's
-            headings use ("More content. The same introduction.") rather
-            than the idiom this first read as, which sat wrong against a
-            literary voice. */}
-        <h2 id="home-v4-cost-stack-title" className={styles.title}>
-          Three costs. <em>Every reset renews them.</em>
-        </h2>
-        <p className={styles.lede}>
-          Starting the brand again looks free. The bill arrives later, in the work
-          people repeat and the recognition that never compounds.
-        </p>
+        <div data-cost-intro>
+          <p className={styles.eyebrow}>02 · What the reset costs</p>
+          {/* The title and introduction share one scroll entrance so the
+              heading keeps its reading space above the supporting copy. */}
+          <h2 id="home-v4-cost-stack-title" className={styles.title}>
+            Three costs. <em>Every reset renews them.</em>
+          </h2>
+          <p className={styles.lede}>
+            Starting the brand again looks free. The bill arrives later, in the work
+            people repeat and the recognition that never compounds.
+          </p>
+        </div>
 
         <ol className={styles.stack} aria-label="Where an inconsistent brand costs time and attention">
           {BRAND_RESET_COSTS.map((cost, index) => (
