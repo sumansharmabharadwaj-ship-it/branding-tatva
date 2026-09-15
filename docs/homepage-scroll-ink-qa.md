@@ -56,3 +56,13 @@ screenshots, controls and the responsive iframe read bridge worked. The same
 release was verified through that iframe. No frontend change was made for the
 browser transport issue. System reduced motion and forced colors are covered by
 CSS fallbacks; the site pause control was exercised directly in the browser.
+
+## Release 305 follow-up
+
+A later computed text-fill check found that Recognition's legacy solid fill
+covered its active gradient. The release 303 coverage table confirmed background
+and progress signals but missed that paint override. Release 305 removes the
+conflicting declaration. Live verification confirms transparent text fill over
+the clipped gradient during motion, and the original solid clay fill when
+motion is paused. See `homepage-comparison-motion-qa.md` for the exact release
+and acceptance evidence.
