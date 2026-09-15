@@ -107,7 +107,7 @@
      as atmosphere. Lower peak for the same reason — a shaft you can
      point at is a shape, not a light. */
   background: linear-gradient(
-    100deg,
+    90deg,
     transparent 0%,
     color-mix(in oklab, var(--lg-light) 10%, transparent) 22%,
     color-mix(in oklab, var(--lg-light) 30%, transparent) 40%,

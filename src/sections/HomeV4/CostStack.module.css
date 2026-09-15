@@ -84,7 +84,7 @@
  * rather than take turns. */
 .stack {
   display: grid;
-  row-gap: clamp(12rem, 42svh, 28rem);
+  row-gap: clamp(8rem, 28svh, 18rem);
   margin: clamp(2.5rem, 7svh, 4.5rem) 0 0;
   padding: 0;
   list-style: none;
@@ -105,12 +105,10 @@
   padding: clamp(1.75rem, 3.4vw, 2.9rem);
   border: 1px solid rgb(242 240 232 / 14%);
   border-radius: 1.75rem;
-  /* Held near opaque on purpose. A translucent card over an already
-     stacked card reads as mud rather than depth. */
-  background: linear-gradient(148deg, rgb(28 34 26 / 94%) 0%, rgb(20 24 18 / 96%) 100%);
+  /* Opaque surfaces keep covered text from ghosting through the next card. */
+  background: linear-gradient(148deg, #1c221a 0%, #141812 100%);
   box-shadow: 0 32px 90px rgb(6 10 8 / 52%), 0 2px 0 rgb(242 240 232 / 6%) inset;
-  /* The near opaque surface already hides cards underneath; a live blur
-     was spending GPU work without adding useful translucency. */
+  /* Solid surfaces need no live backdrop blur. */
 }
 
 .cardHead {
