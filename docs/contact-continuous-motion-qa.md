@@ -69,3 +69,22 @@ account/security setting was changed.
 
 Checks above use desktop Chrome and same-origin responsive frames, not physical
 mobile devices or independent Safari/Firefox runs.
+
+## Release 284 continuation
+
+The mobile review exposed a hidden-but-focusable chapter dock while the form
+owned the viewport. Visibility, inertness and tab order now share the same state.
+The dock returns after leaving the form even when optional context remains open.
+Chapter tracking uses the section crossing the reading line, and remeasures when
+section height or motion preferences change.
+
+Compact screens show one bottom control at a time during the chapter journey.
+The measurement notice remains available at the hero/footer and while focused;
+measurement consent itself is unchanged. Matched paper gradients now blend the
+Choose/Write/Call boundaries and lead into the existing invitation frame. Lower
+specificity on the default palette lets each chapter use its intended sage or
+peach colours.
+
+Local verification: production build (including types/lint), Contact contract,
+cinematic motion and all 2,002 invitation poses passed before deployment.
+Hosted acceptance is performed against the exact Release 284 preview.

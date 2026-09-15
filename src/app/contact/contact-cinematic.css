@@ -1084,17 +1084,6 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   background: #f6f2ea;
 }
 
-@supports selector(body:has(*)) {
-  body:has([data-contact-form-card]:focus-within) [data-contact-chapter-rail],
-  body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail],
-  body:has([data-contact-gratitude-next] :focus-visible) [data-contact-chapter-rail],
-  body:has([data-contact-gratitude-active="true"]) [data-contact-chapter-rail] {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, 0.75rem);
-  }
-}
-
 /* On compact/touch viewports the form takes ownership before a field receives
    focus. This prevents the chapter dock and privacy choice from covering the
    untouched submit state while preserving the desktop side rail. Keep the
@@ -1110,23 +1099,11 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   html[data-contact-form-owns-viewport="true"] .consent-notice {
     display: none;
   }
-
-  html[data-contact-form-owns-viewport="true"] [data-contact-chapter-rail] {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, 0.75rem);
-  }
 }
 
 @media (pointer: coarse) {
   html[data-contact-form-owns-viewport="true"] .consent-notice {
     display: none;
-  }
-
-  html[data-contact-form-owns-viewport="true"] [data-contact-chapter-rail] {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, 0.75rem);
   }
 }
 
@@ -1175,16 +1152,7 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
     display: inline;
   }
 
-  @supports selector(body:has(*)) {
-    body:has([data-contact-form-card]:focus-within) [data-contact-chapter-rail],
-    body:has([data-contact-form-expanded="true"]) [data-contact-chapter-rail],
-    body:has([data-contact-gratitude-next] :focus-visible) [data-contact-chapter-rail],
-    body:has([data-contact-gratitude-active="true"]) [data-contact-chapter-rail] {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translate(0, -50%);
-    }
-  }
+
 }
 
 @media (min-width: 640px) and (max-height: 780px) {
@@ -2043,7 +2011,7 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
 }
 
 /* September Contact pass: continuous colour, one camera, stable reading. */
-[data-contact-film] [data-contact-scene]:not([data-contact-scene="invitation"]) {
+[data-contact-film] [data-contact-scene]:where(:not([data-contact-scene="invitation"])) {
   --contact-current-warm: #eac8a0;
   --contact-current-cool: #b8c9b3;
   background: #eee7d8;
@@ -2154,3 +2122,59 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-scene-current],
 html[data-motion="reduced"] [data-contact-film] [data-contact-scene-sunlight],
 html[data-motion="reduced"] [data-contact-film] [data-contact-heading-line],
 html[data-motion="reduced"] [data-contact-film] [data-contact-heading-ink] { transform: none !important; }
+
+/* Neighbouring chapters meet on the same paper colour. These stationary
+   edge washes blend the moving plates without moving text or hit targets. */
+[data-contact-film] [data-contact-scene="branch"] {
+  --contact-seam-out: linear-gradient(90deg, #dfe3d4, #eee1ca);
+  border-bottom-width: 0;
+}
+[data-contact-film] [data-contact-scene="paper"] {
+  --contact-seam-in: linear-gradient(90deg, #dfe3d4, #eee1ca);
+  --contact-seam-out: linear-gradient(90deg, #e5dfcd, #f0ddc5);
+}
+[data-contact-film] [data-contact-scene="daybreak"] {
+  --contact-seam-in: linear-gradient(90deg, #e5dfcd, #f0ddc5);
+  --contact-seam-out: linear-gradient(90deg, #f2eddf, #f2eddf);
+  border-top-width: 0;
+}
+[data-contact-film] [data-contact-scene="paper"]::before,
+[data-contact-film] [data-contact-scene="daybreak"]::before,
+[data-contact-film] [data-contact-scene="branch"]::after,
+[data-contact-film] [data-contact-scene="paper"]::after,
+[data-contact-film] [data-contact-scene="daybreak"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  z-index: 6;
+  height: clamp(64px, 14svh, 150px);
+  pointer-events: none;
+}
+[data-contact-film] [data-contact-scene="paper"]::before,
+[data-contact-film] [data-contact-scene="daybreak"]::before {
+  top: 0;
+  background: var(--contact-seam-in);
+  mask-image: linear-gradient(#000, transparent);
+}
+[data-contact-film] [data-contact-scene="branch"]::after,
+[data-contact-film] [data-contact-scene="paper"]::after,
+[data-contact-film] [data-contact-scene="daybreak"]::after {
+  bottom: 0;
+  background: var(--contact-seam-out);
+  mask-image: linear-gradient(transparent, #000);
+}
+
+/* One bottom control at a time. Measurement preferences remain available
+   in the footer; the notice returns outside the chapter journey. The nav's
+   React visibility also owns inert/tab order, including during form editing. */
+@media (max-width: 1359px), (pointer: coarse) {
+  body:has([data-contact-chapter-rail][data-visible="true"]) .consent-notice:not(:focus-within) {
+    display: none;
+  }
+  html[data-consent-banner="visible"] [data-contact-film] [data-contact-chapter-rail] {
+    bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+  }
+  html[data-consent-banner="visible"] body:has(.consent-notice:focus-within) [data-contact-film] [data-contact-chapter-rail] {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom)) !important;
+  }
+}
