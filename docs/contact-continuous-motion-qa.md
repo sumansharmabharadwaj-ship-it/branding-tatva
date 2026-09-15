@@ -88,3 +88,24 @@ peach colours.
 Local verification: production build (including types/lint), Contact contract,
 cinematic motion and all 2,002 invitation poses passed before deployment.
 Hosted acceptance is performed against the exact Release 284 preview.
+
+Release 284 hosted acceptance completed on
+`branding-tatva-70sc5ujex-suman22.vercel.app`, deployment
+`dpl_DKxGgV1bvf5oX7mNC5DrV2taJgtR` (READY). Source commit
+`b8916a93cfaf4b774e8e8e808bc4a6d92ad9e366`; trigger
+`ca701e21268fb4d9e90eb7cebb3cf9257f27facb`.
+
+- Desktop visual review confirms a blended Write/Call boundary and crisp fields.
+- At 390px, the dock sits 12px above the viewport edge; the measurement notice
+  yields while the dock is visible. Each chapter reports its distinct palette.
+- Keyboard Write navigation lands at 7.77px and transfers focus to Write. The
+  hidden dock has aria-hidden true, inert present, and all four tab indices -1.
+- Optional context expands Write to 2,145px; leaving it expanded and scrolling
+  into Call restores the dock with Call current and inert absent.
+- Both 390px and 320px QA frames have matching content and scroll widths
+  (375/375px and 305/305px respectively).
+- Reduced motion reports data-motion reduced and transform none on the gradient.
+  Full motion was restored. No Contact application error was present in the
+  captured log; extension transport errors were unrelated.
+- Controlled preview status is success and the branch returned to controlled
+  mode. The permanent alias was rechecked and still points to Release 273.
