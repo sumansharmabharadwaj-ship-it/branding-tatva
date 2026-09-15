@@ -53,10 +53,16 @@ export const GENERATED_SERVICES_MEDIA = {
     purpose: "Let surface noise settle into one calm, legible reflection before the conversation begins.",
   },
   health: {
-    desktop: "/videos/generated/bt-services-health-reflection.mp4",
-    mobile: "/videos/generated/bt-services-health-reflection-mobile.mp4",
-    poster: "/images/generated/bt-services-health-reflection-poster.jpg",
-    purpose: "Reveal hidden misalignment beneath an apparently coherent surface.",
+    // The crystal water slot open since August, filled on Suman's direct
+    // instruction to choose: a single trout gliding over sunlit golden sand,
+    // seen whole through glass clear shallows, ripple rings where it broke
+    // the surface. The health check's promise as an image — look through the
+    // surface and see exactly what lives there. Replaces the near black
+    // procedural veins render that sat against the media standard.
+    desktop: "/videos/generated/bt-services-healthcheck-clarity.mp4",
+    mobile: "/videos/generated/bt-services-healthcheck-clarity-mobile.mp4",
+    poster: "/images/generated/bt-services-healthcheck-clarity-poster.jpg",
+    purpose: "See through the surface to exactly what lives beneath it.",
   },
 } as const;
 
