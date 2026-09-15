@@ -1128,9 +1128,8 @@
    about the sticky journey inside changes.
    Two blooms from the codified palette — deep forest green with a faint
    warm sand answer — oversized and moved with transform only, so the
-   whole thing composites without a repaint. The shaft-style brightening
-   on scroll comes free from the camera's velocity property, which
-   inherits from the Home root. */
+   whole thing composites without a repaint. The camera publishes scroll
+   energy locally and admits the animation only while this chapter is visible. */
 .home-v4-chapter--process::before {
   content: "";
   position: absolute;
@@ -1140,9 +1139,15 @@
     radial-gradient(46% 38% at 24% 30%, rgba(31, 58, 40, 0.55) 0%, rgba(31, 58, 40, 0.18) 45%, transparent 72%),
     radial-gradient(40% 34% at 78% 72%, rgba(198, 169, 122, 0.13) 0%, rgba(198, 169, 122, 0.05) 46%, transparent 74%),
     radial-gradient(52% 44% at 62% 18%, rgba(85, 107, 74, 0.28) 0%, transparent 70%);
-  opacity: calc(0.85 + var(--home-camera-velocity, 0) * 0.5);
-  will-change: transform;
+  opacity: calc(0.85 + var(--field-speed, 0) * 0.15);
+  will-change: auto;
   animation: processGroundDrift 57s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+.home-v4-chapter--process[data-gradient-active="true"]::before {
+  animation-play-state: running;
+  will-change: transform;
 }
 
 /* The chapter's own content lifts one paint layer above the ground.

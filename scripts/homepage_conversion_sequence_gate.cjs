@@ -13,9 +13,24 @@ const page = read("src/app/page.tsx");
 const pacing = read("src/sections/Home/HomePacingDirector.tsx");
 const refinement = read("src/app/home-v4-refinement.css");
 const consentManager = read("src/components/ConsentManager.tsx");
+const camera = read("src/sections/HomeV4/HomeV4ScrollCamera.tsx");
+const atmosphereStyles = [
+  read("src/components/LivingGradient.module.css"),
+  read("src/app/home-v4-gradient-motion.css"),
+  read("src/app/home-v4.css"),
+].join("\n");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+// A visual layer can compile while silently reading an abandoned signal.
+// Keep the CSS consumers connected to a live camera publisher across files.
+const atmosphereSignals = new Set(
+  [...atmosphereStyles.matchAll(/var\((--(?:field-|home-camera-)[\w-]+)/g)].map((match) => match[1]),
+);
+for (const signal of atmosphereSignals) {
+  assert(camera.includes(`setProperty("${signal}"`), `Atmosphere signal ${signal} has no camera publisher.`);
 }
 
 const sequence = [

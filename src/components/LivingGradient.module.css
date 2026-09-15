@@ -118,27 +118,9 @@
   );
   will-change: transform, opacity;
   animation: sweep 38s ease-in-out infinite alternate;
-  /* Scroll feedback, borrowed rather than built: on Home the scroll
-     camera already publishes an eased 0-1 velocity and a signed
-     directional shift as custom properties on the [data-home-v4] root,
-     and custom properties inherit, so a field inside a Home chapter can
-     read them for free. The shaft brightens a little while the visitor
-     is actually moving and rests when they rest, which reads as the
-     light answering the scroll. Both properties default to zero, so
-     every field outside Home (and Home at rest) renders exactly as
-     before, and both land on opacity — compositor work, no repaint. */
-  opacity: calc(0.62 + var(--home-camera-velocity, 0) * 0.85);
-}
-
-/* The drifting masses lean a breath in the scroll direction. The shift
-   the camera publishes is at most a couple of viewport-widths' hundredths,
-   so this reads as wind catching the field, never as parallax. Applied to
-   the two large background blobs only; the third sits lowest and stays
-   still so the lean has something steady to read against. */
-.blobA,
-.blobB {
-  translate: var(--home-camera-shift, 0vw) 0;
-  transition: translate 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* Home publishes the eased signal directly on visible fields. Other
+     routes retain their resting light without a page-wide dependency. */
+  opacity: calc(0.62 + var(--field-speed, 0) * 0.85);
 }
 
 /* Vignette: keeps type legible against the brightest part of the field

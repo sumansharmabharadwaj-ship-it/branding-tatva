@@ -6,7 +6,10 @@
   translate: var(--field-x, 0px) var(--field-y, 0px);
 }
 .home-v4 [data-living-gradient] [data-gradient-layer="far"] {
-  translate: calc(var(--field-x, 0px) * -0.65) calc(var(--field-y, 0px) * -0.7);
+  translate: calc(var(--field-x, 0px) * -0.65 + var(--field-lean, 0px) * 0.65) calc(var(--field-y, 0px) * -0.7);
+}
+.home-v4 [data-living-gradient] [data-gradient-layer="near"] {
+  translate: calc(var(--field-x, 0px) + var(--field-lean, 0px)) var(--field-y, 0px);
 }
 .home-v4 [data-living-gradient] [data-gradient-layer="ground"] {
   translate: calc(var(--field-x, 0px) * 0.4) calc(var(--field-y, 0px) * -0.4);

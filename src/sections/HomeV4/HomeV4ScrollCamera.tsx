@@ -43,6 +43,8 @@ export function HomeV4ScrollCamera() {
       root.querySelectorAll<HTMLElement>(HANDOFF_SELECTOR),
     );
     const fields = Array.from(root.querySelectorAll<HTMLElement>("[data-living-gradient]"));
+    const processGround = root.querySelector<HTMLElement>('[data-home-v4-chapter="process"]');
+    const surfaces = processGround ? [...fields, processGround] : fields;
     const finePointer = window.matchMedia("(pointer: fine)");
     let pointerX = 0;
     let pointerY = 0;
@@ -53,6 +55,7 @@ export function HomeV4ScrollCamera() {
     let lastY = window.scrollY;
     let lastTime = performance.now();
     let easedVelocity = 0;
+    let easedShift = 0;
     let lastDirection = 1;
     let hashAttempts = 0;
     let hashCancelled = false;
@@ -64,24 +67,33 @@ export function HomeV4ScrollCamera() {
       if (disposed || document.hidden) return;
       const viewport = Math.max(1, window.innerHeight);
       const currentY = window.scrollY;
-      const elapsed = Math.max(16, now - lastTime);
+      // A long idle interval must not swallow the next wheel gesture.
+      const elapsed = clamp(now - lastTime, 16, 64);
       const delta = currentY - lastY;
       const direction = delta > 0.25 ? 1 : delta < -0.25 ? -1 : 0;
       const rawVelocity = clamp(Math.abs(delta) / elapsed / 2.2);
       const damping = 1 - Math.exp(-Math.min(elapsed, 64) / 110);
       easedVelocity += (rawVelocity - easedVelocity) * damping;
+      if (rawVelocity === 0 && easedVelocity < 0.005) easedVelocity = 0;
       pointerX += (targetX - pointerX) * damping;
       pointerY += (targetY - pointerY) * damping;
       if (direction !== 0) lastDirection = direction;
+      easedShift += (lastDirection * easedVelocity - easedShift) * damping;
+      if (!easedVelocity && Math.abs(easedShift) < 0.002) easedShift = 0;
 
       // Complete geometry reads before writing any styles. Only decorative
       // fields receive the eased signal; native document scroll stays 1:1.
       const seamPositions = handoffs.map((handoff) => ({ handoff, top: handoff.getBoundingClientRect().top }));
-      const fieldPositions = fields.map((field) => ({ field, rect: field.getBoundingClientRect() }));
+      const fieldPositions = surfaces.map((field) => ({ field, rect: field.getBoundingClientRect() }));
+      const leanDistance = finePointer.matches ? Math.min(22, window.innerWidth * 0.012) : 5;
       fieldPositions.forEach(({ field, rect }) => {
         const active = rect.bottom > 0 && rect.top < viewport;
         if (field.dataset.gradientActive !== String(active)) field.dataset.gradientActive = String(active);
         if (!active) return;
+        // Publish at each visible surface, never on the whole Home root.
+        field.style.setProperty("--field-speed", easedVelocity.toFixed(4));
+        field.style.setProperty("--field-lean", `${(easedShift * leanDistance).toFixed(2)}px`);
+        if (field === processGround) return;
         const phase = clamp((viewport - rect.top) / (viewport + rect.height));
         const travel = finePointer.matches ? 100 : 28;
         field.style.setProperty("--current-draw", clamp((phase - 0.08) / 0.65).toFixed(4));
@@ -139,7 +151,7 @@ export function HomeV4ScrollCamera() {
 
       lastY = currentY;
       lastTime = now;
-      if (easedVelocity > 0.005 || Math.abs(targetX - pointerX) > 0.002 || Math.abs(targetY - pointerY) > 0.002) {
+      if (easedVelocity > 0 || easedShift !== 0 || Math.abs(targetX - pointerX) > 0.002 || Math.abs(targetY - pointerY) > 0.002) {
         frame = window.requestAnimationFrame(renderCamera);
       }
     }
@@ -167,11 +179,12 @@ export function HomeV4ScrollCamera() {
       window.cancelAnimationFrame(frame);
       frame = 0;
       if (document.hidden) {
-        fields.forEach((field) => { field.dataset.gradientActive = "false"; });
+        surfaces.forEach((field) => { field.dataset.gradientActive = "false"; });
       } else {
         lastY = window.scrollY;
         lastTime = performance.now();
         easedVelocity = 0;
+        easedShift = 0;
         scheduleCamera();
       }
     }
@@ -259,9 +272,9 @@ export function HomeV4ScrollCamera() {
       document.documentElement.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       resize.disconnect();
-      fields.forEach((field) => {
+      surfaces.forEach((field) => {
         delete field.dataset.gradientActive;
-        ["--field-x", "--field-y", "--field-turn", "--current-draw", "--current-sweep", "--current-breath"].forEach((property) => field.style.removeProperty(property));
+        ["--field-x", "--field-y", "--field-turn", "--field-speed", "--field-lean", "--current-draw", "--current-sweep", "--current-breath"].forEach((property) => field.style.removeProperty(property));
       });
       window.removeEventListener("wheel", cancelHashRecovery);
       window.removeEventListener("touchstart", cancelHashRecovery);
