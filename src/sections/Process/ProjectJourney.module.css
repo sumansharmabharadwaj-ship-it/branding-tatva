@@ -6,7 +6,7 @@
 }
 .shell {
   width: min(100%, 90rem); margin-inline: auto;
-  display: grid; align-content: center; gap: clamp(1.5rem, 3svh, 2rem);
+  display: grid; align-content: center; gap: clamp(1.5rem, 2.5svh, 2rem);
   min-height: 100svh;
   padding: clamp(5.5rem, 9svh, 7rem) clamp(1.5rem, 5.5vw, 5.5rem) clamp(2.5rem, 5svh, 4rem);
 }
