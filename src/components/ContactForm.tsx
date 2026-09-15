@@ -657,7 +657,7 @@ export function ContactForm() {
         animate={{ opacity: 1, scale: 1, clipPath: "inset(0 0 0% 0 round 2rem)" }}
         transition={{ duration: 0.52, ease: EASE_AIR }}
         style={{ minHeight: successMinHeight ?? undefined }}
-        className="flex rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-8 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-3xl focus:outline-none sm:px-10 sm:py-10"
+        className="flex rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-8 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-2xl focus:outline-none sm:px-10 sm:py-10"
       >
         <div className="my-auto w-full">
           <motion.span
@@ -757,7 +757,7 @@ export function ContactForm() {
       data-contact-form-card
       data-contact-form-completion={completedDetails}
       data-contact-form-expanded={showMore ? "true" : undefined}
-      className="rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-7 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-3xl sm:px-10 sm:py-9"
+      className="rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-7 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-2xl sm:px-10 sm:py-9"
     >
       {/* The panel mirrors the booking card beside it — cream ground,
           italic display accent, serif line, and the sprig divider —

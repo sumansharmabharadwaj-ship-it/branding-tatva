@@ -229,16 +229,19 @@ export function ContactCinematicScene({
   // reading point, then eases out of focus as the next chapter approaches.
   // Keep this desktop-only: coarse pointers receive the lighter transform
   // grammar and focused controls always remain optically still.
+  // Blur cost grows with the square of its radius across the whole plane,
+  // so the focus pull is capped where the softness still reads but an
+  // integrated GPU pays roughly a third of the old kernel per frame.
   const contentFocus = useTransform(
     progress,
     [0, 0.14, 0.34, 0.78, 0.94, 1],
     [
-      "blur(2.8px)",
-      "blur(1.1px)",
+      "blur(1.6px)",
+      "blur(0.8px)",
       "blur(0px)",
       "blur(0px)",
-      "blur(0.9px)",
-      "blur(2.2px)",
+      "blur(0.7px)",
+      "blur(1.4px)",
     ],
   );
   const contentFocusOpacity = useTransform(
