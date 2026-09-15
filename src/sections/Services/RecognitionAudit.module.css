@@ -703,7 +703,10 @@
   .answerStatus {
     margin-top: auto;
     padding-top: 0.7rem;
-    font-size: 0.66rem;
+    /* The phone override, which is what actually governs this live region at
+       390px and silently won over the base rule. Brought to the same 0.7rem
+       reading floor so the correction isn't desktop-only. */
+    font-size: 0.7rem;
   }
 
   .questionActions {
