@@ -39,24 +39,37 @@ export function ContactScrollRuntime() {
     let hashTimer = 0;
     let hashLastScrollY = -1;
     let hashMotionWaits = 0;
+    let formOwnsViewport = false;
 
     const syncFormOwnership = () => {
       const formCard = contactFilm.querySelector<HTMLElement>("[data-contact-form-card]");
       if (!formCard) {
+        formOwnsViewport = false;
         delete root.dataset.contactFormOwnsViewport;
         return;
       }
 
       const viewportHeight = Math.max(1, window.visualViewport?.height ?? window.innerHeight);
+      const viewportTop = window.visualViewport?.offsetTop ?? 0;
+      const viewportBottom = viewportTop + viewportHeight;
       const rect = formCard.getBoundingClientRect();
       const visibleHeight = Math.max(
         0,
-        Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0),
+        Math.min(rect.bottom, viewportBottom) - Math.max(rect.top, viewportTop),
       );
       const minimumReadingArea = Math.min(180, viewportHeight * 0.24);
+      // Once the form has the reading area, small trackpad reversals should
+      // finish the dock's dissolve instead of immediately bringing it back.
+      const returnBuffer = formOwnsViewport ? 24 : 0;
+      const formHasFocus = formCard.contains(document.activeElement) && visibleHeight > 0;
       const ownsViewport =
-        rect.top <= viewportHeight * 0.82 && visibleHeight >= minimumReadingArea;
+        formHasFocus || (
+          rect.top <= viewportTop + viewportHeight * 0.82 + returnBuffer &&
+          visibleHeight >= Math.max(1, minimumReadingArea - returnBuffer)
+        );
 
+      if (ownsViewport === formOwnsViewport) return;
+      formOwnsViewport = ownsViewport;
       if (ownsViewport) root.dataset.contactFormOwnsViewport = "true";
       else delete root.dataset.contactFormOwnsViewport;
     };
@@ -201,18 +214,23 @@ export function ContactScrollRuntime() {
         ],
       }),
     );
+    const layoutObserver = new ResizeObserver(requestRender);
+    layoutObserver.observe(contactFilm);
 
     render();
     scheduleHashRecovery();
     window.addEventListener("scroll", requestRender, { passive: true });
     window.addEventListener("resize", requestRender);
     window.visualViewport?.addEventListener("resize", requestRender);
+    window.visualViewport?.addEventListener("scroll", requestRender, { passive: true });
     window.addEventListener("wheel", cancelHashRecovery, { passive: true });
     window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
     window.addEventListener("pointerdown", cancelHashRecovery, { passive: true });
     window.addEventListener("keydown", onManualKey);
     window.addEventListener("hashchange", onHashChange);
     contactFilm.addEventListener("click", onFilmClick);
+    contactFilm.addEventListener("focusin", requestRender);
+    contactFilm.addEventListener("focusout", requestRender);
     if (document.readyState !== "complete") {
       window.addEventListener("load", scheduleHashRecovery);
     }
@@ -228,6 +246,7 @@ export function ContactScrollRuntime() {
       window.removeEventListener("scroll", requestRender);
       window.removeEventListener("resize", requestRender);
       window.visualViewport?.removeEventListener("resize", requestRender);
+      window.visualViewport?.removeEventListener("scroll", requestRender);
       window.removeEventListener("wheel", cancelHashRecovery);
       window.removeEventListener("touchstart", cancelHashRecovery);
       window.removeEventListener("pointerdown", cancelHashRecovery);
@@ -235,8 +254,11 @@ export function ContactScrollRuntime() {
       window.removeEventListener("hashchange", onHashChange);
       window.removeEventListener("load", scheduleHashRecovery);
       contactFilm.removeEventListener("click", onFilmClick);
+      contactFilm.removeEventListener("focusin", requestRender);
+      contactFilm.removeEventListener("focusout", requestRender);
       motionPreferenceObserver.disconnect();
       interactionObserver.disconnect();
+      layoutObserver.disconnect();
       delete root.dataset.contactFilmSnap;
       delete root.dataset.contactFormOwnsViewport;
     };

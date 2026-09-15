@@ -13,6 +13,7 @@ const CHAPTERS = [
 export function ContactChapterRail() {
   const [activeIndex, setActiveIndex] = useState(-1);
   const [obscuresForm, setObscuresForm] = useState(false);
+  const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false);
   const railRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -30,7 +31,8 @@ export function ContactChapterRail() {
     function update() {
       frame = 0;
       const viewportHeight = Math.max(1, window.visualViewport?.height ?? window.innerHeight);
-      const viewportCenter = viewportHeight / 2;
+      const viewportTop = window.visualViewport?.offsetTop ?? 0;
+      const viewportCenter = viewportTop + viewportHeight / 2;
       const rects = chapters.map((chapter) => chapter.getBoundingClientRect());
       const firstRect = rects[0];
       const lastRect = rects[rects.length - 1];
@@ -38,7 +40,7 @@ export function ContactChapterRail() {
       // Wait until the first chapter meaningfully enters the frame. The old
       // 76% threshold exposed the rail while the opening hero was still the
       // visitor's primary decision surface on medium desktop viewports.
-      const isInsideJourney = firstRect.top <= viewportHeight * 0.6 && lastRect.bottom >= viewportHeight * 0.24;
+      const isInsideJourney = firstRect.top <= viewportTop + viewportHeight * 0.6 && lastRect.bottom >= viewportTop + viewportHeight * 0.24;
 
       if (!isInsideJourney) {
         previousReadingIndex = -1;
@@ -97,6 +99,7 @@ export function ContactChapterRail() {
     window.addEventListener("scroll", scheduleUpdate, { passive: true });
     window.addEventListener("resize", scheduleUpdate);
     window.visualViewport?.addEventListener("resize", scheduleUpdate);
+    window.visualViewport?.addEventListener("scroll", scheduleUpdate, { passive: true });
 
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
@@ -107,12 +110,15 @@ export function ContactChapterRail() {
       window.removeEventListener("scroll", scheduleUpdate);
       window.removeEventListener("resize", scheduleUpdate);
       window.visualViewport?.removeEventListener("resize", scheduleUpdate);
+      window.visualViewport?.removeEventListener("scroll", scheduleUpdate);
     };
   }, []);
 
   // The closing invitation owns its routes; the chapter dock yields so
   // the personal note keeps the selected open composition.
-  const visible = activeIndex >= 0 && activeIndex < CHAPTERS.length - 1 && !obscuresForm;
+  // Scrolling cannot retire a control that still owns keyboard focus. Anchor
+  // navigation moves focus to its destination, then the dock can dissolve.
+  const visible = hasKeyboardFocus || (activeIndex >= 0 && activeIndex < CHAPTERS.length - 1 && !obscuresForm);
   const activeChapter = CHAPTERS[Math.max(activeIndex, 0)] ?? CHAPTERS[0];
 
   return (
@@ -137,6 +143,13 @@ export function ContactChapterRail() {
         aria-label="Contact chapters"
         aria-hidden={!visible}
         inert={!visible}
+        onFocusCapture={(event) => setHasKeyboardFocus(event.target instanceof HTMLElement && event.target.matches(":focus-visible"))}
+        onClickCapture={(event) => {
+          if (event.detail > 0) setHasKeyboardFocus(false);
+        }}
+        onBlurCapture={(event) => {
+          if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setHasKeyboardFocus(false);
+        }}
       >
         <ol>
           {CHAPTERS.map((chapter, index) => {
