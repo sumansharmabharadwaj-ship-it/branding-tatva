@@ -171,12 +171,16 @@ export function ContactScrollRuntime() {
       if (window.location.hash !== anchor.hash) window.history.pushState(null, "", anchor.hash);
       const reduced = root.dataset.motion === "reduced" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       destination.scrollIntoView({ behavior: reduced ? "instant" : "smooth", block: "start" });
-      // Transfer keyboard navigation without making another scroll correction.
-      if (!destination.hasAttribute("tabindex")) {
-        destination.setAttribute("tabindex", "-1");
-        destination.addEventListener("blur", () => destination.removeAttribute("tabindex"), { once: true });
+      // Keyboard chapter navigation transfers focus. Pointer navigation keeps
+      // the scroll film alive instead of locking the destination's focus pose.
+      if (event.detail === 0) {
+        if (!destination.hasAttribute("tabindex")) {
+          destination.setAttribute("tabindex", "-1");
+          destination.addEventListener("blur", () => destination.removeAttribute("tabindex"), { once: true });
+        }
+        destination.focus({ preventScroll: true });
       }
-      destination.focus({ preventScroll: true });
+
     }
 
     const motionPreferenceObserver = new MutationObserver(requestRender);
