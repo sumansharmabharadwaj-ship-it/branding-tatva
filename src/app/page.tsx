@@ -32,6 +32,7 @@ import "./home-v4-studio-scroll.css";
 // without this gives an unstyled chapter, so the two belong together.
 import "./home-v4-orbit-redesign.css";
 import "./home-v4-gradient-motion.css";
+import { preload } from "react-dom";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
@@ -61,6 +62,12 @@ const faqStructuredData = {
 };
 
 export default function Home() {
+  /* The hero poster is this page's LCP element, and without a preload the
+     browser only discovers it once the parser reaches a <video poster>
+     attribute deep inside the opening scene. A head preload with high
+     priority starts the 193KB fetch alongside the document instead of
+     after it — the same pattern Contact used before its rebuild. */
+  preload("/images/hero-forest-sanctuary-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
