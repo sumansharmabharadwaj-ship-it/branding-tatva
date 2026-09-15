@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useRef, type CSSProperties, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { motion, useAnimationControls, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -62,6 +62,8 @@ export function PathsCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const previousIndexRef = useRef(0);
+  const copyMotion = useAnimationControls();
+  const scopeMotion = useAnimationControls();
   const selectionId = useId();
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const cinematicMotion = useMediaQuery(
@@ -70,13 +72,13 @@ export function PathsCinematicChapter() {
   const sceneInView = useInView(sectionRef, { amount: 0.08 });
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
+    preservePanelFocus: true,
     count: PATHS.length,
     target: sectionRef,
     enabled: cinematicMotion && sceneInView,
     reducedMotion,
   });
   const { activeIndex, choose: chooseVisualState, preview, releasePreview } = visualizer;
-  const selectionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
   const active = PATHS[activeIndex];
   const packageSlug = SITUATION_TO_PACKAGE[active.situation];
   const offering = packages.find((item) => item.slug === packageSlug)!;
@@ -115,9 +117,27 @@ export function PathsCinematicChapter() {
     };
   }, [chooseVisualState]);
 
+  const settleReading = useCallback(() => {
+    copyMotion.stop();
+    scopeMotion.stop();
+    copyMotion.set({ x: 0, y: 0 });
+    scopeMotion.set({ x: 0, rotateY: 0 });
+  }, [copyMotion, scopeMotion]);
+
   useEffect(() => {
+    const previous = previousIndexRef.current;
     previousIndexRef.current = activeIndex;
-  }, [activeIndex]);
+    settleReading();
+    if (reducedMotion || previous === activeIndex) return;
+    const direction = activeIndex > previous ? 1 : -1;
+    // Stable reading columns retain the action node. The heading and its
+    // description share one transform, so their gap cannot collapse mid-turn.
+    copyMotion.set({ x: -direction * (cinematicMotion ? 30 : 10), y: cinematicMotion ? 12 : 0 });
+    scopeMotion.set({ x: direction * (cinematicMotion ? 38 : 12), rotateY: cinematicMotion ? direction * -9 : 0 });
+    void copyMotion.start({ x: 0, y: 0, transition: { duration: .46, ease: EASE } });
+    void scopeMotion.start({ x: 0, rotateY: 0, transition: { duration: .6, ease: EASE } });
+    return () => { copyMotion.stop(); scopeMotion.stop(); };
+  }, [activeIndex, cinematicMotion, copyMotion, reducedMotion, scopeMotion, settleReading]);
 
   function choose(index: number) {
     chooseVisualState(index);
@@ -132,7 +152,7 @@ export function PathsCinematicChapter() {
       : event.key === "ArrowRight" ? (index + 1) % PATHS.length
       : (index - 1 + PATHS.length) % PATHS.length;
     choose(next);
-    tabsRef.current[next]?.focus();
+    tabsRef.current[next]?.focus({ preventScroll: true });
   }
 
   return (
@@ -210,26 +230,19 @@ export function PathsCinematicChapter() {
           aria-labelledby={`home-path-${active.situation}`}
           tabIndex={0}
           data-path-situation={active.situation}
+          onFocusCapture={settleReading}
         >
-          <motion.div
-            key={active.situation}
+          <div
             className={styles.detail}
-            initial={false}
             data-path-detail
           >
             <motion.div
               className={styles.copy}
-              initial={reducedMotion ? false : { x: -selectionDirection * (cinematicMotion ? 30 : 10), y: cinematicMotion ? 12 : 0 }}
-              animate={{ x: 0, y: 0 }}
-              transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
+              initial={false}
+              animate={copyMotion}
             >
               <p className={styles.pathNumber}>0{activeIndex + 1} <span>{offering.name}</span></p>
-              <motion.h3
-                initial={reducedMotion || !cinematicMotion ? false : { rotateX: 18, y: 18 }}
-                animate={{ rotateX: 0, y: 0 }}
-                transition={{ duration: reducedMotion ? 0 : 0.6, ease: EASE }}
-                style={{ transformPerspective: 900, transformOrigin: "50% 100%" }}
-              >{active.title}</motion.h3>
+              <h3>{active.title}</h3>
               <p className={styles.description}>{offering.description}</p>
               <Link
                 href={`/services#package-${packageSlug}`}
@@ -243,9 +256,8 @@ export function PathsCinematicChapter() {
             <motion.div
               className={styles.scope}
               data-path-scope
-              initial={reducedMotion ? false : { x: selectionDirection * (cinematicMotion ? 38 : 12), rotateY: cinematicMotion ? selectionDirection * -9 : 0 }}
-              animate={{ x: 0, rotateY: 0 }}
-              transition={{ duration: reducedMotion ? 0 : 0.6, ease: EASE }}
+              initial={false}
+              animate={scopeMotion}
               style={{ transformPerspective: 1100, transformOrigin: "0% 50%" }}
             >
               <p className={styles.eyebrow}>The first question</p>
@@ -253,19 +265,17 @@ export function PathsCinematicChapter() {
               <p className={styles.scopeLabel}>What we work on</p>
               <ul>
                 {active.decisions.map((decision, index) => (
-                  <motion.li
+                  <li
                     key={decision}
-                    initial={reducedMotion ? false : { x: selectionDirection * 22 }}
-                    animate={{ x: 0 }}
-                    transition={{ duration: reducedMotion ? 0 : 0.4, delay: reducedMotion ? 0 : index * 0.055, ease: EASE }}
+                    style={{ "--path-order": index } as CSSProperties}
                   >
                     <span aria-hidden="true">0{index + 1}</span>
                     {decision}
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
 
         <footer className={styles.footer}>

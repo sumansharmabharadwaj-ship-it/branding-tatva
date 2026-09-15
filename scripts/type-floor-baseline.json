@@ -1,8 +1,8 @@
 {
   "recorded": 239,
   "entries": [
-    "src/app/contact/contact-cinematic.css:1172:0.55",
-    "src/app/contact/contact-cinematic.css:1849:0.69",
+    "src/app/contact/contact-cinematic.css:1143:0.55",
+    "src/app/contact/contact-cinematic.css:1820:0.69",
     "src/app/contact/page.tsx:347:0.68",
     "src/app/globals.css:992:0.68",
     "src/app/home-paths-cinematic.css:244:0.56",
@@ -172,7 +172,7 @@
     "src/components/ContactGratitude.module.css:250:0.6875",
     "src/components/ContactGratitude.module.css:253:0.6875",
     "src/components/ContactNoteProgress.tsx:104:0.68",
-    "src/components/ContactPathwayFilm.tsx:121:0.65",
+    "src/components/ContactPathwayFilm.tsx:160:0.65",
     "src/components/ContactPathways.tsx:491:0.64",
     "src/components/SectionJumpNav.tsx:757:0.42",
     "src/sections/About/AboutResolution.module.css:121:0.6",

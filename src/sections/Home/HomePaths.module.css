@@ -130,3 +130,24 @@
 }
 :global(html[data-motion="reduced"]) .paths { height: auto; min-height: 100svh; }
 :global(html[data-motion="reduced"]) .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
+
+/* New decisions follow the card's turn; the semantic panel and action persist.
+   CSS cancels the stagger immediately when either motion preference changes. */
+.scope li {
+  animation: path-decision 420ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(var(--path-order, 0) * 55ms);
+}
+@keyframes path-decision {
+  from { transform: translateX(14px); }
+  to { transform: none; }
+}
+@media (max-width: 680px), (pointer: coarse) {
+  @keyframes path-decision {
+    from { transform: translateX(6px); }
+    to { transform: none; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scope li { animation: none; transform: none; }
+}
+:global(html[data-motion="reduced"]) .scope li { animation: none; transform: none; }

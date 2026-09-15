@@ -10,6 +10,8 @@ type ScrollDrivenVisualizerOptions = {
   reducedMotion?: boolean;
   /** Normalized buffer around each boundary; 0 preserves legacy behavior. */
   scrollHysteresis?: number;
+  /** Keep a keyboard reader's active panel and action destination stable. */
+  preservePanelFocus?: boolean;
 };
 
 const SCROLL_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "]);
@@ -34,6 +36,7 @@ export function useScrollDrivenVisualizer({
   enabled = true,
   reducedMotion = false,
   scrollHysteresis = 0,
+  preservePanelFocus = false,
 }: ScrollDrivenVisualizerOptions) {
   const safeCount = Math.max(1, count);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -45,6 +48,13 @@ export function useScrollDrivenVisualizer({
     target,
     offset: ["start start", "end end"],
   });
+
+  const panelOwnsFocus = useCallback(() => {
+    if (!preservePanelFocus || typeof document === "undefined") return false;
+    const focused = document.activeElement;
+    return focused instanceof HTMLElement && focused.matches(":focus-visible") &&
+      Boolean(focused.closest('[role="tabpanel"]') && target.current?.contains(focused));
+  }, [preservePanelFocus, target]);
 
   const readProgress = useCallback(() => {
     const node = target.current;
@@ -71,15 +81,15 @@ export function useScrollDrivenVisualizer({
   }, [safeCount, scrollHysteresis]);
 
   const syncToScroll = useCallback(() => {
-    if (reducedMotion || manualChoiceRef.current) return;
+    if (reducedMotion || manualChoiceRef.current || panelOwnsFocus()) return;
     const nextIndex = resolveScrollIndex(readProgress());
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  }, [readProgress, reducedMotion, resolveScrollIndex]);
+  }, [panelOwnsFocus, readProgress, reducedMotion, resolveScrollIndex]);
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     // Buffered scenes have one state writer: the native-scroll RAF below.
     // The Framer value remains available for continuous decorative motion.
-    if (scrollHysteresis > 0 || !enabled || reducedMotion || previewingRef.current || manualChoiceRef.current) return;
+    if (scrollHysteresis > 0 || !enabled || reducedMotion || previewingRef.current || manualChoiceRef.current || panelOwnsFocus()) return;
     const nextIndex = resolveScrollIndex(progress);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   });
@@ -96,7 +106,7 @@ export function useScrollDrivenVisualizer({
     const update = () => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
-        if (previewingRef.current || manualChoiceRef.current) return;
+        if (previewingRef.current || manualChoiceRef.current || panelOwnsFocus()) return;
         const progress = readProgress();
         const nextIndex = resolveScrollIndex(progress);
         setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
@@ -112,12 +122,13 @@ export function useScrollDrivenVisualizer({
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [enabled, readProgress, reducedMotion, resolveScrollIndex]);
+  }, [enabled, panelOwnsFocus, readProgress, reducedMotion, resolveScrollIndex]);
 
   useEffect(() => {
     if (reducedMotion) return;
 
     const releaseManualChoice = () => {
+      if (panelOwnsFocus()) return;
       manualChoiceRef.current = false;
       // Explicit scroll intent ends a transient tab preview. Otherwise a
       // pointer parked on the tabs can freeze the whole scroll sequence.
@@ -142,7 +153,7 @@ export function useScrollDrivenVisualizer({
       window.removeEventListener("touchstart", releaseManualChoice);
       window.removeEventListener("keydown", releaseManualChoiceFromKeyboard);
     };
-  }, [reducedMotion, scrollHysteresis, target]);
+  }, [panelOwnsFocus, reducedMotion, scrollHysteresis, target]);
 
   const choose = useCallback(
     (index: number) => {
@@ -157,11 +168,12 @@ export function useScrollDrivenVisualizer({
 
   const preview = useCallback(
     (index: number) => {
+      if (panelOwnsFocus()) return;
       const nextIndex = ((index % safeCount) + safeCount) % safeCount;
       previewingRef.current = true;
       setActiveIndex(nextIndex);
     },
-    [safeCount],
+    [panelOwnsFocus, safeCount],
   );
 
   const releasePreview = useCallback(() => {
