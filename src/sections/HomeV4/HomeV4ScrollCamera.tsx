@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMotionPreference } from "@/components/MotionPreference";
@@ -34,6 +34,8 @@ export function HomeV4ScrollCamera() {
   const { setPref } = useMotionPreference();
   const osReducedMotion = useReducedMotion();
   const followsSystem = hydrated && Boolean(osReducedMotion);
+  const releaseReadingAnchor = useRef<() => void>(() => {});
+  useEffect(() => () => releaseReadingAnchor.current(), []);
 
   useEffect(() => {
     const rootElement = document.querySelector<HTMLElement>("[data-home-v4]");
@@ -314,6 +316,7 @@ export function HomeV4ScrollCamera() {
   }, [hydrated]);
 
   function toggleMotion() {
+    releaseReadingAnchor.current();
     // Pausing collapses desktop story runways. Keep a visible reading landmark
     // at the same screen position through that one deliberate layout change.
     const landmarks = Array.from(document.querySelectorAll<HTMLElement>(
@@ -329,12 +332,47 @@ export function HomeV4ScrollCamera() {
         return hit === node || (hit !== null && node.contains(hit));
       });
     const anchor = visible.sort((a, b) => a.rect.top - b.rect.top)[0];
-    // Only this explicit control flushes synchronously; scroll frames never do.
-    flushSync(() => setPref(prefersReducedMotion ? "full" : "reduced"));
-    if (!anchor?.node.isConnected) return;
-    const drift = anchor.node.getBoundingClientRect().top - anchor.rect.top;
-    if (Math.abs(drift) > 1) {
-      window.scrollTo({ top: Math.max(0, window.scrollY + drift), behavior: "instant" });
+    if (anchor) {
+      // Responsive story frames finish measuring after React commits. Observe
+      // those finite layout changes too; one immediate correction is too early.
+      let stopped = false;
+      let frame = 0;
+      let timer = 0;
+      const restore = () => {
+        if (stopped || !anchor.node.isConnected) return;
+        const drift = anchor.node.getBoundingClientRect().top - anchor.rect.top;
+        if (Math.abs(drift) > 1) {
+          window.scrollTo({ top: Math.max(0, window.scrollY + drift), behavior: "instant" });
+        }
+      };
+      const observer = new ResizeObserver(restore);
+      const stop = () => {
+        stopped = true;
+        observer.disconnect();
+        window.cancelAnimationFrame(frame);
+        window.clearTimeout(timer);
+        window.removeEventListener("wheel", stop, true);
+        window.removeEventListener("touchstart", stop, true);
+        window.removeEventListener("pointerdown", stop, true);
+        window.removeEventListener("keydown", stop, true);
+        window.removeEventListener("focusin", stop, true);
+      };
+      releaseReadingAnchor.current = stop;
+      const root = document.querySelector<HTMLElement>("[data-home-v4]");
+      if (root) observer.observe(root);
+      observer.observe(anchor.node);
+      window.addEventListener("wheel", stop, { passive: true, capture: true });
+      window.addEventListener("touchstart", stop, { passive: true, capture: true });
+      window.addEventListener("pointerdown", stop, { passive: true, capture: true });
+      window.addEventListener("keydown", stop, true);
+      window.addEventListener("focusin", stop, true);
+      // This is a short layout transaction, never a persistent scroll lock.
+      timer = window.setTimeout(stop, 1500);
+      flushSync(() => setPref(prefersReducedMotion ? "full" : "reduced"));
+      restore();
+      frame = window.requestAnimationFrame(restore);
+    } else {
+      setPref(prefersReducedMotion ? "full" : "reduced");
     }
   }
 
