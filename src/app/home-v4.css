@@ -1384,9 +1384,20 @@
     padding-bottom: 4.6rem;
   }
 
+  /* Was 0.56rem, which computes to 8.96px on a phone. Every other
+     sub-11px string on this page is a one or two word label where small
+     caps read as a typographic device; this one is a full sentence
+     ("Psychology finds the tension. Strategy gives it shape.") carrying
+     the hero's whole argument, set in uppercase with 0.17em tracking,
+     and at that size on the most important chapter of the site it is
+     closer to texture than to copy.
+     0.7rem clears 11px. The tracking eases with it because uppercase at
+     0.17em costs real width, and the line has to stay inside a 390px
+     screen without wrapping into a block. */
   .home-v4-opening__eyebrow {
     max-width: 20rem;
-    font-size: 0.56rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.13em;
     line-height: 1.5;
   }
 
