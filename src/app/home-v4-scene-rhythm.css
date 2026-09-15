@@ -7,8 +7,9 @@ html.home-v4-mounted [data-home-motion-layer] {
   transform-origin: 50% 65%;
 }
 
-/* Inline emphasis needs a transformable box for the opposing type movement. */
-html.home-v4-mounted [data-home-motion-layer="accent"] { display: inline-block; }
+/* Keep the same type wrapping before hydration and when motion is paused.
+   The director changes transforms, never the heading's formatting context. */
+.home-v4 h2 em { display: inline-block; }
 
 /* Keep the actual hit target still as soon as a visitor starts interacting. */
 html.home-v4-mounted [data-home-motion-layer]:is(:focus-within, :focus-visible) {

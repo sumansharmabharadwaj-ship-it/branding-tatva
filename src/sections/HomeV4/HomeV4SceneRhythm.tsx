@@ -80,12 +80,12 @@ export function HomeV4SceneRhythm() {
           side: sceneIndex % 2 ? 1 : -1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
         }));
       });
-      return [{ element, layers }];
+      return [{ element, layers, active: true }];
     });
     const handoffs = Array.from(root.querySelectorAll<HTMLElement>(".home-v4-handoff"));
     const footerTitle = document.querySelector<HTMLElement>("footer h2");
     // The footer title is a separate reading beat, scoped to the mounted home.
-    if (footerTitle) scenes.push({ element: footerTitle.parentElement!, layers: [{
+    if (footerTitle) scenes.push({ element: footerTitle.parentElement!, active: true, layers: [{
       node: footerTitle, treatment: "title", index: 0, spread: 0, side: 1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
     }] });
 
@@ -99,7 +99,7 @@ export function HomeV4SceneRhythm() {
       lastTime = now;
       let settling = false;
       // Finish all reads before writes, including compact per-element geometry.
-      const measurements = scenes.map((scene) => ({
+      const measurements = scenes.filter((scene) => scene.active || scene.element.contains(focused)).map((scene) => ({
         scene, top: scene.element.getBoundingClientRect().top,
         layers: scene.layers.map((layer) => ({
           layer,
@@ -111,7 +111,6 @@ export function HomeV4SceneRhythm() {
 
       measurements.forEach(({ scene, top, layers }) => {
         const entering = 1 - ease((viewport * 0.96 - top) / (viewport * 0.74));
-        scene.element.dataset.homeMotionScene = "ready";
         layers.forEach(({ layer, top: layerTop, focused: hasFocus }) => {
           const { node, treatment, index, spread, side } = layer;
           const amount = hasFocus ? 0 : wide
@@ -189,6 +188,18 @@ export function HomeV4SceneRhythm() {
     function schedule() {
       if (!disposed && !frame && !document.hidden) frame = window.requestAnimationFrame(render);
     }
+    const sceneByElement = new Map(scenes.map((scene) => [scene.element, scene]));
+    const visibility = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const scene = sceneByElement.get(entry.target as HTMLElement);
+        if (scene) scene.active = entry.isIntersecting;
+      });
+      schedule();
+    }, { rootMargin: "35% 0px" });
+    scenes.forEach(({ element }) => {
+      element.dataset.homeMotionScene = "ready";
+      visibility.observe(element);
+    });
     const resize = new ResizeObserver(schedule);
     scenes.forEach(({ element }) => resize.observe(element));
     root.dataset.sceneChoreography = "ready";
@@ -205,6 +216,7 @@ export function HomeV4SceneRhythm() {
       disposed = true;
       window.cancelAnimationFrame(frame);
       resize.disconnect();
+      visibility.disconnect();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       document.removeEventListener("focusin", schedule);

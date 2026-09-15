@@ -14,12 +14,8 @@
  * is the local bar: a section that still means the same thing with the
  * animation removed has failed.
  *
- * Mechanism, deliberately CSS only. Every card is a sticky sibling in
- * one tall list with a staggered `top`, so earlier cards stay pinned
- * while later ones slide over them. No scroll listener, no rAF, no
- * measurement that can go stale — this is the same reason the rest of
- * the site's pinned sections use sticky rather than a cached trigger
- * position.
+ * CSS sticky owns positioning. A small local director only draws the
+ * number-row meter and scales a covered card behind the arriving one.
  *
  * Sticky safety: nothing here sets `overflow: hidden`. The two
  * ancestors that do clip (.home-v4 and .home-v4-chapter) use
@@ -88,7 +84,7 @@
  * rather than take turns. */
 .stack {
   display: grid;
-  row-gap: 74svh;
+  row-gap: clamp(12rem, 42svh, 28rem);
   margin: clamp(2.5rem, 7svh, 4.5rem) 0 0;
   padding: 0;
   list-style: none;
@@ -103,6 +99,8 @@
    nothing. */
 .card {
   position: sticky;
+  transform-origin: top center;
+  scale: calc(1 - var(--stack-cover, 0) * .045);
   top: calc(15svh + var(--i) * 4.2rem);
   padding: clamp(1.75rem, 3.4vw, 2.9rem);
   border: 1px solid rgb(242 240 232 / 14%);
@@ -111,7 +109,8 @@
      stacked card reads as mud rather than depth. */
   background: linear-gradient(148deg, rgb(28 34 26 / 94%) 0%, rgb(20 24 18 / 96%) 100%);
   box-shadow: 0 32px 90px rgb(6 10 8 / 52%), 0 2px 0 rgb(242 240 232 / 6%) inset;
-  backdrop-filter: blur(16px);
+  /* The near opaque surface already hides cards underneath; a live blur
+     was spending GPU work without adding useful translucency. */
 }
 
 .cardHead {
@@ -129,9 +128,20 @@
 }
 
 .meter {
+  position: relative;
+  overflow: hidden;
   flex: 1;
   height: 1px;
   background: rgb(242 240 232 / 14%);
+}
+
+.meter::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #c6a97a;
+  transform: scaleX(var(--stack-arrival, 1));
+  transform-origin: left center;
 }
 
 .card h3 {
@@ -199,10 +209,11 @@
    cannot hold cleanly — it just clips. Measured rule from this
    project, so the stack degrades to ordinary flow rather than pinning
    something the reader cannot finish reading. */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 700px) {
   .stack { row-gap: 1.1rem; }
   .card {
     position: static;
+    scale: 1;
     padding: 1.5rem 1.35rem;
     border-radius: 1.35rem;
     backdrop-filter: none;
@@ -213,12 +224,6 @@
   .link { width: 100%; }
 }
 
-/* A short viewport has the same problem for a different reason. */
-@media (min-width: 901px) and (max-height: 700px) {
-  .stack { row-gap: 62svh; }
-  .card { top: calc(9svh + var(--i) * 3.6rem); }
-}
-
 /* Reduced motion: the pile is scroll position rather than animation, so
    nothing here is strictly motion. It still reads as movement though,
    so the standing per component rule applies and it resolves to a plain
@@ -227,6 +232,7 @@
   .stack { row-gap: 1.1rem; }
   .card {
     position: static;
+    scale: 1;
     backdrop-filter: none;
   }
   .link { transition: none; }
@@ -236,9 +242,13 @@
 
 :global(html[data-motion="reduced"]) .card {
   position: static;
+  scale: 1;
   backdrop-filter: none;
 }
 
 :global(html[data-motion="reduced"]) .link {
   transition: none;
 }
+
+@media (prefers-reduced-motion: reduce) { .meter::after { transform: none; } }
+:global(html[data-motion="reduced"]) .meter::after { transform: none; }

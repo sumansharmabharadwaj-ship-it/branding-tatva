@@ -1,6 +1,7 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { ArrowDownRight } from "lucide-react";
 import { LivingGradient } from "@/components/LivingGradient";
 import styles from "./CostStack.module.css";
@@ -38,8 +39,73 @@ const BRAND_RESET_COSTS = [
  * Suman's reference board, the deepest warm ground in the set.
  */
 export function V4CostStackScene() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || !hydrated || prefersReducedMotion) return;
+    const cards = Array.from(section.querySelectorAll<HTMLElement>("[data-cost-card]"));
+    const stacked = window.matchMedia("(min-width: 901px) and (min-height: 701px)");
+    let frame = 0;
+    let visible = true;
+    let disposed = false;
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+
+    function render() {
+      frame = 0;
+      if (disposed || !visible || document.hidden) return;
+      const viewport = window.innerHeight;
+      // Top-centred scale leaves each sticky top unchanged. Read layout height
+      // rather than transformed height so depth never feeds back into progress.
+      const measurements = cards.map((card) => ({
+        card, top: card.getBoundingClientRect().top, height: card.offsetHeight,
+        pin: stacked.matches ? parseFloat(getComputedStyle(card).top) : 0,
+      }));
+      measurements.forEach(({ card, top, height, pin }, index) => {
+        const next = measurements[index + 1];
+        const cover = stacked.matches && next
+          ? clamp((top + height - next.top) / Math.max(1, height - (next.pin - pin)))
+          : 0;
+        const arrival = clamp((viewport * .92 - top) / Math.max(1, viewport * .92 - pin));
+        card.style.setProperty("--stack-cover", cover.toFixed(4));
+        card.style.setProperty("--stack-arrival", arrival.toFixed(4));
+      });
+    }
+    function schedule() {
+      if (!frame && !disposed && visible && !document.hidden) frame = requestAnimationFrame(render);
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) schedule();
+    }, { rootMargin: "20% 0px" });
+    observer.observe(section);
+    const resize = new ResizeObserver(schedule);
+    cards.forEach((card) => resize.observe(card));
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    document.addEventListener("visibilitychange", schedule);
+    stacked.addEventListener("change", schedule);
+    schedule();
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      resize.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      document.removeEventListener("visibilitychange", schedule);
+      stacked.removeEventListener("change", schedule);
+      cards.forEach((card) => {
+        card.style.removeProperty("--stack-cover");
+        card.style.removeProperty("--stack-arrival");
+      });
+    };
+  }, [hydrated, prefersReducedMotion]);
+
   return (
     <section
+      ref={sectionRef}
       id="cost-stack"
       tabIndex={-1}
       data-home-v4-chapter="cost-stack"
@@ -70,6 +136,7 @@ export function V4CostStackScene() {
         <ol className={styles.stack} aria-label="Where an inconsistent brand costs time and attention">
           {BRAND_RESET_COSTS.map((cost, index) => (
             <li
+              data-cost-card
               key={cost.number}
               className={styles.card}
               /* Drives the staggered sticky offset, so each card pins a
