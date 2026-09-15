@@ -2091,7 +2091,6 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
     radial-gradient(ellipse at 68% 28%, #fff5dbb3, transparent 48%),
     linear-gradient(112deg, transparent 28%, #fff7e740 42%, #fffdf099 49%, #fff7e733 56%, transparent 70%);
   mask-image: radial-gradient(ellipse at 58% 45%, #000 12%, transparent 72%);
-  transition: opacity 0.35s ease;
 }
 /* The shared scene owns background travel. Nested living-image cameras were
    applying another scroll transform and pointer drift to the same photograph. */

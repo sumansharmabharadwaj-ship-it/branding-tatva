@@ -56,21 +56,33 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
   // only nudges that path; reversing the scroll retraces the whole exposure.
   const sunlightTravelX = useTransform(progress, [0, 0.48, 1], compact ? [-32, 0, 32] : [-150, 0, 150]);
   const sunlightTravelY = useTransform(progress, [0, 1], compact ? [-12, 12] : [-36, 36]);
-  const sunlightX = useTransform(() => sunlightTravelX.get() + (compact ? 0 : lightX.get()));
-  const sunlightY = useTransform(() => sunlightTravelY.get() + (compact ? 0 : lightY.get()));
-  const sunlightScale = useTransform(progress, [0, 0.48, 1], [1.12, 0.92, 1.08]);
-  const cameraY = useTransform(progress, [0, 0.46, 1], compact ? [-8, 0, 8] : [-24, 0, 24]);
-  const cameraScale = useTransform(progress, [0, 0.46, 1], compact ? [1.045, 1.03, 1.045] : [1.1, 1.045, 1.075]);
-  const currentX = useTransform(progress, [0, 1], variant === "paper" ? ["14%", "-14%"] : ["-14%", "14%"]);
-  const currentY = useTransform(progress, [0, 1], ["-8%", "8%"]);
-  const currentRotate = useTransform(progress, [0, 1], variant === "paper" ? [12, -8] : [-12, 8]);
-  const exposure = useTransform(progress, [0, 0.35, 0.7, 1], [0.4, 0.12, 0.14, 0.35]);
-  const lineDraw = useTransform(progress, [0.08, 0.66], [0, 1]);
+  const sunlightScaleTravel = useTransform(progress, [0, 0.48, 1], [1.12, 0.92, 1.08]);
+  const cameraTravelY = useTransform(progress, [0, 0.46, 1], compact ? [-8, 0, 8] : [-24, 0, 24]);
+  const cameraScaleTravel = useTransform(progress, [0, 0.46, 1], compact ? [1.045, 1.03, 1.045] : [1.1, 1.045, 1.075]);
+  const currentTravelX = useTransform(progress, [0, 1], variant === "paper" ? [14, -14] : [-14, 14]);
+  const currentTravelY = useTransform(progress, [0, 1], [-8, 8]);
+  const currentRotation = useTransform(progress, [0, 1], variant === "paper" ? [12, -8] : [-12, 8]);
+  const exposureTravel = useTransform(progress, [0, 0.35, 0.7, 1], [0.4, 0.12, 0.14, 0.35]);
+  const lineTravel = useTransform(progress, [0.08, 0.66], [0, 1]);
+  // The whole composition shares the heading's reading rest. Resizing the
+  // form or scrolling with a field focused can update the underlying timeline
+  // without pulling the scenery around the reader. Blur rejoins its live pose.
+  const cameraY = useTransform(() => cameraTravelY.get() * (1 - readingRest.get()));
+  const cameraScale = useTransform(() => cameraScaleTravel.get() + (1.03 - cameraScaleTravel.get()) * readingRest.get());
+  const currentX = useTransform(() => `${currentTravelX.get() * (1 - readingRest.get())}%`);
+  const currentY = useTransform(() => `${currentTravelY.get() * (1 - readingRest.get())}%`);
+  const currentRotate = useTransform(() => currentRotation.get() * (1 - readingRest.get()));
+  const exposure = useTransform(() => exposureTravel.get() + (0.12 - exposureTravel.get()) * readingRest.get());
+  const sunlightX = useTransform(() => (sunlightTravelX.get() + (compact ? 0 : lightX.get())) * (1 - readingRest.get()));
+  const sunlightY = useTransform(() => (sunlightTravelY.get() + (compact ? 0 : lightY.get())) * (1 - readingRest.get()));
+  const sunlightScale = useTransform(() => sunlightScaleTravel.get() + (1 - sunlightScaleTravel.get()) * readingRest.get());
+  const sunlightOpacity = useTransform(() => 0.42 * (1 - readingRest.get()));
+  const lineDraw = useTransform(() => lineTravel.get() + (1 - lineTravel.get()) * readingRest.get());
   const value = useMemo(() => ({ progress, readingRest, enabled, compact }), [progress, readingRest, enabled, compact]);
 
   useEffect(() => {
-    // Blend the headline into its reading pose while its scroll timeline keeps
-    // running. Leaving a field returns smoothly to the current camera frame.
+    // The shared spring settles scenery and type together; no new scroll
+    // listener, frame loop, or React render is needed for individual layers.
     const destination = hasReadingFocus ? 1 : 0;
     if (enabled) readingRest.set(destination);
     else readingRest.jump(destination);
@@ -122,12 +134,12 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
           aria-hidden="true"
           data-contact-scene-media="true"
           className="pointer-events-none absolute inset-0 overflow-hidden"
-          style={enabled ? { y: cameraY, scale: cameraScale, willChange: nearViewport ? "transform" : undefined } : { transform: "none" }}
+          style={{ y: enabled ? cameraY : 0, scale: enabled ? cameraScale : 1, willChange: enabled && nearViewport ? "transform" : undefined }}
         >{media}</motion.div>
         <motion.div
           aria-hidden="true"
           data-contact-scene-current
-          style={enabled ? { x: currentX, y: currentY, rotate: currentRotate, willChange: nearViewport ? "transform" : undefined } : { transform: "none" }}
+          style={{ x: enabled ? currentX : 0, y: enabled ? currentY : 0, rotate: enabled ? currentRotate : 0, willChange: enabled && nearViewport ? "transform" : undefined }}
         />
         <motion.div
           aria-hidden="true"
@@ -139,9 +151,7 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
           aria-hidden="true"
           data-contact-scene-sunlight="true"
           data-contact-light-timeline="shared"
-          style={enabled
-            ? { x: sunlightX, y: sunlightY, scale: sunlightScale, opacity: hasReadingFocus ? 0 : 0.42 }
-            : { transform: "none", opacity: 0.16 }}
+          style={{ x: enabled ? sunlightX : 0, y: enabled ? sunlightY : 0, scale: enabled ? sunlightScale : 1, opacity: enabled ? sunlightOpacity : 0.16 }}
         />
         <div data-contact-scene-plane="true" data-contact-focus-pull="crisp" className="relative z-10 flex min-h-[100svh] w-full items-center">
           {children}
