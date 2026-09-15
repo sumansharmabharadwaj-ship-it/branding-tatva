@@ -19,6 +19,7 @@ import { PricingProvider } from "@/components/PricingProvider";
 import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
 import { WorkIndex } from "@/sections/Work/WorkIndex";
+import { DecisionMap } from "@/sections/Work/DecisionMap";
 import { projects } from "@/data/projects";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
@@ -483,6 +484,16 @@ export default async function ServicesPage() {
             carries its own <section id="index">, filters from data/workTaxonomy
             and renders only verified projects from data/projects. */}
         <WorkIndex projects={projects} />
+
+        {/* The causal spine behind the cases above (M4: "case index and causal
+            case-study spine"). The index answers which project resembles your
+            situation; this answers what was actually decided inside them, which
+            is the part that teaches. Also stranded from the old /work page:
+            196 lines, zero importers, pulling its own verified projects.
+            No jump-nav entry on purpose — it reads as the second half of the
+            evidence chapter rather than a tenth destination in a rail that
+            already carries nine. */}
+        <DecisionMap />
 
         {/* Authority now resolves inside one viewport. The shared services
             camera assembles its five layers during entry, discovery, and
