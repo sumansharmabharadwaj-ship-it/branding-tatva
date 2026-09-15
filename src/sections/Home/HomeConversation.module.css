@@ -52,6 +52,10 @@
 }
 .textLink {
   display: inline-flex; align-items: center; gap: .7rem; max-width: 100%;
+  /* min-height 2.75rem = 44px, the touch-target floor. Padding alone put
+     these at 42px on a phone — close enough to look fine and still under
+     the line every accessibility guideline actually draws. */
+  min-height: 2.75rem;
   padding-block: .65rem; color: #70482f; font-size: .875rem;
   font-weight: 500; line-height: 1.5; text-decoration: underline;
   text-decoration-color: rgb(112 72 47 / 35%); text-underline-offset: .3em;
