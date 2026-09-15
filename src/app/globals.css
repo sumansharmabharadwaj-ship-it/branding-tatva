@@ -45,6 +45,20 @@
   --text-display-sm: clamp(1.375rem, 2vw, 1.875rem);
   --text-display-sm--line-height: 1.25;
 
+  /* Reading floor. Anything a visitor has to READ — a sentence, a paragraph,
+     a status message, a form label, a phone number, the text of a control —
+     sits at or above this. 0.7rem is 11.2px at the default root size.
+     --text-label-min is the separate, smaller floor for genuine small-caps
+     treatment: short uppercase strings of roughly three words or fewer, where
+     the small size reads as a device rather than as body text.
+     The distinction exists because the same wrong value, 0.56rem, independently
+     produced sub-9px sentences in three different files (the Home hero eyebrow,
+     the Services audit status region, the Contact phone number). In each case a
+     mobile override also made the type SMALLER on the smallest screens, which is
+     backwards. scripts/type_floor_gate.cjs enforces both floors. */
+  --text-reading-min: 0.7rem;
+  --text-label-min: 0.5rem;
+
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.875rem;

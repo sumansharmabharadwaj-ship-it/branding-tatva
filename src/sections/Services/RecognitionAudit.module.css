@@ -190,7 +190,7 @@
      the hero-eyebrow correction: sub-9px was small-caps treatment applied to
      something a visitor actually has to read. Tracking eased with the size so
      the line still fits its container. */
-  font-size: clamp(0.7rem, 0.7cqw, 0.78rem);
+  font-size: clamp(var(--text-reading-min), 0.7cqw, 0.78rem);
   letter-spacing: 0.06em;
 }
 
@@ -679,7 +679,7 @@
     /* An interactive control, previously 0.48rem (7.68px) on phones. A button
        small enough to be mistaken for a caption is a usability problem before
        it is a type problem. */
-    font-size: 0.7rem;
+    font-size: var(--text-reading-min);
     text-align: right;
   }
 
@@ -704,9 +704,9 @@
     margin-top: auto;
     padding-top: 0.7rem;
     /* The phone override, which is what actually governs this live region at
-       390px and silently won over the base rule. Brought to the same 0.7rem
-       reading floor so the correction isn't desktop-only. */
-    font-size: 0.7rem;
+       390px and silently won over the base rule. Brought to the same reading
+       floor so the correction isn't desktop-only. */
+    font-size: var(--text-reading-min);
   }
 
   .questionActions {
@@ -799,7 +799,7 @@
   .signalCopy p {
     /* Body copy, not a label: 0.56rem (8.96px) is the same floor the hero
        eyebrow was corrected from. */
-    font-size: 0.7rem;
+    font-size: var(--text-reading-min);
   }
 
   .signalCopy span {
@@ -859,7 +859,7 @@
   .consentField {
     /* Form labels and the consent line. Consent text especially has to be
        legible to be meaningful, and 0.55rem (8.8px) on a phone is not. */
-    font-size: 0.7rem;
+    font-size: var(--text-reading-min);
   }
 
   .fields label {

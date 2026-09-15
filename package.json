@@ -18,7 +18,8 @@
     "check:contact": "node scripts/contact_contract_gate.cjs && node scripts/contact_delivery_gate.mjs && node scripts/contact_media_uniqueness_gate.cjs && node scripts/contact_cinematic_motion_gate.cjs && node scripts/contact_invitation_motion_gate.cjs && node scripts/contact_copy_voice_gate.cjs",
     "check:contact:hosted": "node scripts/run_contact_hosted_gate.mjs",
     "check:homepage": "node scripts/homepage_conversion_sequence_gate.cjs",
-    "check:homepage:built": "node scripts/homepage_rendered_quality_gate.cjs"
+    "check:homepage:built": "node scripts/homepage_rendered_quality_gate.cjs",
+    "check:type": "node scripts/type_floor_gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
