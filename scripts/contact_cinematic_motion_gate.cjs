@@ -39,14 +39,18 @@ const css = read("src/app/contact/contact-cinematic.css");
 
 const sceneContracts = [
   ["SCENE_EXPOSURE", "scene-specific exposure pulls are missing"],
-  ["useMotionValueEvent(playbackLift", "scroll-responsive playback is missing"],
+  ['data-contact-playback="authored"', "scene playback must retain its authored pace"],
   ['data-contact-playback=', "playback mode is no longer inspectable"],
   ['data-contact-scene-exposure="true"', "scene exposure layer is missing"],
   ['data-contact-focus-pull=', "chapter focus pull is missing"],
-  ['filter: hasReadingFocus ? "blur(0px)" : contentFocus', "focused controls no longer resolve sharply"],
+  ['data-contact-focus-pull="crisp"', "the reading plane must remain crisp throughout scroll"],
 ];
 
 for (const [expected, message] of sceneContracts) requireText(scene, expected, message);
+forbidPattern(scene, /contentFocus|contentTranslate|useVelocity|playbackRate\s*=/, "scene scroll must not blur text, move controls, or modulate playback");
+requireText(pathways, "inert={!present}", "exiting pathway actions must leave keyboard and pointer navigation");
+const scrollRuntime = read("src/components/ContactScrollRuntime.tsx");
+forbidPattern(scrollRuntime, /dataset\.contactFilmSnap\s*=/, "Contact must not turn snapping back on during manual scrolling");
 
 requirePattern(
   pathwayFilm,

@@ -13,7 +13,7 @@
      and eight pixels sit entirely behind the fixed header's glass, so the
      seam stays invisible while the contract holds. */
   scroll-margin-top: 0.5rem;
-  scroll-snap-align: start;
+  scroll-snap-align: none;
   scroll-snap-stop: normal;
 }
 
@@ -897,25 +897,7 @@ body:has([data-contact-form-success]) .consent-notice {
     transform-origin: 0 50%;
   }
 
-  [data-contact-film] [data-contact-heading-line] {
-    animation-duration: 1ms;
-    animation-fill-mode: both;
-    animation-timing-function: linear;
-    animation-timeline: view(block);
-    animation-range: entry 4% exit 86%;
-  }
 
-  [data-contact-film] [data-contact-heading-line="lead"] {
-    animation-name: contact-heading-lead;
-  }
-
-  [data-contact-film] [data-contact-heading-line="body"] {
-    animation-name: contact-heading-body;
-  }
-
-  [data-contact-film] [data-contact-heading-line="resolve"] {
-    animation-name: contact-heading-resolve;
-  }
 }
 
 @keyframes contact-heading-gather {
@@ -979,7 +961,7 @@ body:has([data-contact-form-success]) .consent-notice {
 }
 
 html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
-  scroll-snap-type: y proximity;
+  scroll-snap-type: none;
 }
 
 /* A quiet chapter control appears only while the four Contact scenes are in
@@ -2059,3 +2041,116 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
     transform: scaleX(1) !important;
   }
 }
+
+/* September Contact pass: continuous colour, one camera, stable reading. */
+[data-contact-film] [data-contact-scene]:not([data-contact-scene="invitation"]) {
+  --contact-current-warm: #eac8a0;
+  --contact-current-cool: #b8c9b3;
+  background: #eee7d8;
+}
+[data-contact-film] [data-contact-scene="paper"] {
+  --contact-current-warm: #e7d3b5;
+  --contact-current-cool: #b3cbbf;
+  background: #e4e8df;
+}
+[data-contact-film] [data-contact-scene="daybreak"] {
+  --contact-current-warm: #efba98;
+  --contact-current-cool: #cbc9a6;
+  background: #f1e4d4;
+}
+[data-contact-film] [data-contact-scene-current] {
+  position: absolute;
+  inset: -20%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.72;
+  background:
+    radial-gradient(ellipse at 14% 30%, var(--contact-current-cool) 0%, transparent 49%),
+    radial-gradient(ellipse at 85% 70%, var(--contact-current-warm) 0%, transparent 52%),
+    linear-gradient(115deg, transparent 30%, #fff5df99 49%, transparent 70%);
+}
+[data-contact-film] [data-contact-scene-sunlight] {
+  position: absolute;
+  inset: -8%;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 67% 28%, #fff5dbaa, transparent 42%);
+  transition: opacity 0.35s ease;
+}
+/* The shared scene owns background travel. Nested living-image cameras were
+   applying another scroll transform and pointer drift to the same photograph. */
+[data-contact-film] [data-contact-scene-media] [data-living-image-stage] > div:first-child,
+[data-contact-film] [data-contact-scene-media] [data-living-image-stage] > div:first-child > div {
+  transform: none !important;
+  will-change: auto !important;
+}
+[data-contact-film] [data-contact-scene-media] [data-contact-ambient] {
+  display: none;
+}
+[data-contact-film] [data-contact-scene-media] {
+  opacity: 0.72;
+}
+[data-contact-film] [data-contact-scene-plane] {
+  transform: none;
+  filter: none;
+  opacity: 1;
+}
+[data-contact-film] [data-contact-pathways-card],
+[data-contact-film] [data-contact-form-card],
+[data-contact-film] [data-contact-booking-card] {
+  background: linear-gradient(135deg, #fffdf6f7, #f3ede0ed);
+  border-color: #ffffffb3;
+  box-shadow: 0 24px 64px #574a321c, inset 0 1px 0 #ffffffc7;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+[data-contact-film] [data-contact-heading-line] {
+  animation: none;
+  will-change: auto;
+}
+[data-contact-film] [data-contact-heading-line="resolve"]::after {
+  display: none;
+}
+[data-contact-film] [data-contact-heading-ink] {
+  display: block;
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.08em;
+  height: 1px;
+  background: linear-gradient(90deg, currentColor, transparent);
+  transform-origin: left;
+  opacity: 0.52;
+  pointer-events: none;
+}
+[data-contact-film] [data-contact-scene-thread] {
+  position: absolute;
+  z-index: 5;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: clamp(40px, 9vh, 100px);
+  pointer-events: none;
+  stroke: #ad8860;
+  stroke-width: 1;
+  opacity: 0.35;
+}
+[data-contact-film] [data-contact-reading-focus="true"] [data-contact-heading-line] {
+  transform: none !important;
+}
+[data-contact-film] [data-contact-in-view="false"] [data-contact-sundust] > span {
+  animation-play-state: paused;
+}
+@media (max-width: 940px) {
+  [data-contact-film] [data-contact-scene-current] { opacity: 0.8; }
+  [data-contact-film] [data-contact-scene-media] { opacity: 0.56; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-contact-film] [data-contact-scene-current],
+  [data-contact-film] [data-contact-scene-sunlight],
+  [data-contact-film] [data-contact-heading-line],
+  [data-contact-film] [data-contact-heading-ink] { transform: none !important; }
+}
+html[data-motion="reduced"] [data-contact-film] [data-contact-scene-current],
+html[data-motion="reduced"] [data-contact-film] [data-contact-scene-sunlight],
+html[data-motion="reduced"] [data-contact-film] [data-contact-heading-line],
+html[data-motion="reduced"] [data-contact-film] [data-contact-heading-ink] { transform: none !important; }

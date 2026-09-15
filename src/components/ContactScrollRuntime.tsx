@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { preconnect } from "react-dom";
 
-const CAMERA_QUERY = "(min-width: 941px) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 const SCROLL_KEYS = new Set([
   // Focus navigation can scroll a control into view; it also owns the viewport.
   "Tab",
@@ -16,11 +15,8 @@ const SCROLL_KEYS = new Set([
   " ",
 ]);
 
-/**
- * Enables a forgiving native snap only while the post-hero Contact film is in
- * view. It releases before the footer or a reading interaction, never pins
- * content, and owns hash recovery now that Lenis stands down on this route.
- */
+/** Native scroll owns the viewport. This runtime tracks form visibility and
+ * recovers initial fragment links after layout settles; it never snaps scenes. */
 export function ContactScrollRuntime() {
   // Every primary action on Contact opens Calendly. Warming the connection
   // while the visitor is still reading means the DNS and TLS round trips are
@@ -35,7 +31,6 @@ export function ContactScrollRuntime() {
     if (!film || scenes.length === 0) return;
     const contactFilm = film;
 
-    const cameraReady = window.matchMedia(CAMERA_QUERY);
     let frame = 0;
     let disposed = false;
     let hashAttempts = 0;
@@ -69,43 +64,7 @@ export function ContactScrollRuntime() {
     const render = () => {
       frame = 0;
       syncFormOwnership();
-      const motionAllowed = cameraReady.matches && root.dataset.motion !== "reduced";
-      const interactionOwnsScroll = scenes.some(
-        (scene) =>
-          scene.dataset.contactReadingFocus === "true" ||
-          Boolean(scene.querySelector('[data-contact-form-expanded="true"]')),
-      );
-      if (!motionAllowed || interactionOwnsScroll) {
-        delete root.dataset.contactFilmSnap;
-        return;
-      }
-
-      const viewportHeight = Math.max(window.innerHeight, 1);
-      // Release snapping from the invitation's first visible edge through the
-      // footer, including layouts too short to pin. Re-enabling it when the
-      // stage leaves would swallow small reverse scrolls back into the scene.
-      const invitation = contactFilm.querySelector<HTMLElement>('[data-contact-gratitude="sunlit"]');
-      if (invitation) {
-        const rect = invitation.getBoundingClientRect();
-        if (rect.top <= viewportHeight) {
-          delete root.dataset.contactFilmSnap;
-          return;
-        }
-      }
-      const firstSceneTop = scenes[0].offsetTop;
-      const lastScene = scenes[scenes.length - 1];
-      const releasePoint = lastScene.offsetTop + lastScene.offsetHeight - viewportHeight * 0.5;
-      // Anchor landings sit up to the scenes' scroll margin (8px) above the
-      // frame boundary, so the entry threshold absorbs it — otherwise a
-      // visitor arriving via #choose sits just outside the film and neither
-      // snap nor the smooth chapter glide engages until they nudge scroll.
-      const insideFilm = window.scrollY >= firstSceneTop - 12 && window.scrollY < releasePoint;
-
-      if (insideFilm && root.dataset.contactFilmSnap !== "true") {
-        root.dataset.contactFilmSnap = "true";
-      } else if (!insideFilm && root.dataset.contactFilmSnap) {
-        delete root.dataset.contactFilmSnap;
-      }
+      delete root.dataset.contactFilmSnap;
     };
 
     const requestRender = () => {
@@ -166,7 +125,7 @@ export function ContactScrollRuntime() {
       hashAttempts += 1;
       window.scrollTo({
         top: Math.max(0, window.scrollY + delta),
-        behavior: "auto",
+        behavior: "instant",
       });
       requestRender();
 
@@ -201,11 +160,23 @@ export function ContactScrollRuntime() {
       const anchor = target.closest<HTMLAnchorElement>('a[href^="#"]');
       if (!anchor || !contactFilm.contains(anchor)) return;
 
-      // Pointer-down correctly cancels an older recovery, but an intentional
-      // chapter jump needs a fresh pass after the browser applies the new
-      // fragment. The timeout also covers clicking the fragment already in
-      // the URL, which does not emit another hashchange event.
-      window.setTimeout(restartHashRecovery, 0);
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const id = anchor.hash.slice(1);
+      let decoded = id;
+      try { decoded = decodeURIComponent(id); } catch { return; }
+      const destination = document.getElementById(decoded);
+      if (!destination || !contactFilm.contains(destination)) return;
+      event.preventDefault();
+      cancelHashRecovery();
+      if (window.location.hash !== anchor.hash) window.history.pushState(null, "", anchor.hash);
+      const reduced = root.dataset.motion === "reduced" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      destination.scrollIntoView({ behavior: reduced ? "instant" : "smooth", block: "start" });
+      // Transfer keyboard navigation without making another scroll correction.
+      if (!destination.hasAttribute("tabindex")) {
+        destination.setAttribute("tabindex", "-1");
+        destination.addEventListener("blur", () => destination.removeAttribute("tabindex"), { once: true });
+      }
+      destination.focus({ preventScroll: true });
     }
 
     const motionPreferenceObserver = new MutationObserver(requestRender);
@@ -238,7 +209,6 @@ export function ContactScrollRuntime() {
     window.addEventListener("keydown", onManualKey);
     window.addEventListener("hashchange", onHashChange);
     contactFilm.addEventListener("click", onFilmClick);
-    cameraReady.addEventListener("change", requestRender);
     if (document.readyState !== "complete") {
       window.addEventListener("load", scheduleHashRecovery);
     }
@@ -261,7 +231,6 @@ export function ContactScrollRuntime() {
       window.removeEventListener("hashchange", onHashChange);
       window.removeEventListener("load", scheduleHashRecovery);
       contactFilm.removeEventListener("click", onFilmClick);
-      cameraReady.removeEventListener("change", requestRender);
       motionPreferenceObserver.disconnect();
       interactionObserver.disconnect();
       delete root.dataset.contactFilmSnap;

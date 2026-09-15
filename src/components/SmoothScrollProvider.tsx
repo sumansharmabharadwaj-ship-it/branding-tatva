@@ -48,7 +48,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
 
   useEffect(() => {
-    if (!hydrated || !prefersReducedMotion || !window.location.hash) return;
+    if (pathname === "/contact" || !hydrated || !prefersReducedMotion || !window.location.hash) return;
 
     let cancelled = false;
     let attempts = 0;

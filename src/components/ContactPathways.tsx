@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   type KeyboardEvent,
+  type ReactNode,
   type PointerEvent,
 } from "react";
 import {
@@ -11,6 +12,7 @@ import {
   motion,
   useMotionValue,
   useSpring,
+  useIsPresent,
   type Variants,
 } from "framer-motion";
 import {
@@ -146,9 +148,27 @@ const PATHWAY_SHOT_VARIANTS: Variants = {
       direction > 0
         ? "inset(0 0 0 12% round 1.1rem)"
         : "inset(0 12% 0 0 round 1.1rem)",
-    transition: { duration: 0.22, ease: EASE_AIR },
+    transition: { duration: 0.14, ease: EASE_AIR },
   }),
 };
+
+function PathwayShot({ direction, reduced, children }: { direction: number; reduced: boolean; children: ReactNode }) {
+  const present = useIsPresent();
+  return <motion.div
+    data-contact-pathway-shot
+    data-contact-shot-present={present ? "true" : "false"}
+    inert={!present}
+    aria-hidden={!present}
+    custom={direction}
+    variants={PATHWAY_SHOT_VARIANTS}
+    initial={reduced ? false : "enter"}
+    animate="centre"
+    exit={reduced ? undefined : "exit"}
+    transition={{ duration: reduced ? 0 : 0.32, ease: EASE_AIR }}
+    style={{ transformOrigin: "50% 50%", pointerEvents: present ? "auto" : "none" }}
+    className="relative grid min-w-0 gap-5 [grid-area:1/1]"
+  >{children}</motion.div>;
+}
 
 const primaryActionClass =
   "group inline-flex min-h-11 items-center justify-center rounded-full bg-soil px-3 py-2 text-center text-[0.72rem] font-medium leading-tight text-ivory transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-action-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-12 sm:px-5 sm:py-3 sm:text-sm";
@@ -249,6 +269,7 @@ export function ContactPathways() {
     target: sceneRef,
     reducedMotion: prefersReducedMotion,
     persistManualSelection: true,
+    followScroll: false,
   });
   const active = pathways[activeIndex] ?? pathways[0];
   const activeDetail =
@@ -295,6 +316,8 @@ export function ContactPathways() {
 
   function handlePanelPointerDown(event: PointerEvent<HTMLDivElement>) {
     if (event.pointerType === "mouse" || !event.isPrimary) return;
+    // Buttons and links retain their native tap target; only the panel surface swipes.
+    if (event.target instanceof Element && event.target.closest("a, button, input, textarea, select")) return;
     touchGestureRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
@@ -400,8 +423,7 @@ export function ContactPathways() {
                       aria-controls={panelId}
                       onClick={() => choose(index)}
                       onFocus={() => choose(index)}
-                      onMouseEnter={() => choose(index)}
-                      onKeyDown={(event) => handleTabKeyDown(index, event)}
+                                            onKeyDown={(event) => handleTabKeyDown(index, event)}
                       data-cursor-label={pathway.label}
                       className={`group relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1.5 py-1.5 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-[5.5rem] sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2 ${
                         selected ? "text-ivory" : "text-soil hover:bg-white/55"
@@ -450,19 +472,8 @@ export function ContactPathways() {
                 className="relative grid min-w-0 touch-pan-y p-4 sm:p-6 lg:p-7"
                 style={prefersReducedMotion ? undefined : { x: touchDragXSmooth }}
               >
-                <AnimatePresence initial={false} custom={direction} mode="sync">
-                  <motion.div
-                    key={active.id}
-                    data-contact-pathway-shot
-                    custom={direction}
-                    variants={PATHWAY_SHOT_VARIANTS}
-                    initial={prefersReducedMotion ? false : "enter"}
-                    animate="centre"
-                    exit={prefersReducedMotion ? undefined : "exit"}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE_AIR }}
-                    style={{ transformOrigin: "50% 50%" }}
-                    className="relative grid min-w-0 gap-5 [grid-area:1/1]"
-                  >
+                <AnimatePresence initial={false} custom={direction} mode="wait">
+                  <PathwayShot key={active.id} direction={direction} reduced={prefersReducedMotion}>
                   <ContactPathwayFilm key={active.id} {...active.film} />
 
                   <div data-contact-pathway-copy className="relative z-10 flex min-w-0 flex-col">
@@ -605,7 +616,7 @@ export function ContactPathways() {
                     )}
                     </div>
                   </div>
-                  </motion.div>
+                  </PathwayShot>
                 </AnimatePresence>
               </motion.div>
             </div>
