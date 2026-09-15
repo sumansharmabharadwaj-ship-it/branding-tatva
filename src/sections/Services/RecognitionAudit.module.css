@@ -185,8 +185,13 @@
   padding-top: 0.75cqw;
   border-top: 1px solid rgba(23, 38, 30, 0.14);
   color: #66695e;
-  font-size: clamp(0.56rem, 0.7cqw, 0.72rem);
-  letter-spacing: 0.08em;
+  /* Reading floor, not a label floor. This is a role="status" live region and
+     it carries whole sentences ("Choose what is true today"), so it followed
+     the hero-eyebrow correction: sub-9px was small-caps treatment applied to
+     something a visitor actually has to read. Tracking eased with the size so
+     the line still fits its container. */
+  font-size: clamp(0.7rem, 0.7cqw, 0.78rem);
+  letter-spacing: 0.06em;
 }
 
 .answerStatus span {
@@ -671,7 +676,10 @@
     min-height: 2.75rem;
     justify-content: flex-end;
     padding: 0;
-    font-size: 0.48rem;
+    /* An interactive control, previously 0.48rem (7.68px) on phones. A button
+       small enough to be mistaken for a caption is a usability problem before
+       it is a type problem. */
+    font-size: 0.7rem;
     text-align: right;
   }
 
@@ -786,7 +794,9 @@
   }
 
   .signalCopy p {
-    font-size: 0.56rem;
+    /* Body copy, not a label: 0.56rem (8.96px) is the same floor the hero
+       eyebrow was corrected from. */
+    font-size: 0.7rem;
   }
 
   .signalCopy span {
@@ -844,7 +854,9 @@
 
   .fields label,
   .consentField {
-    font-size: 0.55rem;
+    /* Form labels and the consent line. Consent text especially has to be
+       legible to be meaningful, and 0.55rem (8.8px) on a phone is not. */
+    font-size: 0.7rem;
   }
 
   .fields label {
