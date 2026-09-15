@@ -118,6 +118,27 @@
   );
   will-change: transform, opacity;
   animation: sweep 38s ease-in-out infinite alternate;
+  /* Scroll feedback, borrowed rather than built: on Home the scroll
+     camera already publishes an eased 0-1 velocity and a signed
+     directional shift as custom properties on the [data-home-v4] root,
+     and custom properties inherit, so a field inside a Home chapter can
+     read them for free. The shaft brightens a little while the visitor
+     is actually moving and rests when they rest, which reads as the
+     light answering the scroll. Both properties default to zero, so
+     every field outside Home (and Home at rest) renders exactly as
+     before, and both land on opacity — compositor work, no repaint. */
+  opacity: calc(0.62 + var(--home-camera-velocity, 0) * 0.85);
+}
+
+/* The drifting masses lean a breath in the scroll direction. The shift
+   the camera publishes is at most a couple of viewport-widths' hundredths,
+   so this reads as wind catching the field, never as parallax. Applied to
+   the two large background blobs only; the third sits lowest and stays
+   still so the lean has something steady to read against. */
+.blobA,
+.blobB {
+  translate: var(--home-camera-shift, 0vw) 0;
+  transition: translate 620ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Vignette: keeps type legible against the brightest part of the field
@@ -169,10 +190,15 @@
   100% { transform: translate3d(9%, -9%, 0) scale(1.2); }
 }
 
+/* Transform only, deliberately. Keyframed opacity overrides the base
+   opacity declaration for as long as the animation runs, which silently
+   killed the scroll-velocity brightening below — the calc never applied.
+   The breathing the opacity stops used to provide now comes from the
+   velocity term instead: still light that swells and settles, but tied
+   to the visitor's own movement rather than a clock. */
 @keyframes sweep {
-  0%   { transform: translate3d(-120%, 0, 0) rotate(9deg); opacity: 0.5; }
-  50%  { opacity: 1; }
-  100% { transform: translate3d(70%, 0, 0) rotate(9deg); opacity: 0.45; }
+  0%   { transform: translate3d(-120%, 0, 0) rotate(9deg); }
+  100% { transform: translate3d(70%, 0, 0) rotate(9deg); }
 }
 
 @keyframes grainShift {
@@ -201,6 +227,15 @@
     transform: translate3d(-20%, 0, 0) rotate(9deg);
     opacity: 0.7;
   }
+
+  /* The scroll lean and the velocity brightening are still motion, just
+     motion the visitor drives — the static-equivalent rule covers them
+     the same as the autonomous drift. */
+  .blobA,
+  .blobB {
+    translate: 0 0;
+    transition: none;
+  }
 }
 
 /* The sitewide MotionPreference toggle writes data-motion="reduced" on
@@ -212,4 +247,14 @@
 :global([data-motion="reduced"]) .shaft,
 :global([data-motion="reduced"]) .grain {
   animation: none;
+}
+
+:global([data-motion="reduced"]) .blobA,
+:global([data-motion="reduced"]) .blobB {
+  translate: 0 0;
+  transition: none;
+}
+
+:global([data-motion="reduced"]) .shaft {
+  opacity: 0.7;
 }

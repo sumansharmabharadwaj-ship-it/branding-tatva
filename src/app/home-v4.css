@@ -1115,8 +1115,59 @@
 }
 
 .home-v4-chapter--process {
+  position: relative;
   min-height: 112svh;
   background: #171411;
+}
+
+/* The method chapter was the one dark chapter left on a flat fill while
+   every neighbour sits on footage or a living field. A drifting ground
+   drawn on the wrapper's own pseudo-element rather than a mounted
+   component: the chapter's `> div:first-child` sizing rules keep
+   matching the heading (pseudo-elements are not children), and nothing
+   about the sticky journey inside changes.
+   Two blooms from the codified palette — deep forest green with a faint
+   warm sand answer — oversized and moved with transform only, so the
+   whole thing composites without a repaint. The shaft-style brightening
+   on scroll comes free from the camera's velocity property, which
+   inherits from the Home root. */
+.home-v4-chapter--process::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  background:
+    radial-gradient(46% 38% at 24% 30%, rgba(31, 58, 40, 0.55) 0%, rgba(31, 58, 40, 0.18) 45%, transparent 72%),
+    radial-gradient(40% 34% at 78% 72%, rgba(198, 169, 122, 0.13) 0%, rgba(198, 169, 122, 0.05) 46%, transparent 74%),
+    radial-gradient(52% 44% at 62% 18%, rgba(85, 107, 74, 0.28) 0%, transparent 70%);
+  opacity: calc(0.85 + var(--home-camera-velocity, 0) * 0.5);
+  will-change: transform;
+  animation: processGroundDrift 57s ease-in-out infinite alternate;
+}
+
+/* The chapter's own content lifts one paint layer above the ground.
+   position: relative alone never breaks a sticky descendant — only
+   overflow (other than clip) or a transform on an ancestor does. */
+.home-v4-chapter--process > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes processGroundDrift {
+  0%   { transform: translate3d(-3%, -2%, 0) scale(1); }
+  100% { transform: translate3d(3.5%, 2.5%, 0) scale(1.14); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4-chapter--process::before {
+    animation: none;
+    opacity: 0.85;
+  }
+}
+
+html[data-motion="reduced"] .home-v4-chapter--process::before {
+  animation: none;
+  opacity: 0.85;
 }
 
 .home-v4-chapter--process > div:first-child {
