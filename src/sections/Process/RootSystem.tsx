@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useId, useRef, useState, type KeyboardEvent } from "react";
-import { useLenis } from "@/components/SmoothScrollProvider";
+import { motion, useAnimationControls, useInView, useTransform } from "framer-motion";
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -55,18 +54,27 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const sectionRef = useRef<HTMLElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const animatedStageRef = useRef(0);
   const selectionId = useId();
-  const lenis = useLenis();
+  const readingMotion = useAnimationControls();
+  const noteMotion = useAnimationControls();
+  const captionMotion = useAnimationControls();
+  const outputMotion = useAnimationControls();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const cinematicMotion = useMediaQuery(
     "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
   );
+  const [frameFits, setFrameFits] = useState(false);
+  const desktopStory = cinematicMotion && !prefersReducedMotion && frameFits;
   const sceneInView = useInView(sectionRef, { amount: 0.06 });
   const visualizer = useScrollDrivenVisualizer({
+    scrollHysteresis: 0.0125,
+    preservePanelFocus: true,
     count: stages.length,
     target: sectionRef,
-    enabled: cinematicMotion && sceneInView,
+    enabled: desktopStory && sceneInView,
     reducedMotion: prefersReducedMotion,
   });
   // One selection survives switching between the scroll story, compact layout,
@@ -75,32 +83,55 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     visualizer.activeIndex,
     Math.max(0, stages.length - 1),
   );
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const imageY = useTransform(scrollYProgress, [0, 1], [12, -12]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.1]);
-  const [stepTransition, setStepTransition] = useState({ index: active, direction: 0 });
+  // The photograph follows the same reversible timeline as the six decisions.
+  // A close inspection opens out again; compact layouts retain a quiet still.
+  const imageY = useTransform(visualizer.scrollYProgress, [0, .2, .4, .6, .8, 1], [14, -8, 5, -12, -4, 10]);
+  const imageX = useTransform(visualizer.scrollYProgress, [0, .2, .4, .6, .8, 1], ["-1%", "1%", "-.7%", "1.2%", ".2%", "-.8%"]);
+  const imageScale = useTransform(visualizer.scrollYProgress, [0, .2, .4, .6, .8, 1], [1.05, 1.1, 1.07, 1.13, 1.09, 1.04]);
 
-  // Resolve direction before the new keyed content mounts, including changes
-  // driven by scrolling. Repeated renders retain the same entry direction.
-  if (stepTransition.index !== active) {
-    setStepTransition({ index: active, direction: Math.sign(active - stepTransition.index) });
-  }
+  // Measure the natural frame, including the footer, before enabling a hold.
+  // Sticky never imposes a height that could hide the last decision or action.
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const measure = () => setFrameFits(frame.offsetHeight <= window.innerHeight + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(frame);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  const settleReading = useCallback(() => {
+    readingMotion.stop(); noteMotion.stop(); captionMotion.stop(); outputMotion.stop();
+    readingMotion.set({ x: 0, y: 0 });
+    noteMotion.set({ y: 0, rotate: 0 });
+    captionMotion.set({ x: 0 });
+    outputMotion.set({ scaleX: 1 });
+  }, [readingMotion, noteMotion, captionMotion, outputMotion]);
+
+  useEffect(() => {
+    const previous = animatedStageRef.current;
+    animatedStageRef.current = active;
+    settleReading();
+    if (prefersReducedMotion || previous === active) return;
+    const direction = Math.sign(active - previous);
+    readingMotion.set({ x: direction * (desktopStory ? 28 : 8), y: desktopStory ? 8 : 0 });
+    noteMotion.set({ y: direction * (desktopStory ? 24 : 6), rotate: desktopStory ? direction * -2.5 : 0 });
+    captionMotion.set({ x: direction * (desktopStory ? 22 : 6) });
+    outputMotion.set({ scaleX: .08 });
+    void readingMotion.start({ x: 0, y: 0, transition: { duration: .48, ease: EASE } });
+    void noteMotion.start({ y: 0, rotate: 0, transition: { duration: .58, ease: EASE } });
+    void captionMotion.start({ x: 0, transition: { duration: .48, ease: EASE } });
+    void outputMotion.start({ scaleX: 1, transition: { duration: .62, ease: EASE } });
+    return () => { readingMotion.stop(); noteMotion.stop(); captionMotion.stop(); outputMotion.stop(); };
+  }, [active, desktopStory, prefersReducedMotion, settleReading, readingMotion, noteMotion, captionMotion, outputMotion]);
 
   function choose(index: number) {
     visualizer.choose(index);
-
-    const section = sectionRef.current;
-    if (!section || !cinematicMotion || prefersReducedMotion || !stages.length) return;
-
-    const bounds = section.getBoundingClientRect();
-    const runway = Math.max(0, bounds.height - window.innerHeight);
-    if (runway <= 1) return;
-
-    // Land inside the chosen step's scroll interval so the next wheel movement
-    // continues from that decision instead of restoring the previous position.
-    const top = window.scrollY + bounds.top + runway * ((index + 0.5) / stages.length);
-    if (lenis) lenis.scrollTo(top, { immediate: true });
-    else window.scrollTo({ top, behavior: "instant" });
   }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -122,14 +153,9 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     output: "A decision the next stage can use",
     decision: "What needs to be agreed before the next stage?",
   };
-  const stepEntrance = prefersReducedMotion || stepTransition.direction === 0
-    ? false
-    : { x: stepTransition.direction * 10 };
-  const stepTiming = { duration: prefersReducedMotion ? 0 : 0.3, ease: EASE };
-
   return (
-    <section ref={sectionRef} data-project-journey="true" data-scroll-story="process" data-process-state={active} className={`project-journey ${styles.journey}`} aria-labelledby="project-journey-title">
-      <div className={styles.shell}>
+    <section ref={sectionRef} data-project-journey="true" data-scroll-story="process" data-process-state={active} data-process-layout={desktopStory ? "held" : "flow"} className={`project-journey ${styles.journey}`} aria-labelledby="project-journey-title">
+      <div ref={frameRef} className={styles.shell}>
         <header className={styles.header}>
           <div>
             <p className={styles.eyebrow}>The working method</p>
@@ -160,27 +186,30 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           ))}
         </div>
 
-        <article id="project-stage-panel" role="tabpanel" aria-labelledby={`project-stage-tab-${active}`} tabIndex={0} className={styles.panel}>
+        <article id="project-stage-panel" role="tabpanel" aria-labelledby={`project-stage-tab-${active}`} tabIndex={0} className={styles.panel} onFocusCapture={settleReading}>
           <div className={styles.media}>
-            <motion.div className={styles.imagePlane} style={prefersReducedMotion ? undefined : { y: imageY, scale: imageScale }}>
+            <motion.div className={styles.imagePlane} data-process-camera style={{ x: desktopStory ? imageX : 0, y: desktopStory ? imageY : 0, scale: desktopStory ? imageScale : 1 }}>
               <Image src="/images/strategy-working-desk.webp" alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />
             </motion.div>
             <div className={styles.imageShade} />
-            <motion.div key={`question-${active}`} className={styles.deskNote} initial={stepEntrance} animate={{ x: 0 }} transition={stepTiming}>
+            <motion.div className={styles.deskNote} initial={false} animate={noteMotion}>
               <span>Before moving on</span>
               <p>{meta.decision}</p>
             </motion.div>
-            <motion.p key={active} className={styles.imageCaption} initial={stepEntrance} animate={{ x: 0 }} transition={stepTiming} aria-hidden="true">
+            <motion.p className={styles.imageCaption} initial={false} animate={captionMotion} aria-hidden="true">
               <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>{stage.stage}
             </motion.p>
           </div>
 
-          <motion.div key={active} className={styles.reading} initial={stepEntrance} animate={{ x: 0 }} transition={stepTiming}>
+          <motion.div className={styles.reading} data-process-reading initial={false} animate={readingMotion}>
             <p className={styles.eyebrow}>The decision</p>
             <h3>{meta.title}</h3>
             <p className={styles.explanation}>{meta.explanation}</p>
             <dl className={styles.notes}>
-              <div><dt>What you receive</dt><dd>{meta.output}</dd></div>
+              <div>
+                <motion.span aria-hidden="true" className={styles.outputTrace} data-process-output-trace initial={false} animate={outputMotion} />
+                <dt>What you receive</dt><dd>{meta.output}</dd>
+              </div>
             </dl>
           </motion.div>
         </article>

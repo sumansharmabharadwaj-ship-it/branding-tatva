@@ -9,6 +9,7 @@ const PRESETS = {
   sunlit: { label: "Sunlit invitation reference", width: 1487, height: 1058 },
   desktop: { label: "Desktop wide", width: 1440, height: 900 },
   laptop: { label: "Short laptop", width: 1280, height: 720 },
+  laptop790: { label: "Laptop reading height", width: 1280, height: 790 },
   tablet: { label: "Tablet portrait", width: 768, height: 820 },
   mobile: { label: "Mobile portrait", width: 390, height: 844 },
   narrow: { label: "Narrow phone", width: 320, height: 720 },
