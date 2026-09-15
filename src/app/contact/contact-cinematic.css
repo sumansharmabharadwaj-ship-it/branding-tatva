@@ -1115,6 +1115,8 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 }
 
 [data-contact-chapter-rail] a {
+  position: relative;
+  isolation: isolate;
   display: flex;
   min-height: 2.75rem;
   align-items: center;
@@ -1123,9 +1125,33 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   border-radius: 999px;
   color: rgba(39, 34, 30, 0.56);
   font-size: 0.7rem;
-  transition:
-    color 240ms ease,
-    background-color 240ms ease;
+  transition: color 240ms ease;
+}
+
+/* Light dissolves inside a fixed target; chapter changes never move a link
+   beneath a pointer or a keyboard focus ring. */
+[data-contact-chapter-rail] a::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 16% 0%, rgba(198, 169, 122, 0.24), transparent 78%),
+    #27221e;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-contact-chapter-rail] a:focus-visible::before {
+  opacity: 0.08;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-contact-chapter-rail] a:hover::before {
+    opacity: 0.08;
+  }
 }
 
 [data-contact-chapter-rail] a:focus-visible {
@@ -1135,7 +1161,10 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 
 [data-contact-chapter-rail] li[data-active="true"] a {
   color: #f6f2ea;
-  background: #27221e;
+}
+
+[data-contact-chapter-rail] li[data-active="true"] a::before {
+  opacity: 1;
 }
 
 [data-contact-chapter-rail] a span {
@@ -1166,7 +1195,12 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
 
 [data-contact-chapter-rail][data-tone="dark"] li[data-active="true"] a {
   color: #27221e;
-  background: #f6f2ea;
+}
+
+[data-contact-chapter-rail][data-tone="dark"] a::before {
+  background:
+    radial-gradient(ellipse at 16% 0%, rgba(198, 169, 122, 0.3), transparent 78%),
+    #f6f2ea;
 }
 
 /* On compact/touch viewports the form takes ownership before a field receives
@@ -2000,7 +2034,8 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail] {
 }
 
 html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail]::after,
-html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail] a {
+html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail] a,
+html[data-motion="reduced"] [data-contact-film] [data-contact-chapter-rail] a::before {
   transition: none !important;
 }
 
@@ -2053,7 +2088,8 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   }
 
   [data-contact-film] [data-contact-chapter-rail]::after,
-  [data-contact-film] [data-contact-chapter-rail] a {
+  [data-contact-film] [data-contact-chapter-rail] a,
+  [data-contact-film] [data-contact-chapter-rail] a::before {
     transition: none !important;
   }
 

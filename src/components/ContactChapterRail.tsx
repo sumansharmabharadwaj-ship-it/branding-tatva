@@ -25,6 +25,7 @@ export function ContactChapterRail() {
     const compactDock = window.matchMedia("(max-width: 1359px), (pointer: coarse)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
+    let previousReadingIndex = -1;
 
     function update() {
       frame = 0;
@@ -40,6 +41,7 @@ export function ContactChapterRail() {
       const isInsideJourney = firstRect.top <= viewportHeight * 0.6 && lastRect.bottom >= viewportHeight * 0.24;
 
       if (!isInsideJourney) {
+        previousReadingIndex = -1;
         setActiveIndex((current) => (current === -1 ? current : -1));
         return;
       }
@@ -62,13 +64,18 @@ export function ContactChapterRail() {
         );
       }
 
-      // Read the chapter crossing the reading line. Comparing chapter centres
-      // falsely selects Choose when the optional form makes Write much taller.
+      // A small directional buffer keeps trackpad settling and fractional
+      // layout changes from alternating chapters at the reading line. Measure
+      // section tops so opening optional form fields preserves the Write chapter.
       let readingIndex = 0;
       rects.forEach((rect, index) => {
-        if (rect.top <= viewportCenter) readingIndex = index;
+        const readingLine = previousReadingIndex < 0
+          ? viewportCenter
+          : viewportCenter + (index <= previousReadingIndex ? 12 : -12);
+        if (rect.top <= readingLine) readingIndex = index;
       });
 
+      previousReadingIndex = readingIndex;
       setActiveIndex((current) => (current === readingIndex ? current : readingIndex));
     }
 
@@ -143,7 +150,9 @@ export function ContactChapterRail() {
                   tabIndex={visible ? 0 : -1}
                   data-cursor-label={chapter.label}
                   onClick={() => {
-                    setActiveIndex(index);
+                    // Native scrolling owns chapter selection. An optimistic
+                    // destination would flash back through every intermediate
+                    // chapter and briefly hide the dock on a Thank you click.
                     track("contact_route_selected", {
                       source: "contact_chapter_rail",
                       route: chapter.id,
