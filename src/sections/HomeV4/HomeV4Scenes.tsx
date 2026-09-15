@@ -9,6 +9,7 @@ import { publishServicesSituation } from "@/lib/servicesJourney";
 import recognitionStyles from "./RecognitionChoices.module.css";
 import costStyles from "./HiddenCost.module.css";
 import openingStyles from "./OpeningScene.module.css";
+import { LivingGradient } from "@/components/LivingGradient";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -257,6 +258,7 @@ export function V4RecognitionScene() {
       aria-labelledby="home-v4-recognition-title"
       style={{ "--recognition-accent": active.accent } as React.CSSProperties}
     >
+      <LivingGradient preset="meadow" shaft={false} />
       <div className="home-v4-recognition__media" aria-hidden="true">
         <video
           muted
@@ -386,6 +388,7 @@ export function V4HiddenCostScene() {
       className={costStyles.section}
       aria-labelledby="home-v4-cost-title"
     >
+      <LivingGradient preset="wanderlust" />
       <div className={costStyles.shell}>
         <header className={costStyles.header}>
           <div>

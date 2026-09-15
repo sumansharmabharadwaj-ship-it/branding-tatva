@@ -1,5 +1,6 @@
 .section { position: relative; isolation: isolate; overflow: hidden; color: #342f27; background: #eee6d8; }
 .shell {
+  position: relative; z-index: 1;
   display: grid; align-content: center; gap: clamp(1.5rem, 3.5svh, 2.2rem);
   width: min(100%, 90rem); min-height: 100svh; margin-inline: auto;
   padding: clamp(5.5rem, 9svh, 7rem) clamp(1.5rem, 5.5vw, 5.5rem) clamp(2.5rem, 5svh, 4rem);

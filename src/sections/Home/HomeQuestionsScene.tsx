@@ -9,6 +9,7 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { faqs } from "@/data/faqs";
 import styles from "./HomeConversation.module.css";
+import { LivingGradient } from "@/components/LivingGradient";
 
 const QUESTION_ORDER = [
   "Can you help a brand new business?",
@@ -53,6 +54,7 @@ export function HomeQuestionsScene() {
 
   return (
     <section ref={rootRef} className={styles.questions} data-cursor-world="light" aria-labelledby="home-questions-title">
+      <LivingGradient preset="meadow" plain opacity={0.42} shaft={false} />
       <motion.div
         className={styles.questionMedia}
         style={{ scale: cinematicMotion && !reducedMotion ? mediaScale : 1 }}

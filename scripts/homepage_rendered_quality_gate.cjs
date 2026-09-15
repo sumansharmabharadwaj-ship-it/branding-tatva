@@ -31,6 +31,7 @@ const expected = [
   "opening",
   "recognition",
   "cost",
+  "cost-stack",
   "foundation",
   "paths",
   "process",
@@ -38,6 +39,7 @@ const expected = [
   "tatva",
   "studio",
   "decision",
+  "diagnostic",
   "invitation",
 ];
 const chapters = [...html.matchAll(/data-home-v4-chapter="([^"]+)"/g)].map((match) => match[1]);
@@ -97,5 +99,5 @@ assert(!cssText.includes(".home-v4-cursor"), "A homepage-only cursor style has r
 assert(cssBytes <= 600_000, `Homepage CSS budget exceeded: ${cssBytes.toLocaleString()} bytes.`);
 
 console.log(
-  `Rendered homepage gate passed: eleven ordered chapters, unique IDs, heading and media semantics, clear decision handoffs, and ${cssBytes.toLocaleString()} CSS bytes verified.`,
+  `Rendered homepage gate passed: thirteen ordered chapters, unique IDs, heading and media semantics, clear decision handoffs, and ${cssBytes.toLocaleString()} CSS bytes verified.`,
 );

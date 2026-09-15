@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
+import { useMotionPreference } from "@/components/MotionPreference";
+import { Pause, Play } from "lucide-react";
+import { useReducedMotion } from "framer-motion";
 
 const HANDOFF_SELECTOR = ".home-v4-handoff";
 const SCROLL_KEYS = new Set([
@@ -26,16 +29,25 @@ function clamp(value: number, minimum = 0, maximum = 1) {
  * on this route.
  */
 export function HomeV4ScrollCamera() {
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const { setPref } = useMotionPreference();
+  const osReducedMotion = useReducedMotion();
+  const followsSystem = hydrated && Boolean(osReducedMotion);
 
   useEffect(() => {
     const rootElement = document.querySelector<HTMLElement>("[data-home-v4]");
-    if (!rootElement || prefersReducedMotion) return;
+    if (!rootElement || !hydrated || prefersReducedMotion) return;
     const root = rootElement;
 
     const handoffs = Array.from(
       root.querySelectorAll<HTMLElement>(HANDOFF_SELECTOR),
     );
+    const fields = Array.from(root.querySelectorAll<HTMLElement>("[data-living-gradient]"));
+    const finePointer = window.matchMedia("(pointer: fine)");
+    let pointerX = 0;
+    let pointerY = 0;
+    let targetX = 0;
+    let targetY = 0;
     let frame = 0;
     let disposed = false;
     let lastY = window.scrollY;
@@ -49,45 +61,39 @@ export function HomeV4ScrollCamera() {
 
     function renderCamera(now: number) {
       frame = 0;
+      if (disposed || document.hidden) return;
       const viewport = Math.max(1, window.innerHeight);
       const currentY = window.scrollY;
       const elapsed = Math.max(16, now - lastTime);
       const delta = currentY - lastY;
       const direction = delta > 0.25 ? 1 : delta < -0.25 ? -1 : 0;
       const rawVelocity = clamp(Math.abs(delta) / elapsed / 2.2);
-      easedVelocity += (rawVelocity - easedVelocity) * 0.22;
+      const damping = 1 - Math.exp(-Math.min(elapsed, 64) / 110);
+      easedVelocity += (rawVelocity - easedVelocity) * damping;
+      pointerX += (targetX - pointerX) * damping;
+      pointerY += (targetY - pointerY) * damping;
       if (direction !== 0) lastDirection = direction;
 
-      root.style.setProperty("--home-camera-velocity", easedVelocity.toFixed(4));
-      root.style.setProperty(
-        "--home-camera-light-opacity",
-        (0.22 + easedVelocity * 0.34).toFixed(4),
-      );
-      root.style.setProperty(
-        "--home-camera-light-scale",
-        (0.94 + easedVelocity * 0.12).toFixed(4),
-      );
-      root.style.setProperty(
-        "--home-camera-light-blur",
-        `${(12 + easedVelocity * 10).toFixed(2)}px`,
-      );
-      root.style.setProperty(
-        "--home-camera-edge-opacity",
-        (0.2 + easedVelocity * 0.2).toFixed(4),
-      );
-      root.style.setProperty("--home-camera-direction", String(lastDirection));
-      root.style.setProperty(
-        "--home-camera-angle",
-        `${90 + lastDirection * 5}deg`,
-      );
-      root.style.setProperty(
-        "--home-camera-shift",
-        `${(lastDirection * easedVelocity * -1.2).toFixed(3)}vw`,
-      );
+      // Complete geometry reads before writing any styles. Only decorative
+      // fields receive the eased signal; native document scroll stays 1:1.
+      const seamPositions = handoffs.map((handoff) => ({ handoff, top: handoff.getBoundingClientRect().top }));
+      const fieldPositions = fields.map((field) => ({ field, rect: field.getBoundingClientRect() }));
+      fieldPositions.forEach(({ field, rect }) => {
+        const active = rect.bottom > 0 && rect.top < viewport;
+        if (field.dataset.gradientActive !== String(active)) field.dataset.gradientActive = String(active);
+        if (!active) return;
+        const phase = clamp((viewport - rect.top) / (viewport + rect.height));
+        const travel = finePointer.matches ? 42 : 14;
+        field.style.setProperty("--field-x", `${(pointerX * 16).toFixed(2)}px`);
+        field.style.setProperty("--field-y", `${((phase - 0.5) * travel + pointerY * 9).toFixed(2)}px`);
+        field.style.setProperty("--field-turn", `${((phase - 0.5) * 9 + pointerX).toFixed(2)}deg`);
+      });
+
+      // Keep changing styles local to the visible fields, avoiding inherited
+      // custom-property invalidation across the entire homepage.
       root.dataset.cameraDirection = lastDirection > 0 ? "forward" : "reverse";
 
-      handoffs.forEach((handoff) => {
-        const top = handoff.getBoundingClientRect().top;
+      seamPositions.forEach(({ handoff, top }) => {
         const presence = clamp(1 - Math.abs(top - viewport * 0.5) / (viewport * 0.72));
         const phase = clamp((viewport - top) / (viewport * 1.45));
         if (presence <= 0.001) {
@@ -130,18 +136,41 @@ export function HomeV4ScrollCamera() {
 
       lastY = currentY;
       lastTime = now;
-      if (easedVelocity > 0.005) frame = window.requestAnimationFrame(renderCamera);
+      if (easedVelocity > 0.005 || Math.abs(targetX - pointerX) > 0.002 || Math.abs(targetY - pointerY) > 0.002) {
+        frame = window.requestAnimationFrame(renderCamera);
+      }
     }
 
     function scheduleCamera() {
-      if (!frame) frame = window.requestAnimationFrame(renderCamera);
+      if (!disposed && !document.hidden && !frame) frame = window.requestAnimationFrame(renderCamera);
     }
 
     function onPointerMove(event: PointerEvent) {
+      if (!finePointer.matches || event.pointerType === "touch") return;
       const x = clamp(event.clientX / Math.max(1, window.innerWidth), 0, 1);
       const y = clamp(event.clientY / Math.max(1, window.innerHeight), 0, 1);
-      root.style.setProperty("--home-camera-x", `${(x * 100).toFixed(3)}%`);
-      root.style.setProperty("--home-camera-y", `${(y * 100).toFixed(3)}%`);
+      targetX = x * 2 - 1;
+      targetY = y * 2 - 1;
+      scheduleCamera();
+    }
+
+    function onPointerLeave() {
+      targetX = 0;
+      targetY = 0;
+      scheduleCamera();
+    }
+
+    function onVisibilityChange() {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
+      if (document.hidden) {
+        fields.forEach((field) => { field.dataset.gradientActive = "false"; });
+      } else {
+        lastY = window.scrollY;
+        lastTime = performance.now();
+        easedVelocity = 0;
+        scheduleCamera();
+      }
     }
 
     function cancelHashRecovery() {
@@ -193,11 +222,6 @@ export function HomeV4ScrollCamera() {
       hashFrame = window.requestAnimationFrame(recoverHash);
     }
 
-    root.style.setProperty("--home-camera-x", "50%");
-    root.style.setProperty("--home-camera-y", "42%");
-    root.style.setProperty("--home-camera-direction", "1");
-    root.style.setProperty("--home-camera-angle", "95deg");
-    root.style.setProperty("--home-camera-shift", "0vw");
     root.dataset.cameraReady = "true";
     scheduleCamera();
     scheduleHashRecovery();
@@ -205,6 +229,10 @@ export function HomeV4ScrollCamera() {
     window.addEventListener("scroll", scheduleCamera, { passive: true });
     window.addEventListener("resize", scheduleCamera, { passive: true });
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.documentElement.addEventListener("pointerleave", onPointerLeave);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    const resize = new ResizeObserver(scheduleCamera);
+    resize.observe(root);
     window.addEventListener("wheel", cancelHashRecovery, { passive: true });
     window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
     window.addEventListener("pointerdown", cancelHashRecovery, { passive: true });
@@ -225,6 +253,13 @@ export function HomeV4ScrollCamera() {
       window.removeEventListener("scroll", scheduleCamera);
       window.removeEventListener("resize", scheduleCamera);
       window.removeEventListener("pointermove", onPointerMove);
+      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      resize.disconnect();
+      fields.forEach((field) => {
+        delete field.dataset.gradientActive;
+        ["--field-x", "--field-y", "--field-turn"].forEach((property) => field.style.removeProperty(property));
+      });
       window.removeEventListener("wheel", cancelHashRecovery);
       window.removeEventListener("touchstart", cancelHashRecovery);
       window.removeEventListener("pointerdown", cancelHashRecovery);
@@ -232,18 +267,6 @@ export function HomeV4ScrollCamera() {
       window.removeEventListener("load", scheduleHashRecovery);
       delete root.dataset.cameraReady;
       delete root.dataset.cameraDirection;
-      [
-        "--home-camera-x",
-        "--home-camera-y",
-        "--home-camera-velocity",
-        "--home-camera-direction",
-        "--home-camera-light-opacity",
-        "--home-camera-light-scale",
-        "--home-camera-light-blur",
-        "--home-camera-edge-opacity",
-        "--home-camera-angle",
-        "--home-camera-shift",
-      ].forEach((property) => root.style.removeProperty(property));
       handoffs.forEach((handoff) => {
         delete handoff.dataset.cameraVisible;
         handoff.style.removeProperty("--home-handoff-presence");
@@ -256,14 +279,19 @@ export function HomeV4ScrollCamera() {
         handoff.style.removeProperty("--home-handoff-dash");
       });
     };
-  }, [prefersReducedMotion]);
-
-  if (prefersReducedMotion) return null;
+  }, [hydrated, prefersReducedMotion]);
 
   return (
-    <div className="home-v4-scroll-camera" aria-hidden="true">
-      <span className="home-v4-scroll-camera__light" />
-      <span className="home-v4-scroll-camera__edge" />
-    </div>
+    <button
+      type="button"
+      className="home-v4-motion-toggle"
+      aria-label={followsSystem ? "Reduced motion follows your device setting" : prefersReducedMotion ? "Resume page motion" : "Pause page motion"}
+      disabled={followsSystem}
+      aria-pressed={prefersReducedMotion}
+      onClick={() => setPref(prefersReducedMotion ? "full" : "reduced")}
+    >
+      {prefersReducedMotion ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
+      <span>{followsSystem ? "Reduced motion" : prefersReducedMotion ? "Motion paused" : "Pause motion"}</span>
+    </button>
   );
 }

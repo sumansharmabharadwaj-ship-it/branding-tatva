@@ -21,6 +21,9 @@ const SCENES: readonly SceneSpec[] = [
   { selector: '[data-home-v4-chapter="cost"]', layers: [
     ["h2", "title"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
   ] },
+  { selector: '[data-home-v4-chapter="cost-stack"]', layers: [
+    ["h2", "title"],
+  ] },
   { selector: '[data-scroll-story="foundation"]', layers: [
     ["h2", "title"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
@@ -48,6 +51,9 @@ const SCENES: readonly SceneSpec[] = [
   { selector: '[data-home-v4-chapter="invitation"]', layers: [
     ["h2", "title"], ["aside", "plate"],
   ] },
+  { selector: '[data-home-v4-chapter="diagnostic"]', layers: [
+    ["h3", "title"],
+  ] },
 ];
 
 function clamp(value: number) { return Math.max(0, Math.min(1, value)); }
@@ -62,6 +68,7 @@ export function HomeV4SceneRhythm() {
     if (!root || !hydrated || prefersReducedMotion) return;
     const desktop = window.matchMedia(DESKTOP);
     let frame = 0;
+    let lastTime = 0;
     let disposed = false;
     const scenes = SCENES.flatMap((spec, sceneIndex) => {
       const element = root.querySelector<HTMLElement>(spec.selector);
@@ -70,7 +77,7 @@ export function HomeV4SceneRhythm() {
         const matches = Array.from(element.querySelectorAll<HTMLElement>(selector));
         return matches.map((node, index) => ({
           node, treatment, index, spread: index - (matches.length - 1) / 2,
-          side: sceneIndex % 2 ? 1 : -1, appliedY: 0, last: "",
+          side: sceneIndex % 2 ? 1 : -1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
         }));
       });
       return [{ element, layers }];
@@ -79,15 +86,18 @@ export function HomeV4SceneRhythm() {
     const footerTitle = document.querySelector<HTMLElement>("footer h2");
     // The footer title is a separate reading beat, scoped to the mounted home.
     if (footerTitle) scenes.push({ element: footerTitle.parentElement!, layers: [{
-      node: footerTitle, treatment: "title", index: 0, spread: 0, side: 1, appliedY: 0, last: "",
+      node: footerTitle, treatment: "title", index: 0, spread: 0, side: 1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
     }] });
 
-    function render() {
+    function render(now: number) {
       frame = 0;
       if (document.hidden || disposed) return;
       const viewport = Math.max(1, window.innerHeight);
       const wide = desktop.matches;
       const focused = document.activeElement;
+      const damping = lastTime ? 1 - Math.exp(-Math.min(now - lastTime, 64) / 65) : 1;
+      lastTime = now;
+      let settling = false;
       // Finish all reads before writes, including compact per-element geometry.
       const measurements = scenes.map((scene) => ({
         scene, top: scene.element.getBoundingClientRect().top,
@@ -134,10 +144,27 @@ export function HomeV4SceneRhythm() {
               y = (28 + index * 9) * amount;
             }
           }
+          // Ease the visual response, never the document's scroll position.
+          // First paint and focused controls settle immediately. Following
+          // frames converge quickly and stop scheduling when at rest.
+          const blend = hasFocus || !layer.last ? 1 : damping;
+          function settle(current: number, target: number, threshold: number) {
+            const next = current + (target - current) * blend;
+            if (Math.abs(target - next) <= threshold) return target;
+            settling = true;
+            return next;
+          }
+          x = settle(layer.appliedX, x, 0.08);
+          y = settle(layer.appliedY, y, 0.08);
+          rotate = settle(layer.appliedTurn, rotate, 0.008);
+          scale = settle(layer.appliedScale, scale, 0.0002);
           const value = `${x.toFixed(2)}|${y.toFixed(2)}|${rotate.toFixed(3)}|${scale.toFixed(4)}`;
           if (layer.last === value) return;
           layer.last = value;
+          layer.appliedX = x;
           layer.appliedY = y;
+          layer.appliedTurn = rotate;
+          layer.appliedScale = scale;
           node.dataset.homeMotionLayer = treatment;
           node.style.setProperty("--scene-x", `${x.toFixed(2)}px`);
           node.style.setProperty("--scene-y", `${y.toFixed(2)}px`);
@@ -148,6 +175,7 @@ export function HomeV4SceneRhythm() {
       seamPositions.forEach(({ node, top }) => {
         node.style.setProperty("--scene-thread", ease((viewport - top) / (viewport * 0.72)).toFixed(4));
       });
+      if (settling) schedule();
     }
 
     function schedule() {

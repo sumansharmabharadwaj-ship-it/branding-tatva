@@ -21,6 +21,7 @@ import {
 } from "@/lib/servicesJourney";
 import styles from "./HomeConversation.module.css";
 import { invitationStep } from "./invitationScroll";
+import { LivingGradient } from "@/components/LivingGradient";
 
 type Situation = ServicesSituationId | "default";
 
@@ -158,6 +159,7 @@ export function FinalInvitation() {
       data-invitation-situation={situation}
       data-invitation-step={activeStep + 1}
     >
+      <LivingGradient preset="wanderlust" plain opacity={0.5} />
       <div className={styles.invitationMedia} aria-hidden="true">
         <motion.div
           className={styles.invitationMediaCamera}

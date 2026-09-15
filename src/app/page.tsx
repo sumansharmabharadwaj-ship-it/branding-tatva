@@ -31,6 +31,7 @@ import "./home-v4-studio-scroll.css";
 // itself: 127 .brand-orbit rules imported by nothing. Mounting the quiz
 // without this gives an unstyled chapter, so the two belong together.
 import "./home-v4-orbit-redesign.css";
+import "./home-v4-gradient-motion.css";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";

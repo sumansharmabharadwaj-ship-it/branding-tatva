@@ -20,6 +20,7 @@ export type LivingGradientPreset =
   | "dusk"
   | "verdure"
   | "plantation"
+  | "meadow"
   | "wanderlust";
 
 type FieldVars = {
@@ -46,6 +47,8 @@ type FieldVars = {
 };
 
 const FIELDS: Record<LivingGradientPreset, FieldVars> = {
+  // Mist, sage and sunlit sand for light reading surfaces.
+  meadow: { base: "#EDE7DA", a: "#DDE2DC", b: "#D4B99A", c: "#8FAE83", light: "#F2F0E8", grain: 0.025, carries: "soil" },
   // Plate 1 — the dark botanical orangery. Near-black green ground with
   // a warm lamp bloom, the way the orchid plate is lit from one side.
   orangery: { base: "#14180F", a: "#1F3A28", b: "#C28A28", c: "#556B4A", light: "#D4B99A", grain: 0.06, carries: "ivory" },
@@ -138,10 +141,10 @@ export function LivingGradient({
         .join(" ")}
       style={style}
     >
-      <div className={`${styles.blob} ${styles.blobA}`} />
-      <div className={`${styles.blob} ${styles.blobB}`} />
-      <div className={`${styles.blob} ${styles.blobC}`} />
-      {shaft ? <div className={styles.shaft} /> : null}
+      <div data-gradient-layer="near" className={`${styles.blob} ${styles.blobA}`} />
+      <div data-gradient-layer="far" className={`${styles.blob} ${styles.blobB}`} />
+      <div data-gradient-layer="ground" className={`${styles.blob} ${styles.blobC}`} />
+      {shaft ? <div data-gradient-layer="light" className={styles.shaft} /> : null}
       <div className={styles.vignette} />
       {grainAmount > 0 ? <div className={styles.grain} /> : null}
     </div>
