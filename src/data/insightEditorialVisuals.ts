@@ -59,6 +59,14 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "image",
     aspectRatio: 990 / 334,
   },
+  "brand-marketing-vs-performance-marketing": {
+    src: "/images/generated/insights-editorial/demand-ledger.png",
+    alt: "A two column ledger separating demand harvesting from demand creation, above the three signals of an empty demand reservoir",
+    shortTitle: "The dashboard only measures the harvest",
+    description: "Split the budget by what each job actually does.",
+    depthKind: "image",
+    aspectRatio: 990 / 296,
+  },
   "founder-brand-vs-company-brand": {
     src: "/images/generated/insights-editorial/founder-company-ledger.png",
     alt: "A two column ledger weighing the founder's name against the company's name, above the three shared cues that bridge them",

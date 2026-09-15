@@ -25,6 +25,7 @@ Legacy `/blog` URLs, the retired `/work` index, and superseded Insight slugs per
 
 - [How AI assistants decide which brands to recommend](https://brandingtatva.com/insights/how-ai-assistants-choose-brands-to-recommend): why assistants name some brands and skip others, explained through entity consistency, mental availability, and third-party corroboration
 - [Why AI content makes brands average, and what escapes it](https://brandingtatva.com/insights/why-ai-content-makes-brands-average): the statistical mechanism behind AI sameness and the distinctiveness system that survives it
+- [Brand or performance: the budget fight, settled by memory](https://brandingtatva.com/insights/brand-marketing-vs-performance-marketing): why acquisition costs rise when brand goes unfunded, with the demand ledger for splitting a limited budget
 - [Founder brand or company brand: which one should carry the business?](https://brandingtatva.com/insights/founder-brand-vs-company-brand): the founder led content era read as a brand architecture decision, with a succession test for dividing the work between the two names
 - [What the rebrand backlash year teaches about brand memory](https://brandingtatva.com/insights/what-rebrand-backlashes-teach-about-brand-memory): the Cracker Barrel and Jaguar controversies of 2025 read as memory psychology, with a change budget framework for established brands
 

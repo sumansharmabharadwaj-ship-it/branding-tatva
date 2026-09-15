@@ -5,6 +5,7 @@ import { brandDiscoveryWorkshopInsightPosts } from "@/data/brandDiscoveryWorksho
 import { brandRefreshInsightPosts } from "@/data/brandRefreshInsights";
 import { brandRecallMeasurementInsightPosts } from "@/data/brandRecallMeasurementInsights";
 import { brandVoiceInsightPosts } from "@/data/brandVoiceInsights";
+import { brandVsPerformanceInsightPosts } from "@/data/brandVsPerformanceInsights";
 import { caseStudyInsightPosts } from "@/data/caseStudyInsights";
 import { clientProofInsightPosts } from "@/data/clientProofInsights";
 import { competitorResearchInsightPosts } from "@/data/competitorResearchInsights";
@@ -67,6 +68,7 @@ const combinedPosts = [
   ...testimonialEvidenceInsightPosts,
   ...aiEraInsightPosts,
   ...founderBrandInsightPosts,
+  ...brandVsPerformanceInsightPosts,
 ];
 
 const uniquePosts = combinedPosts.filter(
@@ -115,6 +117,7 @@ const relatedRegistrations = [
   { supportingSlug: "why-ai-content-makes-brands-average", pillarSlugs: ["why-beautiful-brand-identity-can-be-forgettable", "brand-voice-guidelines-writers-can-use", "find-real-differentiator-crowded-service-market"] },
   { supportingSlug: "what-rebrand-backlashes-teach-about-brand-memory", pillarSlugs: ["brand-refresh-vs-rebrand-how-much-change", "reposition-established-service-business-without-losing-recognition", "brand-audit-checklist-before-rebrand"] },
   { supportingSlug: "founder-brand-vs-company-brand", pillarSlugs: ["brand-architecture-service-businesses", "brand-positioning-strategy-service-businesses", "turn-client-proof-into-positioning-advantage"] },
+  { supportingSlug: "brand-marketing-vs-performance-marketing", pillarSlugs: ["brand-awareness-vs-brand-recall", "measure-brand-recall-limited-budget", "how-ai-assistants-choose-brands-to-recommend"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
