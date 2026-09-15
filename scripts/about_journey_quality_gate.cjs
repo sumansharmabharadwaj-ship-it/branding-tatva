@@ -94,7 +94,8 @@ assert(
   "About chapter hashes can expose the previous cinematic scene instead of landing on a clean frame.",
 );
 assert(
-  smoothScroll.includes("if (!hydrated || !prefersReducedMotion || !window.location.hash) return;") &&
+  // Contact owns its native hash recovery; About still uses this fallback.
+  smoothScroll.includes('if (pathname === "/contact" || !hydrated || !prefersReducedMotion || !window.location.hash) return;') &&
     smoothScroll.includes('target.scrollIntoView({ behavior: "auto", block: "start" })') &&
     smoothScroll.includes("document.fonts?.ready?.then(alignHashWithoutMotion)") &&
     smoothScroll.includes('window.addEventListener("wheel", cancelHashRecovery, { passive: true })'),

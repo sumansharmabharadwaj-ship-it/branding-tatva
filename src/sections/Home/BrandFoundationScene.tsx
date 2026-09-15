@@ -5,7 +5,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { useEffect, useId, useRef, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useInView, useIsPresent, useTransform } from "framer-motion";
+import { motion, useInView, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import styles from "./BrandFoundation.module.css";
 
@@ -51,22 +51,12 @@ function FoundationDecision({ layer, direction, reducedMotion }: {
   direction: number;
   reducedMotion: boolean;
 }) {
-  const present = useIsPresent();
-  const arrival = reducedMotion ? false : { opacity: 0, y: direction * 16 };
+  const arrival = reducedMotion ? false : { y: direction * 16 };
 
   return (
     <motion.div
       className={styles.panelCopy}
-      aria-hidden={!present}
-      inert={!present}
       initial={false}
-      animate={{ opacity: 1, x: 0 }}
-      exit="depart"
-      variants={{ depart: (nextDirection: number) => ({
-        opacity: 0,
-        x: reducedMotion ? 0 : -nextDirection * 12,
-        transition: { duration: reducedMotion ? 0 : 0.16, ease: EASE },
-      }) }}
     >
       <motion.h3 initial={arrival} animate={{ opacity: 1, y: 0 }} transition={{ duration: reducedMotion ? 0 : 0.42, ease: EASE }}>
         {layer.title}
@@ -113,6 +103,7 @@ export function BrandFoundationScene() {
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
   const previousIndexRef = useRef(0);
   const visualizer = useScrollDrivenVisualizer({
+    scrollHysteresis: 0.0125,
     count: FOUNDATION_LAYERS.length,
     target: wrapperRef,
     enabled: sceneInView && cinematicMotion,
@@ -245,9 +236,7 @@ export function BrandFoundationScene() {
             </div>
 
             <div id="foundation-layer-panel" role="tabpanel" aria-labelledby={`foundation-tab-${active.id}`} tabIndex={0} className={styles.panel}>
-              <AnimatePresence initial={false} mode="sync" custom={direction}>
-                <FoundationDecision key={active.id} layer={active} direction={direction} reducedMotion={prefersReducedMotion} />
-              </AnimatePresence>
+              <FoundationDecision key={active.id} layer={active} direction={direction} reducedMotion={prefersReducedMotion} />
             </div>
 
             <Link href="/services#package-brand-beginning" className={styles.link} data-magnetic data-cursor-label="foundation">

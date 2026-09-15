@@ -69,6 +69,7 @@ export function PathsCinematicChapter() {
   );
   const sceneInView = useInView(sectionRef, { amount: 0.08 });
   const visualizer = useScrollDrivenVisualizer({
+    scrollHysteresis: 0.0125,
     count: PATHS.length,
     target: sectionRef,
     enabled: cinematicMotion && sceneInView,

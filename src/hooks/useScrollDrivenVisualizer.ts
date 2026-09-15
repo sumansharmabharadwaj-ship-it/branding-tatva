@@ -8,6 +8,8 @@ type ScrollDrivenVisualizerOptions = {
   target: RefObject<HTMLElement | null>;
   enabled?: boolean;
   reducedMotion?: boolean;
+  /** Normalized buffer around each boundary; 0 preserves legacy behavior. */
+  scrollHysteresis?: number;
 };
 
 const SCROLL_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "]);
@@ -31,9 +33,11 @@ export function useScrollDrivenVisualizer({
   target,
   enabled = true,
   reducedMotion = false,
+  scrollHysteresis = 0,
 }: ScrollDrivenVisualizerOptions) {
   const safeCount = Math.max(1, count);
   const [activeIndex, setActiveIndex] = useState(0);
+  const scrollIndexRef = useRef(0);
   const previewingRef = useRef(false);
   const manualChoiceRef = useRef(false);
   const manualChoiceIndexRef = useRef(0);
@@ -53,15 +57,30 @@ export function useScrollDrivenVisualizer({
     return Math.min(1, Math.max(0, -rect.top / runway));
   }, [scrollYProgress, target]);
 
+  const resolveScrollIndex = useCallback((progress: number) => {
+    const candidate = stageFromProgress(progress, safeCount);
+    const current = Math.min(safeCount - 1, scrollIndexRef.current);
+    const margin = Math.max(0, Math.min(scrollHysteresis, .24 / safeCount));
+    // Preserve the current reading beat through tiny trackpad reversals.
+    // Large jumps still resolve directly, with no queued intermediate stages.
+    const insideBand = progress >= current / safeCount - margin &&
+      progress < (current + 1) / safeCount + margin;
+    const next = margin > 0 && insideBand ? current : candidate;
+    scrollIndexRef.current = next;
+    return next;
+  }, [safeCount, scrollHysteresis]);
+
   const syncToScroll = useCallback(() => {
     if (reducedMotion || manualChoiceRef.current) return;
-    const nextIndex = stageFromProgress(readProgress(), safeCount);
+    const nextIndex = resolveScrollIndex(readProgress());
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-  }, [readProgress, reducedMotion, safeCount]);
+  }, [readProgress, reducedMotion, resolveScrollIndex]);
 
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    if (!enabled || reducedMotion || previewingRef.current || manualChoiceRef.current) return;
-    const nextIndex = stageFromProgress(progress, safeCount);
+    // Buffered scenes have one state writer: the native-scroll RAF below.
+    // The Framer value remains available for continuous decorative motion.
+    if (scrollHysteresis > 0 || !enabled || reducedMotion || previewingRef.current || manualChoiceRef.current) return;
+    const nextIndex = resolveScrollIndex(progress);
     setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   });
 
@@ -79,7 +98,7 @@ export function useScrollDrivenVisualizer({
       frame = window.requestAnimationFrame(() => {
         if (previewingRef.current || manualChoiceRef.current) return;
         const progress = readProgress();
-        const nextIndex = stageFromProgress(progress, safeCount);
+        const nextIndex = resolveScrollIndex(progress);
         setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
       });
     };
@@ -93,13 +112,16 @@ export function useScrollDrivenVisualizer({
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [enabled, readProgress, reducedMotion, safeCount]);
+  }, [enabled, readProgress, reducedMotion, resolveScrollIndex]);
 
   useEffect(() => {
     if (reducedMotion) return;
 
     const releaseManualChoice = () => {
       manualChoiceRef.current = false;
+      // Explicit scroll intent ends a transient tab preview. Otherwise a
+      // pointer parked on the tabs can freeze the whole scroll sequence.
+      if (scrollHysteresis > 0) previewingRef.current = false;
     };
     const releaseManualChoiceFromKeyboard = (event: KeyboardEvent) => {
       if (!SCROLL_KEYS.has(event.key)) return;
@@ -120,7 +142,7 @@ export function useScrollDrivenVisualizer({
       window.removeEventListener("touchstart", releaseManualChoice);
       window.removeEventListener("keydown", releaseManualChoiceFromKeyboard);
     };
-  }, [reducedMotion, target]);
+  }, [reducedMotion, scrollHysteresis, target]);
 
   const choose = useCallback(
     (index: number) => {

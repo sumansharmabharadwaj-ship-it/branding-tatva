@@ -144,10 +144,11 @@ export function EvidenceWall() {
   const desktopMotion = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const visualizer = useScrollDrivenVisualizer({
+    scrollHysteresis: 0.0125,
     count: projects.length,
     target: sectionRef,
-    enabled: inView,
-    reducedMotion: prefersReducedMotion,
+    enabled: inView && desktopMotion,
+    reducedMotion: prefersReducedMotion || !desktopMotion,
   });
   const { activeIndex, choose: chooseVisualState, preview, releasePreview } = visualizer;
   const selectionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
