@@ -18,17 +18,20 @@ html.home-v4-mounted [data-home-motion-layer]:is(:focus-within, :focus-visible) 
   scale: 1;
 }
 
-.home-v4[data-scene-choreography="ready"] .home-v4-handoff {
+.home-v4[data-camera-ready="true"] .home-v4-handoff {
   overflow: clip;
 }
-.home-v4[data-scene-choreography="ready"] .home-v4-handoff::after {
+.home-v4[data-camera-ready="true"] .home-v4-handoff::after {
   content: "";
   position: absolute;
   inset: 50% 8% auto;
+  width: auto;
+  max-width: none;
   height: 1px;
+  filter: none;
   background: linear-gradient(90deg, transparent, var(--handoff-line) 30%, var(--handoff-line) 70%, transparent);
   opacity: .5;
-  transform: scaleX(var(--scene-thread, 0));
+  transform: scaleX(clamp(0, calc(var(--home-handoff-phase, 1) * 1.45), 1));
   transform-origin: left center;
   pointer-events: none;
 }

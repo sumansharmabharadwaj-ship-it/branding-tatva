@@ -17,16 +17,19 @@
   isolation: isolate;
 }
 .home-v4 [data-home-v4-chapter="opening"] + .home-v4-handoff {
-  --handoff-from: #0c1111; --handoff-to: #eee7da;
+  --handoff-from: #111518; --handoff-to: #eee7da;
 }
 .home-v4 [data-home-v4-chapter="recognition"] + .home-v4-handoff {
   --handoff-from: #eee7da; --handoff-to: #eee6d8; --handoff-line: #805239;
 }
 .home-v4 [data-home-v4-chapter="cost"] + .home-v4-handoff {
-  --handoff-from: #eee6d8; --handoff-to: #121713;
+  --handoff-from: #eee6d8; --handoff-to: #14180f;
+}
+.home-v4 [data-home-v4-chapter="cost-stack"] + .home-v4-handoff {
+  --handoff-from: #14180f; --handoff-to: #121713;
 }
 .home-v4 [data-home-v4-chapter="foundation"] + .home-v4-handoff {
-  --handoff-from: #080d0a; --handoff-to: #eae1d2;
+  --handoff-from: #121713; --handoff-to: #eae1d2;
 }
 .home-v4 [data-home-v4-chapter="paths"] + .home-v4-handoff {
   --handoff-from: #eae1d2; --handoff-to: #eee7da; --handoff-line: #805239;
@@ -38,13 +41,16 @@
   --handoff-from: #171310; --handoff-to: #0d1514;
 }
 .home-v4 [data-home-v4-chapter="tatva"] + .home-v4-handoff {
-  --handoff-from: #0a1211; --handoff-to: #0a100f;
+  --handoff-from: #0d1514; --handoff-to: #0a100f;
 }
 .home-v4 [data-home-v4-chapter="studio"] + .home-v4-handoff {
   --handoff-from: #0a100f; --handoff-to: #f1eadf;
 }
 .home-v4 [data-home-v4-chapter="decision"] + .home-v4-handoff {
-  --handoff-from: #f1eadf; --handoff-to: #eee5d7; --handoff-line: #805239;
+  --handoff-from: #f1eadf; --handoff-to: #dcd1bb; --handoff-line: #805239;
+}
+.home-v4 [data-home-v4-chapter="diagnostic"] + .home-v4-handoff {
+  --handoff-from: #dcd1bb; --handoff-to: #f1eadf; --handoff-line: #805239;
 }
 .home-v4 .home-v4-handoff::before,
 .home-v4 .home-v4-handoff::after {

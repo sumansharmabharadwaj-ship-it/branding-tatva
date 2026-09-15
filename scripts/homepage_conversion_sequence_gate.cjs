@@ -17,6 +17,7 @@ const camera = read("src/sections/HomeV4/HomeV4ScrollCamera.tsx");
 const atmosphereStyles = [
   read("src/components/LivingGradient.module.css"),
   read("src/app/home-v4-gradient-motion.css"),
+  read("src/app/home-v4-scene-rhythm.css"),
   read("src/app/home-v4.css"),
 ].join("\n");
 
@@ -27,10 +28,11 @@ function assert(condition, message) {
 // A visual layer can compile while silently reading an abandoned signal.
 // Keep the CSS consumers connected to a live camera publisher across files.
 const atmosphereSignals = new Set(
-  [...atmosphereStyles.matchAll(/var\((--(?:field-|home-camera-)[\w-]+)/g)].map((match) => match[1]),
+  [...atmosphereStyles.matchAll(/var\((--(?:field-|home-camera-|home-handoff-)[\w-]+)/g)].map((match) => match[1]),
 );
+const cameraPublishers = new Set([...camera.matchAll(/setProperty\(\s*"([^"]+)"/g)].map((match) => match[1]));
 for (const signal of atmosphereSignals) {
-  assert(camera.includes(`setProperty("${signal}"`), `Atmosphere signal ${signal} has no camera publisher.`);
+  assert(cameraPublishers.has(signal), `Atmosphere signal ${signal} has no camera publisher.`);
 }
 
 const sequence = [

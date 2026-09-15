@@ -40,12 +40,23 @@
 
 /* Compact seams carry light across the boundary, without adding runways. */
 .home-v4 .home-v4-handoff .home-v4-handoff__veil {
+  translate: var(--home-handoff-shift, 0px) 0;
   opacity: var(--home-handoff-opacity, 0.25);
   scale: var(--home-handoff-scale, 1);
   background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--handoff-line) 28%, transparent), transparent 68%);
 }
 .home-v4 .home-v4-handoff svg {
   opacity: var(--home-handoff-star-opacity, 0.4);
+  translate: calc(var(--home-handoff-shift, 0px) * -0.15) 0;
+}
+.home-v4 .home-v4-handoff svg path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(0.88 * (1 - var(--home-handoff-phase, 1)));
+}
+.home-v4 .home-v4-handoff__stars {
+  opacity: var(--home-handoff-star-opacity, 0.4);
+  translate: calc(var(--home-handoff-shift, 0px) * -0.35) 0;
+  scale: var(--home-handoff-star-scale, 1);
 }
 
 .home-v4-motion-toggle {

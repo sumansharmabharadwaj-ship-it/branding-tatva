@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Compass, Hand, Pause, Play, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
@@ -405,52 +405,30 @@ export function GuidedView() {
   );
 }
 
-/* Reads the first genuinely painted background colour for a chapter.
- * A chapter wrapper is often transparent itself, with the real tone a
- * level or two down on the section it contains, so this walks a short
- * way in rather than trusting the outermost node. */
+/* Nested scene surfaces paint over their chapter wrapper. Follow only those
+ * semantic surfaces, never a card, media overlay or decorative gradient. Keep
+ * the last opaque tone as the fallback for a transparent inner surface. */
 function chapterTone(start: Element | null, edge: "top" | "bottom"): string | null {
-  if (!start) return null;
-  const TRANSPARENT = "rgba(0, 0, 0, 0)";
   let node: Element | null = start;
+  let tone: string | null = null;
 
   for (let depth = 0; node && depth < 4; depth += 1) {
     const color = getComputedStyle(node).backgroundColor;
-    if (color && color !== TRANSPARENT && !color.startsWith("rgba(0, 0, 0, 0")) return color;
-    // Follow the edge that actually touches this handoff: the last child
-    // for the chapter above, the first child for the chapter below.
-    const kids: HTMLElement[] = Array.from(node.children).filter(
-      (child): child is HTMLElement => child instanceof HTMLElement && child.offsetParent !== null,
+    if (color && color !== "transparent" && color !== "rgba(0, 0, 0, 0)") tone = color;
+    const surfaces: Element[] = Array.from(node.querySelectorAll(":scope > section, :scope > [data-home-surface]")).filter(
+      (child) => getComputedStyle(child).display !== "none",
     );
-    node = (edge === "bottom" ? kids[kids.length - 1] : kids[0]) ?? null;
+    node = (edge === "bottom" ? surfaces[surfaces.length - 1] : surfaces[0]) ?? null;
   }
-  return null;
+  return tone;
 }
 
 export function SceneHandoff({ motif }: { motif: HandoffMotif }) {
   const handoffRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  const { scrollYProgress } = useScroll({ target: handoffRef, offset: ["start end", "end start"] });
-  const lightX = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const lineProgress = useTransform(scrollYProgress, [0, 1], [0.12, 1]);
-  const starsX = useTransform(scrollYProgress, [0, 1], [-12, 12]);
 
-  /* The handoff blend used to be hand written per motif as
-   * --handoff-from/--handoff-to literals, spread across a dozen
-   * separate chapter stylesheets. Measured against the chapters they
-   * actually sit between, several had drifted badly out of sync: the
-   * handoff before the process chapter faded to cream while the
-   * chapters on BOTH sides were near black, painting a bright bar
-   * across two dark scenes, and three others mismatched their
-   * neighbour by more than twenty points of lightness, which is the
-   * visible grey seam between sections.
-   *
-   * Deriving both stops from the real neighbours at runtime removes the
-   * whole bug class instead of re-hardcoding eight more literals: the
-   * seam now cannot drift when a chapter is recoloured or reordered,
-   * which is exactly how it drifted in the first place. The CSS
-   * literals stay in place as the pre-hydration default, so the first
-   * paint is still correct. */
+  // Resolve the visible chapter surfaces after hydration and on reflow.
+  // HomeV4ScrollCamera owns all motion; these twelve seams need no separate
+  // Framer scroll subscriptions, including while page motion is paused.
   useEffect(() => {
     const el = handoffRef.current;
     if (!el) return;
@@ -476,10 +454,10 @@ export function SceneHandoff({ motif }: { motif: HandoffMotif }) {
 
   return (
     <div ref={handoffRef} className={`home-v4-handoff home-v4-handoff--${motif}`} aria-hidden="true">
-      <motion.span className="home-v4-handoff__veil" style={{ x: prefersReducedMotion ? 0 : lightX }} />
+      <span className="home-v4-handoff__veil" />
       {motif === "river" || motif === "root" ? (
         <svg viewBox="0 0 1200 96" preserveAspectRatio="none">
-          <motion.path
+          <path
             d={
               motif === "river"
                 ? "M-20 50 C160 8 290 86 462 48 C638 10 770 88 955 42 C1048 20 1120 27 1220 55"
@@ -490,19 +468,19 @@ export function SceneHandoff({ motif }: { motif: HandoffMotif }) {
             strokeWidth="1.4"
             strokeLinecap="round"
             opacity="0.4"
-            style={{ pathLength: prefersReducedMotion ? 1 : lineProgress }}
+            pathLength={1}
           />
         </svg>
       ) : null}
       {motif === "constellation" && (
-        <motion.span className="home-v4-handoff__stars" style={{ x: prefersReducedMotion ? 0 : starsX }}>
+        <span className="home-v4-handoff__stars">
           {[12, 28, 44, 61, 78, 91].map((left, index) => (
             <i
               key={left}
               style={{ left: `${left}%`, top: `${28 + (index % 3) * 20}%` }}
             />
           ))}
-        </motion.span>
+        </span>
       )}
     </div>
   );

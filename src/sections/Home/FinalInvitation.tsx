@@ -155,6 +155,7 @@ export function FinalInvitation() {
     <div
       ref={rootRef}
       className={styles.invitation}
+      data-home-surface
       data-cursor-world="light"
       data-invitation-situation={situation}
       data-invitation-step={activeStep + 1}

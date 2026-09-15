@@ -82,7 +82,6 @@ export function HomeV4SceneRhythm() {
       });
       return [{ element, layers, active: true }];
     });
-    const handoffs = Array.from(root.querySelectorAll<HTMLElement>(".home-v4-handoff"));
     const footerTitle = document.querySelector<HTMLElement>("footer h2");
     // The footer title is a separate reading beat, scoped to the mounted home.
     if (footerTitle) scenes.push({ element: footerTitle.parentElement!, active: true, layers: [{
@@ -107,7 +106,6 @@ export function HomeV4SceneRhythm() {
           focused: layer.node === focused || layer.node.contains(focused),
         })),
       }));
-      const seamPositions = handoffs.map((node) => ({ node, top: node.getBoundingClientRect().top }));
 
       measurements.forEach(({ scene, top, layers }) => {
         const entering = 1 - ease((viewport * 0.96 - top) / (viewport * 0.74));
@@ -179,9 +177,6 @@ export function HomeV4SceneRhythm() {
           node.style.setProperty("--scene-scale", scale.toFixed(4));
         });
       });
-      seamPositions.forEach(({ node, top }) => {
-        node.style.setProperty("--scene-thread", ease((viewport - top) / (viewport * 0.72)).toFixed(4));
-      });
       if (settling) schedule();
     }
 
@@ -231,7 +226,6 @@ export function HomeV4SceneRhythm() {
           ["--scene-x", "--scene-y", "--scene-turn", "--scene-scale"].forEach((property) => node.style.removeProperty(property));
         });
       });
-      handoffs.forEach((node) => node.style.removeProperty("--scene-thread"));
     };
   }, [hydrated, prefersReducedMotion]);
 

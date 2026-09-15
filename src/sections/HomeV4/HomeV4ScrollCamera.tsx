@@ -83,7 +83,7 @@ export function HomeV4ScrollCamera() {
 
       // Complete geometry reads before writing any styles. Only decorative
       // fields receive the eased signal; native document scroll stays 1:1.
-      const seamPositions = handoffs.map((handoff) => ({ handoff, top: handoff.getBoundingClientRect().top }));
+      const seamPositions = handoffs.map((handoff) => ({ handoff, rect: handoff.getBoundingClientRect() }));
       const fieldPositions = surfaces.map((field) => ({ field, rect: field.getBoundingClientRect() }));
       const leanDistance = finePointer.matches ? Math.min(22, window.innerWidth * 0.012) : 5;
       fieldPositions.forEach(({ field, rect }) => {
@@ -108,9 +108,10 @@ export function HomeV4ScrollCamera() {
       // custom-property invalidation across the entire homepage.
       root.dataset.cameraDirection = lastDirection > 0 ? "forward" : "reverse";
 
-      seamPositions.forEach(({ handoff, top }) => {
+      seamPositions.forEach(({ handoff, rect }) => {
+        const { top, height } = rect;
         const presence = clamp(1 - Math.abs(top - viewport * 0.5) / (viewport * 0.72));
-        const phase = clamp((viewport - top) / (viewport * 1.45));
+        const phase = clamp((viewport - top) / (viewport + height));
         if (presence <= 0.001) {
           if (handoff.dataset.cameraVisible === "true") {
             handoff.dataset.cameraVisible = "false";
