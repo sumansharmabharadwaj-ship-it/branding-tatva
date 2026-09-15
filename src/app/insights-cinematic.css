@@ -388,6 +388,10 @@
   transform: translate3d(var(--scene-camera-x), var(--scene-camera-y), 0)
     scale(var(--scene-camera-scale)) rotate(var(--scene-camera-roll));
   transform-origin: center;
+  /* The director updates clip-path and transform every frame; without a
+     dedicated layer each update re-rasterises the whole film. Measured
+     at seven frames per second during a full page scroll before this. */
+  will-change: transform, clip-path;
 }
 
 .insights-foundation__camera {
@@ -997,7 +1001,12 @@
     rgb(12 19 20 / 47%);
   box-shadow: 0 2rem 8rem rgb(0 0 0 / 28%);
   backdrop-filter: blur(18px);
-  transform: perspective(1200px) rotateY(var(--scene-camera-roll));
+  /* This is the one blurred glass panel that also carried a per frame
+     rotateY from the camera roll, which forced the backdrop blur to
+     resample on every scrolled frame. The roll on a blurred surface is
+     under a quarter degree and reads as static; the depth cue stays
+     through the perspective while the blur now samples once. */
+  transform: perspective(1200px);
   transform-origin: center;
 }
 
@@ -1257,6 +1266,7 @@
   transform: translate3d(var(--scene-camera-x), var(--scene-camera-y), 0)
     scale(var(--scene-camera-scale)) rotate(var(--scene-camera-roll));
   transform-origin: center;
+  will-change: transform, clip-path;
 }
 
 .insights-library__camera {
@@ -1987,6 +1997,7 @@
 .insights-audit-scene__film {
   overflow: hidden;
   clip-path: inset(0 calc(100% - var(--scene-mask)) 0 0);
+  will-change: clip-path;
 }
 
 .insights-audit-scene__film > div:first-child {

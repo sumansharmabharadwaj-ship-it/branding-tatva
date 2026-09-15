@@ -206,6 +206,33 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       };
     }
 
+    // Scene geometry cache. During a pure scroll every scene rectangle
+    // moves by exactly the scroll delta, yet the camera used to call
+    // getBoundingClientRect on all five scenes every frame — profiled as
+    // the single largest script cost of a page scroll, because each read
+    // after any style write forces a synchronous reflow. Positions are
+    // measured once as document offsets, derived per frame from
+    // window.scrollY, and remeasured only when layout can actually have
+    // changed: a resize, a body height change (folio turns, lazy
+    // mounts), or the scroll settling.
+    let sceneGeometry: Array<{ top: number; height: number }> = [];
+    let geometryStale = true;
+
+    function measureSceneGeometry() {
+      const scrollY = window.scrollY;
+      sceneGeometry = targets.map((target) => {
+        const bounds = target.getBoundingClientRect();
+        return { top: bounds.top + scrollY, height: bounds.height };
+      });
+      geometryStale = false;
+    }
+
+    const bodyResizeObserver = new ResizeObserver(() => {
+      geometryStale = true;
+      scheduleCamera();
+    });
+    bodyResizeObserver.observe(document.body);
+
     function setScrollState(state: "moving" | "settled") {
       if (page.dataset.scrollState !== state) page.dataset.scrollState = state;
     }
@@ -229,15 +256,25 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       renderedVelocity += (targetVelocity - renderedVelocity) * velocityEase;
       targetVelocity *= Math.pow(0.84, frameStep);
 
-      // Read all geometry before changing styles, including page variables.
+      // Geometry comes from the cache; a frame touches layout only when
+      // something invalidated it.
+      if (geometryStale) measureSceneGeometry();
       const viewport = viewportMetrics();
       const viewportHeight = viewport.height;
       const viewportBottom = viewport.top + viewportHeight;
-      const measuredScenes = targets.map((target, index) => ({
-        target,
-        index,
-        bounds: target.getBoundingClientRect(),
-      }));
+      const frameScrollY = window.scrollY;
+      const measuredScenes = targets.map((target, index) => {
+        const geometry = sceneGeometry[index] ?? { top: 0, height: 1 };
+        return {
+          target,
+          index,
+          bounds: {
+            top: geometry.top - frameScrollY,
+            bottom: geometry.top - frameScrollY + geometry.height,
+            height: geometry.height,
+          },
+        };
+      });
 
       const scrollDirection = direction > 0 ? "forward" : "backward";
       if (page.dataset.scrollDirection !== scrollDirection) {
@@ -333,6 +370,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
       } else {
         lastFrameTime = 0;
         setScrollState("settled");
+        geometryStale = true;
       }
     }
 
@@ -436,6 +474,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
     }
 
     function handleViewportChange() {
+      geometryStale = true;
       lastScroll = window.scrollY;
       targetVelocity = 0;
       renderedVelocity = 0;
@@ -501,6 +540,7 @@ export function InsightsSceneNavigator({ scenes }: InsightsSceneNavigatorProps) 
 
     return () => {
       window.cancelAnimationFrame(frame);
+      bodyResizeObserver.disconnect();
       unsubscribeLenis?.();
       window.removeEventListener("scroll", handleNativeScroll);
       window.removeEventListener("resize", handleViewportChange);
