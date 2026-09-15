@@ -10,6 +10,7 @@ type ContactSceneVariant = "branch" | "paper" | "horizon" | "daybreak" | "afterg
 
 export const ContactSceneMotion = createContext<{
   progress: MotionValue<number>;
+  readingRest: MotionValue<number>;
   enabled: boolean;
   compact: boolean;
 } | null>(null);
@@ -46,6 +47,7 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
     trackContentSize: true,
   });
   const progress = useSpring(scrollYProgress, { stiffness: 180, damping: 32, mass: 0.45 });
+  const readingRest = useSpring(0, { stiffness: 240, damping: 32, mass: 0.5 });
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const lightX = useSpring(pointerX, { stiffness: 65, damping: 24, mass: 0.6 });
@@ -64,7 +66,15 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
   const currentRotate = useTransform(progress, [0, 1], variant === "paper" ? [12, -8] : [-12, 8]);
   const exposure = useTransform(progress, [0, 0.35, 0.7, 1], [0.4, 0.12, 0.14, 0.35]);
   const lineDraw = useTransform(progress, [0.08, 0.66], [0, 1]);
-  const value = useMemo(() => ({ progress, enabled, compact }), [progress, enabled, compact]);
+  const value = useMemo(() => ({ progress, readingRest, enabled, compact }), [progress, readingRest, enabled, compact]);
+
+  useEffect(() => {
+    // Blend the headline into its reading pose while its scroll timeline keeps
+    // running. Leaving a field returns smoothly to the current camera frame.
+    const destination = hasReadingFocus ? 1 : 0;
+    if (enabled) readingRest.set(destination);
+    else readingRest.jump(destination);
+  }, [enabled, hasReadingFocus, readingRest]);
 
   useEffect(() => {
     // Direct links and preference changes begin at the actual scroll position.
