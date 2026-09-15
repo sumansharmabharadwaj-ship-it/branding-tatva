@@ -2,14 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
-import { EASE_AIR } from "@/lib/motion";
 import { LivingImage } from "@/components/LivingImage";
 import { usesLivingStill } from "@/lib/mediaMode";
 
 export type ContactPathwayFilmProps = {
+  active?: boolean;
   video: string;
   poster: string;
   caption: string;
@@ -25,6 +24,7 @@ export type ContactPathwayFilmProps = {
  * the form and booking card as calm, distraction-free working surfaces.
  */
 export function ContactPathwayFilm({
+  active = true,
   video,
   poster,
   caption,
@@ -37,8 +37,21 @@ export function ContactPathwayFilm({
   const [isHovering, setIsHovering] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
   const livingStill = usesLivingStill(video);
+  const [retainMedia, setRetainMedia] = useState(active);
+  const showMedia = active || retainMedia;
 
-  useVideoFadeIn(videoRef, !reducedMotion && !livingStill);
+  useVideoFadeIn(videoRef, showMedia && !reducedMotion && !livingStill);
+
+  useEffect(() => {
+    if (active) {
+      setRetainMedia(true);
+      return;
+    }
+    // Keep the outgoing photograph through the 140ms dissolve. Hidden routes
+    // then release their camera and image instead of running three at once.
+    const timer = window.setTimeout(() => setRetainMedia(false), reducedMotion ? 0 : 160);
+    return () => window.clearTimeout(timer);
+  }, [active, reducedMotion]);
 
   useEffect(() => {
     const element = videoRef.current;
@@ -49,10 +62,10 @@ export function ContactPathwayFilm({
     const nextRate = Math.min(0.96, playbackRate + (isHovering ? hoverBoost : 0));
     element.defaultPlaybackRate = nextRate;
     element.playbackRate = nextRate;
-  }, [hoverBoost, isHovering, livingStill, playbackRate, video]);
+  }, [hoverBoost, isHovering, livingStill, playbackRate, showMedia, video]);
 
   return (
-    <motion.figure
+    <figure
       data-contact-pathway-film
       data-contact-pathway-camera={camera}
       className="relative m-0 w-full min-w-0 self-center overflow-hidden rounded-2xl bg-soil"
@@ -62,11 +75,8 @@ export function ContactPathwayFilm({
       onPointerLeave={(event) => {
         if (event.pointerType === "mouse") setIsHovering(false);
       }}
-      initial={reducedMotion ? undefined : { opacity: 0, scale: 1.035, clipPath: "inset(0 14% 0 0 round 1.4rem)" }}
-      animate={{ opacity: 1, scale: 1, clipPath: "inset(0 0% 0 0 round 1.4rem)" }}
-      transition={{ duration: reducedMotion ? 0 : 0.64, ease: EASE_AIR }}
     >
-      {livingStill ? (
+      {showMedia && (livingStill ? (
         <LivingImage
           src={poster}
           sizes="(min-width: 1024px) 28vw, (min-width: 640px) 42vw, calc(100vw - 5rem)"
@@ -81,9 +91,9 @@ export function ContactPathwayFilm({
           sizes="(min-width: 1024px) 28vw, (min-width: 640px) 42vw, calc(100vw - 5rem)"
           style={{ objectFit: "cover", objectPosition: imagePosition }}
         />
-      )}
+      ))}
 
-      {!reducedMotion && !livingStill ? (
+      {showMedia && !reducedMotion && !livingStill ? (
         <video
           ref={videoRef}
           data-video-priority="foreground"
@@ -111,6 +121,6 @@ export function ContactPathwayFilm({
       <figcaption className="absolute inset-x-4 bottom-3 text-[0.65rem] font-medium leading-relaxed tracking-[0.03em] text-ivory sm:bottom-4">
         {caption}
       </figcaption>
-    </motion.figure>
+    </figure>
   );
 }

@@ -2,7 +2,7 @@
 
 import { createContext, useEffect, useMemo, useRef, useState, type FocusEvent, type PointerEvent, type ReactNode } from "react";
 import { motion, useInView, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 
@@ -34,10 +34,12 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
 }) {
   const sceneRef = useRef<HTMLElement>(null);
   const [hasReadingFocus, setHasReadingFocus] = useState(false);
-  const reduced = useHydratedReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const compact = useMediaQuery("(max-width: 940px), (pointer: coarse)");
   const nearViewport = useInView(sceneRef, { margin: "20% 0px 20% 0px" });
-  const enabled = !reduced;
+  // The server and first client frame remain readable, especially on a deep
+  // link. Start the camera only after the viewport and preference are known.
+  const enabled = hydrated && !prefersReducedMotion;
   const { scrollYProgress } = useScroll({
     target: sceneRef,
     offset: ["start end", "end start"],

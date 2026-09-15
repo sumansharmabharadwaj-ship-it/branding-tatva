@@ -17,6 +17,15 @@
   scroll-snap-stop: normal;
 }
 
+/* On compact direct links the header is still visible before the first
+   gesture. Let the working chapters land below its pill, without adding
+   padding or extra scroll distance to the sections themselves. */
+@media (max-width: 940px), (pointer: coarse) {
+  [data-contact-film] [data-contact-scene]:not([data-contact-scene="invitation"]) {
+    scroll-margin-top: calc(4.75rem + env(safe-area-inset-top, 0px));
+  }
+}
+
 [data-contact-film] [data-contact-scene-media="true"] {
   transform-origin: 50% 46%;
 }
@@ -656,7 +665,8 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-form-success]::bef
 /* Content participates in layout: longer route copy must never disappear
    behind the card edge. Crossfading shots share a grid cell, not a fixed box. */
 [data-contact-film] [data-contact-pathway-shot] {
-  align-content: start;
+  grid-template-rows: auto 1fr;
+  align-content: stretch;
 }
 
 [data-contact-film] [data-contact-pathway-film] {
@@ -669,6 +679,7 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-form-success]::bef
 @container contact-pathways (min-width: 34rem) {
   [data-contact-film] [data-contact-pathway-shot] {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-rows: 1fr;
     align-items: center;
     column-gap: 1.5rem;
   }
@@ -676,6 +687,7 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-form-success]::bef
   [data-contact-film] [data-contact-pathway-copy] {
     grid-column: 1;
     grid-row: 1;
+    align-self: stretch;
   }
 
   [data-contact-film] [data-contact-pathway-film] {

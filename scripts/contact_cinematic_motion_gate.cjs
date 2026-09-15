@@ -63,7 +63,9 @@ for (const camera of ["folio", "conversation", "letter"]) {
   requireText(css, `data-contact-pathway-camera="${camera}"`, `pathway camera styling is missing: ${camera}`);
 }
 
-requireText(pathways, "<AnimatePresence", "pathway changes no longer use a cinematic cut");
+requireText(pathways, 'data-contact-pathway-layout="stable"', "pathway transitions must preserve the card's layout frame");
+requireText(pathways, 'animate={present ? "centre" : "exit"}', "pathway changes must retain their directional cut");
+requireText(scene, "hydrated && !prefersReducedMotion", "chapters must render readable before the camera hydrates");
 requireText(pathways, "data-contact-pathway-shot", "pathway shot boundary is missing");
 // The selected sunlit invitation replaces the acknowledgement ledger.
 const invitationCss = read("src/components/ContactGratitude.module.css");

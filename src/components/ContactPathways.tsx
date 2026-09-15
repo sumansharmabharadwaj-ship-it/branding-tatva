@@ -1,18 +1,15 @@
 "use client";
 
 import {
-  useEffect,
   useRef,
   type KeyboardEvent,
   type ReactNode,
   type PointerEvent,
 } from "react";
 import {
-  AnimatePresence,
   motion,
   useMotionValue,
   useSpring,
-  useIsPresent,
   type Variants,
 } from "framer-motion";
 import {
@@ -125,35 +122,28 @@ const SWIPE_AXIS_DOMINANCE = 1.3;
 const TOUCH_DRAG_LIMIT_PX = 12;
 
 const PATHWAY_SHOT_VARIANTS: Variants = {
-  enter: (direction: number) => ({
-    opacity: 0.42,
-    x: direction * 18,
-    scale: 0.992,
-    clipPath:
-      direction > 0
-        ? "inset(0 16% 0 0 round 1.25rem)"
-        : "inset(0 0 0 16% round 1.25rem)",
-  }),
   centre: {
     opacity: 1,
     x: 0,
-    scale: 1,
     clipPath: "inset(0 0% 0 0 round 0rem)",
   },
   exit: (direction: number) => ({
     opacity: 0,
-    x: direction * -12,
-    scale: 0.996,
-    clipPath:
-      direction > 0
-        ? "inset(0 0 0 12% round 1.1rem)"
-        : "inset(0 12% 0 0 round 1.1rem)",
-    transition: { duration: 0.14, ease: EASE_AIR },
+    x: direction * 18,
+    clipPath: direction > 0
+      ? "inset(0 12% 0 0 round 1.1rem)"
+      : "inset(0 0 0 12% round 1.1rem)",
   }),
 };
 
-function PathwayShot({ direction, reduced, children }: { direction: number; reduced: boolean; children: ReactNode }) {
-  const present = useIsPresent();
+/** All three text layers share one grid cell, so the tallest route determines
+ * the frame even before hydration. Hidden routes release their media. */
+function PathwayShot({ direction, reduced, present, children }: {
+  direction: number;
+  reduced: boolean;
+  present: boolean;
+  children: ReactNode;
+}) {
   return <motion.div
     data-contact-pathway-shot
     data-contact-shot-present={present ? "true" : "false"}
@@ -161,11 +151,14 @@ function PathwayShot({ direction, reduced, children }: { direction: number; redu
     aria-hidden={!present}
     custom={direction}
     variants={PATHWAY_SHOT_VARIANTS}
-    initial={reduced ? false : "enter"}
-    animate="centre"
-    exit={reduced ? undefined : "exit"}
-    transition={{ duration: reduced ? 0 : 0.32, ease: EASE_AIR }}
-    style={{ transformOrigin: "50% 50%", pointerEvents: present ? "auto" : "none" }}
+    initial={false}
+    animate={present ? "centre" : "exit"}
+    transition={{
+      duration: reduced ? 0 : present ? 0.36 : 0.14,
+      delay: reduced || !present ? 0 : 0.14,
+      ease: EASE_AIR,
+    }}
+    style={{ pointerEvents: present ? "auto" : "none" }}
     className="relative grid min-w-0 gap-5 [grid-area:1/1]"
   >{children}</motion.div>;
 }
@@ -257,7 +250,6 @@ export function ContactPathways() {
   const sceneRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const touchGestureRef = useRef<TouchGesture | null>(null);
-  const previousIndexRef = useRef(0);
   const touchDragX = useMotionValue(0);
   const touchDragXSmooth = useSpring(touchDragX, {
     stiffness: 190,
@@ -272,16 +264,7 @@ export function ContactPathways() {
     followScroll: false,
   });
   const active = pathways[activeIndex] ?? pathways[0];
-  const activeDetail =
-    active.id === "book" && selectedPackage
-      ? `${selectedPackage.name} · ${site.consultationMinutes} minutes · your timezone`
-      : active.detail;
-  const direction = activeIndex >= previousIndexRef.current ? 1 : -1;
   const panelId = "contact-pathway-panel";
-
-  useEffect(() => {
-    previousIndexRef.current = activeIndex;
-  }, [activeIndex]);
 
   function moveToPathway(index: number) {
     const nextIndex = (index + pathways.length) % pathways.length;
@@ -423,7 +406,7 @@ export function ContactPathways() {
                       aria-controls={panelId}
                       onClick={() => choose(index)}
                       onFocus={() => choose(index)}
-                                            onKeyDown={(event) => handleTabKeyDown(index, event)}
+                      onKeyDown={(event) => handleTabKeyDown(index, event)}
                       data-cursor-label={pathway.label}
                       className={`group relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1.5 py-1.5 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-[5.5rem] sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2 ${
                         selected ? "text-ivory" : "text-soil hover:bg-white/55"
@@ -463,6 +446,7 @@ export function ContactPathways() {
                 role="tabpanel"
                 aria-labelledby={`contact-pathway-tab-${active.id}`}
                 data-contact-pathway-panel
+                data-contact-pathway-layout="stable"
                 data-contact-touch-surface
                 onPointerDown={handlePanelPointerDown}
                 onPointerMove={handlePanelPointerMove}
@@ -472,152 +456,159 @@ export function ContactPathways() {
                 className="relative grid min-w-0 touch-pan-y p-4 sm:p-6 lg:p-7"
                 style={prefersReducedMotion ? undefined : { x: touchDragXSmooth }}
               >
-                <AnimatePresence initial={false} custom={direction} mode="wait">
-                  <PathwayShot key={active.id} direction={direction} reduced={prefersReducedMotion}>
-                  <ContactPathwayFilm key={active.id} {...active.film} />
+                {pathways.map((pathway, index) => {
+                  const selected = index === activeIndex;
+                  const detail = pathway.id === "book" && selectedPackage
+                    ? `${selectedPackage.name} · ${site.consultationMinutes} minutes · your timezone`
+                    : pathway.detail;
+                  return (
+                    <PathwayShot key={pathway.id} direction={index > activeIndex ? 1 : -1} reduced={prefersReducedMotion} present={selected}>
+                      <ContactPathwayFilm active={selected} {...pathway.film} />
 
-                  <div data-contact-pathway-copy className="relative z-10 flex min-w-0 flex-col">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-clay">
-                        {active.label}
-                      </span>
-                      <span className="font-display text-2xl text-soil/25 sm:hidden" aria-hidden="true">
-                        {active.index}
-                      </span>
-                    </div>
+                      <div data-contact-pathway-copy className="relative z-10 flex min-w-0 flex-col">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[0.68rem] font-medium uppercase tracking-[0.22em] text-clay">
+                            {pathway.label}
+                          </span>
+                          <span className="font-display text-2xl text-soil/25 sm:hidden" aria-hidden="true">
+                            {pathway.index}
+                          </span>
+                        </div>
 
-                    <p data-contact-pathway-title className="mt-3 max-w-xl font-display text-[clamp(1.65rem,7.2vw,2.2rem)] font-normal leading-[1.06] text-soil sm:mt-4 sm:text-[clamp(1.85rem,2.7vw,2.35rem)]">
-                      {active.title}
-                    </p>
-                    <p data-contact-pathway-description className="mt-3 max-w-lg text-[0.78rem] leading-relaxed text-soil/68 sm:mt-4 sm:text-sm lg:text-base">
-                      {active.description}
-                    </p>
-                    <p data-contact-pathway-best className="mt-3 max-w-lg border-l border-clay/25 pl-3 text-[0.72rem] leading-relaxed text-soil/58 sm:text-xs lg:text-sm">
-                      <span className="font-medium text-clay">Best when:</span>{" "}
-                      {active.bestWhen}
-                    </p>
-                    {active.id === "book" && selectedPackage ? (
-                      <p
-                        data-contact-pathway-package
-                        className="mt-3 w-fit max-w-full rounded-full border border-clay/18 bg-clay/[0.06] px-3 py-1.5 text-[0.64rem] font-medium leading-relaxed text-clay sm:text-xs"
-                      >
-                        Carrying your {selectedPackage.name} choice
-                      </p>
-                    ) : null}
-                    <PathwayHandoff
-                      pathway={active}
-                      detail={activeDetail}
-                      reducedMotion={prefersReducedMotion}
-                    />
+                        <p data-contact-pathway-title className="mt-3 max-w-xl font-display text-[clamp(1.65rem,7.2vw,2.2rem)] font-normal leading-[1.06] text-soil sm:mt-4 sm:text-[clamp(1.85rem,2.7vw,2.35rem)]">
+                          {pathway.title}
+                        </p>
+                        <p data-contact-pathway-description className="mt-3 max-w-lg text-[0.78rem] leading-relaxed text-soil/68 sm:mt-4 sm:text-sm lg:text-base">
+                          {pathway.description}
+                        </p>
+                        <p data-contact-pathway-best className="mt-3 max-w-lg border-l border-clay/25 pl-3 text-[0.72rem] leading-relaxed text-soil/58 sm:text-xs lg:text-sm">
+                          <span className="font-medium text-clay">Best when:</span>{" "}
+                          {pathway.bestWhen}
+                        </p>
+                        {pathway.id === "book" && selectedPackage ? (
+                          <p
+                            data-contact-pathway-package
+                            className="mt-3 w-fit max-w-full rounded-full border border-clay/18 bg-clay/[0.06] px-3 py-1.5 text-[0.64rem] font-medium leading-relaxed text-clay sm:text-xs"
+                          >
+                            Carrying your {selectedPackage.name} choice
+                          </p>
+                        ) : null}
+                        <PathwayHandoff
+                          key={`${pathway.id}-${selected}`}
+                          pathway={pathway}
+                          detail={detail}
+                          reducedMotion={prefersReducedMotion || !selected}
+                        />
 
-                    <div data-contact-pathway-actions className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
-                      {active.id === "book" && (
-                      <>
-                        <a
-                          href={bookingHref}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() =>
-                            track("calendar_opened", {
-                              source: "contact_pathways",
-                              ...(servicePackage ? { package: servicePackage } : {}),
-                            })
-                          }
-                          data-cursor-label="See available times"
-                          className={primaryActionClass}
-                        >
-                          See available times
-                          <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        </a>
-                        <a
-                          href="#call"
-                          onClick={() =>
-                            track("contact_route_selected", {
-                              source: "contact_pathways",
-                              route: "call_flow",
-                            })
-                          }
-                          data-cursor-label="See the call flow"
-                          className={secondaryActionClass}
-                        >
-                          See the call flow
-                          <ArrowDown aria-hidden="true" className="ml-2 h-4 w-4" />
-                        </a>
-                      </>
-                    )}
+                        <div data-contact-pathway-actions className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap sm:gap-3">
+                          {pathway.id === "book" && (
+                          <>
+                            <a
+                              href={bookingHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() =>
+                                track("calendar_opened", {
+                                  source: "contact_pathways",
+                                  ...(servicePackage ? { package: servicePackage } : {}),
+                                })
+                              }
+                              data-cursor-label="See available times"
+                              className={primaryActionClass}
+                            >
+                              See available times
+                              <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            </a>
+                            <a
+                              href="#call"
+                              onClick={() =>
+                                track("contact_route_selected", {
+                                  source: "contact_pathways",
+                                  route: "call_flow",
+                                })
+                              }
+                              data-cursor-label="See the call flow"
+                              className={secondaryActionClass}
+                            >
+                              See the call flow
+                              <ArrowDown aria-hidden="true" className="ml-2 h-4 w-4" />
+                            </a>
+                          </>
+                        )}
 
-                      {active.id === "speak" && (
-                      <>
-                        <a
-                          href={`tel:${site.phone.tel}`}
-                          aria-label={`Call Suman at ${site.phone.display}`}
-                          onClick={() =>
-                            track("contact_route_selected", {
-                              source: "contact_pathways",
-                              route: "call",
-                            })
-                          }
-                          data-cursor-label="Call Suman"
-                          className={primaryActionClass}
-                        >
-                          <Phone aria-hidden="true" className="mr-2 h-4 w-4" />
-                          Call Suman
-                        </a>
-                        <a
-                          href={site.phone.whatsappUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() =>
-                            track("contact_route_selected", {
-                              source: "contact_pathways",
-                              route: "whatsapp",
-                            })
-                          }
-                          data-cursor-label="Open WhatsApp"
-                          className={secondaryActionClass}
-                        >
-                          WhatsApp
-                          <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" />
-                        </a>
-                      </>
-                    )}
+                          {pathway.id === "speak" && (
+                          <>
+                            <a
+                              href={`tel:${site.phone.tel}`}
+                              aria-label={`Call Suman at ${site.phone.display}`}
+                              onClick={() =>
+                                track("contact_route_selected", {
+                                  source: "contact_pathways",
+                                  route: "call",
+                                })
+                              }
+                              data-cursor-label="Call Suman"
+                              className={primaryActionClass}
+                            >
+                              <Phone aria-hidden="true" className="mr-2 h-4 w-4" />
+                              Call Suman
+                            </a>
+                            <a
+                              href={site.phone.whatsappUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() =>
+                                track("contact_route_selected", {
+                                  source: "contact_pathways",
+                                  route: "whatsapp",
+                                })
+                              }
+                              data-cursor-label="Open WhatsApp"
+                              className={secondaryActionClass}
+                            >
+                              WhatsApp
+                              <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" />
+                            </a>
+                          </>
+                        )}
 
-                      {active.id === "write" && (
-                      <>
-                        <a
-                          href="#write"
-                          onClick={() =>
-                            track("contact_route_selected", {
-                              source: "contact_pathways",
-                              route: "write",
-                            })
-                          }
-                          data-cursor-label="Start the note"
-                          className={primaryActionClass}
-                        >
-                          Start the note
-                          <ArrowDown aria-hidden="true" className="ml-2 h-4 w-4" />
-                        </a>
-                        <a
-                          href={`mailto:${site.email}`}
-                          onClick={() =>
-                            track("contact_route_selected", {
-                              source: "contact_pathways",
-                              route: "email",
-                            })
-                          }
-                          data-cursor-label="Email Suman"
-                          className={secondaryActionClass}
-                        >
-                          Email instead
-                          <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" />
-                        </a>
-                      </>
-                    )}
-                    </div>
-                  </div>
-                  </PathwayShot>
-                </AnimatePresence>
+                          {pathway.id === "write" && (
+                          <>
+                            <a
+                              href="#write"
+                              onClick={() =>
+                                track("contact_route_selected", {
+                                  source: "contact_pathways",
+                                  route: "write",
+                                })
+                              }
+                              data-cursor-label="Start the note"
+                              className={primaryActionClass}
+                            >
+                              Start the note
+                              <ArrowDown aria-hidden="true" className="ml-2 h-4 w-4" />
+                            </a>
+                            <a
+                              href={`mailto:${site.email}`}
+                              onClick={() =>
+                                track("contact_route_selected", {
+                                  source: "contact_pathways",
+                                  route: "email",
+                                })
+                              }
+                              data-cursor-label="Email Suman"
+                              className={secondaryActionClass}
+                            >
+                              Email instead
+                              <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" />
+                            </a>
+                          </>
+                        )}
+                        </div>
+                      </div>
+                    </PathwayShot>
+                  );
+                })}
               </motion.div>
             </div>
           </div>
