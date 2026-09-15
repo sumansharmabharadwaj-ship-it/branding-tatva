@@ -74,6 +74,22 @@ function enclosingBlock(text, index) {
 
 const lineOf = (text, index) => text.slice(0, index).split("\n").length;
 
+/*
+ * The baseline is keyed on the offending declaration's own source line, with
+ * whitespace collapsed, rather than on a line NUMBER. Line numbers move: adding
+ * an import at the top of a file shifts every violation below it and the gate
+ * then reports pre-existing debt as new. That produces false failures on
+ * unrelated edits, and a gate that cries wolf gets switched off, which protects
+ * nothing. Content is stable under those edits and still changes when the
+ * declaration itself is touched, which is exactly when it should be re-examined.
+ */
+const contextOf = (text, index) => {
+  const start = text.lastIndexOf("\n", index) + 1;
+  let end = text.indexOf("\n", index);
+  if (end === -1) end = text.length;
+  return text.slice(start, end).replace(/\s+/g, " ").trim().slice(0, 200);
+};
+
 let violations = [];
 
 for (const file of SOURCE_ROOTS.flatMap((dir) => walk(path.join(ROOT, dir)))) {
@@ -88,10 +104,10 @@ for (const file of SOURCE_ROOTS.flatMap((dir) => walk(path.join(ROOT, dir)))) {
       const isLabel = /text-transform\s*:\s*uppercase/.test(block);
       const excused = /type-floor-ok/.test(block);
       if (rem < LABEL_MIN_REM) {
-        violations.push({ rel, line: lineOf(text, match.index), rem,
+        violations.push({ rel, line: lineOf(text, match.index), context: contextOf(text, match.index), rem,
           why: `below the label floor (${LABEL_MIN_REM}rem); nothing may be this small` });
       } else if (!isLabel && !excused) {
-        violations.push({ rel, line: lineOf(text, match.index), rem,
+        violations.push({ rel, line: lineOf(text, match.index), context: contextOf(text, match.index), rem,
           why: `below the reading floor (${READING_MIN_REM}rem) and the rule is not uppercase` });
       }
     }
@@ -104,10 +120,10 @@ for (const file of SOURCE_ROOTS.flatMap((dir) => walk(path.join(ROOT, dir)))) {
       const isLabel = /uppercase/.test(around);
       const excused = /type-floor-ok/.test(around);
       if (rem < LABEL_MIN_REM) {
-        violations.push({ rel, line: lineOf(text, match.index), rem,
+        violations.push({ rel, line: lineOf(text, match.index), context: contextOf(text, match.index), rem,
           why: `below the label floor (${LABEL_MIN_REM}rem); nothing may be this small` });
       } else if (!isLabel && !excused) {
-        violations.push({ rel, line: lineOf(text, match.index), rem,
+        violations.push({ rel, line: lineOf(text, match.index), context: contextOf(text, match.index), rem,
           why: `below the reading floor (${READING_MIN_REM}rem) and no uppercase treatment nearby` });
       }
     }
@@ -134,7 +150,7 @@ const BASELINE_PATH = path.join(__dirname, "type-floor-baseline.json");
  * baselined line would be silently grandfathered. Including the value makes the
  * baseline entry specific to the declaration it actually recorded.
  */
-const key = (v) => `${v.rel}:${v.line}:${v.rem}`;
+const key = (v) => `${v.rel}|${v.rem}|${v.context}`;
 
 let baseline = new Set();
 if (fs.existsSync(BASELINE_PATH)) {
