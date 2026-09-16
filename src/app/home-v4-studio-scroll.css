@@ -69,6 +69,39 @@
   outline-offset: 4px;
 }
 
+/* Measure every reading at the actual type size and available width. The
+   hidden copies have no links, IDs, focus stops or accessible text. */
+.studio-cinematic__reading-stack,
+.studio-cinematic__reading-measure {
+  display: grid;
+  min-width: 0;
+}
+.studio-cinematic__reading-stack > *,
+.studio-cinematic__reading-measure > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.studio-cinematic__reading-measure {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+.studio-cinematic__result {
+  position: relative;
+  border-left-color: color-mix(in srgb, var(--studio-accent) 24%, transparent);
+}
+.studio-cinematic__result-signal {
+  position: absolute;
+  inset: 0 auto 0 -2px;
+  width: 2px;
+  background: var(--studio-accent);
+  transform-origin: 50% 0;
+  pointer-events: none;
+}
+.home-v4 #studio .studio-cinematic__proof:focus-visible {
+  transform: none;
+}
+
 /* Both the site preference and the OS preference release the held frame. */
 html[data-motion="reduced"] body .home-v4 #studio {
   height: auto !important;

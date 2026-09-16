@@ -69,9 +69,40 @@ const MEDIA_TRANSITION = {
   exit: (direction: number) => ({ opacity: 0.78, y: direction * -12, scale: 1.015 }),
 };
 
+type Discipline = (typeof DISCIPLINES)[number];
+
+function DisciplineReading({ discipline }: { discipline: Discipline }) {
+  return (
+    <>
+      <p className="studio-cinematic__credential">{discipline.eyebrow}</p>
+      <h3>{discipline.title}</h3>
+      <p className="studio-cinematic__panel-copy">{discipline.line}</p>
+    </>
+  );
+}
+
+function DisciplineResult({ discipline }: { discipline: Discipline }) {
+  return (
+    <>
+      <span>What the client receives</span>
+      <strong>{discipline.result}</strong>
+    </>
+  );
+}
+
+function DisciplineProof({ discipline }: { discipline: Discipline }) {
+  return (
+    <>
+      <small>{discipline.proofLabel}</small>
+      <strong>{discipline.proofLine}</strong>
+    </>
+  );
+}
+
 export function StudioCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const selectionId = useId();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
@@ -81,6 +112,8 @@ export function StudioCinematicChapter() {
   const decisionControls = useAnimationControls();
   const resultControls = useAnimationControls();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
+  const { scrollYProgress: readingProgress } = useScroll({ target: panelRef, offset: ["start end", "end start"] });
+  const resultSignal = useTransform(readingProgress, [0.12, 0.62], [0.08, 1]);
   const portraitY = useTransform(scrollYProgress, [0, 0.5, 1], [18, -8, 8]);
   const portraitScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.035, 1.14, 1.06]);
   const portraitX = useTransform(scrollYProgress, [0, 0.5, 1], ["-1%", "1.5%", "-1.5%"]);
@@ -113,31 +146,36 @@ export function StudioCinematicChapter() {
     };
   }, []);
 
-  // Animate the mounted reading surface so a change preserves the proof link
-  // and keyboard focus. Repeated forward steps still get their own entrance.
+  const settleReading = useCallback(() => {
+    decisionControls.stop();
+    resultControls.stop();
+    decisionControls.set({ x: 0, y: 0 });
+    resultControls.set({ x: 0 });
+  }, [decisionControls, resultControls]);
+
+  // Only copy moves. The mounted proof link keeps its geometry and focus.
   useEffect(() => {
     const changed = animatedIndexRef.current !== activeIndex;
     animatedIndexRef.current = activeIndex;
-    if (prefersReducedMotion || !changed) {
-      decisionControls.set({ y: 0, rotateX: 0 });
-      resultControls.set({ x: 0 });
-    } else {
+    settleReading();
+    if (!prefersReducedMotion && changed) {
       const direction = selectionRef.current.direction;
+      decisionControls.set({ x: direction * 8, y: 3 });
+      resultControls.set({ x: direction * 10 });
       void decisionControls.start({
-        y: [direction * (desktopMotion ? 26 : 10), 0],
-        rotateX: [desktopMotion ? direction * 9 : 0, 0],
-        transition: { duration: 0.52, ease: EASE },
+        x: 0, y: 0,
+        transition: { duration: 0.38, ease: EASE },
       });
       void resultControls.start({
-        x: [direction * 28, 0],
-        transition: { duration: 0.48, delay: 0.08, ease: EASE },
+        x: 0,
+        transition: { duration: 0.42, ease: EASE },
       });
     }
     return () => {
       decisionControls.stop();
       resultControls.stop();
     };
-  }, [activeIndex, desktopMotion, prefersReducedMotion, decisionControls, resultControls]);
+  }, [activeIndex, prefersReducedMotion, decisionControls, resultControls, settleReading]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -160,6 +198,9 @@ export function StudioCinematicChapter() {
       // Scrolling must preserve the destination of the proof they are reading.
       const focused = document.activeElement;
       if (focused instanceof HTMLElement && section?.contains(focused) && focused.matches(":focus-visible")) return;
+      const selection = document.getSelection();
+      if (selection && !selection.isCollapsed && selection.rangeCount
+        && selection.getRangeAt(0).intersectsNode(section!)) return;
       select(studioStep(progress, selectionRef.current.index, DISCIPLINES.length));
     }
 
@@ -212,7 +253,9 @@ export function StudioCinematicChapter() {
       : event.key === "ArrowRight" ? (index + 1) % DISCIPLINES.length
       : (index - 1 + DISCIPLINES.length) % DISCIPLINES.length;
     choose(next);
-    tabsRef.current[next]?.focus({ preventScroll: true });
+    const target = tabsRef.current[next];
+    const bounds = target?.getBoundingClientRect();
+    target?.focus({ preventScroll: Boolean(bounds && bounds.top >= 80 && bounds.bottom <= window.innerHeight) });
   }
 
   return (
@@ -296,37 +339,47 @@ export function StudioCinematicChapter() {
           </div>
 
           <article
+            ref={panelRef}
             id="studio-cinematic-panel"
             role="tabpanel"
             aria-labelledby={`studio-discipline-${active.number}`}
             tabIndex={0}
             className="studio-cinematic__panel"
+            onFocusCapture={settleReading}
+            onPointerDown={settleReading}
           >
-            <motion.div
-              data-studio-decision
-              initial={false}
-              animate={decisionControls}
-              style={{ transformPerspective: 1000, transformOrigin: "50% 0%" }}
-            >
-              <p className="studio-cinematic__credential">{active.eyebrow}</p>
-              <h3>{active.title}</h3>
-              <p className="studio-cinematic__panel-copy">{active.line}</p>
-              <motion.div
-                className="studio-cinematic__result"
-                initial={false}
-                animate={resultControls}
-              >
-                <span>What the client receives</span>
-                <strong>{active.result}</strong>
+            <div className="studio-cinematic__reading-stack">
+              <div className="studio-cinematic__reading-measure" aria-hidden="true" inert>
+                {DISCIPLINES.map((discipline) => (
+                  <div key={discipline.number}>
+                    <DisciplineReading discipline={discipline} />
+                    <div className="studio-cinematic__result"><DisciplineResult discipline={discipline} /></div>
+                  </div>
+                ))}
+              </div>
+              <motion.div data-studio-decision initial={false} animate={decisionControls}>
+                <DisciplineReading discipline={active} />
+                <motion.div className="studio-cinematic__result" initial={false} animate={resultControls}>
+                  <motion.i
+                    className="studio-cinematic__result-signal"
+                    aria-hidden="true"
+                    style={{ scaleY: prefersReducedMotion ? 1 : resultSignal }}
+                  />
+                  <DisciplineResult discipline={active} />
+                </motion.div>
               </motion.div>
-              <Link href={active.proofHref} className="studio-cinematic__proof">
-                <span>
-                  <small>{active.proofLabel}</small>
-                  <strong>{active.proofLine}</strong>
+            </div>
+            <Link href={active.proofHref} className="studio-cinematic__proof">
+              <span className="studio-cinematic__reading-stack">
+                <span className="studio-cinematic__reading-measure" aria-hidden="true" inert>
+                  {DISCIPLINES.map((discipline) => (
+                    <span key={discipline.number}><DisciplineProof discipline={discipline} /></span>
+                  ))}
                 </span>
-                <i aria-hidden="true">↗</i>
-              </Link>
-            </motion.div>
+                <span><DisciplineProof discipline={active} /></span>
+              </span>
+              <i aria-hidden="true">→</i>
+            </Link>
           </article>
 
           <div className="studio-cinematic__footer">
