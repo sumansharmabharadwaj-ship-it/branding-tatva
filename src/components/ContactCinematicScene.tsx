@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useEffect, useMemo, useRef, useState, type FocusEvent, type PointerEvent, type ReactNode } from "react";
+import { createContext, useEffect, useMemo, useRef, useState, type FocusEvent, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { motion, useInView, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -23,6 +23,12 @@ const SCENE_EXPOSURE: Record<ContactSceneVariant, string> = {
   afterglow: "radial-gradient(ellipse at 62% 72%, #f8cd8e 0%, transparent 62%)",
 };
 
+function isWritingControl(target: EventTarget | null) {
+  return target instanceof HTMLElement && (
+    target.matches("input, textarea, select") || target.isContentEditable
+  );
+}
+
 /** One scroll timeline moves the scenery, light and headline. Content and
  * hit targets retain a stable plane, including while a form changes height. */
 export function ContactCinematicScene({ id, labelledBy, variant, media, children, className }: {
@@ -34,6 +40,7 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
   className?: string;
 }) {
   const sceneRef = useRef<HTMLElement>(null);
+  const pointerOwnsFocus = useRef(false);
   const [hasReadingFocus, setHasReadingFocus] = useState(false);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const compact = useMediaQuery("(max-width: 940px), (pointer: coarse)");
@@ -107,10 +114,32 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
     pointerY.set((event.clientY - rect.top - rect.height / 2) * 0.15);
   }
   function onFocus(event: FocusEvent<HTMLElement>) {
-    if (event.target instanceof HTMLElement && event.target.matches("input, textarea, select, [contenteditable='true'], :focus-visible")) {
-      settlePointer();
-      setHasReadingFocus(true);
+    const reading = isWritingControl(event.target) || (
+      !pointerOwnsFocus.current && event.target.matches(":focus-visible")
+    );
+    if (reading) settlePointer();
+    setHasReadingFocus(reading);
+  }
+  function onPointerDown(event: PointerEvent<HTMLElement>) {
+    if (!event.isPrimary || event.button !== 0) return;
+    // A same-control click has no new focus event, and browsers may keep its
+    // focus-visible state. A deliberate pointer action can resume the camera.
+    pointerOwnsFocus.current = true;
+    // Keep the writing pose until a field actually blurs. Clicking its label
+    // or dragging inside an editor must never move the scenery underneath it.
+    if (!isWritingControl(document.activeElement)) {
+      const writing = isWritingControl(event.target);
+      if (writing) settlePointer();
+      setHasReadingFocus(writing);
     }
+  }
+  function onKeyDown(event: KeyboardEvent<HTMLElement>) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    // Home, End and activation can reuse the same focused control. Settle the
+    // shared composition even when keyboard use produces no new focus event.
+    pointerOwnsFocus.current = false;
+    settlePointer();
+    setHasReadingFocus(true);
   }
 
   return (
@@ -126,11 +155,16 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
         data-contact-in-view={nearViewport ? "true" : "false"}
         data-contact-reading-focus={hasReadingFocus ? "true" : undefined}
         onPointerMove={onPointerMove}
+        onPointerDownCapture={onPointerDown}
         onPointerLeave={settlePointer}
         onPointerCancel={settlePointer}
         onFocusCapture={onFocus}
+        onKeyDownCapture={onKeyDown}
         onBlurCapture={(event) => {
-          if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setHasReadingFocus(false);
+          if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
+            pointerOwnsFocus.current = false;
+            setHasReadingFocus(false);
+          }
         }}
         // Clip the oversized light layers without creating a scroll container.
         // Hidden overflow let focus navigation scroll the whole composition
