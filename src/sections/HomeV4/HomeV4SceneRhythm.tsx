@@ -6,51 +6,51 @@ import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
 type Treatment = "title" | "heading" | "fan" | "plate" | "portrait" | "row" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
-type SceneSpec = { selector: string; ink?: "clay" | "sand"; layers: readonly LayerSpec[] };
+type SceneSpec = { selector: string; ink?: "clay" | "sand"; reading?: string; layers: readonly LayerSpec[] };
 
 // Stable semantic hooks keep CSS-module names and the scenes' tab state private.
 // Each plate settles before its reading interval. Existing sticky stories retain
 // sole ownership of their content, media and stage selection.
 const SCENES: readonly SceneSpec[] = [
-  { selector: '[data-home-v4-chapter="opening"]', layers: [
+  { selector: '[data-home-v4-chapter="opening"]', ink: "sand", reading: ".home-v4-opening__lede", layers: [
     [".home-v4-opening__proof", "plate"],
   ] },
   { selector: '[data-home-v4-chapter="recognition"]', ink: "clay", layers: [
     [".home-v4-recognition__header > div", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '[data-home-v4-chapter="cost"]', ink: "clay", layers: [
+  { selector: '[data-home-v4-chapter="cost"]', ink: "clay", reading: "[data-home-cost-heading] h2 + p", layers: [
     ["[data-home-cost-heading]", "heading"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],
   ] },
-  { selector: '[data-home-v4-chapter="cost-stack"]', ink: "sand", layers: [
+  { selector: '[data-home-v4-chapter="cost-stack"]', ink: "sand", reading: "[data-cost-intro] > p:last-child", layers: [
     ["[data-cost-intro]", "heading"],
   ] },
-  { selector: '[data-scroll-story="foundation"]', ink: "clay", layers: [
+  { selector: '[data-scroll-story="foundation"]', ink: "clay", reading: "header h2 + p", layers: [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '[data-scroll-story="paths"]', ink: "clay", layers: [
+  { selector: '[data-scroll-story="paths"]', ink: "clay", reading: "header > p", layers: [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '[data-scroll-story="process"]', ink: "clay", layers: [
+  { selector: '[data-scroll-story="process"]', ink: "clay", reading: "header > p", layers: [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '[data-home-v4-chapter="evidence"]', ink: "sand", layers: [
+  { selector: '[data-home-v4-chapter="evidence"]', ink: "sand", reading: ".evidence-cinematic__intro > p", layers: [
     [".evidence-cinematic__header", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
   ] },
-  { selector: '.tatva-observatory', ink: "sand", layers: [
+  { selector: '.tatva-observatory', ink: "sand", reading: ".tatva-observatory__copy > h2 + p", layers: [
     [".tatva-observatory__copy", "heading"], [".tatva-observatory__force", "fan"],
   ] },
-  { selector: '.tatva-pressure-lab', ink: "sand", layers: [
+  { selector: '.tatva-pressure-lab', ink: "sand", reading: ".tatva-pressure-lab__copy > h2 + p", layers: [
     [".tatva-pressure-lab__copy", "heading"], [".tatva-pressure-lab__board", "plate"],
   ] },
-  { selector: '.studio-cinematic', ink: "sand", layers: [
+  { selector: '.studio-cinematic', ink: "sand", reading: ".studio-cinematic__lede", layers: [
     // One reading column preserves the title/intro and proof/footer gaps.
     // Its own discipline transition stays inside this shared entrance.
     [".studio-cinematic__content", "heading"], [".studio-cinematic__portrait", "portrait"],
   ] },
-  { selector: '[data-home-v4-chapter="decision"]', ink: "clay", layers: [
+  { selector: '[data-home-v4-chapter="decision"]', ink: "clay", reading: "header h2 + p", layers: [
     ["header", "heading"], ["[data-open]", "row"],
   ] },
-  { selector: '[data-home-v4-chapter="invitation"]', ink: "clay", layers: [
+  { selector: '[data-home-v4-chapter="invitation"]', ink: "clay", reading: "[data-invitation-copy] > h2 + p", layers: [
     ["[data-invitation-copy]", "heading"], ["aside", "plate"],
   ] },
   { selector: '[data-home-v4-chapter="diagnostic"]', layers: [
@@ -85,11 +85,17 @@ export function HomeV4SceneRhythm() {
       // Paint the original semantic text. No split words, duplicate accessible
       // names or formatting changes: wrapping and selection stay browser owned.
       const ink = spec.ink ? Array.from(element.querySelectorAll<HTMLElement>("h2")).map((heading) => ({
-        heading,
+        anchor: heading,
         node: heading.querySelector<HTMLElement>("em") ?? heading,
         layer: layers.find(({ node }) => node === heading || node.contains(heading)),
-        tone: spec.ink!, progress: 0, last: "",
+        tone: spec.ink!, reading: false, progress: 0, last: "",
       })) : [];
+      if (spec.ink && spec.reading) {
+        element.querySelectorAll<HTMLElement>(spec.reading).forEach((node) => {
+          ink.push({ anchor: node, node, layer: layers.find((layer) => layer.node.contains(node)),
+            tone: spec.ink!, reading: true, progress: 0, last: "" });
+        });
+      }
       return [{ element, layers, ink, active: true }];
     });
     const footerTitle = document.querySelector<HTMLElement>("footer h2");
@@ -104,14 +110,20 @@ export function HomeV4SceneRhythm() {
       const viewport = Math.max(1, window.innerHeight);
       const wide = desktop.matches;
       const focused = document.activeElement;
+      const selection = document.getSelection();
+      const readingRange = selection && !selection.isCollapsed && selection.rangeCount
+        ? selection.getRangeAt(0) : null;
       const damping = lastTime ? 1 - Math.exp(-Math.min(now - lastTime, 64) / 65) : 1;
       lastTime = now;
       let settling = false;
       // Finish all reads before writes, including compact per-element geometry.
       const measurements = scenes.filter((scene) => scene.active || scene.element.contains(focused)).map((scene) => ({
         scene, top: scene.element.getBoundingClientRect().top,
+        selected: Boolean(readingRange?.intersectsNode(scene.element)),
+        readingFocused: focused instanceof HTMLElement && focused !== scene.element
+          && focused.matches(":focus-visible") && scene.element.contains(focused),
         ink: scene.ink.map((text) => {
-          const rect = text.heading.getBoundingClientRect();
+          const rect = text.anchor.getBoundingClientRect();
           // Subtract our reading group's entrance so paint never feeds back
           // into its own progress. Sticky headings retain their local position.
           return { text, top: rect.top - (text.layer?.appliedY ?? 0), height: rect.height,
@@ -124,7 +136,10 @@ export function HomeV4SceneRhythm() {
         })),
       }));
 
-      measurements.forEach(({ top, layers, ink }) => {
+      measurements.forEach(({ top, layers, ink, selected, readingFocused }) => {
+        // Native selection owns its reading surface until the selection clears.
+        // Keep its geometry and paint still without intercepting native scroll.
+        if (selected) return;
         const entering = 1 - ease((viewport * 0.96 - top) / (viewport * 0.74));
         layers.forEach(({ layer, top: layerTop, focused: hasFocus }) => {
           const { node, treatment, index, spread, side } = layer;
@@ -200,18 +215,25 @@ export function HomeV4SceneRhythm() {
           }
         });
         ink.forEach(({ text, top: textTop, height, visible }) => {
-          if (!visible) return;
+          if (!visible || readingFocused) return;
           // The sweep completes in the reading zone and reverses with native
           // scroll. Pausing scroll also pauses the ink after a short settle.
-          const target = ease((viewport * 0.94 - textTop) / Math.max(viewport * 0.62, height + viewport * 0.16));
+          const target = text.reading
+            ? ease((viewport * 0.88 - textTop) / Math.max(viewport * 0.56, height + viewport * 0.12))
+            : ease((viewport * 0.94 - textTop) / Math.max(viewport * 0.62, height + viewport * 0.16));
           const next = text.last ? text.progress + (target - text.progress) * damping : target;
           text.progress = Math.abs(target - next) < 0.001 ? target : next;
           if (text.progress !== target) settling = true;
           const value = text.progress.toFixed(3);
           if (text.last === value) return;
           text.last = value;
-          text.node.dataset.scrollInk = text.tone;
-          text.node.style.setProperty("--ink-progress", value);
+          if (text.reading) {
+            text.node.dataset.scrollReading = text.tone;
+            text.node.style.setProperty("--reading-progress", value);
+          } else {
+            text.node.dataset.scrollInk = text.tone;
+            text.node.style.setProperty("--ink-progress", value);
+          }
         });
       });
       if (settling) schedule();
@@ -239,6 +261,7 @@ export function HomeV4SceneRhythm() {
     window.addEventListener("resize", schedule, { passive: true });
     document.addEventListener("focusin", schedule);
     document.addEventListener("focusout", schedule);
+    document.addEventListener("selectionchange", schedule);
     document.addEventListener("visibilitychange", schedule);
     desktop.addEventListener("change", schedule);
     void document.fonts.ready.then(schedule);
@@ -253,6 +276,7 @@ export function HomeV4SceneRhythm() {
       window.removeEventListener("resize", schedule);
       document.removeEventListener("focusin", schedule);
       document.removeEventListener("focusout", schedule);
+      document.removeEventListener("selectionchange", schedule);
       document.removeEventListener("visibilitychange", schedule);
       desktop.removeEventListener("change", schedule);
       delete root.dataset.sceneChoreography;
@@ -260,7 +284,9 @@ export function HomeV4SceneRhythm() {
         delete element.dataset.homeMotionScene;
         ink.forEach(({ node }) => {
           delete node.dataset.scrollInk;
+          delete node.dataset.scrollReading;
           node.style.removeProperty("--ink-progress");
+          node.style.removeProperty("--reading-progress");
         });
         layers.forEach(({ node }) => {
           delete node.dataset.homeMotionLayer;

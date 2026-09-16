@@ -80,6 +80,40 @@ html[data-motion="reduced"].home-v4-mounted .home-v4 [data-scroll-ink]::after {
   html.home-v4-mounted .home-v4 [data-scroll-ink]::after { content: none; }
 }
 
+/* Supporting copy gains weight line by line as it enters the reading zone.
+   Both endpoints are readable ink. Text stays semantic, selectable and in its
+   original formatting context; the sweep never translates or hides a line. */
+html.home-v4-mounted .home-v4 [data-scroll-reading] {
+  --reading-emphasis: #342f27;
+}
+html.home-v4-mounted .home-v4 [data-scroll-reading="sand"] {
+  --reading-emphasis: #fff0d9;
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  html.home-v4-mounted .home-v4 [data-scroll-reading] {
+    background-image: linear-gradient(180deg,
+      var(--reading-emphasis) calc(var(--reading-progress, 1) * 120% - 20%),
+      currentColor calc(var(--reading-progress, 1) * 120%));
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+html.home-v4-mounted .home-v4 [data-scroll-reading]::selection {
+  -webkit-text-fill-color: currentColor;
+}
+html[data-motion="reduced"].home-v4-mounted .home-v4 [data-scroll-reading] {
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+}
+@media (prefers-reduced-motion: reduce), (forced-colors: active), print {
+  html.home-v4-mounted .home-v4 [data-scroll-reading] {
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
 /* Keep the actual hit target still as soon as a visitor starts interacting. */
 html.home-v4-mounted [data-home-motion-layer]:is(:focus-within, :focus-visible) {
   translate: none;
