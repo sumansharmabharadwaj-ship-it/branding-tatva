@@ -2170,8 +2170,8 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-scene-sunlight],
 html[data-motion="reduced"] [data-contact-film] [data-contact-heading-line],
 html[data-motion="reduced"] [data-contact-film] [data-contact-heading-ink] { transform: none !important; }
 
-/* Neighbouring chapters meet on the same paper colour. These stationary
-   edge washes blend the moving plates without moving text or hit targets. */
+/* Neighbouring chapters meet on the same fully opaque edge colour. Only
+   the feather's depth moves with the shared camera; content stays above it. */
 [data-contact-film] [data-contact-scene="branch"] {
   --contact-seam-out: linear-gradient(90deg, #dfe3d4, #eee1ca);
   border-bottom-width: 0;
@@ -2185,30 +2185,30 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-heading-ink] { tra
   --contact-seam-out: linear-gradient(90deg, #f2eddf, #f2eddf);
   border-top-width: 0;
 }
-[data-contact-film] [data-contact-scene="paper"]::before,
-[data-contact-film] [data-contact-scene="daybreak"]::before,
-[data-contact-film] [data-contact-scene="branch"]::after,
-[data-contact-film] [data-contact-scene="paper"]::after,
-[data-contact-film] [data-contact-scene="daybreak"]::after {
-  content: "";
+[data-contact-film] [data-contact-scene-seam] {
   position: absolute;
   inset-inline: 0;
   z-index: 6;
   height: clamp(64px, 14svh, 150px);
   pointer-events: none;
 }
-[data-contact-film] [data-contact-scene="paper"]::before,
-[data-contact-film] [data-contact-scene="daybreak"]::before {
+[data-contact-film] [data-contact-scene-seam="arrival"] {
   top: 0;
+  transform-origin: 50% 0;
   background: var(--contact-seam-in);
   mask-image: linear-gradient(#000, transparent);
 }
-[data-contact-film] [data-contact-scene="branch"]::after,
-[data-contact-film] [data-contact-scene="paper"]::after,
-[data-contact-film] [data-contact-scene="daybreak"]::after {
+[data-contact-film] [data-contact-scene-seam="departure"] {
   bottom: 0;
+  transform-origin: 50% 100%;
   background: var(--contact-seam-out);
   mask-image: linear-gradient(transparent, #000);
+}
+html[data-motion="reduced"] [data-contact-film] [data-contact-scene-seam] {
+  transform: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-contact-film] [data-contact-scene-seam] { transform: none !important; }
 }
 
 /* One bottom control at a time. Measurement preferences remain available

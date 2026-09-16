@@ -79,6 +79,11 @@ export function ContactGratitude() {
     offset: ["start end", "start start"],
     trackContentSize: true,
   });
+  // Match Call's paper edge while the botanical stage enters. The wash clears
+  // as the edge leaves the viewport, preserving the approved final composition.
+  // Entry progress remains independent of the stage's optional sticky travel.
+  const entryWashScale = useTransform(entryProgress, [0, 0.6, 1], [1.4, 1, 0.8]);
+  const entryWashOpacity = useTransform(entryProgress, [0, 0.92, 1], [1, 1, 0]);
   const { scrollYProgress: storyProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
@@ -238,6 +243,13 @@ export function ContactGratitude() {
           <Image src={botanicalImage} alt="" fill unoptimized className={styles.botanicalImage} sizes="40vw" />
         </motion.div>
       </motion.div>
+
+      <motion.div
+        aria-hidden="true"
+        data-contact-invitation-entry-wash
+        className={styles.entryWash}
+        style={{ scaleY: motionEnabled ? entryWashScale : 1, opacity: motionEnabled ? entryWashOpacity : 1 }}
+      />
 
       <div className={styles.content}>
         <p className={styles.eyebrow}>Before you go</p>

@@ -64,6 +64,8 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
   const currentRotation = useTransform(progress, [0, 1], variant === "paper" ? [12, -8] : [-12, 8]);
   const exposureTravel = useTransform(progress, [0, 0.35, 0.7, 1], [0.4, 0.12, 0.14, 0.35]);
   const lineTravel = useTransform(progress, [0.08, 0.66], [0, 1]);
+  const arrivalFeather = useTransform(progress, [0, 0.5, 1], compact ? [1.18, 1, 0.92] : [1.45, 1, 0.8]);
+  const departureFeather = useTransform(progress, [0, 0.5, 1], compact ? [0.92, 1, 1.18] : [0.8, 1, 1.45]);
   // The whole composition shares the heading's reading rest. Resizing the
   // form or scrolling with a field focused can update the underlying timeline
   // without pulling the scenery around the reader. Blur rejoins its live pose.
@@ -78,6 +80,8 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
   const sunlightScale = useTransform(() => sunlightScaleTravel.get() + (1 - sunlightScaleTravel.get()) * readingRest.get());
   const sunlightOpacity = useTransform(() => 0.42 * (1 - readingRest.get()));
   const lineDraw = useTransform(() => lineTravel.get() + (1 - lineTravel.get()) * readingRest.get());
+  const arrivalScale = useTransform(() => arrivalFeather.get() + (1 - arrivalFeather.get()) * readingRest.get());
+  const departureScale = useTransform(() => departureFeather.get() + (1 - departureFeather.get()) * readingRest.get());
   const value = useMemo(() => ({ progress, readingRest, enabled, compact }), [progress, readingRest, enabled, compact]);
 
   useEffect(() => {
@@ -153,6 +157,20 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
           data-contact-light-timeline="shared"
           style={{ x: enabled ? sunlightX : 0, y: enabled ? sunlightY : 0, scale: enabled ? sunlightScale : 1, opacity: enabled ? sunlightOpacity : 0.16 }}
         />
+        {(variant === "paper" || variant === "daybreak") && (
+          <motion.div
+            aria-hidden="true"
+            data-contact-scene-seam="arrival"
+            style={{ scaleY: enabled ? arrivalScale : 1 }}
+          />
+        )}
+        {(variant === "branch" || variant === "paper" || variant === "daybreak") && (
+          <motion.div
+            aria-hidden="true"
+            data-contact-scene-seam="departure"
+            style={{ scaleY: enabled ? departureScale : 1 }}
+          />
+        )}
         <div data-contact-scene-plane="true" data-contact-focus-pull="crisp" className="relative z-10 flex min-h-[100svh] w-full items-center">
           {children}
         </div>
