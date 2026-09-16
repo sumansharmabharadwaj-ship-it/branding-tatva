@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useContactSceneStage } from "@/hooks/useContactSceneStage";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
@@ -50,12 +50,14 @@ function CallStepNumber({ index, progress, reducedMotion }: {
 /** The first call assembles as a three-part ledger instead of fading in. */
 export function ContactCallSequence() {
   const sequenceRef = useRef<HTMLDivElement>(null);
+  const [keyboardOwnsSequence, setKeyboardOwnsSequence] = useState(false);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const reducedMotion = !hydrated || prefersReducedMotion;
   const { activeIndex, choose, stageProgress } = useContactSceneStage({
     count: STEPS.length,
     target: sequenceRef,
     reducedMotion,
+    followScroll: !keyboardOwnsSequence,
   });
   const progress = useSpring(stageProgress, { stiffness: 130, damping: 27, mass: 0.32 });
   const drawn = useTransform(progress, [0.5 / STEPS.length, 1 - 0.5 / STEPS.length], [0, 1]);
@@ -66,6 +68,19 @@ export function ContactCallSequence() {
       data-contact-call-sequence
       data-contact-call-motion={reducedMotion ? "reduced" : "full"}
       data-contact-call-timeline="shared"
+      onFocusCapture={(event) => {
+        setKeyboardOwnsSequence(event.target.matches(":focus-visible"));
+      }}
+      onBlurCapture={(event) => {
+        if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
+          setKeyboardOwnsSequence(false);
+        }
+      }}
+      // Clicking the already focused row has no focus event. Release its
+      // keyboard hold so a deliberate pointer choice can follow scroll.
+      onPointerDownCapture={(event) => {
+        if (event.isPrimary && event.button === 0) setKeyboardOwnsSequence(false);
+      }}
       className="relative mt-5 sm:mt-9"
     >
       <span
@@ -102,9 +117,15 @@ export function ContactCallSequence() {
                 onClick={() => choose(index)}
                 onFocus={() => choose(index)}
                 onPointerEnter={(event) => {
-                  if (event.pointerType === "mouse") choose(index);
+                  // Incidental hover cannot replace the keyboard reader's
+                  // selected step, its ink, or the booking card's light.
+                  if (event.pointerType === "mouse" && !keyboardOwnsSequence) choose(index);
                 }}
                 onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    setKeyboardOwnsSequence(true);
+                    return;
+                  }
                   let next: number;
                   if (event.key === "ArrowRight" || event.key === "ArrowDown") next = index + 1;
                   else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = index - 1;
@@ -112,8 +133,13 @@ export function ContactCallSequence() {
                   else if (event.key === "End") next = STEPS.length - 1;
                   else return;
                   event.preventDefault();
+                  setKeyboardOwnsSequence(true);
                   const buttons = sequenceRef.current?.querySelectorAll<HTMLButtonElement>("[data-contact-call-step]");
-                  buttons?.[(next + STEPS.length) % STEPS.length]?.focus({ preventScroll: true });
+                  const nextIndex = (next + STEPS.length) % STEPS.length;
+                  // Home/End can select the row that already has focus, in
+                  // which case the focus handler will never run again.
+                  if (nextIndex === index) choose(nextIndex);
+                  else buttons?.[nextIndex]?.focus({ preventScroll: true });
                 }}
                 className={`group relative flex min-h-[6.75rem] w-full flex-col items-center gap-2 overflow-hidden rounded-xl border px-2 py-3 text-center transition-[border-color,color,transform] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-clay sm:min-h-20 sm:flex-row sm:items-start sm:gap-4 sm:rounded-2xl sm:px-4 sm:py-4 sm:text-left lg:min-h-0 lg:items-center lg:py-3 ${
                   active
