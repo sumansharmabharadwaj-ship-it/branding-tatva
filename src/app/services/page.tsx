@@ -368,9 +368,9 @@ export default async function ServicesPage() {
               separate water-current metaphor. */}
           <BackgroundVideo
             parallax
-            video="/videos/generated/bt-services-situation-paths.mp4"
-            videoMobile="/videos/generated/bt-services-situation-paths-mobile.mp4"
-            poster="/images/generated/bt-services-situation-paths-poster.jpg"
+            video="/videos/pexels-moss-stream.mp4"
+            videoWebm="/videos/pexels-moss-stream.webm"
+            poster="/images/pexels-moss-stream-poster.jpg"
             playbackRate={1.06}
           />
           {/* A left-weighted charcoal scrim protects the diagnosis copy
@@ -410,9 +410,9 @@ export default async function ServicesPage() {
               visible without turning the chapter into another card grid. */}
           <BackgroundVideo
             parallax
-            video="/videos/generated/bt-services-strategy-topography.mp4"
-            videoMobile="/videos/generated/bt-services-strategy-topography-mobile.mp4"
-            poster="/images/generated/bt-services-strategy-topography-poster.jpg"
+            video="/videos/pexels-root-network.mp4"
+            videoWebm="/videos/pexels-root-network.webm"
+            poster="/images/pexels-root-network-poster.jpg"
             playbackRate={1.12}
           />
           <div
@@ -438,9 +438,9 @@ export default async function ServicesPage() {
           <BackgroundVideo
             parallax
             push
-            video="/videos/generated/bt-services-package-current.mp4"
-            videoMobile="/videos/generated/bt-services-package-current-mobile.mp4"
-            poster="/images/generated/bt-services-package-current-poster.jpg"
+            video="/videos/pexels-golden-fog-sea.mp4"
+            videoWebm="/videos/pexels-golden-fog-sea.webm"
+            poster="/images/pexels-golden-fog-sea-poster.jpg"
           />
           <div
             className="absolute inset-0"
@@ -465,8 +465,9 @@ export default async function ServicesPage() {
             seamlessly into Authority's identical charcoal. */}
         <section id="proof" data-services-scene="verified-outcome" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           <BackgroundVideo
-            video="/videos/generated/bt-services-verified-rings.mp4"
-            poster="/images/generated/bt-services-verified-rings-poster.jpg"
+            video="/videos/pexels-redwood-ferns.mp4"
+            videoWebm="/videos/pexels-redwood-ferns.webm"
+            poster="/images/pexels-redwood-ferns-poster.jpg"
             parallax
             playbackRate={0.94}
           />
@@ -542,9 +543,9 @@ export default async function ServicesPage() {
           <div data-perception-ambient-film="true" aria-hidden="true" className="absolute inset-0">
             <BackgroundVideo
               parallax
-              video="/videos/generated/bt-services-perception-ascent.mp4"
-              videoMobile="/videos/generated/bt-services-perception-ascent-mobile.mp4"
-              poster="/images/generated/bt-services-perception-ascent-poster.jpg"
+              video="/videos/pexels-summit-inversion.mp4"
+              videoWebm="/videos/pexels-summit-inversion.webm"
+              poster="/images/pexels-summit-inversion-poster.jpg"
               playbackRate={0.82}
             />
           </div>
@@ -608,9 +609,9 @@ export default async function ServicesPage() {
             responsive, and preserved as a still under reduced motion. */}
         <TexturedDark
           id="book"
-          image="/images/generated/bt-services-strategy-room-poster.jpg"
-          video="/videos/generated/bt-services-strategy-room.mp4"
-          videoMobile="/videos/generated/bt-services-strategy-room-mobile.mp4"
+          image="/images/pexels-valley-first-light-poster.jpg"
+          video="/videos/pexels-valley-first-light.mp4"
+          videoWebm="/videos/pexels-valley-first-light.webm"
           overlayGradient="linear-gradient(180deg, rgba(10,15,16,0.26) 0%, rgba(14,18,18,0.34) 52%, rgba(20,17,14,0.54) 100%)"
           className="flex min-h-[100svh] flex-col justify-center pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
