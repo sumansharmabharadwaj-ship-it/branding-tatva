@@ -151,7 +151,7 @@ export const founderBrandInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "The bridge is made of distinctive assets shared on purpose. One claim, staked identically by the founder's posts and the company's homepage. One vocabulary, so a sentence from either source is recognisably from the same mind. One visual register, so the feed and the website read as one place. When the cues are shared, attention earned by either name accrues to both, and the parasocial trust the founder collects has somewhere durable to land.",
           "The bridge also needs traffic in both directions. The founder's content should keep attaching the company's name to the buying situations that matter, so the firm gets recorded as the answer while the person earns the attention. The company's surfaces should keep the founder visible, named, and quotable, because the face is the reason the trust arrived at all.",
-          "Watch what breaks the bridge: a founder voice that never mentions what the firm actually decides for clients, a company site scrubbed of personality, vocabularies that diverge until the two names read as strangers. Each is common, and each quietly routes years of accumulated trust into an asset the business cannot keep.",
+          "Watch what breaks the bridge: a founder voice that never mentions what the firm actually decides for clients, a company site scrubbed of personality, vocabularies that diverge until the two names read as strangers. Each is common, and each quietly routes years of accumulated trust into an asset that leaves with the founder.",
         ],
       },
       {
