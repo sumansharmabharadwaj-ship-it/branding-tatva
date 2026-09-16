@@ -11,7 +11,8 @@
 }
 
 .tatva-pressure-lab__node {
-  translate: -50% -50%;
+  /* Anchor the marker itself; the label sits below the connection endpoint. */
+  translate: -50% -1rem;
 }
 
 .tatva-pressure-lab__reading {
@@ -36,7 +37,7 @@
 
 @media (max-width: 640px) {
   .tatva-pressure-lab__diagram {
-    overflow: hidden;
+    overflow: visible;
   }
 
   .tatva-pressure-lab__consequence {

@@ -318,7 +318,7 @@
   }
 
   .tatva-pressure-lab__diagram {
-    min-height: 22rem;
+    min-height: 0;
   }
 
   .tatva-pressure-lab__node {

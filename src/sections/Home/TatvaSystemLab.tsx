@@ -281,7 +281,7 @@ export function TatvaSystemLab() {
             </div>
 
             <div className="grid gap-6 pt-5 md:grid-cols-[minmax(17rem,1fr)_minmax(13rem,0.72fr)] md:items-center">
-              <div ref={diagramRef} className="tatva-pressure-lab__diagram relative mx-auto aspect-[5/4] w-full max-w-[36rem]">
+              <div ref={diagramRef} className="tatva-pressure-lab__diagram relative mx-auto aspect-[500/420] w-full max-w-[36rem]">
                 <svg
                   viewBox="0 0 500 420"
                   className="absolute inset-0 h-full w-full overflow-visible"
