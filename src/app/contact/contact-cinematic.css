@@ -40,7 +40,10 @@
 [data-contact-film] [data-contact-booking-card] {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  /* Its oversized light must stay clipped without letting focus navigation
+     scroll the card's heading and copy behind its own rounded edge. */
+  display: flow-root;
+  overflow: clip;
 }
 
 [data-contact-film] [data-contact-booking-card]::before {

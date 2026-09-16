@@ -132,7 +132,11 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
         onBlurCapture={(event) => {
           if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setHasReadingFocus(false);
         }}
-        className={cn("relative min-h-[100svh] overflow-hidden touch-pan-y", className)}
+        // Clip the oversized light layers without creating a scroll container.
+        // Hidden overflow let focus navigation scroll the whole composition
+        // inside its section, leaving its seam above the actual boundary.
+        // Flow-root retains the previous formatting context.
+        className={cn("relative flow-root min-h-[100svh] overflow-clip touch-pan-y", className)}
       >
         <motion.div
           aria-hidden="true"
