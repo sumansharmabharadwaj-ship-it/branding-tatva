@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Compass, Hand, Pause, Play, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import { focusHomeReading, isAvailableHomeTabStop } from "./homeReadingFocus";
 import {
   publishHomeGuideMode,
   type HomeGuideMode,
@@ -34,14 +35,6 @@ const CHAPTER_NAMES = [
   "invitation",
 ] as const;
 const TAB_STOP_SELECTOR = "a[href], button, input, select, textarea, [tabindex]";
-
-function isAvailableTabStop(element: HTMLElement) {
-  return element.tabIndex >= 0 &&
-    !element.matches(":disabled") &&
-    !element.closest('[inert], [aria-hidden="true"]') &&
-    element.getClientRects().length > 0 &&
-    window.getComputedStyle(element).visibility === "visible";
-}
 
 type GuideMode = HomeGuideMode;
 type HandoffMotif = "mist" | "river" | "root" | "aperture" | "paper" | "constellation" | "light";
@@ -286,31 +279,12 @@ export function GuidedView() {
     if (event.key !== "Tab" || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
 
     const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(TAB_STOP_SELECTOR))
-      .filter(isAvailableTabStop);
+      .filter(isAvailableHomeTabStop);
     if (event.target !== controls[controls.length - 1]) return;
-
-    const chapter = resolveChapters()[activeIndex];
-    if (!chapter) return;
-    const candidates = Array.from(chapter.querySelectorAll<HTMLElement>(TAB_STOP_SELECTOR))
-      .filter(isAvailableTabStop);
-    // The fixed guide precedes the opening in DOM order. Leave it at the
-    // current reading position, preferring a control already in the viewport.
-    const destination = candidates.find((candidate) => {
-      const rect = candidate.getBoundingClientRect();
-      return rect.top >= 0 && rect.bottom <= window.innerHeight;
-    }) ?? candidates[0];
-    if (!destination) return;
 
     dismissHint();
     changeMode("manual");
-    destination.focus({ preventScroll: true });
-    if (document.activeElement !== destination) return;
-    event.preventDefault();
-
-    const rect = destination.getBoundingClientRect();
-    if (rect.top < 0 || rect.bottom > window.innerHeight) {
-      destination.scrollIntoView({ block: "nearest", behavior: "instant" });
-    }
+    if (focusHomeReading()) event.preventDefault();
   }
 
   if (prefersReducedMotion) return null;
@@ -331,7 +305,7 @@ export function GuidedView() {
   const detail = atFinalChapter
     ? "the invitation"
     : showHint
-      ? "eleven scenes · always yours to steer"
+      ? `${count} scenes · always yours to steer`
       : chapterName;
 
   return (

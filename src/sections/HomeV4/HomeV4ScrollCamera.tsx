@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { flushSync } from "react-dom";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMotionPreference } from "@/components/MotionPreference";
 import { Pause, Play } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
+import { focusHomeReading, isAvailableHomeTabStop } from "./homeReadingFocus";
 
 const HANDOFF_SELECTOR = ".home-v4-handoff";
 const SCROLL_KEYS = new Set([
@@ -376,6 +377,16 @@ export function HomeV4ScrollCamera() {
     }
   }
 
+  function continueReading(event: ReactKeyboardEvent<HTMLButtonElement>) {
+    if (event.key !== "Tab" || event.altKey || event.ctrlKey || event.metaKey) return;
+    // Desktop keeps the guide in the control group's forward Tab order. On
+    // mobile and when paused it is absent, so return directly to the reading.
+    if (!event.shiftKey && Array.from(document.querySelectorAll<HTMLButtonElement>(
+      "[data-guided-controls] button",
+    )).some(isAvailableHomeTabStop)) return;
+    if (focusHomeReading(event.shiftKey)) event.preventDefault();
+  }
+
   return (
     <button
       type="button"
@@ -384,6 +395,7 @@ export function HomeV4ScrollCamera() {
       disabled={followsSystem}
       aria-pressed={prefersReducedMotion}
       onClick={toggleMotion}
+      onKeyDown={continueReading}
     >
       {prefersReducedMotion ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
       <span>{followsSystem ? "Reduced motion" : prefersReducedMotion ? "Motion paused" : "Pause motion"}</span>
