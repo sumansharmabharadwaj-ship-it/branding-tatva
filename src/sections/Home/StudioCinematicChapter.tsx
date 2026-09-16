@@ -130,6 +130,12 @@ export function StudioCinematicChapter() {
     setActiveIndex(index);
   }, []);
 
+  // Collapsing the desktop hold changes its progress. Preserve the current
+  // discipline through pause/resume until the visitor scrolls again.
+  useEffect(() => {
+    if (prefersReducedMotion) manualChoiceRef.current = true;
+  }, [prefersReducedMotion]);
+
   // The natural frame height includes the portrait and the complete proof.
   // Release the hold when a shorter viewport or larger type needs more room.
   useEffect(() => {

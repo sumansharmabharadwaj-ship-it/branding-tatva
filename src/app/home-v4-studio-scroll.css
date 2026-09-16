@@ -100,6 +100,7 @@
 }
 .home-v4 #studio .studio-cinematic__proof:focus-visible {
   transform: none;
+  outline-offset: -4px;
 }
 
 /* Both the site preference and the OS preference release the held frame. */
