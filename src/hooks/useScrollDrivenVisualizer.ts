@@ -12,6 +12,8 @@ type ScrollDrivenVisualizerOptions = {
   scrollHysteresis?: number;
   /** Keep a keyboard reader's active panel and action destination stable. */
   preservePanelFocus?: boolean;
+  /** A scene may use a reading region and pressed buttons instead of tabs. */
+  focusScopeSelector?: string;
 };
 
 const SCROLL_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "]);
@@ -37,6 +39,7 @@ export function useScrollDrivenVisualizer({
   reducedMotion = false,
   scrollHysteresis = 0,
   preservePanelFocus = false,
+  focusScopeSelector = '[role="tabpanel"]',
 }: ScrollDrivenVisualizerOptions) {
   const safeCount = Math.max(1, count);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -61,8 +64,8 @@ export function useScrollDrivenVisualizer({
     if (!preservePanelFocus || typeof document === "undefined") return false;
     const focused = document.activeElement;
     return focused instanceof HTMLElement && focused.matches(":focus-visible") &&
-      Boolean(focused.closest('[role="tabpanel"]') && target.current?.contains(focused));
-  }, [preservePanelFocus, target]);
+      Boolean(focused.closest(focusScopeSelector) && target.current?.contains(focused));
+  }, [focusScopeSelector, preservePanelFocus, target]);
 
   const readProgress = useCallback(() => {
     const node = target.current;
@@ -143,7 +146,7 @@ export function useScrollDrivenVisualizer({
       if (scrollHysteresis > 0) previewingRef.current = false;
     };
     const releaseManualChoiceFromKeyboard = (event: KeyboardEvent) => {
-      if (!SCROLL_KEYS.has(event.key)) return;
+      if (event.defaultPrevented || !SCROLL_KEYS.has(event.key)) return;
       if (
         event.target instanceof Element &&
         target.current?.contains(event.target) &&

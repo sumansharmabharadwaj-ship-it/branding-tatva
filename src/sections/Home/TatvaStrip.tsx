@@ -1,12 +1,13 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { motion, useInView } from "framer-motion";
+import { motion, useAnimationControls, useInView, useMotionValueEvent } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, type KeyboardEvent } from "react";
 import { Container } from "@/components/Container";
-import { useLenis } from "@/components/SmoothScrollProvider";
 import { Reveal } from "@/components/Reveal";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { elements } from "@/data/elements";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
 
@@ -62,80 +63,69 @@ const TATVAS: Tatva[] = [
   },
 ];
 
+function TatvaReading({ tatva }: { tatva: Tatva }) {
+  return (
+    <>
+      <p className="tatva-observatory__reading-title mt-3 font-display text-2xl font-normal">{tatva.role}</p>
+      <p className="tatva-observatory__reading-question mt-2 text-base leading-relaxed">{tatva.question}</p>
+      <p className="mt-4 text-sm leading-relaxed text-ivory/75">Governs · {tatva.governs}</p>
+    </>
+  );
+}
+
 export function TatvaStrip() {
-  const lenis = useLenis();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
+  const forceRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const previousIndex = useRef(0);
+  const copyMotion = useAnimationControls();
   const inView = useInView(sectionRef, { amount: 0.18 });
-  const [activeIndex, setActiveIndex] = useState(0);
+  const desktopStory = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
+  const { activeIndex, choose, preview, releasePreview, scrollYProgress } = useScrollDrivenVisualizer({
+    count: TATVAS.length,
+    target: sectionRef,
+    enabled: desktopStory && inView,
+    reducedMotion: prefersReducedMotion,
+    scrollHysteresis: 0.0125,
+    preservePanelFocus: true,
+    focusScopeSelector: ".tatva-observatory__focus, .tatva-observatory__force",
+  });
   const active = TATVAS[activeIndex] ?? TATVAS[0];
 
+  const writeProgress = useCallback((progress: number) => {
+    if (!desktopStory || prefersReducedMotion) return;
+    frameRef.current?.style.setProperty("--tatva-scroll-progress", Math.max(0, Math.min(1, progress)).toFixed(4));
+  }, [desktopStory, prefersReducedMotion]);
+  useMotionValueEvent(scrollYProgress, "change", writeProgress);
   useEffect(() => {
-    const section = sectionRef.current;
     const frame = frameRef.current;
-    if (!section || !frame || prefersReducedMotion) return;
+    writeProgress(scrollYProgress.get());
+    return () => { frame?.style.removeProperty("--tatva-scroll-progress"); };
+  }, [scrollYProgress, writeProgress]);
 
-    const desktopStory = window.matchMedia(
-      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
-    );
-    let frameRequest = 0;
+  const settleReading = useCallback(() => {
+    copyMotion.stop();
+    copyMotion.set({ x: 0, y: 0 });
+  }, [copyMotion]);
+  useEffect(() => {
+    const previous = previousIndex.current;
+    previousIndex.current = activeIndex;
+    settleReading();
+    if (prefersReducedMotion || previous === activeIndex) return;
+    const direction = activeIndex > previous ? 1 : -1;
+    copyMotion.set({ x: -direction * (desktopStory ? 18 : 8), y: desktopStory ? 6 : 0 });
+    void copyMotion.start({ x: 0, y: 0, transition: { duration: .42, ease: [0.22, 1, 0.36, 1] } });
+    return () => copyMotion.stop();
+  }, [activeIndex, copyMotion, desktopStory, prefersReducedMotion, settleReading]);
 
-    function render() {
-      frameRequest = 0;
-      if (!desktopStory.matches) {
-        frame?.style.removeProperty("--tatva-scroll-progress");
-        return;
-      }
-
-      const bounds = section?.getBoundingClientRect();
-      if (!bounds) return;
-
-      const runway = Math.max(1, bounds.height - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, -bounds.top / runway));
-      const nextIndex = Math.min(TATVAS.length - 1, Math.floor(progress * TATVAS.length));
-
-      frame?.style.setProperty("--tatva-scroll-progress", progress.toFixed(4));
-      setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
-    }
-
-    function schedule() {
-      if (frameRequest) return;
-      frameRequest = window.requestAnimationFrame(render);
-    }
-
-    render();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    desktopStory.addEventListener("change", schedule);
-
-    return () => {
-      if (frameRequest) window.cancelAnimationFrame(frameRequest);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      desktopStory.removeEventListener("change", schedule);
-      frame.style.removeProperty("--tatva-scroll-progress");
-    };
-  }, [prefersReducedMotion]);
-
-  function choose(index: number) {
-    const section = sectionRef.current;
-    const desktopStory = window.matchMedia(
-      "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
-    );
-
-    if (section && desktopStory.matches && !prefersReducedMotion) {
-      const bounds = section.getBoundingClientRect();
-      const runway = Math.max(0, bounds.height - window.innerHeight);
-      if (runway > 0) {
-        // Put the held frame in the middle of the chosen scroll chapter.
-        // Immediate alignment avoids briefly reading every intervening force.
-        const top = window.scrollY + bounds.top + runway * ((index + 0.5) / TATVAS.length);
-        if (lenis) lenis.scrollTo(top, { immediate: true });
-        else window.scrollTo({ top, behavior: "instant" });
-      }
-    }
-    setActiveIndex(index);
+  function onForceKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? 0 : event.key === "End" ? TATVAS.length - 1
+      : (index + (event.key === "ArrowRight" ? 1 : TATVAS.length - 1)) % TATVAS.length;
+    choose(next);
+    forceRefs.current[next]?.focus({ preventScroll: true });
   }
 
   const motionActive = inView && !prefersReducedMotion;
@@ -198,13 +188,15 @@ export function TatvaStrip() {
 
             <motion.div
               id="tatva-focus-reading"
+              role="region"
+              aria-label={`${active.name}: ${active.role}`}
+              tabIndex={0}
+              onFocusCapture={settleReading}
               className="tatva-observatory__focus mt-7 overflow-hidden rounded-2xl border p-5"
               style={{
                 borderColor: `${ELEMENT_HEX[active.slug]}88`,
                 background: `radial-gradient(circle at 92% 4%, ${ELEMENT_HEX[active.slug]}24, transparent 42%), rgba(9,18,16,0.78)`,
               }}
-              aria-live="polite"
-              aria-atomic="true"
             >
               <div className="flex items-center justify-between gap-4">
                 <p className="text-[0.8125rem] font-medium uppercase tracking-[0.12em]">
@@ -214,21 +206,20 @@ export function TatvaStrip() {
                   {String(activeIndex + 1).padStart(2, "0")} / 05
                 </span>
               </div>
-              <p className="mt-3 font-display text-2xl font-normal">
-                {active.role}
-              </p>
-              <p className="mt-2 text-base leading-relaxed">
-                {active.question}
-              </p>
-              <p className="mt-4 text-sm leading-relaxed text-ivory/75">
-                Governs · {active.governs}
-              </p>
+              <div className="tatva-observatory__reading">
+                <div className="tatva-observatory__reading-measure" aria-hidden="true" inert>
+                  {TATVAS.map((tatva) => <div key={tatva.slug}><TatvaReading tatva={tatva} /></div>)}
+                </div>
+                <motion.div className="tatva-observatory__reading-copy" initial={false} animate={copyMotion}>
+                  <TatvaReading tatva={active} />
+                </motion.div>
+              </div>
             </motion.div>
 
           </Reveal>
 
           <Reveal delay={0.1}>
-            <ol className="tatva-observatory__orbit grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
+            <ol aria-label="Choose a Tatva" className="tatva-observatory__orbit grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
               {TATVAS.map((tatva, index) => {
                 const element = elements.find((entry) => entry.slug === tatva.slug);
                 const isActive = index === activeIndex;
@@ -245,11 +236,15 @@ export function TatvaStrip() {
                     }}
                   >
                     <button
+                      ref={(node) => { forceRefs.current[index] = node; }}
                       type="button"
                       aria-pressed={isActive}
                       aria-controls="tatva-focus-reading"
                       aria-label={`Focus ${tatva.name}: ${tatva.role}`}
                       onClick={() => choose(index)}
+                      onPointerEnter={(event) => { if (event.pointerType === "mouse") preview(index); }}
+                      onPointerLeave={releasePreview}
+                      onKeyDown={(event) => onForceKey(event, index)}
                       className="tatva-observatory__force group flex min-w-0 w-full flex-col items-center rounded-2xl text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
                     >
                       <motion.span

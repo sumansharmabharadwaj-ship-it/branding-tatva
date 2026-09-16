@@ -66,7 +66,7 @@
 
 .tatva-observatory__copy > p:not(:first-child),
 .tatva-pressure-lab__copy > p:not(:first-child),
-.tatva-observatory__focus > p:nth-of-type(2),
+.tatva-observatory__reading-question,
 .tatva-pressure-lab__reading > p:last-of-type {
   color: rgba(244, 239, 230, 0.68);
 }
@@ -78,12 +78,24 @@
   backdrop-filter: blur(18px) saturate(1.08);
 }
 
-.tatva-observatory__focus > div p {
+.tatva-observatory__focus > div:first-child p {
   color: rgba(244, 239, 230, 0.75);
 }
 
-.tatva-observatory__focus > p:nth-of-type(1) {
+.tatva-observatory__reading-title {
   color: #f4efe6;
+}
+
+/* The five readings share one measured slot at the actual viewport width.
+   Only the live copy is exposed; switching never resizes the card or runway. */
+.tatva-observatory__reading,
+.tatva-observatory__reading-measure { display: grid; }
+.tatva-observatory__reading > *,
+.tatva-observatory__reading-measure > * { grid-area: 1 / 1; min-width: 0; }
+.tatva-observatory__reading-measure { visibility: hidden; pointer-events: none; user-select: none; }
+.tatva-observatory__focus:focus-visible {
+  outline: 2px solid #d4b99a;
+  outline-offset: 5px;
 }
 
 .tatva-observatory__force {
