@@ -39,7 +39,7 @@
     overflow: hidden;
   }
 
-  .tatva-pressure-lab__reading > p.font-display {
+  .tatva-pressure-lab__consequence {
     font-size: clamp(1.28rem, 6vw, 1.52rem);
     line-height: 1.15;
   }

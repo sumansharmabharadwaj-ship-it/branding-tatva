@@ -408,7 +408,16 @@
 
 /* Keep the explanation and next action readable after each deliberate choice. */
 .tatva-pressure-lab__force span span:last-child { color: #c3c1b8; }
-.tatva-pressure-lab__reading > p.font-display { color: #f4efe6; }
+.tatva-pressure-lab__consequence { color: #f4efe6; }
+.tatva-pressure-lab__stack { display: grid; }
+.tatva-pressure-lab__stack > * { grid-area: 1 / 1; min-width: 0; }
+.tatva-pressure-lab__measure { visibility: hidden; pointer-events: none; user-select: none; }
+.tatva-pressure-lab__reading-region:focus-visible {
+  outline: 2px solid #d4b99a;
+  outline-offset: 5px;
+  border-radius: 1rem;
+}
+.tatva-pressure-lab__signal { pointer-events: none; }
 .tatva-pressure-lab__next-step {
   margin-top: 1.25rem;
   padding-top: 1rem;

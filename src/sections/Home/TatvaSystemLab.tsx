@@ -1,8 +1,8 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useAnimationControls, useInView, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Container } from "@/components/Container";
 import Link from "next/link";
 
@@ -57,8 +57,86 @@ const NODE_POSITIONS = [
   { x: 74, y: 172 },
 ] as const;
 
+type Force = (typeof FORCES)[number];
+const READING_STATES: (Force | null)[] = [null, ...FORCES];
+
+function SystemHeading({ force }: { force: Force | null }) {
+  return (
+    <>
+      <div>
+        <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em]">Brand connections</p>
+        <h3 className="mt-2 font-display text-3xl font-normal leading-tight">
+          {force ? `${force.role} missing` : "All five working together"}
+        </h3>
+      </div>
+      <span className="tatva-pressure-lab__status rounded-full border px-3 py-2 text-[0.56rem] font-medium uppercase tracking-[0.14em]">
+        {force ? `${force.name} omitted` : "Complete system"}
+      </span>
+    </>
+  );
+}
+
+function SystemReading({ force }: { force: Force | null }) {
+  return (
+    <>
+      <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: "#D4B99A" }}>
+        {force ? `Without ${force.name}` : "When all five are present"}
+      </p>
+      <p className="tatva-pressure-lab__consequence mt-3 font-display text-2xl leading-tight">
+        {force?.consequence ?? "The position, experience, identity, voice, and presence all carry the same promise."}
+      </p>
+      <div className="tatva-pressure-lab__next-step">
+        <p>{force ? "First decision to revisit" : "Where to begin"}</p>
+        <p>{force?.repair ?? "Check where customers encounter a different message from the one you intend."}</p>
+      </div>
+    </>
+  );
+}
+
+function SystemConnection({ index, missing, reducedMotion, progress }: {
+  index: number;
+  missing: boolean;
+  reducedMotion: boolean;
+  progress: MotionValue<number>;
+}) {
+  const node = NODE_POSITIONS[index];
+  const force = FORCES[index];
+  const range = [.12 + index * .035, .64 + index * .035];
+  const signalX = useTransform(progress, range, [node.x, 250]);
+  const signalY = useTransform(progress, range, [node.y, 222]);
+  return (
+    <g>
+      <motion.line
+        x1={node.x} y1={node.y} x2="250" y2="222"
+        stroke={force.color}
+        strokeWidth={missing ? .8 : 1.7}
+        strokeDasharray={missing ? "4 8" : undefined}
+        initial={false}
+        animate={{ opacity: missing ? .18 : .86, pathLength: missing ? .35 : 1 }}
+        transition={{ duration: reducedMotion ? 0 : .45, ease: [0.22, 1, 0.36, 1] }}
+      />
+      {!reducedMotion && (
+        <motion.circle
+          className="tatva-pressure-lab__signal"
+          cx={signalX} cy={signalY} r="3"
+          fill={force.color}
+          initial={false}
+          animate={{ opacity: missing ? 0 : .9 }}
+          transition={{ duration: .3 }}
+        />
+      )}
+    </g>
+  );
+}
+
 export function TatvaSystemLab() {
   const sectionRef = useRef<HTMLElement>(null);
+  const diagramRef = useRef<HTMLDivElement>(null);
+  const forceRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const nodeRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const copyMotion = useAnimationControls();
+  const previousIndex = useRef<number | null>(null);
+  const { scrollYProgress } = useScroll({ target: diagramRef, offset: ["start end", "end start"] });
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const inView = useInView(sectionRef, { amount: 0.28 });
   const [omittedIndex, setOmittedIndex] = useState<number | null>(null);
@@ -66,6 +144,33 @@ export function TatvaSystemLab() {
   const motionActive = inView && !prefersReducedMotion;
   function choose(index: number | null) {
     setOmittedIndex((current) => (index !== null && current === index ? null : index));
+  }
+
+  const settleReading = useCallback(() => {
+    copyMotion.stop();
+    copyMotion.set({ x: 0, y: 0 });
+  }, [copyMotion]);
+  useEffect(() => {
+    const previous = previousIndex.current;
+    previousIndex.current = omittedIndex;
+    settleReading();
+    if (prefersReducedMotion || previous === omittedIndex) return;
+    const direction = (omittedIndex ?? -1) > (previous ?? -1) ? 1 : -1;
+    copyMotion.set({ x: -direction * 8, y: 3 });
+    void copyMotion.start({ x: 0, y: 0, transition: { duration: .4, ease: [0.22, 1, 0.36, 1] } });
+    return () => copyMotion.stop();
+  }, [omittedIndex, prefersReducedMotion, copyMotion, settleReading]);
+
+  function onForceKey(event: KeyboardEvent<HTMLButtonElement>, index: number, buttons: (HTMLButtonElement | null)[]) {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const next = event.key === "Home" ? 0 : event.key === "End" ? FORCES.length - 1
+      : (index + (event.key === "ArrowRight" ? 1 : FORCES.length - 1)) % FORCES.length;
+    setOmittedIndex(next);
+    const button = buttons[next];
+    if (!button) return;
+    const bounds = button.getBoundingClientRect();
+    button.focus({ preventScroll: bounds.top >= 80 && bounds.bottom <= window.innerHeight });
   }
 
   return (
@@ -79,15 +184,15 @@ export function TatvaSystemLab() {
         aria-hidden="true"
         className="pointer-events-none absolute -left-40 top-[-20%] h-[30rem] w-[30rem] rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(199,119,82,0.22), transparent 70%)" }}
-        animate={motionActive ? { x: [0, 72, 0], y: [0, 24, 0], scale: [0.96, 1.08, 0.96] } : undefined}
-        transition={motionActive ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : undefined}
+        animate={motionActive ? { x: [0, 72, 0], y: [0, 24, 0], scale: [0.96, 1.08, 0.96] } : { x: 0, y: 0, scale: 1 }}
+        transition={motionActive ? { duration: 18, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
       />
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute -right-36 bottom-[-32%] h-[34rem] w-[34rem] rounded-full blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(82,117,111,0.24), transparent 70%)" }}
-        animate={motionActive ? { x: [0, -64, 0], y: [0, -32, 0], scale: [1.05, 0.94, 1.05] } : undefined}
-        transition={motionActive ? { duration: 21, repeat: Infinity, ease: "easeInOut" } : undefined}
+        animate={motionActive ? { x: [0, -64, 0], y: [0, -32, 0], scale: [1.05, 0.94, 1.05] } : { x: 0, y: 0, scale: 1 }}
+        transition={motionActive ? { duration: 21, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
       />
 
       <Container className="relative max-w-[94rem]">
@@ -112,10 +217,12 @@ export function TatvaSystemLab() {
                 return (
                   <button
                     key={force.name}
+                    ref={(node) => { forceRefs.current[index] = node; }}
                     type="button"
                     aria-pressed={missing}
                     aria-controls="tatva-system-reading"
                     onClick={() => choose(index)}
+                    onKeyDown={(event) => onForceKey(event, index, forceRefs.current)}
                     className="tatva-pressure-lab__force group flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                     style={{
                       borderColor: missing ? `${force.color}99` : "rgba(244,239,230,0.12)",
@@ -160,20 +267,21 @@ export function TatvaSystemLab() {
           </div>
 
           <div className="tatva-pressure-lab__board overflow-hidden rounded-[2rem] border p-4 backdrop-blur-xl sm:p-7">
-            <div className="tatva-pressure-lab__board-top flex flex-wrap items-end justify-between gap-4 border-b pb-5">
-              <div>
-                <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em]">Brand connections</p>
-                <h3 className="mt-2 font-display text-3xl font-normal leading-tight">
-                  {omitted ? `${omitted.role} missing` : "All five working together"}
-                </h3>
+            <div className="tatva-pressure-lab__board-top tatva-pressure-lab__stack border-b pb-5">
+              <div className="tatva-pressure-lab__measure tatva-pressure-lab__stack" aria-hidden="true" inert>
+                {READING_STATES.map((force) => (
+                  <div key={force?.name ?? "complete"} className="flex flex-wrap items-end justify-between gap-4">
+                    <SystemHeading force={force} />
+                  </div>
+                ))}
               </div>
-              <span className="tatva-pressure-lab__status rounded-full border px-3 py-2 text-[0.56rem] font-medium uppercase tracking-[0.14em]">
-                {omitted ? `${omitted.name} omitted` : "Complete system"}
-              </span>
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <SystemHeading force={omitted} />
+              </div>
             </div>
 
             <div className="grid gap-6 pt-5 md:grid-cols-[minmax(17rem,1fr)_minmax(13rem,0.72fr)] md:items-center">
-              <div className="tatva-pressure-lab__diagram relative mx-auto aspect-[5/4] w-full max-w-[36rem]">
+              <div ref={diagramRef} className="tatva-pressure-lab__diagram relative mx-auto aspect-[5/4] w-full max-w-[36rem]">
                 <svg
                   viewBox="0 0 500 420"
                   className="absolute inset-0 h-full w-full overflow-visible"
@@ -187,25 +295,10 @@ export function TatvaSystemLab() {
                     strokeWidth="1.2"
                   />
 
-                  {NODE_POSITIONS.map((node, index) => {
-                    const force = FORCES[index];
-                    const missing = omittedIndex === index;
-                    return (
-                      <g key={force.name}>
-                        <motion.line
-                          x1={node.x}
-                          y1={node.y}
-                          x2="250"
-                          y2="222"
-                          stroke={force.color}
-                          strokeWidth={missing ? 0.8 : 1.7}
-                          strokeDasharray={missing ? "4 8" : undefined}
-                          animate={{ opacity: missing ? 0.18 : 0.86, pathLength: missing ? 0.35 : 1 }}
-                          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
-                        />
-                      </g>
-                    );
-                  })}
+                  {FORCES.map((force, index) => (
+                    <SystemConnection key={force.name} index={index} missing={omittedIndex === index}
+                      reducedMotion={prefersReducedMotion} progress={scrollYProgress} />
+                  ))}
 
                   <motion.circle
                     cx="250"
@@ -232,11 +325,13 @@ export function TatvaSystemLab() {
                   return (
                     <motion.button
                       key={force.name}
+                      ref={(node) => { nodeRefs.current[index] = node; }}
                       type="button"
                       aria-label={`${missing ? "Restore" : "Remove"} ${force.name}`}
                       aria-pressed={missing}
                       aria-controls="tatva-system-reading"
                       onClick={() => choose(index)}
+                      onKeyDown={(event) => onForceKey(event, index, nodeRefs.current)}
                       className="tatva-pressure-lab__node absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-xl px-2 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                       style={{ left: `${(node.x / 500) * 100}%`, top: `${(node.y / 420) * 100}%` }}
                       animate={{ y: missing ? 3 : 0 }}
@@ -257,9 +352,10 @@ export function TatvaSystemLab() {
                 })}
               </div>
 
-              <div id="tatva-system-reading" className="min-w-0" aria-live="polite" aria-atomic="true">
-                <motion.div
-                  key={omitted?.name ?? "complete"}
+              <div id="tatva-system-reading" className="tatva-pressure-lab__reading-region min-w-0"
+                role="region" aria-label="Brand system reading" tabIndex={0}
+                onFocusCapture={settleReading} onPointerDown={settleReading}>
+                <div
                   className="tatva-pressure-lab__reading rounded-2xl border p-5"
                   style={{
                     borderColor: omitted ? `${omitted.color}77` : "rgba(143,162,131,0.32)",
@@ -267,29 +363,22 @@ export function TatvaSystemLab() {
                       ? `radial-gradient(circle at 88% 4%, ${omitted.color}20, transparent 44%), rgba(244,239,230,0.035)`
                       : "radial-gradient(circle at 88% 4%, rgba(143,162,131,0.16), transparent 44%), rgba(244,239,230,0.035)",
                   }}
-                  initial={prefersReducedMotion ? false : { y: 8 }}
-                  animate={{ y: 0 }}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <p
-                    className="text-[0.58rem] font-medium uppercase tracking-[0.16em]"
-                    style={{ color: "#D4B99A" }}
-                  >
-                    {omitted ? `Without ${omitted.name}` : "When all five are present"}
-                  </p>
-                  <p className="mt-3 font-display text-2xl leading-tight">
-                    {omitted
-                      ? omitted.consequence
-                      : "The position, experience, identity, voice, and presence all carry the same promise."}
-                  </p>
-                  <div className="tatva-pressure-lab__next-step">
-                    <p>{omitted ? "First decision to revisit" : "Where to begin"}</p>
-                    <p>{omitted?.repair ?? "Check where customers encounter a different message from the one you intend."}</p>
+                  <div className="tatva-pressure-lab__stack">
+                    <div className="tatva-pressure-lab__measure tatva-pressure-lab__stack" aria-hidden="true" inert>
+                      {READING_STATES.map((force) => (
+                        <div key={force?.name ?? "complete"}><SystemReading force={force} /></div>
+                      ))}
+                    </div>
+                    <motion.div className="tatva-pressure-lab__reading-copy" initial={false} animate={copyMotion}
+                      aria-live="polite" aria-atomic="true">
+                      <SystemReading force={omitted} />
+                    </motion.div>
                   </div>
                   <Link href="/services#audit" className="tatva-pressure-lab__audit">
                     Open the brand audit <span aria-hidden="true">→</span>
                   </Link>
-                </motion.div>
+                </div>
               </div>
             </div>
           </div>
