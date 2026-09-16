@@ -129,7 +129,7 @@
 .invitationRule {
   grid-column: 1 / -1; height: 1px; background: #98623f; transform-origin: left;
 }
-.invitationCopy h2 { max-width: 13ch; font-size: clamp(2.8rem, min(5vw, 7.5svh), 5rem); }
+.invitationCopy h2 { max-width: 15ch; font-size: clamp(2.8rem, min(5vw, 7.5svh), 5rem); }
 .invitationCopy .lede { max-width: 42ch; }
 .bookButton {
   display: inline-flex; align-items: center; justify-content: space-between;
@@ -158,9 +158,22 @@
 }
 .conversation ol { margin: 0; padding: 0; list-style: none; }
 .conversation li {
+  position: relative; isolation: isolate;
   display: grid; grid-template-columns: 1.8rem minmax(0,1fr); gap: 1rem;
   padding-block: 1.4rem; border-top: 1px solid rgb(91 78 58 / 24%);
 }
+.conversationRule {
+  position: absolute; z-index: -1; inset: 0 -.85rem;
+  border-radius: .35rem; pointer-events: none;
+  background: linear-gradient(100deg, rgb(152 98 63 / 12%), rgb(152 98 63 / 3%) 80%, transparent);
+}
+.conversationRule::before {
+  content: ""; position: absolute; inset: 0 .85rem auto; height: 1px;
+  background: linear-gradient(90deg, #98623f, rgb(152 98 63 / 12%));
+}
+.conversation :is(h3, .stepNumber) { transition: color 380ms cubic-bezier(.22,1,.36,1); }
+.conversation li[data-current="true"] .stepNumber { color: #855035; }
+.conversation li[data-current="true"] h3 { color: #70482f; }
 .conversation h3 {
   margin: 0 0 .55rem; font: 400 clamp(1.35rem, 2vw, 1.8rem)/1.2 var(--font-display, Georgia, serif);
 }
@@ -177,6 +190,8 @@
   outline: 2px solid #855035; outline-offset: 5px; border-radius: 3px;
 }
 .invitation .bookButton:focus-visible { border-radius: 999px; }
+:global(.home-v4) .invitation a:focus-visible { outline-color: #855035 !important; }
+.invitation a { scroll-margin-block: 6rem 5rem; }
 @media (max-width: 900px) {
   .questionFrame { gap: 2.5rem; grid-template-columns: minmax(0,.75fr) minmax(0,1.25fr); }
   .invitationFrame { column-gap: 2.5rem; }
@@ -237,47 +252,11 @@
     box-sizing: border-box;
   }
 
-  :global(html:not([data-motion="reduced"])) .conversation li {
-    position: relative;
-  }
 
-  /* A warm reading light follows the agenda in either scroll direction.
-     It sits behind the copy, without moving text or changing row heights. */
-  :global(html:not([data-motion="reduced"])) .conversationRule {
-    position: absolute;
-    inset: 0 -.85rem;
-    border-radius: .35rem;
-    background: linear-gradient(100deg, rgb(152 98 63 / 12%), rgb(152 98 63 / 3%) 80%, transparent);
-    pointer-events: none;
-  }
-
-  :global(html:not([data-motion="reduced"])) .conversationRule::before {
-    content: "";
-    position: absolute;
-    inset: 0 .85rem auto;
-    height: 1px;
-    background: linear-gradient(90deg, #98623f, rgb(152 98 63 / 12%));
-  }
-
-  :global(html:not([data-motion="reduced"])) .conversation li > :not(.conversationRule) {
-    position: relative;
-  }
-
-  :global(html:not([data-motion="reduced"])) .conversation :is(h3, .stepNumber) {
-    transition: color 240ms ease;
-  }
-
-  :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] .stepNumber {
-    color: #855035;
-  }
-
-  :global(html:not([data-motion="reduced"])) .conversation li[data-current="true"] h3 {
-    color: #70482f;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .questionItem, .questionItem::before, .questionNumber, .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg { transition: none; }
+  .questionItem, .questionItem::before, .questionNumber, .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber { transition: none; }
 }
 
 :global(html[data-motion="reduced"]) .questionItem::before { transition: none; }
@@ -286,6 +265,6 @@
   transition: none;
 }
 
-:global(html[data-motion="reduced"]) .invitation :is(.textLink svg, .bookButton, .bookButton svg) {
+:global(html[data-motion="reduced"]) .invitation :is(.textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber) {
   transition: none;
 }

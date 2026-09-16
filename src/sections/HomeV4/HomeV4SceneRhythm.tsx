@@ -52,8 +52,10 @@ const SCENES: readonly SceneSpec[] = [
     // rules and answer transitions carry the interaction below this entrance.
     ["header", "heading"],
   ] },
-  { selector: '[data-home-v4-chapter="invitation"]', ink: "clay", reading: "[data-invitation-copy] > h2 + p", layers: [
-    ["[data-invitation-copy]", "heading"], ["aside", "plate"],
+  { selector: '[data-home-v4-chapter="invitation"]', ink: "clay", reading: "[data-invitation-reading] > h2 + p", layers: [
+    // The booking and proof links stay in a stationary sibling. The agenda
+    // owns its reading light and keeps all three rows in their natural place.
+    ["[data-invitation-reading]", "heading"],
   ] },
   { selector: '[data-home-v4-chapter="diagnostic"]', layers: [
     ["h3", "title"],

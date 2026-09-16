@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { SplitReveal } from "@/components/SplitReveal";
-import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Clock3 } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -80,7 +79,8 @@ function readSituation(): Situation {
 export function FinalInvitation() {
   const rootRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const agendaId = useId();
+  const agendaRef = useRef<HTMLOListElement>(null);
+  const preserveStep = useRef(false);
   const [situation, setSituation] = useState<Situation>("default");
   const [activeStep, setActiveStep] = useState(0);
   const [frameFits, setFrameFits] = useState(false);
@@ -99,8 +99,7 @@ export function FinalInvitation() {
   const lineProgress = useTransform(entranceProgress, [0.1, 0.9], [0, 1]);
   const mediaScale = useTransform(storyProgress, [0, 0.52, 1], [1.05, 1.025, 1]);
   const mediaX = useTransform(storyProgress, [0, 0.52, 1], ["0.8%", "0.25%", "0%"]);
-  const signoffOpacity = useTransform(storyProgress, [0, 0.66, 0.84, 1], [0, 0, 1, 1]);
-  const signoffY = useTransform(storyProgress, [0, 0.66, 0.84, 1], [10, 10, 0, 0]);
+  const signoffInk = useTransform(entranceProgress, [0.5, 1], ["#625a4d", "#70482f"]);
   const desktopStory = cinematicMotion && !reducedMotion && frameFits;
 
   // The frame always keeps its natural height, even while sticky. Measuring
@@ -120,12 +119,59 @@ export function FinalInvitation() {
     };
   }, []);
 
-  useMotionValueEvent(storyProgress, "change", (progress) => {
-    setActiveStep((current) => desktopStory
-      ? invitationStep(progress, current, STEP_LABELS.length)
-      : 0,
-    );
-  });
+  // Preference changes reflow the page. Keep the reading light on the same
+  // step until a fresh scroll gesture, rather than treating that reflow as input.
+  useEffect(() => {
+    if (reducedMotion) preserveStep.current = true;
+  }, [reducedMotion]);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    const agenda = agendaRef.current;
+    if (!root || !agenda || reducedMotion) return;
+    let frame = 0;
+    function render() {
+      frame = 0;
+      if (preserveStep.current) return;
+      const bounds = root!.getBoundingClientRect();
+      if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) return;
+      const focused = document.activeElement;
+      if (focused instanceof HTMLElement && root!.contains(focused) && focused.matches(":focus-visible")) return;
+      const selection = document.getSelection();
+      if (selection && !selection.isCollapsed && selection.rangeCount
+        && selection.getRangeAt(0).intersectsNode(root!)) return;
+      // Compact layouts use the agenda's natural travel through the reading
+      // zone. The desktop hold uses its existing runway. Neither moves text.
+      const agendaBounds = agenda!.getBoundingClientRect();
+      const progress = desktopStory
+        ? -bounds.top / Math.max(1, bounds.height - window.innerHeight)
+        : (window.innerHeight * 0.42 - agendaBounds.top) / Math.max(1, agendaBounds.height);
+      setActiveStep((current) => invitationStep(progress, current, STEP_LABELS.length));
+    }
+    function schedule() {
+      if (!frame) frame = window.requestAnimationFrame(render);
+    }
+    function release() { preserveStep.current = false; }
+    function onKey(event: KeyboardEvent) {
+      if (event.defaultPrevented || !["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) return;
+      if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"], [role="tablist"]')) return;
+      release();
+    }
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.addEventListener("wheel", release, { passive: true });
+    window.addEventListener("touchmove", release, { passive: true });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("wheel", release);
+      window.removeEventListener("touchmove", release);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [desktopStory, reducedMotion]);
 
   // Refresh the two local timelines after the hold changes the scene height.
   // A font, viewport or preference change can happen while scrolling is idle.
@@ -138,10 +184,6 @@ export function FinalInvitation() {
       entranceProgress.set(clamp((viewport - top) / Math.max(1, height)));
       storyProgress.set(clamp(-top / Math.max(1, height - viewport)));
     }
-    setActiveStep((current) => desktopStory
-      ? invitationStep(storyProgress.get(), current, STEP_LABELS.length)
-      : 0,
-    );
   }, [desktopStory, entranceProgress, storyProgress]);
 
   useEffect(() => {
@@ -210,14 +252,13 @@ export function FinalInvitation() {
       <div ref={frameRef} className={styles.invitationFrame}>
         <motion.div className={styles.invitationRule} style={{ scaleX: reducedMotion ? 1 : lineProgress }} aria-hidden="true" />
         <div className={styles.invitationCopy} data-invitation-copy>
-          <p className={styles.eyebrow}>{invitation.eyebrow}</p>
-          {/* The close is the page's decision moment; the headline gets
-              the reserved word-stagger. The text is per-situation
-              dynamic — on a post-mount swap the split decays to plain
-              text, which is the correct failure (fresh text carries no
-              styles, so nothing can arrive invisible). */}
-          <SplitReveal as="h2">{invitation.headline}</SplitReveal>
-          <p className={styles.lede}>{invitation.body}</p>
+          <div data-invitation-reading>
+            <p className={styles.eyebrow}>{invitation.eyebrow}</p>
+            {/* Native text wrapping and one scroll-ink owner keep the heading
+                readable through personalisation, pause and reverse scrolling. */}
+            <h2>{invitation.headline}</h2>
+            <p className={styles.lede}>{invitation.body}</p>
+          </div>
           <Link href={contactHref} className={styles.bookButton}>
             {consultation.actionLabel} <ArrowRight size={20} aria-hidden="true" />
           </Link>
@@ -232,18 +273,16 @@ export function FinalInvitation() {
             <span>What we’ll talk through</span>
             <span><Clock3 size={15} aria-hidden="true" /> {consultation.minutes} minutes</span>
           </div>
-          <ol>
+          <ol ref={agendaRef}>
             {consultation.fullSteps.map((step, index) => (
               <li key={step} data-current={activeStep === index}>
-                {desktopStory && activeStep === index && (
-                  <motion.span
-                    className={styles.conversationRule}
-                    layoutId={`home-conversation-rule-${agendaId}`}
-                    initial={false}
-                    transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                    aria-hidden="true"
-                  />
-                )}
+                <motion.span
+                  className={styles.conversationRule}
+                  initial={false}
+                  animate={{ opacity: activeStep === index ? 1 : 0 }}
+                  transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
+                  aria-hidden="true"
+                />
                 <span className={styles.stepNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <h3>{STEP_LABELS[index]}</h3>
@@ -257,8 +296,7 @@ export function FinalInvitation() {
         <motion.p
           className={styles.signoff}
           style={{
-            opacity: desktopStory ? signoffOpacity : 1,
-            y: desktopStory ? signoffY : 0,
+            color: reducedMotion ? "#625a4d" : signoffInk,
           }}
         >
           Thank you for giving your brand the attention it deserves.
