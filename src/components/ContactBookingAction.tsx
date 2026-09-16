@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { Magnetic } from "@/components/Magnetic";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useSpotlight } from "@/hooks/useSpotlight";
 import { track } from "@/lib/analytics";
@@ -75,17 +74,21 @@ export function ContactBookingAction({
   }
 
   return (
-    <Magnetic intensity={0.14} range={120} className="contact-booking-action-wrap mt-8 block">
+    <div className="contact-booking-action-wrap mt-8 block">
       <a
         data-contact-booking-action
+        data-cursor-label="Choose a time"
         ref={linkRef}
         href={bookingHref}
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleClick}
-        className="group relative flex min-h-16 w-full items-center gap-4 overflow-hidden rounded-2xl bg-soil p-4 text-left text-ivory shadow-elevation-sm transition-[transform,box-shadow,background-color] duration-300 hover:-translate-y-1 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay sm:p-5"
+        className="group relative flex min-h-16 w-full items-center gap-4 overflow-hidden rounded-2xl bg-soil p-4 text-left text-ivory shadow-elevation-sm transition-[box-shadow,background-color] duration-300 hover:bg-action-primary-hover hover:shadow-elevation-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay sm:p-5"
         aria-label={`Open Calendly in ${visitorTimezone ?? "your timezone"} to book a ${consultationMinutes} minute meeting with ${founder}`}
       >
+        {/* Light travels inside the action; the link and its label keep a
+            stable position as the pointer and page move around them. */}
+        <span data-contact-booking-sheen aria-hidden="true" />
         <span
           ref={spotlightRef}
           aria-hidden="true"
@@ -118,6 +121,6 @@ export function ContactBookingAction({
           <ArrowRight aria-hidden="true" className="h-5 w-5" strokeWidth={1.6} />
         </span>
       </a>
-    </Magnetic>
+    </div>
   );
 }

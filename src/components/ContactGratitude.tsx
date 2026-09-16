@@ -311,6 +311,7 @@ export function ContactGratitude() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Find a time with Suman, opens Calendly in a new tab"
+            data-cursor-label="Find a time with Suman"
             event="calendar_opened"
             eventProps={{ source: "contact_gratitude", ...(packageSlug ? { package: packageSlug } : {}) }}
             data-contact-invitation-booking

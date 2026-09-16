@@ -112,6 +112,7 @@ export function ContactCallSequence() {
               <button
                 type="button"
                 aria-label={step.full}
+                data-cursor-label={step.compact}
                 aria-current={active ? "step" : undefined}
                 data-contact-call-step={index}
                 onClick={() => choose(index)}
