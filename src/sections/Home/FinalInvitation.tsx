@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
+import { SplitReveal } from "@/components/SplitReveal";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Clock3 } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
@@ -210,7 +211,12 @@ export function FinalInvitation() {
         <motion.div className={styles.invitationRule} style={{ scaleX: reducedMotion ? 1 : lineProgress }} aria-hidden="true" />
         <div className={styles.invitationCopy} data-invitation-copy>
           <p className={styles.eyebrow}>{invitation.eyebrow}</p>
-          <h2>{invitation.headline}</h2>
+          {/* The close is the page's decision moment; the headline gets
+              the reserved word-stagger. The text is per-situation
+              dynamic — on a post-mount swap the split decays to plain
+              text, which is the correct failure (fresh text carries no
+              styles, so nothing can arrive invisible). */}
+          <SplitReveal as="h2">{invitation.headline}</SplitReveal>
           <p className={styles.lede}>{invitation.body}</p>
           <Link href={contactHref} className={styles.bookButton}>
             {consultation.actionLabel} <ArrowRight size={20} aria-hidden="true" />
