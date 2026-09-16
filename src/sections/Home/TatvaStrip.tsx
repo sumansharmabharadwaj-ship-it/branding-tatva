@@ -5,7 +5,6 @@ import { motion, useAnimationControls, useInView, useMotionValueEvent } from "fr
 import Image from "next/image";
 import { useCallback, useEffect, useRef, type KeyboardEvent } from "react";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { elements } from "@/data/elements";
@@ -125,7 +124,11 @@ export function TatvaStrip() {
     const next = event.key === "Home" ? 0 : event.key === "End" ? TATVAS.length - 1
       : (index + (event.key === "ArrowRight" ? 1 : TATVAS.length - 1)) % TATVAS.length;
     choose(next);
-    forceRefs.current[next]?.focus({ preventScroll: true });
+    const nextButton = forceRefs.current[next];
+    if (!nextButton) return;
+    const bounds = nextButton.getBoundingClientRect();
+    const fullyVisible = bounds.top >= 80 && bounds.bottom <= window.innerHeight;
+    nextButton.focus({ preventScroll: fullyVisible });
   }
 
   const motionActive = inView && !prefersReducedMotion;
@@ -172,7 +175,7 @@ export function TatvaStrip() {
 
         <Container className="tatva-observatory__frame relative z-[3] max-w-[100rem]">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,21rem)_1fr] lg:items-center lg:gap-16">
-          <Reveal className="tatva-observatory__copy">
+          <div className="tatva-observatory__copy">
             <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: "#D4B99A" }}>
               The framework
             </p>
@@ -216,9 +219,9 @@ export function TatvaStrip() {
               </div>
             </motion.div>
 
-          </Reveal>
+          </div>
 
-          <Reveal delay={0.1}>
+          <div>
             <ol aria-label="Choose a Tatva" className="tatva-observatory__orbit grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
               {TATVAS.map((tatva, index) => {
                 const element = elements.find((entry) => entry.slug === tatva.slug);
@@ -308,7 +311,7 @@ export function TatvaStrip() {
                 );
               })}
             </ol>
-          </Reveal>
+          </div>
         </div>
         </Container>
       </div>
