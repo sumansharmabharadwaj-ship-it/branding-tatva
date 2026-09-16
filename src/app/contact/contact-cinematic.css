@@ -379,6 +379,73 @@ html[data-contact-film-snap="true"]:not([data-motion="reduced"]) {
   animation: contact-anchor-breathe 6.5s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
+/* Route light develops inside a fixed tab. Dark ink stays readable through
+   every intermediate frame, including rapid reversals and distant choices. */
+[data-contact-film] [data-contact-pathway-tab-wash] {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 18% 0%, #fff9eae6, transparent 78%),
+    linear-gradient(125deg, #eee1ca, #dfe3d4);
+  box-shadow: inset 0 0 0 1px #a3674a40, inset 0 1px 0 #ffffffa6;
+  opacity: 0;
+  transition: opacity 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-contact-film] [data-contact-pathway-tab-ink] {
+  position: absolute;
+  inset-inline: 20%;
+  bottom: 0.2rem;
+  height: 2px;
+  border-radius: 999px;
+  pointer-events: none;
+  background: linear-gradient(90deg, #a3674a, #6f4e37);
+  opacity: 0;
+  transform: scaleX(0.35);
+  transform-origin: 50% 50%;
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 280ms ease;
+}
+
+[data-contact-film] [data-contact-pathway-tabs] > button[aria-selected="true"] [data-contact-pathway-tab-wash],
+[data-contact-film] [data-contact-pathway-tabs] > button[aria-selected="true"] [data-contact-pathway-tab-ink] {
+  opacity: 1;
+}
+
+[data-contact-film] [data-contact-pathway-tabs] > button[aria-selected="true"] [data-contact-pathway-tab-ink] {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-contact-film] [data-contact-pathway-tabs] > button[aria-selected="false"]:hover [data-contact-pathway-tab-wash] {
+    opacity: 0.35;
+  }
+}
+
+html[data-motion="reduced"] [data-contact-film] [data-contact-pathway-tab-wash],
+html[data-motion="reduced"] [data-contact-film] [data-contact-pathway-tab-ink],
+html[data-motion="reduced"] [data-contact-film] [data-contact-pathway-tab-icon] {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-contact-film] [data-contact-pathway-tab-wash],
+  [data-contact-film] [data-contact-pathway-tab-ink],
+  [data-contact-film] [data-contact-pathway-tab-icon] {
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  [data-contact-film] [data-contact-pathway-tabs] > button[aria-selected="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -3px;
+  }
+}
+
 @keyframes contact-anchor-breathe {
   from {
     transform: translateY(0) scale(1);

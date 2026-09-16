@@ -408,28 +408,23 @@ export function ContactPathways() {
                       onFocus={() => choose(index)}
                       onKeyDown={(event) => handleTabKeyDown(index, event)}
                       data-cursor-label={pathway.label}
-                      className={`group relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1.5 py-1.5 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-[5.5rem] sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2 ${
-                        selected ? "text-ivory" : "text-soil hover:bg-white/55"
-                      }`}
+                      className="group relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl px-1.5 py-1.5 text-center text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:min-h-[5.5rem] sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2"
                     >
-                      {selected ? (
-                        <motion.span
-                          layoutId="contact-pathway-active"
-                          aria-hidden="true"
-                          className="absolute inset-0 rounded-2xl bg-soil shadow-[0_12px_30px_rgba(34,39,31,0.16)]"
-                          transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE_AIR }}
-                        />
-                      ) : null}
+                      {/* Each tab owns its light. Moving a shared background
+                          between clipped buttons briefly left pale labels on
+                          bare paper; fixed ink stays readable during the fade. */}
+                      <span aria-hidden="true" data-contact-pathway-tab-wash />
+                      <span aria-hidden="true" data-contact-pathway-tab-ink />
                       <span
                         data-contact-pathway-tab-icon
                         className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 lg:h-9 lg:w-9 ${
-                          selected ? "border-ivory/20 bg-ivory/10" : "border-soil/15 bg-white/35"
+                          selected ? "border-clay/40 bg-white/60 text-clay" : "border-soil/15 bg-white/35"
                         }`}
                       >
                         <Icon aria-hidden="true" className="h-4 w-4" strokeWidth={1.45} />
                       </span>
                       <span className="relative z-10 min-w-0">
-                        <span className={`hidden text-[0.62rem] uppercase tracking-[0.18em] lg:block ${selected ? "text-ivory/55" : "text-soil/45"}`}>
+                        <span className="hidden text-[0.62rem] uppercase tracking-[0.18em] text-soil/65 lg:block">
                           {pathway.index} · {pathway.tempo}
                         </span>
                         <span className="block text-[0.68rem] font-medium leading-[1.2] sm:text-xs lg:mt-1 lg:text-sm lg:leading-snug">
