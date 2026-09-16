@@ -34,6 +34,7 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
   onKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => void;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
+  const previousOpen = useRef(open);
   const copyControls = useAnimationControls();
   const { scrollYProgress } = useScroll({ target: rowRef, offset: ["start end", "end start"] });
   // Warm soil ink deepens through the reading interval in either direction.
@@ -48,8 +49,10 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
   }, [copyControls]);
 
   useEffect(() => {
+    const opened = open && !previousOpen.current;
+    previousOpen.current = open;
     settleCopy();
-    if (!open || reducedMotion) return;
+    if (!opened || reducedMotion) return;
     copyControls.set({ x: 6, y: 3 });
     void copyControls.start({ x: 0, y: 0, transition: { duration: .34, ease: [.22, 1, .36, 1] } });
     return () => copyControls.stop();
