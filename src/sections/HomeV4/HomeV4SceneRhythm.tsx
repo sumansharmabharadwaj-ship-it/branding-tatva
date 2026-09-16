@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
-type Treatment = "title" | "heading" | "fan" | "plate" | "portrait" | "row" | "rail";
+type Treatment = "title" | "heading" | "fan" | "plate" | "portrait" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
 type SceneSpec = { selector: string; ink?: "clay" | "sand"; reading?: string; layers: readonly LayerSpec[] };
 
@@ -48,7 +48,9 @@ const SCENES: readonly SceneSpec[] = [
     [".studio-cinematic__content", "heading"], [".studio-cinematic__portrait", "portrait"],
   ] },
   { selector: '[data-home-v4-chapter="decision"]', ink: "clay", reading: "header h2 + p", layers: [
-    ["header", "heading"], ["[data-open]", "row"],
+    // Disclosure headings keep their hit areas still. Their own scroll ink,
+    // rules and answer transitions carry the interaction below this entrance.
+    ["header", "heading"],
   ] },
   { selector: '[data-home-v4-chapter="invitation"]', ink: "clay", reading: "[data-invitation-copy] > h2 + p", layers: [
     ["[data-invitation-copy]", "heading"], ["aside", "plate"],
@@ -144,7 +146,7 @@ export function HomeV4SceneRhythm() {
         layers.forEach(({ layer, top: layerTop, focused: hasFocus }) => {
           const { node, treatment, index, spread, side } = layer;
           const amount = hasFocus ? 0 : wide
-            ? clamp(entering * (1 + (treatment === "fan" || treatment === "row" ? index * 0.09 : 0)))
+            ? clamp(entering * (1 + (treatment === "fan" ? index * 0.09 : 0)))
             : 1 - ease((viewport * 0.96 - layerTop) / (viewport * 0.3));
           let x = 0;
           let y = amount * (wide ? 106 : 32);
@@ -177,9 +179,6 @@ export function HomeV4SceneRhythm() {
               y = 40 * amount;
               rotate = -7 * amount;
               scale = 1 - 0.17 * amount;
-            } else if (treatment === "row") {
-              x = (36 + index * 12) * amount;
-              y = (28 + index * 9) * amount;
             }
           }
           // Ease the visual response, never the document's scroll position.

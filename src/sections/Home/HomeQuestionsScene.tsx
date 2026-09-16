@@ -1,8 +1,8 @@
 "use client";
 
-import { useId, useRef, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useAnimationControls, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, Plus } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -24,11 +24,91 @@ const QUESTIONS = QUESTION_ORDER.flatMap((question) =>
   faqs.filter((item) => item.question === question),
 );
 
+function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, onKeyDown }: {
+  item: (typeof QUESTIONS)[number];
+  index: number;
+  open: boolean;
+  reducedMotion: boolean;
+  buttonRef: (element: HTMLButtonElement | null) => void;
+  onToggle: () => void;
+  onKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => void;
+}) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const copyControls = useAnimationControls();
+  const { scrollYProgress } = useScroll({ target: rowRef, offset: ["start end", "end start"] });
+  // Warm soil ink deepens through the reading interval in either direction.
+  // The original semantic text keeps its wrapping, selection and contrast.
+  const readingInk = useTransform(scrollYProgress, [0, .3, .7, 1], ["#625a4d", "#342f27", "#342f27", "#625a4d"]);
+  const buttonId = `home-question-${index + 1}`;
+  const answerId = `${buttonId}-answer`;
+
+  const settleCopy = useCallback(() => {
+    copyControls.stop();
+    copyControls.set({ x: 0, y: 0 });
+  }, [copyControls]);
+
+  useEffect(() => {
+    settleCopy();
+    if (!open || reducedMotion) return;
+    copyControls.set({ x: 6, y: 3 });
+    void copyControls.start({ x: 0, y: 0, transition: { duration: .34, ease: [.22, 1, .36, 1] } });
+    return () => copyControls.stop();
+  }, [open, reducedMotion, copyControls, settleCopy]);
+
+  return (
+    <motion.div
+      ref={rowRef}
+      className={styles.questionItem}
+      data-open={open}
+      style={{ color: reducedMotion ? "#342f27" : readingInk }}
+    >
+      <motion.span
+        aria-hidden="true"
+        className={styles.questionRule}
+        initial={false}
+        animate={{ scaleX: open ? 1 : 0 }}
+        transition={{ duration: reducedMotion ? 0 : .38, ease: [.22, 1, .36, 1] }}
+      />
+      <h3>
+        <button
+          ref={buttonRef}
+          type="button"
+          id={buttonId}
+          className={styles.questionButton}
+          aria-expanded={open}
+          aria-controls={answerId}
+          onClick={onToggle}
+          onKeyDown={onKeyDown}
+        >
+          <span className={styles.questionNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+          <span>{item.question}</span>
+          <Plus size={19} className={styles.questionIcon} aria-hidden="true" />
+        </button>
+      </h3>
+      <motion.div
+        id={answerId}
+        role="region"
+        aria-labelledby={buttonId}
+        aria-hidden={!open}
+        inert={!open}
+        tabIndex={open ? 0 : -1}
+        className={styles.answer}
+        initial={false}
+        animate={{ height: open ? "auto" : 0 }}
+        transition={{ duration: reducedMotion ? 0 : .34, ease: [.22, 1, .36, 1] }}
+        onFocusCapture={settleCopy}
+        onPointerDown={settleCopy}
+      >
+        <motion.p initial={false} animate={copyControls}>{item.answer}</motion.p>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export function HomeQuestionsScene() {
   const rootRef = useRef<HTMLElement>(null);
   const questionRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const selectionId = useId();
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openQuestions, setOpenQuestions] = useState(() => new Set([0]));
   const reducedMotion = useHydratedReducedMotion();
   const cinematicMotion = useMediaQuery(
     "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
@@ -47,7 +127,20 @@ export function HomeQuestionsScene() {
       : event.key === "ArrowDown" ? (index + 1) % QUESTIONS.length
       : (index - 1 + QUESTIONS.length) % QUESTIONS.length;
     // Moving between headings leaves the answer being read unchanged.
-    questionRefs.current[next]?.focus();
+    const target = questionRefs.current[next];
+    const bounds = target?.getBoundingClientRect();
+    target?.focus({ preventScroll: Boolean(bounds && bounds.top >= 80 && bounds.bottom <= window.innerHeight) });
+  }
+
+  function toggleQuestion(index: number) {
+    // Opening a later answer never collapses text above the active heading.
+    // Each disclosure stays owned by the visitor who opened it.
+    setOpenQuestions((current) => {
+      const next = new Set(current);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
   }
 
   return (
@@ -78,65 +171,18 @@ export function HomeQuestionsScene() {
         </header>
 
         <div className={styles.questionList}>
-          {QUESTIONS.map((item, index) => {
-            const open = openIndex === index;
-            const buttonId = `home-question-${index + 1}`;
-            const answerId = `${buttonId}-answer`;
-            return (
-              <div key={item.question} className={styles.questionItem} data-open={open}>
-                {open && (
-                  <motion.span
-                    aria-hidden="true"
-                    className={styles.questionRule}
-                    layoutId={reducedMotion ? undefined : `home-answer-rule-${selectionId}`}
-                    initial={false}
-                    transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
-                  />
-                )}
-                <h3>
-                  <button
-                    ref={(element) => { questionRefs.current[index] = element; }}
-                    type="button"
-                    id={buttonId}
-                    className={styles.questionButton}
-                    aria-expanded={open}
-                    aria-controls={answerId}
-                    onClick={() => setOpenIndex((current) => current === index ? null : index)}
-                    onKeyDown={(event) => onQuestionKeyDown(event, index)}
-                  >
-                    <span className={styles.questionNumber} aria-hidden="true">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span>{item.question}</span>
-                    <Plus size={19} className={styles.questionIcon} aria-hidden="true" />
-                  </button>
-                </h3>
-                <motion.div
-                  id={answerId}
-                  role="region"
-                  aria-labelledby={buttonId}
-                  aria-hidden={!open}
-                  inert={!open}
-                  className={styles.answer}
-                  initial={false}
-                  animate={{ height: open ? "auto" : 0 }}
-                  transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <motion.p
-                    initial={false}
-                    animate={{ opacity: open ? 1 : 0, y: reducedMotion || open ? 0 : -6 }}
-                    transition={{
-                      duration: reducedMotion ? 0 : open ? 0.32 : 0.12,
-                      delay: reducedMotion || !open ? 0 : 0.06,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                  >
-                    {item.answer}
-                  </motion.p>
-                </motion.div>
-              </div>
-            );
-          })}
+          {QUESTIONS.map((item, index) => (
+            <QuestionRow
+              key={item.question}
+              item={item}
+              index={index}
+              open={openQuestions.has(index)}
+              reducedMotion={reducedMotion}
+              buttonRef={(element) => { questionRefs.current[index] = element; }}
+              onToggle={() => toggleQuestion(index)}
+              onKeyDown={(event) => onQuestionKeyDown(event, index)}
+            />
+          ))}
           <div className={styles.auditNote}>
             <p>Prefer to look at your brand first?</p>
             <Link href="/services#audit" className={styles.textLink}>

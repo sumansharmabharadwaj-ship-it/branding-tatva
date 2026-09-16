@@ -101,6 +101,10 @@
 .questionIcon { margin-top: .2rem; transition: transform 280ms cubic-bezier(.22,1,.36,1); }
 .questionItem[data-open="true"] .questionIcon { transform: rotate(45deg); }
 .answer { overflow: hidden; }
+.answer[aria-hidden="true"] { visibility: hidden; }
+.answer:focus-visible {
+  outline: 2px solid #855035; outline-offset: -3px; border-radius: 3px;
+}
 .answer p {
   margin: 0; padding: 0 2.2rem 1.5rem 2.8rem; color: #514b40;
   font-size: 1rem; line-height: 1.7; text-wrap: pretty;
