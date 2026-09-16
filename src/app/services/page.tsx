@@ -20,6 +20,7 @@ import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
 import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { DecisionMap } from "@/sections/Work/DecisionMap";
+import { TatvaLab } from "@/sections/Work/TatvaLab";
 import { projects } from "@/data/projects";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
@@ -495,6 +496,21 @@ export default async function ServicesPage() {
             already carries nine. */}
         <DecisionMap />
 
+        {/* Concept studies. The three chapters above are all client evidence,
+            which only speaks to buyers whose situation already resembles one of
+            five engagements. The Lab shows the method itself on brands nobody
+            hired us for, which is the only honest way to demonstrate range
+            beyond the client list.
+
+            Safe to show beside real work because its framing is explicit and
+            enforced in the data: data/conceptProjects.ts opens with an honesty
+            contract ("Zero clients, zero engagements, zero outcomes are
+            implied"), the component repeats it on screen, and measurement
+            sections there are plans rather than results. That is what keeps it
+            clear of CLAUDE.md's rule against implying experience. 415 lines,
+            zero importers before this. */}
+        <TatvaLab />
+
         {/* Authority now resolves inside one viewport. The shared services
             camera assembles its five layers during entry, discovery, and
             resolution, so the chapter keeps its teaching sequence without
@@ -550,6 +566,26 @@ export default async function ServicesPage() {
           className="relative flex min-h-[100svh] scroll-mt-24 flex-col items-center justify-center overflow-hidden"
           style={{ backgroundColor: "#EEE6D7" }}
         >
+          {/* The clarity footage finally has a consumer. A single trout over
+              sunlit sand through glass-clear water is the audit chapter's own
+              metaphor: you can see all the way to the bottom. Until now the
+              whole of generatedMediaManifest.ts was orphaned, so this clip and
+              the eight beside it were encoded, correct, and rendered nowhere.
+
+              The paper tone stays on top at 0.82 rather than being replaced.
+              This chapter is dark type on light paper and it carries the text
+              that was just brought to the reading floor; the footage is meant
+              to be sensed at the edges of the card, never to sit under body
+              copy. Media standard: footage stays bright, the panel carries
+              readability. */}
+          <BackgroundVideo
+            parallax
+            video="/videos/generated/bt-services-healthcheck-clarity.mp4"
+            videoMobile="/videos/generated/bt-services-healthcheck-clarity-mobile.mp4"
+            poster="/images/generated/bt-services-healthcheck-clarity-poster.jpg"
+            playbackRate={0.92}
+          />
+          <div aria-hidden="true" className="absolute inset-0" style={{ backgroundColor: "rgb(238 230 215 / 82%)" }} />
           <div data-services-content-plane="true" className="relative w-full">
             <RecognitionAudit />
           </div>
