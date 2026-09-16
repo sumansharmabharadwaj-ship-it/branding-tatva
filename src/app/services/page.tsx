@@ -201,7 +201,7 @@ export default async function ServicesPage() {
   const region = isRegion(savedRegion) ? savedRegion : regionFromCountry(hdrs.get("x-vercel-ip-country"));
   // The hero poster is the page's first paint — a high priority preload
   // hint so the awakening scene arrives before the veil starts lifting.
-  preload("/images/generated/bt-services-hero-root-system-poster.jpg", { as: "image", fetchPriority: "high" });
+  preload("/images/generated/bt-services-hero-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });
   return (
     <>
       <Header transparent />
@@ -216,16 +216,24 @@ export default async function ServicesPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd) }} />
         <PricingProvider initialRegion={region}>
         {/* Curiosity opens as a complete first scene rather than a
-            compact masthead. One viewport belongs to the root-system
-            film, proposition, proof, and chapter map; the Situation
-            chapter only begins after the visitor has finished this
-            frame. The scene still advances quickly because the veil and
-            word reveal respond inside the viewport, not by shortening it. */}
+            compact masthead. One viewport belongs to the opening film,
+            proposition, proof, and chapter map; the Situation chapter
+            only begins after the visitor has finished this frame. The
+            scene still advances quickly because the veil and word reveal
+            respond inside the viewport, not by shortening it.
+
+            The film is the aspen sunburst Suman approved in August against
+            her own five-question bar, replacing a near-black procedural
+            render. Her recorded media verdict on that set was "dark, vague,
+            low quality, serving no purpose", and the standard she set after
+            it asks for footage that stays bright while glass panels carry
+            readability. This is the first delivery of that re-foundation;
+            the remaining procedural slots are still dark. */}
         <PhotoHero
           id="services-opening"
-          video="/videos/generated/bt-services-hero-root-system.mp4"
-          videoMobile="/videos/generated/bt-services-hero-root-system-mobile.mp4"
-          poster="/images/generated/bt-services-hero-root-system-poster.jpg"
+          video="/videos/generated/bt-services-hero-aspen-sunburst.mp4"
+          videoMobile="/videos/generated/bt-services-hero-aspen-sunburst-mobile.mp4"
+          poster="/images/generated/bt-services-hero-aspen-sunburst-poster.jpg"
           mediaMode="video"
           minHeight="100vh"
           overlayGradient="linear-gradient(180deg, rgba(36,45,39,0.16) 0%, rgba(36,45,39,0.24) 58%, rgba(36,45,39,0.42) 100%)"
