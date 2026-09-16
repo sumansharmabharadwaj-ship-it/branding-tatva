@@ -202,7 +202,7 @@ export const differentiationInsightPosts: InsightPost[] = [
       {
         question: "Can process be a brand differentiator?",
         answer:
-          "Yes. A process can differentiate when its sequence, depth, participation, or tradeoffs create a consequence the customer values and competitors do not commonly provide.",
+          "Yes. A process can differentiate when its sequence, depth, participation, or tradeoffs create a consequence the customer values and competitors rarely provide.",
       },
       {
         question: "How do I know whether a differentiator is unique?",

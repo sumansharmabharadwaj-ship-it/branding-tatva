@@ -41,7 +41,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
     heroImageAlt:
       "A positioning claim connected to five structured layers of client evidence",
     keyTakeaways: [
-      "Proof should answer a buyer's doubt about the position, not merely show that someone liked the service.",
+      "Proof should answer a buyer's doubt about the position rather than merely show that someone liked the service.",
       "Choose cases for strategic relevance and diagnostic detail rather than client fame alone.",
       "A persuasive case explains the situation, decision, mechanism, evidence, and relevance to the next buyer.",
       "Testimonials can support a claim, but factual outcomes still require documentation and honest context.",
@@ -82,16 +82,16 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
     sections: [
       {
         id: "proof-is-part-of-positioning",
-        heading: "Proof is part of positioning, not a section added afterward",
+        heading: "Proof is part of positioning, never a section added afterward",
         paragraphs: [
           "A position tells the market why the business is a better fit for a particular customer situation. Proof makes that interpretation believable. When the two are developed separately, the website may lead with one promise while the case studies demonstrate something else.",
-          "Many service businesses display client logos, broad praise, and isolated percentages without showing how the evidence connects with the choice they want to own. The visitor learns that work happened, but not why this provider should be compared differently.",
-          "Build the proof question alongside the positioning claim. If the position is built around resolving strategy before production, the evidence should show decisions clarified, waste prevented, or later work made more coherent. A testimonial about responsiveness may be positive, yet it does not prove the central position.",
+          "Many service businesses display client logos, broad praise, and isolated percentages without showing how the evidence connects with the choice they want to own. The visitor learns that work happened, and learns nothing about why this provider should be compared differently.",
+          "Build the proof question alongside the positioning claim. If the position is built around resolving strategy before production, the evidence should show decisions clarified, waste prevented, or later work made more coherent. A testimonial about responsiveness may be positive, yet it leaves the central position unproven.",
         ],
         callout: {
           label: "Proof rule",
           text:
-            "The strongest evidence does not merely say the work succeeded. It reveals why the business's distinctive choice mattered to the result.",
+            "The strongest evidence goes beyond saying the work succeeded. It reveals why the business's distinctive choice mattered to the result.",
         },
       },
       {
@@ -128,7 +128,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
       },
       {
         id: "choose-strategic-cases",
-        heading: "Choose cases for strategic fit, not client fame",
+        heading: "Choose cases for strategic fit, never client fame",
         paragraphs: [
           "A famous client logo can attract attention while proving little about the service the business wants to sell next. Select cases that resemble the desired customer's situation and expose the distinctive method clearly.",
           "Score potential cases for audience relevance, problem relevance, mechanism visibility, evidence quality, permission, recency, and commercial priority. A smaller client with a well documented journey may be a stronger positioning asset than a prestigious engagement that can only be described vaguely.",
@@ -137,7 +137,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         callout: {
           label: "Selection test",
           text:
-            "Choose the case that helps the next best fit buyer recognise their decision, not the case most likely to impress an unrelated audience.",
+            "Choose the case that helps the next best fit buyer recognise their decision rather than the case most likely to impress an unrelated audience.",
         },
       },
       {
@@ -145,7 +145,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         heading: "Use a case study structure that preserves causality and context",
         paragraphs: [
           "Begin before the project. Describe the business situation, the customer goal, what had already been tried, what was constrained, and which alternative the customer was considering. Without the starting condition, the outcome floats without meaning.",
-          "Explain the decision, not every meeting. Show what the service provider noticed, prioritised, sequenced, or refused differently. Then reveal the mechanism through selected artefacts, process moments, and implementation facts.",
+          "Explain the decision rather than every meeting. Show what the service provider noticed, prioritised, sequenced, or refused differently. Then reveal the mechanism through selected artefacts, process moments, and implementation facts.",
           "End with evidence and interpretation. What changed, what contributed to the change, what remained outside the provider's control, and what the customer can now do that was previously difficult?",
         ],
         bullets: [
@@ -162,7 +162,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         heading: "Separate contribution from attribution",
         paragraphs: [
           "Business outcomes rarely have one cause. Revenue, conversion, retention, awareness, hiring, and sales velocity may also be affected by seasonality, pricing, distribution, product changes, media spend, leadership, market conditions, and the customer's own execution.",
-          "State what the work directly produced, what it plausibly influenced, and what changed during the same period. This does not weaken the story. It makes the evidence more credible and helps sophisticated buyers understand the mechanism.",
+          "State what the work directly produced, what it plausibly influenced, and what changed during the same period. Far from weakening the story, this makes the evidence more credible and helps sophisticated buyers understand the mechanism.",
           "Use precise language: the programme supported, contributed to, enabled, clarified, reduced, increased within the measured channel, or coincided with. Reserve caused for situations where the evidence can genuinely support causal attribution.",
         ],
         callout: {
@@ -190,7 +190,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
       },
       {
         id: "use-qualitative-evidence",
-        heading: "Use qualitative evidence when the value is not fully numeric",
+        heading: "Use qualitative evidence when the value is only partly numeric",
         paragraphs: [
           "Service work often changes decisions, confidence, alignment, language, handoffs, and organisational behaviour before it changes a dashboard. Those outcomes can be evidenced through artefacts and observed behaviour rather than inflated proxies.",
           "Show the approved message hierarchy, the reduced offer set, the new decision rights, the customer language that became repeatable, the faster approval path, or the way teams began using one system across touchpoints.",
@@ -201,9 +201,9 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         id: "write-better-testimonials",
         heading: "Turn vague praise into useful testimony",
         paragraphs: [
-          "Do not manufacture the client's voice. Conduct a short evidence interview and invite the customer to describe the starting difficulty, the important decision, the experience of the process, the observable change, and who would benefit from a similar engagement.",
-          "Preserve the meaning and language accurately, then obtain approval for the edited quotation and context. Testimonials used in advertising must be genuine and must not turn unsupported factual claims into borrowed credibility.",
-          "Current FTC guidance requires endorsements and testimonials to be truthful and not misleading, while the UK's CAP guidance requires documentary evidence that testimonials are genuine and permission for use. Treat consent, substantiation, and context as part of the content workflow rather than a final legal scramble.",
+          "Never manufacture the client's voice. Conduct a short evidence interview and invite the customer to describe the starting difficulty, the important decision, the experience of the process, the observable change, and who would benefit from a similar engagement.",
+          "Preserve the meaning and language accurately, then obtain approval for the edited quotation and context. Testimonials used in advertising must be genuine and must never turn unsupported factual claims into borrowed credibility.",
+          "Current FTC guidance requires endorsements and testimonials to be truthful and free from misleading impressions, while the UK's CAP guidance requires documentary evidence that testimonials are genuine and permission for use. Treat consent, substantiation, and context as part of the content workflow rather than a final legal scramble.",
         ],
         bullets: [
           "Before: what was difficult or unclear?",
@@ -217,7 +217,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         id: "anonymised-proof",
         heading: "Make anonymised proof concrete",
         paragraphs: [
-          "Confidentiality does not require emptiness. An anonymised case can still specify the sector, scale, customer stage, operating constraint, decision, method, evidence type, and result range without exposing the organisation.",
+          "Confidentiality never requires emptiness. An anonymised case can still specify the sector, scale, customer stage, operating constraint, decision, method, evidence type, and result range without exposing the organisation.",
           "Explain why the identity is withheld and replace the missing logo with diagnostic detail. A statement such as global professional services firm is weak alone. Add the relevant market, team structure, buying situation, legacy constraint, and implementation environment.",
           "Where a numerical result cannot be published, show approved artefacts, process milestones, behavioural changes, or a bounded qualitative outcome. The goal is to preserve verifiability without breaching trust.",
         ],
@@ -235,7 +235,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
           "Service page: a relevant case fragment beside the method or deliverable.",
           "Work page: complete evidence stories organised by buyer situation.",
           "Proposal: proof selected for the prospect's specific risk and desired change.",
-          "Sales call: referenceable details and artefacts, not memorised hype.",
+          "Sales call: referenceable details and artefacts, never memorised hype.",
           "Content: lessons from cases that teach the market how the method works.",
         ],
       },
@@ -254,7 +254,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "During week one, map the positioning claims and buyer doubts, then inventory every existing logo, quote, case, metric, artefact, review, credential, and reference. During week two, score the evidence for relevance, strength, permission, specificity, and freshness.",
           "During week three, interview three to five strategically relevant clients, document baselines and mechanisms, verify outcomes, and collect approved language. During week four, publish one full case, three short proof units, a searchable internal matrix, and a permission and refresh process.",
-          "The objective is not a larger gallery. It is a tighter chain between what the brand claims, what the service does, what customers experienced, and what the next buyer needs to believe.",
+          "A larger gallery is beside the point. The objective is a tighter chain between what the brand claims, what the service does, what customers experienced, and what the next buyer needs to believe.",
         ],
       },
     ],

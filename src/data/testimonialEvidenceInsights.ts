@@ -72,7 +72,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
         paragraphs: [
           "Hesitation is commercially useful because future buyers often share it. Ask what made the client cautious, which alternatives they considered, and what almost prevented the purchase.",
           "This can reveal objections around cost, timing, internal capacity, previous agency experiences, founder dependence, or uncertainty about the process.",
-          "Do not turn the answer into rebuttal copy automatically. First understand the concern. Then place the testimonial near the claim or decision where that evidence genuinely reduces uncertainty.",
+          "Never turn the answer into rebuttal copy automatically. First understand the concern. Then place the testimonial near the claim or decision where that evidence genuinely reduces uncertainty.",
         ],
       },
       {
@@ -101,7 +101,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
         id: "ask-about-after",
         heading: "5. Ask what changed afterward",
         paragraphs: [
-          "Outcomes can be quantitative, behavioural, operational, perceptual, or emotional. Ask what became easier, what changed in customer response, which internal decisions improved, and what the client can now do that they could not do before.",
+          "Outcomes can be quantitative, behavioural, operational, perceptual, or emotional. Ask what became easier, what changed in customer response, which internal decisions improved, and what the client can now do that was previously beyond them.",
           "If the client mentions a metric, verify the definition, timeframe, and source before publishing it. If the change is qualitative, preserve that boundary instead of inflating it into a numerical claim.",
           "Ask for comparison language: What feels different now? What happens faster? Which conversation changed? What no longer requires founder intervention?",
         ],
@@ -142,7 +142,7 @@ export const testimonialEvidenceInsightPosts: InsightPost[] = [
       },
       {
         id: "testimonial-system",
-        heading: "Build a testimonial evidence system, not a one time request",
+        heading: "Build a testimonial evidence system, never a one time request",
         paragraphs: [
           "Create collection moments around meaningful milestones: shortly after a decision breakthrough, at delivery, after implementation, and when measurable results become available.",
           "Tag evidence by service, buying situation, objection, claim, outcome type, and permission level. This makes proof reusable across website pages, proposals, case studies, sales material, and content.",

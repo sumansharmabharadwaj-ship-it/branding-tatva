@@ -126,7 +126,7 @@ export const caseStudyInsightPosts: InsightPost[] = [
       },
       {
         id: "write-transfer",
-        heading: "7. End with a transferable lesson, not a sales slogan",
+        heading: "7. End with a transferable lesson, never a sales slogan",
         paragraphs: [
           "Close by explaining what the project revealed about the underlying business problem. A prospective client should leave with a useful idea even before contacting you.",
           "The lesson can point toward the type of situation where the method becomes valuable: service sprawl, unclear category framing, weak recognition, inconsistent experience, or proof that exists but has never been organised.",

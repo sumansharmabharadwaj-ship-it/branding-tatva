@@ -8,7 +8,7 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
     excerpt:
       "A practical framework for structuring service page messaging around customer situation, outcome, method, scope, proof, fit, and next action.",
     directAnswer:
-      "A strong service page helps a qualified buyer decide whether a specific offer fits their situation. It should identify the buying context, describe the desired change, explain the distinctive method, clarify scope and process, place relevant proof near the claims it supports, state who the service fits and who it does not, and make the next step concrete. The page should reduce uncertainty rather than simply repeat the homepage at greater length.",
+      "A strong service page helps a qualified buyer decide whether a specific offer fits their situation. It should identify the buying context, describe the desired change, explain the distinctive method, clarify scope and process, place relevant proof near the claims it supports, state who the service fits and who falls outside it, and make the next step concrete. The page should reduce uncertainty rather than simply repeat the homepage at greater length.",
     element: "air",
     topicSlug: "brand-messaging",
     primaryKeyword: "service page messaging strategy",
@@ -61,7 +61,7 @@ export const servicePageMessagingInsightPosts: InsightPost[] = [
       },
       {
         id: "lead-with-situation",
-        heading: "Lead with the buying situation, not the internal service description",
+        heading: "Lead with the buying situation, never the internal service description",
         paragraphs: [
           "Internal labels often describe what the business delivers. Buyers begin from what has changed in their world. A positioning engagement may become relevant when growth has made the old story inaccurate, when several services compete for attention, or when qualified prospects keep misunderstanding the offer.",
           "Open with a recognisable situation and then name the service as the response. This makes the category easier to understand because the buyer knows why it exists.",

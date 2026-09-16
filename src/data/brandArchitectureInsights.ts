@@ -160,7 +160,7 @@ export const brandArchitectureInsightPosts: SourcedInsightPost[] = [
         id: "journey-test",
         heading: "3. Test whether the customer journey needs separation",
         paragraphs: [
-          "A separate offer can share the brand while using a different page, funnel, sales sequence, onboarding process, and delivery system. Operational difference alone does not automatically require brand separation.",
+          "A separate offer can share the brand while using a different page, funnel, sales sequence, onboarding process, and delivery system. Operational difference alone falls short of requiring brand separation.",
           "Greater independence becomes useful when discovery channels, buyer expectations, purchasing mechanics, service environment, and ongoing relationship all diverge. The architecture can then help signal that the customer is entering a different kind of experience.",
           "Map the journey before naming the solution. If the proposed sub brand still sends people back to the same website, same founder, same proof, same sales call, and same delivery team, the customer may experience the separate identity as theatre rather than useful navigation.",
         ],
