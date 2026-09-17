@@ -1,9 +1,10 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { motion, useAnimationControls, useInView, useScroll, useTransform, type MotionValue } from "framer-motion";
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { motion, useInView, useScroll, useTransform, type MotionStyle, type MotionValue } from "framer-motion";
+import { useCallback, useEffect, useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
 import { Container } from "@/components/Container";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Link from "next/link";
 
 const FORCES = [
@@ -132,12 +133,17 @@ function SystemConnection({ index, missing, reducedMotion, progress }: {
 export function TatvaSystemLab() {
   const sectionRef = useRef<HTMLElement>(null);
   const diagramRef = useRef<HTMLDivElement>(null);
+  const readingRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const readingAnimations = useRef<Animation[]>([]);
   const forceRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const nodeRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const copyMotion = useAnimationControls();
   const previousIndex = useRef<number | null>(null);
   const { scrollYProgress } = useScroll({ target: diagramRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: readingProgress } = useScroll({ target: readingRef, offset: ["start end", "end start"] });
+  const readingArrival = useTransform(readingProgress, [.1, .65], [0, 1]);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const compact = useMediaQuery("(max-width: 767px)");
   const inView = useInView(sectionRef, { amount: 0.28 });
   const [omittedIndex, setOmittedIndex] = useState<number | null>(null);
   const omitted = omittedIndex === null ? null : FORCES[omittedIndex];
@@ -147,19 +153,38 @@ export function TatvaSystemLab() {
   }
 
   const settleReading = useCallback(() => {
-    copyMotion.stop();
-    copyMotion.set({ x: 0, y: 0 });
-  }, [copyMotion]);
+    readingAnimations.current.forEach((animation) => animation.cancel());
+    readingAnimations.current = [];
+  }, []);
   useEffect(() => {
     const previous = previousIndex.current;
     previousIndex.current = omittedIndex;
     settleReading();
-    if (prefersReducedMotion || previous === omittedIndex) return;
+    if (prefersReducedMotion || previous === omittedIndex || readingRef.current?.matches(":focus-within")) return;
+    const paragraphs = copyRef.current?.querySelectorAll(":scope > p, :scope > .tatva-pressure-lab__next-step > p");
+    if (!paragraphs) return;
     const direction = (omittedIndex ?? -1) > (previous ?? -1) ? 1 : -1;
-    copyMotion.set({ x: -direction * 8, y: 3 });
-    void copyMotion.start({ x: 0, y: 0, transition: { duration: .4, ease: [0.22, 1, 0.36, 1] } });
-    return () => copyMotion.stop();
-  }, [omittedIndex, prefersReducedMotion, copyMotion, settleReading]);
+    // Keep the measured surface, rule and audit link stationary. Only the
+    // original paragraphs enter in sequence, without hiding or remounting text.
+    readingAnimations.current = Array.from(paragraphs).map((paragraph, index) => paragraph.animate([
+      { transform: `translate3d(${-direction * (compact ? 4 : 8)}px, ${compact ? 2 : 3}px, 0)`, opacity: 1 },
+      { transform: "translate3d(0, 0, 0)", opacity: 1 },
+    ], { duration: 440, delay: index * 45, fill: "backwards", easing: "cubic-bezier(0.22, 1, 0.36, 1)" }));
+    return settleReading;
+  }, [omittedIndex, compact, prefersReducedMotion, settleReading]);
+
+  function revealFocusedReading(event: FocusEvent<HTMLElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({
+        block: bounds.height > window.innerHeight - 160 ? "start" : "center",
+        inline: "nearest",
+        behavior: "instant",
+      });
+    }
+  }
 
   function onForceKey(event: KeyboardEvent<HTMLButtonElement>, index: number, buttons: (HTMLButtonElement | null)[]) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -169,8 +194,7 @@ export function TatvaSystemLab() {
     setOmittedIndex(next);
     const button = buttons[next];
     if (!button) return;
-    const bounds = button.getBoundingClientRect();
-    button.focus({ preventScroll: bounds.top >= 80 && bounds.bottom <= window.innerHeight });
+    button.focus({ preventScroll: true });
   }
 
   return (
@@ -179,6 +203,7 @@ export function TatvaSystemLab() {
       className="tatva-pressure-lab relative overflow-hidden border-t py-20 sm:py-28"
       style={{ backgroundColor: "#111A18", borderColor: "rgba(244,239,230,0.08)" }}
       aria-labelledby="tatva-system-lab-title"
+      onFocusCapture={revealFocusedReading}
     >
       <motion.div
         aria-hidden="true"
@@ -198,18 +223,20 @@ export function TatvaSystemLab() {
       <Container className="relative max-w-[94rem]">
         <div className="grid gap-10 lg:grid-cols-[minmax(22rem,0.86fr)_minmax(34rem,1.14fr)] lg:items-center lg:gap-16">
           <div className="tatva-pressure-lab__copy">
-            <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#D4B99A]">
-              The system under pressure
-            </p>
-            <h2
-              id="tatva-system-lab-title"
-              className="mt-3 max-w-xl font-display text-[clamp(2.35rem,4.5vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em]"
-            >
-              A gap in one place changes the whole brand.
-            </h2>
-            <p className="mt-5 max-w-xl text-sm leading-7 sm:text-base sm:leading-8">
-              Walk through five common gaps between a brand’s intent and what customers encounter. Each points to a different decision worth revisiting.
-            </p>
+            <div className="tatva-pressure-lab__intro">
+              <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#D4B99A]">
+                The system under pressure
+              </p>
+              <h2
+                id="tatva-system-lab-title"
+                className="mt-3 max-w-xl font-display text-[clamp(2.35rem,4.5vw,4.5rem)] font-normal leading-[1.02] tracking-[-0.02em]"
+              >
+                A gap in one place changes the whole brand.
+              </h2>
+              <p className="mt-5 max-w-xl text-sm leading-7 sm:text-base sm:leading-8">
+                Walk through five common gaps between a brand’s intent and what customers encounter. Each points to a different decision worth revisiting.
+              </p>
+            </div>
 
             <div className="mt-7 grid gap-2 sm:grid-cols-2" role="group" aria-label="Choose a missing part of the brand">
               {FORCES.map((force, index) => {
@@ -223,7 +250,7 @@ export function TatvaSystemLab() {
                     aria-controls="tatva-system-reading"
                     onClick={() => choose(index)}
                     onKeyDown={(event) => onForceKey(event, index, forceRefs.current)}
-                    className="tatva-pressure-lab__force group flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                    className="tatva-pressure-lab__force group flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,box-shadow] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                     style={{
                       borderColor: missing ? `${force.color}99` : "rgba(244,239,230,0.12)",
                       backgroundColor: missing ? `${force.color}1A` : "rgba(244,239,230,0.035)",
@@ -323,7 +350,7 @@ export function TatvaSystemLab() {
                   const node = NODE_POSITIONS[index];
                   const missing = omittedIndex === index;
                   return (
-                    <motion.button
+                    <button
                       key={force.name}
                       ref={(node) => { nodeRefs.current[index] = node; }}
                       type="button"
@@ -334,8 +361,6 @@ export function TatvaSystemLab() {
                       onKeyDown={(event) => onForceKey(event, index, nodeRefs.current)}
                       className="tatva-pressure-lab__node absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-xl px-2 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                       style={{ left: `${(node.x / 500) * 100}%`, top: `${(node.y / 420) * 100}%` }}
-                      animate={{ y: missing ? 3 : 0 }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
                     >
                       <span
                         className="h-4 w-4 rounded-full border-2"
@@ -347,12 +372,13 @@ export function TatvaSystemLab() {
                         }}
                       />
                       <span className="mt-1.5 font-display text-sm leading-none">{force.name}</span>
-                    </motion.button>
+                    </button>
                   );
                 })}
               </div>
 
-              <div id="tatva-system-reading" className="tatva-pressure-lab__reading-region min-w-0"
+              <motion.div ref={readingRef} id="tatva-system-reading" className="tatva-pressure-lab__reading-region min-w-0"
+                style={{ "--pressure-reading": prefersReducedMotion ? 1 : readingArrival, "--pressure-accent": omitted?.color ?? "#8FA283" } as MotionStyle}
                 role="region" aria-label="Brand system reading" tabIndex={0}
                 onFocusCapture={settleReading} onPointerDown={settleReading}>
                 <div
@@ -370,16 +396,16 @@ export function TatvaSystemLab() {
                         <div key={force?.name ?? "complete"}><SystemReading force={force} /></div>
                       ))}
                     </div>
-                    <motion.div className="tatva-pressure-lab__reading-copy" initial={false} animate={copyMotion}
+                    <div ref={copyRef} className="tatva-pressure-lab__reading-copy"
                       aria-live="polite" aria-atomic="true">
                       <SystemReading force={omitted} />
-                    </motion.div>
+                    </div>
                   </div>
                   <Link href="/services#audit" className="tatva-pressure-lab__audit">
                     Open the brand audit <span aria-hidden="true">→</span>
                   </Link>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>

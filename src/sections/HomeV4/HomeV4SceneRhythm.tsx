@@ -50,8 +50,10 @@ const SCENES: readonly SceneSpec[] = [
     // The introduction enters; choices and their reading keep fixed hit areas.
     [".tatva-observatory__copy", "heading"],
   ] },
-  { selector: '.tatva-pressure-lab', ink: "sand", reading: ".tatva-pressure-lab__copy > h2 + p", layers: [
-    [".tatva-pressure-lab__copy", "heading"], [".tatva-pressure-lab__board", "plate"],
+  { selector: '.tatva-pressure-lab', ink: "sand", reading: ".tatva-pressure-lab__intro > h2 + p", layers: [
+    // The diagram, choices and audit link stay anchored. The reading owns its
+    // paragraph transitions and scroll rule; the introduction enters above.
+    [".tatva-pressure-lab__intro", "intro"],
   ] },
   { selector: '.studio-cinematic', ink: "sand", reading: ".studio-cinematic__lede", layers: [
     // Only the introduction enters. Discipline controls, proof links and the

@@ -65,7 +65,7 @@
 }
 
 .tatva-observatory__copy > p:not(:first-child),
-.tatva-pressure-lab__copy > p:not(:first-child),
+.tatva-pressure-lab__intro > p:not(:first-child),
 .tatva-observatory__reading-question,
 .tatva-pressure-lab__reading > p:last-of-type {
   color: rgba(244, 239, 230, 0.68);
@@ -207,7 +207,7 @@ html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
   z-index: 2;
 }
 
-.tatva-pressure-lab__copy > p:last-of-type {
+.tatva-pressure-lab__intro > p:last-of-type {
   color: rgba(244, 239, 230, 0.68);
 }
 
@@ -479,16 +479,40 @@ html[data-motion="reduced"] .tatva-observatory__film video {
 .tatva-pressure-lab__stack > * { grid-area: 1 / 1; min-width: 0; }
 .tatva-pressure-lab__measure { visibility: hidden; pointer-events: none; user-select: none; }
 .tatva-pressure-lab__reading-region:focus-visible {
-  outline: 2px solid #d4b99a;
+  outline: 2px solid #d4b99a !important;
   outline-offset: 5px;
   border-radius: 1rem;
 }
 .tatva-pressure-lab__signal { pointer-events: none; }
+.tatva-pressure-lab__force,
+.tatva-pressure-lab__node,
+.tatva-pressure-lab__restore,
+.tatva-pressure-lab__reading-region,
+.tatva-pressure-lab__audit { scroll-margin-block: 80px; }
+.tatva-pressure-lab__force:focus-visible,
+.tatva-pressure-lab__node:focus-visible,
+.tatva-pressure-lab__restore:focus-visible,
+.tatva-pressure-lab__audit:focus-visible { outline: 2px solid #d4b99a !important; }
 .tatva-pressure-lab__next-step {
+  position: relative;
   margin-top: 1.25rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(244, 239, 230, .2);
 }
+.tatva-pressure-lab__reading-copy .tatva-pressure-lab__next-step::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  inset-inline: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--pressure-accent, #8fa283), #d4b99a);
+  transform: scaleX(calc(.18 + var(--pressure-reading, 1) * .82));
+  transform-origin: left;
+  pointer-events: none;
+}
+.tatva-pressure-lab__reading-region:focus-within .tatva-pressure-lab__next-step::before,
+html[data-motion="reduced"] .tatva-pressure-lab__next-step::before { transform: none; }
+html[data-motion="reduced"] .tatva-pressure-lab__audit span { transition: none; transform: none; }
 .tatva-pressure-lab__next-step p:first-child {
   margin: 0 0 .5rem;
   color: #d4b99a;
@@ -519,6 +543,7 @@ html[data-motion="reduced"] .tatva-observatory__film video {
 .tatva-pressure-lab__audit:hover span { transform: translateX(3px); }
 .tatva-pressure-lab__node { min-height: 2.75rem; }
 @media (prefers-reduced-motion: reduce) {
+  .tatva-pressure-lab__next-step::before { transform: none !important; }
   .tatva-pressure-lab__audit span { transition: none; }
   .tatva-pressure-lab__audit:hover span { transform: none; }
 }
