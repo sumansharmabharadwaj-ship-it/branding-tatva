@@ -436,16 +436,40 @@ html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
     min-height: auto;
   }
 
-  .tatva-observatory__stage,
-  .tatva-observatory__frame,
-  .tatva-observatory__film video {
+  .tatva-observatory__stage {
     position: relative;
     top: auto;
     height: auto;
-    min-height: auto;
+    min-height: 100svh;
     transform: none;
     transition: none;
   }
+
+  .tatva-observatory__frame,
+  .tatva-observatory__film video {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* The page control gets the same compact reading as the device preference.
+   Keep one full frame while removing the inactive scroll-selection runway. */
+html[data-motion="reduced"] .tatva-observatory {
+  height: auto;
+  min-height: auto;
+}
+html[data-motion="reduced"] .tatva-observatory__stage {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 100svh;
+  transform: none;
+  transition: none;
+}
+html[data-motion="reduced"] .tatva-observatory__frame,
+html[data-motion="reduced"] .tatva-observatory__film video {
+  transform: none;
+  transition: none;
 }
 
 /* Keep the explanation and next action readable after each deliberate choice. */
