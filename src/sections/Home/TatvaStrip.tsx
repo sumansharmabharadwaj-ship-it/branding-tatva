@@ -14,6 +14,7 @@ type Tatva = {
   slug: keyof typeof ELEMENT_HEX;
   name: string;
   role: string;
+  choice: string;
   line: string;
   governs: string;
   question: string;
@@ -24,6 +25,7 @@ const TATVAS: Tatva[] = [
     slug: "earth",
     name: "Prithvi",
     role: "The Foundation",
+    choice: "Position",
     line: "The strategic truth everything else stands on.",
     governs: "Positioning, category, audience, belief",
     question: "What must people understand before the brand looks like anything?",
@@ -32,6 +34,7 @@ const TATVAS: Tatva[] = [
     slug: "water",
     name: "Jal",
     role: "The Flow",
+    choice: "Journey",
     line: "The experience that makes every touchpoint feel related.",
     governs: "Journey, offers, interaction, continuity",
     question: "How should every encounter feel connected to the one before it?",
@@ -40,6 +43,7 @@ const TATVAS: Tatva[] = [
     slug: "fire",
     name: "Agni",
     role: "The Spark",
+    choice: "Identity",
     line: "The distinct expression that earns attention.",
     governs: "Identity, distinction, creative direction",
     question: "What gives the right audience a reason to look twice?",
@@ -48,6 +52,7 @@ const TATVAS: Tatva[] = [
     slug: "air",
     name: "Vayu",
     role: "The Voice",
+    choice: "Voice",
     line: "The language people carry beyond the room.",
     governs: "Voice, messaging, content, distribution",
     question: "What can people repeat clearly after the brand has stopped speaking?",
@@ -56,6 +61,7 @@ const TATVAS: Tatva[] = [
     slug: "space",
     name: "Akash",
     role: "The Space",
+    choice: "Recall",
     line: "The consistency that turns exposure into memory.",
     governs: "Recognition, governance, repetition, recall",
     question: "What must remain coherent long enough to become familiar?",
@@ -210,7 +216,7 @@ export function TatvaStrip() {
               Five forces. One recognisable brand.
             </h2>
             <p className="mt-4 max-w-sm text-base leading-relaxed">
-              Each Tatva governs a different decision. The system works when none of them is forced to compensate for a missing one.
+              Position, experience, identity, voice, and recall. Five decisions that teach people to recognise the same business.
             </p>
           </div>
 
@@ -235,7 +241,7 @@ export function TatvaStrip() {
                       type="button"
                       aria-pressed={isActive}
                       aria-controls="tatva-focus-reading"
-                      aria-label={`Focus ${tatva.name}: ${tatva.role}`}
+                      aria-label={`Focus ${tatva.name}: ${tatva.role}, ${tatva.choice}`}
                       onClick={() => choose(index)}
                       onPointerEnter={(event) => { if (event.pointerType === "mouse") preview(index); }}
                       onPointerLeave={releasePreview}
@@ -243,14 +249,14 @@ export function TatvaStrip() {
                       className="tatva-observatory__force group flex min-w-0 w-full flex-col items-center rounded-2xl text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
                     >
                       <motion.span
-                        className="relative block h-24 w-24 lg:h-28 lg:w-28"
+                        className="tatva-observatory__portrait-frame relative block h-24 w-24 lg:h-28 lg:w-28"
                         initial={false}
                         animate={{ scale: prefersReducedMotion ? 1 : isActive ? 1.04 : 0.96 }}
                         transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
                       >
                         <motion.span
                           aria-hidden="true"
-                          className="absolute -inset-3 rounded-full border"
+                          className="tatva-observatory__halo absolute -inset-3 rounded-full border"
                           style={{ borderColor: `${ELEMENT_HEX[tatva.slug]}77` }}
                           initial={false}
                           animate={{ opacity: isActive ? 1 : 0, scale: prefersReducedMotion ? 1 : isActive ? 1 : 0.94 }}
@@ -277,6 +283,7 @@ export function TatvaStrip() {
                         </span>
                       </motion.span>
 
+                      <span className="tatva-observatory__choice-label">{tatva.choice}</span>
                       <span className="tatva-observatory__name mt-5 text-sm font-medium uppercase tracking-[0.16em]">
                         {tatva.name}
                       </span>
@@ -303,6 +310,13 @@ export function TatvaStrip() {
                 );
               })}
             </ol>
+            <div className="tatva-observatory__selection-track" aria-hidden="true">
+              <motion.span
+                initial={false}
+                animate={{ x: `${activeIndex * 100}%` }}
+                transition={{ duration: prefersReducedMotion ? 0 : .45, ease: [0.22, 1, 0.36, 1] }}
+              />
+            </div>
           </motion.div>
 
             <div
@@ -310,17 +324,17 @@ export function TatvaStrip() {
               role="region"
               aria-label={`${active.name}: ${active.role}`}
               tabIndex={0}
+              data-home-reading-anchor
               onFocusCapture={settleReading}
               onPointerDown={settleReading}
               className="tatva-observatory__focus overflow-hidden rounded-2xl border p-5"
               style={{
                 borderColor: `${ELEMENT_HEX[active.slug]}88`,
-                background: `radial-gradient(circle at 92% 4%, ${ELEMENT_HEX[active.slug]}24, transparent 42%), rgba(9,18,16,0.78)`,
               }}
             >
               <div className="flex items-center justify-between gap-4">
                 <p className="text-[0.8125rem] font-medium uppercase tracking-[0.12em]">
-                  Now in focus
+                  {active.name}
                 </p>
                 <span className="text-[0.8125rem] tracking-[0.1em] text-ivory/75">
                   {String(activeIndex + 1).padStart(2, "0")} / 05
