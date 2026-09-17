@@ -40,6 +40,7 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
   // Warm soil ink deepens through the reading interval in either direction.
   // The original semantic text keeps its wrapping, selection and contrast.
   const readingInk = useTransform(scrollYProgress, [0, .3, .7, 1], ["#625a4d", "#342f27", "#342f27", "#625a4d"]);
+  const readingLine = useTransform(scrollYProgress, [.18, .64], [.12, 1]);
   const buttonId = `home-question-${index + 1}`;
   const answerId = `${buttonId}-answer`;
 
@@ -102,6 +103,9 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
         onFocusCapture={settleCopy}
         onPointerDown={settleCopy}
       >
+        <span className={styles.answerRail} aria-hidden="true">
+          <motion.i style={{ scaleY: reducedMotion ? 1 : readingLine }} />
+        </span>
         <motion.p initial={false} animate={copyControls}>{item.answer}</motion.p>
       </motion.div>
     </motion.div>
@@ -186,7 +190,7 @@ export function HomeQuestionsScene() {
           <p className={styles.eyebrow}>Before we work together</p>
           <h2 id="home-questions-title">Know what you’re <em>saying yes to.</em></h2>
           <p className={styles.lede}>
-            A clear scope, a realistic schedule, and the same person leading the work.
+            Scope, timing, and working directly with Suman.
           </p>
           {/* Native fragment navigation carries keyboard focus into the next scene. */}
           <a href="#invitation" className={styles.textLink}>

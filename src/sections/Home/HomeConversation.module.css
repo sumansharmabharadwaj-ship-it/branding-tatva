@@ -100,7 +100,16 @@
 .questionNumber { transition: color 280ms ease; }
 .questionIcon { margin-top: .2rem; transition: transform 280ms cubic-bezier(.22,1,.36,1); }
 .questionItem[data-open="true"] .questionIcon { transform: rotate(45deg); }
-.answer { overflow: hidden; }
+.answer { position: relative; overflow: hidden; }
+.answerRail {
+  position: absolute; inset: .2rem auto 1.5rem .85rem; width: 2px;
+  background: rgb(152 98 63 / 16%); pointer-events: none;
+}
+.answerRail i {
+  position: absolute; inset: 0; background: #98623f;
+  transform-origin: top;
+}
+.answer:focus-within .answerRail i { transform: none !important; }
 .answer[aria-hidden="true"] { visibility: hidden; }
 /* Focus can arrive before the opening animation finishes. Measure and reveal
    the full answer immediately so its reading stays above the fixed controls. */
@@ -204,12 +213,14 @@
     grid-template-columns: minmax(0,1fr); padding: 6rem 1.5rem 3.5rem;
     gap: 2.3rem; min-height: 100svh;
   }
+  .questionFrame { padding-block: 5rem; gap: 1.5rem; }
   .questionIntro h2 { max-width: 15ch; font-size: clamp(2.6rem, 10vw, 3.4rem); }
   .questionIntro .lede { margin-block: 1rem .5rem; }
   .questionButton {
-    grid-template-columns: 1.35rem minmax(0,1fr) 1.2rem; gap: .65rem; padding-block: 1.15rem;
+    grid-template-columns: 1.05rem minmax(0,1fr) 1.2rem; gap: .5rem; padding-block: 1rem;
   }
-  .answer p { padding: 0 1.8rem 1.25rem 2rem; }
+  .answer p { padding: 0 .25rem 1rem 1.55rem; }
+  .answerRail { left: .5rem; bottom: 1rem; }
   .auditNote { display: block; }
   .invitationCopy h2 { max-width: 15ch; font-size: clamp(2.8rem, 10.7vw, 3.8rem); }
   .invitationCopy .lede { margin-top: 1.2rem; }
@@ -259,10 +270,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .answerRail i { transform: none !important; }
   .questionItem, .questionItem::before, .questionNumber, .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber { transition: none; }
 }
 
 :global(html[data-motion="reduced"]) .questionItem::before { transition: none; }
+:global(html[data-motion="reduced"]) .answerRail i { transform: none !important; }
 
 :global(html[data-motion="reduced"]) .questions :is(.questionNumber, .questionIcon, .questionButton, .textLink svg) {
   transition: none;
