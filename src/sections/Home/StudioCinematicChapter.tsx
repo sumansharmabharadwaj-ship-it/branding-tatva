@@ -141,9 +141,10 @@ export function StudioCinematicChapter() {
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
-    const measure = () => setFrameFits(grid.offsetHeight <= window.innerHeight + 1);
+    const measure = () => setFrameFits(Math.max(grid.offsetHeight, grid.scrollHeight) <= window.innerHeight + 1);
     const observer = new ResizeObserver(measure);
     observer.observe(grid);
+    grid.querySelectorAll(".studio-cinematic__content, .studio-cinematic__portrait").forEach((element) => observer.observe(element));
     window.addEventListener("resize", measure);
     measure();
     return () => {

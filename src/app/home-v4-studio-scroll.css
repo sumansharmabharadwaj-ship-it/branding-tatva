@@ -10,6 +10,28 @@
   position: relative;
   top: auto;
   height: auto;
+  padding-bottom: max(5rem, calc(env(safe-area-inset-bottom) + 4rem));
+}
+
+/* The caption must participate in sizing. Absolute text cannot tell the
+   portrait or the desktop fit check when larger type needs more space. */
+.home-v4 #studio .studio-cinematic__portrait {
+  display: grid;
+  grid-template-rows: minmax(16rem, 1fr) auto;
+  max-height: none;
+}
+.home-v4 #studio .studio-cinematic__authorship {
+  position: relative;
+  grid-row: 2;
+  align-self: end;
+  inset: auto;
+  width: auto;
+  margin: clamp(1rem, 2vw, 1.75rem);
+}
+.home-v4 #studio .studio-cinematic__footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
 }
 
 .home-v4 #studio[data-studio-story="flow"] .studio-cinematic__media-topline::after {
@@ -38,7 +60,7 @@
   }
 
   .home-v4 #studio .studio-cinematic__grid {
-    padding-block: clamp(5.5rem, 9svh, 6.25rem) 2rem;
+    padding-top: clamp(5.5rem, 9svh, 6.25rem);
   }
 
   .home-v4 #studio .studio-cinematic__content {

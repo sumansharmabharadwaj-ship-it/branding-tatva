@@ -5,14 +5,16 @@
   --home-scroll-velocity: 0;
 }
 
-/* A transition inherits the two chapters it joins. Repeated motifs cannot
-   carry a former chapter's dark palette into a light reading surface. */
+/* Keep chapter boundaries in document flow without painting a separate strip.
+   A narrow light-to-dark gradient reads as a blurred bar across the page. */
 .home-v4 .home-v4-handoff {
   --handoff-from: #111518;
   --handoff-to: #14201e;
   --handoff-line: #d4b99a;
-  height: clamp(1.25rem, 2.6vw, 2.5rem);
-  background: linear-gradient(180deg, var(--handoff-from), var(--handoff-to));
+  height: 0;
+  margin-block: 0;
+  overflow: clip;
+  background: none;
   pointer-events: none;
   isolation: isolate;
 }
@@ -96,7 +98,6 @@
 }
 
 @media (max-width: 720px) {
-  .home-v4 .home-v4-handoff { height: 1.25rem; }
   .home-v4-opening__shell {
     padding-top: max(6.5rem, calc(env(safe-area-inset-top) + 5.4rem));
   }
@@ -109,7 +110,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-v4 .home-v4-handoff { height: 1.25rem; }
   .home-v4 .home-v4-handoff__veil,
   .home-v4 .home-v4-handoff svg,
   .home-v4 .home-v4-handoff__stars {
