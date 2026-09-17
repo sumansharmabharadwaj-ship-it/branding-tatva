@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValue, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Clock3 } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -100,6 +100,7 @@ export function FinalInvitation() {
   const mediaScale = useTransform(storyProgress, [0, 0.52, 1], [1.05, 1.025, 1]);
   const mediaX = useTransform(storyProgress, [0, 0.52, 1], ["0.8%", "0.25%", "0%"]);
   const signoffInk = useTransform(entranceProgress, [0.5, 1], ["#625a4d", "#70482f"]);
+  const conversationProgress = useMotionValue(0);
   const desktopStory = cinematicMotion && !reducedMotion && frameFits;
 
   // The frame always keeps its natural height, even while sticky. Measuring
@@ -108,7 +109,7 @@ export function FinalInvitation() {
   useEffect(() => {
     const frame = frameRef.current;
     if (!frame) return;
-    const measure = () => setFrameFits(frame.offsetHeight <= window.innerHeight + 1);
+    const measure = () => setFrameFits(Math.max(frame.offsetHeight, frame.scrollHeight) <= window.innerHeight + 1);
     const observer = new ResizeObserver(measure);
     observer.observe(frame);
     window.addEventListener("resize", measure);
@@ -146,6 +147,7 @@ export function FinalInvitation() {
       const progress = desktopStory
         ? -bounds.top / Math.max(1, bounds.height - window.innerHeight)
         : (window.innerHeight * 0.42 - agendaBounds.top) / Math.max(1, agendaBounds.height);
+      conversationProgress.set(Math.min(1, Math.max(0, progress)));
       setActiveStep((current) => invitationStep(progress, current, STEP_LABELS.length));
     }
     function schedule() {
@@ -171,7 +173,7 @@ export function FinalInvitation() {
       window.removeEventListener("touchmove", release);
       window.removeEventListener("keydown", onKey);
     };
-  }, [desktopStory, reducedMotion]);
+  }, [conversationProgress, desktopStory, reducedMotion]);
 
   // Refresh the two local timelines after the hold changes the scene height.
   // A font, viewport or preference change can happen while scrolling is idle.
@@ -273,24 +275,29 @@ export function FinalInvitation() {
             <span>What we’ll talk through</span>
             <span><Clock3 size={15} aria-hidden="true" /> {consultation.minutes} minutes</span>
           </div>
-          <ol ref={agendaRef}>
-            {consultation.fullSteps.map((step, index) => (
-              <li key={step} data-current={activeStep === index}>
-                <motion.span
-                  className={styles.conversationRule}
-                  initial={false}
-                  animate={{ opacity: activeStep === index ? 1 : 0 }}
-                  transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
-                  aria-hidden="true"
-                />
-                <span className={styles.stepNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3>{STEP_LABELS[index]}</h3>
-                  <p>{step}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <div className={styles.conversationAgenda}>
+            <div className={styles.conversationTrack} aria-hidden="true">
+              <motion.i style={{ scaleY: reducedMotion ? 1 : conversationProgress }} />
+            </div>
+            <ol ref={agendaRef}>
+              {consultation.fullSteps.map((step, index) => (
+                <li key={step} data-current={activeStep === index}>
+                  <motion.span
+                    className={styles.conversationRule}
+                    initial={false}
+                    animate={{ opacity: activeStep === index ? 1 : 0 }}
+                    transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
+                    aria-hidden="true"
+                  />
+                  <span className={styles.stepNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3>{STEP_LABELS[index]}</h3>
+                    <p>{step}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
           <p className={styles.conversationFooter}>Direct with Suman · Your timezone</p>
         </aside>
         <motion.p

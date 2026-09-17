@@ -169,6 +169,14 @@
 .conversationTopline span:last-child {
   display: inline-flex; align-items: center; gap: .4rem; font-size: .875rem; color: #855035;
 }
+.conversationAgenda { position: relative; }
+.conversationTrack {
+  position: absolute; inset: .25rem auto .25rem 2.15rem; width: 2px;
+  background: rgb(152 98 63 / 13%); pointer-events: none;
+}
+.conversationTrack i {
+  position: absolute; inset: 0; background: #98623f; transform-origin: top;
+}
 .conversation ol { margin: 0; padding: 0; list-style: none; }
 .conversation li {
   position: relative; isolation: isolate;
@@ -215,6 +223,7 @@
     gap: 2.3rem; min-height: 100svh;
   }
   .questionFrame { padding-block: 5rem; gap: 1.5rem; }
+  .invitationFrame { padding-block: 5rem; row-gap: 1.5rem; }
   .questionIntro h2 { max-width: 15ch; font-size: clamp(2.6rem, 10vw, 3.4rem); }
   .questionIntro .lede { margin-block: 1rem .5rem; }
   .questionButton {
@@ -227,7 +236,12 @@
   .invitationCopy .lede { margin-top: 1.2rem; }
   .bookButton { width: 100%; padding-inline: 1.15rem; gap: .7rem; }
   .preparation { margin-bottom: .7rem; }
-  .conversation li { padding-block: 1.15rem; }
+  .conversation li {
+    grid-template-columns: 1.05rem minmax(0, 1fr); gap: .65rem;
+    padding-block: 1rem;
+  }
+  .conversationTrack { left: 1.325rem; }
+  .conversationTopline { padding-bottom: 1rem; }
   /* Raised with the desktop value above, kept a little lower because the
      mobile copy column spans the full width and has no clear side of
      the frame to fall back on. */
@@ -272,11 +286,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .answerRail i { transform: none !important; }
+  .conversationTrack i { transform: none !important; }
   .questionItem, .questionItem::before, .questionNumber, .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber { transition: none; }
 }
 
 :global(html[data-motion="reduced"]) .questionItem::before { transition: none; }
 :global(html[data-motion="reduced"]) .answerRail i { transform: none !important; }
+:global(html[data-motion="reduced"]) .conversationTrack i { transform: none !important; }
 
 :global(html[data-motion="reduced"]) .questions :is(.questionNumber, .questionIcon, .questionButton, .textLink svg) {
   transition: none;
