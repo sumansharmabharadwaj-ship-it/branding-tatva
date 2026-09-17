@@ -100,3 +100,80 @@ to authentication. The permanent review link is therefore not represented as
 current. Alias mutation is unavailable through the connected tools. The release
 329 deployment log explicitly confirms that the `VERCEL_TOKEN` repository secret
 needed for permanent-alias reassignment is not configured.
+
+## Release 354 pressure reading refinement
+
+The release 353 baseline confirmed that selecting Akash moved its diagram marker
+3 px off the line endpoint on both desktop and narrow phone. The unselected
+marker error was under 0.015 px; selected vertical error became 2.991518 px on
+desktop and 2.994196 px on phone. Desktop selection retained scrollY 16541 and
+the 534.125 px board, 375.703125 px reading and 80.421875 px heading.
+
+At 320 × 720, the baseline board measured 796.09375 px, the reading 365.4375 px
+and the heading 165.34375 px. End selected Akash; Tab reached the reading at
+top 354.734375 / bottom 720.171875, touching the viewport edge. Document width
+matched its 305 px viewport.
+
+Release 354 removes the selected node translation and the force-list hover
+translation. The shared scene entrance now moves only a stable introduction
+wrapper; choices, diagram, measured reading and audit link keep their positions.
+Existing SVG connection signals still respond to native forward and reverse
+scrolling.
+
+The four original reading paragraphs enter separately, in document order, over
+440 ms with 45 ms stagger. Forward and reverse choices have opposite horizontal
+travel: 8 px desktop or 4 px compact, with 3 px or 2 px vertical travel. Text
+stays opaque. Choice changes, entering the reading, pause and unmount cancel the
+active animations. Resize and resume retain the chosen reading without replay.
+Animation handles stay in refs, and neither the live text nor the audit link is
+keyed or replaced.
+
+A one-pixel accent rule between consequence and repair draws with the reading's
+native viewport progress, reversing when scroll direction reverses. The rule
+adds no height or scroll distance and becomes fully drawn while the reading
+has focus or reduced motion is active. OS reduced-motion CSS provides the same
+static fallback. The existing site pause also settles the audit arrow.
+
+Keyboard targets use 80 px viewport clearance and one focus-placement handler.
+Both force lists retain Left, Right, Home and End behavior; Tab keeps its native
+order through the reading and audit link. Focus outlines use the existing sand
+color. Visible copy, palette and media are unchanged.
+
+Local TypeScript, changed-file ESLint, homepage source and typography gates,
+production build and rendered homepage gate all passed. The rendered gate
+verified 496,919 CSS bytes. Source commit:
+`78e87c20e49dfedaf0513e4511ad0c5247a17175`.
+
+## Release 354 deployment evidence and remaining acceptance
+
+Vercel deployment `dpl_3iWtrkKekWTn3q4dhKL5QjZ4aA8C` reached READY, preview target,
+for trigger `1fe00e3a0fb3a69a240343cc06bc6343aa206cbf`. Source-to-trigger comparison
+contains only `vercel.json`. GitHub homepage contract `35215030682`, contact
+regression `35215030756`, and controlled preview `35215030711` all passed.
+The workflow restored controlled mode in
+`f982c0379e7f1ccfc80b0d8583a28dea95d2dcb4`.
+
+The browser connection failed with an exec-server transport disconnection while
+opening the final desktop preview. Two subsequent connection attempts remained
+unresponsive and were cancelled. No browser edits or alternate automation were
+used. The measurements above are explicitly the release 353 baseline. Final
+release 354 desktop, narrow phone, reverse-scroll and pause/resume browser
+acceptance remains pending. Source review and build checks cover the intended
+motion fallbacks; they do not substitute for the remaining interactive checks.
+
+The authenticated Vercel fetch of the exact release's `/api/release` on
+2026-09-17 at 11:24:40 UTC returned HTTP 302 to Vercel authentication. Exact
+endpoint identity could therefore not be certified in this pass; the READY
+deployment and trigger identity are confirmed by Vercel metadata and GitHub.
+
+The controlled workflow again reported that the existing `VERCEL_TOKEN` secret
+for permanent-alias reassignment is unconfigured. The permanent review link is
+still treated as an older release. Production remains unchanged.
+
+Resume acceptance on the exact release 354 preview: cycle both force lists;
+confirm every marker remains within 0.02 px of its endpoint; check fixed reading
+height and keyboard viewport clearance; inspect opposite, opaque paragraph
+transitions; verify native forward/reverse signal and reading-rule movement;
+then pause and resume with reading or audit-link focus and confirm retained
+selection, readable text and stable visible geometry. Capture the final narrow
+phone screenshot and retry `/api/release` certification through the browser.
