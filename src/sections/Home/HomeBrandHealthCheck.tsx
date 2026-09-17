@@ -17,7 +17,7 @@ import { track, trackRuntimeIssue } from "@/lib/analytics";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useReducer, useRef, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useLayoutEffect, useReducer, useRef, type FocusEvent, type KeyboardEvent, type PointerEvent } from "react";
 
 type Diagnosis = HomeDiagnosis;
 type ResultDiagnosis = HomeDiagnosis | "mixed";
@@ -96,7 +96,7 @@ const QUESTIONS: readonly Question[] = [
         centre: "Make the position easy to repeat.",
       },
       {
-        label: "The team knows what belongs and what does not.",
+        label: "The team makes brand decisions from shared rules.",
         shortLabel: "Judgement",
         diagnosis: "coherence",
         centre: "Write the rules behind the brand choices.",
@@ -140,7 +140,7 @@ const RESULTS: Record<
   demand: {
     title: "Marketing is carrying a weak reason to choose.",
     detail:
-      "The business is visible, yet the message and evidence are not giving buyers enough reason to prefer it before the sales conversation.",
+      "The business is visible, yet buyers reach the sales conversation still comparing price. The message and evidence need to establish a reason to prefer it.",
     signal: "Put proof behind a sharper position",
     situation: "ongoing",
     nextAction: "See the evidence, then the Brand Partnership",
@@ -311,6 +311,19 @@ export function HomeBrandHealthCheck() {
     dispatch({ type: "review" });
   }
 
+  function revealReading(event: FocusEvent<HTMLElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({
+        block: bounds.height > window.innerHeight - 160 ? "start" : "center",
+        inline: "nearest",
+        behavior: "instant",
+      });
+    }
+  }
+
   function onChoiceKeyDown(
     event: KeyboardEvent<HTMLButtonElement>,
     index: number,
@@ -342,6 +355,7 @@ export function HomeBrandHealthCheck() {
       data-diagnostic-state={done ? "complete" : selected === null ? "choosing" : "ready"}
       data-diagnostic-panel={done ? "result" : `question-${step + 1}`}
       aria-labelledby="brand-orbit-title"
+      onFocusCapture={revealReading}
       onPointerEnter={prepareScene}
       onPointerMove={moveScene}
       onPointerLeave={resetScene}
@@ -384,8 +398,8 @@ export function HomeBrandHealthCheck() {
       <div className="brand-orbit__shell" data-home-frame>
         <header className="brand-orbit__header">
           <h2 id="brand-orbit-title">
-            02 · Brand diagnostic
-            <span>3 choices · about 30 seconds · instant direction</span>
+            Brand diagnostic
+            <span>3 questions · Where to begin</span>
           </h2>
           <div
             className="brand-orbit__progress"
@@ -397,7 +411,7 @@ export function HomeBrandHealthCheck() {
             aria-valuetext={done ? "Complete" : `Question ${step + 1} of ${QUESTIONS.length}`}
           >
             <strong>
-              <span className="brand-orbit__progress-label">Question</span>
+              <span className="brand-orbit__progress-label">{done ? "Complete" : "Question"}</span>
               <span className="brand-orbit__progress-count">
                 {String(Math.min(step + 1, QUESTIONS.length)).padStart(2, "0")} / 03
               </span>
@@ -473,26 +487,6 @@ export function HomeBrandHealthCheck() {
               </div>
 
               <div className="brand-orbit__decision">
-                <div className="brand-orbit__choice-cue" id={`brand-orbit-cue-${step}`}>
-                  <p aria-live="polite" aria-atomic="true">
-                    <span>{selected === null ? "Choose one" : "This points toward"}</span>
-                    <b>
-                      {selected === null
-                        ? "The statement closest to where the friction lives."
-                        : active.choices[selected].centre}
-                    </b>
-                  </p>
-                  <button
-                    type="button"
-                    className="brand-orbit__continue"
-                    onClick={continueDiagnostic}
-                    disabled={selected === null}
-                  >
-                    {step === QUESTIONS.length - 1 ? "See my result" : "Next question"}
-                    <span aria-hidden="true">→</span>
-                  </button>
-                </div>
-
                 <fieldset className="brand-orbit__choices" role="radiogroup" aria-describedby={`brand-orbit-cue-${step}`}>
                   <legend className="sr-only">{active.prompt}</legend>
                   {active.choices.map((choice, index) => (
@@ -525,6 +519,26 @@ export function HomeBrandHealthCheck() {
                     </motion.button>
                   ))}
                 </fieldset>
+
+                <div className="brand-orbit__choice-cue" id={`brand-orbit-cue-${step}`}>
+                  <p aria-live="polite" aria-atomic="true">
+                    <span>{selected === null ? "Choose one" : "This points toward"}</span>
+                    <b>
+                      {selected === null
+                        ? "The statement closest to your business."
+                        : active.choices[selected].centre}
+                    </b>
+                  </p>
+                  <button
+                    type="button"
+                    className="brand-orbit__continue"
+                    onClick={continueDiagnostic}
+                    disabled={selected === null}
+                  >
+                    {step === QUESTIONS.length - 1 ? "See my result" : "Next question"}
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
