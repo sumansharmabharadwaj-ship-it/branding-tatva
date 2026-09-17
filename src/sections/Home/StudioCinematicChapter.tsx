@@ -261,7 +261,12 @@ export function StudioCinematicChapter() {
     choose(next);
     const target = tabsRef.current[next];
     const bounds = target?.getBoundingClientRect();
-    target?.focus({ preventScroll: Boolean(bounds && bounds.top >= 80 && bounds.bottom <= window.innerHeight) });
+    // Keep keyboard choices clear of the fixed header and bottom controls.
+    // Center only an obscured target, then focus without a second scroll.
+    if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 64)) {
+      target?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+    }
+    target?.focus({ preventScroll: true });
   }
 
   return (
@@ -305,14 +310,16 @@ export function StudioCinematicChapter() {
         </div>
 
         <div className="studio-cinematic__content">
-          <p className="studio-cinematic__eyebrow">About Suman</p>
-          <h2 id="studio-cinematic-title">
-            One mind. Three disciplines. <em>One accountable author.</em>
-          </h2>
-          <p className="studio-cinematic__lede">
-            Psychology reads the audience. Literature shapes the language.
-            Strategy connects both to the decisions a business makes.
-          </p>
+          <div className="studio-cinematic__intro" data-studio-intro>
+            <p className="studio-cinematic__eyebrow">About Suman</p>
+            <h2 id="studio-cinematic-title">
+              One mind. Three disciplines. <em>One accountable author.</em>
+            </h2>
+            <p className="studio-cinematic__lede">
+              Psychology reads the audience. Literature shapes the language.
+              Strategy connects both to the decisions a business makes.
+            </p>
+          </div>
 
           <div className="studio-cinematic__chooser" role="tablist" aria-label="Choose one of Suman's three disciplines">
             {DISCIPLINES.map((discipline, index) => {

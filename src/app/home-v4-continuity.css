@@ -48,7 +48,7 @@
     width: min(31rem, calc(100% - 3rem));
   }
 
-  .studio-cinematic__content > h2 {
+  .studio-cinematic__content h2 {
     max-width: 13ch;
     font-size: clamp(3rem, 5.15vw, 4.75rem);
   }
@@ -62,7 +62,7 @@
 }
 
 .studio-cinematic__media-caption h3,
-.studio-cinematic__content > h2 {
+.studio-cinematic__content h2 {
   text-wrap: balance;
 }
 

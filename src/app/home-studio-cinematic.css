@@ -146,7 +146,7 @@
   color: var(--studio-gold);
 }
 
-.studio-cinematic__content > h2 {
+.studio-cinematic__content h2 {
   max-width: 14.5ch;
   margin: 0.8rem 0 0;
   font-family: var(--font-display), Georgia, serif;
@@ -156,7 +156,7 @@
   letter-spacing: -0.035em;
 }
 
-.studio-cinematic__content > h2 em {
+.studio-cinematic__content h2 em {
   color: #8a6b3d;
   font-weight: 400;
 }

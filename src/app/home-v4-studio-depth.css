@@ -220,7 +220,7 @@ html[data-motion="reduced"] .studio-cinematic__aurora--sage {
   text-shadow: 0 0 24px color-mix(in srgb, var(--studio-accent) 32%, transparent);
 }
 
-.studio-cinematic__content > h2 {
+.studio-cinematic__content h2 {
   max-width: 19ch;
   margin-top: 0.8rem;
   color: #f4efe6;
@@ -230,7 +230,7 @@ html[data-motion="reduced"] .studio-cinematic__aurora--sage {
   text-shadow: 0 10px 48px rgba(0, 0, 0, 0.24);
 }
 
-.studio-cinematic__content > h2 em {
+.studio-cinematic__content h2 em {
   color: #d4b99a;
   background: none;
   animation: none;
@@ -479,7 +479,7 @@ html[data-motion="reduced"] .studio-cinematic__aurora--sage {
     padding-inline: clamp(1.75rem, 3vw, 3rem);
   }
 
-  .studio-cinematic__content > h2 {
+  .studio-cinematic__content h2 {
     font-size: clamp(2.6rem, 4.2vw, 3.4rem);
   }
 
@@ -521,7 +521,7 @@ html[data-motion="reduced"] .studio-cinematic__aurora--sage {
     inset: -1rem;
   }
 
-  .studio-cinematic__content > h2 {
+  .studio-cinematic__content h2 {
     max-width: 19ch;
     font-size: clamp(2.8rem, 6vw, 4rem);
   }
@@ -546,7 +546,7 @@ html[data-motion="reduced"] .studio-cinematic__aurora--sage {
     padding: 2.25rem 0.85rem 0.75rem;
   }
 
-  .studio-cinematic__content > h2 {
+  .studio-cinematic__content h2 {
     max-width: 100%;
     font-size: clamp(2.75rem, 13vw, 4.45rem);
     line-height: 0.95;

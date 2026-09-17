@@ -16,6 +16,12 @@
   display: none;
 }
 
+.studio-cinematic__intro {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
   html body .home-v4 #studio {
     scroll-margin-top: 0;
@@ -39,7 +45,7 @@
     padding-block: .5rem;
   }
 
-  .home-v4 #studio .studio-cinematic__content > h2 {
+  .home-v4 #studio .studio-cinematic__content h2 {
     max-width: 26ch;
     font-size: clamp(2.8rem, min(4.2vw, 5.8svh), 4.6rem);
   }
@@ -66,6 +72,7 @@
 
 .home-v4 #studio :is([role="tab"], [role="tabpanel"], a):focus-visible {
   outline: 2px solid var(--studio-accent);
+  outline-color: var(--studio-accent) !important;
   outline-offset: 4px;
 }
 

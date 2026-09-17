@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
-type Treatment = "title" | "heading" | "fan" | "plate" | "portrait" | "rail";
+type Treatment = "title" | "heading" | "intro" | "fan" | "plate" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
 type SceneSpec = { selector: string; ink?: "clay" | "sand"; reading?: string; layers: readonly LayerSpec[] };
 
@@ -47,9 +47,9 @@ const SCENES: readonly SceneSpec[] = [
     [".tatva-pressure-lab__copy", "heading"], [".tatva-pressure-lab__board", "plate"],
   ] },
   { selector: '.studio-cinematic', ink: "sand", reading: ".studio-cinematic__lede", layers: [
-    // One reading column preserves the title/intro and proof/footer gaps.
-    // Its own discipline transition stays inside this shared entrance.
-    [".studio-cinematic__content", "heading"], [".studio-cinematic__portrait", "portrait"],
+    // Only the introduction enters. Discipline controls, proof links and the
+    // portrait frame stay anchored while the chapter owns its image camera.
+    ["[data-studio-intro]", "intro"],
   ] },
   { selector: '[data-home-v4-chapter="decision"]', ink: "clay", reading: "header h2 + p", layers: [
     // Disclosure headings keep their hit areas still. Their own scroll ink,
@@ -158,7 +158,12 @@ export function HomeV4SceneRhythm() {
           let y = amount * (wide ? 106 : 32);
           let rotate = 0;
           let scale = 1;
-          if (wide) {
+          if (treatment === "intro") {
+            // Approach from above so the reading group always clears the
+            // stationary tabs below, including during reverse scrolling.
+            x = wide ? side * -24 * amount : 0;
+            y = -12 * amount;
+          } else if (wide) {
             if (treatment === "heading") {
               // Eyebrow, title and introduction arrive as one reading group.
               // Match the rail's vertical travel so the heading cannot cross
@@ -180,11 +185,6 @@ export function HomeV4SceneRhythm() {
               y = 150 * amount;
               rotate = side * 4.5 * amount;
               scale = 1 - 0.11 * amount;
-            } else if (treatment === "portrait") {
-              x = 128 * amount;
-              y = 40 * amount;
-              rotate = -7 * amount;
-              scale = 1 - 0.17 * amount;
             }
           }
           // Ease the visual response, never the document's scroll position.
