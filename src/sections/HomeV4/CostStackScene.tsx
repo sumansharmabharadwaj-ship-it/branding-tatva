@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties, type FocusEvent } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { ArrowDownRight } from "lucide-react";
 import { LivingGradient } from "@/components/LivingGradient";
-import { SplitReveal } from "@/components/SplitReveal";
 import styles from "./CostStack.module.css";
 
 /* Moved here from the cream hidden-cost scene rather than rewritten.
@@ -57,20 +56,32 @@ export function V4CostStackScene() {
       frame = 0;
       if (disposed || !visible || document.hidden) return;
       const viewport = window.innerHeight;
+      const selection = document.getSelection();
+      const readingRange = selection && !selection.isCollapsed && selection.rangeCount
+        ? selection.getRangeAt(0) : null;
       // Top-centred scale leaves each sticky top unchanged. Read layout height
       // rather than transformed height so depth never feeds back into progress.
       const measurements = cards.map((card) => ({
         card, top: card.getBoundingClientRect().top, height: card.offsetHeight,
         pin: stacked.matches ? parseFloat(getComputedStyle(card).top) : 0,
+        selected: Boolean(readingRange?.intersectsNode(card)),
       }));
-      measurements.forEach(({ card, top, height, pin }, index) => {
+      measurements.forEach(({ card, top, height, pin, selected }, index) => {
+        // Native text selection holds the paint while the document still scrolls.
+        if (selected) return;
         const next = measurements[index + 1];
         const cover = stacked.matches && next
           ? clamp((top + height - next.top) / Math.max(1, height - (next.pin - pin)))
           : 0;
         const arrival = clamp((viewport * .92 - top) / Math.max(1, viewport * .92 - pin));
+        // Text settles well before the sticky reading position. Separate title
+        // and body ranges give a short sequence that reverses with native scroll.
+        const title = clamp((viewport * .9 - top) / Math.max(1, viewport * .35));
+        const body = clamp((viewport * .85 - top) / Math.max(1, viewport * .35));
         card.style.setProperty("--stack-cover", cover.toFixed(4));
         card.style.setProperty("--stack-arrival", arrival.toFixed(4));
+        card.style.setProperty("--stack-title", title.toFixed(4));
+        card.style.setProperty("--stack-body", body.toFixed(4));
       });
     }
     function schedule() {
@@ -86,6 +97,7 @@ export function V4CostStackScene() {
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
     document.addEventListener("visibilitychange", schedule);
+    document.addEventListener("selectionchange", schedule);
     stacked.addEventListener("change", schedule);
     schedule();
     return () => {
@@ -96,13 +108,29 @@ export function V4CostStackScene() {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       document.removeEventListener("visibilitychange", schedule);
+      document.removeEventListener("selectionchange", schedule);
       stacked.removeEventListener("change", schedule);
       cards.forEach((card) => {
         card.style.removeProperty("--stack-cover");
         card.style.removeProperty("--stack-arrival");
+        card.style.removeProperty("--stack-title");
+        card.style.removeProperty("--stack-body");
       });
     };
   }, [hydrated, prefersReducedMotion]);
+
+  function revealReading(event: FocusEvent<HTMLElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLElement) || target === event.currentTarget || !target.matches(":focus-visible")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({
+        block: bounds.height > window.innerHeight - 160 ? "start" : "center",
+        inline: "nearest",
+        behavior: "instant",
+      });
+    }
+  }
 
   return (
     <section
@@ -115,6 +143,7 @@ export function V4CostStackScene() {
       data-cursor-world="dark"
       className={styles.scene}
       aria-labelledby="home-v4-cost-stack-title"
+      onFocusCapture={revealReading}
     >
       {/* First child, content after: DOM order does the layering, so no
           negative z-index is involved anywhere in this scene. */}
@@ -123,17 +152,10 @@ export function V4CostStackScene() {
       <div className={styles.inner}>
         <div data-cost-intro>
           <p className={styles.eyebrow}>02 · What the reset costs</p>
-          {/* The title and introduction share one scroll entrance so the
-              heading keeps its reading space above the supporting copy. */}
-          {/* Word-staggered entrance rather than a block fade. The split
-              keeps the <em> intact, renders plain text immediately, stays
-              static under reduced motion, and skips itself on compact
-              screens. A rebase reverted this to a plain h2 once while
-              leaving the import stranded — if the title ever stops
-              splitting, check this element before suspecting the engine. */}
-          <SplitReveal as="h2" id="home-v4-cost-stack-title" className={styles.title}>
+          {/* The shared scene entrance owns this intact, readable heading. */}
+          <h2 id="home-v4-cost-stack-title" className={styles.title}>
             Three costs. <em>Every reset renews them.</em>
-          </SplitReveal>
+          </h2>
           <p className={styles.lede}>
             Starting the brand again looks free. The bill arrives later, in the work
             people repeat and the recognition that never compounds.
@@ -144,6 +166,9 @@ export function V4CostStackScene() {
           {BRAND_RESET_COSTS.map((cost, index) => (
             <li
               data-cost-card
+              id={`brand-reset-cost-${cost.number}`}
+              tabIndex={0}
+              aria-labelledby={`brand-reset-cost-title-${cost.number}`}
               key={cost.number}
               className={styles.card}
               /* Drives the staggered sticky offset, so each card pins a
@@ -155,7 +180,7 @@ export function V4CostStackScene() {
                 <span className={styles.number} aria-hidden="true">{cost.number}</span>
                 <span className={styles.meter} aria-hidden="true" />
               </div>
-              <h3>{cost.title}</h3>
+              <h3 id={`brand-reset-cost-title-${cost.number}`}>{cost.title}</h3>
               <p>{cost.body}</p>
             </li>
           ))}
@@ -163,7 +188,7 @@ export function V4CostStackScene() {
 
         <div className={styles.footer}>
           <p>A clear position gives every campaign something to build on.</p>
-          <a href="#foundation" className={styles.link} data-magnetic data-cursor-label="foundation">
+          <a href="#foundation" className={styles.link} data-cursor-label="foundation">
             Build the foundation <ArrowDownRight size={18} aria-hidden="true" />
           </a>
         </div>

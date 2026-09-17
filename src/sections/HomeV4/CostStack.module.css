@@ -98,10 +98,13 @@
    smaller offset left only a blank rounded edge showing, which says
    nothing. */
 .card {
+  --title-travel: 8px;
+  --body-travel: 12px;
   position: sticky;
   transform-origin: top center;
   scale: calc(1 - var(--stack-cover, 0) * .045);
   top: calc(15svh + var(--i) * 4.2rem);
+  scroll-margin-block: 80px;
   padding: clamp(1.75rem, 3.4vw, 2.9rem);
   border: 1px solid rgb(242 240 232 / 14%);
   border-radius: 1.75rem;
@@ -147,6 +150,7 @@
   font: 400 clamp(1.85rem, 3.3vw, 2.9rem)/1.08 var(--font-display), Georgia, serif;
   letter-spacing: -.02em;
   text-wrap: balance;
+  translate: 0 calc((1 - var(--stack-title, 1)) * var(--title-travel));
 }
 
 .card p {
@@ -155,6 +159,22 @@
   color: rgb(242 240 232 / 74%);
   font-size: 1rem;
   line-height: 1.65;
+  translate: 0 calc((1 - var(--stack-body, 1)) * var(--body-travel));
+}
+
+/* A covered reading rises above the pile when reached with Tab, including
+   reverse Tab. Its content stays still without changing document geometry. */
+.card:focus-within {
+  z-index: 4;
+  scale: 1;
+}
+
+.card:focus-within :is(h3, p) { translate: none; }
+.card:focus-within .meter::after { transform: none; }
+
+.scene :is(.card, .link):focus-visible {
+  outline: 2px solid #d4b99a !important;
+  outline-offset: 5px;
 }
 
 .footer {
@@ -182,6 +202,7 @@
   justify-content: center;
   gap: 1.2rem;
   min-height: 3rem;
+  scroll-margin-block: 80px;
   padding: .75rem 1.35rem;
   border: 1px solid rgb(242 240 232 / 30%);
   border-radius: 999px;
@@ -189,17 +210,11 @@
   background: #e9e2d4;
   font-size: .9rem;
   line-height: 1.4;
-  transition: background-color 200ms ease, transform 200ms ease;
+  transition: background-color 200ms ease;
 }
 
 .link:hover {
   background: #fff9ed;
-  transform: translateY(-2px);
-}
-
-.link:focus-visible {
-  outline: 2px solid #d4b99a;
-  outline-offset: 4px;
 }
 
 /* Below this width a card plus its heading stops fitting inside one
@@ -210,6 +225,8 @@
 @media (max-width: 900px), (max-height: 700px) {
   .stack { row-gap: 1.1rem; }
   .card {
+    --title-travel: 4px;
+    --body-travel: 6px;
     position: static;
     scale: 1;
     padding: 1.5rem 1.35rem;
@@ -222,31 +239,17 @@
   .link { width: 100%; }
 }
 
-/* Reduced motion: the pile is scroll position rather than animation, so
-   nothing here is strictly motion. It still reads as movement though,
-   so the standing per component rule applies and it resolves to a plain
-   readable list. */
+/* Pause only decorative motion. Native sticky positioning and spacing keep
+   exactly the same geometry, so toggling cannot move a reading to its old
+   flow position. Compact screens keep their ordinary-flow list in both modes. */
 @media (prefers-reduced-motion: reduce) {
-  .stack { row-gap: 1.1rem; }
-  .card {
-    position: static;
-    scale: 1;
-    backdrop-filter: none;
-  }
+  .card { scale: 1; }
+  .card :is(h3, p) { translate: none; }
   .link { transition: none; }
+  .meter::after { transform: none; }
 }
 
-:global(html[data-motion="reduced"]) .stack { row-gap: 1.1rem; }
-
-:global(html[data-motion="reduced"]) .card {
-  position: static;
-  scale: 1;
-  backdrop-filter: none;
-}
-
-:global(html[data-motion="reduced"]) .link {
-  transition: none;
-}
-
-@media (prefers-reduced-motion: reduce) { .meter::after { transform: none; } }
+:global(html[data-motion="reduced"]) .card { scale: 1; }
+:global(html[data-motion="reduced"]) .card :is(h3, p) { translate: none; }
+:global(html[data-motion="reduced"]) .link { transition: none; }
 :global(html[data-motion="reduced"]) .meter::after { transform: none; }
