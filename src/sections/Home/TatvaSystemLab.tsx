@@ -65,12 +65,12 @@ function SystemHeading({ force }: { force: Force | null }) {
   return (
     <>
       <div>
-        <p className="text-[0.58rem] font-medium uppercase tracking-[0.18em]">Brand connections</p>
+        <p className="text-xs font-medium uppercase tracking-[0.12em]">Brand connections</p>
         <h3 className="mt-2 font-display text-3xl font-normal leading-tight">
           {force ? `${force.role} missing` : "All five working together"}
         </h3>
       </div>
-      <span className="tatva-pressure-lab__status rounded-full border px-3 py-2 text-[0.56rem] font-medium uppercase tracking-[0.14em]">
+      <span className="tatva-pressure-lab__status rounded-full border px-3 py-2 text-xs font-medium uppercase tracking-[0.1em]">
         {force ? `${force.name} omitted` : "Complete system"}
       </span>
     </>
@@ -80,7 +80,7 @@ function SystemHeading({ force }: { force: Force | null }) {
 function SystemReading({ force }: { force: Force | null }) {
   return (
     <>
-      <p className="text-[0.58rem] font-medium uppercase tracking-[0.16em]" style={{ color: "#D4B99A" }}>
+      <p className="tatva-pressure-lab__reading-label text-xs font-medium uppercase tracking-[0.12em]">
         {force ? `Without ${force.name}` : "When all five are present"}
       </p>
       <p className="tatva-pressure-lab__consequence mt-3 font-display text-2xl leading-tight">
@@ -223,7 +223,7 @@ export function TatvaSystemLab() {
       />
 
       <Container className="relative max-w-[94rem]">
-        <div className="grid gap-10 lg:grid-cols-[minmax(22rem,0.86fr)_minmax(34rem,1.14fr)] lg:items-center lg:gap-16">
+        <div className="tatva-pressure-lab__layout grid gap-10 lg:grid-cols-[minmax(22rem,0.86fr)_minmax(34rem,1.14fr)] lg:items-center lg:gap-16">
           <div className="tatva-pressure-lab__copy">
             <div className="tatva-pressure-lab__intro">
               <p className="text-xs font-medium uppercase tracking-[0.22em] text-[#D4B99A]">
@@ -236,11 +236,11 @@ export function TatvaSystemLab() {
                 A gap in one place changes the whole brand.
               </h2>
               <p className="mt-5 max-w-xl text-sm leading-7 sm:text-base sm:leading-8">
-                Walk through five common gaps between a brand’s intent and what customers encounter. Each points to a different decision worth revisiting.
+                One missing connection can make the same business feel different from place to place.
               </p>
             </div>
 
-            <div className="mt-7 grid gap-2 sm:grid-cols-2" role="group" aria-label="Choose a missing part of the brand">
+            <div className="tatva-pressure-lab__choices mt-7 grid gap-2 sm:grid-cols-2" role="group" aria-label="Choose a missing part of the brand">
               {FORCES.map((force, index) => {
                 const missing = omittedIndex === index;
                 return (
@@ -286,13 +286,6 @@ export function TatvaSystemLab() {
               })}
             </div>
 
-            <button
-              type="button"
-              onClick={() => choose(null)}
-              className="tatva-pressure-lab__restore mt-4 inline-flex min-h-11 items-center text-xs font-medium uppercase tracking-[0.16em] underline underline-offset-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
-            >
-              Restore all five forces
-            </button>
           </div>
 
           <div className="tatva-pressure-lab__board overflow-hidden rounded-[2rem] border p-4 backdrop-blur-xl sm:p-7">
@@ -309,7 +302,7 @@ export function TatvaSystemLab() {
               </div>
             </div>
 
-            <div className="grid gap-6 pt-5 md:grid-cols-[minmax(17rem,1fr)_minmax(13rem,0.72fr)] md:items-center">
+            <div className="tatva-pressure-lab__response grid gap-6 pt-5 md:grid-cols-[minmax(17rem,1fr)_minmax(13rem,0.72fr)] md:items-center">
               <div ref={diagramRef} className="tatva-pressure-lab__diagram relative mx-auto aspect-[500/420] w-full max-w-[36rem]">
                 <svg
                   viewBox="0 0 500 420"
@@ -356,7 +349,7 @@ export function TatvaSystemLab() {
                       key={force.name}
                       ref={(node) => { nodeRefs.current[index] = node; }}
                       type="button"
-                      aria-label={`${missing ? "Restore" : "Remove"} ${force.name}`}
+                      aria-label={`${missing ? "Restore" : "Remove"} ${force.name}: ${force.role}`}
                       aria-pressed={missing}
                       aria-controls="tatva-system-reading"
                       onClick={() => choose(index)}
@@ -373,13 +366,13 @@ export function TatvaSystemLab() {
                           boxShadow: missing ? "none" : `0 0 16px ${force.color}88`,
                         }}
                       />
-                      <span className="mt-1.5 font-display text-sm leading-none">{force.name}</span>
+                      <span className="tatva-pressure-lab__node-label mt-1.5 text-xs leading-none">{force.role}</span>
                     </button>
                   );
                 })}
               </div>
 
-              <motion.div ref={readingRef} id="tatva-system-reading" className="tatva-pressure-lab__reading-region min-w-0"
+              <motion.div ref={readingRef} id="tatva-system-reading" className="tatva-pressure-lab__reading-region min-w-0" data-home-reading-anchor
                 style={{ "--pressure-reading": prefersReducedMotion ? 1 : readingArrival, "--pressure-accent": omitted?.color ?? "#8FA283" } as MotionStyle}
                 role="region" aria-label="Brand system reading" tabIndex={0}
                 onFocusCapture={settleReading} onPointerDown={settleReading}>
@@ -387,11 +380,20 @@ export function TatvaSystemLab() {
                   className="tatva-pressure-lab__reading rounded-2xl border p-5"
                   style={{
                     borderColor: omitted ? `${omitted.color}77` : "rgba(143,162,131,0.32)",
-                    background: omitted
-                      ? `radial-gradient(circle at 88% 4%, ${omitted.color}20, transparent 44%), rgba(244,239,230,0.035)`
-                      : "radial-gradient(circle at 88% 4%, rgba(143,162,131,0.16), transparent 44%), rgba(244,239,230,0.035)",
                   }}
                 >
+                  <div className="tatva-pressure-lab__connection-meter" aria-hidden="true">
+                    {FORCES.map((force, index) => (
+                      <span key={force.name}>
+                        <motion.span
+                          initial={false}
+                          style={{ backgroundColor: force.color, transformOrigin: "left" }}
+                          animate={{ scaleX: omittedIndex === index ? .18 : 1, opacity: omittedIndex === index ? .4 : 1 }}
+                          transition={{ duration: prefersReducedMotion ? 0 : .45, ease: [0.22, 1, 0.36, 1] }}
+                        />
+                      </span>
+                    ))}
+                  </div>
                   <div className="tatva-pressure-lab__stack">
                     <div className="tatva-pressure-lab__measure tatva-pressure-lab__stack" aria-hidden="true" inert>
                       {READING_STATES.map((force) => (
@@ -409,6 +411,13 @@ export function TatvaSystemLab() {
                 </div>
               </motion.div>
             </div>
+            <button
+              type="button"
+              onClick={() => choose(null)}
+              className="tatva-pressure-lab__restore mt-4 inline-flex min-h-11 items-center text-xs font-medium uppercase tracking-[0.12em] underline underline-offset-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+            >
+              Restore all five forces
+            </button>
           </div>
         </div>
       </Container>

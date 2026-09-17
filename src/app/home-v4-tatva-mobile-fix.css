@@ -98,6 +98,51 @@ html[data-motion="reduced"] .tatva-observatory__portrait { transition: none; tra
   overflow: hidden;
 }
 
+/* The diagram remains interactive; the consequence reads as a short field note. */
+.home-v4 .tatva-pressure-lab__reading {
+  background: linear-gradient(145deg, #faf5e9, #eae1d2);
+  color: #342f27;
+  backdrop-filter: none;
+  box-shadow: 0 18px 48px rgb(6 10 8 / 15%), inset 0 1px 0 #fff9ed;
+}
+.home-v4 .tatva-pressure-lab__reading-label,
+.home-v4 .tatva-pressure-lab__next-step p:first-child { color: #70533e; }
+.home-v4 .tatva-pressure-lab__consequence { color: #342f27; }
+.home-v4 .tatva-pressure-lab__next-step { border-color: rgb(112 83 62 / 22%); }
+.home-v4 .tatva-pressure-lab__next-step p:last-child { color: #514936; }
+.home-v4 .tatva-pressure-lab__audit { color: #70533e; }
+.home-v4 .tatva-pressure-lab__node-label { font-family: var(--font-body), sans-serif; font-size: .75rem; line-height: 1.25; }
+.home-v4 .tatva-pressure-lab__node[aria-pressed="true"] .tatva-pressure-lab__node-label {
+  text-decoration: underline;
+  text-underline-offset: .3em;
+}
+.tatva-pressure-lab__connection-meter {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: .3rem;
+  height: 3px;
+  margin-bottom: 1rem;
+}
+.tatva-pressure-lab__connection-meter > span { background: rgb(112 83 62 / 14%); }
+.tatva-pressure-lab__connection-meter > span > span { display: block; height: 100%; }
+
+@media (max-width: 1023px) {
+  .home-v4 .tatva-pressure-lab { padding-block: 3.5rem; }
+  .home-v4 .tatva-pressure-lab__layout { gap: 1.5rem; }
+  .home-v4 .tatva-pressure-lab__choices { display: none; }
+  .home-v4 .tatva-pressure-lab__board { margin: 0; }
+  .home-v4 .tatva-pressure-lab__intro > p:last-child { margin-top: 1rem; font-size: 1rem; line-height: 1.65; }
+  .home-v4 .tatva-pressure-lab__copy h2 { font-size: clamp(2.35rem, 8vw, 3.25rem); line-height: 1.03; }
+  .home-v4 .tatva-pressure-lab__board-top { padding-bottom: 1rem; }
+  .home-v4 .tatva-pressure-lab__board-top h3 { font-size: 1.5rem; }
+  .home-v4 .tatva-pressure-lab__board-top > div { align-items: center; gap: .75rem; }
+  .home-v4 .tatva-pressure-lab__status { padding: .45rem .6rem; font-size: .75rem; letter-spacing: .08em; }
+  .home-v4 .tatva-pressure-lab__response { gap: 1rem; padding-top: 1rem; }
+  .home-v4 .tatva-pressure-lab__node { width: 5.5rem; }
+  .home-v4 .tatva-pressure-lab__node > .tatva-pressure-lab__node-label { font-size: .75rem; line-height: 1.25; }
+  .home-v4 .tatva-pressure-lab__restore { margin-top: .75rem; }
+}
+
 .tatva-pressure-lab__reading p,
 .tatva-pressure-lab__reading a,
 .tatva-pressure-lab__reading span,
