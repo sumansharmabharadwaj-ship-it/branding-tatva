@@ -245,6 +245,7 @@ export function FinalInvitation() {
         >
           <BackgroundVideo
             video="/videos/higgsfield-silver-tide.mp4"
+            videoMobile="/videos/higgsfield-silver-tide-mobile.mp4"
             poster="/images/higgsfield-silver-tide-poster.jpg"
             imagePosition="50% 18%"
             loop={false}

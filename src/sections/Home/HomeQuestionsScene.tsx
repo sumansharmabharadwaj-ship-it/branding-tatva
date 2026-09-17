@@ -184,6 +184,7 @@ export function HomeQuestionsScene() {
       >
         <BackgroundVideo
           video="/videos/pexels-golden-fog-sea.mp4"
+          videoMobile="/videos/pexels-golden-fog-sea-mobile.mp4"
           videoWebm="/videos/pexels-golden-fog-sea.webm"
           poster="/images/pexels-golden-fog-sea-poster.jpg"
         />

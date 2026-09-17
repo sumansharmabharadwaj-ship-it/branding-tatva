@@ -115,6 +115,7 @@ export function ElementsIntroPinned() {
         >
           <BackgroundVideo
             video="/videos/pixabay-refreshing-river.mp4"
+            videoMobile="/videos/pixabay-refreshing-river-mobile.mp4"
             poster="/images/pixabay-refreshing-river-poster.jpg"
           />
           <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
