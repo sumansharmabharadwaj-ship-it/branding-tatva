@@ -278,6 +278,13 @@ export function V4RecognitionScene() {
     setActiveIndex(index);
   }
 
+  function revealControl(target: HTMLElement | null) {
+    const bounds = target?.getBoundingClientRect();
+    if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 80)) {
+      target?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+    }
+  }
+
   function handleChoiceKey(event: React.KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
     if (event.key === "ArrowDown") next = (index + 1) % RECOGNITION_STATES.length;
@@ -288,10 +295,7 @@ export function V4RecognitionScene() {
     event.preventDefault();
     choose(next);
     const target = choiceRefs.current[next];
-    const bounds = target?.getBoundingClientRect();
-    if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 64)) {
-      target?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
-    }
+    revealControl(target);
     target?.focus({ preventScroll: true });
   }
 
@@ -417,6 +421,9 @@ export function V4RecognitionScene() {
             <a
               href="#cost"
               onClick={() => publishServicesSituation(active.situation, "home_recognition")}
+              onFocus={(event) => {
+                if (event.currentTarget.matches(":focus-visible")) revealControl(event.currentTarget);
+              }}
               className={recognitionStyles.link}
               data-cursor-label="follow"
             >
