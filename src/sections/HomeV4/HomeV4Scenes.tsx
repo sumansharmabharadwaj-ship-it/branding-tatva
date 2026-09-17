@@ -271,9 +271,16 @@ export function V4RecognitionScene() {
   }
 
   function revealControl(target: HTMLElement | null) {
-    const bounds = target?.getBoundingClientRect();
-    if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 80)) {
-      target?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+    if (!target) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({
+        // Tall reading starts below the header. Smaller controls move only
+        // far enough to clear the fixed controls, using their scroll margins.
+        block: bounds.height > window.innerHeight - 160 ? "start" : "nearest",
+        inline: "nearest",
+        behavior: "instant",
+      });
     }
   }
 
@@ -287,8 +294,10 @@ export function V4RecognitionScene() {
     event.preventDefault();
     choose(next);
     const target = choiceRefs.current[next];
-    revealControl(target);
-    target?.focus({ preventScroll: true });
+    // A repeated Home or End creates no new focus event. Other targets use
+    // the same focus visibility path as ordinary Tab and Shift Tab.
+    if (target === document.activeElement) revealControl(target);
+    else target?.focus({ preventScroll: true });
   }
 
   return (
@@ -304,6 +313,11 @@ export function V4RecognitionScene() {
       className={`home-v4-recognition ${recognitionStyles.section}`}
       aria-labelledby="home-v4-recognition-title"
       style={{ "--recognition-accent": active.accent } as React.CSSProperties}
+      onFocusCapture={(event) => {
+        if (event.target !== event.currentTarget && event.target.matches(":focus-visible")) {
+          revealControl(event.target);
+        }
+      }}
     >
       <LivingGradient contours preset="meadow" shaft={false} />
       <div className="home-v4-recognition__media" aria-hidden="true">
@@ -413,9 +427,6 @@ export function V4RecognitionScene() {
             <a
               href="#cost"
               onClick={() => publishServicesSituation(active.situation, "home_recognition")}
-              onFocus={(event) => {
-                if (event.currentTarget.matches(":focus-visible")) revealControl(event.currentTarget);
-              }}
               className={recognitionStyles.link}
               data-cursor-label="follow"
             >
