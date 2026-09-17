@@ -103,6 +103,7 @@
   color: #70482f; font-size: .875rem; line-height: 1.5;
   text-decoration: underline; text-decoration-color: rgb(112 72 47 / 35%); text-underline-offset: .3em;
 }
+.paths :is(a,button,[role="tabpanel"]) { scroll-margin-block: 80px; }
 .paths :is(a,button,[role="tabpanel"]):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 5px; }
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
   .paths[data-path-story="held"] { height: 200svh; min-height: 200svh; overflow: clip; }

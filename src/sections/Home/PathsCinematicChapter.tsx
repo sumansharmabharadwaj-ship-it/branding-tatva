@@ -176,6 +176,18 @@ export function PathsCinematicChapter() {
     publishServicesSituation(PATHS[index].situation, "home_paths");
   }
 
+  function revealFocusedPath(target: HTMLElement | null) {
+    if (!target || target === sectionRef.current || !target.matches(":focus-visible")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({
+        block: bounds.height > window.innerHeight - 160 ? "start" : "nearest",
+        inline: "nearest",
+        behavior: "instant",
+      });
+    }
+  }
+
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -184,7 +196,11 @@ export function PathsCinematicChapter() {
       : event.key === "ArrowRight" ? (index + 1) % PATHS.length
       : (index - 1 + PATHS.length) % PATHS.length;
     choose(next);
-    tabsRef.current[next]?.focus({ preventScroll: true });
+    const target = tabsRef.current[next];
+    // Repeated Home/End needs its own visibility check after a wheel gesture;
+    // new targets use the same focus handler as Tab and Shift Tab.
+    if (target === document.activeElement) revealFocusedPath(target);
+    else target?.focus({ preventScroll: true });
   }
 
   return (
@@ -199,6 +215,7 @@ export function PathsCinematicChapter() {
       data-path-story={desktopStory ? "held" : "flow"}
       className={styles.paths}
       aria-labelledby="paths-cinematic-title"
+      onFocusCapture={(event) => revealFocusedPath(event.target)}
     >
       <div className={styles.scene}>
         <div className={styles.film} aria-hidden="true">
