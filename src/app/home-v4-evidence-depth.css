@@ -718,8 +718,8 @@
     grid-auto-columns: minmax(10rem, 65%);
     gap: 0.42rem;
     overflow-x: auto;
-    padding: .35rem .3rem .65rem;
-    scroll-padding-inline: .3rem;
+    padding: .35rem .5rem .65rem;
+    scroll-padding-inline: .5rem;
     scroll-snap-type: x proximity;
   }
 
