@@ -1,9 +1,11 @@
 # Update the Branding Tatva preview link
 
-Release 369 is READY and browser verified. The shared review link currently
-points to release 368, which was successfully updated before this work.
-The new release improves the closing invitation's phone spacing and adds a
-scroll-driven line connecting the three conversation steps.
+Release 371 is READY and verified. The shared review link currently points to
+release 369, which was successfully updated before this work.
+
+The new release makes the brand diagnostic easier to follow: wider phone
+answer text on a light reading panel, choices before the next action, a clear
+completion label, and room between desktop actions and fixed page controls.
 
 [Branding Tatva preview](https://branding-tatva-git-august-8-isolated-suman22.vercel.app/).
 
@@ -11,17 +13,19 @@ The connected tools expose deployment inspection but no alias assignment
 action. In the Terminal already signed into the site's Vercel account, run:
 
 ```bash
-npx --yes vercel@59.19.0 alias set dpl_5Kg7mhK8JLo3qmWk2SmrXuKpVESg branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
+npx --yes vercel@59.19.0 alias set dpl_5ioFupDvX3q9ftgEyFxQg1k63u6o branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
 ```
 
 This updates the shared preview link without promoting production. The target
-is the verified release 369, trigger commit
-`ffee9e5c99f4b09321592de9dcade360036b8fbb`.
+is the verified release 371, trigger commit
+`2b4cd0e44e1c5574b63b12b1cc95f08110eeaf41`.
 
-Build and deployment checks passed. Browser checks covered 320 px and 390 px
-phones, 1280 px laptops at two heights, and a 1440 px desktop. Forward/reverse
-scrolling, pause/resume, visible keyboard focus and the personalized contact
-route passed. See `homepage-invitation-reading-qa.md` for measurements and limits.
+The build, typing, homepage and deployment checks passed. The initial candidate
+passed the three-question flow, back navigation, keyboard selection, answer
+review and editing, completion and motion pause checks at 320 px. Layouts were
+checked at 390 px, tablet, laptop and desktop widths. The final correction was
+verified on both desktop heights and the phone layout was confirmed unchanged.
+See `homepage-diagnostic-reading-qa.md` for exact measurements and limits.
 
 After the command succeeds, the shared link can be checked against this target.
 The browser blocks `/api/release`, so endpoint certification remains unavailable;
