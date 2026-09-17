@@ -320,19 +320,23 @@ export function HomeV4ScrollCamera() {
     releaseReadingAnchor.current();
     // Pausing collapses desktop story runways. Keep a visible reading landmark
     // at the same screen position through that one deliberate layout change.
+    const readingLine = window.innerHeight * .42;
     const landmarks = Array.from(document.querySelectorAll<HTMLElement>(
-      ".home-v4 h1, .home-v4 h2:not(.sr-only), .home-v4 h3, .home-v4 [role='tabpanel'], footer h2",
+      ".home-v4 [data-home-reading-anchor], .home-v4 h1, .home-v4 h2:not(.sr-only), .home-v4 h3, .home-v4 [role='tabpanel'], footer h2",
     ));
     const visible = landmarks.map((node) => ({ node, rect: node.getBoundingClientRect() }))
       .filter(({ node, rect }) => {
-        if (rect.height <= 0 || rect.top < 0 || rect.top >= window.innerHeight * .8) return false;
+        if (rect.height <= 0 || rect.bottom <= 80 || rect.top >= window.innerHeight * .8) return false;
         const hit = document.elementFromPoint(
           clamp(rect.left + rect.width / 2, 1, window.innerWidth - 1),
-          rect.top + Math.min(rect.height / 2, 16),
+          clamp(readingLine, Math.max(80, rect.top + 1), Math.min(window.innerHeight - 80, rect.bottom - 1)),
         );
         return hit === node || (hit !== null && node.contains(hit));
       });
-    const anchor = visible.sort((a, b) => a.rect.top - b.rect.top)[0];
+    // Keep the reading nearest the visitor's eye line, rather than always
+    // choosing an earlier heading. A specific row wins over its whole panel.
+    const distance = (rect: DOMRect) => Math.max(rect.top - readingLine, readingLine - rect.bottom, 0);
+    const anchor = visible.sort((a, b) => distance(a.rect) - distance(b.rect) || a.rect.height - b.rect.height)[0];
     if (anchor) {
       // Responsive story frames finish measuring after React commits. Observe
       // those finite layout changes too; one immediate correction is too early.

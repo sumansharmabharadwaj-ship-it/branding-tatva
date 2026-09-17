@@ -197,3 +197,55 @@ html[data-motion="reduced"] body .home-v4 #evidence :is(.evidence-cinematic__ind
 @media (prefers-reduced-motion: reduce) {
   html body .home-v4 #evidence :is(.evidence-cinematic__index button, .evidence-cinematic__index-image, .evidence-cinematic__media-actions > :is(button, a)) { transition: none; }
 }
+
+/* A second way through the files beside the reading on stacked layouts. */
+.evidence-cinematic__pager { display: none; }
+@media (max-width: 1180px) {
+  html body .home-v4 #evidence .evidence-cinematic__pager {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: .5rem;
+    margin-top: 1rem;
+  }
+  html body .home-v4 #evidence .evidence-cinematic__pager button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .375rem;
+    min-width: 0;
+    min-height: 3rem;
+    padding: .5rem;
+    border: 1px solid #80523955;
+    border-radius: .75rem;
+    color: #342f27;
+    background: rgb(255 249 237 / 50%);
+    font-size: .875rem;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 240ms ease, border-color 240ms ease;
+  }
+  html body .home-v4 #evidence .evidence-cinematic__pager button:is(:hover, :focus-visible) {
+    background: #fff9ed;
+    border-color: #805239;
+    outline-color: #805239 !important;
+  }
+  .evidence-cinematic__pager-count {
+    color: #70533e;
+    font-size: .75rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  html body .home-v4 #evidence .evidence-cinematic__trail-step { padding-block: 1rem; }
+  html body .home-v4 #evidence .evidence-cinematic__trail-step p { margin-top: .5rem; }
+  html body .home-v4 #evidence .evidence-cinematic__dossier-footer { margin-top: .8rem; padding-top: 0; }
+  html body .home-v4 #evidence .evidence-cinematic__dossier-footer p { display: none; }
+  html body .home-v4 #evidence .evidence-cinematic__dossier-footer a { margin-top: 0; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="reduced"]) .evidence-cinematic__pager button > span { transition: translate 300ms cubic-bezier(.22,1,.36,1); }
+  html:not([data-motion="reduced"]) .evidence-cinematic__pager button:first-of-type:is(:hover, :focus-visible) > span { translate: -3px; }
+  html:not([data-motion="reduced"]) .evidence-cinematic__pager button:last-of-type:is(:hover, :focus-visible) > span { translate: 3px; }
+}
+html[data-motion="reduced"] .evidence-cinematic__pager button { transition: none; }
+@media (prefers-reduced-motion: reduce) { .evidence-cinematic__pager button { transition: none; } }

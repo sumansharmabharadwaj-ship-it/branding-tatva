@@ -186,6 +186,24 @@ export function EvidenceWall() {
     chooseVisualState(index);
   }
 
+  function stepProject(direction: -1 | 1) {
+    const next = (activeIndex + direction + projects.length) % projects.length;
+    chooseProject(next);
+    // Keep the controls and reading in place. Only the horizontal tab strip
+    // moves to show the new selection; page scroll and keyboard focus stay put.
+    const tab = tabsRef.current[next];
+    const strip = tab?.parentElement;
+    if (!tab || !strip) return;
+    const tabRect = tab.getBoundingClientRect();
+    const stripRect = strip.getBoundingClientRect();
+    if (tabRect.left < stripRect.left || tabRect.right > stripRect.right) {
+      strip.scrollBy({
+        left: tabRect.left - stripRect.left - (strip.clientWidth - tabRect.width) / 2,
+        behavior: prefersReducedMotion ? "instant" : "smooth",
+      });
+    }
+  }
+
   async function openProjectFile(slug: string, opener: HTMLButtonElement) {
     if (openingSlug === slug) {
       cancelOpening();
@@ -515,6 +533,7 @@ export function EvidenceWall() {
               <div
                 key={label}
                 className="evidence-cinematic__trail-step"
+                data-home-reading-anchor
               >
                 <div>
                   <span>{label}</span>
@@ -528,6 +547,21 @@ export function EvidenceWall() {
                 </div>
               </div>
             ))}
+
+            <div className="evidence-cinematic__pager" role="group" aria-label="Browse project records">
+              <button type="button" aria-label="Previous project" onClick={() => stepProject(-1)}>
+                <span aria-hidden="true">←</span> Back
+              </button>
+              <span className="evidence-cinematic__pager-count" aria-hidden="true">
+                {String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+              </span>
+              <button type="button" aria-label="Next project" onClick={() => stepProject(1)}>
+                Next <span aria-hidden="true">→</span>
+              </button>
+              <p className="sr-only" role="status" aria-atomic="true">
+                Project {activeIndex + 1} of {projects.length}: {activeProject.title}.
+              </p>
+            </div>
 
             <div className="evidence-cinematic__dossier-footer">
               <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
