@@ -3006,7 +3006,7 @@
 /* The floating navigation returns on an upward scroll. Give the Library a
    protected editorial header line in that state, then recover the same
    one-screen rhythm from the image aperture rather than adding scroll. */
-@media (min-width: 1024px) and (min-height: 791px) {
+@media (min-width: 1024px) and (min-height: 761px) {
   .insights-library {
     padding-block: 6.65rem 1.5rem;
   }
@@ -3020,7 +3020,7 @@
    common laptop heights. The edit compresses the search instrument and card
    aperture, while preserving the three-column editorial composition and every
    44px interaction target. */
-@media (min-width: 1024px) and (min-height: 791px) and (max-height: 980px) {
+@media (min-width: 1024px) and (min-height: 761px) and (max-height: 980px) {
   .insights-library {
     padding-block: 6.05rem 0.85rem;
   }
