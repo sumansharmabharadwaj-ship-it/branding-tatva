@@ -110,6 +110,7 @@
   transform-origin: top;
 }
 .answer:focus-within .answerRail i { transform: none !important; }
+.answer:focus-within > p { transform: none !important; }
 .answer[aria-hidden="true"] { visibility: hidden; }
 /* Focus can arrive before the opening animation finishes. Measure and reveal
    the full answer immediately so its reading stays above the fixed controls. */

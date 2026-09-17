@@ -53,7 +53,10 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
     const opened = open && !previousOpen.current;
     previousOpen.current = open;
     settleCopy();
-    if (!opened || reducedMotion) return;
+    // Focus may enter between the opening render and this effect. A reading
+    // already owned by the keyboard must not restart its entrance motion.
+    const answerHasFocus = rowRef.current?.querySelector('[role="region"]')?.contains(document.activeElement);
+    if (!opened || reducedMotion || answerHasFocus) return;
     copyControls.set({ x: 6, y: 3 });
     void copyControls.start({ x: 0, y: 0, transition: { duration: .34, ease: [.22, 1, .36, 1] } });
     return () => copyControls.stop();
