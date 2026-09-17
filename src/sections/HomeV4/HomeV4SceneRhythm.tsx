@@ -16,7 +16,9 @@ const SCENES: readonly SceneSpec[] = [
     [".home-v4-opening__proof", "plate"],
   ] },
   { selector: '[data-home-v4-chapter="recognition"]', ink: "clay", layers: [
-    [".home-v4-recognition__header > div", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    // The choices and measured reading keep their hit areas still while
+    // the introduction and the chapter's own text transitions carry motion.
+    [".home-v4-recognition__header > div", "intro"],
   ] },
   { selector: '[data-home-v4-chapter="cost"]', ink: "clay", reading: "[data-home-cost-heading] h2 + p", layers: [
     ["[data-home-cost-heading]", "heading"], ['[data-home-cost-comparison]', "plate"], ['[data-home-cost-item]', "fan"],

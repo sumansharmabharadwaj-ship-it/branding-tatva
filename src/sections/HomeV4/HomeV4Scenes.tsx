@@ -2,9 +2,9 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useAnimationControls, useScroll, useTransform } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { publishServicesSituation } from "@/lib/servicesJourney";
 import recognitionStyles from "./RecognitionChoices.module.css";
 import costStyles from "./HiddenCost.module.css";
@@ -68,6 +68,20 @@ const MESSAGE_TOUCHPOINTS = [
 ] as const;
 
 type MessageMode = "separate" | "shared";
+
+type RecognitionState = (typeof RECOGNITION_STATES)[number];
+
+function RecognitionReading({ state }: { state: RecognitionState }) {
+  return <><h3>{state.headline}</h3><p className={recognitionStyles.body}>{state.body}</p></>;
+}
+
+function RecognitionExample({ item }: { item: RecognitionState["example"][number] }) {
+  return <><span>{item.label}</span><p>{item.text}</p></>;
+}
+
+function RecognitionAnswer({ state }: { state: RecognitionState }) {
+  return <><span>The useful move</span><strong>{state.path}</strong><p>{state.proof}</p></>;
+}
 
 export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -218,13 +232,44 @@ export function V4OpeningScene() {
 
 export function V4RecognitionScene() {
   const sectionRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectionDirection, setSelectionDirection] = useState<"forward" | "backward">("forward");
   const active = RECOGNITION_STATES[activeIndex];
+  const previousIndexRef = useRef(activeIndex);
+  const readingControls = useAnimationControls();
+  const exampleControls = useAnimationControls();
+  const answerControls = useAnimationControls();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: readingProgress } = useScroll({ target: panelRef, offset: ["start end", "end start"] });
   const reflectionX = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const exampleSignal = useTransform(readingProgress, [0.1, 0.6], [0.08, 1]);
+
+  const settleReading = useCallback(() => {
+    readingControls.stop();
+    exampleControls.stop();
+    answerControls.stop();
+    readingControls.set({ x: 0, y: 0 });
+    exampleControls.set({ x: 0, y: 0 });
+    answerControls.set({ x: 0 });
+  }, [readingControls, exampleControls, answerControls]);
+
+  useEffect(() => {
+    const changed = previousIndexRef.current !== activeIndex;
+    previousIndexRef.current = activeIndex;
+    settleReading();
+    if (!changed || prefersReducedMotion) return;
+    const direction = selectionDirection === "forward" ? 1 : -1;
+    readingControls.set({ x: direction * 8, y: 3 });
+    exampleControls.set({ x: direction * -6, y: 2 });
+    answerControls.set({ x: direction * 6 });
+    void readingControls.start({ x: 0, y: 0, transition: { duration: .38, ease: EASE } });
+    void exampleControls.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
+    void answerControls.start({ x: 0, transition: { duration: .44, ease: EASE } });
+    return () => { readingControls.stop(); exampleControls.stop(); answerControls.stop(); };
+  }, [activeIndex, selectionDirection, prefersReducedMotion, readingControls, exampleControls, answerControls, settleReading]);
 
   function choose(index: number) {
     publishServicesSituation(RECOGNITION_STATES[index].situation, "home_recognition");
@@ -242,7 +287,12 @@ export function V4RecognitionScene() {
     else return;
     event.preventDefault();
     choose(next);
-    choiceRefs.current[next]?.focus({ preventScroll: true });
+    const target = choiceRefs.current[next];
+    const bounds = target?.getBoundingClientRect();
+    if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 64)) {
+      target?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+    }
+    target?.focus({ preventScroll: true });
   }
 
   return (
@@ -253,6 +303,7 @@ export function V4RecognitionScene() {
       data-home-v4-chapter="recognition"
       data-home-chapter="recognition"
       data-home-section="recognition"
+      data-recognition-state={active.number}
       data-cursor-world="light"
       className={`home-v4-recognition ${recognitionStyles.section}`}
       aria-labelledby="home-v4-recognition-title"
@@ -316,44 +367,57 @@ export function V4RecognitionScene() {
           </div>
 
           <div
+            ref={panelRef}
             id="recognition-reading"
             role="tabpanel"
             aria-labelledby={`recognition-choice-${active.number}`}
             tabIndex={0}
             className={recognitionStyles.panel}
+            onFocusCapture={settleReading}
+            onPointerDown={settleReading}
           >
-            <motion.div
-              key={active.number}
-              initial={prefersReducedMotion ? false : { x: selectionDirection === "forward" ? 10 : -10 }}
-              animate={{ x: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
-            >
-              <p className={recognitionStyles.label}>What this means</p>
-              <h3>{active.headline}</h3>
-              <p className={recognitionStyles.body}>{active.body}</p>
-              <div className={recognitionStyles.example}>
-                <p className={recognitionStyles.exampleLabel}>Illustrative example</p>
-                <div className={recognitionStyles.examplePair}>
-                  {active.example.map((item) => (
-                    <div key={item.label}>
-                      <span>{item.label}</span>
-                      <p>{item.text}</p>
+            <p className={recognitionStyles.label}>What this means</p>
+            <div className={recognitionStyles.readingStack}>
+              <div className={recognitionStyles.readingMeasure} aria-hidden="true" inert>
+                {RECOGNITION_STATES.map((state) => <div key={state.number}><RecognitionReading state={state} /></div>)}
+              </div>
+              <motion.div initial={false} animate={readingControls} data-recognition-reading>
+                <RecognitionReading state={active} />
+              </motion.div>
+            </div>
+            <div className={recognitionStyles.example}>
+              <motion.i className={recognitionStyles.exampleSignal} aria-hidden="true" style={{ scaleX: prefersReducedMotion ? 1 : exampleSignal }} />
+              <p className={recognitionStyles.exampleLabel}>Illustrative example</p>
+              <div className={recognitionStyles.examplePair}>
+                {active.example.map((item, index) => (
+                  <div key={index}>
+                    <div className={recognitionStyles.readingStack}>
+                      <div className={recognitionStyles.readingMeasure} aria-hidden="true" inert>
+                        {RECOGNITION_STATES.map((state) => <div key={state.number}><RecognitionExample item={state.example[index]} /></div>)}
+                      </div>
+                      <motion.div initial={false} animate={exampleControls} data-recognition-example>
+                        <RecognitionExample item={item} />
+                      </motion.div>
                     </div>
-                  ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className={recognitionStyles.answer}>
+              <div className={recognitionStyles.readingStack}>
+                <div className={recognitionStyles.readingMeasure} aria-hidden="true" inert>
+                  {RECOGNITION_STATES.map((state) => <div key={state.number}><RecognitionAnswer state={state} /></div>)}
                 </div>
+                <motion.div initial={false} animate={answerControls} data-recognition-answer>
+                  <RecognitionAnswer state={active} />
+                </motion.div>
               </div>
-              <div className={recognitionStyles.answer}>
-                <span>The useful move</span>
-                <strong>{active.path}</strong>
-                <p>{active.proof}</p>
-              </div>
-            </motion.div>
+            </div>
 
             <a
               href="#cost"
               onClick={() => publishServicesSituation(active.situation, "home_recognition")}
               className={recognitionStyles.link}
-              data-magnetic
               data-cursor-label="follow"
             >
               See what inconsistency is costing <ArrowDownRight size={18} aria-hidden="true" />
