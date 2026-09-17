@@ -2,7 +2,7 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
-import { motion, useAnimationControls, useScroll, useTransform } from "framer-motion";
+import { motion, useAnimationControls, useScroll, useTransform, type MotionStyle } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { publishServicesSituation } from "@/lib/servicesJourney";
@@ -68,6 +68,11 @@ const MESSAGE_TOUCHPOINTS = [
 ] as const;
 
 type MessageMode = "separate" | "shared";
+
+const MESSAGE_MEANINGS: Record<MessageMode, string> = {
+  separate: "Three channels. Three different reasons to choose.",
+  shared: "One promise: make weekday dinners easier to decide.",
+};
 
 type RecognitionState = (typeof RECOGNITION_STATES)[number];
 
@@ -438,13 +443,34 @@ export function V4RecognitionScene() {
 
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
+  const comparisonRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [comparison, setComparison] = useState<{ mode: MessageMode; direction: number }>({ mode: "separate", direction: 0 });
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: comparisonProgress } = useScroll({ target: comparisonRef, offset: ["start end", "end start"] });
   const lineProgress = useTransform(scrollYProgress, [0.2, 0.6], [0.08, 1]);
+  const comparisonArrival = useTransform(comparisonProgress, [0, 0.62], [0, 1]);
+  const messageTransition = comparison.direction === 0 ? "idle" : comparison.direction > 0 ? "forward" : "reverse";
+
+  const settleComparison = useCallback(() => {
+    setComparison((current) => current.direction === 0 ? current : { ...current, direction: 0 });
+  }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion) settleComparison();
+  }, [prefersReducedMotion, settleComparison]);
 
   function chooseMessageMode(mode: MessageMode) {
-    setComparison((current) => current.mode === mode ? current : { mode, direction: mode === "shared" ? 1 : -1 });
+    setComparison((current) => current.mode === mode ? current : { mode, direction: prefersReducedMotion ? 0 : mode === "shared" ? 1 : -1 });
+  }
+
+  function revealFocusedMode(event: React.FocusEvent<HTMLDivElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement) || !target.matches(":focus-visible")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+    }
   }
 
   return (
@@ -469,7 +495,14 @@ export function V4HiddenCostScene() {
               When the brand keeps changing, the next campaign has to introduce the business all over again.
             </p>
           </div>
-          <div data-home-cost-comparison className={costStyles.comparison} data-message-mode={comparison.mode}>
+          <motion.div
+            ref={comparisonRef}
+            data-home-cost-comparison
+            className={costStyles.comparison}
+            data-message-mode={comparison.mode}
+            style={{ "--comparison-arrival": prefersReducedMotion ? 1 : comparisonArrival } as MotionStyle}
+            onFocusCapture={revealFocusedMode}
+          >
             <p className={costStyles.exampleLabel}>Illustrative example · Meal planning</p>
             <div className={costStyles.modeChoices} role="group" aria-label="Compare how a brand communicates">
               <button type="button" aria-pressed={comparison.mode === "separate"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("separate")}>
@@ -480,20 +513,31 @@ export function V4HiddenCostScene() {
               </button>
             </div>
 
-            <div id="brand-message-example" className={costStyles.messageExample}>
+            <div
+              id="brand-message-example"
+              className={costStyles.messageExample}
+              role="region"
+              aria-label="Message comparison"
+              tabIndex={0}
+              onFocusCapture={settleComparison}
+              onPointerDown={settleComparison}
+            >
               <dl className={costStyles.touchpoints}>
                 {MESSAGE_TOUCHPOINTS.map((touchpoint, index) => (
                   <div key={touchpoint.channel} style={{ "--message-order": index } as React.CSSProperties}>
                     <dt><span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{touchpoint.channel}</dt>
                     <dd>
-                      <span className={costStyles.messageMeasure} aria-hidden="true">
+                      <span className={costStyles.messageMeasure} aria-hidden="true" inert>
                         <span>{touchpoint.separate}</span>
                         <span>{touchpoint.shared}</span>
                       </span>
                       <span
                         className={costStyles.messageText}
-                        key={comparison.mode}
-                        data-message-transition={comparison.direction === 0 ? "idle" : comparison.direction > 0 ? "forward" : "reverse"}
+                        data-message-transition={messageTransition}
+                        onAnimationEnd={(event) => {
+                          const last = comparison.direction > 0 ? MESSAGE_TOUCHPOINTS.length - 1 : 0;
+                          if (event.target === event.currentTarget && index === last) settleComparison();
+                        }}
                       >
                         {touchpoint[comparison.mode]}
                       </span>
@@ -501,13 +545,17 @@ export function V4HiddenCostScene() {
                   </div>
                 ))}
               </dl>
-              <p className={costStyles.comparisonMeaning} role="status" aria-atomic="true">
-                {comparison.mode === "shared"
-                  ? "One promise: make weekday dinners easier to decide."
-                  : "Three channels. Three different reasons to choose."}
-              </p>
+              <div className={costStyles.comparisonMeaning}>
+                <div className={costStyles.messageMeasure} aria-hidden="true" inert>
+                  <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.separate}</p>
+                  <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.shared}</p>
+                </div>
+                <p className={costStyles.meaningText} role="status" aria-atomic="true" data-message-transition={messageTransition}>
+                  {MESSAGE_MEANINGS[comparison.mode]}
+                </p>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </header>
 
         <div className={costStyles.rule} aria-hidden="true">

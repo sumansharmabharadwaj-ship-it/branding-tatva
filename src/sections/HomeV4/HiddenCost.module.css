@@ -16,17 +16,18 @@
 .modeChoices button { min-width: 0; min-height: 2.75rem; padding: .55rem .6rem; border: 0; border-radius: 999px; color: #595246; background: transparent; font: inherit; font-size: .875rem; line-height: 1.4; cursor: pointer; transition: color 220ms ease, background-color 220ms ease; }
 .modeChoices button[aria-pressed="true"] { color: #fff9ed; background: #514936; }
 .modeChoices button:not([aria-pressed="true"]):hover { background: #e2d8c7; }
-.modeChoices button:focus-visible { outline: 2px solid #805239; outline-offset: 3px; }
-.messageExample { margin-top: 1rem; }
+.modeChoices button:focus-visible, .messageExample:focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 4px; }
+.messageExample { margin-top: 1rem; border-radius: .4rem; }
 .touchpoints { display: grid; margin: 0; }
 .touchpoints > div { display: grid; grid-template-columns: 4.25rem minmax(0, 1fr); align-items: center; gap: 1rem; min-height: 4.5rem; padding: .65rem 0; border-bottom: 1px solid rgb(128 82 57 / 18%); }
 .touchpoints dt { display: grid; gap: .15rem; color: #595246; font-size: .75rem; line-height: 1.5; }
 .touchpoints dt span { color: #805239; font-size: .65rem; font-variant-numeric: tabular-nums; }
 .touchpoints dd { display: grid; min-width: 0; margin: 0; color: #342f27; font: 400 clamp(1.35rem, 1.85vw, 1.85rem)/1.15 var(--font-display), Georgia, serif; letter-spacing: -.015em; }
 /* Both samples reserve the same cell; only the chosen message is exposed. */
-.messageMeasure { display: grid; grid-area: 1 / 1; visibility: hidden; pointer-events: none; }
+.messageMeasure { display: grid; grid-area: 1 / 1; visibility: hidden; pointer-events: none; user-select: none; }
 .messageMeasure > span, .messageText { grid-area: 1 / 1; min-width: 0; }
-.comparisonMeaning { min-height: 2.75rem; margin: .8rem 0 0; color: #595246; font-size: .875rem; line-height: 1.55; }
+.comparisonMeaning { display: grid; min-height: 2.75rem; margin: .8rem 0 0; color: #595246; font-size: .875rem; line-height: 1.55; }
+.meaningText { grid-area: 1 / 1; min-width: 0; margin: 0; }
 .comparison[data-message-mode="shared"] .comparisonMeaning { color: #805239; }
 .rule { height: 1px; overflow: hidden; background: rgb(128 82 57 / 18%); }
 .rule span { display: block; height: 100%; background: #805239; transform-origin: left; }
@@ -109,35 +110,43 @@
 }
 .comparison[data-message-mode="shared"] .touchpoints > div { --message-line: #805239; }
 .touchpoints dd { perspective: 700px; }
-.messageText { --message-tilt: -12deg; --message-rise: 4px; transform-origin: left center; }
-.messageText[data-message-transition="forward"] {
-  --message-travel: 12px;
-  animation: message-arrive 480ms cubic-bezier(.22, 1, .36, 1) both;
-  animation-delay: calc(var(--message-order, 0) * 55ms);
+.messageText { --message-tilt: -5deg; --message-rise: 3px; transform-origin: left center; }
+.messageText[data-message-transition="forward"], .meaningText[data-message-transition="forward"] {
+  --message-travel: 8px;
+  animation: message-forward 480ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(var(--message-order, 0) * 45ms);
 }
-.messageText[data-message-transition="reverse"] {
-  --message-travel: -12px;
-  animation: message-arrive 480ms cubic-bezier(.22, 1, .36, 1) both;
-  animation-delay: calc((2 - var(--message-order, 0)) * 55ms);
+.messageText[data-message-transition="reverse"], .meaningText[data-message-transition="reverse"] {
+  --message-travel: -8px;
+  animation: message-reverse 480ms cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc((2 - var(--message-order, 0)) * 45ms);
 }
-@keyframes message-arrive {
+/* Distinct names replay either direction while the same text nodes stay mounted. */
+@keyframes message-forward {
   from { transform: translate3d(var(--message-travel), var(--message-rise), 0) rotateX(var(--message-tilt)); }
   to { transform: none; }
 }
+@keyframes message-reverse {
+  from { transform: translate3d(var(--message-travel), var(--message-rise), 0) rotateX(var(--message-tilt)); }
+  to { transform: none; }
+}
+.meaningText[data-message-transition] { --message-tilt: 0deg; --message-rise: 2px; animation-duration: 420ms; }
+.meaningText[data-message-transition="forward"] { --message-travel: 4px; }
+.meaningText[data-message-transition="reverse"] { --message-travel: -4px; }
 @media (max-width: 820px), (pointer: coarse) {
   .touchpoints dd { perspective: none; }
   .messageText { --message-tilt: 0deg; --message-rise: 2px; }
-  .messageText[data-message-transition="forward"] { --message-travel: 5px; }
-  .messageText[data-message-transition="reverse"] { --message-travel: -5px; }
+  .messageText[data-message-transition="forward"] { --message-travel: 4px; }
+  .messageText[data-message-transition="reverse"] { --message-travel: -4px; }
 }
 /* CSS owns these finite transitions so a preference change cancels an
    in-flight animation immediately, even when the selected mode stays put. */
 @media (prefers-reduced-motion: reduce) {
   .modeChoices::before, .touchpoints > div::after { transition: none; }
   .touchpoints > div::after { transform: none; }
-  .messageText[data-message-transition] { animation: none; transform: none; }
+  :is(.messageText, .meaningText)[data-message-transition] { animation: none; transform: none; }
 }
 :global(html[data-motion="reduced"]) .modeChoices::before,
 :global(html[data-motion="reduced"]) .touchpoints > div::after { transition: none; }
 :global(html[data-motion="reduced"]) .touchpoints > div::after { transform: none; }
-:global(html[data-motion="reduced"]) .messageText[data-message-transition] { animation: none; transform: none; }
+:global(html[data-motion="reduced"]) :is(.messageText, .meaningText)[data-message-transition] { animation: none; transform: none; }
