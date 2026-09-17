@@ -168,9 +168,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     choose(next);
     const target = tabsRef.current[next];
     const bounds = target?.getBoundingClientRect();
-    target?.focus({
-      preventScroll: Boolean(bounds && bounds.top >= 80 && bounds.bottom <= window.innerHeight - 64),
-    });
+    if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 64)) {
+      // Native focus otherwise stops at the viewport edge, beneath the
+      // mobile controls. Center only a stage that needs reading clearance.
+      target?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+    }
+    target?.focus({ preventScroll: true });
   }
 
   if (!stages.length) return null;
