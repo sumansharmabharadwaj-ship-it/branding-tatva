@@ -6,7 +6,7 @@
   "ignoreCommand": "node scripts/vercel_preview_deploy_gate.cjs",
   "git": {
     "deploymentEnabled": {
-      "august-8-isolated": false
+      "august-8-isolated": true
     }
   },
   "github": {
