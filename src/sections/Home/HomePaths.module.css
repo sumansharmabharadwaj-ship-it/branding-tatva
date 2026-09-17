@@ -56,7 +56,13 @@
 .tab:hover .tabLabel { color: #805239; }
 .tab[aria-selected="true"] { color: #342f27; }
 .panel { min-height: 20rem; }
-.detail { display: grid; grid-template-columns: 1.15fr .85fr; gap: 4rem; }
+.detail { min-width: 0; display: grid; grid-template-columns: 1.15fr .85fr; gap: 4rem; }
+.copy { min-width: 0; }
+/* The invisible, inert copies reserve the tallest reading at the real width
+   and font size. Only one copy is exposed to assistive technology. */
+.readingStack, .readingMeasure { display: grid; min-width: 0; }
+.readingStack > *, .readingMeasure > * { grid-area: 1 / 1; min-width: 0; }
+.readingMeasure { visibility: hidden; pointer-events: none; user-select: none; }
 .pathNumber {
   display: flex; align-items: baseline; gap: 1rem; margin: 0 0 1rem;
   font: 400 1.75rem/1 var(--font-display, Georgia, serif); color: #805239;
@@ -70,7 +76,7 @@
 .description { max-width: 47ch; margin: 1.2rem 0; color: #514b40; font-size: 1rem; line-height: 1.65; text-wrap: pretty; }
 .action {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 1.5rem;
-  max-width: 100%; min-height: 3.1rem; margin-top: .3rem; padding: .8rem 1.3rem;
+  width: min(100%, 19rem); max-width: 100%; min-height: 3.1rem; margin-top: .3rem; padding: .8rem 1.3rem;
   border: 1px solid #514936; border-radius: 999px; background: #514936; color: #fff9ed;
   font-size: .875rem; line-height: 1.45; transition: background-color 220ms ease;
 }
@@ -78,14 +84,15 @@
 .action:hover { background: #3b3629; }
 .action:hover svg, .footer a:hover svg { transform: translateX(4px); }
 .scope { border: 1px solid rgb(94 76 51 / 18%); border-radius: 1.25rem; padding: 1.2rem 1.5rem; background: rgb(250 246 237 / 78%); box-shadow: 0 18px 45px rgb(76 62 41 / 7%); }
-.question { max-width: 26ch; margin: 0 0 1.6rem; font: 400 clamp(1.5rem, 2.2vw, 2rem)/1.25 var(--font-display, Georgia, serif); text-wrap: pretty; }
+.questionStack { margin-bottom: 1.6rem; }
+.question { max-width: 26ch; margin: 0; font: 400 clamp(1.5rem, 2.2vw, 2rem)/1.25 var(--font-display, Georgia, serif); text-wrap: pretty; }
 .scopeLabel { margin: 0 0 .7rem; color: #514b40; font-size: .875rem; line-height: 1.5; }
 .scope ul { margin: 0; padding: 0; list-style: none; }
 .scope li {
   display: grid; grid-template-columns: 1.3rem minmax(0,1fr); gap: .7rem;
   padding-block: .7rem; border-top: 1px solid rgb(94 76 51 / 20%); font-size: .9rem; line-height: 1.45;
 }
-.scope li span { color: #805239; font-size: .7rem; padding-top: .15rem; font-variant-numeric: tabular-nums; }
+.scope li > span { color: #805239; font-size: .7rem; padding-top: .15rem; font-variant-numeric: tabular-nums; }
 .footer {
   display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .25rem 1rem;
   padding-top: 1rem; border-top: 1px solid rgb(94 76 51 / 25%); color: #514b40;
@@ -96,11 +103,13 @@
   color: #70482f; font-size: .875rem; line-height: 1.5;
   text-decoration: underline; text-decoration-color: rgb(112 72 47 / 35%); text-underline-offset: .3em;
 }
-.paths :is(a,button,[role="tabpanel"]):focus-visible { outline: 2px solid #805239; outline-offset: 5px; }
+.paths :is(a,button,[role="tabpanel"]):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 5px; }
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
-  .paths { height: 200svh; min-height: 200svh; overflow: clip; }
-  .scene { position: sticky; top: 0; height: 100svh; min-height: 100svh; }
-  .frame { height: 100svh; min-height: 100svh; }
+  .paths[data-path-story="held"] { height: 200svh; min-height: 200svh; overflow: clip; }
+  .paths[data-path-story="held"] .scene { position: sticky; top: 0; }
+  /* Anchor the whole reading frame, with no header offset pushing its footer
+     below the viewport when a chapter link is used. */
+  :global(html body .home-v4) .paths { scroll-margin-top: 0; }
 }
 @media (max-width: 900px) {
   .header, .detail { gap: 2rem; grid-template-columns: 1fr 1fr; }
@@ -120,7 +129,8 @@
   .description { margin-block: 1rem; }
   .action { width: 100%; }
   .scope { padding: 1.25rem; }
-  .question { max-width: 28ch; margin-bottom: 1.3rem; }
+  .question { max-width: 28ch; }
+  .questionStack { margin-bottom: 1.3rem; }
   .footer { display: block; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -131,23 +141,7 @@
 :global(html[data-motion="reduced"]) .paths { height: auto; min-height: 100svh; }
 :global(html[data-motion="reduced"]) .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
 
-/* New decisions follow the card's turn; the semantic panel and action persist.
-   CSS cancels the stagger immediately when either motion preference changes. */
-.scope li {
-  animation: path-decision 420ms cubic-bezier(.22, 1, .36, 1) both;
-  animation-delay: calc(var(--path-order, 0) * 55ms);
-}
-@keyframes path-decision {
-  from { transform: translateX(14px); }
-  to { transform: none; }
-}
-@media (max-width: 680px), (pointer: coarse) {
-  @keyframes path-decision {
-    from { transform: translateX(6px); }
-    to { transform: none; }
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .scope li { animation: none; transform: none; }
-}
-:global(html[data-motion="reduced"]) .scope li { animation: none; transform: none; }
+/* No delayed row animation can restart on resume or while reading by key. */
+:global(html[data-motion="reduced"]) .action,
+:global(html[data-motion="reduced"]) .action svg,
+:global(html[data-motion="reduced"]) .footer svg { transition: none; }

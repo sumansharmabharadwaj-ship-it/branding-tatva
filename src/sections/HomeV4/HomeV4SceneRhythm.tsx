@@ -28,7 +28,8 @@ const SCENES: readonly SceneSpec[] = [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
   ] },
   { selector: '[data-scroll-story="paths"]', ink: "clay", reading: "header > p", layers: [
-    ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    // Path controls stay in place; the chapter owns its reading transitions.
+    ["header", "heading"],
   ] },
   { selector: '[data-scroll-story="process"]', ink: "clay", reading: "header > p", layers: [
     ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, type CSSProperties, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { motion, useAnimationControls, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -57,9 +57,23 @@ const PATHS = [
 }[];
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+type Path = (typeof PATHS)[number];
+
+function PathReading({ path, index }: { path: Path; index: number }) {
+  const offering = packages.find((item) => item.slug === SITUATION_TO_PACKAGE[path.situation])!;
+  return (
+    <>
+      <p className={styles.pathNumber}>0{index + 1} <span>{offering.name}</span></p>
+      <h3>{path.title}</h3>
+      <p className={styles.description}>{offering.description}</p>
+    </>
+  );
+}
 
 export function PathsCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [frameFits, setFrameFits] = useState(false);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const previousIndexRef = useRef(0);
   const copyMotion = useAnimationControls();
@@ -69,13 +83,15 @@ export function PathsCinematicChapter() {
   const cinematicMotion = useMediaQuery(
     "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
   );
+  const desktopStory = cinematicMotion && frameFits && !reducedMotion;
   const sceneInView = useInView(sectionRef, { amount: 0.08 });
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
+    focusScopeSelector: '[role="tabpanel"], [role="tablist"]',
     count: PATHS.length,
     target: sectionRef,
-    enabled: cinematicMotion && sceneInView,
+    enabled: desktopStory && sceneInView,
     reducedMotion,
   });
   const { activeIndex, choose: chooseVisualState, preview, releasePreview } = visualizer;
@@ -117,11 +133,27 @@ export function PathsCinematicChapter() {
     };
   }, [chooseVisualState]);
 
+  // Measure natural content, including every possible reading, before holding
+  // the scene. Short windows and larger text retain ordinary document flow.
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const measure = () => setFrameFits(frame.offsetHeight <= window.innerHeight + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(frame);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   const settleReading = useCallback(() => {
     copyMotion.stop();
     scopeMotion.stop();
     copyMotion.set({ x: 0, y: 0 });
-    scopeMotion.set({ x: 0, rotateY: 0 });
+    scopeMotion.set({ x: 0 });
   }, [copyMotion, scopeMotion]);
 
   useEffect(() => {
@@ -130,14 +162,14 @@ export function PathsCinematicChapter() {
     settleReading();
     if (reducedMotion || previous === activeIndex) return;
     const direction = activeIndex > previous ? 1 : -1;
-    // Stable reading columns retain the action node. The heading and its
-    // description share one transform, so their gap cannot collapse mid-turn.
-    copyMotion.set({ x: -direction * (cinematicMotion ? 30 : 10), y: cinematicMotion ? 12 : 0 });
-    scopeMotion.set({ x: direction * (cinematicMotion ? 38 : 12), rotateY: cinematicMotion ? direction * -9 : 0 });
-    void copyMotion.start({ x: 0, y: 0, transition: { duration: .46, ease: EASE } });
-    void scopeMotion.start({ x: 0, rotateY: 0, transition: { duration: .6, ease: EASE } });
+    // Fully opaque text arrives as one reading group; controls stay outside
+    // its transform. Reversing the selection reverses this small movement.
+    copyMotion.set({ x: direction * 6, y: 2 });
+    scopeMotion.set({ x: direction * 8 });
+    void copyMotion.start({ x: 0, y: 0, transition: { duration: .36, ease: EASE } });
+    void scopeMotion.start({ x: 0, transition: { duration: .4, ease: EASE } });
     return () => { copyMotion.stop(); scopeMotion.stop(); };
-  }, [activeIndex, cinematicMotion, copyMotion, reducedMotion, scopeMotion, settleReading]);
+  }, [activeIndex, copyMotion, reducedMotion, scopeMotion, settleReading]);
 
   function choose(index: number) {
     chooseVisualState(index);
@@ -164,6 +196,7 @@ export function PathsCinematicChapter() {
       data-cursor-world="light"
       data-scroll-story="paths"
       data-path-state={activeIndex}
+      data-path-story={desktopStory ? "held" : "flow"}
       className={styles.paths}
       aria-labelledby="paths-cinematic-title"
     >
@@ -176,7 +209,7 @@ export function PathsCinematicChapter() {
             loop={false}
           />
         </div>
-        <div className={styles.frame}>
+        <div ref={frameRef} className={styles.frame}>
           <header className={styles.header}>
           <div>
             <p className={styles.eyebrow}>Three ways to work together</p>
@@ -200,11 +233,13 @@ export function PathsCinematicChapter() {
               aria-controls="home-path-panel"
               tabIndex={index === activeIndex ? 0 : -1}
               onClick={() => choose(index)}
-              onPointerEnter={() => preview(index)}
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse" && !reducedMotion) preview(index);
+              }}
               onPointerLeave={(event) => {
                 if (document.activeElement !== event.currentTarget) releasePreview();
               }}
-              onFocus={() => preview(index)}
+              onFocus={() => chooseVisualState(index)}
               onBlur={releasePreview}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={styles.tab}
@@ -231,50 +266,67 @@ export function PathsCinematicChapter() {
           tabIndex={0}
           data-path-situation={active.situation}
           onFocusCapture={settleReading}
+          onPointerDownCapture={settleReading}
         >
           <div
             className={styles.detail}
             data-path-detail
           >
-            <motion.div
-              className={styles.copy}
-              initial={false}
-              animate={copyMotion}
-            >
-              <p className={styles.pathNumber}>0{activeIndex + 1} <span>{offering.name}</span></p>
-              <h3>{active.title}</h3>
-              <p className={styles.description}>{offering.description}</p>
+            <div className={styles.copy}>
+              <div className={styles.readingStack}>
+                <div className={styles.readingMeasure} aria-hidden="true" inert>
+                  {PATHS.map((path, index) => (
+                    <div key={path.situation}><PathReading path={path} index={index} /></div>
+                  ))}
+                </div>
+                <motion.div data-path-reading initial={false} animate={copyMotion}>
+                  <PathReading path={active} index={activeIndex} />
+                </motion.div>
+              </div>
               <Link
                 href={`/services#package-${packageSlug}`}
                 onClick={() => publishServicesSituation(active.situation, "home_paths")}
                 className={styles.action}
               >
-                Open {offering.name} <ArrowRight size={19} aria-hidden="true" />
+                <span className={styles.readingStack}>
+                  <span className={styles.readingMeasure} aria-hidden="true" inert>
+                    {PATHS.map((path) => (
+                      <span key={path.situation}>
+                        Open {packages.find((item) => item.slug === SITUATION_TO_PACKAGE[path.situation])!.name}
+                      </span>
+                    ))}
+                  </span>
+                  <span>Open {offering.name}</span>
+                </span>
+                <ArrowRight size={19} aria-hidden="true" />
               </Link>
-            </motion.div>
+            </div>
 
-            <motion.div
-              className={styles.scope}
-              data-path-scope
-              initial={false}
-              animate={scopeMotion}
-              style={{ transformPerspective: 1100, transformOrigin: "0% 50%" }}
-            >
-              <p className={styles.eyebrow}>The first question</p>
-              <p className={styles.question}>{active.question}</p>
-              <p className={styles.scopeLabel}>What we work on</p>
-              <ul>
-                {active.decisions.map((decision, index) => (
-                  <li
-                    key={decision}
-                    style={{ "--path-order": index } as CSSProperties}
-                  >
-                    <span aria-hidden="true">0{index + 1}</span>
-                    {decision}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+            <div className={styles.scope} data-path-scope>
+              <motion.div initial={false} animate={scopeMotion} data-path-question>
+                <p className={styles.eyebrow}>The first question</p>
+                <div className={`${styles.readingStack} ${styles.questionStack}`}>
+                  <div className={styles.readingMeasure} aria-hidden="true" inert>
+                    {PATHS.map((path) => <p key={path.situation} className={styles.question}>{path.question}</p>)}
+                  </div>
+                  <p className={styles.question}>{active.question}</p>
+                </div>
+                <p className={styles.scopeLabel}>What we work on</p>
+                <ul>
+                  {active.decisions.map((decision, index) => (
+                    <li key={index}>
+                      <span aria-hidden="true">0{index + 1}</span>
+                      <div className={styles.readingStack}>
+                        <div className={styles.readingMeasure} aria-hidden="true" inert>
+                          {PATHS.map((path) => <div key={path.situation}>{path.decisions[index]}</div>)}
+                        </div>
+                        <div>{decision}</div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
           </div>
         </div>
 
