@@ -83,3 +83,77 @@ The permanent alias returned HTTP 200 but still reported the older commit
 bf4ef15c495ad3e822425c68b2843805ddde6974. It does not expose release 338.
 The controlled deployment log again confirmed that the existing VERCEL_TOKEN
 repository secret needed for permanent alias reassignment is not configured.
+
+## Release 358 keyboard visibility correction
+
+Source review found that Paths moved keyboard focus with `preventScroll` for
+ArrowLeft, ArrowRight, Home and End without checking visibility. After native
+scroll moved the focused tab beyond the viewport, another key selection could
+leave the new target offscreen. Ordinary Tab into the panel or its links also
+lacked the explicit fixed-control clearance used by other updated chapters.
+
+Paths now checks visible keyboard focus at section level for tabs, the reading
+panel, package action and footer link. All of those surfaces use 80 px vertical
+scroll margins. Fully visible targets remain stationary. Obscured small targets
+use nearest alignment; targets taller than the available viewport align at their
+start. Pointer focus and the section itself do not trigger the correction.
+
+New arrow-key targets focus with `preventScroll` and use the section handler.
+Repeated Home or End on the same focused tab checks visibility directly because
+no new focus event fires. The selected path, mounted reading and links, measured
+content space, scroll ownership and existing pause behavior are unchanged.
+
+TypeScript, changed-component ESLint, homepage source contract, typography floor,
+production build, rendered homepage gate (499,573 CSS bytes) and whitespace
+validation passed. Source commit:
+`944e1c21e4d56fa3590ffaeb243004290b72be31`.
+
+The browser connection probe remained unresponsive and was cancelled. This is
+a source-confirmed correction; release 358 interactive acceptance is pending.
+The historical release 338 measurements above do not certify this new release.
+
+Remaining checks: at 1440 × 900, 1280 × 790, 390 × 844 and 320 × 720, verify
+Arrow keys, Home/End and Tab/Shift Tab across tabs, panel and links. Move the
+focused first or last tab offscreen and repeat Home/End. Check visible targets
+stay still, obscured controls clear both fixed edges, tall reading starts below
+the header, reverse scrolling retains selection, and pause/resume retains the
+focused node and readable text. Inspect OS reduced motion separately.
+
+The permanent alias still resolves to older deployment
+`dpl_o4VJQ5q2uu2mYzeeVyL2UEZXRqDT`, commit
+`bf4ef15c495ad3e822425c68b2843805ddde6974`, at the start of this continuation.
+The repository already declares the intended alias in `vercel.json`; another
+configuration edit is not justified by the documentation or observed state.
+The existing account-authorized alias repair remains pending. This workspace's
+earlier CLI login was terminated by a network policy denial, so that device
+session cannot finish the repair.
+
+Release 358 deployment trigger:
+`561178de180e3ce6814b21d7ecde04f66b558e74`.
+Deployment: `dpl_GdU2F7RWtvJkNiE8tKcD5uWZMyeC`.
+The source-to-trigger comparison contains only `vercel.json`.
+Include the footer link in the held-desktop clearance check: its final position
+depends on the measured frame and native sticky scrolling, and has not been
+visually certified in this pass.
+
+Release 358 reached READY. GitHub homepage contract `35220772850`, contact
+regression `35220772948` and controlled preview `35220772991` passed. Controlled
+mode was restored in `c68de5ded017147c5dd62084e25e94f702922935`.
+
+The exact deployment's `/api/release` returned HTTP 200 at 12:26:04 UTC on
+2026-09-17 and reported commit `561178de180e3ce6814b21d7ecde04f66b558e74`,
+branch `august-8-isolated` and environment `preview`. This certifies the exact
+preview identity, not browser interaction acceptance. Production is unchanged.
+
+The current user-terminal repair steps are saved in
+`docs/preview-link-repair.md`; they identify the release 358 deployment rather
+than an older target. Assignment to release 358 remains outstanding.
+
+At final verification the shared alias had advanced to release 357:
+`dpl_ETy3ey7duTKFk8vT3kGqyaa5k837`, commit
+`5d64cf439c9a2081ae62090b0cb90bd64192741b`. That update exposes the opening
+and Recognition improvements. It does not yet expose the new Paths correction.
+The local CLI still reports `login_required`, so workspace account access has
+not recovered. The controlled workflow confirms the existing alias credential
+is unconfigured and cleanup succeeded. The repair guide now distinguishes the
+confirmed release 357 alias from the READY release 358 target.
