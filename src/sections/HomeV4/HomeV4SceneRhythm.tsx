@@ -37,7 +37,8 @@ const SCENES: readonly SceneSpec[] = [
     ["header", "heading"],
   ] },
   { selector: '[data-home-v4-chapter="evidence"]', ink: "sand", reading: ".evidence-cinematic__intro > p", layers: [
-    [".evidence-cinematic__header", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
+    // The archive owns its photo reveal and measured reading transitions.
+    [".evidence-cinematic__header", "heading"],
   ] },
   { selector: '.tatva-observatory', ink: "sand", reading: ".tatva-observatory__copy > h2 + p", layers: [
     [".tatva-observatory__copy", "heading"], [".tatva-observatory__force", "fan"],

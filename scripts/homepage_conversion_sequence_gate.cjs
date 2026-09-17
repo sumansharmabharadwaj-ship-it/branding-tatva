@@ -116,7 +116,8 @@ assert(
 );
 assert(
   evidenceWall.includes('<article className="evidence-cinematic__media">') &&
-    evidenceWall.includes('<motion.aside className="evidence-cinematic__dossier"') &&
+    evidenceWall.includes('<aside className="evidence-cinematic__dossier"') &&
+    evidenceWall.includes('data-evidence-trail-reading') &&
     !evidenceWall.includes('key={`copy-${activeProject.slug}`}') &&
     evidenceWall.includes("preservePanelFocus: true") &&
     !evidenceWall.includes('filter: "blur('),

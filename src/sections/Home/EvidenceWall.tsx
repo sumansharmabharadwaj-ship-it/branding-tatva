@@ -117,6 +117,18 @@ function metricFor(project: Project) {
   };
 }
 
+const READINGS = projects.map((project) => ({ project, trail: trailFor(project) }));
+const TRAIL_ROWS = [
+  { key: "signal", label: "01 · The signal" },
+  { key: "decision", label: "02 · The decision" },
+  { key: "proof", label: "03 · Recorded proof" },
+] as const;
+
+function ProjectMetric({ project }: { project: Project }) {
+  const metric = metricFor(project);
+  return <><p>{project.title}</p><strong>{metric.big}</strong><span>{metric.label}</span></>;
+}
+
 export function EvidenceWall() {
   const sectionRef = useRef<HTMLElement>(null);
   const activeVideoRef = useRef<HTMLVideoElement>(null);
@@ -124,6 +136,7 @@ export function EvidenceWall() {
   const previousIndexRef = useRef(0);
   const copyMotion = useAnimationControls();
   const trailMotion = useAnimationControls();
+  const traceMotion = useAnimationControls();
   const fileRequestRef = useRef(0);
   const [ProjectFile, setProjectFile] = useState<ProjectFileModule["ProjectFile"] | null>(null);
   const [openingSlug, setOpeningSlug] = useState<string | null>(null);
@@ -131,23 +144,36 @@ export function EvidenceWall() {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const desktopMotion = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
+  const [frameFits, setFrameFits] = useState(false);
+  const desktopStory = desktopMotion && !prefersReducedMotion && frameFits;
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
+    focusScopeSelector: '[role="tabpanel"], [role="tablist"]',
     count: projects.length,
     target: sectionRef,
-    enabled: inView && desktopMotion,
-    reducedMotion: prefersReducedMotion || !desktopMotion,
+    enabled: inView && desktopStory,
+    reducedMotion: prefersReducedMotion,
   });
   const { activeIndex, choose: chooseVisualState, preview, releasePreview } = visualizer;
   const selectionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
   const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = trailFor(activeProject);
-  const activeMetric = metricFor(activeProject);
   const mediaDuration = prefersReducedMotion ? 0 : desktopMotion ? 0.7 : 0.35;
 
   useEffect(() => () => { fileRequestRef.current += 1; }, []);
+
+  useEffect(() => {
+    const frame = sectionRef.current?.querySelector<HTMLElement>(".evidence-cinematic__shell");
+    if (!frame) return;
+    const measure = () => setFrameFits(frame.offsetHeight <= window.innerHeight + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(frame);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
+  }, []);
 
   function cancelOpening() {
     fileRequestRef.current += 1;
@@ -190,7 +216,16 @@ export function EvidenceWall() {
       : event.key === "ArrowRight" ? (index + 1) % projects.length
       : (index - 1 + projects.length) % projects.length;
     chooseProject(next);
-    tabsRef.current[next]?.focus({ preventScroll: true });
+    const target = tabsRef.current[next];
+    const bounds = target?.getBoundingClientRect();
+    if (bounds) {
+      const needsVerticalSpace = bounds.top < 80 || bounds.bottom > window.innerHeight - 64;
+      const needsHorizontalSpace = bounds.left < 24 || bounds.right > window.innerWidth - 24;
+      if (needsVerticalSpace || needsHorizontalSpace) {
+        target?.scrollIntoView({ block: needsVerticalSpace ? "center" : "nearest", inline: "nearest", behavior: "instant" });
+      }
+    }
+    target?.focus({ preventScroll: true });
   }
 
   useEffect(() => {
@@ -216,9 +251,11 @@ export function EvidenceWall() {
   const settleReading = useCallback(() => {
     copyMotion.stop();
     trailMotion.stop();
+    traceMotion.stop();
     copyMotion.set({ x: 0, y: 0 });
     trailMotion.set({ x: 0, y: 0 });
-  }, [copyMotion, trailMotion]);
+    traceMotion.set({ scaleX: 1 });
+  }, [copyMotion, trailMotion, traceMotion]);
 
   useEffect(() => {
     const previous = previousIndexRef.current;
@@ -226,13 +263,16 @@ export function EvidenceWall() {
     settleReading();
     if (prefersReducedMotion || previous === activeIndex) return;
     const direction = activeIndex > previous ? 1 : -1;
-    // Keep original text nodes and reading gaps while the two columns arrive.
-    copyMotion.set({ x: -direction * (desktopMotion ? 18 : 8), y: desktopMotion ? 10 : 0 });
-    trailMotion.set({ x: direction * (desktopMotion ? 24 : 8), y: 0 });
-    void copyMotion.start({ x: 0, y: 0, transition: { duration: .44, ease: EASE } });
-    void trailMotion.start({ x: 0, y: 0, transition: { duration: .52, ease: EASE } });
-    return () => { copyMotion.stop(); trailMotion.stop(); };
-  }, [activeIndex, copyMotion, desktopMotion, prefersReducedMotion, settleReading, trailMotion]);
+    // The photograph opens the file; opaque text settles inside measured rows.
+    // Glass surfaces and actions keep their positions throughout the transition.
+    copyMotion.set({ x: -direction * 8, y: 2 });
+    trailMotion.set({ x: direction * 6, y: 2 });
+    traceMotion.set({ scaleX: .08 });
+    void copyMotion.start({ x: 0, y: 0, transition: { duration: .38, ease: EASE } });
+    void trailMotion.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
+    void traceMotion.start({ scaleX: 1, transition: { duration: .58, ease: EASE } });
+    return () => { copyMotion.stop(); trailMotion.stop(); traceMotion.stop(); };
+  }, [activeIndex, copyMotion, prefersReducedMotion, settleReading, trailMotion, traceMotion]);
 
   return (
     <section
@@ -241,6 +281,7 @@ export function EvidenceWall() {
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
       data-evidence-index={activeIndex}
+      data-evidence-layout={desktopStory ? "held" : "flow"}
       data-scroll-story="evidence"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
     >
@@ -286,7 +327,7 @@ export function EvidenceWall() {
               Five real engagements. Each file begins with a signal that was misread,
               then records the decision that changed the direction.
             </p>
-            <span>{desktopMotion && !prefersReducedMotion
+            <span>{desktopStory
               ? "Scroll through five project files, or choose one to explore."
               : "Choose a project to follow the decision and its result."}</span>
           </div>
@@ -308,9 +349,11 @@ export function EvidenceWall() {
                 className={selected ? "is-active" : undefined}
                 style={{ "--project-accent": project.accent } as CSSProperties}
                 onClick={() => chooseProject(index)}
-                onPointerEnter={() => preview(index)}
+                onPointerEnter={(event) => {
+                  if (event.pointerType === "mouse" && desktopMotion && !prefersReducedMotion) preview(index);
+                }}
                 onPointerLeave={releasePreview}
-                onFocus={() => preview(index)}
+                onFocus={() => chooseProject(index)}
                 onBlur={releasePreview}
                 onKeyDown={(event) => onTabKeyDown(event, index)}
               >
@@ -343,6 +386,7 @@ export function EvidenceWall() {
           tabIndex={0}
           className="evidence-cinematic__stage"
           onFocusCapture={settleReading}
+          onPointerDownCapture={settleReading}
         >
           <article className="evidence-cinematic__media">
             {/* Only the scenery overlaps. Copy and actions retain one owner. */}
@@ -411,17 +455,23 @@ export function EvidenceWall() {
             <div className="evidence-cinematic__media-wash" aria-hidden="true" />
             <div className="evidence-cinematic__media-topline">
               <span>Case file {String(activeIndex + 1).padStart(2, "0")}</span>
-              <span>{activeProject.industry}</span>
+              <span className="evidence-cinematic__industry evidence-cinematic__reading-stack">
+                <span className="evidence-cinematic__measure" aria-hidden="true" inert>
+                  {projects.map((project) => <span key={project.slug}>{project.industry}</span>)}
+                </span>
+                <span>{activeProject.industry}</span>
+              </span>
             </div>
-            <motion.div
-              className="evidence-cinematic__media-copy"
-              initial={false}
-              animate={copyMotion}
-            >
-              <p>{activeProject.title}</p>
-              <strong>{activeMetric.big}</strong>
-              <span>{activeMetric.label}</span>
-            </motion.div>
+            <div className="evidence-cinematic__media-copy evidence-cinematic__reading-stack">
+              <div className="evidence-cinematic__measure" aria-hidden="true" inert>
+                {READINGS.map(({ project }) => (
+                  <div key={project.slug} className="evidence-cinematic__metric"><ProjectMetric project={project} /></div>
+                ))}
+              </div>
+              <motion.div className="evidence-cinematic__metric" data-evidence-reading initial={false} animate={copyMotion}>
+                <ProjectMetric project={activeProject} />
+              </motion.div>
+            </div>
             <div className="evidence-cinematic__media-actions">
               <button
                 type="button"
@@ -436,7 +486,13 @@ export function EvidenceWall() {
                 <span aria-hidden="true">↗</span>
               </button>
               <Link href={`/work/${activeProject.slug}`}>
-                {ACTION[activeProject.slug] ?? "View the case"} <span aria-hidden="true">→</span>
+                <span className="evidence-cinematic__reading-stack">
+                  <span className="evidence-cinematic__measure" aria-hidden="true" inert>
+                    {projects.map((project) => <span key={project.slug}>{ACTION[project.slug] ?? "View the case"}</span>)}
+                  </span>
+                  <span>{ACTION[activeProject.slug] ?? "View the case"}</span>
+                </span>
+                <span aria-hidden="true">→</span>
               </Link>
               {fileError && (
                 <p className="evidence-cinematic__file-error" role="status">
@@ -446,26 +502,27 @@ export function EvidenceWall() {
             </div>
           </article>
 
-          <motion.aside className="evidence-cinematic__dossier" initial={false} animate={trailMotion}>
+          <aside className="evidence-cinematic__dossier">
             <div className="evidence-cinematic__dossier-topline">
               <span>Decision record</span>
               <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</strong>
             </div>
 
-            {[
-              ["01 · The signal", activeTrail.signal],
-              ["02 · The decision", activeTrail.decision],
-              ["03 · Recorded proof", activeTrail.proof],
-            ].map(([label, value]) => (
+            {TRAIL_ROWS.map(({ key, label }) => (
               <div
                 key={label}
                 className="evidence-cinematic__trail-step"
               >
                 <div>
                   <span>{label}</span>
-                  <i aria-hidden="true" />
+                  <motion.i aria-hidden="true" initial={false} animate={traceMotion} />
                 </div>
-                <p>{value}</p>
+                <div className="evidence-cinematic__reading-stack">
+                  <div className="evidence-cinematic__measure" aria-hidden="true" inert>
+                    {READINGS.map(({ project, trail }) => <p key={project.slug}>{trail[key]}</p>)}
+                  </div>
+                  <motion.p data-evidence-trail-reading initial={false} animate={trailMotion}>{activeTrail[key]}</motion.p>
+                </div>
               </div>
             ))}
 
@@ -473,7 +530,7 @@ export function EvidenceWall() {
               <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
               <Link href="/work">Open the full archive <span aria-hidden="true">→</span></Link>
             </div>
-          </motion.aside>
+          </aside>
         </div>
       </Container>
 

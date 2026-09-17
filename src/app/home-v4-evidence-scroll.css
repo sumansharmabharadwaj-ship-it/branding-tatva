@@ -23,7 +23,12 @@ html body .home-v4 #evidence .evidence-cinematic__shell {
     overflow: visible !important;
   }
 
-  html:not([data-motion="reduced"]) body .home-v4 #evidence > .evidence-cinematic {
+  html body .home-v4 #evidence > .evidence-cinematic {
+    display: block !important;
+    padding-block: 0 !important;
+  }
+
+  html:not([data-motion="reduced"]) body .home-v4 #evidence > .evidence-cinematic[data-evidence-layout="held"] {
     display: block !important;
     height: 285svh !important;
     min-height: 285svh !important;
@@ -31,27 +36,65 @@ html body .home-v4 #evidence .evidence-cinematic__shell {
     overflow: clip !important;
   }
 
-  html:not([data-motion="reduced"]) body .home-v4 #evidence .evidence-cinematic__shell {
-    position: sticky !important;
-    top: 0 !important;
-    height: 100svh !important;
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    height: auto !important;
     min-height: 100svh !important;
     box-sizing: border-box;
-    padding-block: clamp(4.4rem, 6.5svh, 5.5rem) 1rem !important;
+    grid-template-rows: auto auto minmax(min-content, 1fr);
+    padding-block: clamp(4.4rem, 6.5svh, 5.5rem) 3.5rem !important;
+  }
+
+  html:not([data-motion="reduced"]) body .home-v4 #evidence [data-evidence-layout="held"] .evidence-cinematic__shell {
+    position: sticky !important;
+    top: 0 !important;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__media {
+    min-height: 25rem;
   }
 
   html:not([data-motion="reduced"]) .home-v4 #evidence :is(
     .evidence-cinematic__media-layer,
     .evidence-cinematic__media-wash,
-    .evidence-cinematic__trail-step,
     .evidence-cinematic__index button
   ) {
     will-change: transform, opacity;
   }
+}
 
-  html:not([data-motion="reduced"]) .home-v4 #evidence .evidence-cinematic__index button.is-active {
-    transform: translateY(-4px);
-  }
+/* Real text at the current width reserves each reading, without cloning a
+   control or letting an outgoing case retain an accessible reading. */
+html body .home-v4 #evidence :is(.evidence-cinematic__reading-stack, .evidence-cinematic__measure) {
+  display: grid;
+  min-width: 0;
+  gap: 0;
+}
+
+.evidence-cinematic__reading-stack > *,
+.evidence-cinematic__measure > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.evidence-cinematic__measure {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.evidence-cinematic__trail-step i {
+  transform-origin: left;
+}
+
+html body .home-v4 #evidence .evidence-cinematic__index button,
+html body .home-v4 #evidence .evidence-cinematic__media-actions :is(button, a) {
+  transform: none;
+}
+
+html body .home-v4 #evidence :is(button, a, [role="tabpanel"]):focus-visible {
+  outline: 2px solid #ead6bc;
+  outline-color: #ead6bc !important;
+  outline-offset: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {

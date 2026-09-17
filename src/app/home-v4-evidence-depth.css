@@ -231,7 +231,7 @@
   text-shadow: 0 10px 48px rgba(0, 0, 0, 0.34);
 }
 
-.evidence-cinematic__media-copy > span {
+.evidence-cinematic__metric > span {
   display: block;
   max-width: 46ch;
   margin-top: 0.85rem;
@@ -645,7 +645,7 @@
     overflow-wrap: anywhere;
   }
 
-  .evidence-cinematic__media-copy > span {
+  .evidence-cinematic__metric > span {
     max-width: 100%;
     color: rgba(244, 239, 230, .82);
     font-size: 1rem;
