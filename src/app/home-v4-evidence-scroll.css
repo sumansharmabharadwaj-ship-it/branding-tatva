@@ -110,3 +110,90 @@ html body .home-v4 #evidence :is(button, a, [role="tabpanel"]):focus-visible {
     top: auto !important;
   }
 }
+
+/* A readable decision record beside a brighter photograph. The record owns
+   its contrast, rather than asking the entire image to become a dark scrim. */
+html body .home-v4 #evidence .evidence-cinematic__dossier {
+  color: #342f27;
+  background: linear-gradient(145deg, #faf5e9, #eae1d2);
+  border-color: rgb(250 245 233 / 75%);
+  backdrop-filter: none;
+  box-shadow: 0 24px 65px rgb(6 10 8 / 20%), inset 0 1px 0 #fff9ed;
+}
+html body .home-v4 #evidence :is(.evidence-cinematic__dossier-topline, .evidence-cinematic__trail-step) {
+  border-color: rgb(94 76 51 / 20%);
+}
+html body .home-v4 #evidence :is(.evidence-cinematic__dossier-topline span, .evidence-cinematic__dossier-topline strong, .evidence-cinematic__trail-step span) {
+  color: #70533e;
+  font-size: .75rem;
+  line-height: 1.5;
+  letter-spacing: .08em;
+}
+html body .home-v4 #evidence .evidence-cinematic__trail-step p {
+  color: #342f27;
+  font-size: clamp(1.2rem, 1.55vw, 1.4rem);
+  line-height: 1.35;
+}
+html body .home-v4 #evidence .evidence-cinematic__trail-step i {
+  background: linear-gradient(90deg, #80523999, #80523920);
+}
+html body .home-v4 #evidence .evidence-cinematic__dossier-footer :is(p, a) { color: #514936; }
+html body .home-v4 #evidence .evidence-cinematic__dossier-footer a {
+  min-height: 2.75rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration-color: #80523966;
+}
+html body .home-v4 #evidence .evidence-cinematic__dossier-footer a:is(:hover, :focus-visible) {
+  color: #805239;
+  text-decoration-color: currentColor;
+}
+html body .home-v4 #evidence .evidence-cinematic__dossier a:focus-visible { outline-color: #805239 !important; }
+
+html body .home-v4 #evidence :is(.evidence-cinematic__media-image, .evidence-cinematic__media-video) {
+  filter: saturate(.9) contrast(1.02);
+}
+html body .home-v4 #evidence .evidence-cinematic__media-wash {
+  background: linear-gradient(180deg, rgb(12 15 12 / 62%) 0%, transparent 24%, transparent 35%, rgb(12 15 12 / 76%) 78%, rgb(12 15 12 / 92%) 100%);
+}
+html body .home-v4 #evidence :is(.evidence-cinematic__media-topline, .evidence-cinematic__media-topline span:first-child) {
+  color: #fff9ed;
+  font-size: .75rem;
+  line-height: 1.5;
+  letter-spacing: .08em;
+}
+html body .home-v4 #evidence .evidence-cinematic__media-actions :is(button, a) {
+  min-height: 3rem;
+  font-size: .875rem;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;
+}
+html body .home-v4 #evidence .evidence-cinematic__media-actions button {
+  color: #342f27;
+  background: #eae1d2;
+  border-color: #eae1d2;
+  backdrop-filter: none;
+}
+html body .home-v4 #evidence .evidence-cinematic__media-actions button:is(:hover, :focus-visible) { background: #fff9ed; border-color: #fff9ed; }
+html body .home-v4 #evidence .evidence-cinematic__intro > span { color: #d4b99a; font-size: .875rem; }
+
+/* Readable names and a clear selected file, with motion only inside each tab. */
+html body .home-v4 #evidence .evidence-cinematic__index-copy small { font-size: .75rem; line-height: 1.3; letter-spacing: .06em; }
+html body .home-v4 #evidence .evidence-cinematic__index-copy strong { font-size: 1.125rem; line-height: 1.15; }
+html body .home-v4 #evidence .evidence-cinematic__index-copy em { color: #d4cfc3; font-size: .8125rem; line-height: 1.4; }
+html body .home-v4 #evidence .evidence-cinematic__index button.is-active { background: #eae1d2; border-color: #eae1d2; }
+html body .home-v4 #evidence .evidence-cinematic__index button.is-active .evidence-cinematic__index-image { opacity: 0; }
+html body .home-v4 #evidence .evidence-cinematic__index button.is-active :is(small, strong, em) { color: #342f27; }
+html body .home-v4 #evidence .evidence-cinematic__index button::after { background: #805239; }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html body .home-v4 #evidence .evidence-cinematic__media-actions > :is(button, a) > span:last-child { transition: translate 300ms cubic-bezier(.22,1,.36,1); }
+  html body .home-v4 #evidence .evidence-cinematic__media-actions > :is(button, a):is(:hover, :focus-visible) > span:last-child { translate: 3px -2px; }
+}
+html[data-motion="reduced"] body .home-v4 #evidence :is(.evidence-cinematic__index button, .evidence-cinematic__index-image, .evidence-cinematic__media-actions > :is(button, a), .evidence-cinematic__media-actions > :is(button, a) > span:last-child) { transition: none; translate: none; }
+@media (prefers-reduced-motion: reduce) {
+  html body .home-v4 #evidence :is(.evidence-cinematic__index button, .evidence-cinematic__index-image, .evidence-cinematic__media-actions > :is(button, a)) { transition: none; }
+}

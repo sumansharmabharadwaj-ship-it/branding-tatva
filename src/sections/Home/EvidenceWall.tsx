@@ -269,8 +269,11 @@ export function EvidenceWall() {
     trailMotion.set({ x: direction * 6, y: 2 });
     traceMotion.set({ scaleX: .08 });
     void copyMotion.start({ x: 0, y: 0, transition: { duration: .38, ease: EASE } });
-    void trailMotion.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
-    void traceMotion.start({ scaleX: 1, transition: { duration: .58, ease: EASE } });
+    // Follow the decision in reading order; reversing project direction also
+    // reverses the short sequence. The original text remains opaque throughout.
+    const delayFor = (row: number) => (direction > 0 ? row : TRAIL_ROWS.length - 1 - row) * .065;
+    void trailMotion.start((row: number) => ({ x: 0, y: 0, transition: { duration: .42, delay: delayFor(row), ease: EASE } }));
+    void traceMotion.start((row: number) => ({ scaleX: 1, transition: { duration: .58, delay: delayFor(row), ease: EASE } }));
     return () => { copyMotion.stop(); trailMotion.stop(); traceMotion.stop(); };
   }, [activeIndex, copyMotion, prefersReducedMotion, settleReading, trailMotion, traceMotion]);
 
@@ -508,20 +511,20 @@ export function EvidenceWall() {
               <strong>{String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</strong>
             </div>
 
-            {TRAIL_ROWS.map(({ key, label }) => (
+            {TRAIL_ROWS.map(({ key, label }, row) => (
               <div
                 key={label}
                 className="evidence-cinematic__trail-step"
               >
                 <div>
                   <span>{label}</span>
-                  <motion.i aria-hidden="true" initial={false} animate={traceMotion} />
+                  <motion.i aria-hidden="true" custom={row} initial={false} animate={traceMotion} />
                 </div>
                 <div className="evidence-cinematic__reading-stack">
                   <div className="evidence-cinematic__measure" aria-hidden="true" inert>
                     {READINGS.map(({ project, trail }) => <p key={project.slug}>{trail[key]}</p>)}
                   </div>
-                  <motion.p data-evidence-trail-reading initial={false} animate={trailMotion}>{activeTrail[key]}</motion.p>
+                  <motion.p data-evidence-trail-reading custom={row} initial={false} animate={trailMotion}>{activeTrail[key]}</motion.p>
                 </div>
               </div>
             ))}
