@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useAnimationControls, useInView, useTransform } from "framer-motion";
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -51,8 +51,29 @@ const STAGE_META = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+type StageReading = { title: string; explanation: string; output: string; decision: string };
+
+function resolveReading(stage: ProcessStage, index: number): StageReading {
+  return STAGE_META[index] ?? {
+    title: stage.stage,
+    explanation: stage.description,
+    output: "A decision the next stage can use",
+    decision: "What needs to be agreed before the next stage?",
+  };
+}
+
+function DecisionReading({ meta }: { meta: StageReading }) {
+  return (
+    <>
+      <p className={styles.eyebrow}>The decision</p>
+      <h3>{meta.title}</h3>
+      <p className={styles.explanation}>{meta.explanation}</p>
+    </>
+  );
+}
 
 export function RootSystem({ stages }: { stages: ProcessStage[] }) {
+  const readings = useMemo(() => stages.map(resolveReading), [stages]);
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
@@ -72,6 +93,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
+    focusScopeSelector: '[role="tabpanel"], [role="tablist"]',
     count: stages.length,
     target: sectionRef,
     enabled: desktopStory && sceneInView,
@@ -108,7 +130,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const settleReading = useCallback(() => {
     readingMotion.stop(); noteMotion.stop(); captionMotion.stop(); outputMotion.stop();
     readingMotion.set({ x: 0, y: 0 });
-    noteMotion.set({ y: 0, rotate: 0 });
+    noteMotion.set({ x: 0, y: 0 });
     captionMotion.set({ x: 0 });
     outputMotion.set({ scaleX: 1 });
   }, [readingMotion, noteMotion, captionMotion, outputMotion]);
@@ -119,16 +141,18 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     settleReading();
     if (prefersReducedMotion || previous === active) return;
     const direction = Math.sign(active - previous);
-    readingMotion.set({ x: direction * (desktopStory ? 28 : 8), y: desktopStory ? 8 : 0 });
-    noteMotion.set({ y: direction * (desktopStory ? 24 : 6), rotate: desktopStory ? direction * -2.5 : 0 });
-    captionMotion.set({ x: direction * (desktopStory ? 22 : 6) });
+    // Reading moves within a measured space; the note surface, result and
+    // controls retain their positions through every forward or reverse step.
+    readingMotion.set({ x: direction * 8, y: 2 });
+    noteMotion.set({ x: direction * -6, y: 2 });
+    captionMotion.set({ x: direction * 6 });
     outputMotion.set({ scaleX: .08 });
-    void readingMotion.start({ x: 0, y: 0, transition: { duration: .48, ease: EASE } });
-    void noteMotion.start({ y: 0, rotate: 0, transition: { duration: .58, ease: EASE } });
-    void captionMotion.start({ x: 0, transition: { duration: .48, ease: EASE } });
+    void readingMotion.start({ x: 0, y: 0, transition: { duration: .38, ease: EASE } });
+    void noteMotion.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
+    void captionMotion.start({ x: 0, transition: { duration: .38, ease: EASE } });
     void outputMotion.start({ scaleX: 1, transition: { duration: .62, ease: EASE } });
     return () => { readingMotion.stop(); noteMotion.stop(); captionMotion.stop(); outputMotion.stop(); };
-  }, [active, desktopStory, prefersReducedMotion, settleReading, readingMotion, noteMotion, captionMotion, outputMotion]);
+  }, [active, prefersReducedMotion, settleReading, readingMotion, noteMotion, captionMotion, outputMotion]);
 
   function choose(index: number) {
     visualizer.choose(index);
@@ -147,12 +171,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
 
   if (!stages.length) return null;
   const stage = stages[active];
-  const meta = STAGE_META[active] ?? {
-    title: stage.stage,
-    explanation: stage.description,
-    output: "A decision the next stage can use",
-    decision: "What needs to be agreed before the next stage?",
-  };
+  const meta = readings[active];
   return (
     <section ref={sectionRef} data-project-journey="true" data-scroll-story="process" data-process-state={active} data-process-layout={desktopStory ? "held" : "flow"} className={`project-journey ${styles.journey}`} aria-labelledby="project-journey-title">
       <div ref={frameRef} className={styles.shell}>
@@ -177,6 +196,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               tabIndex={active === index ? 0 : -1}
               className={styles.tab}
               onClick={() => choose(index)}
+              onFocus={() => choose(index)}
               onKeyDown={(event) => onTabKeyDown(event, index)}
             >
               {active === index && <motion.span className={styles.selection} layoutId={`project-selection-${selectionId}`} transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }} aria-hidden="true" />}
@@ -186,32 +206,50 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
           ))}
         </div>
 
-        <article id="project-stage-panel" role="tabpanel" aria-labelledby={`project-stage-tab-${active}`} tabIndex={0} className={styles.panel} onFocusCapture={settleReading}>
+        <article id="project-stage-panel" role="tabpanel" aria-labelledby={`project-stage-tab-${active}`} tabIndex={0} className={styles.panel} onFocusCapture={settleReading} onPointerDownCapture={settleReading}>
           <div className={styles.media}>
             <motion.div className={styles.imagePlane} data-process-camera style={{ x: desktopStory ? imageX : 0, y: desktopStory ? imageY : 0, scale: desktopStory ? imageScale : 1 }}>
               <Image src="/images/strategy-working-desk.webp" alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />
             </motion.div>
             <div className={styles.imageShade} />
-            <motion.div className={styles.deskNote} initial={false} animate={noteMotion}>
+            <div className={styles.deskNote} data-process-note>
               <span>Before moving on</span>
-              <p>{meta.decision}</p>
-            </motion.div>
+              <div className={styles.readingStack}>
+                <div className={styles.readingMeasure} aria-hidden="true" inert>
+                  {readings.map((reading, index) => <p key={index}>{reading.decision}</p>)}
+                </div>
+                <motion.p data-process-note-reading initial={false} animate={noteMotion}>{meta.decision}</motion.p>
+              </div>
+            </div>
             <motion.p className={styles.imageCaption} initial={false} animate={captionMotion} aria-hidden="true">
               <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>{stage.stage}
             </motion.p>
           </div>
 
-          <motion.div className={styles.reading} data-process-reading initial={false} animate={readingMotion}>
-            <p className={styles.eyebrow}>The decision</p>
-            <h3>{meta.title}</h3>
-            <p className={styles.explanation}>{meta.explanation}</p>
+          <div className={styles.reading} data-process-reading>
+            <div className={styles.readingStack}>
+              <div className={styles.readingMeasure} aria-hidden="true" inert>
+                {readings.map((reading, index) => (
+                  <div key={index}><DecisionReading meta={reading} /></div>
+                ))}
+              </div>
+              <motion.div data-process-copy initial={false} animate={readingMotion}>
+                <DecisionReading meta={meta} />
+              </motion.div>
+            </div>
             <dl className={styles.notes}>
               <div>
                 <motion.span aria-hidden="true" className={styles.outputTrace} data-process-output-trace initial={false} animate={outputMotion} />
-                <dt>What you receive</dt><dd>{meta.output}</dd>
+                <dt>What you receive</dt>
+                <dd className={styles.readingStack}>
+                  <span className={styles.readingMeasure} aria-hidden="true" inert>
+                    {readings.map((reading, index) => <span key={index}>{reading.output}</span>)}
+                  </span>
+                  <span>{meta.output}</span>
+                </dd>
               </div>
             </dl>
-          </motion.div>
+          </div>
         </article>
 
         <footer className={styles.footer}>

@@ -44,11 +44,17 @@
 .deskNote p { margin: .65rem 0 0; font: 400 clamp(1.6rem, 2.4vw, 2.2rem)/1.15 var(--font-display), Georgia, serif; color: #342f27; letter-spacing: -.015em; }
 .imageCaption { position: absolute; bottom: 1.5rem; left: 1.5rem; right: 1.5rem; display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 0; color: #fff9ed; font: 400 2rem/1.1 var(--font-display), Georgia, serif; }
 .imageCaption span { font: 500 .75rem/1.5 var(--font-sans), sans-serif; letter-spacing: .1em; }
+/* Hidden copies measure the real wrapping without adding accessible text.
+   One stable space keeps the media, output and footer from following each
+   individual sentence's height. */
+.readingStack, .readingMeasure { display: grid; min-width: 0; }
+.readingStack > *, .readingMeasure > * { grid-area: 1 / 1; min-width: 0; }
+.readingMeasure { visibility: hidden; pointer-events: none; user-select: none; }
 .reading { min-width: 0; padding-block: .7rem; }
 .reading h3 { max-width: 22ch; margin: 0; font: 400 clamp(2rem, 3.1vw, 3rem)/1.08 var(--font-display), Georgia, serif; letter-spacing: -.02em; text-wrap: balance; }
 .explanation { max-width: 46ch; margin: 1.2rem 0 1.5rem; color: #595246; font-size: 1rem; line-height: 1.65; }
 .notes { margin: 0; }
-.notes > div { padding-top: 1rem; margin-top: 1rem; border-top: 1px solid rgb(94 76 51 / 25%); }
+.notes > div { padding-top: 1rem; margin-top: 0; border-top: 1px solid rgb(94 76 51 / 25%); }
 .notes dt { margin: 0 0 .35rem; color: #805239; font-size: .875rem; line-height: 1.5; }
 .notes dd { margin: 0; max-width: 42ch; font-size: 1rem; line-height: 1.55; }
 .footer { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding-top: 1.25rem; border-top: 1px solid rgb(94 76 51 / 25%); }
@@ -59,7 +65,7 @@
 .footer a span { transition: transform 220ms ease; }
 .footer a:is(:hover, :focus-visible) span { transform: translate(2px,-2px); }
 .footer > div > span { color: #595246; font-size: .875rem; line-height: 1.5; }
-.journey :is(button,a,[role="tabpanel"]):focus-visible { outline: 2px solid #805239; outline-offset: 5px; }
+.journey.journey :is(button,a,[role="tabpanel"]):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 5px; }
 @media (max-width: 1100px) {
   .tabs { grid-template-columns: repeat(3, minmax(0,1fr)); border-radius: 1.6rem; }
 }

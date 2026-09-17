@@ -32,7 +32,9 @@ const SCENES: readonly SceneSpec[] = [
     ["header", "heading"],
   ] },
   { selector: '[data-scroll-story="process"]', ink: "clay", reading: "header > p", layers: [
-    ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    // The method owns its camera and decision changes. Keep stage controls
+    // and the reading panel anchored during the chapter entrance.
+    ["header", "heading"],
   ] },
   { selector: '[data-home-v4-chapter="evidence"]', ink: "sand", reading: ".evidence-cinematic__intro > p", layers: [
     [".evidence-cinematic__header", "heading"], ['[role="tab"]', "fan"], ['[role="tabpanel"]', "plate"],
