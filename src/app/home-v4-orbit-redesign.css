@@ -374,6 +374,11 @@
   .brand-orbit__choices button { min-height:7rem; gap:.7rem; }
 }
 
+@media (min-width: 821px) {
+  .brand-orbit__shell { padding-bottom:5rem; }
+  .brand-orbit__decision { bottom:0; }
+}
+
 /* Focus owns the reading plane immediately, including a newly mounted panel. */
 .brand-orbit :is(button, a, [tabindex]) { scroll-margin-block:5rem; }
 .home-v4 .brand-orbit__question:focus-within,
