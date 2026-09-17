@@ -164,7 +164,7 @@ export function RecognitionAudit() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setError(data.error ?? "The audit request did not reach the mailing list. Please send it once more.");
+        setError(data.error ?? "The audit request never reached the mailing list. Please send it once more.");
         setStatus("error");
         return;
       }

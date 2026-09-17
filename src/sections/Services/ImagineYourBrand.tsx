@@ -118,7 +118,7 @@ export function ImagineYourBrand() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "The project map request did not reach the mailing list. Send it once more.");
+        setError(data.error ?? "The project map request never reached the mailing list. Send it once more.");
         setStatus("error");
         return;
       }

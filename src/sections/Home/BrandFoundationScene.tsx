@@ -247,7 +247,7 @@ export function BrandFoundationScene() {
         <div className={styles.shell}>
           <div className={styles.content} data-foundation-controls>
             <header>
-              <p className={styles.eyebrow}>03 · The foundation</p>
+              <p className={styles.eyebrow}>04 · The foundation</p>
               <h2 id="brand-foundation-title">The decisions people never see.</h2>
               <p className={styles.intro}>What should people understand, trust, and remember before they see the logo?</p>
             </header>

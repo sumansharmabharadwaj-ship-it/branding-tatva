@@ -332,7 +332,7 @@ export function ContactGratitude() {
                 <motion.path d="M22 40C14 13 112 3 214 8C330 9 383 19 383 37C386 58 295 72 191 68C90 67 13 60 16 39C18 17 104 4 200 6" fill="none" vectorEffect="non-scaling-stroke" style={{ pathLength: motionEnabled ? bookingOrbit : 1 }} />
               </svg>
             </motion.span>
-            <span className={styles.bookingLabel}>Find a time with Suman</span>
+            <span className={styles.bookingLabel}>Choose a time with Suman</span>
             <ArrowRight className={styles.bookingArrow} aria-hidden="true" size={20} strokeWidth={1.4} />
           </TrackedLink>
           <p className={styles.reassurance}>

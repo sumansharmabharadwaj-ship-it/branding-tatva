@@ -34,7 +34,7 @@ export const packages: Package[] = [
     price: 1850,
     billing: "one-time",
     description:
-      "We decide what the business should mean, who should choose it, and which promise it can prove before identity or launch work begins.",
+      "This engagement settles what the business should mean, who should choose it, and which promise it can prove, before identity or launch work begins.",
     includes: [
       "Brand discovery and positioning workshop",
       "Audience and purpose definition",
@@ -51,7 +51,7 @@ export const packages: Package[] = [
     price: 4200,
     billing: "one-time",
     description:
-      "We find what buyers still recognise, decide the stronger position, then rebuild the language and identity around it.",
+      "It begins with what buyers still recognise, decides the stronger position, then rebuilds the language and identity around it.",
     includes: [
       "Everything in Foundation",
       "Full brand audit and repositioning",
@@ -94,12 +94,12 @@ export const packages: Package[] = [
 export const offerings: Offering[] = [
   {
     name: "Brand Strategy and Identity",
-    detail: "We decide the position before designing the identity. The logo, colour, type, and image direction then make that position visible.",
+    detail: "Position first, identity second. The logo, colour, type, and image direction exist to make the position visible.",
     color: "#B85A34", // clay
   },
   {
     name: "Content Strategy",
-    detail: "We define the subjects, arguments, and language the brand can own before the first post or campaign is written.",
+    detail: "The subjects, arguments, and language the brand can own get decided before the first post or campaign is written.",
     color: "#24394D", // indigo
   },
   {

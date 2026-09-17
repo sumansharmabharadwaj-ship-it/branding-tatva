@@ -32,12 +32,12 @@ const OPTIONS: ReadonlyArray<{
   {
     id: "idea",
     label: "I have a credible offer but no settled brand.",
-    reason: "We decide what the business should mean before naming, identity, website, or launch work begins.",
+    reason: "The first work settles what the business should mean. Naming, identity, website, and launch all inherit that answer.",
   },
   {
     id: "reposition",
     label: "The business has outgrown the brand people still see.",
-    reason: "We keep the cues buyers already trust, remove the ones that misrepresent the business, and establish the stronger position.",
+    reason: "The cues buyers already trust stay. The ones that misrepresent the business go. The stronger position takes their place.",
   },
   {
     id: "ongoing",

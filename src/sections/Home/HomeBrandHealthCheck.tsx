@@ -127,7 +127,7 @@ const RESULTS: Record<
       "The offer becomes persuasive in conversation, but the website and content are asking buyers to do too much interpretation first.",
     signal: "Move the reason to choose forward",
     situation: "idea",
-    nextAction: "See the evidence, then the Foundation engagement",
+    nextAction: "Follow the evidence to the Foundation engagement",
   },
   coherence: {
     title: "The brand depends too much on your personal approval.",
@@ -135,7 +135,7 @@ const RESULTS: Record<
       "Useful pieces already exist, but people are relying on memory and taste to keep them aligned across the website, content, and campaigns.",
     signal: "Turn your judgement into usable rules",
     situation: "reposition",
-    nextAction: "See the evidence, then the Full Brand System",
+    nextAction: "Follow the evidence to the Full Brand System",
   },
   demand: {
     title: "Marketing is carrying a weak reason to choose.",
@@ -143,14 +143,14 @@ const RESULTS: Record<
       "The business is visible, yet buyers reach the sales conversation still comparing price. The message and evidence need to establish a reason to prefer it.",
     signal: "Put proof behind a sharper position",
     situation: "ongoing",
-    nextAction: "See the evidence, then the Brand Partnership",
+    nextAction: "Follow the evidence to the Brand Partnership",
   },
   mixed: {
     title: "The business has outgrown the brand representing it.",
     detail:
       "Positioning, expression, and proof are pulling in different directions. Pushing any single channel harder will make the mismatch more visible.",
     signal: "Diagnose the whole brand before rebuilding a part",
-    nextAction: "See the evidence, then compare the engagements",
+    nextAction: "Follow the evidence, then compare the engagements",
   },
 };
 

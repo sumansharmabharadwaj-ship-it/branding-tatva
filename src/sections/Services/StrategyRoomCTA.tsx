@@ -546,10 +546,10 @@ export function StrategyRoomCTA() {
                         ? "Your decision note stays in view while you choose a time."
                         : answers.length > 0
                           ? "The context you have already named stays in view while you choose a time."
-                          : "Choose a time now; a polished brief is not required."}
+                          : "Choose a time now; the unpolished version of the question is enough."}
                     </p>
                     <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-relaxed text-ivory/65">
-                      <span>Calendar not showing times? {hasCompletedBrief ? "Send this decision directly." : "Write the decision directly."}</span>
+                      <span>No times showing in the calendar? {hasCompletedBrief ? "Send this decision directly." : "Write the decision directly."}</span>
                       <Link
                         href="/contact"
                         className="inline-flex min-h-11 items-center rounded-full border border-sandstone/35 px-4 py-2 font-medium text-ivory transition-colors hover:border-sandstone/65 hover:bg-sandstone/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
@@ -604,7 +604,7 @@ export function StrategyRoomCTA() {
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ivory/90 lg:mx-0">
             Thirty minutes directly with Suman. Bring the decision, the disagreement, or the sentence nobody can finish.
-            A polished brief is not required.
+            The unpolished version is enough.
           </p>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-ivory/68 lg:mx-0">
             Remote projects led directly by Suman are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
@@ -681,7 +681,7 @@ export function StrategyRoomCTA() {
                     onClick={openCalendar}
                     className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
                   >
-                    See available times
+                    Choose a time
                     <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
                   </button>
                   <button ref={registerBriefStartButton} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
@@ -787,7 +787,7 @@ export function StrategyRoomCTA() {
                           onClick={openCalendar}
                           className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
                         >
-                          See available times
+                          Choose a time
                           <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
                         </button>
                         <button type="button" data-strategy-control="true" onClick={restart} className={QUIET_ACTION_CLASS}>

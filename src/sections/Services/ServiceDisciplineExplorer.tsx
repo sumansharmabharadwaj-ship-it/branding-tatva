@@ -248,7 +248,7 @@ export function ServiceDisciplineExplorer() {
               <Reveal>
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">What the work can cover</p>
                 <h2 data-discipline-heading="true" className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  Six disciplines, used in the order your business needs.
+                  The order of the work matters more than the list of services.
                 </h2>
                 <p data-discipline-intro="true" className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
                   {routePlan

@@ -32,7 +32,7 @@ const RUNGS = [
   {
     label: "Recognized",
     signal: "The name or cues register, but the meaning still moves.",
-    explanation: "Familiarity has begun, but recognition alone does not make the brand easy to describe or choose. Inconsistent cues can still make it interchangeable.",
+    explanation: "Familiarity has begun, but recognition alone leaves the brand hard to describe or choose. Inconsistent cues can still make it interchangeable.",
     decision: "Repeat a small set of distinctive verbal and visual codes.",
     evidence: "Correct identification from cues other than the name, plus repeated language across interviews.",
     system: "Distinctive codes",
@@ -48,7 +48,7 @@ const RUNGS = [
   {
     label: "Considered",
     signal: "The brand enters the shortlist before price alone decides.",
-    explanation: "Recall creates an opportunity, not guaranteed preference. Relevance, proof, availability, experience, and price still shape the final decision.",
+    explanation: "Recall creates an opportunity rather than guaranteed preference. Relevance, proof, availability, experience, and price still shape the final decision.",
     decision: "Protect the position and support it with evidence buyers can inspect.",
     evidence: "Shortlist mentions, qualified enquiries, and sales notes that cite the position.",
     system: "Consideration",
@@ -174,13 +174,13 @@ export function PerceptionLadder() {
               How buyers remember
             </p>
             <h2 className="mt-3 max-w-[24ch] font-display text-[clamp(2.45rem,4.6vw,5rem)] font-normal leading-[0.98] tracking-[-0.025em] text-[#1D2D25]">
-              Four ways buyers may hold your brand in memory.
+              Buyers hold your brand in one of four states of memory.
             </h2>
           </div>
 
           <div className="max-w-xl lg:justify-self-end">
             <p data-perception-intro="true" className="max-w-[39rem] text-sm leading-relaxed text-[#3F463E] sm:text-base">
-              These are different market conditions, not a guaranteed ladder. Each condition asks for a different
+              Each is a market condition rather than a step on a guaranteed ladder. Each asks for a different
               brand decision and a different form of evidence.
             </p>
 

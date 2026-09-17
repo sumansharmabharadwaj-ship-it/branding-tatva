@@ -328,7 +328,7 @@ export function PathsCinematicChapter() {
                   </div>
                   <p className={styles.question}>{active.question}</p>
                 </div>
-                <p className={styles.scopeLabel}>What we work on</p>
+                <p className={styles.scopeLabel}>What the work covers</p>
                 <ul>
                   {active.decisions.map((decision, index) => (
                     <li key={index}>

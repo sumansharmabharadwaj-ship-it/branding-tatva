@@ -80,7 +80,7 @@ const pathways: Pathway[] = [
     label: "Speak directly",
     title: "Call while the decision is still live.",
     description:
-      "Use phone or WhatsApp for a direct question that does not need a polished brief.",
+      "Use phone or WhatsApp for a direct question that skips the polished brief.",
     bestWhen: "You know the point you want to test and want the shortest route to Suman.",
     detail: site.phone.display,
     Icon: MessageCircle,
@@ -508,10 +508,10 @@ export function ContactPathways() {
                                   ...(servicePackage ? { package: servicePackage } : {}),
                                 })
                               }
-                              data-cursor-label="See available times"
+                              data-cursor-label="Choose a time"
                               className={primaryActionClass}
                             >
-                              See available times
+                              Choose a time
                               <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                             </a>
                             <a

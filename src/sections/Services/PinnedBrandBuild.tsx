@@ -242,7 +242,7 @@ export function PinnedBrandBuild() {
             <div data-authority-copy="true">
               <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Before promotion</p>
               <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
-                Marketing cannot correct what the brand has not decided.
+                Marketing can only repeat what the brand has already decided.
               </h2>
               <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
                 When category, experience, expression, voice, or presence is weak, every campaign has to compensate.
