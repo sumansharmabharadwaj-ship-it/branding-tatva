@@ -117,3 +117,68 @@ metadata confirms the final trigger, but its `/api/release` request returned a
 reports older commit `bf4ef15c495ad3e822425c68b2843805ddde6974`; it is not described
 as current. The release 335 deployment log confirms that the `VERCEL_TOKEN`
 repository secret needed for permanent-alias reassignment is not configured.
+
+## Release 359 keyboard and closing-focus guards
+
+The user requested deployment of all current changes. This release includes
+the complete isolated branch, including the opening, Recognition and Paths
+improvements from releases 356 through 358.
+
+Questions now applies 80 px fixed-control clearance to visible keyboard focus
+on headings, open answers and links. Fully visible targets stay stationary;
+obscured small targets use nearest alignment, while a target taller than the
+available viewport aligns at its beginning. Matching scroll margins replace
+the former 2 rem bottom margin on headings and cover the answer/link stops.
+
+Arrow navigation focuses a new heading with `preventScroll` and uses the
+section's shared visibility handler. Repeated Home or End checks the already
+focused target directly, so scrolling it offscreen cannot leave that path
+dependent on a missing second focus event.
+
+Before closing an answer that still contains keyboard focus, the handler moves
+focus to its controlling question button. That happens before the answer is
+made inert and hidden, and outside the React state updater. This covers pointer
+activation in browsers that do not automatically focus the clicked button.
+Other open answers, disclosure animation, text motion, native scrolling and
+pause fallbacks keep their existing behavior.
+
+TypeScript, changed-component ESLint, homepage source gate, typography floor,
+production build, rendered homepage gate (499,714 CSS bytes) and whitespace
+validation passed. Source commit:
+`1345bf392363cfefd8129b174eac9378dccad085`.
+
+The browser connection still failed to respond and the probe was cancelled.
+These guards are source-confirmed; release 359 browser acceptance is pending.
+The release 334 and 335 browser observations above remain historical evidence.
+
+Remaining acceptance: Tab and Shift Tab through headings, answers and links on
+desktop and phone; check clearance from both fixed edges; scroll a focused first
+or last heading offscreen and repeat Home or End; close a focused answer through
+pointer activation and confirm focus returns to its heading before hiding;
+verify multiple answers stay independent, reverse scrolling preserves focus,
+and site pause plus OS reduced motion retain readable content and stable nodes.
+
+The complete branch was submitted through the existing controlled Git-integrated
+preview workflow. Release 359 trigger:
+`79a4fe3e43579db6af4f05f3b84acf1a9f55dafa`.
+Deployment: `dpl_A1srdMuvGBfsgbdpWiyQbrue9kYG`.
+The source-to-trigger comparison contains only `vercel.json`, so the deployment
+includes every application change in the source commit and its branch history.
+
+Release 359 reached READY as a preview. GitHub homepage contract `35221996617`,
+contact regression `35221996578` and controlled preview `35221996625` all passed.
+The workflow restored controlled mode in
+`2d07567e9538ba70da4f45676351645b6d96aa35`. Logs confirm successful cleanup and
+the still-unconfigured repository alias credential.
+
+The exact deployment's `/api/release` returned HTTP 302 to authentication at
+12:39:33 UTC on 2026-09-17, so endpoint identity is not certified for this
+release. Vercel metadata and the source-to-trigger comparison confirm the READY
+preview and exact deployed source. Browser acceptance remains pending.
+
+Final Vercel metadata resolves the shared alias to release 357 deployment
+`dpl_ETy3ey7duTKFk8vT3kGqyaa5k837`, commit
+`5d64cf439c9a2081ae62090b0cb90bd64192741b`. Every current application change
+is deployed in release 359, but assigning that deployment to the shared review
+link still requires account-authorized access. The updated command is in
+`docs/preview-link-repair.md`. Production was untouched.
