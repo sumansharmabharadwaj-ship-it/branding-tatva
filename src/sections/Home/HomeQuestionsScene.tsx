@@ -122,6 +122,18 @@ export function HomeQuestionsScene() {
   });
   const mediaScale = useTransform(scrollYProgress, [0, 0.68, 1], [1, 1, 1.035]);
 
+  function revealFocusedQuestion(target: HTMLElement | null) {
+    if (!target || target === rootRef.current || !target.matches(":focus-visible")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({
+        block: bounds.height > window.innerHeight - 160 ? "start" : "nearest",
+        inline: "nearest",
+        behavior: "instant",
+      });
+    }
+  }
+
   function onQuestionKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -131,11 +143,19 @@ export function HomeQuestionsScene() {
       : (index - 1 + QUESTIONS.length) % QUESTIONS.length;
     // Moving between headings leaves the answer being read unchanged.
     const target = questionRefs.current[next];
-    const bounds = target?.getBoundingClientRect();
-    target?.focus({ preventScroll: Boolean(bounds && bounds.top >= 80 && bounds.bottom <= window.innerHeight) });
+    if (target === document.activeElement) revealFocusedQuestion(target);
+    else target?.focus({ preventScroll: true });
   }
 
   function toggleQuestion(index: number) {
+    // Move focus before making its current reading surface inert. Pointer
+    // activation does not focus buttons in every browser.
+    const button = questionRefs.current[index];
+    const answerId = button?.getAttribute("aria-controls");
+    const answer = answerId ? document.getElementById(answerId) : null;
+    if (openQuestions.has(index) && answer?.contains(document.activeElement)) {
+      button?.focus({ preventScroll: true });
+    }
     // Opening a later answer never collapses text above the active heading.
     // Each disclosure stays owned by the visitor who opened it.
     setOpenQuestions((current) => {
@@ -147,7 +167,8 @@ export function HomeQuestionsScene() {
   }
 
   return (
-    <section ref={rootRef} className={styles.questions} data-cursor-world="light" aria-labelledby="home-questions-title">
+    <section ref={rootRef} className={styles.questions} data-cursor-world="light" aria-labelledby="home-questions-title"
+      onFocusCapture={(event) => revealFocusedQuestion(event.target)}>
       <LivingGradient contours preset="meadow" plain opacity={0.42} shaft={false} />
       <motion.div
         className={styles.questionMedia}
