@@ -166,7 +166,11 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       : event.key === "ArrowRight" ? (index + 1) % stages.length
       : (index - 1 + stages.length) % stages.length;
     choose(next);
-    tabsRef.current[next]?.focus({ preventScroll: true });
+    const target = tabsRef.current[next];
+    const bounds = target?.getBoundingClientRect();
+    target?.focus({
+      preventScroll: Boolean(bounds && bounds.top >= 80 && bounds.bottom <= window.innerHeight - 64),
+    });
   }
 
   if (!stages.length) return null;

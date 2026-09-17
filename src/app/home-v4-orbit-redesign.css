@@ -363,17 +363,20 @@
   .brand-orbit__petal { display:none; }
 }
 
-/* These manual chapters fit one scene. Evidence and Studio own their
-   responsive scroll sequences in their respective scroll stylesheets. */
-html body .home-v4 section#recognition,
-html body .home-v4 section#process {
+/* Recognition fits one scene. The method's measured child owns its complete
+   scroll height, including the later decisions and the reverse handoff. */
+html body .home-v4 section#recognition {
   height: 100svh !important;
   min-height: 100svh !important;
 }
 
+html body .home-v4 section#process {
+  height: auto !important;
+  min-height: 100svh !important;
+}
+
 @media (max-width: 820px) {
-  html body .home-v4 section#recognition,
-  html body .home-v4 section#process {
+  html body .home-v4 section#recognition {
     height: auto !important;
     min-height: 100svh !important;
   }
