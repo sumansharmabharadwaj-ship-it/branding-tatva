@@ -425,6 +425,7 @@ export default function ContactPage() {
 
             <div className="min-w-0">
               <div data-contact-booking-card className="rounded-[2rem] border border-white/60 bg-[#F8F4EC]/92 p-6 shadow-[0_30px_90px_rgba(62,48,30,0.18)] backdrop-blur-2xl sm:p-10">
+                <span data-contact-card-sheen aria-hidden="true" />
                 <div data-contact-booking-header className="flex items-start justify-between gap-6">
                   <div>
                     <p className="text-[0.65rem] font-medium uppercase tracking-[0.22em] text-clay">Direct with the founder</p>

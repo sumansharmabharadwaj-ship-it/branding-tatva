@@ -381,7 +381,8 @@ export function ContactPathways() {
             </p>
           </div>
 
-          <div data-contact-pathways-card className="min-w-0 overflow-hidden rounded-[1.5rem] border border-white/55 bg-[#F6F2EA]/90 shadow-[0_28px_90px_rgba(42,35,26,0.12)] backdrop-blur-2xl sm:rounded-[1.75rem]">
+          <div data-contact-pathways-card className="relative min-w-0 overflow-hidden rounded-[1.5rem] border border-white/55 bg-[#F6F2EA]/90 shadow-[0_28px_90px_rgba(42,35,26,0.12)] backdrop-blur-2xl sm:rounded-[1.75rem]">
+            <span data-contact-card-sheen aria-hidden="true" />
             <div className="grid min-w-0">
               <div
                 role="tablist"

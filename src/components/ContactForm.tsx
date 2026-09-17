@@ -774,6 +774,7 @@ export function ContactForm() {
       data-contact-form-expanded={showMore ? "true" : undefined}
       className="rounded-[2rem] border border-white/55 bg-[#F6F2EA]/88 px-6 py-7 shadow-[0_30px_100px_rgba(26,38,27,0.2)] backdrop-blur-2xl sm:px-10 sm:py-9"
     >
+      <span data-contact-card-sheen aria-hidden="true" />
       {/* The panel mirrors the booking card beside it — cream ground,
           italic display accent, serif line, and the sprig divider —
           so the two paths on this page read as siblings rather than

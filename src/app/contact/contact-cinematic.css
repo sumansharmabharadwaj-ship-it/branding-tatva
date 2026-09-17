@@ -302,6 +302,93 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-field-ink] {
   z-index: 0;
 }
 
+/* Card life. The three glass surfaces arrive like set pieces rather than
+   printed panels: each rises and settles as its scene reaches the reading
+   point, a band of morning light crosses the glass in step with the scroll,
+   and under a fine pointer the card lifts toward the hand. Transform and
+   opacity only; the sheen is scroll scrubbed so it reverses naturally. */
+[data-contact-film] [data-contact-card-sheen] {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+[data-contact-film] [data-contact-card-sheen]::before {
+  content: "";
+  position: absolute;
+  inset: -12% -55%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 244, 218, 0.1) 46%,
+    rgba(255, 236, 196, 0.34) 50%,
+    rgba(255, 244, 218, 0.1) 54%,
+    transparent 60%
+  );
+  mix-blend-mode: soft-light;
+  transform: translate3d(-55%, 0, 0);
+}
+
+[data-contact-film] [data-contact-booking-card],
+[data-contact-film] [data-contact-form-card],
+[data-contact-film] [data-contact-pathways-card] {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-contact-film] [data-contact-booking-card]:hover,
+  [data-contact-film] [data-contact-form-card]:hover:not(:focus-within),
+  [data-contact-film] [data-contact-pathways-card]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 40px 110px rgba(62, 48, 30, 0.24);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  [data-contact-film] [data-contact-booking-card],
+  [data-contact-film] [data-contact-form-card],
+  [data-contact-film] [data-contact-pathways-card] {
+    animation: contact-card-arrive linear both;
+    animation-timeline: view(block);
+    animation-range: entry 8% entry 62%;
+    /* A filled scroll animation owns transform outright and would silence
+       the hover lift forever; additive composition lets the settled
+       entrance and the pointer response share the property. */
+    animation-composition: add;
+  }
+
+  [data-contact-film] [data-contact-card-sheen]::before {
+    animation: contact-card-sheen linear both;
+    animation-timeline: view(block);
+    animation-range: entry 30% cover 55%;
+  }
+}
+
+@keyframes contact-card-arrive {
+  from {
+    opacity: 0.5;
+    transform: translateY(26px) scale(0.984);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes contact-card-sheen {
+  from {
+    transform: translate3d(-55%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(55%, 0, 0);
+  }
+}
+
 /* Living ground. Beneath the dust, two broad fields of colour wander the
    light chapters on minute long paths — morning gold from one corner, a
    cool sage answer from the other — so the wash behind the glass is never
@@ -2007,6 +2094,15 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-hero-cue] > span {
   opacity: 0;
 }
 
+html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card],
+html[data-motion="reduced"] [data-contact-film] [data-contact-form-card],
+html[data-motion="reduced"] [data-contact-film] [data-contact-pathways-card],
+html[data-motion="reduced"] [data-contact-film] [data-contact-card-sheen]::before {
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
 html[data-motion="reduced"] [data-contact-film] [data-contact-heading-line="resolve"]::after {
   animation: none !important;
   transform: scaleX(1) !important;
@@ -2144,6 +2240,15 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   [data-contact-film] [data-contact-hero-cue] > span {
     animation: none !important;
     opacity: 0;
+  }
+
+  [data-contact-film] [data-contact-booking-card],
+  [data-contact-film] [data-contact-form-card],
+  [data-contact-film] [data-contact-pathways-card],
+  [data-contact-film] [data-contact-card-sheen]::before {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
   }
 
   [data-contact-film] [data-contact-heading-line="resolve"]::after {
