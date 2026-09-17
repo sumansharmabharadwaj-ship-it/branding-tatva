@@ -1,7 +1,7 @@
 # Update the Branding Tatva preview link
 
-The shared review link has advanced to release 357. Release 361 is READY and includes all
-current website changes, including the Paths, Questions and Studio corrections.
+The shared review link has advanced to release 357. Release 362 is READY and includes
+the current homepage changes, including the brighter evidence archive.
 The permanent alias has not advanced automatically. The connected tools expose
 deployment inspection but no alias assignment action.
 Run these steps in **Terminal on your Mac**, using the Vercel account that owns
@@ -17,10 +17,10 @@ npx --yes vercel@59.19.0 login
 
 Complete the sign-in in your browser. Wait for Terminal to confirm success.
 
-## 2. Point the shared link to release 361
+## 2. Point the shared link to release 362
 
 ```bash
-npx --yes vercel@59.19.0 alias set dpl_svYSjWbiCjp8QNxuEqH33gDitLcz branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
+npx --yes vercel@59.19.0 alias set dpl_FN5fbMjcMmihwHW6FaVM6fzHJTvh branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
 ```
 
 This updates the preview link:
@@ -28,18 +28,17 @@ This updates the preview link:
 It does not promote the site to production.
 
 After the command succeeds, return to this conversation so the link can be
-checked against release 361.
+checked against release 362.
 
-This release includes all earlier opening, text and motion improvements, plus
-corrections for the Paths footer, fast Questions keyboard input and Studio reading
-focus. Release 361 adds the staggered headline entrance, scroll-drawn accents,
-chapter rules, stable button light sweeps and clearer opening copy. Automated
-checks and responsive Chrome checks passed, including reverse scrolling and
-pause/resume. Details and verification limits are recorded in
-homepage-signature-motion-qa.md.
+This release includes the earlier opening, text and motion improvements, plus
+brighter project photography, readable decision records, clearer project
+selection and sequenced evidence animations. Build and deployment checks passed.
+Chrome checks covered desktop, 320 px and 390 px layouts, keyboard selection,
+pause/resume and opening/closing a project file. Details and verification limits
+are recorded in homepage-evidence-readability-qa.md.
 
 For verification, the expected preview commit is
-`a890ad3ca04f8cb39c9fb687f16c3c7d66162365`. A later preview release will need
+`e6ff397551bf1d775b7fa8e94f9c1198796336d8`. A later preview release will need
 its own confirmed deployment target; these commands deliberately identify this
 specific version. Automatic assignment for future releases still requires the
 repository's existing Vercel credential to be configured.
