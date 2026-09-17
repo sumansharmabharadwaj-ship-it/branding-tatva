@@ -1,6 +1,6 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference, useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { motion, useAnimationControls, useScroll, useTransform, type MotionStyle } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
@@ -90,12 +90,56 @@ function RecognitionAnswer({ state }: { state: RecognitionState }) {
 
 export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const entrancePlayed = useRef(false);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
   const landscapeScale = useTransform(scrollYProgress, [0, 0.65, 1], [1.02, 1.17, 1.2]);
   const landscapeY = useTransform(scrollYProgress, [0, 1], [0, 58]);
   const lightX = useTransform(scrollYProgress, [0, 1], ["-18%", "80%"]);
   const proofSweep = useTransform(scrollYProgress, [0, .62], ["-110%", "110%"]);
+  const signatureDraw = useTransform(scrollYProgress, [0, .48], [.3, 1]);
+
+  // A finite entrance on the original text nodes, after the existing prelude.
+  // Reading, focus, pause and a restored scroll position always take priority.
+  useEffect(() => {
+    if (!hydrated || entrancePlayed.current) return;
+    if (prefersReducedMotion) { entrancePlayed.current = true; return; }
+    const section = sectionRef.current;
+    if (!section) return;
+    let animations: Animation[] = [];
+    const finish = () => animations.forEach((animation) => animation.cancel());
+    const start = () => {
+      if (entrancePlayed.current) return;
+      entrancePlayed.current = true;
+      if (window.scrollY > 80 || section.contains(document.activeElement) || document.hidden) return;
+      const compact = window.matchMedia("(max-width: 820px)").matches;
+      animations = Array.from(section.querySelectorAll<HTMLElement>("[data-opening-word]")).map((word, index) =>
+        word.animate([
+          { transform: `translate3d(0, ${compact ? 10 : 22}px, 0) rotate(${compact ? 0 : 2}deg)` },
+          { transform: "translate3d(0, 0, 0) rotate(0deg)" },
+        ], { duration: 850, delay: index * 45, easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards" }),
+      );
+    };
+    const onSelection = () => {
+      const selection = document.getSelection();
+      if (selection && !selection.isCollapsed && selection.anchorNode && section.contains(selection.anchorNode)) finish();
+    };
+    const onVisibility = () => { if (document.hidden) finish(); };
+    if (document.documentElement.dataset.homePreludeReady === "true") start();
+    window.addEventListener("bt:home-prelude-ready", start, { once: true });
+    window.addEventListener("scroll", finish, { passive: true, once: true });
+    section.addEventListener("focusin", finish);
+    document.addEventListener("selectionchange", onSelection);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      finish();
+      window.removeEventListener("bt:home-prelude-ready", start);
+      window.removeEventListener("scroll", finish);
+      section.removeEventListener("focusin", finish);
+      document.removeEventListener("selectionchange", onSelection);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [hydrated, prefersReducedMotion]);
 
   return (
     <section
@@ -156,11 +200,19 @@ export function V4OpeningScene() {
               Psychology finds the tension. Strategy gives it shape.
             </p>
             <h1 id="home-v4-opening-title" className={openingStyles.headline}>
-              <span>Your audience has already formed an opinion.</span>
-              <em><span>Did you</span>{" "}<span>design it?</span></em>
+              <span>{"Your audience has already formed an opinion.".split(" ").map((word, index) => (
+                <span key={index}>{index > 0 ? " " : ""}<span className={openingStyles.word} data-opening-word>{word}</span></span>
+              ))}</span>
+              <em><span className={openingStyles.word} data-opening-word>Did you</span>{" "}<span className={openingStyles.word} data-opening-word>design it?</span></em>
             </h1>
+            <motion.span className={openingStyles.signature} aria-hidden="true" style={{ "--signature-draw": prefersReducedMotion ? 1 : signatureDraw } as MotionStyle}>
+              <svg viewBox="0 0 420 18" fill="none" preserveAspectRatio="none">
+                <path d="M2 13C96 2 217 1 418 7" pathLength={1} />
+                <path d="M74 17C182 9 275 10 350 12" pathLength={1} />
+              </svg>
+            </motion.span>
             <p className="home-v4-opening__lede">
-              A position people understand. A voice they recognise. A reason to choose you. Built from audience psychology, carried into words and design.
+              Brand strategy, words, and design shaped by how your audience thinks. A clear position, carried through every place people meet your business.
             </p>
           </div>
 

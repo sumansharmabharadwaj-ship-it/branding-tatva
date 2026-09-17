@@ -115,11 +115,14 @@ export function HomeV4SceneRhythm() {
             tone: spec.ink!, reading: true, progress: 0, last: "" });
         });
       }
-      return [{ element, layers, ink, active: true }];
+      // Restrict chapter accents to the first paragraph in the existing
+      // introduction. Never decorate panel copy, controls or measured readings.
+      const label = layers[0]?.node.querySelector<HTMLElement>(":scope > p:first-child");
+      return [{ element, layers, ink, label, active: true }];
     });
     const footerTitle = document.querySelector<HTMLElement>("footer h2");
     // The footer title is a separate reading beat, scoped to the mounted home.
-    if (footerTitle) scenes.push({ element: footerTitle.parentElement!, active: true, ink: [], layers: [{
+    if (footerTitle) scenes.push({ element: footerTitle.parentElement!, active: true, ink: [], label: null, layers: [{
       node: footerTitle, treatment: "title", index: 0, spread: 0, side: 1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
     }] });
 
@@ -155,11 +158,15 @@ export function HomeV4SceneRhythm() {
         })),
       }));
 
-      measurements.forEach(({ top, layers, ink, selected, readingFocused }) => {
+      measurements.forEach(({ scene, top, layers, ink, selected, readingFocused }) => {
         // Native selection owns its reading surface until the selection clears.
         // Keep its geometry and paint still without intercepting native scroll.
         if (selected) return;
         const entering = 1 - ease((viewport * 0.96 - top) / (viewport * 0.74));
+        if (scene.label && !readingFocused) {
+          scene.label.dataset.homeChapterLabel = "true";
+          scene.label.style.setProperty("--chapter-arrival", (1 - entering).toFixed(3));
+        }
         layers.forEach(({ layer, top: layerTop, focused: hasFocus }) => {
           const { node, treatment, index, spread, side } = layer;
           const amount = hasFocus ? 0 : wide
@@ -291,8 +298,12 @@ export function HomeV4SceneRhythm() {
       document.removeEventListener("visibilitychange", schedule);
       desktop.removeEventListener("change", schedule);
       delete root.dataset.sceneChoreography;
-      scenes.forEach(({ element, layers, ink }) => {
+      scenes.forEach(({ element, layers, ink, label }) => {
         delete element.dataset.homeMotionScene;
+        if (label) {
+          delete label.dataset.homeChapterLabel;
+          label.style.removeProperty("--chapter-arrival");
+        }
         ink.forEach(({ node }) => {
           delete node.dataset.scrollInk;
           delete node.dataset.scrollReading;

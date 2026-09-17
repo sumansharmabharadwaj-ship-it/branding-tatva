@@ -4,6 +4,14 @@
 :global(.home-v4) .opening h1.headline { max-width: 19ch; font-size: clamp(3.1rem, 5.4vw, 5.75rem); line-height: 1.04; letter-spacing: -.035em; perspective: none; }
 :global(.home-v4) .opening h1.headline em { margin-top: .18em; padding-right: .12em; color: #e4c7a2; -webkit-text-fill-color: currentColor; background: none; animation: none; font-size: .96em; line-height: 1.2; letter-spacing: -.025em; }
 .headline em > span { display: inline-block; white-space: nowrap; }
+.word { display: inline-block; transform-origin: left bottom; }
+.signature { display: block; width: clamp(8rem, 22vw, 19rem); height: 1rem; margin-top: .45rem; color: #e4c7a2; pointer-events: none; }
+.signature svg { width: 100%; height: 100%; overflow: visible; }
+.signature path { stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--signature-draw, 1)); }
+.signature path + path { opacity: .42; stroke-width: .8; stroke-dashoffset: calc(1 - var(--signature-draw, 1) * .88); }
+/* The opening has its own drawn accent; keep the shared ink paint only. */
+:global(html.home-v4-mounted) .opening h1.headline em:global([data-scroll-ink])::after { content: none; }
+.opening:focus-within .signature path { stroke-dashoffset: 0; }
 .opening:global(.home-v4-opening) :global(.home-v4-opening__wash) { background: linear-gradient(90deg, rgb(12 15 17 / 78%) 0%, rgb(12 15 17 / 58%) 38%, rgb(12 15 17 / 8%) 75%), linear-gradient(180deg, rgb(8 11 12 / 18%), transparent 45%, rgb(8 11 12 / 28%)); }
 
 .opening:global(.home-v4-opening) :global(.home-v4-opening__lede) { font-size: clamp(1rem, 1.2vw, 1.125rem); line-height: 1.6; max-width: 42ch; }
@@ -37,9 +45,13 @@
 :global(html[data-motion="reduced"]) .proofTrack > span::after { content: none; }
 :global(html[data-motion="reduced"].home-v4-mounted) .opening h1.headline em:global([data-scroll-ink]) { -webkit-text-fill-color: currentColor; }
 @media (prefers-reduced-motion: reduce), (forced-colors: active), print {
+  .word { transform: none !important; }
+  .signature path { stroke-dashoffset: 0; }
   .proofTrack > span::after { content: none; }
   :global(html.home-v4-mounted) .opening h1.headline em:global([data-scroll-ink]) { -webkit-text-fill-color: currentColor; }
 }
+:global(html[data-motion="reduced"]) .word { transform: none !important; }
+:global(html[data-motion="reduced"]) .signature path { stroke-dashoffset: 0; }
 @media (forced-colors: active) {
   .proofTrack { border-bottom: 1px solid CanvasText; }
   .proofTrack > span { background: Highlight; forced-color-adjust: none; }

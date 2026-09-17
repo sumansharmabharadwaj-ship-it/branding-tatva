@@ -11,6 +11,29 @@ html.home-v4-mounted [data-home-motion-layer] {
    The director changes transforms, never the heading's formatting context. */
 .home-v4 h2 em { display: inline-block; }
 
+/* Chapter labels carry the same drawn line as the opening. Decoration stays
+   outside text flow so pause/resume never rewraps a heading. */
+.home-v4 [data-home-chapter-label] { position: relative; }
+.home-v4 [data-home-chapter-label]::before {
+  content: "";
+  position: absolute;
+  inset: auto auto -.35rem 0;
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  opacity: .65;
+  transform: scaleX(var(--chapter-arrival, 1));
+  transform-origin: left center;
+  pointer-events: none;
+}
+@media (max-width: 820px) {
+  .home-v4 [data-home-chapter-label]::before { width: 1.25rem; }
+}
+html[data-motion="reduced"] .home-v4 [data-home-chapter-label]::before { transform: none; }
+@media (prefers-reduced-motion: reduce), (forced-colors: active), print {
+  .home-v4 [data-home-chapter-label]::before { transform: none; }
+}
+
 /* Ink follows the reading position, sharing the scene director's existing RAF.
    Opaque earth tones keep every word readable throughout the sweep. The
    original color remains the fallback if text clipping is unavailable. */
