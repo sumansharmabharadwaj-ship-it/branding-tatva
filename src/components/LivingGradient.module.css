@@ -63,30 +63,36 @@
   transform: translate3d(0, 0, 0);
 }
 
+/* The colour carry below was raised (55/50/45% mid-stops up to 72/66/60%,
+   tails 68% out to 78%) after the fields read as faint tints on real
+   panels: the drifting masses were losing most of their chroma before
+   they overlapped, so the plates settled back toward their flat base.
+   Richer mid-stops keep each hue alive to the point where two blooms
+   cross, which is where the living-gradient depth actually happens. */
 .blobA {
-  width: 90%;
-  height: 120%;
+  width: 96%;
+  height: 126%;
   top: -30%;
   left: -18%;
-  background: radial-gradient(ellipse at 50% 50%, var(--lg-a) 0%, color-mix(in oklab, var(--lg-a) 55%, transparent) 38%, transparent 68%);
+  background: radial-gradient(ellipse at 50% 50%, var(--lg-a) 0%, color-mix(in oklab, var(--lg-a) 72%, transparent) 38%, transparent 78%);
   animation: driftA 46s ease-in-out infinite alternate;
 }
 
 .blobB {
-  width: 80%;
-  height: 105%;
+  width: 88%;
+  height: 112%;
   top: -10%;
   right: -20%;
-  background: radial-gradient(ellipse at 50% 50%, var(--lg-b) 0%, color-mix(in oklab, var(--lg-b) 50%, transparent) 40%, transparent 68%);
+  background: radial-gradient(ellipse at 50% 50%, var(--lg-b) 0%, color-mix(in oklab, var(--lg-b) 66%, transparent) 40%, transparent 78%);
   animation: driftB 61s ease-in-out infinite alternate;
 }
 
 .blobC {
-  width: 105%;
-  height: 90%;
+  width: 110%;
+  height: 96%;
   bottom: -34%;
   left: 8%;
-  background: radial-gradient(ellipse at 50% 50%, var(--lg-c) 0%, color-mix(in oklab, var(--lg-c) 45%, transparent) 42%, transparent 68%);
+  background: radial-gradient(ellipse at 50% 50%, var(--lg-c) 0%, color-mix(in oklab, var(--lg-c) 60%, transparent) 42%, transparent 78%);
   animation: driftC 53s ease-in-out infinite alternate;
 }
 
@@ -109,18 +115,18 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in oklab, var(--lg-light) 10%, transparent) 22%,
-    color-mix(in oklab, var(--lg-light) 30%, transparent) 40%,
-    color-mix(in oklab, var(--lg-light) 38%, transparent) 50%,
-    color-mix(in oklab, var(--lg-light) 30%, transparent) 60%,
-    color-mix(in oklab, var(--lg-light) 10%, transparent) 78%,
+    color-mix(in oklab, var(--lg-light) 12%, transparent) 22%,
+    color-mix(in oklab, var(--lg-light) 34%, transparent) 40%,
+    color-mix(in oklab, var(--lg-light) 46%, transparent) 50%,
+    color-mix(in oklab, var(--lg-light) 34%, transparent) 60%,
+    color-mix(in oklab, var(--lg-light) 12%, transparent) 78%,
     transparent 100%
   );
   will-change: transform, opacity;
   animation: sweep 38s ease-in-out infinite alternate;
   /* Home publishes the eased signal directly on visible fields. Other
      routes retain their resting light without a page-wide dependency. */
-  opacity: calc(0.62 + var(--field-speed, 0) * 0.85);
+  opacity: calc(0.7 + var(--field-speed, 0) * 0.85);
 }
 
 /* Vignette: keeps type legible against the brightest part of the field
@@ -157,19 +163,23 @@
   /* A stationary tile avoids a 25-viewport texture on tall sticky scenes. */
 }
 
+/* Wider travel than the first cut (12/14/9% out to 16/18/13%) so the
+   drift registers within one reading of a section instead of only
+   across a full loop. The cycle times stay long: more distance at the
+   same duration is still slow weather, never a visible slide. */
 @keyframes driftA {
   0%   { transform: translate3d(0, 0, 0) scale(1); }
-  100% { transform: translate3d(12%, 7%, 0) scale(1.16); }
+  100% { transform: translate3d(16%, 9%, 0) scale(1.22); }
 }
 
 @keyframes driftB {
-  0%   { transform: translate3d(0, 0, 0) scale(1.08); }
-  100% { transform: translate3d(-14%, 10%, 0) scale(1); }
+  0%   { transform: translate3d(0, 0, 0) scale(1.12); }
+  100% { transform: translate3d(-18%, 13%, 0) scale(1); }
 }
 
 @keyframes driftC {
   0%   { transform: translate3d(0, 0, 0) scale(1.05); }
-  100% { transform: translate3d(9%, -9%, 0) scale(1.2); }
+  100% { transform: translate3d(13%, -11%, 0) scale(1.26); }
 }
 
 /* Transform only, deliberately. Keyframed opacity overrides the base

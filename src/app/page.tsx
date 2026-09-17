@@ -38,6 +38,7 @@ import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
 import { site } from "@/data/site";
 import { faqs } from "@/data/faqs";
+import { entityFacts } from "@/data/entityFacts";
 
 export const metadata: Metadata = {
   title: `${site.name}: Brand Strategy by ${site.founder}`,
@@ -61,6 +62,52 @@ const faqStructuredData = {
   })),
 };
 
+/* The home page's own node in the graph the root layout already
+ * publishes (WebSite, Person, Organization, by @id). Answer engines and
+ * assistants read this page far more often than any inner page, so the
+ * node states plainly what the page is, who it belongs to, and which
+ * sentences answer the visitor's first question (the speakable pair is
+ * the hero headline and lede, the two strings written to stand alone).
+ * The Service node describes the practice's actual offer in the terms
+ * entityFacts already bounds — no outcomes, prices, or ratings appear
+ * here because none are verified for display. */
+const homeStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${site.url}/#webpage`,
+      url: site.url,
+      name: `${site.name}: Brand Strategy by ${site.founder}`,
+      description: site.description,
+      isPartOf: { "@id": `${site.url}/#website` },
+      about: { "@id": `${site.url}/#organization` },
+      inLanguage: "en",
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: ["#home-v4-opening-title", ".home-v4-opening__lede"],
+      },
+    },
+    {
+      "@type": "Service",
+      "@id": `${site.url}/#service`,
+      name: "Brand strategy, verbal identity, and brand systems",
+      serviceType: "Brand strategy consultancy",
+      description: site.positioning,
+      provider: { "@id": `${site.url}/#organization` },
+      areaServed: entityFacts.delivery.regions.map((name) => ({
+        "@type": "Country",
+        name,
+      })),
+      availableChannel: {
+        "@type": "ServiceChannel",
+        serviceUrl: `${site.url}/contact`,
+        availableLanguage: "English",
+      },
+    },
+  ],
+};
+
 export default function Home() {
   /* The hero poster is this page's LCP element, and without a preload the
      browser only discovers it once the parser reaches a <video poster>
@@ -79,6 +126,11 @@ export default function Home() {
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeStructuredData) }}
       />
     </>
   );

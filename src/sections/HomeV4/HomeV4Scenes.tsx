@@ -212,7 +212,7 @@ export function V4OpeningScene() {
               </svg>
             </motion.span>
             <p className="home-v4-opening__lede">
-              Brand strategy, words, and design shaped by how your audience thinks. A clear position, carried through every place people meet your business.
+              Brand strategy, words, and design shaped by how your audience thinks. A clear position, carried through every place people meet your business, so the next person arrives already leaning toward yes.
             </p>
           </div>
 
@@ -401,7 +401,7 @@ export function V4RecognitionScene() {
               Most inconsistency begins <em>before the design file.</em>
             </h2>
           </div>
-          <span>Choose the situation that feels familiar.</span>
+          <span>Choose the situation that sounds like yours.</span>
         </header>
 
         <div className={recognitionStyles.stage}>
@@ -482,7 +482,7 @@ export function V4RecognitionScene() {
               className={recognitionStyles.link}
               data-cursor-label="follow"
             >
-              See what inconsistency is costing <ArrowDownRight size={18} aria-hidden="true" />
+              See what this is quietly costing you <ArrowDownRight size={18} aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -546,7 +546,7 @@ export function V4HiddenCostScene() {
             <p className={costStyles.eyebrow}>02 · The hidden cost</p>
             <h2 id="home-v4-cost-title">More content.<br /><em>The same introduction.</em></h2>
             <p className={costStyles.intro}>
-              When the brand keeps changing, the next campaign has to introduce the business all over again.
+              When the brand keeps changing, every campaign has to introduce you all over again. Your buyers keep meeting a stranger.
             </p>
           </div>
           <motion.div

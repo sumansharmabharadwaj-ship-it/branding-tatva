@@ -151,7 +151,7 @@ export function V4CostStackScene() {
 
       <div className={styles.inner}>
         <div data-cost-intro>
-          <p className={styles.eyebrow}>02 · What the reset costs</p>
+          <p className={styles.eyebrow}>03 · What the reset costs</p>
           {/* The shared scene entrance owns this intact, readable heading. */}
           <h2 id="home-v4-cost-stack-title" className={styles.title}>
             Three costs. <em>Every reset renews them.</em>
@@ -187,7 +187,7 @@ export function V4CostStackScene() {
         </ol>
 
         <div className={styles.footer}>
-          <p>A clear position gives every campaign something to build on.</p>
+          <p>A clear position means every campaign builds the same memory instead of a new introduction.</p>
           <a href="#foundation" className={styles.link} data-cursor-label="foundation">
             Build the foundation <ArrowDownRight size={18} aria-hidden="true" />
           </a>
