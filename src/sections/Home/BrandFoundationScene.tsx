@@ -3,7 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
-import { useCallback, useEffect, useId, useRef, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { motion, useAnimationControls, useInView, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
@@ -45,87 +45,104 @@ const FOUNDATION_LAYERS = [
 ] as const;
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+type FoundationLayer = (typeof FOUNDATION_LAYERS)[number];
+
+function FoundationReading({ layer }: { layer: FoundationLayer }) {
+  return <><h3>{layer.title}</h3><p className={styles.description}>{layer.description}</p></>;
+}
 
 function FoundationDecision({ layer, direction, reducedMotion }: {
-  layer: (typeof FOUNDATION_LAYERS)[number];
+  layer: FoundationLayer;
   direction: number;
   reducedMotion: boolean;
 }) {
   const controls = useAnimationControls();
+  const outputControls = useAnimationControls();
+  const ruleControls = useAnimationControls();
   const previousLayer = useRef(layer.id);
   const settle = useCallback(() => {
     controls.stop();
+    outputControls.stop();
+    ruleControls.stop();
     controls.set({ x: 0, y: 0 });
-  }, [controls]);
+    outputControls.set({ x: 0 });
+    ruleControls.set({ scaleY: 1 });
+  }, [controls, outputControls, ruleControls]);
 
   useEffect(() => {
     const changed = previousLayer.current !== layer.id;
     previousLayer.current = layer.id;
     settle();
     if (reducedMotion || !changed) return;
-    controls.set({ x: direction * 12, y: 8 });
-    void controls.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
-    return () => controls.stop();
-  }, [controls, direction, layer.id, reducedMotion, settle]);
+    controls.set({ x: direction * 8, y: 3 });
+    outputControls.set({ x: direction * -6 });
+    ruleControls.set({ scaleY: 0 });
+    void controls.start({ x: 0, y: 0, transition: { duration: .38, ease: EASE } });
+    void outputControls.start({ x: 0, transition: { duration: .42, ease: EASE } });
+    void ruleControls.start({ scaleY: 1, transition: { duration: .58, ease: EASE } });
+    return () => { controls.stop(); outputControls.stop(); ruleControls.stop(); };
+  }, [controls, outputControls, ruleControls, direction, layer.id, reducedMotion, settle]);
 
   return (
-    <motion.div
-      className={styles.panelCopy}
-      initial={false}
-      animate={controls}
+    <div
+      id="foundation-layer-panel"
+      role="tabpanel"
+      aria-labelledby={`foundation-tab-${layer.id}`}
+      tabIndex={0}
+      className={styles.panel}
       onFocusCapture={settle}
+      onPointerDown={settle}
     >
-      <h3>
-        {layer.title}
-      </h3>
-      <p className={styles.description}>
-        {layer.description}
-      </p>
-      <div>
+      <div className={styles.panelCopy} data-foundation-decision>
+        <div className={styles.readingStack}>
+          <div className={styles.readingMeasure} aria-hidden="true" inert>
+            {FOUNDATION_LAYERS.map((item) => <div key={item.id}><FoundationReading layer={item} /></div>)}
+          </div>
+          <motion.div initial={false} animate={controls} data-foundation-reading>
+            <FoundationReading layer={layer} />
+          </motion.div>
+        </div>
         <p className={styles.outputLabel}>What we define</p>
         <ul className={styles.outputs}>
-          {layer.produces.map((item) => <li key={item}>{item}</li>)}
+          {layer.produces.map((item, index) => (
+            <li key={index}>
+              <motion.i className={styles.outputRule} aria-hidden="true" initial={false} animate={ruleControls} />
+              <span className={styles.readingStack}>
+                <span className={styles.readingMeasure} aria-hidden="true" inert>
+                  {FOUNDATION_LAYERS.map((candidate) => <span key={candidate.id}>{candidate.produces[index]}</span>)}
+                </span>
+                <motion.span initial={false} animate={outputControls} data-foundation-output>{item}</motion.span>
+              </span>
+            </li>
+          ))}
         </ul>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 export function BrandFoundationScene() {
   const wrapperRef = useRef<HTMLElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const selectionId = useId();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
-  /* 761px, lowered from 901px. This MUST stay identical to the matching
-     media query in BrandFoundation.module.css: the JS gates whether the
-     motion runs, the CSS builds the runway it needs, and a mismatch gives
-     you a runway with nothing moving in it, or motion with nowhere to go.
-     At 901px this chapter was dead on ordinary laptops. Confirmed on
-     production, where data-foundation-motion read "static" at 900px tall
-     and "scroll" at 1000px; two sessions independently measured this
-     chapter at zero motion on every axis because of it.
-     The number is measured, and the first correction was still wrong. A
-     1440x900 SCREEN is not a 900px viewport: browser chrome takes roughly
-     110px, so that laptop reports about 790px. An intermediate value of
-     801px, derived against a synthetic 900px viewport, would therefore
-     still have excluded the exact machine it was meant to fix.
-     Re-measured at real viewport heights, the scene's content column
-     renders 671px at 790px and 637px at 690px and clears the screen in
-     both; it first clips at 658px. 761px sits above the clipping point,
-     below every common laptop, and matches the site's own convention,
-     which is 761px in seventeen other places. */
+  // Match the CSS breakpoint, then measure the complete natural frame.
+  // Larger text or a shorter viewport can release the hold without clipping.
   const hasScrollRunway = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
-  const cinematicMotion = hasScrollRunway && !prefersReducedMotion;
+  const [frameFits, setFrameFits] = useState(false);
+  const cinematicMotion = hasScrollRunway && !prefersReducedMotion && frameFits;
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
   const previousIndexRef = useRef(0);
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
+    focusScopeSelector: '[data-foundation-controls]',
     count: FOUNDATION_LAYERS.length,
     target: wrapperRef,
     enabled: sceneInView && cinematicMotion,
-    reducedMotion: !cinematicMotion,
+    reducedMotion: prefersReducedMotion,
   });
   const activeIndex = visualizer.activeIndex;
   const direction = activeIndex >= previousIndexRef.current ? 1 : -1;
@@ -141,6 +158,17 @@ export function BrandFoundationScene() {
   useEffect(() => {
     previousIndexRef.current = activeIndex;
   }, [activeIndex]);
+
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    const measure = () => setFrameFits(scene.offsetHeight <= window.innerHeight + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(scene);
+    window.addEventListener("resize", measure);
+    measure();
+    return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
+  }, []);
 
   useEffect(() => {
     const videoAtEffectStart = videoRef.current;
@@ -174,7 +202,12 @@ export function BrandFoundationScene() {
     else return;
     event.preventDefault();
     choose(next);
-    tabRefs.current[next]?.focus({ preventScroll: true });
+    const target = tabRefs.current[next];
+    const bounds = target?.getBoundingClientRect();
+    if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 64)) {
+      target?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+    }
+    target?.focus({ preventScroll: true });
   }
 
   return (
@@ -186,7 +219,7 @@ export function BrandFoundationScene() {
       data-foundation-state={activeIndex}
       data-foundation-motion={cinematicMotion ? "scroll" : "static"}
     >
-      <div className={styles.scene}>
+      <div ref={sceneRef} className={styles.scene}>
         <motion.div className={styles.landscape} data-foundation-landscape aria-hidden="true" style={{ scale: cinematicMotion ? landscapeScale : 1, x: cinematicMotion ? landscapeX : 0, y: cinematicMotion ? landscapeY : 0 }}>
           <video
             ref={videoRef}
@@ -212,7 +245,7 @@ export function BrandFoundationScene() {
         <motion.div className={styles.sunlight} data-foundation-sunlight aria-hidden="true" style={{ x: cinematicMotion ? sunlightX : 0, opacity: cinematicMotion ? 0.3 : 0 }} />
 
         <div className={styles.shell}>
-          <div className={styles.content}>
+          <div className={styles.content} data-foundation-controls>
             <header>
               <p className={styles.eyebrow}>03 · The foundation</p>
               <h2 id="brand-foundation-title">The decisions people never see.</h2>
@@ -232,12 +265,15 @@ export function BrandFoundationScene() {
                   tabIndex={index === activeIndex ? 0 : -1}
                   className={styles.tab}
                   onClick={() => choose(index)}
-                  onPointerEnter={() => visualizer.preview(index)}
-                  onPointerLeave={(event) => {
-                    if (document.activeElement !== event.currentTarget) visualizer.releasePreview();
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === "mouse" && cinematicMotion) visualizer.preview(index);
                   }}
-                  onFocus={() => visualizer.preview(index)}
-                  onBlur={visualizer.releasePreview}
+                  onPointerLeave={(event) => {
+                    if (event.pointerType === "mouse" && cinematicMotion && document.activeElement !== event.currentTarget) {
+                      visualizer.releasePreview();
+                    }
+                  }}
+                  onFocus={() => choose(index)}
                   onKeyDown={(event) => onTabKeyDown(event, index)}
                   data-cursor-label="explore"
                 >
@@ -253,11 +289,9 @@ export function BrandFoundationScene() {
               ))}
             </div>
 
-            <div id="foundation-layer-panel" role="tabpanel" aria-labelledby={`foundation-tab-${active.id}`} tabIndex={0} className={styles.panel}>
-              <FoundationDecision layer={active} direction={direction} reducedMotion={prefersReducedMotion} />
-            </div>
+            <FoundationDecision layer={active} direction={direction} reducedMotion={prefersReducedMotion} />
 
-            <Link href="/services#package-brand-beginning" className={styles.link} data-magnetic data-cursor-label="foundation">
+            <Link href="/services#package-brand-beginning" className={styles.link} data-cursor-label="foundation">
               Walk the foundation path <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
           </div>

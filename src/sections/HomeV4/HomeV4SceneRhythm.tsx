@@ -25,7 +25,9 @@ const SCENES: readonly SceneSpec[] = [
     ["[data-cost-intro]", "heading"],
   ] },
   { selector: '[data-scroll-story="foundation"]', ink: "clay", reading: "header h2 + p", layers: [
-    ["header", "heading"], ['[role="tablist"]', "rail"], ['[role="tabpanel"]', "plate"],
+    // The measured decision and its controls stay still. The chapter owns
+    // its reading transitions and camera; only the introduction enters.
+    ["header", "intro"],
   ] },
   { selector: '[data-scroll-story="paths"]', ink: "clay", reading: "header > p", layers: [
     // Path controls stay in place; the chapter owns its reading transitions.

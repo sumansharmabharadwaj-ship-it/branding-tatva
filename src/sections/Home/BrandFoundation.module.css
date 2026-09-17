@@ -18,31 +18,25 @@
 .tab:not([aria-selected="true"]):hover { background: rgb(94 76 51 / 9%); }
 .panel { display: grid; align-items: start; min-width: 0; min-height: 16rem; padding-top: .1rem; }
 .panelCopy { grid-area: 1 / 1; min-width: 0; }
+.readingStack, .readingMeasure { display: grid; min-width: 0; }
+.readingStack > *, .readingMeasure > * { grid-area: 1 / 1; min-width: 0; }
+.readingMeasure { visibility: hidden; pointer-events: none; user-select: none; }
 .panel h3 { max-width: 26ch; margin: 0; color: #342f27; font: 400 clamp(1.9rem, 2.5vw, 2.5rem)/1.1 var(--font-display), Georgia, serif; letter-spacing: -.02em; text-wrap: balance; }
 .description { max-width: 51ch; margin: .8rem 0 0; color: #595246; font-size: 1rem; line-height: 1.65; }
 .outputLabel { margin: 1.2rem 0 .6rem; color: #805239; font-size: .75rem; line-height: 1.5; letter-spacing: .1em; text-transform: uppercase; }
 .outputs { display: flex; flex-wrap: wrap; gap: .5rem .9rem; padding: 0; margin: 0; list-style: none; }
-.outputs li { padding-left: .65rem; border-left: 1px solid #a58e68; color: #595246; font-size: .875rem; line-height: 1.6; }
+.outputs li { position: relative; min-width: 0; max-width: 100%; padding-left: .65rem; border-left: 1px solid rgb(165 142 104 / 24%); color: #595246; font-size: .875rem; line-height: 1.6; }
+.outputRule { position: absolute; inset: 0 auto 0 -1px; width: 1px; background: #a58e68; transform-origin: 50% 0; pointer-events: none; }
 .link { display: inline-flex; align-items: center; justify-content: center; justify-self: start; gap: 1.2rem; min-height: 3rem; padding: .75rem 1.2rem; border: 1px solid #514936; border-radius: 999px; background: #514936; color: #fff9ed; font-size: .9rem; line-height: 1.4; }
 .link svg { flex-shrink: 0; }
 .link:hover { border-color: #d1ba8f; background: #1d271f; }
-.tab:focus-visible, .panel:focus-visible, .link:focus-visible { outline: 2px solid #805239; outline-offset: 4px; }
+.section :is(.tab, .panel, .link):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 4px; }
 
-/* Reserve the sticky film treatment for screens with room for the reading
-   card. This query MUST stay identical to the hasScrollRunway media query
-   in BrandFoundationScene.tsx: that one gates whether the motion runs,
-   this one builds the runway it needs, and a mismatch gives you one
-   without the other.
-   Lowered from 901px to 761px, the site's own convention. At 901px an
-   ordinary laptop got the static fallback, which is why this chapter
-   measured zero motion on production. Note a 1440x900 screen reports
-   only ~790px of viewport once browser chrome is subtracted, so an
-   intermediate 801px would still have excluded it. The reading card
-   renders 671px at a 790px viewport and 637px at 690px, clearing the
-   screen in both, and first clips at 658px. */
+/* The breakpoint admits desktop motion; the measured frame decides whether
+   the full reading and action fit. A static frame always uses document flow. */
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
-  .section { height: 220svh; min-height: 220svh; overflow: clip; }
-  .scene { position: sticky; top: 0; min-height: 100svh; }
+  .section[data-foundation-motion="scroll"] { height: 220svh; min-height: 220svh; overflow: clip; }
+  .section[data-foundation-motion="scroll"] .scene { position: sticky; top: 0; min-height: 100svh; }
   .shell { min-height: 100svh; }
 }
 
@@ -84,9 +78,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section { height: auto; min-height: 0; }
-  .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
+  .section[data-foundation-motion] { height: auto; min-height: 0; }
+  .section[data-foundation-motion] .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
 }
 
 :global(html[data-motion="reduced"]) .section { height: auto; min-height: 0; }
-:global(html[data-motion="reduced"]) .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
+:global(html[data-motion="reduced"]) .section .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
