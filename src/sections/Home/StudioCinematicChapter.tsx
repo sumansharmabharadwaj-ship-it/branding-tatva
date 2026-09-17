@@ -251,6 +251,18 @@ export function StudioCinematicChapter() {
     select(index);
   }
 
+  function revealFocusedReading(target: HTMLElement | null) {
+    if (!target || target === sectionRef.current || !target.matches(":focus-visible")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({
+        block: bounds.height > window.innerHeight - 160 ? "start" : "nearest",
+        inline: "nearest",
+        behavior: "instant",
+      });
+    }
+  }
+
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -260,13 +272,9 @@ export function StudioCinematicChapter() {
       : (index - 1 + DISCIPLINES.length) % DISCIPLINES.length;
     choose(next);
     const target = tabsRef.current[next];
-    const bounds = target?.getBoundingClientRect();
-    // Keep keyboard choices clear of the fixed header and bottom controls.
-    // Center only an obscured target, then focus without a second scroll.
-    if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 64)) {
-      target?.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
-    }
-    target?.focus({ preventScroll: true });
+    // Repeat Home/End can target the already focused tab after a wheel gesture.
+    if (target === document.activeElement) revealFocusedReading(target);
+    else target?.focus({ preventScroll: true });
   }
 
   return (
@@ -279,6 +287,7 @@ export function StudioCinematicChapter() {
       data-studio-story={desktopMotion ? "held" : "flow"}
       className="studio-cinematic home-scene"
       aria-labelledby="studio-cinematic-title"
+      onFocusCapture={(event) => revealFocusedReading(event.target)}
       style={{ "--studio-accent": active.accent } as CSSProperties}
     >
       <div className="studio-cinematic__aurora studio-cinematic__aurora--clay" aria-hidden="true" />

@@ -24,7 +24,9 @@
   position: relative; z-index: 1; width: min(100%, 90rem); min-height: 100svh;
   display: grid; align-content: center; gap: clamp(1.5rem, 3.5svh, 2.25rem);
   margin-inline: auto;
-  padding: clamp(6.5rem, 11svh, 8rem) clamp(1.5rem, 5.5vw, 5.5rem) clamp(2.5rem, 6svh, 4rem);
+  /* Sticky content cannot scroll farther inside its frame. Reserve the same
+     bottom clearance as the keyboard focus margin before enabling the hold. */
+  padding: clamp(6.5rem, 11svh, 8rem) clamp(1.5rem, 5.5vw, 5.5rem) max(5rem, 6svh);
 }
 .header { display: grid; grid-template-columns: 1.15fr .85fr; gap: 4rem; align-items: end; }
 .eyebrow {

@@ -102,6 +102,9 @@
 .questionItem[data-open="true"] .questionIcon { transform: rotate(45deg); }
 .answer { overflow: hidden; }
 .answer[aria-hidden="true"] { visibility: hidden; }
+/* Focus can arrive before the opening animation finishes. Measure and reveal
+   the full answer immediately so its reading stays above the fixed controls. */
+.answer[aria-hidden="false"]:focus-within { height: auto !important; }
 .answer:focus-visible {
   outline: 2px solid #855035; outline-offset: -3px; border-radius: 3px;
 }

@@ -70,6 +70,9 @@
   }
 }
 
+.home-v4 #studio :is([role="tab"], [role="tabpanel"], a) {
+  scroll-margin-block: 80px;
+}
 .home-v4 #studio :is([role="tab"], [role="tabpanel"], a):focus-visible {
   outline: 2px solid var(--studio-accent);
   outline-color: var(--studio-accent) !important;
