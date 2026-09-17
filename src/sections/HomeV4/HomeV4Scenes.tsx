@@ -464,12 +464,16 @@ export function V4HiddenCostScene() {
     setComparison((current) => current.mode === mode ? current : { mode, direction: prefersReducedMotion ? 0 : mode === "shared" ? 1 : -1 });
   }
 
-  function revealFocusedMode(event: React.FocusEvent<HTMLDivElement>) {
+  function revealFocusedComparison(event: React.FocusEvent<HTMLDivElement>) {
     const target = event.target;
-    if (!(target instanceof HTMLButtonElement) || !target.matches(":focus-visible")) return;
+    if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
     const bounds = target.getBoundingClientRect();
     if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
-      target.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+      target.scrollIntoView({
+        block: bounds.height > window.innerHeight - 160 ? "start" : "center",
+        inline: "nearest",
+        behavior: "instant",
+      });
     }
   }
 
@@ -501,7 +505,7 @@ export function V4HiddenCostScene() {
             className={costStyles.comparison}
             data-message-mode={comparison.mode}
             style={{ "--comparison-arrival": prefersReducedMotion ? 1 : comparisonArrival } as MotionStyle}
-            onFocusCapture={revealFocusedMode}
+            onFocusCapture={revealFocusedComparison}
           >
             <p className={costStyles.exampleLabel}>Illustrative example · Meal planning</p>
             <div className={costStyles.modeChoices} role="group" aria-label="Compare how a brand communicates">
