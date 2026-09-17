@@ -1,9 +1,9 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { motion, useAnimationControls, useInView, useMotionValueEvent } from "framer-motion";
+import { motion, useInView, useMotionValueEvent, useScroll, useTransform, type MotionStyle } from "framer-motion";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, type CSSProperties, type FocusEvent, type KeyboardEvent } from "react";
 import { Container } from "@/components/Container";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -76,9 +76,11 @@ export function TatvaStrip() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
+  const choicesRef = useRef<HTMLDivElement>(null);
+  const readingRef = useRef<HTMLDivElement>(null);
+  const readingAnimations = useRef<Animation[]>([]);
   const forceRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const previousIndex = useRef(0);
-  const copyMotion = useAnimationControls();
   const inView = useInView(sectionRef, { amount: 0.18 });
   const desktopStory = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
   const { activeIndex, choose, preview, releasePreview, scrollYProgress } = useScrollDrivenVisualizer({
@@ -91,6 +93,8 @@ export function TatvaStrip() {
     focusScopeSelector: ".tatva-observatory__focus, .tatva-observatory__force",
   });
   const active = TATVAS[activeIndex] ?? TATVAS[0];
+  const { scrollYProgress: choicesProgress } = useScroll({ target: choicesRef, offset: ["start end", "end start"] });
+  const choicesArrival = useTransform(choicesProgress, [0, .55], [0, 1]);
 
   const writeProgress = useCallback((progress: number) => {
     if (!desktopStory || prefersReducedMotion) return;
@@ -104,19 +108,38 @@ export function TatvaStrip() {
   }, [scrollYProgress, writeProgress]);
 
   const settleReading = useCallback(() => {
-    copyMotion.stop();
-    copyMotion.set({ x: 0, y: 0 });
-  }, [copyMotion]);
+    readingAnimations.current.forEach((animation) => animation.cancel());
+    readingAnimations.current = [];
+  }, []);
   useEffect(() => {
     const previous = previousIndex.current;
     previousIndex.current = activeIndex;
     settleReading();
     if (prefersReducedMotion || previous === activeIndex) return;
+    const reading = readingRef.current;
+    if (!reading || reading.closest("#tatva-focus-reading")?.matches(":focus-within")) return;
     const direction = activeIndex > previous ? 1 : -1;
-    copyMotion.set({ x: -direction * (desktopStory ? 18 : 8), y: desktopStory ? 6 : 0 });
-    void copyMotion.start({ x: 0, y: 0, transition: { duration: .42, ease: [0.22, 1, 0.36, 1] } });
-    return () => copyMotion.stop();
-  }, [activeIndex, copyMotion, desktopStory, prefersReducedMotion, settleReading]);
+    // Animate the three original paragraphs separately. Native animations can
+    // restart on every choice without replacing text nodes or the focus region.
+    readingAnimations.current = Array.from(reading.children).map((paragraph, index) => paragraph.animate([
+      { transform: `translate3d(${-direction * (desktopStory ? 10 : 5)}px, ${desktopStory ? 4 : 2}px, 0)`, opacity: 1 },
+      { transform: "translate3d(0, 0, 0)", opacity: 1 },
+    ], { duration: 460, delay: index * 45, fill: "backwards", easing: "cubic-bezier(0.22, 1, 0.36, 1)" }));
+    return settleReading;
+  }, [activeIndex, desktopStory, prefersReducedMotion, settleReading]);
+
+  function revealFocusedReading(event: FocusEvent<HTMLElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({
+        block: bounds.height > window.innerHeight - 160 ? "start" : "center",
+        inline: "nearest",
+        behavior: "instant",
+      });
+    }
+  }
 
   function onForceKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -126,9 +149,8 @@ export function TatvaStrip() {
     choose(next);
     const nextButton = forceRefs.current[next];
     if (!nextButton) return;
-    const bounds = nextButton.getBoundingClientRect();
-    const fullyVisible = bounds.top >= 80 && bounds.bottom <= window.innerHeight;
-    nextButton.focus({ preventScroll: fullyVisible });
+    // One focus placement owns the correction, including the bottom controls.
+    nextButton.focus({ preventScroll: true });
   }
 
   const motionActive = inView && !prefersReducedMotion;
@@ -139,6 +161,7 @@ export function TatvaStrip() {
       className="tatva-observatory relative isolate"
       style={{ backgroundColor: "#0D1514" }}
       aria-labelledby="tatva-framework-title"
+      onFocusCapture={revealFocusedReading}
     >
       <div
         ref={frameRef}
@@ -174,7 +197,7 @@ export function TatvaStrip() {
         />
 
         <Container className="tatva-observatory__frame relative z-[3] max-w-[100rem]">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,21rem)_1fr] lg:items-center lg:gap-16">
+        <div className="tatva-observatory__layout">
           <div className="tatva-observatory__copy">
             <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: "#D4B99A" }}>
               The framework
@@ -188,55 +211,23 @@ export function TatvaStrip() {
             <p className="mt-4 max-w-sm text-base leading-relaxed">
               Each Tatva governs a different decision. The system works when none of them is forced to compensate for a missing one.
             </p>
-
-            <motion.div
-              id="tatva-focus-reading"
-              role="region"
-              aria-label={`${active.name}: ${active.role}`}
-              tabIndex={0}
-              onFocusCapture={settleReading}
-              className="tatva-observatory__focus mt-7 overflow-hidden rounded-2xl border p-5"
-              style={{
-                borderColor: `${ELEMENT_HEX[active.slug]}88`,
-                background: `radial-gradient(circle at 92% 4%, ${ELEMENT_HEX[active.slug]}24, transparent 42%), rgba(9,18,16,0.78)`,
-              }}
-            >
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-[0.8125rem] font-medium uppercase tracking-[0.12em]">
-                  Now in focus
-                </p>
-                <span className="text-[0.8125rem] tracking-[0.1em] text-ivory/75">
-                  {String(activeIndex + 1).padStart(2, "0")} / 05
-                </span>
-              </div>
-              <div className="tatva-observatory__reading">
-                <div className="tatva-observatory__reading-measure" aria-hidden="true" inert>
-                  {TATVAS.map((tatva) => <div key={tatva.slug}><TatvaReading tatva={tatva} /></div>)}
-                </div>
-                <motion.div className="tatva-observatory__reading-copy" initial={false} animate={copyMotion}>
-                  <TatvaReading tatva={active} />
-                </motion.div>
-              </div>
-            </motion.div>
-
           </div>
 
-          <div>
+          <motion.div
+            ref={choicesRef}
+            className="tatva-observatory__choices"
+            style={{ "--tatva-arrival": prefersReducedMotion ? 1 : choicesArrival } as MotionStyle}
+          >
             <ol aria-label="Choose a Tatva" className="tatva-observatory__orbit grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
               {TATVAS.map((tatva, index) => {
                 const element = elements.find((entry) => entry.slug === tatva.slug);
                 const isActive = index === activeIndex;
 
                 return (
-                  <motion.li
+                  <li
                     key={tatva.slug}
                     className="flex min-w-0 items-start lg:flex-1"
-                    initial={false}
-                    animate={{ y: prefersReducedMotion ? 0 : isActive ? -4 : 0 }}
-                    transition={{
-                      duration: prefersReducedMotion ? 0 : 0.45,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
+                    style={{ "--tatva-order": index } as CSSProperties}
                   >
                     <button
                       ref={(node) => { forceRefs.current[index] = node; }}
@@ -307,11 +298,42 @@ export function TatvaStrip() {
                         />
                       </span>
                     )}
-                  </motion.li>
+                  </li>
                 );
               })}
             </ol>
-          </div>
+          </motion.div>
+
+            <div
+              id="tatva-focus-reading"
+              role="region"
+              aria-label={`${active.name}: ${active.role}`}
+              tabIndex={0}
+              onFocusCapture={settleReading}
+              onPointerDown={settleReading}
+              className="tatva-observatory__focus overflow-hidden rounded-2xl border p-5"
+              style={{
+                borderColor: `${ELEMENT_HEX[active.slug]}88`,
+                background: `radial-gradient(circle at 92% 4%, ${ELEMENT_HEX[active.slug]}24, transparent 42%), rgba(9,18,16,0.78)`,
+              }}
+            >
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-[0.8125rem] font-medium uppercase tracking-[0.12em]">
+                  Now in focus
+                </p>
+                <span className="text-[0.8125rem] tracking-[0.1em] text-ivory/75">
+                  {String(activeIndex + 1).padStart(2, "0")} / 05
+                </span>
+              </div>
+              <div className="tatva-observatory__reading">
+                <div className="tatva-observatory__reading-measure" aria-hidden="true" inert>
+                  {TATVAS.map((tatva) => <div key={tatva.slug}><TatvaReading tatva={tatva} /></div>)}
+                </div>
+                <div ref={readingRef} className="tatva-observatory__reading-copy">
+                  <TatvaReading tatva={active} />
+                </div>
+              </div>
+            </div>
         </div>
         </Container>
       </div>

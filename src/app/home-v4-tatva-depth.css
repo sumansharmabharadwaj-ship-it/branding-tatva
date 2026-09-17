@@ -86,6 +86,39 @@
   color: #f4efe6;
 }
 
+/* Choices precede the reading in document order. Desktop preserves the
+   established left-hand introduction and reading beside the five portraits. */
+.tatva-observatory__layout {
+  display: grid;
+  gap: 2rem;
+}
+
+.tatva-observatory__choices,
+.tatva-observatory__focus { min-width: 0; }
+
+@media (min-width: 1024px) {
+  .tatva-observatory__layout {
+    grid-template-columns: minmax(0, 21rem) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 1.75rem 4rem;
+    align-items: start;
+  }
+  .tatva-observatory__copy { grid-area: 1 / 1; }
+  .tatva-observatory__choices {
+    grid-area: 1 / 2 / 3 / 3;
+    align-self: center;
+  }
+  .tatva-observatory__focus { grid-area: 2 / 1; }
+}
+
+.tatva-observatory :is(.tatva-observatory__force, .tatva-observatory__focus) {
+  scroll-margin-block: 80px;
+}
+.tatva-observatory :is(.tatva-observatory__force, .tatva-observatory__focus):focus-visible {
+  outline: 2px solid #d4b99a !important;
+  outline-offset: 5px;
+}
+
 /* The five readings share one measured slot at the actual viewport width.
    Only the live copy is exposed; switching never resizes the card or runway. */
 .tatva-observatory__reading,
@@ -105,8 +138,7 @@
   transition:
     border-color 360ms ease,
     background-color 360ms ease,
-    box-shadow 360ms ease,
-    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow 360ms ease;
 }
 
 .tatva-observatory__force:hover,
@@ -115,13 +147,25 @@
   border-color: rgba(244, 239, 230, 0.1);
   background: rgba(244, 239, 230, 0.035);
   box-shadow: 0 20px 58px rgba(0, 0, 0, 0.18);
-  transform: translateY(-3px);
 }
 
 .tatva-observatory__portrait {
+  /* Decorative movement follows the native scroll while buttons stay put. */
+  translate: 0 calc((1 - clamp(0, (var(--tatva-arrival, 1) - var(--tatva-order, 0) * .04) * 1.5, 1)) * 8px);
   box-shadow:
     0 18px 48px rgba(0, 0, 0, 0.34),
     inset 0 0 0 1px rgba(244, 239, 230, 0.06);
+}
+
+.tatva-observatory__force:focus-within .tatva-observatory__portrait { translate: none; }
+@media (max-width: 1180px), (max-height: 760px), (pointer: coarse) {
+  .tatva-observatory__portrait {
+    translate: 0 calc((1 - clamp(0, (var(--tatva-arrival, 1) - var(--tatva-order, 0) * .04) * 1.5, 1)) * 4px);
+  }
+}
+html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tatva-observatory__portrait { translate: none; }
 }
 
 .tatva-observatory__name {
@@ -373,8 +417,6 @@
 
   .tatva-observatory__frame {
     width: 100%;
-    transform: translate3d(0, calc((var(--tatva-scroll-progress) - 0.5) * -8px), 0);
-    transition: transform 160ms linear;
   }
 
   .tatva-observatory__film video {

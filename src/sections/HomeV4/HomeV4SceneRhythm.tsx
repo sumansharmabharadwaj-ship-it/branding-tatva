@@ -47,7 +47,8 @@ const SCENES: readonly SceneSpec[] = [
     [".evidence-cinematic__header", "heading"],
   ] },
   { selector: '.tatva-observatory', ink: "sand", reading: ".tatva-observatory__copy > h2 + p", layers: [
-    [".tatva-observatory__copy", "heading"], [".tatva-observatory__force", "fan"],
+    // The introduction enters; choices and their reading keep fixed hit areas.
+    [".tatva-observatory__copy", "heading"],
   ] },
   { selector: '.tatva-pressure-lab', ink: "sand", reading: ".tatva-pressure-lab__copy > h2 + p", layers: [
     [".tatva-pressure-lab__copy", "heading"], [".tatva-pressure-lab__board", "plate"],
