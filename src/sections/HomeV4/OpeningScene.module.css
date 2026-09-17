@@ -11,11 +11,40 @@
 .opening:global(.home-v4-opening) :global(.home-v4-opening__actions) svg { flex-shrink: 0; }
 .opening:global(.home-v4-opening) :global(.home-v4-opening__proof) { width: min(100%, 21rem); padding: 1.5rem; color: #342f27; border-color: rgb(255 249 236 / 60%); background: rgb(244 239 230 / 94%); box-shadow: 0 20px 60px rgb(12 15 17 / 18%); }
 .opening:global(.home-v4-opening) :global(.home-v4-opening__proof) > span { color: #70533e; font-size: .75rem; letter-spacing: .09em; }
-.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) strong { margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid rgb(94 76 51 / 22%); color: #514936; font-size: clamp(2rem, 3vw, 2.75rem); white-space: nowrap; }
 .opening:global(.home-v4-opening) :global(.home-v4-opening__proof) p { color: #595246; font-size: .875rem; line-height: 1.55; }
 .opening:global(.home-v4-opening) :global(.home-v4-opening__proof) p.proofStory { margin-top: .8rem; color: #342f27; font: 400 clamp(1.65rem, 2.1vw, 2rem)/1.12 var(--font-display), Georgia, serif; letter-spacing: -.015em; }
 .proofLink { position: relative; display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; margin-top: .45rem; color: #514936; font-size: .875rem; text-decoration: underline; text-decoration-color: #80523966; text-underline-offset: .3em; }
 .proofLink:hover { text-decoration-color: currentColor; }
+.proofLink:focus-visible { outline: 2px solid #514936 !important; outline-offset: 4px; border-radius: .2rem; }
+
+/* The real values and bar proportions stay fixed. Native scroll moves only
+   the light inside their tracks, so the evidence never counts up or drifts. */
+.opening:global(.home-v4-opening) :global(.home-v4-opening__proof) p.proofCaption { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid rgb(94 76 51 / 22%); }
+.proofComparison { display: grid; gap: .85rem; margin: .8rem 0 .5rem; }
+.proofPeriod { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: .75rem; }
+.proofPeriod dt { grid-column: 1; grid-row: 1; align-self: center; color: #595246; font-size: .75rem; line-height: 1.5; }
+.proofPeriod dd { display: grid; grid-column: 1 / -1; grid-row: 1; grid-template-columns: minmax(0, 1fr) auto; margin: 0; }
+.proofValue { grid-column: 2; color: #514936; font: 400 clamp(1.6rem, 2.5vw, 2.15rem)/1 var(--font-display), Georgia, serif; font-variant-numeric: tabular-nums; }
+.proofTrack { grid-column: 1 / -1; display: block; height: 3px; margin-top: .5rem; overflow: hidden; border-radius: 2px; background: rgb(81 73 54 / 12%); }
+.proofTrack > span { position: relative; display: block; height: 100%; overflow: hidden; border-radius: inherit; background: #6f4e37; }
+.proofPeriod:last-child .proofTrack > span { background: #556b4a; }
+.proofTrack > span::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgb(255 248 235 / 75%), transparent); transform: translateX(var(--proof-sweep, 0%)); }
+.opening:global(.home-v4-opening) :global(.home-v4-opening__proof):focus-within .proofTrack > span::after { content: none; }
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  :global(html.home-v4-mounted) .opening h1.headline em:global([data-scroll-ink]) { -webkit-text-fill-color: transparent; }
+}
+:global(html[data-motion="reduced"]) .proofTrack > span::after { content: none; }
+:global(html[data-motion="reduced"].home-v4-mounted) .opening h1.headline em:global([data-scroll-ink]) { -webkit-text-fill-color: currentColor; }
+@media (prefers-reduced-motion: reduce), (forced-colors: active), print {
+  .proofTrack > span::after { content: none; }
+  :global(html.home-v4-mounted) .opening h1.headline em:global([data-scroll-ink]) { -webkit-text-fill-color: currentColor; }
+}
+@media (forced-colors: active) {
+  .proofTrack { border-bottom: 1px solid CanvasText; }
+  .proofTrack > span { background: Highlight; forced-color-adjust: none; }
+  .proofLink:focus-visible { outline-color: Highlight !important; }
+}
 
 @media (min-width: 821px) and (max-width: 1120px) {
   .opening:global(.home-v4-opening) :global(.home-v4-opening__proof) { bottom: 5.5rem; width: 18rem; }

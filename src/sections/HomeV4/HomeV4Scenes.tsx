@@ -95,6 +95,7 @@ export function V4OpeningScene() {
   const landscapeScale = useTransform(scrollYProgress, [0, 0.65, 1], [1.02, 1.17, 1.2]);
   const landscapeY = useTransform(scrollYProgress, [0, 1], [0, 58]);
   const lightX = useTransform(scrollYProgress, [0, 1], ["-18%", "80%"]);
+  const proofSweep = useTransform(scrollYProgress, [0, .62], ["-110%", "110%"]);
 
   return (
     <section
@@ -150,47 +151,20 @@ export function V4OpeningScene() {
         </div>
 
         <div className="home-v4-opening__copy">
-          <motion.p
-            className="home-v4-opening__eyebrow"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.62, delay: 0.12, ease: EASE }}
-          >
-            Psychology finds the tension. Strategy gives it shape.
-          </motion.p>
+          <div className="home-v4-opening__reading">
+            <p className="home-v4-opening__eyebrow">
+              Psychology finds the tension. Strategy gives it shape.
+            </p>
+            <h1 id="home-v4-opening-title" className={openingStyles.headline}>
+              <span>Your audience has already formed an opinion.</span>
+              <em><span>Did you</span>{" "}<span>design it?</span></em>
+            </h1>
+            <p className="home-v4-opening__lede">
+              A position people understand. A voice they recognise. A reason to choose you. Built from audience psychology, carried into words and design.
+            </p>
+          </div>
 
-          <h1 id="home-v4-opening-title" className={openingStyles.headline}>
-            <motion.span
-              initial={prefersReducedMotion ? false : { y: 14 }}
-              animate={{ y: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.86, delay: 0.18, ease: EASE }}
-            >
-              Your audience has already formed an opinion.
-            </motion.span>
-            <motion.em
-              initial={prefersReducedMotion ? false : { y: 14 }}
-              animate={{ y: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.82, delay: 0.34, ease: EASE }}
-            >
-              <span>Did you</span>{" "}<span>design it?</span>
-            </motion.em>
-          </h1>
-
-          <motion.p
-            className="home-v4-opening__lede"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.7, delay: 0.48, ease: EASE }}
-          >
-            A position people understand. A voice they recognise. A reason to choose you. Built from audience psychology, carried into words and design.
-          </motion.p>
-
-          <motion.div
-            className="home-v4-opening__actions"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0 : 0.66, delay: 0.6, ease: EASE }}
-          >
+          <div className="home-v4-opening__actions">
             {/* Native fragment links carry keyboard focus into the destination scene. */}
             <a
               href="#recognition"
@@ -208,19 +182,32 @@ export function V4OpeningScene() {
             >
               <span>See recorded proof</span> <ArrowUpRight size={15} aria-hidden="true" />
             </a>
-          </motion.div>
+          </div>
         </div>
 
         <motion.aside
           className="home-v4-opening__proof"
-          initial={prefersReducedMotion ? false : { opacity: 0, x: 26 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.72, delay: 0.52, ease: EASE }}
+          style={{ "--proof-sweep": prefersReducedMotion ? "0%" : proofSweep } as MotionStyle}
         >
           <span>Dr. Haley Nutrition</span>
           <p className={openingStyles.proofStory}>Fewer posts.<br />A clearer reason to pay attention.</p>
-          <strong>0.71% → 2.81%</strong>
-          <p>LinkedIn engagement rate<br />December 2025 to January 2026</p>
+          <p className={openingStyles.proofCaption}>LinkedIn engagement rate</p>
+          <dl className={openingStyles.proofComparison}>
+            {[
+              { month: "December 2025", value: "0.71%", width: `${(.71 / 2.81) * 100}%` },
+              { month: "January 2026", value: "2.81%", width: "100%" },
+            ].map((period) => (
+              <div key={period.month} className={openingStyles.proofPeriod}>
+                <dt>{period.month}</dt>
+                <dd>
+                  <span className={openingStyles.proofValue}>{period.value}</span>
+                  <span className={openingStyles.proofTrack} aria-hidden="true">
+                    <span style={{ width: period.width }} />
+                  </span>
+                </dd>
+              </div>
+            ))}
+          </dl>
           <Link href="/work/dr-haley-nutrition" className={openingStyles.proofLink}>
             Read the case study <ArrowUpRight size={15} aria-hidden="true" />
           </Link>

@@ -6,14 +6,16 @@ import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 const DESKTOP = "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)";
 type Treatment = "title" | "heading" | "intro" | "fan" | "plate" | "rail";
 type LayerSpec = readonly [selector: string, treatment: Treatment];
-type SceneSpec = { selector: string; ink?: "clay" | "sand"; reading?: string; layers: readonly LayerSpec[] };
+type SceneSpec = { selector: string; ink?: "clay" | "sand"; heading?: string; reading?: string; layers: readonly LayerSpec[] };
 
 // Stable semantic hooks keep CSS-module names and the scenes' tab state private.
 // Each plate settles before its reading interval. Existing sticky stories retain
 // sole ownership of their content, media and stage selection.
 const SCENES: readonly SceneSpec[] = [
-  { selector: '[data-home-v4-chapter="opening"]', ink: "sand", reading: ".home-v4-opening__lede", layers: [
-    [".home-v4-opening__proof", "plate"],
+  { selector: '[data-home-v4-chapter="opening"]', ink: "sand", heading: "h1", reading: ".home-v4-opening__lede", layers: [
+    // The opening joins the shared reading choreography. Its actions and
+    // recorded proof stay still, fully readable from the server render.
+    [".home-v4-opening__reading", "intro"],
   ] },
   { selector: '[data-home-v4-chapter="recognition"]', ink: "clay", layers: [
     // The choices and measured reading keep their hit areas still while
@@ -101,7 +103,7 @@ export function HomeV4SceneRhythm() {
       });
       // Paint the original semantic text. No split words, duplicate accessible
       // names or formatting changes: wrapping and selection stay browser owned.
-      const ink = spec.ink ? Array.from(element.querySelectorAll<HTMLElement>("h2")).map((heading) => ({
+      const ink = spec.ink ? Array.from(element.querySelectorAll<HTMLElement>(spec.heading ?? "h2")).map((heading) => ({
         anchor: heading,
         node: heading.querySelector<HTMLElement>("em") ?? heading,
         layer: layers.find(({ node }) => node === heading || node.contains(heading)),
