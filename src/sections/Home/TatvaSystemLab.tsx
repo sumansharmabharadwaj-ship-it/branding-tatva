@@ -2,7 +2,7 @@
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView, useScroll, useTransform, type MotionStyle, type MotionValue } from "framer-motion";
-import { useCallback, useEffect, useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Container } from "@/components/Container";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Link from "next/link";
@@ -173,8 +173,7 @@ export function TatvaSystemLab() {
     return settleReading;
   }, [omittedIndex, compact, prefersReducedMotion, settleReading]);
 
-  function revealFocusedReading(event: FocusEvent<HTMLElement>) {
-    const target = event.target;
+  function revealFocusedReading(target: HTMLElement) {
     if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
     const bounds = target.getBoundingClientRect();
     if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
@@ -194,7 +193,10 @@ export function TatvaSystemLab() {
     setOmittedIndex(next);
     const button = buttons[next];
     if (!button) return;
-    button.focus({ preventScroll: true });
+    // A repeated Home or End can target the already focused button after a
+    // wheel gesture. No focus event fires in that case, so reveal it directly.
+    if (button === document.activeElement) revealFocusedReading(button);
+    else button.focus({ preventScroll: true });
   }
 
   return (
@@ -203,7 +205,7 @@ export function TatvaSystemLab() {
       className="tatva-pressure-lab relative overflow-hidden border-t py-20 sm:py-28"
       style={{ backgroundColor: "#111A18", borderColor: "rgba(244,239,230,0.08)" }}
       aria-labelledby="tatva-system-lab-title"
-      onFocusCapture={revealFocusedReading}
+      onFocusCapture={(event) => revealFocusedReading(event.target)}
     >
       <motion.div
         aria-hidden="true"

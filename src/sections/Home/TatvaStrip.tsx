@@ -3,7 +3,7 @@
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView, useMotionValueEvent, useScroll, useTransform, type MotionStyle } from "framer-motion";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, type CSSProperties, type FocusEvent, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, type CSSProperties, type KeyboardEvent } from "react";
 import { Container } from "@/components/Container";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -128,8 +128,7 @@ export function TatvaStrip() {
     return settleReading;
   }, [activeIndex, desktopStory, prefersReducedMotion, settleReading]);
 
-  function revealFocusedReading(event: FocusEvent<HTMLElement>) {
-    const target = event.target;
+  function revealFocusedReading(target: HTMLElement) {
     if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
     const bounds = target.getBoundingClientRect();
     if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
@@ -149,8 +148,10 @@ export function TatvaStrip() {
     choose(next);
     const nextButton = forceRefs.current[next];
     if (!nextButton) return;
-    // One focus placement owns the correction, including the bottom controls.
-    nextButton.focus({ preventScroll: true });
+    // Repeating Home or End on an offscreen focused choice fires no new focus
+    // event. Correct that target directly; new targets use the focus handler.
+    if (nextButton === document.activeElement) revealFocusedReading(nextButton);
+    else nextButton.focus({ preventScroll: true });
   }
 
   const motionActive = inView && !prefersReducedMotion;
@@ -161,7 +162,7 @@ export function TatvaStrip() {
       className="tatva-observatory relative isolate"
       style={{ backgroundColor: "#0D1514" }}
       aria-labelledby="tatva-framework-title"
-      onFocusCapture={revealFocusedReading}
+      onFocusCapture={(event) => revealFocusedReading(event.target)}
     >
       <div
         ref={frameRef}
