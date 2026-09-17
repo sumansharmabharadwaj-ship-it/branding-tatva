@@ -177,3 +177,54 @@ transitions; verify native forward/reverse signal and reading-rule movement;
 then pause and resume with reading or audit-link focus and confirm retained
 selection, readable text and stable visible geometry. Capture the final narrow
 phone screenshot and retry `/api/release` certification through the browser.
+
+## Release 355 repeated-key focus correction
+
+Source review found that both Tatva chapters relied on a new focus event to
+perform viewport clearance. After a wheel gesture moved an already focused
+first or last choice offscreen, repeating Home or End called `.focus()` on that
+same element. The unchanged focus generated no new event, leaving the visibility
+check unused.
+
+Both chapters now call the existing visibility check directly when the key's
+target already owns focus. A different target still uses the section's focus
+handler. The check leaves a visible target stationary and reveals an offscreen
+target with the same 80 px clearance. Each key action takes one of these two
+paths. Selection, text transitions, reading measurements and native wheel input
+retain their existing behavior. This is a source-confirmed event-path correction;
+browser reproduction and final interactive acceptance are still pending.
+
+The browser connection and a recovery attempt both remained unresponsive on
+continuation. Those calls were cancelled. No alternate browser automation or
+changes to preview authentication were used. Final acceptance must include
+repeating Home and End after scrolling each already focused target offscreen,
+alongside the release 354 checks above.
+
+Release 355 local validation passed: TypeScript, ESLint for both edited
+components, homepage source contract, typography floor, production build and
+rendered homepage validation (496,919 CSS bytes). Source:
+`6481bbd1dff0acc961d59806ba34d13d8bf945d5`.
+
+When browser access recovers, run the complete pending acceptance matrix against
+release 355, which contains the release 354 motion and geometry changes plus
+this focused correction. Prior release 353 baseline measurements remain useful
+for comparison, but do not certify the new deployment.
+
+Release 355 reached READY as preview deployment
+`dpl_2PstEfvZX8SoF4EGA8mB5XZt34Nw`, trigger
+`80b57bd7b1f3e4f46441adc3efb45587c08a37ac`. The source-to-trigger comparison
+contains only `vercel.json`. GitHub homepage contract `35216243133`, contact
+regression `35216243128`, and controlled preview `35216243144` all completed
+successfully. Controlled mode was restored in
+`ac37e49996f0d254604551d3408c86956220468d`.
+
+The final connection probe remained unresponsive and was cancelled. Browser
+acceptance is still pending. The exact release 355 `/api/release` fetch returned
+HTTP 302 to authentication at 11:35:30 UTC on 2026-09-17, so endpoint identity
+certification also remains pending. Vercel metadata confirms the READY preview
+and trigger above.
+
+The release 355 workflow again confirmed that the existing `VERCEL_TOKEN`
+repository secret is unconfigured; the permanent review alias remains an older
+release. Production was untouched. The committed implementation and gate
+results should be distinguished from the outstanding browser acceptance.
