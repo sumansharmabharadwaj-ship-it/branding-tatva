@@ -90,8 +90,29 @@ Physical phones, Safari and OS-level reduced-motion emulation were not tested.
 The browser blocks `/api/release` in this environment; release identity is based
 on Vercel metadata, the exact trigger diff and the deployed CSS and interface.
 
-The screenshot's release 292 URL remains an immutable older deployment. The
-familiar preview alias still points to release 357, deployment
+The screenshot's release 292 URL remains an immutable older deployment. At
+initial delivery, the familiar preview alias still pointed to release 357, deployment
 `dpl_ETy3ey7duTKFk8vT3kGqyaa5k837`. The available connection has no alias
 assignment action. `preview-link-repair.md` now targets release 366.
 Production was untouched.
+
+## Shared alias repair verified — 17 September 2026
+
+The familiar alias now resolves to release 366 deployment
+`dpl_48YDZyZYv9R5dnTJJUvMGohdHiZz` and trigger
+`ef50219c9c9b1566d3c4efaf8b67353d5d87826e`, confirmed with Vercel metadata.
+The shared site's 320 × 720 questions frame loaded and all twelve transition
+elements remained zero height, with no horizontal overflow.
+
+End moved focus from the first question to the last. Enter opened the last
+answer while preserving the first, and Tab focused the complete last answer
+at 565.95–640.33 px inside the 720 px viewport. The shared homepage also loaded
+directly at `/#studio`. This is a follow-up verification of release 366, with
+no new application release.
+
+A direct pointer click on the deployed studio Literature tab preserved
+scrollY 14658. The apparent shift seen with automated locator clicks did not
+reproduce with the direct pointer gesture, so no speculative scroll fix was
+made. The browser still blocks `/api/release`; the connected fetch on the
+updated shared alias returned a 302 authentication redirect. Neither result
+is an endpoint certification.

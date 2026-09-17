@@ -1,12 +1,17 @@
-# Update the Branding Tatva preview link
+# Branding Tatva preview link — repaired
 
-The shared review link points to release 357. Release 366 is READY and includes
-the current homepage changes, including the screenshot fixes for section bands
-and complete strategist content.
-The permanent alias has not advanced automatically. The connected tools expose
-deployment inspection but no alias assignment action.
-Run these steps in **Terminal on your Mac**, using the Vercel account that owns
-Branding Tatva.
+The shared review link was verified on 17 September 2026 against READY release
+366, deployment `dpl_48YDZyZYv9R5dnTJJUvMGohdHiZz`, trigger commit
+`ef50219c9c9b1566d3c4efaf8b67353d5d87826e`. Vercel metadata reports the corrected
+target, and the shared homepage renders the new zero-height section dividers
+and the portrait caption in document flow. No further repair is needed for
+this release.
+
+[Branding Tatva preview](https://branding-tatva-git-august-8-isolated-suman22.vercel.app/).
+
+The command below is retained as a recovery reference for this specific
+release. The connected tools expose deployment inspection but no alias
+assignment action. Future releases still need their alias target verified.
 
 ## 1. Sign in if needed
 
@@ -28,8 +33,10 @@ This updates the preview link:
 [Branding Tatva preview](https://branding-tatva-git-august-8-isolated-suman22.vercel.app/).
 It does not promote the site to production.
 
-After the command succeeds, return to this conversation so the link can be
-checked against release 366.
+The shared link has now been checked against release 366. The browser blocks
+the `/api/release` route and the connected fetch returns an authentication
+redirect, so endpoint certification remains unavailable; deployment metadata
+and the rendered changes establish this verification.
 
 This release removes the broad gradient strips between chapters, lets the
 portrait caption size its card, improves the studio fit check and adds footer
