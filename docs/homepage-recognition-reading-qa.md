@@ -180,3 +180,75 @@ automatic alias refresh therefore remains unavailable. Production is unchanged.
 The OS reduced-motion path shares the inspected hydrated preference hook and
 has a matching CSS media fallback. Site pause and resume were exercised in the
 browser. An OS preference change was not emulated in this session.
+
+## Release 357 keyboard reading clearance
+
+Source review found that the explicit visibility check covered arrow-key choice
+navigation and the cost link, while ordinary Tab into the choices or reading
+panel had no equivalent check. The mobile reading panel exceeds the viewport in
+the recorded baseline above. The browser's default focus scrolling alone does
+not apply this chapter's intended 80 px clearance from fixed controls.
+
+The section now handles visible keyboard focus for all three surfaces. Its
+choices, reading panel and cost link have matching 80 px scroll margins.
+Obscured small controls use nearest alignment, reducing the previous jump to
+the center. A reading panel taller than the available viewport aligns its start
+below the header. A fully visible target remains stationary. Pointer focus and
+the section's own fragment target do not invoke the new handler.
+
+Arrow keys focus a new choice with `preventScroll`, allowing the shared focus
+handler to perform one visibility check. Home or End on the already focused
+choice invokes the check directly because another focus event does not fire.
+The cost link's separate handler has been removed to avoid duplicate handling.
+Choice state, mounted reading, directional text transitions, scroll-driven rule
+and pause fallbacks are unchanged.
+
+TypeScript, changed-component ESLint, homepage source gate, type floor,
+production build, rendered homepage gate (499,494 CSS bytes) and whitespace
+validation passed. Source commit:
+`2456718fef730d5e24703815eb7e134e85972617`.
+
+The browser connection probe again failed to respond and was cancelled.
+Interactive acceptance remains pending. Check Tab and Shift Tab through the
+three surfaces at 1440 × 900, 1280 × 790, 320 × 720 and 337 × 234; verify 80 px
+clearance and minimal scrolling for small targets, top alignment for tall
+reading, repeated Home/End after moving the focused choice offscreen, retained
+choice and focus on reverse scrolling, and pause/resume without remounts.
+Historical measurements above describe their stated releases only.
+
+The controlled preview created trigger
+`5d64cf439c9a2081ae62090b0cb90bd64192741b`, deployment
+`dpl_ETy3ey7duTKFk8vT3kGqyaa5k837`. Source-to-trigger comparison contains only
+`vercel.json`. The prepared alias repair for this release, after confirming
+READY, runs from the user's own terminal because this workspace denied the
+pending CLI login connection to Vercel's API:
+
+```sh
+npx --yes vercel@59.19.0 login
+npx --yes vercel@59.19.0 alias set dpl_ETy3ey7duTKFk8vT3kGqyaa5k837 branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
+```
+
+This assigns only the existing preview alias. Verify that its `/api/release`
+reports trigger `5d64cf439c9a2081ae62090b0cb90bd64192741b` afterward. Account
+authorization and assignment from the user terminal have not been completed in
+this session.
+
+Release 357 reached READY. Vercel metadata confirms the trigger above and the
+preview target. GitHub homepage contract `35219454778`, contact regression
+`35219454716` and controlled preview `35219454728` all completed successfully.
+The workflow restored controlled mode in
+`afb80eb514a1df602b35eab5202a8e412a68d803`. Its logs again confirm the missing
+alias credential and successful cleanup.
+
+The exact release and permanent alias endpoint fetches at 12:11:48 UTC on
+2026-09-17 both returned HTTP 302 to authentication. Endpoint identity is not
+certified for release 357; its deployment identity is confirmed by Vercel
+metadata and the source-to-trigger comparison. The last certified permanent
+alias response remains the older `bf4ef15c495ad3e822425c68b2843805ddde6974`
+commit recorded in `docs/homepage-opening-motion-qa.md` at 11:59:40 UTC.
+Production was untouched.
+
+A follow-up Vercel metadata lookup of the permanent alias resolves to
+`dpl_o4VJQ5q2uu2mYzeeVyL2UEZXRqDT`, commit
+`bf4ef15c495ad3e822425c68b2843805ddde6974`. This independently confirms that
+the alias remains stale despite the endpoint authentication redirect.

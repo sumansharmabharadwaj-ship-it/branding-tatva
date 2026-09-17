@@ -84,6 +84,14 @@ authorization, is:
 vercel alias set dpl_HetmRJf4WsnPrvo7PS5zK7wkaoUo branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
 ```
 
+On continuation, the CLI still reported `login_required`. The pending login
+process then failed with a workspace policy denial of network access to
+`https://api.vercel.com:443`. That device session can no longer complete the
+repair. No alternate route to the denied API was attempted. A user can perform
+the authorized preview assignment from their own terminal after signing in to
+Vercel there. The exact READY deployment must be refreshed before assignment;
+the command above identifies release 356 and is retained as its record.
+
 ## Remaining acceptance
 
 - Inspect the opening at 1440 × 900, a compact desktop, 390 × 844 and 320 × 720.
