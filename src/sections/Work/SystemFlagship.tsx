@@ -61,7 +61,7 @@ export function SystemFlagship({ project }: { project: Project }) {
     },
     {
       label: "The strategic choice",
-      title: "The advantage was not access. It was origin.",
+      title: "The advantage was never access. It was origin.",
       body: project.strategy ?? project.insight ?? "",
     },
     {

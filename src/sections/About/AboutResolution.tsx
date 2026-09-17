@@ -23,7 +23,7 @@ const PATH_DEFINITIONS = [
   {
     slug: "brand-beginning",
     cue: "Launching",
-    signal: "The offer is credible. The market position is not decided.",
+    signal: "The offer is credible. The market position is still undecided.",
     question: "What should this brand stand for before expression begins?",
     decision: "Define the position, audience, and promise the business can prove.",
   },

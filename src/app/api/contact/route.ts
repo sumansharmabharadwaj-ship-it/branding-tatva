@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
       });
       return jsonNoStore(
         {
-          error: "The delivery provider did not accept the note. Send it once more or email Suman directly.",
+          error: "The delivery provider declined the note. Send it once more or email Suman directly.",
           requestId,
         },
         { status: 502 },

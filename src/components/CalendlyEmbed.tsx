@@ -97,7 +97,7 @@ export function CalendlyEmbed({ url, onReady }: { url: string; onReady?: () => v
               Scheduling
             </p>
             <p className="mt-3 font-display text-2xl font-normal text-[#27221E]">
-              {scriptFailed ? "The embedded calendar has not loaded." : "Opening the calendar."}
+              {scriptFailed ? "The embedded calendar never loaded." : "Opening the calendar."}
             </p>
             <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-[#4A433D]">
               Open Calendly directly if a browser extension or network policy blocks the embedded version.

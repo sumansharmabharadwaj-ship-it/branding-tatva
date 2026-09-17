@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   if (!body) {
-    return jsonNoStore({ error: "The server could not read this request." }, { status: 400 });
+    return jsonNoStore({ error: "The server was unable to read this request." }, { status: 400 });
   }
 
   const parsed = newsletterSchema.safeParse(body);
@@ -92,13 +92,13 @@ export async function POST(request: NextRequest) {
 
     console.error(`[newsletter:${requestId}] Mailchimp failed:`, data);
     return jsonNoStore(
-      { error: "The letter request did not reach the mailing list. Send it once more.", requestId },
+      { error: "The letter request never reached the mailing list. Send it once more.", requestId },
       { status: 502 },
     );
   } catch (error) {
     console.error(`[newsletter:${requestId}] Signup error:`, error);
     return jsonNoStore(
-      { error: "The mailing list server did not answer. Send the request once more.", requestId },
+      { error: "The mailing list server gave no answer. Send the request once more.", requestId },
       { status: 500 },
     );
   }

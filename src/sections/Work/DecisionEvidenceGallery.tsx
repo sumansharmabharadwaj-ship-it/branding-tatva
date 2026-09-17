@@ -70,7 +70,7 @@ export function DecisionEvidenceGallery() {
             Seven decisions, kept small enough to inspect.
           </h2>
           <p className="mt-4 max-w-xl text-base leading-relaxed" style={{ color: WORK.wood }}>
-            These are artefacts from real engagements, not seven inflated case studies: the question each fragment
+            These are artefacts from real engagements rather than seven inflated case studies: the question each fragment
             answered, the call made, and the reason it mattered.
           </p>
         </div>

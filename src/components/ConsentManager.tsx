@@ -307,7 +307,7 @@ export function ConsentManager() {
               />
               <ConsentRow
                 title="Marketing"
-                detail="Advertising and audience trackers are not used today. This control stays visible so the choice remains yours if that changes."
+                detail="No advertising or audience trackers run today. This control stays visible so the choice remains yours if that changes."
                 checked={draft.marketing}
                 onChange={(value) => setDraft((d) => ({ ...d, marketing: value }))}
               />
