@@ -100,6 +100,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async redirects() {
     return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.brandingtatva.com" }],
+        destination: "https://brandingtatva.com/:path*",
+        permanent: true,
+      },
       { source: "/work", destination: "/services#proof", permanent: true },
       ...LEGACY_INSIGHT_REDIRECTS.flatMap(({ slug, destination }) => [
         {
@@ -119,6 +125,13 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      {
+        // Production aliases can serve the same build as the public domain.
+        // Keep Vercel hostnames out of search without blocking the custom domain.
+        source: "/:path*",
+        has: [{ type: "host", value: "(.*)\\.vercel\\.app" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+      },
       {
         source: "/:path*",
         headers: [

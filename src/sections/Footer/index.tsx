@@ -130,6 +130,12 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
         </TexturedDark>
       )}
 
+      <nav aria-label="Explore brand services" className="flex flex-wrap justify-center gap-x-8 gap-y-2 bg-soil px-6 py-4 text-sm text-ivory/90">
+        <Link href="/services" className="inline-flex min-h-11 items-center underline underline-offset-4">Brand strategy services</Link>
+        <Link href="/brand-positioning" className="inline-flex min-h-11 items-center underline underline-offset-4">Brand positioning</Link>
+        <Link href="/brand-audit" className="inline-flex min-h-11 items-center underline underline-offset-4">Brand audit</Link>
+      </nav>
+
       {/* Was sectionWash("space", 14) — rgb(234,221,211), a pale near-cream
           strip sitting directly under a near-black video section, the same
           "abrupt light band right at a seam" problem the divider fixes

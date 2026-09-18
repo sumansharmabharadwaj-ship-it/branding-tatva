@@ -42,6 +42,9 @@ export const metadata: Metadata = {
   description: site.description,
   alternates: { canonical: "/" },
   robots: searchRobotsMetadata(),
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
   openGraph: {
     title: site.name,
     description: site.description,

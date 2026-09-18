@@ -10,52 +10,45 @@ import {
   getInsightSearchMedia,
 } from "@/data/searchMedia";
 import { site } from "@/data/site";
+import { servicePages } from "@/data/servicePages";
 import { getWorkTaxonomy } from "@/data/workTaxonomy";
 
-// Static routes do not carry a trustworthy per-page edit history in the
-// repository. Keep one explicit release date rather than telling crawlers
-// that every page changed at request time.
-const SITE_LAST_UPDATED = new Date("2026-08-07");
+// Omit lastModified where no verified content date exists. A shared release
+// date understates later edits and does not describe individual page changes.
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: site.url,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 1,
       images: [CORE_ROUTE_SEARCH_IMAGES[""]],
     },
     {
       url: `${site.url}/about`,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.7,
       images: [CORE_ROUTE_SEARCH_IMAGES["/about"]],
     },
     {
       url: `${site.url}/services`,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.9,
       images: [CORE_ROUTE_SEARCH_IMAGES["/services"]],
     },
     {
       url: `${site.url}/insights`,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "weekly",
       priority: 0.9,
       images: [CORE_ROUTE_SEARCH_IMAGES["/insights"]],
     },
     {
       url: `${site.url}/glossary`,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${site.url}/contact`,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "yearly",
       priority: 0.8,
       images: [CORE_ROUTE_SEARCH_IMAGES["/contact"]],
@@ -68,13 +61,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${site.url}/privacy`,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "yearly",
       priority: 0.2,
     },
     {
       url: `${site.url}/terms`,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "yearly",
       priority: 0.2,
     },
@@ -89,7 +80,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return {
       url: `${site.url}/work/${project.slug}`,
-      lastModified: SITE_LAST_UPDATED,
       changeFrequency: "monthly",
       priority: 0.7,
       images: [media.url],
@@ -117,7 +107,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const topicRoutes: MetadataRoute.Sitemap = insightTopics.map((topic) => ({
     url: `${site.url}/insights/topic/${topic.slug}`,
-    lastModified: SITE_LAST_UPDATED,
     changeFrequency: "monthly",
     priority: 0.65,
   }));
@@ -131,6 +120,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...staticRoutes,
+    ...servicePages.map((page) => ({
+      url: `${site.url}/${page.slug}`,
+      lastModified: new Date(`${page.updatedAt}T00:00:00Z`),
+    })),
     ...workRoutes,
     ...studyRoutes,
     ...topicRoutes,

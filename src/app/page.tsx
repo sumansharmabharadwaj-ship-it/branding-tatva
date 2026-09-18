@@ -37,28 +37,32 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
 import { site } from "@/data/site";
-import { faqs } from "@/data/faqs";
 
 export const metadata: Metadata = {
-  title: `${site.name}: Brand Strategy by ${site.founder}`,
+  title: { absolute: `${site.name} | Brand Strategy for Service Businesses` },
   description: site.description,
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${site.name}: Brand Strategy by ${site.founder}`,
+    title: `${site.name} | Brand Strategy for Service Businesses`,
     description: site.description,
     url: site.url,
     type: "website",
   },
 };
 
-const faqStructuredData = {
+// The homepage has no visible FAQ. Describe the page itself instead of
+// publishing questions and answers readers cannot find in its content.
+const homeStructuredData = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: { "@type": "Answer", text: faq.answer },
-  })),
+  "@type": "WebPage",
+  "@id": `${site.url}/#webpage`,
+  url: site.url,
+  name: `${site.name} | Brand Strategy for Service Businesses`,
+  description: site.description,
+  isPartOf: { "@id": `${site.url}/#website` },
+  about: { "@id": `${site.url}/#organization` },
+  author: { "@id": `${site.url}/#person` },
+  inLanguage: "en",
 };
 
 export default function Home() {
@@ -78,7 +82,7 @@ export default function Home() {
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeStructuredData) }}
       />
     </>
   );
