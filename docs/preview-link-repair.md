@@ -22,9 +22,11 @@ This changes the shared preview link without promoting production. Release
 The build, TypeScript, ESLint, homepage, type floor, contact delivery and
 controlled release checks passed. Release 403 passed the phone reading,
 keyboard focus loop, scroll progress and reduced-motion checks. Release 405's
-narrow layout and bottom actions were checked. The browser connection failed
-during its final close-position check; that comparison and the final desktop
-visual pass remain unverified. See `homepage-project-file-reading-qa.md`.
+narrow layout, bottom actions and close-position check passed. The inspect
+control returned to exactly the same screen position with focus restored.
+The final desktop visual, bottom-action and keyboard-return checks also passed.
+A temporary browser connection failure recovered before these checks finished.
+See `homepage-project-file-reading-qa.md` for measurements and device limits.
 
 The browser's /api/release restriction remains, so endpoint certification is
 unavailable. Metadata, the source to trigger comparison, and rendered changes

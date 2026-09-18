@@ -91,7 +91,7 @@ change. Its final rendered gate also verified 526,696 CSS bytes.
 All three release 405 workflows passed. The source to trigger comparison
 contains only vercel.json.
 
-## Release 405 browser check and remaining limit
+## Release 405 browser check
 
 The exact deployed 320 × 720 frame opened the file in full motion. Its computed
 root gutter is stable. Dialog width and scroll width both equal 305 px; the
@@ -104,13 +104,23 @@ Native Tab entered Project reading and End reached its bottom at scrollTop
 y 630.828125–678.828125. Both are 48 px tall and completely visible.
 
 Before the second opening, the focused archive control was at y 336.390625 and
-page scrollY 9608. The browser connection failed after the final Escape action,
-first with an evaluation timeout, then with CDP get/refresh tabs timeouts.
-Consequently, the final before/after position comparison is **unverified**.
-The release 403 mobile keyboard and motion checks above should not be read as
-certifying this final scroll-lock correction. A final desktop visual pass also
-remains unverified. Physical devices, Safari and OS-level reduced motion were
-not exercised. The source has an independent reduced-motion CSS equivalent.
+page scrollY 9608. The browser connection temporarily failed after Escape,
+first with an evaluation timeout, then with CDP get/refresh tabs timeouts. Once
+the connection recovered, the control was still at y 336.390625 with focus
+restored and the temporary inline gutter removed. Document scrollY was 9593;
+the reading control's screen position was unchanged. The former 51 px visible
+jump was absent in this final check.
+
+The exact deployed desktop view was then checked at 1363 × 936. The modal and
+its scroll width both measure 1348 px, allowing for the reserved root gutter.
+The paper is 768 px wide with 658.1875 px body text. The bright film and light
+reading surface were visually inspected. Native Tab and End reach the bottom,
+where both 48 px actions sit at y 809.046875–857.046875 and the progress rule
+is complete. Escape returns focus to the inspect control.
+
+Physical devices, Safari and OS-level reduced motion were not exercised. The
+source has an independent reduced-motion CSS equivalent. The release 403
+mobile checks and final release 405 checks are recorded separately above.
 
 ## Shared preview link
 
