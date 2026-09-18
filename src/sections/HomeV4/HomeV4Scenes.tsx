@@ -62,16 +62,16 @@ const RECOGNITION_STATES = [
 ] as const;
 
 const MESSAGE_TOUCHPOINTS = [
-  { channel: "Website", icon: Monitor, meaning: "Personal goals", separate: "Eat for your goals.", shared: "Dinner, decided before six." },
-  { channel: "Email", icon: Mail, meaning: "Something for everyone", separate: "Recipes for everyone.", shared: "A week of dinners. One short list." },
-  { channel: "Social", icon: MessageSquare, meaning: "Calorie control", separate: "Count every calorie.", shared: "Five dinners from one Sunday shop." },
+  { channel: "Website", icon: Monitor, meaning: "A different look", separate: "A new look for your business.", shared: "Give buyers a reason to choose you." },
+  { channel: "Email", icon: Mail, meaning: "More content", separate: "Fill your next content calendar.", shared: "Make that reason clear in every message." },
+  { channel: "Social", icon: MessageSquare, meaning: "A faster launch", separate: "Your next website, ready in a week.", shared: "Show what makes your business worth choosing." },
 ] as const;
 
 type MessageMode = "separate" | "shared";
 
 const MESSAGE_MEANINGS: Record<MessageMode, string> = {
-  separate: "Three channels. Three different reasons to choose.",
-  shared: "Make weekday dinners easier to decide.",
+  separate: "Design, content or speed. What does this business stand for?",
+  shared: "A clear reason to choose your business.",
 };
 
 type RecognitionState = (typeof RECOGNITION_STATES)[number];
@@ -584,10 +584,10 @@ export function V4HiddenCostScene() {
         <header className={costStyles.header}>
           <div data-home-cost-heading>
             <p className={costStyles.eyebrow}>02 · The hidden cost</p>
-            <h2 id="home-v4-cost-title">More content.<br /><em>The same introduction.</em></h2>
+            <h2 id="home-v4-cost-title">More content.<br /><em>Less recognition.</em></h2>
           </div>
           <p className={costStyles.intro}>
-            A different promise in every channel makes buyers start again. A shared position gives every message something familiar to build on.
+            Your website, emails and social posts can say different things about the same business. Positioning gives them one reason for buyers to remember you.
           </p>
         </header>
         <motion.div
@@ -601,13 +601,13 @@ export function V4HiddenCostScene() {
           onPointerDown={() => { manuallyChosen.current = true; }}
         >
           <div className={costStyles.comparisonHeader}>
-            <p className={costStyles.exampleLabel}>Illustrative example · Meal planning</p>
+            <p className={costStyles.exampleLabel}>Illustrative example · A brand consultancy</p>
             <div className={costStyles.modeChoices} role="group" aria-label="Compare how a brand communicates">
               <button type="button" aria-pressed={comparison.mode === "separate"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("separate")}>
-                Separate promises
+                Mixed messages
               </button>
               <button type="button" aria-pressed={comparison.mode === "shared"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("shared")}>
-                Shared position
+                Clear positioning
               </button>
             </div>
           </div>
@@ -653,7 +653,7 @@ export function V4HiddenCostScene() {
                   </dd>
                   <dd className={costStyles.buyerMeaning}>
                     <span className={costStyles.meaningDot} aria-hidden="true" />
-                    <span>{comparison.mode === "shared" ? "Easier weekday dinners" : touchpoint.meaning}</span>
+                    <span>{comparison.mode === "shared" ? "A clear reason to choose" : touchpoint.meaning}</span>
                   </dd>
                 </div>
               ))}
