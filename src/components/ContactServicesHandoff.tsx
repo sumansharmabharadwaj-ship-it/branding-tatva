@@ -3,6 +3,7 @@
 import { ArrowUpRight, MessageCircle } from "lucide-react";
 import { TrackedLink } from "@/components/TrackedLink";
 import { packages } from "@/data/services";
+import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 import { useServicesContactPackage } from "@/hooks/useServicesContactPackage";
 import { calendlyHrefForServicesPackage } from "@/lib/servicesJourney";
@@ -57,6 +58,15 @@ export function ContactHeroContextCard() {
           ? "Your selected package stays attached whether you book a session or write a note."
           : "Suman reads the note, considers the brand problem, and replies herself."}
       </p>
+      <TrackedLink
+        href="/work"
+        event="contact_route_selected"
+        eventProps={{ source: "contact_hero_aside", route: "work_proof" }}
+        data-cursor-label="See the work"
+        className="link-underline mt-3 inline-flex min-h-11 items-center text-sm text-sandstone transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ivory"
+      >
+        {projects.length} projects, documented
+      </TrackedLink>
     </div>
   );
 }

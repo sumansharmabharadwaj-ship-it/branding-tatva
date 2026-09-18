@@ -6,6 +6,7 @@ import { ContactForm } from "@/components/ContactForm";
 import { ContactPathways } from "@/components/ContactPathways";
 import { ContactCinematicScene } from "@/components/ContactCinematicScene";
 import { ContactKineticHeading } from "@/components/ContactKineticHeading";
+import { ContactRotatingGap } from "@/components/ContactRotatingGap";
 import { ContactGratitude } from "@/components/ContactGratitude";
 import { ContactCallSequence } from "@/components/ContactCallSequence";
 import { ContactScrollRuntime } from "@/components/ContactScrollRuntime";
@@ -136,7 +137,7 @@ export default function ContactPage() {
                   Tell me what your brand needs people to understand.
                 </SplitReveal>
                 <p data-contact-hero-intro className="mt-4 max-w-lg text-ivory/80">
-                  Bring the gap between what the business means and what people currently understand. Positioning, voice, identity, or something harder to name.
+                  Bring the gap between what the business means and what people currently understand. <ContactRotatingGap />
                 </p>
                 <div
                   data-contact-hero-signal
