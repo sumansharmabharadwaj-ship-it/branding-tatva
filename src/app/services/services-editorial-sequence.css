@@ -537,6 +537,13 @@
 #book [data-strategy-room-preparation] button:hover { background: transparent; color: #6f4e37; }
 #book [data-strategy-room-context] > div,
 #book [data-strategy-room-decision-note] { border-color: #556b4a33; background: #dde2dc66; box-shadow: none; }
+#book [data-strategy-room-shell] > p[tabindex="-1"] { font-size: 0.75rem; line-height: 1.5; }
+#book [data-strategy-room-decision-note] dt,
+#book [data-strategy-room-decision-note] > div:first-child :is(p, span) {
+  font-size: 0.72rem;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+}
 #book [data-strategy-room-decision-note] :is(dl, div) { border-color: #556b4a33; }
 #book [data-strategy-brief-progress] > span { background: #556b4a33; }
 #book [data-strategy-brief-progress] > [data-complete="true"] { background: #556b4a; }
