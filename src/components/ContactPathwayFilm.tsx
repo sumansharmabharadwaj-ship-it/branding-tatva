@@ -157,7 +157,7 @@ export function ContactPathwayFilm({
         className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(24,27,22,0.72)_100%)]"
       />
 
-      <figcaption className="absolute inset-x-4 bottom-3 text-[0.65rem] font-medium leading-relaxed tracking-[0.03em] text-ivory sm:bottom-4">
+      <figcaption className="absolute inset-x-4 bottom-3 text-[0.7rem] font-medium leading-relaxed tracking-[0.03em] text-ivory [text-shadow:0_1px_14px_rgba(20,16,10,0.6)] sm:bottom-4">
         {caption}
       </figcaption>
     </figure>

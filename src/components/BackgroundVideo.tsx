@@ -47,6 +47,7 @@ export function BackgroundVideo({
   playbackRate = 1,
   posterPriority = false,
   managedByHomepage = false,
+  pauseMargin = 0.25,
 }: {
   video: string;
   // Optional lower-bandwidth MP4 selected by the browser on phones.
@@ -87,6 +88,10 @@ export function BackgroundVideo({
   // keeps fade/source cleanup ownership while the page director owns play,
   // pause, preload admission, and visibility arbitration.
   managedByHomepage?: boolean;
+  // Fraction of a viewport a film keeps playing past the screen edge before
+  // pausing. Full viewport scene films (Contact) pass a wider band so their
+  // freeze frame never lands inside a visible chapter handoff.
+  pauseMargin?: number;
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -105,6 +110,7 @@ export function BackgroundVideo({
     videoRef,
     !prefersReducedMotion && !livingStill,
     managedByHomepage,
+    pauseMargin,
   );
 
   useEffect(() => {

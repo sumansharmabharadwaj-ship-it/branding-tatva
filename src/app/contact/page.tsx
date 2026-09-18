@@ -220,6 +220,7 @@ export default function ContactPage() {
                 playbackRate={0.86}
                 push
                 posterPriority={false}
+                pauseMargin={0.85}
               />
               {/* The veil used to be one flat 0.84 → 0.62 wash across the
                   whole plate, which is the failure the media standard
@@ -280,6 +281,7 @@ export default function ContactPage() {
                 poster="/images/generated/bt-contact-write-note-v2.webp"
                 playbackRate={0.8}
                 posterPriority={false}
+                pauseMargin={0.85}
               />
               {/* Same correction as the pathways scene above, and for the
                   same reason: a 0.88 peak wash left the desk footage as
@@ -384,6 +386,7 @@ export default function ContactPage() {
                 playbackRate={0.83}
                 push
                 posterPriority={false}
+                pauseMargin={0.85}
               />
               <div
                 className="absolute inset-0"

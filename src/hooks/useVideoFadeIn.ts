@@ -32,10 +32,16 @@ import { useEffect, type RefObject } from "react";
 // full-bleed backgrounds: PhotoHero, TexturedDark, BackgroundVideo,
 // FeaturedWorkHero) get this; stage-managed components (PinnedSlider
 // etc.) own their play/pause explicitly and don't run through here.
+// pauseMargin widens the offscreen band a caller keeps playing through.
+// The 25% default proved right for long article pages, but a full viewport
+// scene film pauses visibly at chapter boundaries under it: the freeze frame
+// shows through the handoff gradient while both scenes share the screen.
+// Contact passes a wider band so its four films never freeze in sight.
 export function useVideoFadeIn(
   ref: RefObject<HTMLVideoElement | null>,
   active: boolean,
   playbackManagedExternally = false,
+  pauseMargin = 0.25,
 ) {
   useEffect(() => {
     const el = ref.current;
@@ -59,7 +65,7 @@ export function useVideoFadeIn(
               el.pause();
             }
           },
-          { rootMargin: "25% 0px" },
+          { rootMargin: `${Math.round(pauseMargin * 100)}% 0px` },
         );
 
     // IntersectionObserver reports asynchronously. Establish the correct
@@ -67,7 +73,7 @@ export function useVideoFadeIn(
     // a head start on the network while a visible hero still needs bandwidth.
     if (!playbackManagedExternally) {
       const rect = el.getBoundingClientRect();
-      const margin = window.innerHeight * 0.25;
+      const margin = window.innerHeight * pauseMargin;
       const nearViewport = rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
       if (nearViewport && !document.hidden) el.play().catch(() => {});
       else el.pause();
@@ -78,7 +84,7 @@ export function useVideoFadeIn(
       if (document.hidden) el.pause();
       else {
         const nextRect = el.getBoundingClientRect();
-        const nextMargin = window.innerHeight * 0.25;
+        const nextMargin = window.innerHeight * pauseMargin;
         if (nextRect.bottom >= -nextMargin && nextRect.top <= window.innerHeight + nextMargin) {
           el.play().catch(() => {});
         }
@@ -128,5 +134,5 @@ export function useVideoFadeIn(
         // leaves the element as it was rather than breaking the unmount.
       }
     };
-  }, [ref, active, playbackManagedExternally]);
+  }, [ref, active, playbackManagedExternally, pauseMargin]);
 }
