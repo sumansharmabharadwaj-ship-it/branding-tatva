@@ -62,16 +62,16 @@ const RECOGNITION_STATES = [
 ] as const;
 
 const MESSAGE_TOUCHPOINTS = [
-  { channel: "Website", icon: Monitor, separate: "Eat for your goals.", shared: "Dinner, decided before six." },
-  { channel: "Email", icon: Mail, separate: "Recipes for everyone.", shared: "A week of dinners. One short list." },
-  { channel: "Social", icon: MessageSquare, separate: "Count every calorie.", shared: "Five dinners from one Sunday shop." },
+  { channel: "Website", icon: Monitor, meaning: "Personal goals", separate: "Eat for your goals.", shared: "Dinner, decided before six." },
+  { channel: "Email", icon: Mail, meaning: "Something for everyone", separate: "Recipes for everyone.", shared: "A week of dinners. One short list." },
+  { channel: "Social", icon: MessageSquare, meaning: "Calorie control", separate: "Count every calorie.", shared: "Five dinners from one Sunday shop." },
 ] as const;
 
 type MessageMode = "separate" | "shared";
 
 const MESSAGE_MEANINGS: Record<MessageMode, string> = {
   separate: "Three channels. Three different reasons to choose.",
-  shared: "One promise: make weekday dinners easier to decide.",
+  shared: "Make weekday dinners easier to decide.",
 };
 
 type RecognitionState = (typeof RECOGNITION_STATES)[number];
@@ -494,8 +494,41 @@ export function V4RecognitionScene() {
 export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const comparisonRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const [comparison, setComparison] = useState<{ mode: MessageMode; direction: number }>({ mode: "separate", direction: 0 });
+  const manuallyChosen = useRef(false);
+  const demonstrated = useRef(false);
+  const [arrived, setArrived] = useState(false);
+
+  // One finite demonstration per visit. Reading, manual choices, hidden tabs
+  // and the global motion preference take priority over automatic progression.
+  useEffect(() => {
+    const element = comparisonRef.current;
+    if (!element || !hydrated || prefersReducedMotion || demonstrated.current || manuallyChosen.current) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let visible = false;
+    const clear = () => { clearTimeout(timer); timer = undefined; };
+    const schedule = () => {
+      clear();
+      if (!visible || document.hidden || manuallyChosen.current || demonstrated.current) return;
+      timer = setTimeout(() => {
+        if (!visible || document.hidden || manuallyChosen.current || demonstrated.current || element.contains(document.activeElement)) return;
+        const selection = document.getSelection();
+        if (selection && !selection.isCollapsed && selection.anchorNode && element.contains(selection.anchorNode)) return;
+        demonstrated.current = true;
+        setComparison({ mode: "shared", direction: 1 });
+      }, 3600);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting && entry.intersectionRatio >= .65;
+      if (visible) setArrived(true);
+      schedule();
+    }, { threshold: [0, .65] });
+    observer.observe(element);
+    document.addEventListener("visibilitychange", schedule);
+    return () => { clear(); observer.disconnect(); document.removeEventListener("visibilitychange", schedule); };
+  }, [hydrated, prefersReducedMotion]);
+
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const { scrollYProgress: comparisonProgress } = useScroll({ target: comparisonRef, offset: ["start end", "end start"] });
   const lineProgress = useTransform(scrollYProgress, [0.2, 0.6], [0.08, 1]);
@@ -511,10 +544,13 @@ export function V4HiddenCostScene() {
   }, [prefersReducedMotion, settleComparison]);
 
   function chooseMessageMode(mode: MessageMode) {
+    manuallyChosen.current = true;
     setComparison((current) => current.mode === mode ? current : { mode, direction: prefersReducedMotion ? 0 : mode === "shared" ? 1 : -1 });
   }
 
   function revealFocusedComparison(event: React.FocusEvent<HTMLDivElement>) {
+    manuallyChosen.current = true;
+    settleComparison();
     const target = event.target;
     if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
     const bounds = target.getBoundingClientRect();
@@ -547,7 +583,7 @@ export function V4HiddenCostScene() {
             <h2 id="home-v4-cost-title">More content.<br /><em>The same introduction.</em></h2>
           </div>
           <p className={costStyles.intro}>
-            When the brand keeps changing, every campaign has to introduce you all over again. Your buyers keep meeting a stranger.
+            A different promise in every channel makes buyers start again. A shared position gives every message something familiar to build on.
           </p>
         </header>
         <motion.div
@@ -555,8 +591,10 @@ export function V4HiddenCostScene() {
           data-home-cost-comparison
           className={costStyles.comparison}
           data-message-mode={comparison.mode}
+          data-story-arrived={arrived || prefersReducedMotion}
           style={{ "--comparison-arrival": prefersReducedMotion ? 1 : comparisonArrival } as MotionStyle}
           onFocusCapture={revealFocusedComparison}
+          onPointerDown={() => { manuallyChosen.current = true; }}
         >
           <div className={costStyles.comparisonHeader}>
             <p className={costStyles.exampleLabel}>Illustrative example · Meal planning</p>
@@ -603,6 +641,10 @@ export function V4HiddenCostScene() {
                       {touchpoint[comparison.mode]}
                     </span>
                   </dd>
+                  <dd className={costStyles.buyerMeaning}>
+                    <span className={costStyles.meaningDot} aria-hidden="true" />
+                    <span>{comparison.mode === "shared" ? "Easier weekday dinners" : touchpoint.meaning}</span>
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -610,9 +652,9 @@ export function V4HiddenCostScene() {
                 carry motion while messages and hit targets stay in place. */}
             <svg className={costStyles.connections} viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true" focusable="false">
               <g className={costStyles.separateConnections}>
-                <path d="M166 0V28" />
-                <path d="M500 0V44" />
-                <path d="M834 0V20" />
+                <path d="M166 0C166 24 120 30 120 64" />
+                <path d="M500 0C500 22 540 32 540 74" />
+                <path d="M834 0C834 20 884 30 884 54" />
               </g>
               <g className={costStyles.sharedConnections}>
                 <path d="M166 0V22Q166 42 196 42H470Q500 42 500 68V90" pathLength="1" />
@@ -621,14 +663,23 @@ export function V4HiddenCostScene() {
               </g>
             </svg>
             <div className={costStyles.comparisonMeaning}>
-              <div className={costStyles.messageMeasure} aria-hidden="true" inert>
-                <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.separate}</p>
-                <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.shared}</p>
+              <div className={costStyles.memoryCount} aria-hidden="true">
+                <span>{comparison.mode === "shared" ? "01" : "03"}</span>
               </div>
-              <p className={costStyles.meaningText} role="status" aria-atomic="true" data-message-transition={messageTransition}>
-                {MESSAGE_MEANINGS[comparison.mode]}
-              </p>
+              <div className={costStyles.memoryReading}>
+                <p className={costStyles.memoryLabel}>{comparison.mode === "shared" ? "One reason to remember" : "Three competing ideas"}</p>
+                <div className={costStyles.meaningStack}>
+                  <div className={costStyles.messageMeasure} aria-hidden="true" inert>
+                    <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.separate}</p>
+                    <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.shared}</p>
+                  </div>
+                  <p className={costStyles.meaningText} role="status" aria-atomic="true" data-message-transition={messageTransition}>
+                    {MESSAGE_MEANINGS[comparison.mode]}
+                  </p>
+                </div>
+              </div>
             </div>
+            <p className={costStyles.takeaway}>Different words. The same reason to choose you.</p>
           </div>
         </motion.div>
 
