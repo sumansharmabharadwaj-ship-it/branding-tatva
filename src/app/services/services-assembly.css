@@ -291,6 +291,22 @@
 
 @supports (animation-timeline: view()) {
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    /* A view() timeline binds to the nearest scroll container, and an
+       overflow:hidden element is one. #index and the concept studies
+       section were both overflow-hidden, so their items measured against a
+       box that never scrolls and sat at their finished state at every
+       scroll position (verified on release 421: translate 0, opacity 1 from
+       "just entering" onward), while the decision entries, with no such
+       ancestor, animated correctly. overflow:clip clips painting the same
+       way, still containing the parallax video, but is not a scroll
+       container, so the timeline binds to the page. Both sections carry
+       their own padding, so no margin collapses through. Scoped to the same
+       conditions as the animations. */
+    #index,
+    section:has([aria-label="Concept study dossiers"]) {
+      overflow: clip;
+    }
+
     :root:not([data-motion="reduced"]) #index [role="listitem"] {
       animation: bt-arrive-rise linear both;
       animation-timeline: view();
