@@ -58,16 +58,12 @@
 .separateConnections path:nth-child(1) { stroke: #805239; }
 .separateConnections path:nth-child(2) { stroke: #556b4a; }
 .separateConnections path:nth-child(3) { stroke: #52756f; }
-.sharedConnections { opacity: 0; transition: opacity 300ms ease; }
-.sharedConnections path {
-  stroke: #556b4a; stroke-dasharray: 1; stroke-dashoffset: 1;
-  transition: stroke-dashoffset 650ms cubic-bezier(.22, 1, .36, 1);
-}
+.sharedConnections { opacity: 0; clip-path: inset(0 0 100% 0); transition: opacity 300ms ease, clip-path 650ms cubic-bezier(.22, 1, .36, 1); }
+.sharedConnections path { stroke: #556b4a; }
 .comparison[data-message-mode="shared"] .separateConnections { opacity: 0; }
-.comparison[data-message-mode="shared"] .sharedConnections { opacity: .8; }
-/* An explicit comparison completes its connection even before the visitor
-   finishes scrolling. The channel rules above retain the scroll response. */
-.comparison[data-message-mode="shared"] .sharedConnections path { stroke-dashoffset: 0; }
+/* Reveal the complete connector as one plane. Normalized dash lengths with
+   non-scaling strokes leave gaps when this wide diagram changes aspect ratio. */
+.comparison[data-message-mode="shared"] .sharedConnections { opacity: .8; clip-path: inset(0); }
 .comparisonMeaning { display: grid; align-items: center; width: min(100%, 39rem); min-height: 3.5rem; margin: 0 auto; padding: .8rem 1.25rem; border: 1px solid rgb(128 82 57 / 24%); border-radius: .6rem; color: #5e5548; background: rgb(250 245 233 / 55%); text-align: center; font-size: 1rem; line-height: 1.5; transition: color 300ms ease, background-color 300ms ease, border-color 300ms ease; }
 .meaningText { grid-area: 1 / 1; min-width: 0; margin: 0; }
 .comparison[data-message-mode="shared"] .comparisonMeaning { color: #344630; border-color: rgb(85 107 74 / 35%); background: #e3e7d9; }
@@ -127,14 +123,12 @@
 @media (prefers-reduced-motion: reduce) {
   .modeChoices::before, .modeChoices button, .touchpoints > div::after, .touchpoints dt svg, .connections g, .connections path, .comparisonMeaning { transition: none; }
   .touchpoints > div::after { transform: none; }
-  .comparison[data-message-mode="shared"] .sharedConnections path { stroke-dashoffset: 0; }
   :is(.messageText, .meaningText)[data-message-transition] { animation: none; transform: none; }
 }
 :global(html[data-motion="reduced"]) :is(.modeChoices, .touchpoints > div)::before,
 :global(html[data-motion="reduced"]) .touchpoints > div::after,
 :global(html[data-motion="reduced"]) :is(.modeChoices button, .touchpoints dt svg, .connections g, .connections path, .comparisonMeaning) { transition: none; }
 :global(html[data-motion="reduced"]) .touchpoints > div::after { transform: none; }
-:global(html[data-motion="reduced"]) .comparison[data-message-mode="shared"] .sharedConnections path { stroke-dashoffset: 0; }
 :global(html[data-motion="reduced"]) :is(.messageText, .meaningText)[data-message-transition] { animation: none; transform: none; }
 @media (forced-colors: active) {
   .modeChoices::before { background: Highlight; forced-color-adjust: none; }
