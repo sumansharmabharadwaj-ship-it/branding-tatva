@@ -140,6 +140,25 @@
   text-shadow: 0 1px 16px rgba(5, 10, 8, 0.26);
 }
 
+/* The desire chapter's copy block sits on the film's brightest fog band
+   with bare ivory type and no scrim — the one chapter that skipped the
+   media standard's rule that glass carries readability. A soft localized
+   wash restores contrast without grading the film darker, and the two
+   captions outside the block earn a halo instead of a panel. */
+#desire [data-services-chapter-copy="true"] {
+  border-radius: 1.5rem;
+  padding: 1.1rem 1.4rem 1.3rem;
+  background: rgba(16, 22, 19, 0.34);
+  backdrop-filter: blur(18px) saturate(0.92);
+  box-shadow: 0 18px 56px rgba(5, 10, 8, 0.16);
+}
+
+#desire [data-region-selector-label="true"],
+#desire details > summary {
+  color: rgba(244, 239, 230, 0.86);
+  text-shadow: 0 1px 14px rgba(5, 10, 8, 0.38);
+}
+
 #authority [data-authority-mobile-deck="true"] > div:first-child {
   border: 1px solid rgba(244, 239, 230, 0.12);
   border-radius: 1rem;
