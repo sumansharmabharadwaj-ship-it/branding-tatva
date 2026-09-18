@@ -65,7 +65,9 @@
 }
 .comparison[data-message-mode="shared"] .separateConnections { opacity: 0; }
 .comparison[data-message-mode="shared"] .sharedConnections { opacity: .8; }
-.comparison[data-message-mode="shared"] .sharedConnections path { stroke-dashoffset: calc(1 - var(--comparison-arrival, 1)); }
+/* An explicit comparison completes its connection even before the visitor
+   finishes scrolling. The channel rules above retain the scroll response. */
+.comparison[data-message-mode="shared"] .sharedConnections path { stroke-dashoffset: 0; }
 .comparisonMeaning { display: grid; align-items: center; width: min(100%, 39rem); min-height: 3.5rem; margin: 0 auto; padding: .8rem 1.25rem; border: 1px solid rgb(128 82 57 / 24%); border-radius: .6rem; color: #5e5548; background: rgb(250 245 233 / 55%); text-align: center; font-size: 1rem; line-height: 1.5; transition: color 300ms ease, background-color 300ms ease, border-color 300ms ease; }
 .meaningText { grid-area: 1 / 1; min-width: 0; margin: 0; }
 .comparison[data-message-mode="shared"] .comparisonMeaning { color: #344630; border-color: rgb(85 107 74 / 35%); background: #e3e7d9; }
