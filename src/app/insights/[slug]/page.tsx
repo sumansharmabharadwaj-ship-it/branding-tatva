@@ -279,7 +279,13 @@ export default async function InsightArticlePage({ params }: Props) {
         <article>
           <header className="insight-article-hero relative flex items-end overflow-hidden bg-soil pb-14 pt-36 sm:pb-20 sm:pt-44">
             {post.heroVideo ? (
-              <BackgroundVideo video={post.heroVideo} poster={post.heroImage} posterPriority />
+              <BackgroundVideo
+                video={post.heroVideo}
+                poster={post.heroImage}
+                posterPriority
+                parallax
+                playbackRate={0.9}
+              />
             ) : (
               <Image
                 src={post.heroImage}
@@ -358,6 +364,31 @@ export default async function InsightArticlePage({ params }: Props) {
                   </div>
                 </Reveal>
               </div>
+
+              {/* The essay's drawn worksheet rests on the scene like a
+                  document on a desk: tilted, breathing slowly, bridging
+                  the hero into the reading column. It carries the whole
+                  argument in miniature, so the hero depicts the essay
+                  instead of only setting its weather. Hidden below lg,
+                  where the full sheet already opens the framework
+                  chapter a short scroll away. */}
+              {articleWorksheet && (
+                <a
+                  href="#working-framework"
+                  className="insight-article-hero__sheet"
+                  aria-label={`Preview of ${post.framework.title}, the essay's working framework`}
+                  style={{ aspectRatio: articleWorksheet.aspectRatio }}
+                >
+                  <Image
+                    src={articleWorksheet.src}
+                    alt=""
+                    fill
+                    sizes="30rem"
+                    className="object-contain"
+                    priority
+                  />
+                </a>
+              )}
             </Container>
           </header>
 

@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { InsightDecisionPath } from "@/components/InsightDecisionPath";
 import { InsightCard, type InsightCardPost } from "@/components/InsightCard";
+import { buildInsightEditorialVisuals } from "@/data/insightEditorialVisuals";
 import { InsightsExplorer } from "@/components/InsightsExplorer";
 import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
@@ -347,6 +348,7 @@ export default async function InsightTopicPage({ params }: Props) {
                 <Reveal key={post.slug} delay={index * 0.05}>
                   <InsightCard
                     post={post}
+                    imageOverride={buildInsightEditorialVisuals([post]).get(post.slug)}
                     tracking={{
                       source: "insights_topic",
                       context: {

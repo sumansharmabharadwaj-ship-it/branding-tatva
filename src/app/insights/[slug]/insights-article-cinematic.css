@@ -1390,3 +1390,92 @@
 :root[data-motion="reduced"] .insight-reading-index__all a > span {
   transition-duration: 0.01ms;
 }
+
+/* Hero motion: the footage breathes with a thirty second drift so the
+   masthead reads as alive even when a clip's own movement is subtle.
+   The transform sits on the media element itself, beneath the parallax
+   wrapper, so the two never fight. */
+.insight-article-hero video,
+.insight-article-hero > img,
+.insight-article-hero [data-background-video-stage="true"] video,
+.insight-article-hero [data-background-video-stage="true"] img {
+  animation: insight-hero-drift 34s cubic-bezier(0.22, 1, 0.36, 1) infinite alternate;
+}
+
+@keyframes insight-hero-drift {
+  from { transform: scale(1.02) translate3d(-0.6%, 0.4%, 0); }
+  to { transform: scale(1.09) translate3d(0.8%, -0.6%, 0); }
+}
+
+/* The worksheet as a desk object: tilted on the scene, breathing on a
+   slower clock than the footage, bridging the hero's lower edge into
+   the reading column. */
+/* The answer card stays above the sheet, so the sheet tucks under its
+   corner like paper under a paperweight and the card's links stay
+   reachable. */
+.insight-article-hero__answer {
+  position: relative;
+  z-index: 5;
+}
+
+.insight-article-hero__sheet {
+  position: absolute;
+  z-index: 4;
+  right: clamp(1rem, 4vw, 3rem);
+  bottom: -3.4rem;
+  display: none;
+  overflow: hidden;
+  width: clamp(20rem, 30vw, 27rem);
+  border: 1px solid rgb(40 35 31 / 22%);
+  border-radius: 0.9rem;
+  background: #f5f1e8;
+  box-shadow:
+    0 2.2rem 4.5rem rgb(10 12 10 / 34%),
+    0 0.4rem 1rem rgb(10 12 10 / 22%);
+  transform: rotate(-2.4deg);
+  animation: insight-hero-sheet-breathe 7.5s ease-in-out infinite alternate;
+  transition: box-shadow 360ms ease, transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 1024px) {
+  .insight-article-hero__sheet { display: block; }
+}
+
+.insight-article-hero__sheet:hover,
+.insight-article-hero__sheet:focus-visible {
+  transform: rotate(-1.1deg) translateY(-0.35rem);
+  box-shadow:
+    0 2.8rem 5.5rem rgb(10 12 10 / 40%),
+    0 0.5rem 1.2rem rgb(10 12 10 / 26%);
+}
+
+.insight-article-hero__sheet:focus-visible {
+  outline: 2px solid #C6A97A;
+  outline-offset: 4px;
+}
+
+@keyframes insight-hero-sheet-breathe {
+  from { translate: 0 0; }
+  to { translate: 0 -0.45rem; }
+}
+
+/* Room for the sheet's overhang before the takeaways card begins. */
+@media (min-width: 1024px) {
+  .insight-article-page article > section.bg-ivory { padding-top: 7rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .insight-article-hero video,
+  .insight-article-hero > img,
+  .insight-article-hero [data-background-video-stage="true"] video,
+  .insight-article-hero [data-background-video-stage="true"] img,
+  .insight-article-hero__sheet {
+    animation: none;
+  }
+}
+
+:root[data-motion="reduced"] .insight-article-hero video,
+:root[data-motion="reduced"] .insight-article-hero [data-background-video-stage="true"] img,
+:root[data-motion="reduced"] .insight-article-hero__sheet {
+  animation: none;
+}
