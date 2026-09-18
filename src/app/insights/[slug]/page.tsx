@@ -140,7 +140,7 @@ export default async function InsightArticlePage({ params }: Props) {
   const sources = (post as InsightPostWithSources).sources ?? [];
   const element = elements.find((item) => item.slug === post.element);
   const topic = getInsightTopic(post.topicSlug);
-  const pathway = getInsightPathway(post.topicSlug);
+  const pathway = getInsightPathway(post.topicSlug, post.slug);
   const color = element?.color ?? "#B85A34";
   const application = getInsightApplication(post.topicSlug);
   const applicationProof = projects.find(

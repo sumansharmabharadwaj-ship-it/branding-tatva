@@ -83,3 +83,13 @@ TypeScript and focused ESLint passed on the integrated source. Its production bu
 Integrated built-server checks passed on Home, Services, About, Contact and both new service pages: HTTP 200, one H1, canonical URLs, production indexability, UK metadata on the intended pages, valid structured data and working guide links. The homepage retained exactly one WebPage and its existing Service node. The sitemap contains 75 unique canonical URLs. Public robots rules, www redirects and Vercel hostname noindex headers passed. The controlled deployment self-test and its required contact delivery check also passed.
 
 Google Public DNS returned the owner's `google-site-verification` TXT record at the root of `brandingtatva.com` on 18 September. This confirms public DNS visibility, not completed Search Console ownership verification. The user must finish Verify in their authenticated Search Console session. The assistant's Search Console and Vercel browser sessions remained signed out at this check.
+
+## Contextual article discovery
+
+Four established guides now link to their matching service page within the existing next-step section and desktop reading sidebar. The positioning and consulting guides link to `/brand-positioning`; the audit and consistency guides link to `/brand-audit`. Each link describes the engagement in the context of the article. Topic hubs and other articles retain their existing service paths; project evidence and contact links remain intact.
+
+TypeScript, focused ESLint, the production build (93 routes), contact delivery gate and deployment gate passed. Inspection of the generated HTML confirmed the four ordinary anchor links, their existing proof and contact destinations, the unchanged messaging guide path, production canonicals and indexability for both service destinations. This is a discovery improvement, not a measured ranking result.
+
+The deployment workflow confirms that its existing `VERCEL_TOKEN` secret is absent. Git integration can create previews, but authenticated production promotion and Search Console actions still need the owner's account session. Production was still release 399 at this check.
+
+Reference: https://developers.google.com/search/docs/crawling-indexing/links-crawlable

@@ -111,6 +111,35 @@ export const insightPathways: Record<string, InsightPathway> = {
   },
 };
 
-export function getInsightPathway(topicSlug: string) {
-  return insightPathways[topicSlug] ?? insightPathways.positioning;
+// These guides answer the questions covered by the dedicated service pages.
+// Keep the topic's proof and conversation paths, while making the service
+// destination specific to the article a visitor has just read.
+const articleServiceLinks: Record<string, InsightPathLink> = {
+  "brand-positioning-strategy-service-businesses": {
+    href: "/brand-positioning",
+    label: "Brand positioning for UK service businesses",
+    description: "Work with Suman to define the buyer, compare alternatives and carry an agreed position into your messaging.",
+  },
+  "how-to-position-a-consulting-business": {
+    href: "/brand-positioning",
+    label: "Positioning support for your consultancy",
+    description: "Review your audience, competing offers and evidence with Suman. See the scope for a remote UK engagement.",
+  },
+  "brand-audit-checklist-before-rebrand": {
+    href: "/brand-audit",
+    label: "Arrange a brand audit before your rebrand",
+    description: "Review positioning, messaging, identity and buyer touchpoints with Suman before deciding what to retain or change.",
+  },
+  "brand-consistency-checklist-service-businesses": {
+    href: "/brand-audit",
+    label: "Brand audit services for your business",
+    description: "Examine where language, identity and customer touchpoints tell different stories, then agree which decisions deserve attention first.",
+  },
+};
+
+export function getInsightPathway(topicSlug: string, articleSlug?: string): InsightPathway {
+  const pathway = insightPathways[topicSlug] ?? insightPathways.positioning;
+  const service = articleSlug ? articleServiceLinks[articleSlug] : undefined;
+
+  return service ? { ...pathway, service } : pathway;
 }
