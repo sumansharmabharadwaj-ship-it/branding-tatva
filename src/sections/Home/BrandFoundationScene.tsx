@@ -5,7 +5,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion, useAnimationControls, useInView, useTransform } from "framer-motion";
+import { animate, motion, useAnimationControls, useInView, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import styles from "./BrandFoundation.module.css";
 
@@ -53,20 +53,38 @@ function FoundationReading({ layer }: { layer: FoundationLayer }) {
 
 /* A visual echo of the reading, not a second set of controls. The three
  * inputs converge on Position; the same activeIndex drives both views. */
-function FoundationMap({ activeIndex }: { activeIndex: number }) {
+function FoundationMap({ activeIndex, reducedMotion }: { activeIndex: number; reducedMotion: boolean }) {
+  const mapId = useId();
   return (
     <div className={styles.map} aria-hidden="true" data-foundation-map>
       <p className={styles.mapLabel}>The decisions, connected</p>
       <div className={styles.mapCanvas}>
         <svg className={styles.mapLines} viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
-          {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => (
-            <path
-              key={layer.id}
-              d={`M 40 ${(index + .5) * 100 / 3} C 51 ${(index + .5) * 100 / 3}, 49 50, 60 50`}
-              vectorEffect="non-scaling-stroke"
-              data-connected={activeIndex === index || activeIndex === 3}
-            />
-          ))}
+          {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => {
+            const connected = activeIndex === index || activeIndex === 3;
+            const clipId = `${mapId}-${layer.id}`;
+            const y = Number(((index + .5) * 100 / 3).toFixed(3));
+            const path = `M 40 ${y} C 51 ${y}, 49 50, 60 50`;
+            return (
+              <g key={layer.id} data-map-connection={layer.id} data-connected={connected}>
+                <defs>
+                  <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
+                    {/* Reveal along the actual coordinate system: normalized
+                        stroke dashes distort with non-scaling strokes. */}
+                    <motion.rect
+                      key={reducedMotion ? "settled" : "animated"}
+                      x="39.5" y="0" height="100"
+                      initial={false}
+                      animate={{ width: connected ? 21 : 0 }}
+                      transition={{ duration: reducedMotion ? 0 : connected ? .56 : .2, delay: !reducedMotion && activeIndex === 3 ? index * .08 : 0, ease: EASE }}
+                    />
+                  </clipPath>
+                </defs>
+                <path d={path} vectorEffect="non-scaling-stroke" />
+                <path className={styles.mapSignal} d={path} vectorEffect="non-scaling-stroke" clipPath={`url(#${clipId})`} />
+              </g>
+            );
+          })}
         </svg>
         {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => (
           <div
@@ -188,12 +206,25 @@ export function BrandFoundationScene() {
   const direction = activeIndex >= previousIndexRef.current ? 1 : -1;
   const active = FOUNDATION_LAYERS[activeIndex];
   const scrollYProgress = visualizer.scrollYProgress;
+  // Keep a separate painted camera value. A paused scene must retain its
+  // framing even if the document scrolls; resume catches up once, gently.
+  const cameraProgress = useMotionValue(0);
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    if (!cinematicMotion || !sceneInView || document.hidden) return;
+    cameraProgress.stop();
+    cameraProgress.set(progress);
+  });
+  useEffect(() => {
+    if (!cinematicMotion || !sceneInView) return;
+    const playback = animate(cameraProgress, scrollYProgress.get(), { duration: .45, ease: EASE });
+    return () => playback.stop();
+  }, [cameraProgress, cinematicMotion, sceneInView, scrollYProgress]);
   // A close view opens, pushes toward the roots, then resolves to the wider
   // frame. The reading card stays still while scroll drives the camera.
-  const landscapeScale = useTransform(scrollYProgress, [0, 0.34, 0.67, 1], [1.32, 1.12, 1.22, 1.08]);
-  const landscapeX = useTransform(scrollYProgress, [0, 0.34, 0.67, 1], ["3%", "-1%", "1.5%", "-2%"]);
-  const landscapeY = useTransform(scrollYProgress, [0, 0.34, 0.67, 1], [20, -18, -8, 8]);
-  const sunlightX = useTransform(scrollYProgress, [0, 1], ["-45%", "260%"]);
+  const landscapeScale = useTransform(cameraProgress, [0, 0.34, 0.67, 1], [1.32, 1.12, 1.22, 1.08]);
+  const landscapeX = useTransform(cameraProgress, [0, 0.34, 0.67, 1], ["3%", "-1%", "1.5%", "-2%"]);
+  const landscapeY = useTransform(cameraProgress, [0, 0.34, 0.67, 1], [20, -18, -8, 8]);
+  const sunlightX = useTransform(cameraProgress, [0, 1], ["-45%", "260%"]);
 
   useEffect(() => {
     previousIndexRef.current = activeIndex;
@@ -269,7 +300,7 @@ export function BrandFoundationScene() {
       data-foundation-layout={hasScrollLayout ? "sticky" : "flow"}
     >
       <div ref={sceneRef} className={styles.scene}>
-        <motion.div className={styles.landscape} data-foundation-landscape aria-hidden="true" style={{ scale: cinematicMotion ? landscapeScale : 1, x: cinematicMotion ? landscapeX : 0, y: cinematicMotion ? landscapeY : 0 }}>
+        <motion.div className={styles.landscape} data-foundation-landscape aria-hidden="true" style={{ scale: hasScrollLayout ? landscapeScale : 1, x: hasScrollLayout ? landscapeX : 0, y: hasScrollLayout ? landscapeY : 0 }}>
           <video
             ref={videoRef}
             muted
@@ -291,7 +322,7 @@ export function BrandFoundationScene() {
           </video>
         </motion.div>
         <div className={styles.scrim} aria-hidden="true" />
-        <motion.div className={styles.sunlight} data-foundation-sunlight aria-hidden="true" style={{ x: cinematicMotion ? sunlightX : 0, opacity: cinematicMotion ? 0.3 : 0 }} />
+        <motion.div className={styles.sunlight} data-foundation-sunlight aria-hidden="true" style={{ x: hasScrollLayout ? sunlightX : 0, opacity: hasScrollLayout ? 0.3 : 0 }} />
 
         <div className={styles.shell}>
           <div className={styles.content} data-foundation-controls>
@@ -344,7 +375,7 @@ export function BrandFoundationScene() {
               Walk the foundation path <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
           </div>
-          <FoundationMap activeIndex={activeIndex} />
+          <FoundationMap activeIndex={activeIndex} reducedMotion={prefersReducedMotion} />
         </div>
       </div>
     </section>
