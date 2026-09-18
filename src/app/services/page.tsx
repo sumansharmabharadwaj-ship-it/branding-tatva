@@ -9,7 +9,7 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
-import { PhotoHero } from "@/components/PhotoHero";
+import { LivingGradient } from "@/components/LivingGradient";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
 import { SituationPath } from "@/sections/Services/SituationPath";
@@ -252,33 +252,19 @@ export default async function ServicesPage() {
             it asks for footage that stays bright while glass panels carry
             readability. This is the first delivery of that re-foundation;
             the remaining procedural slots are still dark. */}
-        <PhotoHero
+        {/* The aspen film is retired on Suman's direct verdict (the first
+            two sections' footage read as noise, and the page before it
+            read as clean). The opening frame now follows the reference
+            she sent: a calm, stable ground where the type is the event.
+            LivingGradient is the proven Home base — a slow canopy field
+            with one drifting light shaft, CSS only, nothing competing
+            with the headline. */}
+        <section
           id="services-opening"
-          video="/videos/generated/bt-services-hero-aspen-sunburst.mp4"
-          videoMobile="/videos/generated/bt-services-hero-aspen-sunburst-mobile.mp4"
-          poster="/images/generated/bt-services-hero-aspen-sunburst-poster.jpg"
-          mediaMode="video"
-          minHeight="100vh"
-          overlayGradient="linear-gradient(180deg, rgba(36,45,39,0.16) 0%, rgba(36,45,39,0.24) 58%, rgba(36,45,39,0.42) 100%)"
-          playbackRate={1.15}
+          className="relative flex min-h-[100vh] flex-col justify-center overflow-clip bg-soil"
         >
-          {/* Restored August 28 hero film: a living underground root
-              network becomes legible as a restrained mineral-ivory
-              signal travels through connected paths. The image explains
-              the page's premise before the copy does: brand recognition
-              is a system beneath the visible surface, not one isolated
-              deliverable. The explicit video mode keeps this historical
-              banner moving while later short generated loops elsewhere
-              remain protected by the living-still treatment. */}
+          <LivingGradient preset="canopy" />
           <HeroReveal />
-          {/* A restrained directional scrim protects the masthead
-              while leaving the generated root architecture readable
-              on the right side of the frame. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(90deg, rgba(27,36,31,0.58) 0%, rgba(27,36,31,0.22) 48%, transparent 76%)" }}
-          />
           {/* The headline resolves by word, not character. It
               participates in the scene without delaying basic
               comprehension. */}
@@ -374,7 +360,7 @@ export default async function ServicesPage() {
               veil-and-handoff grammar, so the page reads as one colour
               journey rather than a stack of unrelated blocks. */}
           <SceneHandoff color="#171A17" heightClass="h-[24vh]" endOpacity={1} reducedOpacity={1} />
-        </PhotoHero>
+        </section>
 
         {/* Choose your situation — the visitor places themselves before
             any package is pitched. Reads the Home page's saved choice
@@ -389,24 +375,11 @@ export default async function ServicesPage() {
               repeating rings carry consistency forward. The chapter now
               teaches diagnosis without borrowing the Package selector's
               separate water-current metaphor. */}
-          <BackgroundVideo
-            parallax
-            video="/videos/pexels-moss-stream.mp4"
-            videoWebm="/videos/pexels-moss-stream.webm"
-            poster="/images/pexels-moss-stream-poster.jpg"
-            playbackRate={1.06}
-          />
-          {/* A left-weighted charcoal scrim protects the diagnosis copy
-              while keeping all three material states visible across the
-              lower frame. */}
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(100deg, rgba(16,19,20,0.66) 0%, rgba(16,19,20,0.34) 46%, rgba(16,19,20,0.14) 100%)",
-            }}
-          />
+          {/* The moss stream film is retired with the hero's aspen on the
+              same verdict. The diagnosis chapter reads as a quiet dark
+              room: a near black orangery field with a warm lamp bloom,
+              so the three situation sentences are the only thing moving. */}
+          <LivingGradient preset="orangery" />
           {/* Complete the opening cross-dissolve. The hero already
               anticipates this chapter with a 24vh departure veil; the
               matching arrival veil lets that tone release into the
@@ -431,13 +404,11 @@ export default async function ServicesPage() {
               clear. The six disciplines stay distinct in the foreground,
               but the moving terrain makes the shared strategic foundation
               visible without turning the chapter into another card grid. */}
-          <BackgroundVideo
-            parallax
-            video="/videos/pexels-root-network.mp4"
-            videoWebm="/videos/pexels-root-network.webm"
-            poster="/images/pexels-root-network-poster.jpg"
-            playbackRate={1.12}
-          />
+          {/* The root network macro read as a harsh tangle on black, the
+              exact register the media standard bans. The understory field
+              was built to sit under frosted panels, and this chapter is
+              frosted panels; the disciplines are the only subject left. */}
+          <LivingGradient preset="understory" />
           <div
             className="absolute inset-0"
             data-services-media-wash="offerings"

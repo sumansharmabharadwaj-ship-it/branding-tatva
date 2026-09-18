@@ -19,13 +19,13 @@ const SCENE_MOTION: Record<
   string,
   { contentX: number; contentY: number; rotate: number; scale: number; cameraX: number; cameraY: number }
 > = {
-  situation: { contentX: 30, contentY: -4, rotate: 0.55, scale: 0.014, cameraX: -22, cameraY: 24 },
-  offerings: { contentX: -28, contentY: 10, rotate: -0.48, scale: 0.018, cameraX: 22, cameraY: 20 },
-  desire: { contentX: 0, contentY: 22, rotate: 0, scale: 0.026, cameraX: 0, cameraY: -26 },
-  "verified-outcome": { contentX: 24, contentY: -9, rotate: 0.4, scale: 0.016, cameraX: -18, cameraY: 22 },
-  education: { contentX: -22, contentY: 9, rotate: -0.38, scale: 0.02, cameraX: 20, cameraY: -22 },
-  audit: { contentX: 18, contentY: 12, rotate: 0.28, scale: 0.015, cameraX: -14, cameraY: 18 },
-  book: { contentX: 0, contentY: 18, rotate: 0, scale: 0.022, cameraX: 0, cameraY: -18 },
+  situation: { contentX: 48, contentY: -8, rotate: 0.7, scale: 0.022, cameraX: -34, cameraY: 36 },
+  offerings: { contentX: -46, contentY: 16, rotate: -0.62, scale: 0.026, cameraX: 34, cameraY: 32 },
+  desire: { contentX: 0, contentY: 34, rotate: 0, scale: 0.034, cameraX: 0, cameraY: -38 },
+  "verified-outcome": { contentX: 38, contentY: -14, rotate: 0.52, scale: 0.024, cameraX: -28, cameraY: 34 },
+  education: { contentX: -36, contentY: 14, rotate: -0.5, scale: 0.028, cameraX: 30, cameraY: -34 },
+  audit: { contentX: 26, contentY: 16, rotate: 0.36, scale: 0.02, cameraX: -20, cameraY: 26 },
+  book: { contentX: 0, contentY: 26, rotate: 0, scale: 0.028, cameraX: 0, cameraY: -26 },
 };
 
 const CHAPTER_META: Record<string, { id: string; label: string }> = {
@@ -471,46 +471,69 @@ export function ServicesExperienceRuntime() {
         scene.style.setProperty("--services-scroll-kick", signedVelocity.toFixed(4));
 
         const lateralSign = motion?.contentX && motion.contentX < 0 ? -1 : 1;
+        if (isMotionReduced()) {
+          // The beat variables previously kept animating under reduced
+          // motion; at the new amplitudes that would be a real violation
+          // rather than a rounding error, so the composition settles.
+          scene.style.setProperty("--services-copy-x", "0px");
+          scene.style.setProperty("--services-copy-y", "0px");
+          scene.style.setProperty("--services-copy-opacity", "1");
+          scene.style.setProperty("--services-instrument-x", "0px");
+          scene.style.setProperty("--services-instrument-y", "0px");
+          scene.style.setProperty("--services-instrument-scale", "1");
+          scene.style.setProperty("--services-instrument-opacity", "1");
+          scene.style.setProperty("--services-instrument-mask", "0%");
+          scene.style.setProperty("--services-resolution-y", "0px");
+          scene.style.setProperty("--services-resolution-opacity", "1");
+        } else {
+        /* Amplitudes retuned on Suman's direct verdict that the page reads
+           as having no animation: copy now rises from near invisible, the
+           instrument sweeps in from a real distance, and the resolution
+           panel arrives late and clearly. The curve windows are unchanged,
+           so every entrance still completes before the 0.455 progress a
+           rail or hash arrival forces, and reversing scroll still reverses
+           the composition with no hidden state. */
         scene.style.setProperty(
           "--services-copy-x",
-          `${(travelAxis * 18 * lateralSign + signedVelocity * 5).toFixed(2)}px`,
+          `${(travelAxis * 30 * lateralSign + signedVelocity * 5).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-copy-y",
-          `${(arrival * 15 - departure * 11 + signedVelocity * 8).toFixed(2)}px`,
+          `${(arrival * 44 - departure * 16 + signedVelocity * 8).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-copy-opacity",
-          clamp(0.7 + activation * 0.3 - departure * 0.12, 0.58, 1).toFixed(4),
+          clamp(0.18 + activation * 0.82 - departure * 0.18, 0.14, 1).toFixed(4),
         );
         scene.style.setProperty(
           "--services-instrument-x",
-          `${((1 - discovery) * -32 * lateralSign + departure * 18 * lateralSign + signedVelocity * 9).toFixed(2)}px`,
+          `${((1 - discovery) * -60 * lateralSign + departure * 22 * lateralSign + signedVelocity * 9).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-instrument-y",
-          `${((1 - discovery) * 18 - departure * 9 + signedVelocity * 11).toFixed(2)}px`,
+          `${((1 - discovery) * 38 - departure * 12 + signedVelocity * 11).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-instrument-scale",
-          clamp(0.972 + discovery * 0.028 + smoothedVelocity * 0.012 - departure * 0.006, 0.96, 1.018).toFixed(4),
+          clamp(0.94 + discovery * 0.06 + smoothedVelocity * 0.012 - departure * 0.008, 0.93, 1.02).toFixed(4),
         );
         scene.style.setProperty(
           "--services-instrument-opacity",
-          clamp(0.62 + discovery * 0.38 - departure * 0.1, 0.52, 1).toFixed(4),
+          clamp(0.12 + discovery * 0.88 - departure * 0.14, 0.1, 1).toFixed(4),
         );
         scene.style.setProperty(
           "--services-instrument-mask",
-          `${((1 - discovery) * 9 + departure * 2.5).toFixed(3)}%`,
+          `${((1 - discovery) * 22 + departure * 3.5).toFixed(3)}%`,
         );
         scene.style.setProperty(
           "--services-resolution-y",
-          `${((1 - resolution) * 12 - departure * 8).toFixed(2)}px`,
+          `${((1 - resolution) * 32 - departure * 12).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-resolution-opacity",
-          clamp(0.66 + resolution * 0.34 - departure * 0.08, 0.58, 1).toFixed(4),
+          clamp(0.16 + resolution * 0.84 - departure * 0.12, 0.12, 1).toFixed(4),
         );
+        }
 
         if (motion && !isMotionReduced()) {
           scene.style.setProperty(
