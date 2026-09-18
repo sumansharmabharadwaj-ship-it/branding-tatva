@@ -566,6 +566,18 @@ export default function ContactPage() {
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-soil/70 sm:text-base">
                 Everything else belongs in the conversation itself.
               </p>
+              {/* The soft path. A visitor who wants to think first should
+                  leave with something to read rather than nothing at all —
+                  the library keeps the conversation warm until they return. */}
+              <TrackedLink
+                href="/insights"
+                event="contact_route_selected"
+                eventProps={{ source: "contact_asked", route: "insights_soft_path" }}
+                data-cursor-label="Read first"
+                className="link-underline mt-4 inline-flex min-h-11 items-center text-sm text-clay transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+              >
+                Rather read first? The insights library is open.
+              </TrackedLink>
             </div>
             <div data-contact-faq-card className="relative overflow-hidden rounded-[1.75rem] border border-white/60 bg-[#F8F4EC]/90 p-2 shadow-[0_28px_90px_rgba(62,48,30,0.14)] backdrop-blur-2xl sm:p-3">
               <span data-contact-card-sheen aria-hidden="true" />
