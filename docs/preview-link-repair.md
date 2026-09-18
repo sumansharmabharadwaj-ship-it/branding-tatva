@@ -1,37 +1,34 @@
 # Update the Branding Tatva preview link
 
-Release 371 is READY and verified. The shared review link currently points to
-release 369, which was successfully updated before this work.
-
-The new release makes the brand diagnostic easier to follow: wider phone
-answer text on a light reading panel, choices before the next action, a clear
-completion label, and room between desktop actions and fixed page controls.
+Release 405 is READY. It gives the homepage project files a light reading
+surface, fixed Close control, native scroll progress line, keyboard reading
+area and a scrollbar reservation intended to keep the archive steady on close.
+The newer Services and hidden cost work is included.
 
 [Branding Tatva preview](https://branding-tatva-git-august-8-isolated-suman22.vercel.app/).
 
-The connected tools expose deployment inspection but no alias assignment
-action. In the Terminal already signed into the site's Vercel account, run:
+The shared link still points to commit
+`2b966e0372d390be4568978fe62a88292ff21dcc`. The connected tools expose deployment
+inspection but no alias assignment. In the Terminal already signed into the
+site's Vercel account, run:
 
 ```bash
-npx --yes vercel@59.19.0 alias set dpl_5ioFupDvX3q9ftgEyFxQg1k63u6o branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
+npx --yes vercel@59.19.0 alias set dpl_9xkdSFukNfcQVuKnBYLR1UrgckMc branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
 ```
 
-This updates the shared preview link without promoting production. The target
-is the verified release 371, trigger commit
-`2b4cd0e44e1c5574b63b12b1cc95f08110eeaf41`.
+This changes the shared preview link without promoting production. Release
+405's exact trigger is `403fef297095020243d041c506d22d75e65c6802`.
 
-The build, typing, homepage and deployment checks passed. The initial candidate
-passed the three-question flow, back navigation, keyboard selection, answer
-review and editing, completion and motion pause checks at 320 px. Layouts were
-checked at 390 px, tablet, laptop and desktop widths. The final correction was
-verified on both desktop heights and the phone layout was confirmed unchanged.
-See `homepage-diagnostic-reading-qa.md` for exact measurements and limits.
+The build, TypeScript, ESLint, homepage, type floor, contact delivery and
+controlled release checks passed. Release 403 passed the phone reading,
+keyboard focus loop, scroll progress and reduced-motion checks. Release 405's
+narrow layout and bottom actions were checked. The browser connection failed
+during its final close-position check; that comparison and the final desktop
+visual pass remain unverified. See `homepage-project-file-reading-qa.md`.
 
-After the command succeeds, the shared link can be checked against this target.
-The browser blocks `/api/release`, so endpoint certification remains unavailable;
-deployment metadata, the trigger comparison and the rendered changes establish
-the release used for browser verification.
+The browser's /api/release restriction remains, so endpoint certification is
+unavailable. Metadata, the source to trigger comparison, and rendered changes
+establish the exact preview used for verification.
 
-A later preview will need its own confirmed deployment target. Automatic
-assignment for future releases requires the repository's existing Vercel
-credential to be configured.
+A later preview needs its own confirmed deployment target. Automatic alias
+assignment requires the repository's existing Vercel credential to be configured.
