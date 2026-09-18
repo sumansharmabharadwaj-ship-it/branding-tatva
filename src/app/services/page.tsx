@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { cookies, headers } from "next/headers";
-import { preload } from "react-dom";
 import { site } from "@/data/site";
 import { entityFacts } from "@/data/entityFacts";
 import { offerings, packages } from "@/data/services";
@@ -199,9 +198,8 @@ export default async function ServicesPage() {
   const hdrs = await headers();
   const savedRegion = cookieStore.get(REGION_COOKIE)?.value;
   const region = isRegion(savedRegion) ? savedRegion : regionFromCountry(hdrs.get("x-vercel-ip-country"));
-  // The hero poster is the page's first paint — a high priority preload
-  // hint so the awakening scene arrives before the veil starts lifting.
-  preload("/images/generated/bt-services-hero-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });
+  // The living gradient opening needs no media preload; the retired
+  // aspen poster hint was fetching 200KB nobody renders.
   return (
     <>
       <Header transparent />
