@@ -499,6 +499,7 @@ export function V4HiddenCostScene() {
   const manuallyChosen = useRef(false);
   const demonstrated = useRef(false);
   const [arrived, setArrived] = useState(false);
+  const [entranceFinished, setEntranceFinished] = useState(false);
 
   // One finite demonstration per visit. Reading, manual choices, hidden tabs
   // and the global motion preference take priority over automatic progression.
@@ -540,7 +541,10 @@ export function V4HiddenCostScene() {
   }, []);
 
   useEffect(() => {
-    if (prefersReducedMotion) settleComparison();
+    if (prefersReducedMotion) {
+      settleComparison();
+      setEntranceFinished(true);
+    }
   }, [prefersReducedMotion, settleComparison]);
 
   function chooseMessageMode(mode: MessageMode) {
@@ -591,7 +595,7 @@ export function V4HiddenCostScene() {
           data-home-cost-comparison
           className={costStyles.comparison}
           data-message-mode={comparison.mode}
-          data-story-arrived={arrived || prefersReducedMotion}
+          data-story-arrived={arrived && !entranceFinished && !prefersReducedMotion}
           style={{ "--comparison-arrival": prefersReducedMotion ? 1 : comparisonArrival } as MotionStyle}
           onFocusCapture={revealFocusedComparison}
           onPointerDown={() => { manuallyChosen.current = true; }}
@@ -619,7 +623,13 @@ export function V4HiddenCostScene() {
           >
             <dl className={costStyles.touchpoints}>
               {MESSAGE_TOUCHPOINTS.map((touchpoint, index) => (
-                <div key={touchpoint.channel} style={{ "--message-order": index } as React.CSSProperties}>
+                <div
+                  key={touchpoint.channel}
+                  style={{ "--message-order": index } as React.CSSProperties}
+                  onAnimationEnd={(event) => {
+                    if (event.target === event.currentTarget && index === MESSAGE_TOUCHPOINTS.length - 1) setEntranceFinished(true);
+                  }}
+                >
                   <dt>
                     <touchpoint.icon size={20} strokeWidth={1.4} aria-hidden="true" />
                     {touchpoint.channel}
