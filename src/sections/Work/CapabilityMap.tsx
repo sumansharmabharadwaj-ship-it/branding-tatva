@@ -52,7 +52,7 @@ export function CapabilityMap() {
       <div aria-hidden="true" className="absolute inset-0 bg-[#DDE2DC]/82" />
       <Container className="relative max-w-6xl">
         <div>
-          <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.moss }}>
+          <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.mossInk }}>
             Find relevant proof
           </p>
           <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
@@ -83,7 +83,7 @@ export function CapabilityMap() {
             >
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
                 <div>
-                  <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em]" style={{ color: WORK.moss }}>
+                  <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em]" style={{ color: WORK.mossInk }}>
                     Capability path
                   </p>
                   <h3 className="mt-1 max-w-[13rem] font-display text-lg font-normal" style={{ color: WORK.charcoal }}>
@@ -171,7 +171,7 @@ export function CapabilityMap() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: WORK.moss }}>
+                    <p className="text-xs font-medium uppercase tracking-[0.18em]" style={{ color: WORK.mossInk }}>
                       Closest recorded evidence
                     </p>
                     {project && (

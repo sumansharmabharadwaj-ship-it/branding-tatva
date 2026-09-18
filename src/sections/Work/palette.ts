@@ -19,6 +19,10 @@ export const WORK = {
   sand: "#C6A97A",
   wood: "#6F4E37",
   mist: "#DDE2DC",
+  // Moss blended fifteen percent toward forest: the smallest chip text
+  // sits on mist, where plain moss reads at 4.45 to 1 and misses the
+  // WCAG AA floor by a hair. This ink exists only for small type.
+  mossInk: "#4D6445",
   charcoal: "#1B1B1B",
 } as const;
 

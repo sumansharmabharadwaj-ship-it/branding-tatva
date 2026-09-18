@@ -138,7 +138,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
 
             <Reveal>
               <div className="mt-10 border-l-2 border-clay/60 pl-5">
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary">
                   How Branding Tatva uses it
                 </p>
                 <p className="mt-2 text-base leading-relaxed text-foreground-secondary">{entry.practice}</p>
@@ -147,7 +147,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
 
             <Reveal>
               <div className="mt-12 border-t border-border pt-8">
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary">
                   Questions this term clarifies
                 </p>
                 <ul className="mt-3 space-y-2">
@@ -202,7 +202,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             {siblings.length > 0 && (
               <Reveal>
                 <div className="mt-12 border-t border-border pt-8">
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary">
                     Related terms
                   </p>
                   <ul className="mt-3 flex flex-wrap gap-2">

@@ -66,7 +66,7 @@ export function DecisionMap() {
     <section className="py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
       <Container className="max-w-6xl">
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.moss }}>
+          <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.mossInk }}>
             Decision map
           </p>
           <h2 className="mt-2 max-w-2xl font-display text-display-sm font-normal" style={{ color: WORK.charcoal }}>
@@ -134,7 +134,7 @@ export function DecisionMap() {
                       <span className="block font-display text-xl font-normal" style={{ color: isActive ? WORK.charcoal : WORK.wood }}>
                         {entry.question}
                       </span>
-                      <span className="mt-0.5 block text-xs uppercase tracking-[0.12em]" style={{ color: isActive ? WORK.moss : WORK.stone }}>
+                      <span className="mt-0.5 block text-xs uppercase tracking-[0.12em]" style={{ color: isActive ? WORK.mossInk : WORK.wood }}>
                         {entry.decision}
                       </span>
                     </span>

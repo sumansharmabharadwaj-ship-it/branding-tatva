@@ -114,7 +114,7 @@ export default function GlossaryPage() {
             <div className="space-y-12">
               {pillars.map((pillar) => (
                 <Reveal key={pillar.id}>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary">
                     {pillar.name}
                   </p>
                   <ul className="mt-4 divide-y divide-border border-y border-border">

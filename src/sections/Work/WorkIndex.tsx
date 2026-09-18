@@ -222,9 +222,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                       onMouseEnter={() => setActive(index)}
                       onClick={() => openProject(project, "desktop_filtered_work_index")}
                       onFocus={() => setActive(index)}
-                      className={`group hidden gap-4 py-6 transition-all duration-500 focus-visible:outline focus-visible:outline-2 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7 lg:grid ${
-                        isActive ? "opacity-100" : "opacity-[0.82]"
-                      }`}
+                      className={`group hidden gap-4 py-6 transition-all duration-500 focus-visible:outline focus-visible:outline-2 sm:grid-cols-[3rem_1fr_auto] sm:gap-6 sm:py-7 lg:grid `}
                       style={{
                         transform: animateTransitions && isActive ? "translateX(8px)" : "translateX(0)",
                         outlineColor: WORK.moss,
@@ -241,7 +239,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                           </span>
                           <span
                             className="rounded-full border px-2.5 py-1 text-[0.56rem] font-medium uppercase tracking-[0.13em]"
-                            style={{ borderColor: WORK.stone, color: WORK.moss }}
+                            style={{ borderColor: WORK.stone, color: WORK.mossInk }}
                           >
                             {record.tier === "flagship" ? "Flagship" : "Project story"}
                           </span>
@@ -261,7 +259,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
                               <span
                                 key={needId}
                                 className="rounded-full px-2.5 py-1 text-[0.6rem] uppercase tracking-[0.1em]"
-                                style={{ backgroundColor: WORK.mist, color: WORK.moss }}
+                                style={{ backgroundColor: WORK.mist, color: WORK.mossInk }}
                               >
                                 {need.label}
                               </span>
