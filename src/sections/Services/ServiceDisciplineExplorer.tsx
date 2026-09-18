@@ -297,7 +297,7 @@ export function ServiceDisciplineExplorer() {
                         onClick={() => activate(offeringIndex, "click")}
                         onKeyDown={(event) => handleTabKey(offeringIndex, event)}
                         className="group relative flex min-h-14 min-w-0 items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:px-4 lg:w-[13.5rem] lg:flex-none"
-                        style={{ "--discipline-color": offer.color } as CSSProperties}
+                        style={{ "--discipline-color": offer.color, "--disc-index": sequenceIndex } as CSSProperties}
                       >
                         {isActive && (
                           <motion.span
@@ -328,6 +328,7 @@ export function ServiceDisciplineExplorer() {
                         </span>
                         <span
                           aria-hidden="true"
+                          data-discipline-dot="true"
                           className={`relative h-2 w-2 shrink-0 rounded-full transition-all duration-300 ${
                             isActive ? "scale-125" : "opacity-55 group-hover:opacity-100"
                           }`}

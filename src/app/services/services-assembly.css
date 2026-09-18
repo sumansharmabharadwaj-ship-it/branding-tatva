@@ -123,3 +123,81 @@
   translate: none;
   opacity: 1;
 }
+
+/* Offerings: six disciplines as one system, so the system assembles. On
+   desktop the rail is a 3x2 grid; each discipline rises into its cell in
+   reading order and its coloured dot — the node that marks it as part of
+   the system — grows into place.
+
+   These buttons already carry state of their own in
+   services-discipline-journey.css: unselected at opacity 0.76 and
+   transform: scale(0.965), selected at 1 and scale(1). So:
+   - rise uses the separate `translate` property, which nothing else sets
+     and nothing transitions, so it tracks scroll exactly;
+   - fade is multiplied into each state's opacity rather than replacing it,
+     so the selected discipline still reads as selected while it arrives.
+     The arrival factor floors at 0.6 here, not 0.45, because 0.76 x 0.45
+     would put unselected tabs at 0.34, below readable;
+   - the dot grows through `transform`, which composes with the Tailwind
+     `scale-125` active state (the `scale` property) instead of replacing it.
+   Six items, 0.018 apart, complete by 0.45 — inside the runtime's
+   DIRECT_ANCHOR_PROGRESS of 0.455. */
+@media (min-width: 1024px) {
+  #offerings .services-discipline-rail > button {
+    --disc-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.3 + var(--disc-index, 0) * 0.018)) / 0.06),
+      1
+    );
+    translate: 0 calc((1 - var(--disc-arrival)) * 0.9rem);
+  }
+
+  #offerings .services-discipline-rail > button[aria-selected="false"] {
+    opacity: calc(0.76 * (0.6 + var(--disc-arrival) * 0.4));
+  }
+
+  #offerings .services-discipline-rail > button[aria-selected="true"] {
+    opacity: calc(0.6 + var(--disc-arrival) * 0.4);
+  }
+
+  #offerings [data-discipline-dot="true"] {
+    transform: scale(calc(0.2 + var(--disc-arrival) * 0.8));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #offerings .services-discipline-rail > button {
+    translate: none;
+  }
+
+  /* The fade above is multiplied into state, so restore the state values
+     themselves; otherwise a scene whose progress never advances would hold
+     unselected tabs at 0.46 instead of their intended 0.76. */
+  #offerings .services-discipline-rail > button[aria-selected="false"] {
+    opacity: 0.76;
+  }
+
+  #offerings .services-discipline-rail > button[aria-selected="true"] {
+    opacity: 1;
+  }
+
+  #offerings [data-discipline-dot="true"] {
+    transform: none;
+  }
+}
+
+:root[data-motion="reduced"] #offerings .services-discipline-rail > button {
+  translate: none;
+}
+
+:root[data-motion="reduced"] #offerings .services-discipline-rail > button[aria-selected="false"] {
+  opacity: 0.76;
+}
+
+:root[data-motion="reduced"] #offerings .services-discipline-rail > button[aria-selected="true"] {
+  opacity: 1;
+}
+
+:root[data-motion="reduced"] #offerings [data-discipline-dot="true"] {
+  transform: none;
+}
