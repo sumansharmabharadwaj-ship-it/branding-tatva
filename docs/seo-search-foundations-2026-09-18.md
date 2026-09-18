@@ -17,6 +17,7 @@ The www hostname also served HTTP 200. The homepage included FAQ structured data
 5. Visible service links in the shared footer, plus links between the service pages, existing guides, Services, About and Contact. Include both pages in the sitemap with their actual creation date.
 6. Omit unverified shared last-modification dates. Retain existing individually maintained editorial dates.
 7. Support an optional `GOOGLE_SITE_VERIFICATION` environment value. No verification token has been supplied or invented. This change alone does not verify Search Console ownership.
+8. At the owner's request, prioritise UK service businesses in homepage and Services metadata, visible Services and footer copy, and both focused service pages. Each service page explains a distinct UK buyer situation and the remote engagement. Existing URLs and global service availability remain intact; no UK office, unconfirmed pricing, customer outcome or local address is asserted.
 
 ## Query-to-page map
 
@@ -26,9 +27,9 @@ These are relevance targets, not measured search-volume or difficulty estimates.
 | --- | --- |
 | Branding Tatva; Branding Tatva Suman Sharma | `/` |
 | Suman Sharma brand strategist | `/about` |
-| Brand strategy for service businesses | `/services` |
-| Brand positioning consultant for service businesses | `/brand-positioning` |
-| Brand audit services; brand audit before rebranding | `/brand-audit` |
+| Brand strategy for UK service businesses | `/services` |
+| Brand positioning consultant UK; positioning for UK service businesses | `/brand-positioning` |
+| Brand audit services UK; brand audit before rebranding | `/brand-audit` |
 | How to position a service business | `/insights/brand-positioning-strategy-service-businesses` |
 | Brand audit checklist | `/insights/brand-audit-checklist-before-rebrand` |
 
@@ -48,10 +49,14 @@ These are relevance targets, not measured search-volume or difficulty estimates.
 1. Open the existing property for the public domain. Check ownership before creating a duplicate property. Complete verification only with Google's actual DNS record, HTML file or meta token.
 2. Inspect the homepage, Services and both new service URLs. Check live fetch, indexing permission, selected canonical and any reported exclusion reason. Do not infer these from a site search.
 3. Submit `https://brandingtatva.com/sitemap.xml` once and verify its status. Request indexing for the homepage and the new pages once; repeated requests do not accelerate crawling.
-4. Record a baseline for clicks, impressions, CTR and position, split by branded queries and service queries, country and device. There is no measured baseline in this change.
+4. Record a baseline for clicks, impressions, CTR and position with the Performance country filter set to United Kingdom. Separate branded queries (Branding Tatva and Suman Sharma) from service queries; compare mobile and desktop. Record the date range and each query's landing page. There is no measured UK ranking baseline in this change, and average position does not mean a guaranteed first-page result for every searcher.
 5. Inspect Manual Actions, Security Issues and Core Web Vitals before attributing weak visibility to content alone.
 
 ## Subsequent work
+
+The priority market is the United Kingdom. Start with the three service intents mapped above, rather than an undifferentiated goal of ranking for every branding search. UK search volume and difficulty have not been measured. Use 28-day country-filtered comparisons once enough Search Console data exists; inspect indexing first if impressions are absent. Keep evidence-led project examples and relevant UK industry mentions as subsequent work requiring genuine source material and, for outreach, explicit messaging authorisation.
+
+All pages are currently a single English version. This patch does not add artificial regional duplicates, IP redirects, location meta tags or a fake UK business address. Locale and structured data alone cannot establish a ranking position. Revisit region-specific URLs and hreflang only if genuinely distinct regional content is introduced.
 
 Use Search Console evidence to select the next improvement. If URLs are excluded, resolve the specific exclusion. If indexed pages have relevant impressions but weak clicks, improve the title and page promise. If relevant service queries produce few impressions, deepen the corresponding page with verified examples, decision criteria and evidence. Publish original project analysis with permission and pursue relevant earned mentions; avoid purchased links, fabricated reviews and duplicated city pages.
 
@@ -63,6 +68,7 @@ Ranking improvements require crawling, indexing and competition against existing
 - https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls
 - https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
 - https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl
+- https://developers.google.com/search/docs/specialty/international/managing-multi-regional-sites
 
 ## Release boundary
 

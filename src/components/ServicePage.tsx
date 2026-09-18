@@ -98,6 +98,11 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             <div><h2>Bring what already exists.</h2><p>{page.preparation}</p></div>
             <div><h2>Agree the scope before work begins.</h2><p>{page.boundary}</p></div>
           </section>
+          <section className={styles.opening} aria-labelledby={`${page.slug}-engagement`}>
+            <p className={styles.eyebrow}>Working together remotely</p>
+            <h2 id={`${page.slug}-engagement`}>{page.engagement.title}</h2>
+            <p>{page.engagement.body}</p>
+          </section>
           <section className={styles.reading} aria-labelledby={`${page.slug}-reading`}>
             <p className={styles.eyebrow}>Before we speak</p>
             <h2 id={`${page.slug}-reading`}>Read the thinking behind the work.</h2>

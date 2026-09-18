@@ -39,11 +39,11 @@ import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: { absolute: `${site.name} | Brand Strategy for Service Businesses` },
+  title: { absolute: `${site.name} | Brand Strategy for UK Service Businesses` },
   description: site.description,
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${site.name} | Brand Strategy for Service Businesses`,
+    title: `${site.name} | Brand Strategy for UK Service Businesses`,
     description: site.description,
     url: site.url,
     type: "website",
@@ -57,7 +57,7 @@ const homeStructuredData = {
   "@type": "WebPage",
   "@id": `${site.url}/#webpage`,
   url: site.url,
-  name: `${site.name} | Brand Strategy for Service Businesses`,
+  name: `${site.name} | Brand Strategy for UK Service Businesses`,
   description: site.description,
   isPartOf: { "@id": `${site.url}/#website` },
   about: { "@id": `${site.url}/#organization` },
