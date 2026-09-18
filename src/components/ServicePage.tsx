@@ -114,7 +114,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             <p>Work directly with <Link href="/about">Suman Sharma</Link>. Begin with a conversation about the business, the question and the evidence you already have.</p>
             <div className={styles.actions}>
               <Link href="/contact" className={styles.button}>Discuss your brand <span aria-hidden="true">↗</span></Link>
-              {servicePages.filter((item) => item.slug !== page.slug).map((item) => <Link key={item.slug} href={`/${item.slug}`} className={styles.textLink}>Explore {item.name.toLowerCase()}</Link>)}
+              {servicePages.filter((item) => item.slug !== page.slug).map((item) => <Link key={item.slug} href={`/${item.slug}`} className={styles.textLink}>See {item.name.toLowerCase()}</Link>)}
             </div>
           </section>
         </Container>

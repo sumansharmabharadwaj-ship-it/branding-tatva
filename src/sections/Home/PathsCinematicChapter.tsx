@@ -260,9 +260,15 @@ export function PathsCinematicChapter() {
     >
       <div className={styles.scene}>
         <div className={styles.film} aria-hidden="true">
+          {/* Suman approved the wetland egret shoot (Pexels 36721628 with its
+              two companion moments 36721624/36721623) for this chapter on the
+              wave one contact sheet. The chapter mounts ONE film, so the
+              striding anchor plays here; the companions are staged for a per
+              tab crossfade if that enhancement is ever built. Grade: the
+              shared warm house pass applied at encode. */}
           <BackgroundVideo
-            video="/videos/higgsfield-mountain-mist.mp4"
-            poster="/images/higgsfield-mountain-mist-poster.jpg"
+            video="/videos/bt-home-paths-wetland-egrets.mp4"
+            poster="/images/bt-home-paths-wetland-egrets-poster.jpg"
             managedByHomepage
             loop={false}
           />
