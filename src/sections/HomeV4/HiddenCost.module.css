@@ -49,7 +49,9 @@
   --message-line: #556b4a;
   border-color: rgb(85 107 74 / 28%); background: #f3f2e8;
   box-shadow: 0 10px 30px rgb(52 70 48 / 7%);
+  transition-delay: calc(var(--message-order) * 100ms);
 }
+.comparison[data-message-mode="shared"] .touchpoints > div::after { transform: scaleX(1); }
 .touchpoints dt { display: flex; align-items: center; gap: .65rem; color: #595246; font-size: .875rem; line-height: 1.5; }
 .touchpoints dt svg { flex-shrink: 0; color: var(--message-line); transition: color 480ms ease; }
 .touchpoints dt span { margin-left: auto; color: #70533e; font-size: .75rem; font-variant-numeric: tabular-nums; }
@@ -64,12 +66,12 @@
 .separateConnections path:nth-child(1) { stroke: #805239; }
 .separateConnections path:nth-child(2) { stroke: #556b4a; }
 .separateConnections path:nth-child(3) { stroke: #52756f; }
-.sharedConnections { opacity: 0; clip-path: inset(0 0 100% 0); transition: opacity 350ms ease, clip-path 1100ms cubic-bezier(.22, 1, .36, 1); }
+.sharedConnections { opacity: 0; clip-path: inset(0 0 100% 0); transition: opacity 250ms ease, clip-path 900ms cubic-bezier(.22, 1, .36, 1); }
 .sharedConnections path { stroke: #556b4a; }
 .comparison[data-message-mode="shared"] .separateConnections { opacity: 0; }
 /* Reveal the complete connector as one plane. Normalized dash lengths with
    non-scaling strokes leave gaps when this wide diagram changes aspect ratio. */
-.comparison[data-message-mode="shared"] .sharedConnections { opacity: .8; clip-path: inset(0); }
+.comparison[data-message-mode="shared"] .sharedConnections { opacity: .8; clip-path: inset(0); transition-delay: 320ms; }
 .comparisonMeaning {
   display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 1.2rem;
   width: min(100%, 43rem); min-height: 6rem; margin: 0 auto; padding: 1rem 1.5rem;
@@ -78,20 +80,22 @@
   transition: color 500ms ease, background-color 500ms ease, border-color 500ms ease;
 }
 .memoryCount { display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border: 1px solid rgb(128 82 57 / 30%); border-radius: 50%; color: #805239; font: 400 2rem/1 var(--font-display), Georgia, serif; transition: color 600ms ease, border-color 600ms ease, background-color 600ms ease; }
+.countWindow { display: block; height: 1em; overflow: hidden; }
+.countReel { display: flex; flex-direction: column; transform: translateY(0); transition: transform 650ms cubic-bezier(.22, 1, .36, 1); }
+.countReel > span { display: block; flex: 0 0 1em; height: 1em; line-height: 1; }
+.comparison[data-message-mode="shared"] .countReel { transform: translateY(-50%); transition-delay: 750ms; }
 .memoryReading { min-width: 0; }
 .memoryLabel { margin: 0 0 .25rem; font-size: .8125rem; line-height: 1.4; letter-spacing: .07em; text-transform: uppercase; }
 .meaningStack { display: grid; }
-.comparison[data-message-mode="shared"] .memoryCount { color: #faf6ec; background: #556b4a; border-color: #556b4a; }
-.takeaway { margin: .8rem 0 0; color: #526046; text-align: center; font-size: .875rem; line-height: 1.5; visibility: hidden; opacity: 0; transform: translateY(5px); transition: opacity 600ms 500ms ease, transform 600ms 500ms ease; }
-.comparison[data-message-mode="shared"] .takeaway { visibility: visible; opacity: 1; transform: none; }
+.comparison[data-message-mode="shared"] .memoryCount { color: #faf6ec; background: #556b4a; border-color: #556b4a; transition-delay: 750ms; }
+.takeaway { margin: .8rem 0 0; color: #526046; text-align: center; font-size: .875rem; line-height: 1.5; visibility: hidden; opacity: 0; transform: translateY(5px); transition: opacity 450ms ease, transform 450ms ease; }
+.comparison[data-message-mode="shared"] .takeaway { visibility: visible; opacity: 1; transform: none; transition-delay: 1100ms; }
 .touchpoints .buyerMeaning { display: flex; align-items: center; align-self: end; gap: .5rem; padding-top: .7rem; border-top: 1px solid rgb(128 82 57 / 12%); color: var(--message-line); font: 400 .875rem/1.45 var(--font-body), Arial, sans-serif; letter-spacing: 0; perspective: none; transition: color 700ms ease; }
 .meaningDot { flex: 0 0 .4rem; width: .4rem; height: .4rem; border-radius: 50%; background: currentColor; }
 @media (prefers-reduced-motion: no-preference) {
   .comparison[data-story-arrived="true"] .touchpoints > div { animation: channel-arrive 900ms cubic-bezier(.22, 1, .36, 1) backwards; animation-delay: calc(var(--message-order) * 130ms); }
-  .comparison[data-message-mode="shared"] .memoryCount span { animation: promise-arrive 650ms 350ms cubic-bezier(.22, 1, .36, 1) backwards; }
 }
 @keyframes channel-arrive { from { transform: translate3d(0, 20px, 0) rotate(calc((var(--message-order) - 1) * 1.4deg)); } to { transform: none; } }
-@keyframes promise-arrive { from { transform: scale(.8); } to { transform: scale(1); } }
 .meaningText { grid-area: 1 / 1; min-width: 0; margin: 0; }
 .comparison[data-message-mode="shared"] .comparisonMeaning { color: #344630; border-color: rgb(85 107 74 / 35%); background: #e3e7d9; }
 .rule { height: 1px; overflow: hidden; background: rgb(128 82 57 / 18%); }
@@ -133,17 +137,18 @@
   .comparisonHeader { align-items: stretch; flex-direction: column; gap: .85rem; }
   .modeChoices { width: 100%; min-width: 0; max-width: 30rem; }
   .touchpoints { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
-  .touchpoints > div { grid-template-columns: 5.25rem minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: .6rem 1rem; padding: 1.15rem; border-radius: .4rem .9rem .9rem .4rem; }
+  .touchpoints > div { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto; align-items: center; gap: .6rem; padding: 1rem 1.15rem; border-radius: .4rem .9rem .9rem .4rem; }
   .touchpoints > div::after { inset: 0 auto 0 -1px; width: 2px; height: auto; transform: scaleY(clamp(0, calc(var(--comparison-arrival, 1) * 1.4 - var(--message-order, 0) * .16), 1)); transform-origin: center top; }
-  .touchpoints dt { display: grid; grid-template-columns: auto 1fr; gap: .45rem; }
-  .touchpoints dt span { display: none; }
-  .touchpoints dd { align-self: center; font-size: clamp(1.35rem, 5vw, 1.8rem); perspective: none; }
+  .comparison[data-message-mode="shared"] .touchpoints > div::after { transform: scaleY(1); }
+  .touchpoints dt { gap: .45rem; }
+  .touchpoints dt svg { width: 16px; height: 16px; }
+  .touchpoints dd { align-self: center; font-size: clamp(1.5rem, 5vw, 1.8rem); perspective: none; }
   .touchpoints { position: relative; padding-left: 1.1rem; }
   .touchpoints::before { content: ""; position: absolute; top: 1.5rem; bottom: -1.25rem; left: 0; width: 1px; background: #556b4a; transform: scaleY(0); transform-origin: top; transition: transform 950ms cubic-bezier(.22, 1, .36, 1); }
   .touchpoints > div::before { content: ""; position: absolute; left: -1.1rem; top: 1.5rem; width: 1.1rem; height: 1px; background: #556b4a; transform: scaleX(0); transform-origin: right; transition: transform 600ms ease; }
-  .comparison[data-message-mode="shared"] .touchpoints::before { transform: scaleY(1); }
-  .comparison[data-message-mode="shared"] .touchpoints > div::before { transform: scaleX(1); }
-  .touchpoints .buyerMeaning { grid-column: 2; font-size: .8125rem; padding-top: .4rem; }
+  .comparison[data-message-mode="shared"] .touchpoints::before { transform: scaleY(1); transition-delay: 320ms; }
+  .comparison[data-message-mode="shared"] .touchpoints > div::before { transform: scaleX(1); transition-delay: calc(320ms + var(--message-order) * 100ms); }
+  .touchpoints .buyerMeaning { grid-column: 1; font-size: .8125rem; padding-top: .4rem; }
   .connections { display: none; }
   .comparisonMeaning { position: relative; margin-top: 1.25rem; padding: .85rem 1rem; gap: .75rem; }
   .memoryCount { width: 2.75rem; height: 2.75rem; font-size: 1.7rem; }
@@ -184,9 +189,9 @@
 :global(html[data-motion="reduced"]) .comparison *::after { animation: none !important; transition: none !important; }
 @media (max-width: 380px) {
   .shell { padding-inline: 1rem; }
-  .touchpoints > div { grid-template-columns: 4.6rem minmax(0, 1fr); padding: .85rem; gap: .6rem; }
+  .touchpoints > div { padding: .85rem; gap: .6rem; }
   .touchpoints dt { font-size: .8125rem; }
-  .touchpoints dd { font-size: 1.3rem; }
+  .touchpoints dd { font-size: 1.375rem; }
   .modeChoices button { padding-inline: .45rem; font-size: .8125rem; }
 }
 

@@ -518,7 +518,7 @@ export function V4HiddenCostScene() {
         if (selection && !selection.isCollapsed && selection.anchorNode && element.contains(selection.anchorNode)) return;
         demonstrated.current = true;
         setComparison({ mode: "shared", direction: 1 });
-      }, 3600);
+      }, 4800);
     };
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting && entry.intersectionRatio >= .65;
@@ -674,7 +674,9 @@ export function V4HiddenCostScene() {
             </svg>
             <div className={costStyles.comparisonMeaning}>
               <div className={costStyles.memoryCount} aria-hidden="true">
-                <span>{comparison.mode === "shared" ? "01" : "03"}</span>
+                <span className={costStyles.countWindow}>
+                  <span className={costStyles.countReel}><span>03</span><span>01</span></span>
+                </span>
               </div>
               <div className={costStyles.memoryReading}>
                 <p className={costStyles.memoryLabel}>{comparison.mode === "shared" ? "One reason to remember" : "Three competing ideas"}</p>
