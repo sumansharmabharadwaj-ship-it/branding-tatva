@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Image from "next/image";
@@ -92,6 +94,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!post) return {};
 
+  // The composed share card carries the essay's drawn worksheet, so a
+  // link preview teaches the piece the way the library does. A post
+  // published before its card exists falls back to its hero still.
+  const shareCard = `/images/generated/insights-og/${post.slug}.png`;
+  const shareImage = existsSync(path.join(process.cwd(), "public", shareCard))
+    ? { url: shareCard, width: 1200, height: 630, alt: post.seoTitle }
+    : { url: post.heroImage, alt: post.heroImageAlt };
+
   return {
     title: post.seoTitle,
     description: post.excerpt,
@@ -110,13 +120,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
       authors: [site.founder],
-      images: [{ url: post.heroImage, alt: post.heroImageAlt }],
+      images: [shareImage],
     },
     twitter: {
       card: "summary_large_image",
       title: post.seoTitle,
       description: post.excerpt,
-      images: [post.heroImage],
+      images: [shareImage.url],
     },
   };
 }

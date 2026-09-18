@@ -202,6 +202,18 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "worksheet",
     aspectRatio: 990 / 340,
   },
+  "aeo-vs-seo-vs-geo": {
+    src: "/images/generated/insights-editorial/aeo-vs-seo-vs-geo.png",
+    alt: "The one record method, drawn as an annotated worksheet with its steps and the decision it settles",
+    depthKind: "worksheet",
+    aspectRatio: 990 / 432,
+  },
+  "generative-engine-optimisation-guide": {
+    src: "/images/generated/insights-editorial/generative-engine-optimisation-guide.png",
+    alt: "The quotable record, drawn as an annotated worksheet with its steps and the decision it settles",
+    depthKind: "worksheet",
+    aspectRatio: 990 / 432,
+  },
   "how-ai-assistants-choose-brands-to-recommend": {
     src: "/images/generated/insights-editorial/ai-retrieval-path.png",
     alt: "A buyer's prompt above the four memory checks an AI assistant runs: entity, category, situations, and evidence",
