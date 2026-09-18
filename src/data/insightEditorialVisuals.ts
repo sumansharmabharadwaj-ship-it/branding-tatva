@@ -214,6 +214,12 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "worksheet",
     aspectRatio: 990 / 432,
   },
+  "brand-strategy-when-ai-agents-buy": {
+    src: "/images/generated/insights-editorial/brand-strategy-when-ai-agents-buy.png",
+    alt: "The instruction test, drawn as an annotated worksheet with its steps and the decision it settles",
+    depthKind: "worksheet",
+    aspectRatio: 990 / 374,
+  },
   "how-ai-assistants-choose-brands-to-recommend": {
     src: "/images/generated/insights-editorial/ai-retrieval-path.png",
     alt: "A buyer's prompt above the four memory checks an AI assistant runs: entity, category, situations, and evidence",

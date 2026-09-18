@@ -465,6 +465,15 @@ export default async function InsightArticlePage({ params }: Props) {
                           className="object-contain"
                         />
                       </figure>
+                      <p className="mt-2 flex items-center justify-end">
+                        <a
+                          href={articleWorksheet.src}
+                          download
+                          className="link-underline inline-flex min-h-11 items-center gap-1.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-secondary transition-colors duration-300 hover:text-clay"
+                        >
+                          Save this worksheet <span aria-hidden="true">↓</span>
+                        </a>
+                      </p>
                     </Reveal>
                   )}
 

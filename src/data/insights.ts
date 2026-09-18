@@ -1,3 +1,4 @@
+import { agenticBuyingInsightPosts } from "@/data/agenticBuyingInsights";
 import { aiEraInsightPosts } from "@/data/aiEraInsights";
 import { answerEngineInsightPosts } from "@/data/answerEngineInsights";
 import { brandArchitectureInsightPosts } from "@/data/brandArchitectureInsights";
@@ -71,6 +72,7 @@ const combinedPosts = [
   ...answerEngineInsightPosts,
   ...founderBrandInsightPosts,
   ...brandVsPerformanceInsightPosts,
+  ...agenticBuyingInsightPosts,
 ];
 
 const uniquePosts = combinedPosts.filter(
@@ -122,6 +124,7 @@ const relatedRegistrations = [
   { supportingSlug: "what-rebrand-backlashes-teach-about-brand-memory", pillarSlugs: ["brand-refresh-vs-rebrand-how-much-change", "reposition-established-service-business-without-losing-recognition", "brand-audit-checklist-before-rebrand"] },
   { supportingSlug: "founder-brand-vs-company-brand", pillarSlugs: ["brand-architecture-service-businesses", "brand-positioning-strategy-service-businesses", "turn-client-proof-into-positioning-advantage"] },
   { supportingSlug: "brand-marketing-vs-performance-marketing", pillarSlugs: ["brand-awareness-vs-brand-recall", "measure-brand-recall-limited-budget", "how-ai-assistants-choose-brands-to-recommend"] },
+  { supportingSlug: "brand-strategy-when-ai-agents-buy", pillarSlugs: ["how-ai-assistants-choose-brands-to-recommend", "distinctive-brand-assets-audit", "brand-awareness-vs-brand-recall"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
