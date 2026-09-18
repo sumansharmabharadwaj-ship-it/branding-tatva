@@ -548,9 +548,14 @@ export function V4HiddenCostScene() {
     }
   }, [prefersReducedMotion, settleComparison]);
 
-  function chooseMessageMode(mode: MessageMode) {
+  function chooseMessageMode(mode: MessageMode, keyboardChoice: boolean) {
     manuallyChosen.current = true;
-    setComparison((current) => current.mode === mode ? current : { mode, direction: prefersReducedMotion ? 0 : mode === "shared" ? 1 : -1 });
+    // Keyboard and assistive activation update the reading in place. Pointer
+    // choices retain the directional text motion and connected diagram.
+    const direction = prefersReducedMotion || keyboardChoice ? 0 : mode === "shared" ? 1 : -1;
+    setComparison((current) => current.mode === mode
+      ? current.direction === 0 ? current : { ...current, direction: 0 }
+      : { mode, direction });
   }
 
   function revealFocusedComparison(event: React.FocusEvent<HTMLDivElement>) {
@@ -612,10 +617,10 @@ export function V4HiddenCostScene() {
           <div className={costStyles.comparisonHeader}>
             <p className={costStyles.exampleLabel}>Illustrative example · A brand consultancy</p>
             <div className={costStyles.modeChoices} role="group" aria-label="Compare how a brand communicates">
-              <button type="button" aria-pressed={comparison.mode === "separate"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("separate")}>
+              <button type="button" aria-pressed={comparison.mode === "separate"} aria-controls="brand-message-example" onClick={(event) => chooseMessageMode("separate", event.detail === 0)}>
                 Mixed messages
               </button>
-              <button type="button" aria-pressed={comparison.mode === "shared"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("shared")}>
+              <button type="button" aria-pressed={comparison.mode === "shared"} aria-controls="brand-message-example" onClick={(event) => chooseMessageMode("shared", event.detail === 0)}>
                 Clear positioning
               </button>
             </div>
