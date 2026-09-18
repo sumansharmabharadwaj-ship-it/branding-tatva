@@ -73,3 +73,53 @@
   translate: none;
   opacity: 1;
 }
+
+/* Situation: the same grammar as the ladder, for a list instead of a line.
+   The four hairline rules draw themselves across in order, then each of the
+   three situations rises onto its rule. The copy column beside this list is
+   lg:sticky, so nothing here transforms an ancestor of it — only the rules
+   and the option buttons themselves move. The runtime already sweeps the
+   whole instrument in with a mask during its discovery beat; these windows
+   start as that sweep settles, so the two layer rather than compete. Same
+   completion point (0.455) and the same readable floors as the ladder. */
+@media (min-width: 1024px) {
+  #situation [data-situation-rule="true"] {
+    transform-origin: left center;
+    scale: clamp(
+        0,
+        calc((var(--services-scene-progress, 1) - (0.24 + var(--option-index, 0) * 0.03)) / 0.07),
+        1
+      )
+      1;
+  }
+
+  #situation [data-situation-option="true"] > button {
+    --option-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.3 + var(--option-index, 0) * 0.035)) / 0.06),
+      1
+    );
+    translate: 0 calc((1 - var(--option-arrival)) * 1.1rem);
+    opacity: calc(0.45 + var(--option-arrival) * 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #situation [data-situation-rule="true"] {
+    scale: none;
+  }
+
+  #situation [data-situation-option="true"] > button {
+    translate: none;
+    opacity: 1;
+  }
+}
+
+:root[data-motion="reduced"] #situation [data-situation-rule="true"] {
+  scale: none;
+}
+
+:root[data-motion="reduced"] #situation [data-situation-option="true"] > button {
+  translate: none;
+  opacity: 1;
+}

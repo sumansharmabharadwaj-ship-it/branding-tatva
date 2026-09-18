@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
 import { Container } from "@/components/Container";
@@ -325,8 +325,13 @@ export function SituationPath() {
             const isActive = displayed === option.id;
             const isCommitted = selected === option.id;
             return (
-              <div key={option.id} className="relative">
-                <div className="h-px bg-ivory/12" aria-hidden="true" />
+              <div
+                key={option.id}
+                data-situation-option="true"
+                style={{ "--option-index": index } as CSSProperties}
+                className="relative"
+              >
+                <div data-situation-rule="true" className="h-px bg-ivory/12" aria-hidden="true" />
                 <motion.button
                   type="button"
                   aria-pressed={isCommitted}
@@ -372,7 +377,12 @@ export function SituationPath() {
               </div>
             );
           })}
-          <div className="h-px bg-ivory/12" aria-hidden="true" />
+          <div
+            data-situation-rule="true"
+            style={{ "--option-index": OPTIONS.length } as CSSProperties}
+            className="h-px bg-ivory/12"
+            aria-hidden="true"
+          />
           {displayedPackage ? (
             <motion.div
               layout="size"
