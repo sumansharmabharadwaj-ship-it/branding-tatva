@@ -1,19 +1,19 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, type CSSProperties } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import type { Project } from "@/sections/HomeV4/homeSnapshotProjects";
 import { useLenis } from "@/components/SmoothScrollProvider";
+import styles from "./ProjectFile.module.css";
 
 // Suman's board: "Click — the whole homepage freezes. The card opens
 // full screen. The page becomes the project." The file opens as a
 // cinematic overlay: the project's own hero footage becomes the room,
-// tinted by its accent, and the documented decision trail reads over
-// it — challenge, insight, verified outcome, real stats. Everything
-// shown comes straight from projects.ts; the full case study is one
+// with a light reading surface for the documented decision trail:
+// challenge, insight, verified outcome, real stats. Everything shown
+// comes from the homepage project snapshot; the full case study is one
 // action away. A native modal keeps focus inside the file and lifts it
 // above the chapter's transforms. Closing restores the reader's place.
 // The shared media director gives the opened file the film budget.
@@ -24,6 +24,9 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const backRef = useRef<HTMLButtonElement>(null);
+  const readingRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLElement>(null);
+  const progressRef = useRef<HTMLSpanElement>(null);
   const projectSlug = project?.slug;
 
   useEffect(() => {
@@ -47,6 +50,37 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
     };
   }, [projectSlug, lenis]);
 
+  useEffect(() => {
+    const reading = readingRef.current;
+    const content = contentRef.current;
+    const progress = progressRef.current;
+    if (!projectSlug || !reading || !content || !progress) return;
+    if (prefersReducedMotion) {
+      progress.style.transform = "scaleX(1)";
+      return;
+    }
+    let frame = 0;
+    const render = () => {
+      frame = 0;
+      const distance = reading.scrollHeight - reading.clientHeight;
+      const amount = distance > 0 ? Math.min(1, Math.max(0, reading.scrollTop / distance)) : 1;
+      progress.style.transform = `scaleX(${amount})`;
+    };
+    function schedule() {
+      if (!frame) frame = window.requestAnimationFrame(render);
+    }
+    const observer = new ResizeObserver(schedule);
+    observer.observe(reading);
+    observer.observe(content);
+    reading.addEventListener("scroll", schedule, { passive: true });
+    render();
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+      reading.removeEventListener("scroll", schedule);
+    };
+  }, [projectSlug, prefersReducedMotion]);
+
   const video = project?.heroVideo ?? project?.cardVideo;
   const poster = project?.heroPoster ?? project?.cardImage;
 
@@ -54,6 +88,7 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
     <dialog
       ref={dialogRef}
       data-project-file=""
+      data-motion={prefersReducedMotion ? "reduced" : "full"}
       aria-labelledby={titleId}
       aria-modal="true"
       onCancel={(event) => {
@@ -70,16 +105,16 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
           closeRef.current?.focus({ preventScroll: true });
         }
       }}
-      className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none overflow-hidden border-0 bg-soil p-0 text-ivory backdrop:bg-soil"
+      className={styles.dialog}
+      style={{ "--file-accent": project?.accent ?? "#5C6B4A" } as CSSProperties}
     >
       {project && (
         <>
-          {/* The room: the project's own footage, accent tinted. */}
-          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          {/* The film stays bright; the reading surface supplies contrast. */}
+          <div className={styles.media} aria-hidden="true">
             {video && !prefersReducedMotion ? (
               <video
                 data-home-media-priority="10"
-                className="h-full w-full object-cover"
                 src={video}
                 poster={poster}
                 muted
@@ -90,87 +125,77 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
             ) : (
               poster && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={poster} alt="" className="h-full w-full object-cover" />
+                <img src={poster} alt="" />
               )
             )}
-            <div className="absolute inset-0" style={{ backgroundColor: `${project.accent}26` }} />
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage:
-                  "linear-gradient(180deg, rgba(23,20,17,0.82) 0%, rgba(23,20,17,0.55) 45%, rgba(23,20,17,0.88) 100%)",
-              }}
-            />
           </div>
 
-          <button
-            ref={closeRef}
-            type="button"
-            onClick={onClose}
-            aria-label="Close project file"
-            className="absolute right-5 top-5 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-ivory/30 text-ivory transition-colors duration-300 hover:border-ivory hover:bg-ivory/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone"
-            style={{ backgroundColor: "rgba(23,20,17,0.6)" }}
-          >
-            <X size={18} />
-          </button>
-
-          <div className="relative h-full overflow-y-auto overscroll-contain" data-lenis-prevent="">
-            <motion.div
-              key={project.slug}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="relative mx-auto flex min-h-full max-w-3xl flex-col justify-center px-6 py-24 sm:px-10 sm:py-28"
+          <div className={styles.toolbar}>
+            <span className={styles.toolbarLabel}>The evidence archive</span>
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={onClose}
+              aria-label="Close project file"
+              className={styles.close}
             >
-              <p className="text-xs font-medium uppercase tracking-[0.25em] text-ivory/75">
+              <span>Close</span><X size={18} aria-hidden="true" />
+            </button>
+            <span className={styles.progress} aria-hidden="true"><span ref={progressRef} /></span>
+          </div>
+
+          <div ref={readingRef} className={styles.reading} data-lenis-prevent="" role="region" aria-label="Project reading" tabIndex={0}>
+            <article
+              ref={contentRef}
+              key={project.slug}
+              className={styles.paper}
+            >
+              <p className={styles.eyebrow}>
                 Project file · {project.industry}
               </p>
-              <h2 id={titleId} className="mt-3 font-display text-display-sm font-normal text-ivory sm:text-display-md">
+              <h2 id={titleId} className={styles.title}>
                 {project.title}
               </h2>
               {project.hook && (
-                <p className="mt-4 max-w-xl font-display text-lg italic text-ivory/85 sm:text-xl">{project.hook}</p>
+                <p className={styles.hook}>{project.hook}</p>
               )}
 
-              <div className="mt-8 space-y-6 border-l-2 pl-5" style={{ borderColor: `${project.accent}88` }}>
+              <div className={styles.trail}>
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">The challenge</p>
-                  <p className="mt-1.5 max-w-xl text-base leading-relaxed text-ivory/85">{project.challenge}</p>
+                  <h3><span aria-hidden="true">01</span>The challenge</h3>
+                  <p>{project.challenge}</p>
                 </div>
                 {project.insight && (
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">The insight</p>
-                    <p className="mt-1.5 max-w-xl text-base leading-relaxed text-ivory/85">{project.insight}</p>
+                    <h3><span aria-hidden="true">02</span>The insight</h3>
+                    <p>{project.insight}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-ivory/60">The verified outcome</p>
-                  <p className="mt-1.5 max-w-xl text-base leading-relaxed text-ivory/85">{project.outcome}</p>
+                  <h3><span aria-hidden="true">{project.insight ? "03" : "02"}</span>The verified outcome</h3>
+                  <p>{project.outcome}</p>
                 </div>
               </div>
 
               {project.stats && project.stats.length > 0 && (
-                <ul className="mt-8 flex flex-wrap gap-3">
+                <ul className={styles.stats} aria-label="Recorded project results">
                   {project.stats.map((s) => (
                     <li
                       key={s.label}
-                      className="rounded-2xl border border-ivory/15 px-4 py-3"
-                      style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
                     >
-                      <p className="font-display text-2xl font-normal leading-none text-ivory">
+                      <p className={styles.value}>
                         {s.value}
                       </p>
-                      <p className="mt-1 max-w-[11rem] text-xs leading-relaxed text-ivory/75">{s.label}</p>
+                      <p className={styles.statLabel}>{s.label}</p>
                     </li>
                   ))}
                 </ul>
               )}
 
-              <div className="mt-10 flex flex-wrap items-center gap-5">
+              <div className={styles.actions}>
                 <Link
                   href={`/work/${project.slug}`}
-                  className="inline-flex min-h-12 items-center gap-2 rounded-full px-6 py-3 text-sm font-medium text-soil transition-colors duration-300 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
-                  style={{ backgroundColor: project.accent, color: "#F4EFE6" }}
+                  className={styles.caseLink}
                 >
                   Open the full case study <span aria-hidden="true">→</span>
                 </Link>
@@ -178,12 +203,12 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
                   ref={backRef}
                   type="button"
                   onClick={onClose}
-                  className="link-underline min-h-12 text-sm text-ivory/75 transition-colors duration-300 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+                  className={styles.back}
                 >
                   Back to the archive
                 </button>
               </div>
-            </motion.div>
+            </article>
           </div>
         </>
       )}
