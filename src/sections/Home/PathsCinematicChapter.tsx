@@ -234,7 +234,7 @@ export function PathsCinematicChapter() {
           </div>
           <p className={styles.intro}>
             A first identity, a changed position, or work that needs a consistent hand.
-            The starting point shapes the scope.
+            Your starting point decides the scope.
           </p>
           </header>
 

@@ -98,7 +98,7 @@ export function HomeV4SceneRhythm() {
         const matches = Array.from(element.querySelectorAll<HTMLElement>(selector));
         return matches.map((node, index) => ({
           node, treatment, index, spread: index - (matches.length - 1) / 2,
-          side: sceneIndex % 2 ? 1 : -1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
+          side: sceneIndex % 2 ? 1 : -1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, appliedEnter: 0, last: "",
         }));
       });
       // Paint the original semantic text. No split words, duplicate accessible
@@ -123,7 +123,7 @@ export function HomeV4SceneRhythm() {
     const footerTitle = document.querySelector<HTMLElement>("footer h2");
     // The footer title is a separate reading beat, scoped to the mounted home.
     if (footerTitle) scenes.push({ element: footerTitle.parentElement!, active: true, ink: [], label: null, layers: [{
-      node: footerTitle, treatment: "title", index: 0, spread: 0, side: 1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, last: "",
+      node: footerTitle, treatment: "title", index: 0, spread: 0, side: 1, appliedX: 0, appliedY: 0, appliedTurn: 0, appliedScale: 1, appliedEnter: 0, last: "",
     }] });
 
     function render(now: number) {
@@ -219,18 +219,25 @@ export function HomeV4SceneRhythm() {
           y = settle(layer.appliedY, y, 0.08);
           rotate = settle(layer.appliedTurn, rotate, 0.008);
           scale = settle(layer.appliedScale, scale, 0.0002);
-          const value = `${x.toFixed(2)}|${y.toFixed(2)}|${rotate.toFixed(3)}|${scale.toFixed(4)}`;
+          // The same eased entrance the transforms use, published as its own
+          // signal so CSS can derive the blur sharpening and settle fade
+          // without a second measurement path. Unset (server render, reduced
+          // motion, this director unmounted) reads as fully sharp.
+          const enter = settle(layer.appliedEnter, amount, 0.002);
+          const value = `${x.toFixed(2)}|${y.toFixed(2)}|${rotate.toFixed(3)}|${scale.toFixed(4)}|${enter.toFixed(3)}`;
           if (layer.last === value) return;
           layer.last = value;
           layer.appliedX = x;
           layer.appliedY = y;
           layer.appliedTurn = rotate;
           layer.appliedScale = scale;
+          layer.appliedEnter = enter;
           node.dataset.homeMotionLayer = treatment;
           node.style.setProperty("--scene-x", `${x.toFixed(2)}px`);
           node.style.setProperty("--scene-y", `${y.toFixed(2)}px`);
           node.style.setProperty("--scene-turn", `${rotate.toFixed(3)}deg`);
           node.style.setProperty("--scene-scale", scale.toFixed(4));
+          node.style.setProperty("--scene-enter", enter.toFixed(3));
         });
         ink.forEach(({ text, top: textTop, height, visible }) => {
           if (!visible || readingFocused) return;
@@ -312,7 +319,7 @@ export function HomeV4SceneRhythm() {
         });
         layers.forEach(({ node }) => {
           delete node.dataset.homeMotionLayer;
-          ["--scene-x", "--scene-y", "--scene-turn", "--scene-scale"].forEach((property) => node.style.removeProperty(property));
+          ["--scene-x", "--scene-y", "--scene-turn", "--scene-scale", "--scene-enter"].forEach((property) => node.style.removeProperty(property));
         });
       });
     };

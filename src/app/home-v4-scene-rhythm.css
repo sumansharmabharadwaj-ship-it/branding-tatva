@@ -5,6 +5,35 @@ html.home-v4-mounted [data-home-motion-layer] {
   rotate: var(--scene-turn, 0deg);
   scale: var(--scene-scale, 1);
   transform-origin: 50% 65%;
+  /* Blur sharpening on the same entrance signal the transforms already
+     follow (the living-brand register's named reveal). --scene-enter is 1
+     offscreen and eases to 0 as the reading settles, so a chapter resolves
+     from soft to sharp on the visitor's own scroll. Unset (server render,
+     reduced motion, director unmounted) reads as 0: fully sharp, fully
+     opaque — nothing is ever hidden behind JavaScript. */
+  opacity: calc(1 - var(--scene-enter, 0) * 0.34);
+}
+
+@media (min-width: 1181px) and (pointer: fine) {
+  html.home-v4-mounted [data-home-motion-layer] {
+    /* Desktop only: blur cost grows with the square of the radius, and the
+       compact entrance travel is short enough that the fade alone carries
+       it on phones. 2px peak keeps text legible at every point of the
+       reveal — this sharpens reading, never delays it. */
+    filter: blur(calc(var(--scene-enter, 0) * 2px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce), (forced-colors: active), print {
+  html.home-v4-mounted [data-home-motion-layer] {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+html[data-motion="reduced"] .home-v4 [data-home-motion-layer] {
+  opacity: 1;
+  filter: none;
 }
 
 /* Keep the same type wrapping before hydration and when motion is paused.
