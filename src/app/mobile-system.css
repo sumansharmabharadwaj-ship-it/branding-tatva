@@ -1,10 +1,6 @@
 /* Shared mobile closure: protect the same header, footer and consent controls
    on every route instead of repairing each cinematic page independently. */
 
-.site-header__mobile-audio {
-  display: none;
-}
-
 .site-footer-email {
   overflow-wrap: anywhere;
 }
@@ -104,10 +100,6 @@ html[data-site-menu="open"] [data-auto-journey-control] {
 
   .site-header__ambient {
     display: none;
-  }
-
-  .site-header__mobile-audio {
-    display: flex;
   }
 
   .site-header__menu-shell {

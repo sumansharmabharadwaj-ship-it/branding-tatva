@@ -440,17 +440,6 @@ export function Header({ transparent = false }: HeaderProps) {
                 <motion.div
                   data-menu-item=""
                   variants={prefersReducedMotion ? undefined : navItemVariants}
-                  transition={NAV_ITEM_TRANSITION}
-                  className="site-header__mobile-audio mt-2 items-center justify-between rounded-2xl border-t border-soil/10 px-4 pt-3 min-[430px]:hidden"
-                >
-                  <span className="text-xs font-medium uppercase tracking-[0.16em] text-soil/62">
-                    Ambient sound
-                  </span>
-                  <AmbientAudioButton accent={accent} />
-                </motion.div>
-                <motion.div
-                  data-menu-item=""
-                  variants={prefersReducedMotion ? undefined : navItemVariants}
                   transition={NAV_CTA_TRANSITION}
                   className="mt-2 border-t border-soil/10 pt-3 sm:hidden"
                 >
