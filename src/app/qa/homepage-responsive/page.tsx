@@ -12,6 +12,7 @@ const PRESETS = {
   laptop790: { label: "Laptop reading height", width: 1280, height: 790 },
   tablet: { label: "Tablet portrait", width: 768, height: 820 },
   mobile: { label: "Mobile portrait", width: 390, height: 844 },
+  landscape: { label: "Short landscape phone", width: 844, height: 320 },
   narrow: { label: "Narrow phone", width: 320, height: 720 },
   tall: { label: "Tall phone", width: 430, height: 932 },
   zoom200: { label: "200% zoom equivalent", width: 674, height: 468 },

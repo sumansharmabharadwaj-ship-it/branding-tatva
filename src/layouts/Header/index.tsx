@@ -4,8 +4,8 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import type { PointerEvent } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import type { PointerEvent, ReactNode } from "react";
+import { AnimatePresence, motion, useIsPresent } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo, LogoMark } from "@/components/Logo";
 import { AmbientAudioButton } from "@/components/AmbientAudio";
@@ -45,6 +45,13 @@ function resetBrandPointer(brand: HTMLAnchorElement | null) {
   brand?.style.removeProperty("--brand-pointer-y");
 }
 
+function MobileMenuLayer({ children }: { children: ReactNode }) {
+  const present = useIsPresent();
+  // The exit can finish visually without leaving outgoing links in the
+  // keyboard sequence or intercepting the visitor's next pointer action.
+  return <div inert={!present} aria-hidden={!present} data-menu-state={present ? "open" : "closing"}>{children}</div>;
+}
+
 export function Header({ transparent = false }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -54,6 +61,7 @@ export function Header({ transparent = false }: HeaderProps) {
   const [focusedRoute, setFocusedRoute] = useState<string | null>(null);
   const lastScrollRef = useRef(0);
   const brandRef = useRef<HTMLAnchorElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const desktopNavRef = useRef<HTMLElement>(null);
   const navigationFocusRef = useRef<"desktop" | "menu-button" | null>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -62,6 +70,11 @@ export function Header({ transparent = false }: HeaderProps) {
   const lenis = useLenis();
   const element = useCurrentElement();
   const pathname = usePathname() ?? "/";
+
+  function closeMenu() {
+    menuButtonRef.current?.focus({ preventScroll: true });
+    setOpen(false);
+  }
 
   function handleBrandPointer(event: PointerEvent<HTMLAnchorElement>) {
     if (pathname !== "/" || prefersReducedMotion || event.pointerType !== "mouse") return;
@@ -123,8 +136,16 @@ export function Header({ transparent = false }: HeaderProps) {
 
   useEffect(() => {
     if (!open) return;
-    const previousOverflow = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
+    const rootStyle = document.documentElement.style;
+    const previousOverflow = rootStyle.getPropertyValue("overflow");
+    const previousOverflowPriority = rootStyle.getPropertyPriority("overflow");
+    const previousGutter = rootStyle.getPropertyValue("scrollbar-gutter");
+    const previousGutterPriority = rootStyle.getPropertyPriority("scrollbar-gutter");
+    const gutter = getComputedStyle(document.documentElement).getPropertyValue("scrollbar-gutter");
+    const wasStopped = lenis?.isStopped;
+    lenis?.stop();
+    rootStyle.setProperty("scrollbar-gutter", gutter.includes("stable") ? gutter : "stable");
+    rootStyle.setProperty("overflow", "hidden");
     document.documentElement.dataset.siteMenu = "open";
     const inertTargets = [document.querySelector<HTMLElement>("main"), document.querySelector<HTMLElement>("footer")]
       .filter((target): target is HTMLElement => Boolean(target));
@@ -135,8 +156,9 @@ export function Header({ transparent = false }: HeaderProps) {
 
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
+        e.preventDefault();
+        menuButtonRef.current?.focus({ preventScroll: true });
         setOpen(false);
-        window.requestAnimationFrame(() => menuButtonRef.current?.focus());
         return;
       }
       if (e.key !== "Tab") return;
@@ -144,12 +166,12 @@ export function Header({ transparent = false }: HeaderProps) {
       const menu = menuRef.current;
       const trigger = menuButtonRef.current;
       if (!menu || !trigger) return;
-      const menuItems = Array.from(
-        menu.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter((item) => item.getClientRects().length > 0);
-      const focusables = [trigger, ...menuItems];
+      const selector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      const focusables = [
+        ...Array.from(headerRef.current?.querySelectorAll<HTMLElement>(selector) ?? []),
+        ...Array.from(menu.querySelectorAll<HTMLElement>(selector)),
+      ].filter((item) => item.getClientRects().length > 0 && !item.closest("[inert]"));
+      if (!focusables.length) return;
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
       const active = document.activeElement as HTMLElement | null;
@@ -165,13 +187,17 @@ export function Header({ transparent = false }: HeaderProps) {
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
-      document.documentElement.style.overflow = previousOverflow;
+      if (previousOverflow) rootStyle.setProperty("overflow", previousOverflow, previousOverflowPriority);
+      else rootStyle.removeProperty("overflow");
+      if (previousGutter) rootStyle.setProperty("scrollbar-gutter", previousGutter, previousGutterPriority);
+      else rootStyle.removeProperty("scrollbar-gutter");
+      if (!wasStopped) lenis?.start();
       delete document.documentElement.dataset.siteMenu;
       inertTargets.forEach((target, index) => {
         target.inert = previousInert[index];
       });
     };
-  }, [open]);
+  }, [open, lenis]);
 
   useEffect(() => {
     setOpen(false);
@@ -217,6 +243,7 @@ export function Header({ transparent = false }: HeaderProps) {
   return (
     <>
       <motion.header
+        ref={headerRef}
         data-site-header
         onFocusCapture={() => setFocusWithin(true)}
         onBlurCapture={(event) => {
@@ -234,6 +261,7 @@ export function Header({ transparent = false }: HeaderProps) {
             }`}
           >
             <Link ref={brandRef} href="/" aria-label="Branding Tatva home"
+              onClick={() => setOpen(false)}
               data-brand-compact={pathname === "/" && scrolled ? "true" : undefined}
               onPointerEnter={handleBrandPointer} onPointerMove={handleBrandPointer}
               onPointerLeave={() => resetBrandPointer(brandRef.current)}
@@ -329,7 +357,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 aria-label={open ? "Close menu" : "Open menu"}
                 aria-expanded={open}
                 aria-controls="primary-menu"
-                onClick={() => setOpen((v) => !v)}
+                onClick={() => { if (open) closeMenu(); else setOpen(true); }}
               >
                 <AnimatePresence initial={false}>
                   {open ? (
@@ -366,7 +394,7 @@ export function Header({ transparent = false }: HeaderProps) {
 
       <AnimatePresence>
         {open && (
-          <>
+          <MobileMenuLayer key="mobile-menu">
             <motion.div
               variants={prefersReducedMotion ? undefined : backdropVariants}
               initial="initial"
@@ -374,13 +402,14 @@ export function Header({ transparent = false }: HeaderProps) {
               exit="exit"
               transition={BACKDROP_TRANSITION}
               className="fixed inset-0 z-30 bg-soil/40 backdrop-blur-xs"
-              onClick={() => setOpen(false)}
+              onClick={closeMenu}
               aria-hidden="true"
             />
             <div className="site-header__menu-shell fixed inset-x-0 top-20 z-40 flex justify-center px-4 sm:top-24">
               <motion.nav
                 ref={menuRef}
                 id="primary-menu"
+                data-lenis-prevent=""
                 variants={prefersReducedMotion ? undefined : mobileNavVariants}
                 initial="initial"
                 animate="animate"
@@ -392,6 +421,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 <motion.ul variants={prefersReducedMotion ? undefined : navListVariants} className="flex flex-col">
                   {headerNavigation.map((item) => (
                     <motion.li
+                      data-menu-item=""
                       key={item.href}
                       variants={prefersReducedMotion ? undefined : navItemVariants}
                       transition={NAV_ITEM_TRANSITION}
@@ -399,7 +429,7 @@ export function Header({ transparent = false }: HeaderProps) {
                       <Link
                         href={item.href}
                         aria-current={isActive(item.href) ? "page" : undefined}
-                        onClick={() => setOpen(false)}
+                        onClick={closeMenu}
                         className="block min-h-12 rounded-2xl px-4 py-3 text-center font-display text-xl text-soil/80 transition-colors hover:bg-soil/[0.05] hover:text-clay focus-visible:bg-soil/[0.05] focus-visible:text-clay"
                       >
                         {item.label}
@@ -408,6 +438,7 @@ export function Header({ transparent = false }: HeaderProps) {
                   ))}
                 </motion.ul>
                 <motion.div
+                  data-menu-item=""
                   variants={prefersReducedMotion ? undefined : navItemVariants}
                   transition={NAV_ITEM_TRANSITION}
                   className="site-header__mobile-audio mt-2 items-center justify-between rounded-2xl border-t border-soil/10 px-4 pt-3 min-[430px]:hidden"
@@ -418,13 +449,14 @@ export function Header({ transparent = false }: HeaderProps) {
                   <AmbientAudioButton accent={accent} />
                 </motion.div>
                 <motion.div
+                  data-menu-item=""
                   variants={prefersReducedMotion ? undefined : navItemVariants}
                   transition={NAV_CTA_TRANSITION}
                   className="mt-2 border-t border-soil/10 pt-3 sm:hidden"
                 >
                   <Link
                     href="/contact"
-                    onClick={() => setOpen(false)}
+                    onClick={closeMenu}
                     className="flex min-h-12 w-full items-center justify-center rounded-full px-5 text-xs font-semibold uppercase tracking-[0.16em] text-soil"
                     style={{ backgroundColor: element.color }}
                   >
@@ -433,7 +465,7 @@ export function Header({ transparent = false }: HeaderProps) {
                 </motion.div>
               </motion.nav>
             </div>
-          </>
+          </MobileMenuLayer>
         )}
       </AnimatePresence>
     </>

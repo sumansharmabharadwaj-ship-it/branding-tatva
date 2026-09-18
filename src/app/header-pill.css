@@ -73,6 +73,40 @@
   color: #332e26;
 }
 
+/* The shell leaves the area around the reading surface to the backdrop.
+   This also keeps the last link reachable on short landscape viewports. */
+@media (max-width: 959px) {
+  .site-header__menu-shell {
+    bottom: max(.75rem, env(safe-area-inset-bottom, 0px));
+    align-items: flex-start;
+    pointer-events: none;
+  }
+
+  .site-header__menu-panel {
+    max-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: .75rem;
+    pointer-events: auto;
+  }
+}
+
+[data-menu-state="closing"] { pointer-events: none; }
+
+/* A keyboard reader gets the settled layout even during the opening cascade. */
+.site-header__menu-panel:focus-within,
+.site-header__menu-panel:focus-within [data-menu-item] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.site-header__menu-panel :is(a, button):focus-visible {
+  outline: 2px solid #514d3c;
+  outline-offset: 3px;
+}
+
+html[data-site-menu="open"] .consent-notice { display: none; }
+
 @media (hover: hover) {
   .site-header__cta:hover {
     border-color: #3d392b;
