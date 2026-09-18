@@ -36,8 +36,14 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
     const rootStyle = document.documentElement.style;
     const previousOverflow = rootStyle.getPropertyValue("overflow");
     const previousOverflowPriority = rootStyle.getPropertyPriority("overflow");
+    const previousGutter = rootStyle.getPropertyValue("scrollbar-gutter");
+    const previousGutterPriority = rootStyle.getPropertyPriority("scrollbar-gutter");
+    const computedGutter = getComputedStyle(document.documentElement).scrollbarGutter;
     const wasStopped = lenis?.isStopped;
     lenis?.stop();
+    // Retain the page's scrollbar space while the modal owns scrolling.
+    // Otherwise every earlier chapter reflows, shifting the archive on close.
+    rootStyle.setProperty("scrollbar-gutter", computedGutter.includes("stable") ? computedGutter : "stable");
     rootStyle.setProperty("overflow", "hidden");
     dialog.showModal();
     closeRef.current?.focus({ preventScroll: true });
@@ -45,6 +51,8 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
       dialog.close();
       if (previousOverflow) rootStyle.setProperty("overflow", previousOverflow, previousOverflowPriority);
       else rootStyle.removeProperty("overflow");
+      if (previousGutter) rootStyle.setProperty("scrollbar-gutter", previousGutter, previousGutterPriority);
+      else rootStyle.removeProperty("scrollbar-gutter");
       if (!wasStopped) lenis?.start();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
