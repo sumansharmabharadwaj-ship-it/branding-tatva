@@ -106,6 +106,7 @@
 }
 
 html[data-site-menu="open"] .consent-notice { display: none; }
+html[data-site-menu="open"] [data-guided-controls] { visibility: hidden; }
 
 @media (hover: hover) {
   .site-header__cta:hover {
