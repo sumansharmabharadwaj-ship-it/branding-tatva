@@ -175,8 +175,10 @@ export function TatvaStrip() {
         className="tatva-observatory__stage relative isolate overflow-hidden py-20 sm:py-28"
       >
         <div className="tatva-observatory__film" aria-hidden="true">
+          {/* No src attribute: a src attribute makes every <source> child
+              silently ignored, and the narrow screen source must be first
+              because browsers take the first matching source. */}
           <video
-            src="/videos/higgsfield-confident-light.mp4"
             poster="/images/higgsfield-confident-light-poster.jpg"
             muted
             autoPlay={!prefersReducedMotion}
@@ -184,7 +186,10 @@ export function TatvaStrip() {
             playsInline
             preload={inView ? "metadata" : "none"}
             data-home-playback-rate="1.2"
-          />
+          >
+            <source media="(max-width: 767px)" src="/videos/higgsfield-confident-light-mobile.mp4" type="video/mp4" />
+            <source src="/videos/higgsfield-confident-light.mp4" type="video/mp4" />
+          </video>
           <span />
         </div>
 

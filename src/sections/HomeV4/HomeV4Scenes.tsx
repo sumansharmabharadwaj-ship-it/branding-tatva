@@ -381,6 +381,11 @@ export function V4RecognitionScene() {
           preload="metadata"
           poster="/images/pexels-fog-sunrise-poster.jpg"
         >
+          {/* Narrow screens take the same 768 wide derivative the evidence
+              chapter already fetches, so the second mount of this footage
+              rides the HTTP cache instead of pulling the desktop webm. The
+              mobile source must stay first: browsers take the first match. */}
+          <source media="(max-width: 767px)" src="/videos/pexels-fog-sunrise-mobile.mp4" type="video/mp4" />
           <source src="/videos/pexels-fog-sunrise.webm" type="video/webm" />
           <source src="/videos/pexels-fog-sunrise.mp4" type="video/mp4" />
         </video>
