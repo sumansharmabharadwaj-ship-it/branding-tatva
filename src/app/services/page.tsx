@@ -522,15 +522,12 @@ export default async function ServicesPage() {
           <SceneHandoff color="#191B16" />
         </section>
 
-        {/* Perception gives the system build a market consequence. The
-            dedicated ascent film and one stable interactive frame replace
-            the former shader heavy ladder: native page progress previews the
-            four states, while hover, touch, and keyboard input can hold any
-            state for closer reading. */}
+        {/* A content-sized memory model. Deliberate tab choices stay stable
+            while native scrolling carries the reader toward the audit. */}
         <section
           id="education"
           data-services-scene="education"
-          className="relative flex min-h-[140svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
+          className="relative flex flex-col overflow-hidden py-16 sm:py-20 lg:py-24"
           style={{ backgroundColor: "#F2EBDD" }}
         >
           <div data-perception-ambient-film="true" aria-hidden="true" className="absolute inset-0">

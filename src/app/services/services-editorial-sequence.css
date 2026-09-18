@@ -258,3 +258,18 @@
 }
 :root[data-motion="reduced"] .discipline-output-sequence li::before { animation: none; }
 :root[data-motion="reduced"] #services-opening [data-services-hero-index] li { transition: none; }
+
+/* Memory is an interactive reading surface, with no artificial scroll hold. */
+.august-8-refined #education[data-services-scene="education"] {
+  min-height: 0 !important;
+  height: auto !important;
+  justify-content: flex-start;
+  padding-top: clamp(6.5rem, 9vw, 8rem) !important;
+  padding-bottom: clamp(4rem, 6vw, 6rem) !important;
+}
+@media (max-width: 767px) {
+  .august-8-refined #education[data-services-scene="education"] {
+    padding-top: 5.5rem !important;
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
