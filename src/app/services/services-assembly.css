@@ -1,0 +1,75 @@
+/* Assembly choreography for Services.
+
+   Measured against /about, which Suman names as the scroll character she
+   wants: About's large scale values are not a camera zoom. They come from
+   things arriving as the visitor scrolls — marker bars drawing from 0 to
+   0.9, diagram nodes growing from 0.2 to 1, a core assembling. Services
+   moved its content around but nothing in it was ever built in front of
+   the reader. This file adds that, driven entirely by the progress value
+   ServicesExperienceRuntime already writes to every scene:
+
+     --services-scene-progress  0 as the scene enters, 1 as it leaves,
+                                -1 before the runtime has measured it
+
+   Rules this obeys:
+   - Everything completes by 0.455, DIRECT_ANCHOR_PROGRESS in the runtime,
+     so a jump from the chapter rail never lands on a half-built ladder.
+   - Nothing ever falls below readable. Nodes start at 35% size and labels
+     at 45% opacity: an unmeasured or early scene looks like it is still
+     arriving, never like it is missing.
+   - var(..., 1) means no JavaScript renders the finished state.
+   - Individual `scale` and `translate` properties compose with the
+     existing `transform` on these elements instead of replacing it, so the
+     active rung keeps its own emphasis from services-luminous-clarity.css.
+   - Desktop only, where the ladder is a horizontal horizon. Mobile keeps
+     its current layout untouched.
+   - Both reduced-motion signals render the finished state. */
+
+@media (min-width: 1024px) {
+  /* The horizon draws itself left to right before the rungs arrive. */
+  #education [data-perception-horizon="true"] {
+    --horizon-draw: clamp(0, calc((var(--services-scene-progress, 1) - 0.26) / 0.12), 1);
+  }
+
+  #education [data-perception-horizon="true"]::before {
+    transform-origin: left center;
+    scale: var(--horizon-draw) 1;
+  }
+
+  /* Each rung then lands on it in order, one fortieth of the scene apart. */
+  #education [data-perception-stage-tab="true"] {
+    --rung-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.3 + var(--rung-index, 0) * 0.025)) / 0.05),
+      1
+    );
+    translate: 0 calc((1 - var(--rung-arrival)) * 1.1rem);
+    opacity: calc(0.45 + var(--rung-arrival) * 0.55);
+  }
+
+  #education [data-perception-stage-tab="true"]::before {
+    scale: calc(0.35 + var(--rung-arrival) * 0.65);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #education [data-perception-horizon="true"]::before,
+  #education [data-perception-stage-tab="true"]::before {
+    scale: none;
+  }
+
+  #education [data-perception-stage-tab="true"] {
+    translate: none;
+    opacity: 1;
+  }
+}
+
+:root[data-motion="reduced"] #education [data-perception-horizon="true"]::before,
+:root[data-motion="reduced"] #education [data-perception-stage-tab="true"]::before {
+  scale: none;
+}
+
+:root[data-motion="reduced"] #education [data-perception-stage-tab="true"] {
+  translate: none;
+  opacity: 1;
+}

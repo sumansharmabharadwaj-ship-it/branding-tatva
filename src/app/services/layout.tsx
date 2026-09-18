@@ -3,6 +3,7 @@ import "./services-scroll-compression.css";
 import "./services-discipline-journey.css";
 import "./services-anchor-contract.css";
 import "./services-luminous-clarity.css";
+import "./services-assembly.css";
 import "./services-journey-thread.css";
 import { ServicesExperienceRuntime } from "./ServicesExperienceRuntime";
 import { ServicesMediaDirector } from "./ServicesMediaDirector";

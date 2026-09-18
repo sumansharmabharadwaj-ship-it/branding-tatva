@@ -232,6 +232,7 @@ export function PerceptionLadder() {
                 onClick={() => activate(index, "click")}
                 onKeyDown={(event) => handleKeyDown(index, event)}
                 data-perception-stage-tab="true"
+                style={{ "--rung-index": index } as CSSProperties}
                 className="group relative min-h-20 px-3 py-3 text-left sm:min-h-24 sm:px-5 sm:text-center"
               >
                 <span className={`block font-display text-2xl leading-none transition-colors sm:text-3xl ${active ? "text-[#B85A34]" : "text-[#9A927E] group-hover:text-[#5C6B4A]"}`}>
