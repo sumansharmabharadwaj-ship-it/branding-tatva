@@ -2,11 +2,9 @@
 
 import type { CSSProperties, KeyboardEvent, PointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
-import {
-  AnimatePresence,
-  motion,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { DisciplineOutput } from "./DisciplineOutput";
 import { Reveal } from "@/components/Reveal";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -22,36 +20,12 @@ import {
 } from "@/lib/servicesJourney";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-const USER_HOLD_MS = 14000;
 const HOVER_INTENT_MS = 180;
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const DEFAULT_DISCIPLINE_ORDER = offerings.map((_, index) => index);
 const PANEL_VARIANTS = {
-  enter: (direction: number) => ({
-    opacity: 0.64,
-    x: direction * 20,
-    clipPath:
-      direction > 0
-        ? "inset(3% 18% 3% 0 round 1.15rem)"
-        : "inset(3% 0 3% 18% round 1.15rem)",
-    filter: "blur(2px)",
-  }),
-  center: {
-    opacity: 1,
-    x: 0,
-    clipPath: "inset(0 0 0 0 round 0rem)",
-    filter: "blur(0px)",
-  },
-  exit: (direction: number) => ({
-    opacity: 0.34,
-    x: direction * -14,
-    clipPath:
-      direction > 0
-        ? "inset(3% 0 3% 18% round 1.15rem)"
-        : "inset(3% 18% 3% 0 round 1.15rem)",
-    filter: "blur(2px)",
-  }),
-  reducedExit: { opacity: 0 },
+  enter: (direction: number) => ({ opacity: 0.84, y: direction * 12 }),
+  center: { opacity: 1, y: 0 },
 };
 
 // A situation changes sequencing, not scope. Every route can still inspect all
@@ -93,7 +67,9 @@ type ServicesProgressDetail = {
 export function ServiceDisciplineExplorer() {
   const railViewportRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const userHoldUntilRef = useRef(0);
+  const explorerRef = useRef<HTMLDivElement>(null);
+  const manualChoiceRef = useRef(false);
+  const pointerInsideRef = useRef(false);
   const hoverIntentRef = useRef<number | null>(null);
   const previousPositionRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -166,12 +142,19 @@ export function ServiceDisciplineExplorer() {
   }, [activeIndex, isDesktop, prefersReducedMotion]);
 
   useEffect(() => {
-    if (prefersReducedMotion || !routeReady) return;
+    if (prefersReducedMotion || !routeReady || !isDesktop) return;
 
     function onSceneProgress(event: Event) {
       const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
       if (detail?.id !== "offerings" || typeof detail.progress !== "number") return;
-      if (Date.now() < userHoldUntilRef.current) return;
+      // A deliberate choice stays put while the visitor reads or tabs.
+      // Rejoin the scroll sequence only after leaving the chapter. Phones
+      // keep explicit selection because scrolling is also how copy is read.
+      const hasFocus = explorerRef.current?.contains(document.activeElement);
+      if ((detail.progress < 0.04 || detail.progress > 0.96) && !hasFocus) {
+        manualChoiceRef.current = false;
+      }
+      if (manualChoiceRef.current || hasFocus || pointerInsideRef.current) return;
       const storyProgress = detail.storyProgress ?? detail.progress;
 
       const position = Math.min(
@@ -187,7 +170,7 @@ export function ServiceDisciplineExplorer() {
     return () => {
       window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
     };
-  }, [disciplineOrder, prefersReducedMotion, routeReady]);
+  }, [disciplineOrder, prefersReducedMotion, routeReady, isDesktop]);
 
   function clearHoverIntent() {
     if (hoverIntentRef.current === null) return;
@@ -197,7 +180,7 @@ export function ServiceDisciplineExplorer() {
 
   function activate(index: number, source: "hover" | "focus" | "click") {
     clearHoverIntent();
-    userHoldUntilRef.current = Date.now() + USER_HOLD_MS;
+    manualChoiceRef.current = true;
     if (index === activeIndex) return;
     setActiveIndex(index);
     track("capability_selected", {
@@ -210,6 +193,7 @@ export function ServiceDisciplineExplorer() {
   function handlePointerEnter(index: number, event: PointerEvent<HTMLButtonElement>) {
     // Touch browsers can retain a synthetic hover state after a tap.
     // Only a deliberate fine-pointer hover previews; touch remains click-led.
+    if (explorerRef.current?.contains(document.activeElement)) return;
     if (event.pointerType === "mouse" || event.pointerType === "pen") {
       clearHoverIntent();
       hoverIntentRef.current = window.setTimeout(() => {
@@ -237,7 +221,10 @@ export function ServiceDisciplineExplorer() {
   }
 
   return (
-    <div data-services-discipline-journey="true" className="relative min-h-svh">
+    <div ref={explorerRef} data-services-discipline-journey="true" className="relative min-h-svh"
+      onPointerEnter={(event) => { if (event.pointerType === "mouse") pointerInsideRef.current = true; }}
+      onPointerLeave={() => { pointerInsideRef.current = false; }}
+    >
       <div className="relative lg:flex lg:min-h-svh lg:items-center lg:overflow-hidden">
         <Container className="relative max-w-7xl py-2 lg:py-12">
           <div
@@ -248,11 +235,11 @@ export function ServiceDisciplineExplorer() {
               <Reveal>
                 <p className="text-sm font-medium uppercase tracking-wide text-sandstone">What the work can cover</p>
                 <h2 data-discipline-heading="true" className="mt-2 text-display-sm font-display font-normal text-ivory">
-                  The order of the work matters more than the list of services.
+                  One position. Six ways to put it to work.
                 </h2>
                 <p data-discipline-intro="true" className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
                   {routePlan
-                    ? `${routePlan.label} changes what should come first. Nothing is included to make the proposal look larger.`
+                    ? `${routePlan.label} sets the starting point. Each discipline carries that decision into the places buyers meet you.`
                     : "Choose a situation above to see the relevant order, or inspect every discipline here."}
                 </p>
                 <div data-discipline-progress="true" className="mt-7 flex items-center gap-4" aria-hidden="true">
@@ -372,7 +359,6 @@ export function ServiceDisciplineExplorer() {
                   transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.56, ease: EASE }}
                 />
 
-                <AnimatePresence mode="popLayout" initial={false} custom={panelDirection}>
                   <motion.div
                     key={active.name}
                     custom={panelDirection}
@@ -382,7 +368,6 @@ export function ServiceDisciplineExplorer() {
                     variants={PANEL_VARIANTS}
                     initial={prefersReducedMotion ? false : "enter"}
                     animate="center"
-                    exit={prefersReducedMotion ? "reducedExit" : "exit"}
                     transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.34, ease: EASE }}
                     className="relative flex min-h-[18rem] flex-col justify-between lg:min-h-[20rem]"
                   >
@@ -400,6 +385,8 @@ export function ServiceDisciplineExplorer() {
                       </h3>
                       <p data-discipline-panel-detail="true" className="mt-6 max-w-2xl text-base leading-relaxed text-ivory/[0.88] sm:text-lg">{active.detail}</p>
                     </div>
+
+                    <DisciplineOutput index={activeIndex} />
 
                     <div data-discipline-panel-footer="true" className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ivory/12 pt-5">
                       <p data-service-route-context="true" className="max-w-sm text-sm leading-relaxed text-ivory/60">
@@ -424,7 +411,7 @@ export function ServiceDisciplineExplorer() {
                       </a>
                     </div>
                   </motion.div>
-                </AnimatePresence>
+
               </div>
             </div>
           </div>

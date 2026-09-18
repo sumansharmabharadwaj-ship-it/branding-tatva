@@ -175,10 +175,10 @@ const JUMP_ITEMS = [
 // visitor is moving. The opening needs a quicker read: four commercial acts
 // that explain the page before asking someone to process its full contents.
 const HERO_ACTS = [
-  { href: "#situation", number: "01", label: "Name the situation", note: "Find the real starting point" },
-  { href: "#offerings", number: "02", label: "See the system", note: "Inspect what the work covers" },
-  { href: "#proof", number: "03", label: "Follow the evidence", note: "Trace one decision into delivery" },
-  { href: "#book", number: "04", label: "Bring the problem", note: "Enter the Strategy Room prepared" },
+  { href: "#situation", number: "01", label: "Name the real problem", note: "The business, the buyer, the gap" },
+  { href: "#offerings", number: "02", label: "Connect the decisions", note: "Position into language, identity, and action" },
+  { href: "#proof", number: "03", label: "See what holds up", note: "Real projects and the decisions behind them" },
+  { href: "#book", number: "04", label: "Talk it through", note: "Thirty minutes directly with Suman" },
 ];
 
 // Ambient consolidation (Suman's review: "duplicated ambient effects",
@@ -261,13 +261,13 @@ export default async function ServicesPage() {
           id="services-opening"
           className="relative flex min-h-[100vh] flex-col justify-center overflow-clip bg-soil"
         >
-          <LivingGradient preset="canopy" />
+          <LivingGradient preset="meadow" />
           <HeroReveal />
           {/* The headline resolves by word, not character. It
               participates in the scene without delaying basic
               comprehension. */}
           <Container className="relative py-20 sm:py-28">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+            <div className="services-opening-layout grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-16">
               <Reveal
                 delay={0.08}
                 className="services-hero-copy rounded-[1.75rem] border border-ivory/10 bg-[rgba(22,30,25,0.36)] p-5 shadow-[0_28px_90px_rgba(10,16,13,0.2)] backdrop-blur-xl sm:p-7"
@@ -291,11 +291,11 @@ export default async function ServicesPage() {
                   splitType="words"
                   className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
                 >
-                  When the business has grown past its brand, begin with the position.
+                  Decide why they choose you. Build the brand around that.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
                   Remote brand strategy for UK service businesses, led directly by Suman Sharma.
-                  See what gets decided, what gets built, and what the evidence can support.
+                  Position, language, identity, and the places buyers meet you.
                 </p>
                 {/* The hero's one quiet action — a visitor sold by the
                     opening claim previously had nowhere to act until the
@@ -311,7 +311,7 @@ export default async function ServicesPage() {
                       href="#situation"
                       className="group inline-flex min-h-11 items-center gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
                     >
-                      <span className="link-underline">Choose the situation that sounds like yours</span>
+                      <span className="link-underline">Find your starting point</span>
                       <ArrowDown
                         aria-hidden="true"
                         className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5"
@@ -325,7 +325,8 @@ export default async function ServicesPage() {
                   complete nine-chapter rail takes over once the visitor
                   moves, so the headline never has to compete with a table
                   of contents before its argument has landed. */}
-              <Reveal delay={0.34} className="hidden lg:block lg:pb-2">
+              <Reveal delay={0.18} className="services-opening-map lg:pb-2">
+                <p className="services-opening-map-label">A clearer path from here</p>
                 <ol
                   aria-label="The Brand Strategy journey"
                   data-services-hero-index="true"
