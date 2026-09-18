@@ -201,3 +201,112 @@
 :root[data-motion="reduced"] #offerings [data-discipline-dot="true"] {
   transform: none;
 }
+
+/* Proof: the evidence arrives as a chain. The thread draws down, each of
+   its three nodes appears as the line reaches it and then grows, and the
+   proof beats land in order.
+
+   The thread is a 1px div whose three nodes are its own absolutely placed
+   children, so a vertical scale would squash them. It is drawn with a clip
+   instead, which also means each node is hidden until the line reaches it.
+   The clip's side insets are negative so the 0.55rem nodes are not trimmed
+   to the line's 1px width. Nodes already use transform for placement, so
+   their growth uses the separate scale property.
+
+   Each beat button's opacity is set inline by Framer Motion, which would
+   silently win over any stylesheet opacity on the button. So the list item
+   is animated instead: its opacity multiplies with the button's own, and
+   the active/complete/waiting treatment survives.
+
+   Indices come from attribute values and nth-child, so VerifiedOutcome is
+   unchanged. Everything completes by 0.45, inside DIRECT_ANCHOR_PROGRESS. */
+@media (min-width: 1024px) {
+  #proof [data-verified-proof-thread="true"] {
+    --thread-draw: clamp(0, calc((var(--services-scene-progress, 1) - 0.26) / 0.14), 1);
+    clip-path: inset(0 -2rem calc((1 - var(--thread-draw)) * 100%) -2rem);
+  }
+
+  #proof [data-verified-proof-node] {
+    --node-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.28 + var(--node-index, 0) * 0.04)) / 0.05),
+      1
+    );
+    scale: calc(0.3 + var(--node-arrival) * 0.7);
+  }
+
+  #proof [data-verified-proof-node="2"] { --node-index: 1; }
+  #proof [data-verified-proof-node="3"] { --node-index: 2; }
+
+  #proof [data-proof-beat="true"] {
+    --beat-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.3 + var(--beat-index, 0) * 0.03)) / 0.06),
+      1
+    );
+    translate: 0 calc((1 - var(--beat-arrival)) * 1rem);
+    opacity: calc(0.5 + var(--beat-arrival) * 0.5);
+  }
+
+  #proof [data-proof-beat="true"]:nth-child(2) { --beat-index: 1; }
+  #proof [data-proof-beat="true"]:nth-child(3) { --beat-index: 2; }
+  #proof [data-proof-beat="true"]:nth-child(4) { --beat-index: 3; }
+  #proof [data-proof-beat="true"]:nth-child(5) { --beat-index: 4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #proof [data-verified-proof-thread="true"] { clip-path: none; }
+  #proof [data-verified-proof-node] { scale: none; }
+  #proof [data-proof-beat="true"] { translate: none; opacity: 1; }
+}
+
+:root[data-motion="reduced"] #proof [data-verified-proof-thread="true"] { clip-path: none; }
+:root[data-motion="reduced"] #proof [data-verified-proof-node] { scale: none; }
+:root[data-motion="reduced"] #proof [data-proof-beat="true"] { translate: none; opacity: 1; }
+
+/* The three chapters restored from the old /work page — case index,
+   decision spine, concept studies — are not runtime scenes, so no
+   --services-scene-progress reaches them. Registering them as scenes would
+   renumber the chapter rail. Instead each item uses the browser's own
+   scroll timeline: it arrives as it enters the viewport and is settled by
+   the time it is a third of the way in.
+
+   Progressive enhancement: inside @supports, so a browser without scroll
+   timelines renders everything finished. Desktop only, and excluded under
+   both reduced-motion signals.
+
+   Case index cards are animated by Framer Motion (inline opacity and y), and
+   a CSS animation on opacity would outrank that inline style and flatten its
+   filter transitions. So they get translate and scale only. The decision
+   entries and concept dossiers are plain elements and also fade. */
+@keyframes bt-arrive-rise {
+  from { translate: 0 2.25rem; scale: 0.965; }
+  to   { translate: 0 0;       scale: 1; }
+}
+
+@keyframes bt-arrive-rise-fade {
+  from { translate: 0 1.75rem; opacity: 0.35; }
+  to   { translate: 0 0;       opacity: 1; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion="reduced"]) #index [role="listitem"] {
+      animation: bt-arrive-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+
+    :root:not([data-motion="reduced"]) [data-decision-map="true"] .border-t {
+      animation: bt-arrive-rise-fade linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+
+    :root:not([data-motion="reduced"]) [aria-label="Concept study dossiers"] > article {
+      animation: bt-arrive-rise-fade linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+  }
+}

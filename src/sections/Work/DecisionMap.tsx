@@ -63,7 +63,7 @@ export function DecisionMap() {
   const current = entries[active];
 
   return (
-    <section className="py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
+    <section data-decision-map="true" className="py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
       <Container className="max-w-6xl">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.mossInk }}>
