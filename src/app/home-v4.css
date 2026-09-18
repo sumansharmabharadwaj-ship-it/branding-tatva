@@ -1112,7 +1112,40 @@
 }
 
 .home-v4-chapter--paths {
+  position: relative;
   background: #f2f0e8;
+}
+
+/* The paths chapter sat on the only untouched flat cream between two
+   living grounds, measured at one scroll responsive property while its
+   neighbours held seven to eleven. Same construction as the method
+   chapter below: blooms on the wrapper's own pseudo-element, palette
+   colours at cream strength so the dark reading keeps its contrast,
+   transform only so nothing repaints. The camera lists every
+   [data-home-ground] wrapper as a surface, so this ground receives
+   data-gradient-active and the eased scroll signal with no new writer. */
+.home-v4-chapter--paths::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  background:
+    radial-gradient(44% 36% at 20% 68%, rgba(143, 174, 131, 0.26) 0%, rgba(143, 174, 131, 0.09) 46%, transparent 72%),
+    radial-gradient(38% 32% at 80% 24%, rgba(198, 169, 122, 0.2) 0%, rgba(198, 169, 122, 0.07) 48%, transparent 74%),
+    radial-gradient(50% 42% at 56% 86%, rgba(85, 107, 74, 0.12) 0%, transparent 70%);
+  opacity: calc(0.85 + var(--field-speed, 0) * 0.15);
+  animation: processGroundDrift 49s ease-in-out infinite alternate-reverse;
+  animation-play-state: paused;
+}
+
+.home-v4-chapter--paths[data-gradient-active="true"]::before {
+  animation-play-state: running;
+  will-change: transform;
+}
+
+.home-v4-chapter--paths > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home-v4-chapter--paths .paths-cinematic {
@@ -1168,16 +1201,39 @@
   100% { transform: translate3d(3.5%, 2.5%, 0) scale(1.14); }
 }
 
+/* The scroll lean, on `translate` deliberately: the drift keyframes own
+   `transform`, and the two properties compose instead of fighting, so
+   the camera's eased shift reads through the running animation. */
+.home-v4-chapter--process::before,
+.home-v4-chapter--paths::before,
+.home-v4-chapter--evidence::before,
+.home-v4-chapter--studio::before {
+  translate: var(--field-lean, 0px) 0;
+  transition: translate 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Reduced motion keeps every ground's full colour and stops all of it
+   moving, the drift and the scroll lean both, under either signal. */
 @media (prefers-reduced-motion: reduce) {
-  .home-v4-chapter--process::before {
+  .home-v4-chapter--process::before,
+  .home-v4-chapter--paths::before,
+  .home-v4-chapter--evidence::before,
+  .home-v4-chapter--studio::before {
     animation: none;
     opacity: 0.85;
+    translate: 0 0;
+    transition: none;
   }
 }
 
-html[data-motion="reduced"] .home-v4-chapter--process::before {
+html[data-motion="reduced"] .home-v4-chapter--process::before,
+html[data-motion="reduced"] .home-v4-chapter--paths::before,
+html[data-motion="reduced"] .home-v4-chapter--evidence::before,
+html[data-motion="reduced"] .home-v4-chapter--studio::before {
   animation: none;
   opacity: 0.85;
+  translate: 0 0;
+  transition: none;
 }
 
 .home-v4-chapter--process > div:first-child {
@@ -1191,8 +1247,37 @@ html[data-motion="reduced"] .home-v4-chapter--process::before {
 }
 
 .home-v4-chapter--evidence {
+  position: relative;
   min-height: 110svh;
   background: #171411;
+}
+
+/* Evidence held one scroll responsive property on a flat soil fill,
+   directly after the animated method journey. Dark sibling of the
+   method ground with its own geometry and cycle, so the two chapters
+   read as one weather system rather than a copied backdrop. */
+.home-v4-chapter--evidence::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 36% at 76% 32%, rgba(31, 58, 40, 0.5) 0%, rgba(31, 58, 40, 0.16) 46%, transparent 72%),
+    radial-gradient(46% 38% at 22% 78%, rgba(125, 142, 82, 0.2) 0%, rgba(125, 142, 82, 0.07) 46%, transparent 74%),
+    radial-gradient(36% 30% at 50% 12%, rgba(198, 169, 122, 0.1) 0%, transparent 70%);
+  opacity: calc(0.85 + var(--field-speed, 0) * 0.15);
+  animation: processGroundDrift 66s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+.home-v4-chapter--evidence[data-gradient-active="true"]::before {
+  animation-play-state: running;
+  will-change: transform;
+}
+
+.home-v4-chapter--evidence > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home-v4-chapter--evidence > section {
@@ -1212,7 +1297,35 @@ html[data-motion="reduced"] .home-v4-chapter--process::before {
 }
 
 .home-v4-chapter--studio {
+  position: relative;
   background: #f2f0e8;
+}
+
+/* Studio is the last cream chapter before the dark closing run. Warm
+   sand leads here where sage leads in paths, so the two ivory grounds
+   stay distinguishable at a glance. */
+.home-v4-chapter--studio::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 34% at 78% 70%, rgba(198, 169, 122, 0.24) 0%, rgba(198, 169, 122, 0.08) 46%, transparent 72%),
+    radial-gradient(46% 38% at 18% 26%, rgba(143, 174, 131, 0.17) 0%, rgba(143, 174, 131, 0.06) 48%, transparent 74%),
+    radial-gradient(40% 34% at 60% 8%, rgba(221, 226, 220, 0.5) 0%, transparent 68%);
+  opacity: calc(0.85 + var(--field-speed, 0) * 0.15);
+  animation: processGroundDrift 58s ease-in-out infinite alternate-reverse;
+  animation-play-state: paused;
+}
+
+.home-v4-chapter--studio[data-gradient-active="true"]::before {
+  animation-play-state: running;
+  will-change: transform;
+}
+
+.home-v4-chapter--studio > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home-v4-chapter--studio .studio-cinematic {

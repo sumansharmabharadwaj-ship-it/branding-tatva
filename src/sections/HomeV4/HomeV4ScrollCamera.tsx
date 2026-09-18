@@ -47,8 +47,8 @@ export function HomeV4ScrollCamera() {
       root.querySelectorAll<HTMLElement>(HANDOFF_SELECTOR),
     );
     const fields = Array.from(root.querySelectorAll<HTMLElement>("[data-living-gradient]"));
-    const processGround = root.querySelector<HTMLElement>('[data-home-v4-chapter="process"]');
-    const surfaces = processGround ? [...fields, processGround] : fields;
+    const grounds = Array.from(root.querySelectorAll<HTMLElement>("[data-home-ground]"));
+    const surfaces = [...fields, ...grounds];
     const finePointer = window.matchMedia("(pointer: fine)");
     let pointerX = 0;
     let pointerY = 0;
@@ -93,7 +93,7 @@ export function HomeV4ScrollCamera() {
         // Publish at each visible surface, never on the whole Home root.
         field.style.setProperty("--field-speed", easedVelocity.toFixed(4));
         field.style.setProperty("--field-lean", `${(easedShift * leanDistance).toFixed(2)}px`);
-        if (field === processGround) return;
+        if (grounds.includes(field)) return;
         const phase = clamp((viewport - rect.top) / (viewport + rect.height));
         const travel = finePointer.matches ? 100 : 28;
         field.style.setProperty("--current-draw", clamp((phase - 0.08) / 0.65).toFixed(4));

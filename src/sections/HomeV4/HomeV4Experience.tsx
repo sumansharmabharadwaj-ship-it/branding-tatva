@@ -86,6 +86,7 @@ export function HomeV4Experience() {
         data-home-v4-chapter="paths"
         data-home-section="paths"
         data-cursor-world="dark"
+        data-home-ground=""
         className="home-v4-chapter home-v4-chapter--paths"
       >
         <PathsCinematicChapter />
@@ -99,6 +100,7 @@ export function HomeV4Experience() {
         data-home-chapter="process"
         data-home-section="process"
         data-cursor-world="dark"
+        data-home-ground=""
         className="home-v4-chapter home-v4-chapter--process"
         aria-label="How the Branding Tatva method moves"
       >
@@ -114,6 +116,7 @@ export function HomeV4Experience() {
         data-home-chapter="evidence"
         data-home-section="evidence"
         data-cursor-world="dark"
+        data-home-ground=""
         className="home-v4-chapter home-v4-chapter--evidence"
       >
         <EvidenceWall />
@@ -140,6 +143,7 @@ export function HomeV4Experience() {
         data-home-v4-chapter="studio"
         data-home-section="studio"
         data-cursor-world="dark"
+        data-home-ground=""
         className="home-v4-chapter home-v4-chapter--studio"
       >
         <StudioCinematicChapter />
