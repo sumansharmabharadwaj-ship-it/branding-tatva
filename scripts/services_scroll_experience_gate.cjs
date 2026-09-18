@@ -301,7 +301,13 @@ async function auditViewport(browser, viewport) {
   await scrollSceneToProgress(page, "offerings", 0.72);
   await page.waitForTimeout(520);
   const advancedSelected = await selectedTabIndex(tabs);
-  assert(advancedSelected !== firstSelected, `${label}: scroll progress did not advance the discipline sequence`);
+  // Scroll-led progression is a desktop behaviour; phones keep explicit
+  // selection because scrolling is also how the copy is read.
+  if (viewport.width >= 1024) {
+    assert(advancedSelected !== firstSelected, `${label}: scroll progress did not advance the discipline sequence`);
+  } else {
+    assert(advancedSelected === firstSelected, `${label}: scroll moved the click-led phone selection`);
+  }
 
   // Let the runtime's velocity smoothing come to rest before the manual
   // gesture, the way a visitor's tap lands on a settled page — a click
