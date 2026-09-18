@@ -68,16 +68,16 @@
   .map { display: none; }
 }
 
-/* 830, raised from 780. The scene's natural frame measures 826px, and
-   the frameFits guard (correctly) releases the cinematic hold whenever
-   the frame outgrows the viewport. At 780 this compression block left a
-   dead band: a real 1440x900 MacBook reports about 790px of viewport,
-   too tall to compress and too short for the 826px frame, so the
-   signature chapter fell to static on exactly the laptop class that
-   already lost it once to the old 901px gate. The ceiling sits just
-   above the natural frame height so uncompressed layouts take over the
-   moment they genuinely fit. */
-@media (min-width: 821px) and (max-height: 830px) {
+/* 853, raised from 830 after the connection animations grew the
+   natural frame from 826px to a measured 854px. The frameFits guard
+   (correctly) releases the cinematic hold whenever the frame outgrows
+   the viewport, so any viewport shorter than the natural frame must get
+   this compressed layout or the chapter falls to static. At 830 that
+   reopened a dead band at 831 to 853, the same failure that already hit
+   real 1440x900 MacBooks (about 790px of viewport) under the old 780
+   ceiling. The ceiling sits one pixel under the natural frame height so
+   uncompressed layouts take over the moment they genuinely fit. */
+@media (min-width: 821px) and (max-height: 853px) {
   /* Retuned against the frameFits guard rather than by eye: the
      compressed frame measured 799px, which cleared nothing below 800.
      These values bring the natural frame under the 761px floor, so the
