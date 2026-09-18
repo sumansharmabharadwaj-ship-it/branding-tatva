@@ -38,7 +38,9 @@ export function MobileAuthorityDeck({
       setTransitionDirection(direction);
       setActiveIndex(nextIndex);
     }
-    if (focus) requestAnimationFrame(() => tabRefs.current[nextIndex]?.focus());
+    // All tabs stay mounted, so focus can move immediately. Waiting for an
+    // animation frame can strand focus when browser rendering is paused.
+    if (focus) tabRefs.current[nextIndex]?.focus({ preventScroll: true });
     track("capability_selected", {
       page: "services",
       capability: `Authority: ${layers[nextIndex]?.label ?? "layer"}`,
