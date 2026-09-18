@@ -114,6 +114,39 @@ export const pillars: Pillar[] = [
         practice:
           "The Brand Recognition Audit on the Services page turns this idea into a working diagnostic you can run on your own brand.",
       },
+      {
+        term: "Category entry points",
+        slug: "category-entry-points",
+        essaySlugs: ["how-ai-assistants-choose-brands-to-recommend", "aeo-vs-seo-vs-geo", "brand-awareness-vs-brand-recall"],
+        definition:
+          "The situations that trigger a category in a buyer's mind: the moments, needs, and occasions through which brands get retrieved from memory.",
+        expanded:
+          "Nobody buys a category in the abstract. A trigger fires first: the funding round approaches, the website undersells the work, a rival suddenly looks sharper. Each trigger is an entry point, and the brand linked to more of them gets retrieved more often. The same mechanics now govern AI assistants, because buyers phrase prompts as situations and the assistant retrieves whichever brand the written record has attached to that situation.",
+        practice:
+          "Every guide in this library answers one entry point deliberately: one buying situation, one direct answer, so the practice gets recorded against the moments that matter.",
+      },
+      {
+        term: "Answer engine optimisation",
+        slug: "answer-engine-optimisation",
+        essaySlugs: ["aeo-vs-seo-vs-geo", "how-ai-assistants-choose-brands-to-recommend"],
+        definition:
+          "The practice of earning the quoted answer itself, the snippet, the voice reply, the answer box, rather than a ranked position on a results page.",
+        expanded:
+          "AEO shifts the unit of competition from the page to the passage. A page can rank fourth and still own the answer, because answer surfaces look for the clearest quotable paragraph, stated plainly and marked up so a machine knows which question it resolves. Pages that open with their conclusion get excerpted; pages that warm up for eight hundred words get skipped.",
+        practice:
+          "Every guide and glossary page on this site opens with a direct answer block for exactly this reason: the format teaches human readers and machine readers in the same breath.",
+      },
+      {
+        term: "Generative engine optimisation",
+        slug: "generative-engine-optimisation",
+        essaySlugs: ["generative-engine-optimisation-guide", "aeo-vs-seo-vs-geo", "how-ai-assistants-choose-brands-to-recommend"],
+        definition:
+          "The practice of making a brand retrievable and quotable by AI assistants such as ChatGPT, Gemini, and Perplexity, which recommend entities rather than ranking pages.",
+        expanded:
+          "GEO is mental availability measured by a machine. An assistant retrieves brands from its trained impression of the world, weighted by how consistently independent sources describe them, then quotes whichever pages state answers plainly enough to lift. The controlled research found quotations, statistics, and cited sources raise inclusion in generated answers far more than any polish. In marketing use the abbreviation is distinct from geographic targeting, which older material also shortens to geo.",
+        practice:
+          "The entity sentence, direct answer blocks, and sourced guides across this site are GEO applied to the practice itself: one consistent record, written to be quoted.",
+      },
     ],
   },
   {

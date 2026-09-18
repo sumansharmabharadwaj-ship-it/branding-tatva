@@ -29,6 +29,8 @@ export const entityFacts = {
     "Brand architecture",
     "Distinctive brand assets",
     "Consumer psychology",
+    "Answer engine optimisation",
+    "Generative engine optimisation",
   ],
   evidenceBoundaries: {
     clientWork: "Named only when the site has a verified project source and display permission.",
