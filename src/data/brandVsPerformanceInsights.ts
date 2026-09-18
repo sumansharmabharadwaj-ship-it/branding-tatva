@@ -158,7 +158,7 @@ export const brandVsPerformanceInsightPosts: SourcedInsightPost[] = [
         heading: "Running both on one memory system",
         paragraphs: [
           "The two budgets stop fighting the moment they serve one memory system. The brand work chooses the claim, the vocabulary, and the cues. The performance work repeats exactly those, so every paid impression, even the ones that never convert, deposits another repetition into the account the brand is building.",
-          "Most businesses run the opposite: the ads are written by whoever manages the channel, in whatever voice tests well this week. The clicks get bought, the memory stays unbuilt, and the two budgets genuinely are rivals, because the performance spend is renting attention without banking any of it.",
+          "Most businesses run the opposite: the ads are written by whoever manages the channel, in whatever voice tests well this week. The clicks get bought, the memory never gets built, and the two budgets genuinely are rivals, because the performance spend is renting attention without banking any of it.",
           "The weave is the point. Single threads, pulled one at a time, fray and scatter. The same threads through a loom become fabric that holds. Performance buys threads. Brand is the loom.",
         ],
       },

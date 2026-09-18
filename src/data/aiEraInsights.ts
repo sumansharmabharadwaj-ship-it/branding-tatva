@@ -131,7 +131,7 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "Retrieval fails in predictable ways, and each failure maps to a familiar branding fault. The first is entity dilution. A studio that calls itself a branding agency on its site, a design partner on LinkedIn, a marketing consultancy in a directory, and a creative studio in the press has split its identity across four weak entities. A human eventually reconciles those. A model may never connect them, so each description carries a fraction of the evidence.",
           "The second is category confusion. Models retrieve through categories, and a business that avoids naming its category, or invents a private label for it, gives the model nothing to file it under. Being filed under nothing means being retrieved for nothing.",
-          "The third is situation blindness. Buyers ask assistants situated questions: who can reposition a firm before a funding round, who audits a brand before a rebrand. A brand that never wrote anything addressing those situations was never recorded as an answer to them, and absence from the record is absence from the shortlist.",
+          "The third is situation blindness. Buyers ask assistants questions rooted in a specific situation: who can reposition a firm before a funding round, who audits a brand before a rebrand. A brand that never wrote anything addressing those situations was never recorded as an answer to them, and absence from the record is absence from the shortlist.",
         ],
         bullets: [
           "Does every public profile describe the business in the same sentence?",
@@ -146,7 +146,7 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "Category entry points, the situations that trigger a category, have long been the practical unit of mental availability. They turn out to be the practical unit of assistant answers too, because buyers phrase prompts as situations. Nobody asks an assistant to list brands. They describe a moment: launching a second product line, entering a new market, a website that undersells the work.",
           "The brands retrieved for a situation are the ones the written record has attached to it. This is why a library of direct, situation shaped writing has become the strongest asset in AI search: each guide records the brand as the answer to one more moment.",
-          "The site you are reading applies this deliberately. Each guide here answers one situated question a founder actually asks, states the answer in the opening block, and holds the same vocabulary the rest of the site uses. That is availability work wearing an editorial coat.",
+          "The site you are reading applies this deliberately. Each guide here answers one question a founder actually asks in a real situation, states the answer in the opening block, and holds the same vocabulary the rest of the site uses. That is availability work wearing an editorial coat.",
         ],
       },
       {
@@ -245,7 +245,7 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
     excerpt:
       "Generative tools return the most statistically likely answer, which quietly pulls every brand toward the category average. This guide explains the mechanism and the escape route.",
     directAnswer:
-      "Generative models are trained to produce the most probable output, so an unedited prompt returns the category's average tagline, average palette, and average post. Average is unmemorable by construction: memory favours what deviates from its surroundings. A brand escapes by deciding a point of view the average would never take, codifying its distinctive assets and vocabulary, feeding those codes into every tool as instructions, and refusing to publish anything a competitor's tool could have produced.",
+      "Generative models are trained to produce the most probable output, so an unedited prompt returns the category's average tagline, average palette, and average post. Average is forgettable by design: memory favours whatever differs from its surroundings. A brand escapes by choosing a point of view the average would never take, writing down its own recognisable cues and vocabulary, feeding those rules into every tool as instructions, and refusing to publish anything a competitor's tool could have produced.",
     element: "fire",
     topicSlug: "distinctive-brand",
     primaryKeyword: "ai content brand differentiation",
@@ -266,11 +266,11 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
     heroImageAlt:
       "Rows of near identical ceramic cups on a wooden table, with one distinct pouring vessel set apart in sharp focus",
     keyTakeaways: [
-      "Generative tools return the statistical centre of their training data, so unedited output is the category average by construction.",
+      "Generative tools return the statistical centre of their training data, so unedited output lands on the category average every time.",
       "Average is a memory problem before it is a taste problem: recall favours what deviates from context.",
       "AI exposed weak brand codes rather than causing them. Sameness was already the industry's habit.",
-      "The escape is upstream of the tools: a position the average refuses, codified assets, and instructed vocabulary.",
-      "As feeds fill with modal content, held codes gain contrast value. Distinctiveness is now cheaper to see and harder to fake.",
+      "The escape happens before the tools: a point of view the average would never take, brand cues written down as rules, and a vocabulary every tool is told to use.",
+      "As feeds fill with lookalike content, a brand that holds its own cues becomes easier to spot. Distinctiveness is now cheaper to see and harder to fake.",
     ],
     framework: {
       title: "The averageness escape",
@@ -285,7 +285,7 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
         {
           title: "Position",
           description:
-            "State the claim the average would never make. A position the modal answer could produce is a position already shared with the whole category.",
+            "State the claim the average would never make. A position the average answer could produce is a position already shared with the whole category.",
         },
         {
           title: "Codes",
@@ -320,7 +320,7 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "A generative model predicts the most probable continuation of whatever it is given. That is its training objective, and it is superb at it. Ask for a tagline for a wellness brand and it returns the centre of gravity of every wellness tagline it has read. Ask for a logo and the composition drifts toward the category's most common shapes.",
           "This means the tool never makes a brand bad. It makes a brand typical, which is quieter and more damaging. Typical output carries no error a review meeting can catch. It reads as professional, looks finished, and resembles what leadership expected, because it is assembled from what everyone already published.",
-          "Understood this way, the sameness epidemic needs no conspiracy. Thousands of teams prompting similar tools with similar briefs converge on the modal answer, and the modal answer is by definition shared. The tool did exactly what was asked. The brief was the problem.",
+          "Understood this way, the sameness epidemic needs no conspiracy. Thousands of teams prompting similar tools with similar briefs converge on the most common answer, and the most common answer is by definition shared. The tool did exactly what was asked. The brief was the problem.",
         ],
         callout: {
           label: "The mechanism",
@@ -333,7 +333,7 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
         heading: "Average is a memory problem",
         paragraphs: [
           "Memory research has held one finding steady for ninety years: items that deviate from their context get remembered, items that resemble their context get absorbed. Psychologists call it the isolation effect, from Hedwig von Restorff's 1933 experiments. A brand that matches its category's texture is choosing the absorbed pile.",
-          "This is why averageness costs more than it appears to. The modal post still gets impressions, still fills the calendar, still satisfies the dashboard. What it never does is leave a trace. Buyers scrolling past forty near identical claims retain none of them, and retention is where purchases begin.",
+          "This is why averageness costs more than it appears to. The average post still gets impressions, still fills the calendar, still satisfies the dashboard. What it never does is leave a trace. Buyers scrolling past forty near identical claims retain none of them, and retention is where purchases begin.",
           "Distinctiveness, in the strategic sense, was never about looking unusual for its own sake. It is about owning cues that deviate from category context and repeat until they attribute. The machine age changed none of that arithmetic. It only raised the volume of context to deviate from.",
         ],
       },
@@ -356,9 +356,9 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
         id: "the-distinctiveness-dividend",
         heading: "The distinctiveness dividend",
         paragraphs: [
-          "There is a payout on the other side of this. As feeds fill with modal content, anything genuinely coded gains contrast. The same held palette, recurring format, or owned phrase that read as mild eccentricity in 2020 now reads as relief, because it deviates from an ocean of statistical centre.",
+          "There is a payout on the other side of this. As feeds fill with average content, anything with a genuine code of its own gains contrast. The same held palette, recurring format, or owned phrase that read as mild eccentricity in 2020 now reads as relief, because it deviates from an ocean of statistical centre.",
           "Marketers have started calling the reaction anti AI marketing: deliberately human texture, visible authorship, work signed by a person. The label will pass. The mechanism is durable: scarcity makes signals valuable, and unmistakable authorship is becoming scarce.",
-          "For small brands this is the rare shift that favours them. Holding a code steady requires conviction rather than budget. A solo practice with one voice, one palette, and one point of view can now be more recognisable than a funded competitor publishing modal content at volume.",
+          "For small brands this is the rare shift that favours them. Holding a code steady requires conviction rather than budget. A solo practice with one voice, one palette, and one point of view can now be more recognisable than a funded competitor publishing average content at volume.",
         ],
         callout: {
           label: "The trade",
@@ -380,7 +380,7 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
         heading: "The publish filter",
         paragraphs: [
           "Every piece of work should pass one question before it ships: could a competitor's tool have produced this? The question is severe, and it needs to be. If the honest answer is yes, the piece adds volume to the category and nothing to the brand.",
-          "Passing the filter rarely requires more production effort. It requires a position. A specific claim, a named enemy idea, a worked example from real practice, a sentence only this brand would risk. These are the ingredients the modal answer will never supply, because the modal answer is an average and averages hold no opinions.",
+          "Passing the filter rarely requires more production effort. It requires a position. A specific claim, a named enemy idea, a worked example from real practice, a sentence only this brand would risk. These are the ingredients the average answer will never supply, because an average holds no opinions.",
           "This is the honest summary of branding in the generative era. The machines write, draw, and publish. Deciding what a brand believes, which cues it will hold for a decade, and what it refuses to say stays beyond them. That remains the work, and it has quietly become the whole difference.",
         ],
       },

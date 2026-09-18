@@ -182,7 +182,7 @@ export const brandConsistencyInsightPosts: InsightPost[] = [
         id: "score-consistency-breaks",
         heading: "Score consistency breaks by consequence",
         paragraphs: [
-          "A consistency audit can produce dozens of observations. Treating every difference as equally important leads to cosmetic work while deeper experience breaks remain untouched.",
+          "A consistency audit can produce dozens of observations. Treating every difference as equally important leads to cosmetic work while the deeper breaks in the customer experience remain untouched.",
           "Score each issue by customer consequence, frequency, business risk, and dependency. An inconsistent icon matters less than a proposal that changes the promise. A slightly different email tone matters less than onboarding that creates uncertainty around scope and ownership.",
           "Prioritise breaks that affect understanding, trust, expectation, and delivery. Then repair the systems that repeatedly produce them.",
         ],

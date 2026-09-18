@@ -22,7 +22,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Question",
     description:
-      "We begin with what the business believes, what buyers currently hear, and where those two accounts disagree. The useful position is often hidden beneath language borrowed from the category.",
+      "We begin with what the business believes, what buyers currently hear, and where those two stories disagree. The useful position is often hidden beneath the same phrases every competitor uses.",
     element: "Air",
     video: "/videos/higgsfield-process-listen.mp4",
     poster: "/images/higgsfield-process-listen-poster.jpg",
@@ -38,7 +38,7 @@ export const process: ProcessStage[] = [
   {
     stage: "Architect",
     description:
-      "We decide the category, priority buyer, value, and reason to believe. Those choices govern the name, message, identity, website, and content that follow.",
+      "We decide the category, the priority buyer, the value, and the proof that makes it believable. Those choices govern the name, message, identity, website, and content that follow.",
     element: "Earth",
     video: "/videos/higgsfield-process-ground.mp4",
     poster: "/images/higgsfield-process-ground-poster.jpg",

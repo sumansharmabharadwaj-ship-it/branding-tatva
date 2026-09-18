@@ -51,7 +51,7 @@ export const packages: Package[] = [
     price: 4200,
     billing: "one-time",
     description:
-      "It begins with what buyers still recognise, decides the stronger position, then rebuilds the language and identity around it.",
+      "The work begins with what buyers still recognise, decides the stronger position, then rebuilds the language and identity around it.",
     includes: [
       "Everything in Foundation",
       "Full brand audit and repositioning",

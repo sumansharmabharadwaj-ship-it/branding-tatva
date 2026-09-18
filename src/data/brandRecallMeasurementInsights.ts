@@ -129,7 +129,7 @@ export const brandRecallMeasurementInsightPosts: SourcedInsightPost[] = [
         heading: "Use a practical sample without manufacturing precision",
         paragraphs: [
           "A low cost study will often use a convenience or opt in sample: people recruited through a customer list, partner community, professional network, event, or small paid panel. This can be useful for directional learning when the recruitment method is disclosed and repeated.",
-          "More responses reduce random variation, but they leave a biased recruitment source unrepaired. Pew Research Center has shown that very large online opt in samples can remain tightly clustered around a biased estimate. AAPOR similarly advises judging a survey by the care taken with its design and total sources of error, rather than its size alone.",
+          "More responses reduce random variation, but a biased recruitment source stays biased however many people answer. Pew Research Center has shown that very large online opt in samples can remain tightly clustered around a biased estimate. AAPOR similarly advises judging a survey by the care taken with its design and total sources of error, rather than its size alone.",
           "Never attach a conventional margin of sampling error to a convenience sample as though every buyer had a known chance of selection. Report the base size, source, eligibility rule, field dates, exclusions, and whether the study is descriptive, directional, or designed for population inference.",
         ],
         bullets: [
@@ -281,7 +281,7 @@ export const brandRecallMeasurementInsightPosts: SourcedInsightPost[] = [
       {
         question: "How many responses are needed to measure brand recall?",
         answer:
-          "There is no universal response count. The answer depends on the target population, sampling method, expected recall level, subgroup analysis, and precision required. More responses reduce random variation, but they leave a biased convenience sample uncorrected. Define whether the study is directional or intended for population inference before choosing the design.",
+          "There is no universal response count. The answer depends on the target population, sampling method, expected recall level, subgroup analysis, and precision required. More responses reduce random variation, but a biased convenience sample stays biased at any size. Define whether the study is directional or intended for population inference before choosing the design.",
       },
       {
         question: "What is the difference between unaided and aided brand recall?",

@@ -203,7 +203,7 @@ export const clientProofInsightPosts: SourcedInsightPost[] = [
         paragraphs: [
           "Never manufacture the client's voice. Conduct a short evidence interview and invite the customer to describe the starting difficulty, the important decision, the experience of the process, the observable change, and who would benefit from a similar engagement.",
           "Preserve the meaning and language accurately, then obtain approval for the edited quotation and context. Testimonials used in advertising must be genuine and must never turn unsupported factual claims into borrowed credibility.",
-          "Current FTC guidance requires endorsements and testimonials to be truthful and free from misleading impressions, while the UK's CAP guidance requires documentary evidence that testimonials are genuine and permission for use. Treat consent, substantiation, and context as part of the content workflow rather than a final legal scramble.",
+          "Current FTC guidance requires endorsements and testimonials to be truthful and to avoid creating a misleading impression, while the UK's CAP guidance requires documentary evidence that testimonials are genuine and permission for use. Treat consent, substantiation, and context as part of the content workflow rather than a final legal scramble.",
         ],
         bullets: [
           "Before: what was difficult or unclear?",

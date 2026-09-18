@@ -69,7 +69,7 @@ const PRESENTATIONS: Record<string, CaseStudyPresentation> = {
       to: "A marketplace selling Indian craft and origin",
     },
     resultSummary:
-      "Positioning, channel roles, and a yearlong rollout gave Indian craft and origin a commercial role beyond price.",
+      "Positioning, channel roles, and a yearlong rollout made Indian craft and origin a reason to buy, beyond price alone.",
     artifacts: [
       { label: "Foundation", detail: "Core belief, mission, promise, and value anchored the brand before channel execution." },
       { label: "Content mix", detail: "65% education and authority, 25% culture and people, and 10% direct branding." },
@@ -125,15 +125,15 @@ const PRESENTATIONS: Record<string, CaseStudyPresentation> = {
       to: "A modern sports nutrition position",
     },
     resultSummary:
-      "Five formats ready for filming and complete Hinglish scripts reset the campaign around practical supplementation.",
+      "Five formats ready for filming and complete Hinglish scripts reset the campaign around the practical, everyday use of supplements.",
     artifacts: [
-      { label: "Comparison", detail: "Food and supplement comparisons made the practical protein gap visible." },
+      { label: "Comparison", detail: "Food and supplement comparisons showed how much protein everyday meals leave missing." },
       { label: "Explanation", detail: "Scripts answered why someone would choose a supplement alongside food." },
       { label: "Native formats", detail: "DIY recipes, customer transformations, and reaction reviews replaced pharmaceutical language." },
       { label: "Voice", detail: "Hinglish scripts used familiar cultural reference points instead of fitness influencer clichés." },
     ],
     ctaHeading: "Does the market misunderstand what you actually sell?",
-    ctaBody: "A campaign cannot correct the category frame until the positioning, message, and native content language agree.",
+    ctaBody: "A campaign can only change what the market assumes you are once the positioning, the message, and the content's everyday language all agree.",
     serviceHref: "/services#offerings",
     serviceLabel: "Foundation, messaging, and campaign direction",
     palette: {
@@ -150,17 +150,17 @@ const PRESENTATIONS: Record<string, CaseStudyPresentation> = {
     descriptor: "Content authority and audience architecture",
     transformation: {
       from: "One tone for every reader",
-      to: "Four formats for different levels of fluency",
+      to: "Four formats, from newcomer to expert",
     },
     resultSummary:
-      "Sixteen pieces were organised to validate, challenge, humanise, and define rather than fill a content calendar.",
+      "Sixteen pieces were organised so each format had a job: prove claims, question assumptions, add a human voice, or explain the basics. None existed to fill a content calendar.",
     artifacts: [
       { label: "Research Papers", detail: "Evidence based validation included the Delhi Jal Board proof point." },
       { label: "Perspective Pieces", detail: "Provocative questions challenged assumptions technology leaders had left unexamined." },
       { label: "Blogs", detail: "Emerging technology was translated into relevance for everyday readers." },
       { label: "Articles", detail: "Short articles gave time pressed readers a route into the subject." },
     ],
-    ctaHeading: "Need expert thinking to work for readers at different levels of fluency?",
+    ctaHeading: "Need expert thinking that reaches beginners and experts alike?",
     ctaBody: "Define what each format must prove, challenge, or explain before assigning topics.",
     serviceHref: "/services#offerings",
     serviceLabel: "Content authority and Brand Partnership",

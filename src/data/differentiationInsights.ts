@@ -87,7 +87,7 @@ export const differentiationInsightPosts: InsightPost[] = [
         heading: "Why crowded service markets sound the same",
         paragraphs: [
           "Service businesses often compete through reassuring claims: experienced, tailored, strategic, collaborative, results driven, and customer first. These qualities matter, yet they rarely create separation because credible competitors need them too.",
-          "Sameness also grows from copying category language. Businesses study the leading firms, borrow their vocabulary, then adjust the tone. The words become polished while the comparison frame stays unchanged.",
+          "Sameness also grows from copying category language. Businesses study the leading firms, borrow their vocabulary, then adjust the tone. The words become polished while buyers still compare the firms on the same terms as before.",
           "The market feels crowded partly because many businesses describe the category rather than the choice they make inside it.",
         ],
       },
