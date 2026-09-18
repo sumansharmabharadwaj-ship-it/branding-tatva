@@ -1,4 +1,5 @@
 import { aiEraInsightPosts } from "@/data/aiEraInsights";
+import { answerEngineInsightPosts } from "@/data/answerEngineInsights";
 import { brandArchitectureInsightPosts } from "@/data/brandArchitectureInsights";
 import { brandConsistencyInsightPosts } from "@/data/brandConsistencyInsights";
 import { brandDiscoveryWorkshopInsightPosts } from "@/data/brandDiscoveryWorkshopInsights";
@@ -67,6 +68,7 @@ const combinedPosts = [
   ...caseStudyInsightPosts,
   ...testimonialEvidenceInsightPosts,
   ...aiEraInsightPosts,
+  ...answerEngineInsightPosts,
   ...founderBrandInsightPosts,
   ...brandVsPerformanceInsightPosts,
 ];
@@ -114,6 +116,8 @@ const relatedRegistrations = [
   { supportingSlug: "case-study-structure-service-businesses", pillarSlugs: ["turn-client-proof-into-positioning-advantage", "service-page-messaging-strategy", "brand-audit-checklist-before-rebrand"] },
   { supportingSlug: "testimonial-questions-buying-evidence", pillarSlugs: ["case-study-structure-service-businesses", "turn-client-proof-into-positioning-advantage", "service-page-messaging-strategy"] },
   { supportingSlug: "how-ai-assistants-choose-brands-to-recommend", pillarSlugs: ["brand-awareness-vs-brand-recall", "measure-brand-recall-limited-budget", "distinctive-brand-assets-audit"] },
+  { supportingSlug: "aeo-vs-seo-vs-geo", pillarSlugs: ["how-ai-assistants-choose-brands-to-recommend", "brand-awareness-vs-brand-recall", "brand-marketing-vs-performance-marketing"] },
+  { supportingSlug: "generative-engine-optimisation-guide", pillarSlugs: ["aeo-vs-seo-vs-geo", "how-ai-assistants-choose-brands-to-recommend", "why-ai-content-makes-brands-average"] },
   { supportingSlug: "why-ai-content-makes-brands-average", pillarSlugs: ["why-beautiful-brand-identity-can-be-forgettable", "brand-voice-guidelines-writers-can-use", "find-real-differentiator-crowded-service-market"] },
   { supportingSlug: "what-rebrand-backlashes-teach-about-brand-memory", pillarSlugs: ["brand-refresh-vs-rebrand-how-much-change", "reposition-established-service-business-without-losing-recognition", "brand-audit-checklist-before-rebrand"] },
   { supportingSlug: "founder-brand-vs-company-brand", pillarSlugs: ["brand-architecture-service-businesses", "brand-positioning-strategy-service-businesses", "turn-client-proof-into-positioning-advantage"] },
