@@ -43,6 +43,15 @@ const CONTACT_QUESTIONS = [
     q: "Is this a brand strategy consultation or a sales call?",
     a: "A consultation. Thirty minutes on positioning, perception, and the decision in front of you. Selling has a way of ruining a first conversation, so it stays outside the room.",
   },
+  {
+    q: "What does the work cost?",
+    a: "Every engagement is scoped in the first conversation, against the decision actually on the table. The three shapes the work usually takes are described with the services.",
+    more: { label: "See the package shapes", href: "/services#package-recommendation" },
+  },
+  {
+    q: "Do you work with businesses outside India?",
+    a: "Yes. The work runs over video, in your timezone, wherever the brand lives.",
+  },
 ] as const;
 
 const faqJsonLd = {
@@ -560,7 +569,7 @@ export default function ContactPage() {
             </div>
             <div data-contact-faq-card className="relative overflow-hidden rounded-[1.75rem] border border-white/60 bg-[#F8F4EC]/90 p-2 shadow-[0_28px_90px_rgba(62,48,30,0.14)] backdrop-blur-2xl sm:p-3">
               <span data-contact-card-sheen aria-hidden="true" />
-              {CONTACT_QUESTIONS.map(({ q, a }) => (
+              {CONTACT_QUESTIONS.map(({ q, a, ...rest }) => (
                 <details key={q} data-contact-faq-item className="group border-b border-soil/8 last:border-b-0">
                   <summary
                     data-cursor-label="Open the answer"
@@ -572,9 +581,20 @@ export default function ContactPage() {
                       <span className="absolute left-1/2 top-0 h-full w-px bg-current transition-transform duration-300 group-open:scale-y-0" />
                     </span>
                   </summary>
-                  <p data-contact-faq-answer className="px-4 pb-5 text-sm leading-relaxed text-soil/72 sm:px-5 sm:text-base">
-                    {a}
-                  </p>
+                  <div data-contact-faq-answer className="px-4 pb-5 sm:px-5">
+                    <p className="text-sm leading-relaxed text-soil/72 sm:text-base">{a}</p>
+                    {"more" in rest && rest.more ? (
+                      <TrackedLink
+                        href={rest.more.href}
+                        event="contact_route_selected"
+                        eventProps={{ source: "contact_asked", route: "services_packages" }}
+                        data-cursor-label={rest.more.label}
+                        className="link-underline mt-3 inline-flex min-h-11 items-center text-sm text-clay transition-colors hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay"
+                      >
+                        {rest.more.label}
+                      </TrackedLink>
+                    ) : null}
+                  </div>
                 </details>
               ))}
             </div>
