@@ -1,36 +1,37 @@
 # Update the Branding Tatva preview link
 
-Release 405 is READY. It gives the homepage project files a light reading
-surface, fixed Close control, native scroll progress line, keyboard reading
-area and a scrollbar reservation intended to keep the archive steady on close.
-The newer Services and hidden cost work is included.
+Release 408 is READY. The mobile menu scrolls within short screens, restores
+keyboard focus on close, keeps its animated exit inactive, and preserves page
+position. Keyboard focus settles the opening animation. The floating homepage
+guide stays clear of the open menu, and the empty phone sound row is removed.
+The earlier homepage project file and Services improvements are included.
 
 [Branding Tatva preview](https://branding-tatva-git-august-8-isolated-suman22.vercel.app/).
 
-The shared link still points to commit
-`2b966e0372d390be4568978fe62a88292ff21dcc`. The connected tools expose deployment
+The shared link was successfully updated to release 405 following the user's
+earlier command. It still points to that release, trigger
+`403fef297095020243d041c506d22d75e65c6802`. The connected tools expose deployment
 inspection but no alias assignment. In the Terminal already signed into the
 site's Vercel account, run:
 
 ```bash
-npx --yes vercel@59.19.0 alias set dpl_9xkdSFukNfcQVuKnBYLR1UrgckMc branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
+npx --yes vercel@59.19.0 alias set dpl_H6MVbfzSVsrshPLpcMMwx8RjKEYW branding-tatva-git-august-8-isolated-suman22.vercel.app --scope suman22
 ```
 
 This changes the shared preview link without promoting production. Release
-405's exact trigger is `403fef297095020243d041c506d22d75e65c6802`.
+408's exact trigger is `30683d854ee271602773e892cd90c03c32dd9110`.
 
-The build, TypeScript, ESLint, homepage, type floor, contact delivery and
-controlled release checks passed. Release 403 passed the phone reading,
-keyboard focus loop, scroll progress and reduced-motion checks. Release 405's
-narrow layout, bottom actions and close-position check passed. The inspect
-control returned to exactly the same screen position with focus restored.
-The final desktop visual, bottom-action and keyboard-return checks also passed.
-A temporary browser connection failure recovered before these checks finished.
-See `homepage-project-file-reading-qa.md` for measurements and device limits.
+TypeScript, Header ESLint, homepage source, type floor, production build and
+rendered homepage checks passed. All three final release workflows passed.
+The exact final deployment passed phone focus and exit checks, the shortest
+viewport's bottom-action check, and desktop visual review. Landscape scrolling,
+focus, route navigation, paused motion and backdrop close were exercised during
+this release sequence. The overlap fix was visually verified on release 407.
+See `homepage-mobile-menu-qa.md` for exact measurements and verification limits.
 
 The browser's /api/release restriction remains, so endpoint certification is
-unavailable. Metadata, the source to trigger comparison, and rendered changes
-establish the exact preview used for verification.
+unavailable. Metadata, source to trigger comparisons, and rendered changes
+establish the exact previews used for verification.
 
 A later preview needs its own confirmed deployment target. Automatic alias
 assignment requires the repository's existing Vercel credential to be configured.
