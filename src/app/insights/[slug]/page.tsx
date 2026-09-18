@@ -140,6 +140,8 @@ export default async function InsightArticlePage({ params }: Props) {
     (pkg) => pkg.slug === application?.packageSlug
   );
   const related = selectRelatedInsights(post, insightPosts);
+  // The same drawn sheet the library fronts this essay with.
+  const articleWorksheet = buildInsightEditorialVisuals([post]).get(post.slug);
   const editorialVisuals = buildInsightEditorialVisuals(
     [...insightPosts].sort(
       (a, b) =>
@@ -398,6 +400,32 @@ export default async function InsightArticlePage({ params }: Props) {
                       </ul>
                     </section>
                   </Reveal>
+
+                  {/* The essay's drawn worksheet, the same sheet the library
+                      fronts it with, opens the framework chapter so the
+                      reader meets the whole argument on paper before working
+                      the interactive decisions below it. The paper tone
+                      behind object-contain matches the artwork's own ground,
+                      so letterboxing reads as the sheet's margin. */}
+                  {articleWorksheet && (
+                    <Reveal>
+                      <figure
+                        className="relative mt-10 overflow-hidden rounded-[1.25rem] border border-soil/10 shadow-elevation-sm"
+                        style={{
+                          aspectRatio: articleWorksheet.aspectRatio,
+                          backgroundColor: "#f5f1e8",
+                        }}
+                      >
+                        <Image
+                          src={articleWorksheet.src}
+                          alt={articleWorksheet.alt}
+                          fill
+                          sizes="(min-width: 1280px) 48rem, 100vw"
+                          className="object-contain"
+                        />
+                      </figure>
+                    </Reveal>
+                  )}
 
                   <Reveal>
                     <InsightFrameworkVisualizer
