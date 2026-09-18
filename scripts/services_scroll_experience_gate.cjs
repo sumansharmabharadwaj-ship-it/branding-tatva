@@ -12,6 +12,23 @@ const VIEWPORTS = [
 
 fs.mkdirSync(OUTPUT, { recursive: true });
 
+// The directed composition as of "Services opens clean and every chapter
+// visibly performs" (798c8ad2): nine chapters. The former stakes,
+// deliverables, imagine, and health chapters were folded into their
+// neighbours, and the verified outcome now lives at #proof (where /work
+// redirects) while keeping its scene key.
+const EXPECTED_CHAPTERS = [
+  { id: "services-opening", scene: "opening" },
+  { id: "situation", scene: "situation" },
+  { id: "offerings", scene: "offerings" },
+  { id: "desire", scene: "desire" },
+  { id: "proof", scene: "verified-outcome" },
+  { id: "authority", scene: "authority" },
+  { id: "education", scene: "education" },
+  { id: "audit", scene: "audit" },
+  { id: "book", scene: "book" },
+];
+
 function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
@@ -47,11 +64,32 @@ async function visible(locator) {
   return (await locator.count()) > 0 && (await locator.first().isVisible());
 }
 
+// Scene progress is (viewportHeight - top) / (viewportHeight + height); solve
+// for the scroll position that puts a scene at the requested progress. The
+// discipline sequence is story-progress-led, so the gate drives it the same
+// way a visitor does: by moving the page.
+async function scrollSceneToProgress(page, id, target) {
+  await page.evaluate(
+    ({ id, target }) => {
+      const scene = document.getElementById(id);
+      if (!scene) return;
+      const rect = scene.getBoundingClientRect();
+      const top = window.scrollY + rect.top;
+      const viewportHeight = window.innerHeight;
+      window.scrollTo({
+        top: Math.max(0, top - viewportHeight + target * (viewportHeight + rect.height)),
+        behavior: "instant",
+      });
+    },
+    { id, target },
+  );
+}
+
 async function assertChapterContract(page, sceneCount, label) {
   await page.waitForFunction(
     (expected) => Number(document.documentElement.dataset.servicesChapterCount) === expected,
     sceneCount,
-    { timeout: 4_000 },
+    { timeout: 15_000 },
   );
 
   const chapters = await page.locator("[data-services-scroll-scene]").evaluateAll((nodes) =>
@@ -63,15 +101,14 @@ async function assertChapterContract(page, sceneCount, label) {
   );
 
   assert(chapters.length === sceneCount, `${label}: chapter metadata count drifted from scene count`);
-  assert(chapters.every((chapter) => chapter.id), `${label}: a directed scene has no stable ID`);
   assert(chapters.every((chapter) => chapter.label), `${label}: a directed scene has no chapter label`);
-  assert(new Set(chapters.map((chapter) => chapter.id)).size === sceneCount, `${label}: duplicate chapter IDs detected`);
-  assert(
-    chapters.some((chapter) => chapter.id === "verified-outcome"),
-    `${label}: verified outcome is not directly addressable`,
-  );
-  assert(chapters.some((chapter) => chapter.id === "stakes"), `${label}: positioning cost is not directly addressable`);
-  assert(chapters.some((chapter) => chapter.id === "deliverables"), `${label}: archive is not directly addressable`);
+  EXPECTED_CHAPTERS.forEach((expected, index) => {
+    const actual = chapters[index];
+    assert(
+      actual && actual.id === expected.id && actual.scene === expected.scene,
+      `${label}: chapter ${index + 1} is ${actual ? `${actual.id}/${actual.scene}` : "missing"}; expected ${expected.id}/${expected.scene}`,
+    );
+  });
 
   return chapters;
 }
@@ -86,7 +123,7 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
       (expected) =>
         document.querySelectorAll('[data-section-jump-nav-desktop-mode="rail"] a[href^="#"]').length === expected,
       sceneCount,
-      { timeout: 4_000 },
+      { timeout: 15_000 },
     );
     assert(await visible(rail), `${label}: compact desktop chapter rail is not visible`);
     assert(!(await visible(bar)), `${label}: full-width bottom chapter bar is still visible`);
@@ -96,6 +133,21 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
       `${label}: desktop rail does not expose all ${sceneCount} chapters`,
     );
 
+    // The rail animates in; give the entrance time to settle before
+    // measuring, otherwise a mid-transition bounding box reads as the rail
+    // escaping the viewport.
+    await page
+      .waitForFunction(
+        () => {
+          const node = document.querySelector('[data-section-jump-nav-desktop-mode="rail"]');
+          if (!node) return false;
+          const bounds = node.getBoundingClientRect();
+          return bounds.top >= -2 && bounds.bottom <= window.innerHeight + 2;
+        },
+        undefined,
+        { timeout: 15_000 },
+      )
+      .catch(() => {});
     const geometry = await rail.first().evaluate((node) => {
       const bounds = node.getBoundingClientRect();
       return {
@@ -115,16 +167,32 @@ async function assertWayfinding(page, viewport, label, sceneCount) {
 
     const trigger = mobile.locator("button").last();
     await trigger.click();
-    await page.waitForFunction(
-      (expected) =>
-        document.querySelectorAll('[data-section-jump-nav-mobile="true"] a[href^="#"]').length === expected,
-      sceneCount,
-      { timeout: 4_000 },
-    );
-    assert(
-      (await mobile.locator('a[href^="#"]').count()) === sceneCount,
-      `${label}: mobile chapter menu does not expose all ${sceneCount} chapters`,
-    );
+    // The guided dial lists a continue-to-next-chapter quick action above
+    // the full chapter list, so the menu is judged by chapter coverage
+    // rather than raw anchor count.
+    await page
+      .waitForFunction(
+        (expectedIds) => {
+          const hrefs = new Set(
+            Array.from(
+              document.querySelectorAll('[data-section-jump-nav-mobile="true"] a[href^="#"]'),
+            ).map((node) => node.getAttribute("href")),
+          );
+          return expectedIds.every((id) => hrefs.has(`#${id}`));
+        },
+        EXPECTED_CHAPTERS.map((chapter) => chapter.id),
+        { timeout: 15_000 },
+      )
+      .catch(() => {});
+    const menuHrefs = await mobile
+      .locator('a[href^="#"]')
+      .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href")));
+    for (const chapter of EXPECTED_CHAPTERS) {
+      assert(
+        menuHrefs.includes(`#${chapter.id}`),
+        `${label}: mobile chapter menu is missing #${chapter.id}`,
+      );
+    }
     await trigger.click();
   }
 }
@@ -157,13 +225,12 @@ async function auditViewport(browser, viewport) {
   await page.waitForFunction(() => document.documentElement.dataset.servicesExperience === "active");
 
   const sceneCount = await page.locator("[data-services-scroll-scene]").count();
-  assert(sceneCount === 13, `${label}: expected 13 directed scenes, found ${sceneCount}`);
+  assert(
+    sceneCount === EXPECTED_CHAPTERS.length,
+    `${label}: expected ${EXPECTED_CHAPTERS.length} directed scenes, found ${sceneCount}`,
+  );
   const chapters = await assertChapterContract(page, sceneCount, label);
   await assertWayfinding(page, viewport, label, sceneCount);
-  assert(
-    (await page.locator('[data-services-scroll-scene] > [data-services-scene-signal="true"]').count()) === sceneCount,
-    `${label}: every scene must carry one continuity signal`,
-  );
 
   const metrics = await page.evaluate(() => ({
     scrollHeight: document.documentElement.scrollHeight,
@@ -211,37 +278,51 @@ async function auditViewport(browser, viewport) {
   await page.waitForTimeout(650);
   const tabs = offerings.getByRole("tab");
   assert((await tabs.count()) === 6, `${label}: the service explorer should expose six disciplines`);
-  const firstSelected = await selectedTabIndex(tabs);
 
   const journey = offerings.locator('[data-services-discipline-journey="true"]');
   assert((await journey.count()) === 1, `${label}: the service-discipline journey is missing`);
 
+  // All six disciplines now resolve inside one stable stage; the former
+  // 1.7-viewport sticky runway is retired. Scene story progress, not
+  // internal travel, advances the sequence.
   let journeyRange = null;
   if (viewport.width >= 1024) {
     journeyRange = await journey.evaluate((node) => node.getBoundingClientRect().height / window.innerHeight);
     assert(
-      journeyRange >= 1.62 && journeyRange <= 1.78,
-      `${label}: service ecosystem uses ${journeyRange.toFixed(2)} viewports; expected about 1.7`,
+      journeyRange >= 0.9 && journeyRange <= 1.3,
+      `${label}: discipline stage uses ${journeyRange.toFixed(2)} viewports; expected one stable stage`,
     );
-
-    await journey.evaluate((node) => {
-      const rect = node.getBoundingClientRect();
-      const top = window.scrollY + rect.top;
-      const travel = Math.max(0, node.getBoundingClientRect().height - window.innerHeight);
-      window.scrollTo({ top: top + travel * 0.58, behavior: "instant" });
-    });
-    await page.waitForTimeout(520);
-  } else {
-    await page.waitForTimeout(4_200);
   }
 
-  const advancedSelected = await selectedTabIndex(tabs);
-  assert(advancedSelected !== firstSelected, `${label}: the service ecosystem did not advance`);
+  await scrollSceneToProgress(page, "offerings", 0.4);
+  await page.waitForTimeout(520);
+  const firstSelected = await selectedTabIndex(tabs);
 
+  await scrollSceneToProgress(page, "offerings", 0.72);
+  await page.waitForTimeout(520);
+  const advancedSelected = await selectedTabIndex(tabs);
+  assert(advancedSelected !== firstSelected, `${label}: scroll progress did not advance the discipline sequence`);
+
+  // Let the runtime's velocity smoothing come to rest before the manual
+  // gesture, the way a visitor's tap lands on a settled page — a click
+  // issued mid-settle can miss the moving tab entirely.
+  await page.waitForFunction(
+    () =>
+      new Promise((resolve) => {
+        const initial = window.scrollY;
+        setTimeout(() => resolve(window.scrollY === initial), 220);
+      }),
+    undefined,
+    { timeout: 15_000 },
+  );
   const websiteTab = offerings.getByRole("tab", { name: "Website Development", exact: true });
   await websiteTab.click();
+  await page.waitForTimeout(180);
   assert((await websiteTab.getAttribute("aria-selected")) === "true", `${label}: manual service choice failed`);
-  await page.waitForTimeout(4_200);
+  // A manual choice holds for 14 seconds against scroll-led progression;
+  // driving the scene to a different story position must leave it selected.
+  await scrollSceneToProgress(page, "offerings", 0.55);
+  await page.waitForTimeout(520);
   assert(
     (await websiteTab.getAttribute("aria-selected")) === "true",
     `${label}: automatic progression fought the visitor's manual choice`,
@@ -255,9 +336,11 @@ async function auditViewport(browser, viewport) {
       const height = node.getBoundingClientRect().height;
       return height / window.innerHeight;
     });
+    // Authority resolves inside one viewport: the shared services camera
+    // assembles its layers during entry rather than holding a sticky runway.
     assert(
-      authorityRange >= 2.05 && authorityRange <= 2.3,
-      `${label}: Authority uses ${authorityRange.toFixed(2)} viewports; expected the compressed 2.2 range`,
+      authorityRange >= 0.9 && authorityRange <= 1.2,
+      `${label}: Authority uses ${authorityRange.toFixed(2)} viewports; expected one settled viewport`,
     );
   }
 

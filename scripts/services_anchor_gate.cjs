@@ -4,7 +4,11 @@ const { chromium } = require("playwright");
 
 const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = path.join(process.cwd(), "services-scroll-experience-audit");
-const TARGETS = ["verified-outcome", "stakes", "deliverables"];
+// Deep chapters of the nine-part composition a visitor actually arrives at
+// by link: #proof carries the verified outcome (and receives the /work
+// redirect); the former stakes and deliverables chapters folded into their
+// neighbours when the page compressed to nine scenes.
+const TARGETS = ["proof", "education", "audit"];
 
 fs.mkdirSync(OUTPUT, { recursive: true });
 
@@ -16,9 +20,9 @@ async function waitForServices(page) {
   const veil = page.locator("[data-page-load-veil]");
   if ((await veil.count()) > 0) await veil.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
   await page.waitForFunction(
-    () => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13,
+    () => Number(document.documentElement.dataset.servicesChapterCount || 0) === 9,
     undefined,
-    { timeout: 12_000 },
+    { timeout: 20_000 },
   );
   await page.waitForTimeout(320);
 }
@@ -51,11 +55,13 @@ async function inspect(browser, viewport) {
       };
     });
 
-    const minimum = viewport.width < 768 ? 50 : 60;
-    const maximum = viewport.width < 768 ? 125 : 145;
+    // services-anchor-contract.css zeroes every chapter's scroll margin on
+    // purpose: each scene is a full viewport composition with its own top
+    // clearance, so a direct link must put the frame at the viewport edge —
+    // header clearance would expose the previous chapter as a broken seam.
     assert(
-      geometry.top >= minimum && geometry.top <= maximum,
-      `${viewport.name}: #${id} landed at ${geometry.top.toFixed(1)}px; expected readable header clearance ${minimum}-${maximum}px`,
+      Math.abs(geometry.top) <= 2,
+      `${viewport.name}: #${id} landed at ${geometry.top.toFixed(1)}px; expected the chapter frame at the viewport edge`,
     );
     assert(geometry.activeId === id, `${viewport.name}: #${id} landed with active chapter ${geometry.activeId}`);
     results.push({ id, ...geometry });

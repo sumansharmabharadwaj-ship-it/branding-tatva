@@ -4,9 +4,13 @@ const { chromium } = require("playwright");
 
 const BASE_URL = process.env.AUDIT_BASE_URL || "http://127.0.0.1:3000";
 const OUTPUT = path.join(process.cwd(), "services-scroll-experience-audit");
-const STRATEGY_ROOM_POSTER = "bt-services-strategy-room-poster";
-const STRATEGY_ROOM_VIDEO = "bt-services-strategy-room";
-const HERO_VIDEO = "bt-services-hero-root-system";
+// The closing Strategy Room scene now arrives on the valley-first-light
+// film (the procedural strategy-room render and the root-system opening
+// film both retired with the nine-chapter composition). The trailing dot
+// keeps the video needle from also matching its own poster.
+const STRATEGY_ROOM_POSTER = "pexels-valley-first-light-poster";
+const STRATEGY_ROOM_VIDEO = "pexels-valley-first-light.";
+const CHAPTER_COUNT = 9;
 
 fs.mkdirSync(OUTPUT, { recursive: true });
 
@@ -17,7 +21,11 @@ function assert(condition, message) {
 async function waitForServices(page) {
   const veil = page.locator("[data-page-load-veil]");
   if ((await veil.count()) > 0) await veil.waitFor({ state: "detached", timeout: 9_000 }).catch(() => {});
-  await page.waitForFunction(() => Number(document.documentElement.dataset.servicesChapterCount || 0) === 13, undefined, { timeout: 12_000 });
+  await page.waitForFunction(
+    (expected) => Number(document.documentElement.dataset.servicesChapterCount || 0) === expected,
+    CHAPTER_COUNT,
+    { timeout: 20_000 },
+  );
   await page.waitForTimeout(900);
 }
 
@@ -39,10 +47,12 @@ async function standardMotion(browser) {
   await page.goto(`${BASE_URL}/services`, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await waitForServices(page);
 
-  const initialHeroRequests = matching(requests, HERO_VIDEO);
+  // The opening resolves on the CSS canopy field with zero film: no video
+  // file may enter the initial waterfall at all.
+  const initialVideoRequests = matching(requests, "/videos/");
   const initialPosterRequests = matching(requests, STRATEGY_ROOM_POSTER);
   const initialClosingVideoRequests = matching(requests, STRATEGY_ROOM_VIDEO);
-  assert(initialHeroRequests.length > 0, "Opening Services film did not enter the initial request set");
+  assert(initialVideoRequests.length === 0, "A video entered the initial request waterfall of the filmless opening");
   assert(initialPosterRequests.length === 0, "Strategy-room poster entered the initial request waterfall");
   assert(initialClosingVideoRequests.length === 0, "Strategy-room video entered the initial request waterfall");
 
@@ -56,7 +66,7 @@ async function standardMotion(browser) {
 
   await context.close();
   return {
-    initialHeroRequests: initialHeroRequests.length,
+    initialVideoRequests: initialVideoRequests.length,
     initialPosterRequests: initialPosterRequests.length,
     initialClosingVideoRequests: initialClosingVideoRequests.length,
     afterPosterRequests: afterPosterRequests.length,

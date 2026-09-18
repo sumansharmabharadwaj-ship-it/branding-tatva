@@ -83,14 +83,10 @@ export function ServicesExperienceRuntime() {
 
     document.documentElement.dataset.servicesExperience = "active";
     const generatedIds = new Set<HTMLElement>();
-    const heroMedia = Array.from(
-      hero.querySelectorAll<HTMLElement>(
-        ':scope > img, :scope > video, :scope > [data-living-image-stage="true"]',
-      ),
-    );
-    const heroHeading = hero.querySelector<HTMLElement>("h1");
-    const heroCopy = heroHeading?.closest<HTMLElement>(".services-hero-copy") ?? null;
-    const heroIndex = hero.querySelector<HTMLElement>("ol");
+    let heroMedia: HTMLElement[] = [];
+    let heroHeading: HTMLElement | null = null;
+    let heroCopy: HTMLElement | null = null;
+    let heroIndex: HTMLElement | null = null;
     const heroAperture = document.createElement("span");
     const heroFragments = document.createElement("span");
     let activeIndex = 0;
@@ -116,12 +112,35 @@ export function ServicesExperienceRuntime() {
     }
 
     hero.dataset.servicesHeroScene = "true";
-    heroMedia.forEach((media) => {
-      media.dataset.servicesHeroMedia = "true";
+
+    // Reveal renders a plain <div> until it hydrates, then swaps in a
+    // motion.div — React unmounts the server-rendered hero copy in that
+    // swap, taking any attributes this effect stamped onto it. Tagging is
+    // therefore re-appliable: it re-queries the hero's parts, and the
+    // observer below re-runs it whenever the tagged heading has left the
+    // document.
+    function tagHeroParts() {
+      heroMedia = Array.from(
+        hero.querySelectorAll<HTMLElement>(
+          ':scope > img, :scope > video, :scope > [data-living-image-stage="true"]',
+        ),
+      );
+      heroHeading = hero.querySelector<HTMLElement>("h1");
+      heroCopy = heroHeading?.closest<HTMLElement>(".services-hero-copy") ?? null;
+      heroIndex = hero.querySelector<HTMLElement>("ol");
+      heroMedia.forEach((media) => {
+        media.dataset.servicesHeroMedia = "true";
+      });
+      if (heroHeading) heroHeading.dataset.servicesHeroHeading = "true";
+      if (heroCopy) heroCopy.dataset.servicesHeroCopy = "true";
+      if (heroIndex) heroIndex.dataset.servicesHeroIndex = "true";
+    }
+    tagHeroParts();
+
+    const heroPartsObserver = new MutationObserver(() => {
+      if (!heroHeading || !heroHeading.isConnected) tagHeroParts();
     });
-    if (heroHeading) heroHeading.dataset.servicesHeroHeading = "true";
-    if (heroCopy) heroCopy.dataset.servicesHeroCopy = "true";
-    if (heroIndex) heroIndex.dataset.servicesHeroIndex = "true";
+    heroPartsObserver.observe(hero, { childList: true, subtree: true });
 
     heroAperture.dataset.servicesHeroAperture = "true";
     heroAperture.setAttribute("aria-hidden", "true");
@@ -769,6 +788,7 @@ export function ServicesExperienceRuntime() {
       servicesRoot.removeEventListener("focusin", onInteractiveFocusIn);
       servicesRoot.removeEventListener("focusout", onInteractiveFocusOut);
       motionSettingObserver.disconnect();
+      heroPartsObserver.disconnect();
       reducedMotionQuery.removeEventListener("change", onMotionPreferenceChange);
       delete document.documentElement.dataset.servicesExperience;
       delete document.documentElement.dataset.servicesScrollDirection;
