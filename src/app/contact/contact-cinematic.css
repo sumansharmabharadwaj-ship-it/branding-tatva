@@ -896,6 +896,22 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-form-success]::bef
   }
 }
 
+/* The field being written in holds a small pool of morning light under its
+   baseline — the page warms to the visitor at the exact moment they commit
+   words to it. A state style rather than an animation, so it needs no
+   reduced motion branch; the transition alone goes still with the rest. */
+[data-contact-film] [data-contact-form-card] input:not([type="checkbox"]),
+[data-contact-film] [data-contact-form-card] textarea,
+[data-contact-film] [data-contact-form-card] select {
+  transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-contact-film] [data-contact-form-card] input:not([type="checkbox"]):focus,
+[data-contact-film] [data-contact-form-card] textarea:focus,
+[data-contact-film] [data-contact-form-card] select:focus {
+  box-shadow: 0 14px 30px -14px rgba(190, 132, 62, 0.5);
+}
+
 /* Once the three required details hold, the send button takes the same
    standing warmth as the booking commitments: the page visibly says the
    note is ready before a single validation message is needed. */
