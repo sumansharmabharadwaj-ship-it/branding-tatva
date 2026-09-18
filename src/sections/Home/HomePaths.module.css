@@ -22,7 +22,7 @@
 }
 .frame {
   position: relative; z-index: 1; width: min(100%, 90rem); min-height: 100svh;
-  display: grid; align-content: center; gap: clamp(1.5rem, 3.5svh, 2.25rem);
+  display: grid; align-content: center; gap: clamp(1.25rem, 2.6svh, 1.65rem);
   margin-inline: auto;
   /* Sticky content cannot scroll farther inside its frame. Reserve the same
      bottom clearance as the keyboard focus margin before enabling the hold. */
@@ -86,15 +86,32 @@
 .action:hover { background: #3b3629; }
 .action:hover svg, .footer a:hover svg { transform: translateX(4px); }
 .scope { border: 1px solid rgb(94 76 51 / 18%); border-radius: 1.25rem; padding: 1.2rem 1.5rem; background: rgb(250 246 237 / 78%); box-shadow: 0 18px 45px rgb(76 62 41 / 7%); }
-.questionStack { margin-bottom: 1.6rem; }
-.question { max-width: 26ch; margin: 0; font: 400 clamp(1.5rem, 2.2vw, 2rem)/1.25 var(--font-display, Georgia, serif); text-wrap: pretty; }
+.questionStack { margin-bottom: 1.15rem; }
+.question { max-width: 30ch; margin: 0; font: 400 clamp(1.45rem, 1.9vw, 1.7rem)/1.25 var(--font-display, Georgia, serif); text-wrap: pretty; }
 .scopeLabel { margin: 0 0 .7rem; color: #514b40; font-size: .875rem; line-height: 1.5; }
-.scope ul { margin: 0; padding: 0; list-style: none; }
-.scope li {
-  display: grid; grid-template-columns: 1.3rem minmax(0,1fr); gap: .7rem;
-  padding-block: .7rem; border-top: 1px solid rgb(94 76 51 / 20%); font-size: .9rem; line-height: 1.45;
+.decisionTrail { margin: 0; padding: 0; list-style: none; }
+.decisionTrail li {
+  display: grid; grid-template-columns: 1.9rem minmax(0,1fr); gap: .8rem;
+  min-width: 0; padding-block: .6rem;
 }
-.scope li > span { color: #805239; font-size: .7rem; padding-top: .15rem; font-variant-numeric: tabular-nums; }
+.decisionTrail li:first-child { padding-top: 0; }
+.decisionTrail li:last-child { padding-bottom: 0; }
+.decisionMarker { position: relative; display: block; align-self: stretch; }
+.decisionNumber {
+  position: relative; z-index: 1; display: grid; place-items: center;
+  width: 1.9rem; height: 1.9rem; border: 1px solid rgb(128 82 57 / 45%);
+  border-radius: 50%; background: #f2eadc; color: #805239;
+  font: 500 .75rem/1 var(--font-sans, sans-serif); font-variant-numeric: tabular-nums;
+}
+.decisionConnector {
+  position: absolute; top: .95rem; left: calc(.95rem - 1px);
+  width: 2px; height: calc(100% + 1.2rem); background: rgb(128 82 57 / 16%);
+}
+.decisionConnector > span {
+  position: absolute; inset: 0; background: #805239; transform-origin: top;
+}
+.decisionTitle { display: block; padding-top: .15rem; color: #342f27; font-size: 1rem; line-height: 1.45; font-weight: 500; }
+.decisionNote { display: block; margin-top: .25rem; color: #514b40; font-size: .9375rem; line-height: 1.55; text-wrap: pretty; }
 .footer {
   display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .25rem 1rem;
   padding-top: 1rem; border-top: 1px solid rgb(94 76 51 / 25%); color: #514b40;
@@ -140,9 +157,11 @@
   .paths { height: auto; min-height: 100svh; }
   .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
   .action, .action svg, .footer svg { transition: none; }
+  .decisionConnector > span { transform: none !important; }
 }
 :global(html[data-motion="reduced"]) .paths { height: auto; min-height: 100svh; }
 :global(html[data-motion="reduced"]) .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
+:global(html[data-motion="reduced"]) .decisionConnector > span { transform: none !important; }
 
 /* No delayed row animation can restart on resume or while reading by key. */
 :global(html[data-motion="reduced"]) .action,

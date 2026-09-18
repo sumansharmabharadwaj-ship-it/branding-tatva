@@ -29,7 +29,11 @@ const PATHS = [
     context: "A new business",
     title: "Give the idea a clear beginning.",
     question: "Who should choose this business, and why?",
-    decisions: ["Position and audience", "Core identity", "Launch messaging"],
+    decisions: [
+      { title: "Position and audience", detail: "Decide who should choose you, and why." },
+      { title: "Core identity", detail: "Give that position a recognisable form." },
+      { title: "Launch messaging", detail: "Carry the same promise into the launch." },
+    ],
   },
   {
     situation: "reposition",
@@ -37,7 +41,11 @@ const PATHS = [
     context: "An existing brand",
     title: "Let the brand catch up.",
     question: "What should buyers recognise, and what needs to change?",
-    decisions: ["Audit and position", "Language and identity", "Website and campaign direction"],
+    decisions: [
+      { title: "Audit and position", detail: "Find which associations still serve the business." },
+      { title: "Language and identity", detail: "Keep useful recognition. Change what has drifted." },
+      { title: "Website and campaign direction", detail: "Apply the position wherever buyers meet you." },
+    ],
   },
   {
     situation: "ongoing",
@@ -45,7 +53,11 @@ const PATHS = [
     context: "Work that keeps growing",
     title: "Keep the brand recognisable.",
     question: "Where is the brand drifting as the work grows?",
-    decisions: ["Monthly brand review", "Content management", "Performance and adjustment"],
+    decisions: [
+      { title: "Monthly brand review", detail: "Spot drift across the work already in use." },
+      { title: "Content management", detail: "Keep each new piece recognisably yours." },
+      { title: "Performance and adjustment", detail: "Use the response to guide the next cycle." },
+    ],
   },
 ] as const satisfies readonly {
   situation: ServicesSituationId;
@@ -53,11 +65,20 @@ const PATHS = [
   context: string;
   title: string;
   question: string;
-  decisions: readonly string[];
+  decisions: readonly { title: string; detail: string }[];
 }[];
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 type Path = (typeof PATHS)[number];
+
+function DecisionReading({ decision }: { decision: Path["decisions"][number] }) {
+  return (
+    <>
+      <strong className={styles.decisionTitle}>{decision.title}</strong>
+      <span className={styles.decisionNote}>{decision.detail}</span>
+    </>
+  );
+}
 
 function PathReading({ path, index }: { path: Path; index: number }) {
   const offering = packages.find((item) => item.slug === SITUATION_TO_PACKAGE[path.situation])!;
@@ -73,11 +94,14 @@ function PathReading({ path, index }: { path: Path; index: number }) {
 export function PathsCinematicChapter() {
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
+  const routeRef = useRef<HTMLOListElement>(null);
   const [frameFits, setFrameFits] = useState(false);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const previousIndexRef = useRef(0);
+  const routeSeenRef = useRef<number | null>(null);
   const copyMotion = useAnimationControls();
   const scopeMotion = useAnimationControls();
+  const routeMotion = useAnimationControls();
   const selectionId = useId();
   const reducedMotion = Boolean(useHydratedReducedMotion());
   const cinematicMotion = useMediaQuery(
@@ -85,6 +109,7 @@ export function PathsCinematicChapter() {
   );
   const desktopStory = cinematicMotion && frameFits && !reducedMotion;
   const sceneInView = useInView(sectionRef, { amount: 0.08 });
+  const routeInView = useInView(routeRef, { amount: 0.35 });
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
@@ -152,24 +177,40 @@ export function PathsCinematicChapter() {
   const settleReading = useCallback(() => {
     copyMotion.stop();
     scopeMotion.stop();
+    routeMotion.stop();
     copyMotion.set({ x: 0, y: 0 });
     scopeMotion.set({ x: 0 });
-  }, [copyMotion, scopeMotion]);
+    routeMotion.set({ scaleY: 1 });
+  }, [copyMotion, scopeMotion, routeMotion]);
 
   useEffect(() => {
     const previous = previousIndexRef.current;
     previousIndexRef.current = activeIndex;
+    const firstArrival = routeInView && routeSeenRef.current !== activeIndex;
+    if (routeInView) routeSeenRef.current = activeIndex;
     settleReading();
-    if (reducedMotion || previous === activeIndex) return;
+    const focused = document.activeElement;
+    const keyboardReading = focused instanceof HTMLElement && focused.matches(":focus-visible")
+      && sectionRef.current?.contains(focused);
+    if (reducedMotion || keyboardReading || !sceneInView || (previous === activeIndex && !firstArrival)) return;
     const direction = activeIndex > previous ? 1 : -1;
     // Fully opaque text arrives as one reading group; controls stay outside
-    // its transform. Reversing the selection reverses this small movement.
-    copyMotion.set({ x: direction * 6, y: 2 });
-    scopeMotion.set({ x: direction * 8 });
-    void copyMotion.start({ x: 0, y: 0, transition: { duration: .36, ease: EASE } });
-    void scopeMotion.start({ x: 0, transition: { duration: .4, ease: EASE } });
-    return () => { copyMotion.stop(); scopeMotion.stop(); };
-  }, [activeIndex, copyMotion, reducedMotion, scopeMotion, settleReading]);
+    // its transform. A keyboard choice settles immediately. Only the
+    // decorative connector draws on the first arrival; copy is already there.
+    if (previous !== activeIndex) {
+      copyMotion.set({ x: direction * 6, y: 2 });
+      scopeMotion.set({ x: direction * 8 });
+      void copyMotion.start({ x: 0, y: 0, transition: { duration: .36, ease: EASE } });
+      void scopeMotion.start({ x: 0, transition: { duration: .4, ease: EASE } });
+    }
+    if (routeInView) {
+      routeMotion.set({ scaleY: 0 });
+      void routeMotion.start((index: number) => ({
+        scaleY: 1, transition: { duration: .5, delay: index * .28, ease: EASE },
+      }));
+    }
+    return () => { copyMotion.stop(); scopeMotion.stop(); routeMotion.stop(); };
+  }, [activeIndex, copyMotion, reducedMotion, routeInView, routeMotion, sceneInView, scopeMotion, settleReading]);
 
   function choose(index: number) {
     chooseVisualState(index);
@@ -215,7 +256,7 @@ export function PathsCinematicChapter() {
       data-path-story={desktopStory ? "held" : "flow"}
       className={styles.paths}
       aria-labelledby="paths-cinematic-title"
-      onFocusCapture={(event) => revealFocusedPath(event.target)}
+      onFocusCapture={(event) => { settleReading(); revealFocusedPath(event.target); }}
     >
       <div className={styles.scene}>
         <div className={styles.film} aria-hidden="true">
@@ -328,20 +369,27 @@ export function PathsCinematicChapter() {
                   </div>
                   <p className={styles.question}>{active.question}</p>
                 </div>
-                <p className={styles.scopeLabel}>What the work covers</p>
-                <ul>
+                <p className={styles.scopeLabel}>How the work connects</p>
+                <ol ref={routeRef} className={styles.decisionTrail} role="list" aria-label="Connected brand decisions">
                   {active.decisions.map((decision, index) => (
                     <li key={index}>
-                      <span aria-hidden="true">0{index + 1}</span>
+                      <span className={styles.decisionMarker} aria-hidden="true">
+                        {index < active.decisions.length - 1 && (
+                          <span className={styles.decisionConnector}>
+                            <motion.span custom={index} initial={false} animate={routeMotion} data-path-route-ink />
+                          </span>
+                        )}
+                        <span className={styles.decisionNumber}>0{index + 1}</span>
+                      </span>
                       <div className={styles.readingStack}>
                         <div className={styles.readingMeasure} aria-hidden="true" inert>
-                          {PATHS.map((path) => <div key={path.situation}>{path.decisions[index]}</div>)}
+                          {PATHS.map((path) => <div key={path.situation}><DecisionReading decision={path.decisions[index]} /></div>)}
                         </div>
-                        <div>{decision}</div>
+                        <div><DecisionReading decision={decision} /></div>
                       </div>
                     </li>
                   ))}
-                </ul>
+                </ol>
               </motion.div>
             </div>
           </div>
