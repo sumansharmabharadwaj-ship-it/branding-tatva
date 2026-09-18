@@ -497,6 +497,7 @@ export function V4HiddenCostScene() {
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const [comparison, setComparison] = useState<{ mode: MessageMode; direction: number }>({ mode: "separate", direction: 0 });
   const manuallyChosen = useRef(false);
+  const touchActive = useRef(false);
   const demonstrated = useRef(false);
   const [arrived, setArrived] = useState(false);
   const [entranceFinished, setEntranceFinished] = useState(false);
@@ -513,7 +514,7 @@ export function V4HiddenCostScene() {
       clear();
       if (!visible || document.hidden || manuallyChosen.current || demonstrated.current) return;
       timer = setTimeout(() => {
-        if (!visible || document.hidden || manuallyChosen.current || demonstrated.current || element.contains(document.activeElement)) return;
+        if (!visible || document.hidden || touchActive.current || manuallyChosen.current || demonstrated.current || element.contains(document.activeElement)) return;
         const selection = document.getSelection();
         if (selection && !selection.isCollapsed && selection.anchorNode && element.contains(selection.anchorNode)) return;
         demonstrated.current = true;
@@ -598,7 +599,15 @@ export function V4HiddenCostScene() {
           data-story-arrived={arrived && !entranceFinished && !prefersReducedMotion}
           style={{ "--comparison-arrival": prefersReducedMotion ? 1 : comparisonArrival } as MotionStyle}
           onFocusCapture={revealFocusedComparison}
-          onPointerDown={() => { manuallyChosen.current = true; }}
+          onPointerDown={(event) => {
+            // Touch scrolling begins with pointerdown too. A native click
+            // confirms a tap; a scrolling gesture instead sends pointercancel.
+            if (event.pointerType === "touch" || event.pointerType === "pen") touchActive.current = true;
+            else manuallyChosen.current = true;
+          }}
+          onPointerUp={() => { touchActive.current = false; }}
+          onPointerCancel={() => { touchActive.current = false; }}
+          onClickCapture={() => { manuallyChosen.current = true; }}
         >
           <div className={costStyles.comparisonHeader}>
             <p className={costStyles.exampleLabel}>Illustrative example · A brand consultancy</p>
