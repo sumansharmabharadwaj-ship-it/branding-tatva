@@ -51,6 +51,45 @@ function FoundationReading({ layer }: { layer: FoundationLayer }) {
   return <><h3>{layer.title}</h3><p className={styles.description}>{layer.description}</p></>;
 }
 
+/* A visual echo of the reading, not a second set of controls. The three
+ * inputs converge on Position; the same activeIndex drives both views. */
+function FoundationMap({ activeIndex }: { activeIndex: number }) {
+  return (
+    <div className={styles.map} aria-hidden="true" data-foundation-map>
+      <p className={styles.mapLabel}>The decisions, connected</p>
+      <div className={styles.mapCanvas}>
+        <svg className={styles.mapLines} viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+          {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => (
+            <path
+              key={layer.id}
+              d={`M 40 ${(index + .5) * 100 / 3} C 51 ${(index + .5) * 100 / 3}, 49 50, 60 50`}
+              vectorEffect="non-scaling-stroke"
+              data-connected={activeIndex === index || activeIndex === 3}
+            />
+          ))}
+        </svg>
+        {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => (
+          <div
+            key={layer.id}
+            className={styles.mapInput}
+            data-active={activeIndex === index}
+            data-connected={activeIndex === index || activeIndex === 3}
+            style={{ gridRow: index + 1 }}
+          >
+            <span>{layer.number}</span>
+            <strong>{layer.label}</strong>
+          </div>
+        ))}
+        <div className={styles.mapPosition} data-active={activeIndex === 3}>
+          <span>04</span>
+          <strong>Position</strong>
+        </div>
+      </div>
+      <p className={styles.mapCaption}>One shared basis for what the brand should mean.</p>
+    </div>
+  );
+}
+
 function FoundationDecision({ layer, direction, reducedMotion }: {
   layer: FoundationLayer;
   direction: number;
@@ -132,7 +171,8 @@ export function BrandFoundationScene() {
   // Larger text or a shorter viewport can release the hold without clipping.
   const hasScrollRunway = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
   const [frameFits, setFrameFits] = useState(false);
-  const cinematicMotion = hasScrollRunway && !prefersReducedMotion && frameFits;
+  const [hasScrollLayout, setHasScrollLayout] = useState(false);
+  const cinematicMotion = hasScrollLayout && !prefersReducedMotion;
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
   const previousIndexRef = useRef(0);
   const visualizer = useScrollDrivenVisualizer({
@@ -158,6 +198,14 @@ export function BrandFoundationScene() {
   useEffect(() => {
     previousIndexRef.current = activeIndex;
   }, [activeIndex]);
+
+  useEffect(() => {
+    // Once a desktop story has started, pause its animation without removing
+    // its runway. A visit that begins with reduced motion still uses normal
+    // document flow, and a smaller viewport always releases the sticky frame.
+    if (!hasScrollRunway || !frameFits) setHasScrollLayout(false);
+    else if (!prefersReducedMotion) setHasScrollLayout(true);
+  }, [hasScrollRunway, frameFits, prefersReducedMotion]);
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -218,6 +266,7 @@ export function BrandFoundationScene() {
       data-scroll-story="foundation"
       data-foundation-state={activeIndex}
       data-foundation-motion={cinematicMotion ? "scroll" : "static"}
+      data-foundation-layout={hasScrollLayout ? "sticky" : "flow"}
     >
       <div ref={sceneRef} className={styles.scene}>
         <motion.div className={styles.landscape} data-foundation-landscape aria-hidden="true" style={{ scale: cinematicMotion ? landscapeScale : 1, x: cinematicMotion ? landscapeX : 0, y: cinematicMotion ? landscapeY : 0 }}>
@@ -295,6 +344,7 @@ export function BrandFoundationScene() {
               Walk the foundation path <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
           </div>
+          <FoundationMap activeIndex={activeIndex} />
         </div>
       </div>
     </section>
