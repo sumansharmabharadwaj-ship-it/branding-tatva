@@ -268,6 +268,7 @@ export function PathsCinematicChapter() {
               shared warm house pass applied at encode. */}
           <BackgroundVideo
             video="/videos/bt-home-paths-wetland-egrets.mp4"
+            videoMobile="/videos/bt-home-paths-wetland-egrets-mobile.mp4"
             poster="/images/bt-home-paths-wetland-egrets-poster.jpg"
             managedByHomepage
             loop={false}
