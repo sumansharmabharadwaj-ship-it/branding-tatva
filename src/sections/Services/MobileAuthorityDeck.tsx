@@ -12,6 +12,7 @@ export type AuthorityLayer = {
   slug: Element["slug"];
   label: string;
   line: string;
+  outputs: readonly string[];
   skipped: string;
   color: string;
 };
@@ -135,6 +136,7 @@ export function MobileAuthorityDeck({
               <span className="font-display text-sm leading-none">
                 {String(index + 1).padStart(2, "0")}
               </span>
+              <span data-authority-tab-label="true">{layer.label}</span>
               {selected && (
                 <motion.span
                   layoutId="authority-mobile-active-layer"
@@ -149,35 +151,23 @@ export function MobileAuthorityDeck({
         })}
       </div>
 
-      <div className="relative mt-4 min-h-[17rem]">
+      <div data-authority-mobile-panels="true" className="relative mt-4 min-h-[17rem]">
         {layers.map((layer, index) => {
           const selected = activeIndex === index;
           return (
             <motion.section
-              key={`${layer.slug}-${selected ? `active-${transitionDirection}` : "idle"}`}
+              key={layer.slug}
               id={`authority-layer-panel-${layer.slug}`}
               role="tabpanel"
               aria-labelledby={`authority-layer-tab-${layer.slug}`}
-              hidden={!selected}
+              aria-hidden={!selected}
+              inert={!selected}
+              tabIndex={selected ? 0 : -1}
               data-authority-layer-panel="true"
               data-authority-layer={layer.slug}
-              initial={
-                selected && !prefersReducedMotion
-                  ? {
-                      opacity: 0,
-                      x: transitionDirection * motionTokens.distanceSmall,
-                      clipPath: "inset(0 0 12% 0 round 1rem)",
-                      filter: `blur(${motionTokens.blurSmall}px)`,
-                    }
-                  : false
-              }
+              initial={false}
               animate={{
-                opacity: selected ? 1 : 0,
-                x: 0,
-                clipPath: selected
-                  ? "inset(0% 0 0% 0 round 1rem)"
-                  : "inset(0 0 12% 0 round 1rem)",
-                filter: selected ? "blur(0px)" : `blur(${motionTokens.blurSmall}px)`,
+                x: selected ? 0 : transitionDirection * 8,
               }}
               transition={
                 prefersReducedMotion
@@ -202,6 +192,9 @@ export function MobileAuthorityDeck({
                 </span>
               </div>
               <p className="mt-6 text-base leading-relaxed text-ivory/92">{layer.line}</p>
+              <ul data-authority-decisions="true" aria-label={`Decisions within ${layer.label}`}>
+                {layer.outputs.map((output) => <li key={output}>{output}</li>)}
+              </ul>
               <p className="mt-4 border-t border-ivory/10 pt-4 text-sm leading-relaxed text-ivory/62">
                 {layer.skipped}
               </p>

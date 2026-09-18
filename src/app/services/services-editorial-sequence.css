@@ -267,6 +267,93 @@
   padding-top: clamp(6.5rem, 9vw, 8rem) !important;
   padding-bottom: clamp(4rem, 6vw, 6rem) !important;
 }
+
+/* Foundation choices name the decision before asking for interaction. */
+#authority [data-authority-decisions] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+  padding: 0;
+  list-style: none;
+}
+#authority [data-authority-decisions] li {
+  position: relative;
+  min-width: 0;
+  padding-block: 0.5rem;
+  color: #e1d6c3;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+#authority [data-authority-decisions] li::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #8fae83;
+  transform-origin: left;
+  animation: authority-decision-draw 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+#authority [data-authority-decisions] li:nth-child(2)::after { animation-delay: 90ms; }
+#authority [data-authority-decisions] li:nth-child(3)::after { animation-delay: 180ms; }
+#authority [data-authority-desktop-layer]:is(:hover, :focus-within, [aria-pressed="true"]) {
+  transform: none !important;
+  opacity: 1 !important;
+}
+#authority [data-authority-mobile-panels] {
+  display: grid;
+  align-items: stretch;
+}
+#authority [data-authority-mobile-panels] > [role="tabpanel"] { grid-area: 1 / 1; }
+#authority [data-authority-mobile-panels] > [aria-hidden="true"] {
+  visibility: hidden;
+  pointer-events: none;
+}
+#authority [data-authority-mobile-panels] > [aria-hidden="true"] li::after { animation: none; }
+#authority [data-authority-layer-panel]:focus-visible {
+  outline: 2px solid #c6a97a;
+  outline-offset: 4px;
+}
+@keyframes authority-decision-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (min-width: 1024px) {
+  #authority [data-authority-story],
+  #authority [data-authority-frame] { height: auto !important; min-height: 100svh; }
+  #authority [data-authority-shell] { padding-block: 6rem 4rem !important; }
+  #authority [data-authority-grid] { transform: none; }
+  #authority [data-authority-desktop-layer] > div p:nth-child(2) { font-size: 0.94rem !important; line-height: 1.5; }
+  #authority [data-authority-desktop-layer] > div p:nth-child(3) { font-size: 0.84rem !important; line-height: 1.5; }
+}
+@media (max-width: 1023px) {
+  #authority [data-authority-copy] h2 { font-size: clamp(2rem, 7vw, 3rem); line-height: 1.06; }
+  #authority [data-authority-copy] > p:nth-of-type(2) { font-size: 1rem; font-style: normal; line-height: 1.6; }
+  #authority [data-authority-copy] > a { font-size: 0.9rem; line-height: 1.5; }
+  #authority [data-authority-mobile-deck] [role="tablist"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    padding: 0.4rem;
+  }
+  #authority [data-authority-layer-tab] { flex: 1 1 calc(33.333% - 0.4rem); min-height: 3.75rem; padding: 0.55rem 0.2rem; gap: 0.3rem; }
+  #authority [data-authority-layer-tab] > span:first-child { display: none; }
+  #authority [data-authority-layer-tab] > span:nth-child(2) { font-size: 0.8rem; opacity: 0.7; }
+  #authority [data-authority-tab-label] { font-size: 0.82rem; font-weight: 500; line-height: 1.3; }
+  #authority [data-authority-layer-tab][aria-selected="true"] { background: #dde2dc; color: #1f3a28; }
+  #authority [data-authority-layer-panel] { padding: 1.25rem; background: #f2f0e8; border-color: #b5b3aa; box-shadow: 0 18px 42px rgb(9 20 13 / 12%); }
+  #authority [data-authority-layer-panel] h3 { font-size: 2rem; color: #1f3a28; }
+  #authority [data-authority-layer-panel] > div:first-child > div:first-child > div > p { color: #556b4a !important; }
+  #authority [data-authority-layer-panel] > div:first-child > span { color: #556b4a; opacity: 0.4; font-size: 2.7rem; }
+  #authority [data-authority-layer-panel] > p:first-of-type { font-size: 1.06rem; line-height: 1.55; color: #24372c; }
+  #authority [data-authority-layer-panel] > p:last-of-type { font-size: 0.94rem; line-height: 1.6; color: #4d574a; border-color: #b5b3aa; }
+  #authority [data-authority-decisions] li { color: #45583f; font-size: 0.82rem; }
+  #authority [data-authority-mobile-controls] { margin-top: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #authority [data-authority-decisions] li::after { animation: none; }
+}
+:root[data-motion="reduced"] #authority [data-authority-decisions] li::after { animation: none; }
 @media (max-width: 767px) {
   .august-8-refined #education[data-services-scene="education"] {
     padding-top: 5.5rem !important;

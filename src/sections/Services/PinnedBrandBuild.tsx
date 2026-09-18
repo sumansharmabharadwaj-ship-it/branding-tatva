@@ -52,10 +52,19 @@ const SKIPPED: Record<string, string> = {
   space: "Without this: each campaign works alone and leaves little memory behind.",
 };
 
+const LAYER_DECISIONS = {
+  earth: { line: "A position buyers can explain in one sentence.", outputs: ["Category", "Audience", "Promise"] },
+  water: { line: "The same promise, from first enquiry to delivery.", outputs: ["Touchpoints", "Service cues", "Handoffs"] },
+  fire: { line: "A small set of cues people can recognise.", outputs: ["Colour", "Type", "Image rules"] },
+  air: { line: "One point of view in every channel.", outputs: ["Point of view", "Vocabulary", "Tone"] },
+  space: { line: "The brand that comes to mind when the need appears.", outputs: ["Buying moments", "Repeated cues", "Presence"] },
+} as const;
+
 const LAYERS: AuthorityLayer[] = elements.map((el) => ({
   slug: el.slug,
   label: el.name.split("·")[1]?.trim() ?? el.name,
-  line: el.manifesto[0],
+  line: LAYER_DECISIONS[el.slug].line,
+  outputs: LAYER_DECISIONS[el.slug].outputs,
   skipped: SKIPPED[el.slug] ?? "",
   color: ELEMENT_HEX[el.slug] ?? "#C6A97A",
 }));
@@ -161,9 +170,12 @@ export function PinnedBrandBuild() {
         // unfinished rows still yield to the active layer through position,
         // scale, colour and the activation signal rather than disappearing
         // into the moving material beneath them.
-        layer.style.opacity = String(0.68 + eased * 0.32);
-        layer.style.transform = `translate3d(${orbit.toFixed(1)}px, ${lift.toFixed(1)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${(0.965 + 0.035 * eased).toFixed(3)})`;
-        layer.style.setProperty("--act", (0.34 + eased * 0.66).toFixed(3));
+        // A row being inspected stays still under keyboard, pointer and
+        // deliberate selection; scrolling only assembles the other rows.
+        const reading = layer.matches(":focus-within, :hover") || layer.getAttribute("aria-pressed") === "true";
+        layer.style.opacity = reading ? "1" : String(0.68 + eased * 0.32);
+        layer.style.transform = reading ? "none" : `translate3d(${orbit.toFixed(1)}px, ${lift.toFixed(1)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${(0.965 + 0.035 * eased).toFixed(3)})`;
+        layer.style.setProperty("--act", reading ? "1" : (0.34 + eased * 0.66).toFixed(3));
       });
 
       if (waveRef.current) {
@@ -294,6 +306,15 @@ export function PinnedBrandBuild() {
                     <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="5" strokeLinecap="round" opacity="0.12" />
                   </g>
                 </svg>
+                <ul
+                  key={inspectedLayer ?? "system"}
+                  data-authority-decisions="true"
+                  aria-label={inspectedLayer === null ? "The connected brand system" : `Decisions within ${LAYERS[inspectedLayer].label}`}
+                >
+                  {(inspectedLayer === null ? ["Position", "Experience", "Recognition"] : LAYERS[inspectedLayer].outputs).map((output) => (
+                    <li key={output}>{output}</li>
+                  ))}
+                </ul>
               </div>
               {LAYERS.map((layer, i) => (
                 <button
