@@ -214,6 +214,29 @@ export default async function ServicesPage() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceCatalogJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd) }} />
+        {/* SCROLL RUNWAY. Measured against /about, which Suman names as the
+            closest thing on this site to the scroll character she wants:
+
+              about     sections 1043-1501px   dScale 0.90-1.00   dY 82-190px
+              services  sections 790px (=1vh)  dScale 0.03-0.04   dY 17-85px
+
+            About lets content define height, so a chapter spans 1.3 to 1.9
+            viewports and scroll-linked motion has distance to play out.
+            Services locked every chapter to exactly one viewport, so its own
+            runtime — which already publishes scene progress, content x/y/
+            rotate/scale, camera x/y/scale and copy opacity — had no travel to
+            spend them across. The choreography was built and then starved.
+
+            Per SCROLL_OS §11 (Services: one major and two minor) rather than
+            giving every chapter runway: offerings is the major at 170svh,
+            situation and education the minors at 140svh. #desire and #book
+            stay at one frame deliberately, because pricing and booking are
+            where money hates motion.
+
+            #authority is NOT given runway here. It holds PinnedBrandBuild,
+            the one place this codebase uses GSAP ScrollTrigger.pin, which
+            CLAUDE.md records as twice built and twice abandoned. Restoring a
+            pinned runway there needs its own careful pass. */}
         <PricingProvider initialRegion={region}>
         {/* Curiosity opens as a complete first scene rather than a
             compact masthead. One viewport belongs to the opening film,
@@ -287,8 +310,8 @@ export default async function ServicesPage() {
                   When the business has grown past its brand, begin with the position.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
-                  For founders launching, repositioning, or tired of correcting every channel, this page shows what
-                  we decide, what gets built, what it costs, and what the evidence can support.
+                  For founders launching, repositioning, or tired of correcting every channel: what gets decided,
+                  what gets built, what it costs, and what the evidence can support.
                 </p>
                 {/* The hero's one quiet action — a visitor sold by the
                     opening claim previously had nowhere to act until the
@@ -359,7 +382,7 @@ export default async function ServicesPage() {
             the site remembers where they stand instead of asking twice.
             A quiet interstitial on the page's charcoal ground; the
             chapters around it carry the media. */}
-        <section id="situation" data-services-scene="situation" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: "#3f4d44" }}>
+        <section id="situation" data-services-scene="situation" className="relative flex min-h-[140svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: "#3f4d44" }}>
           {/* Original procedural Situation film: one coherent material
               world holds three different starting conditions. A pale
               mineral seed begins, shifted strata wait to realign, and
@@ -402,7 +425,7 @@ export default async function ServicesPage() {
             "what do you actually do" with no complete answer anywhere
             on the page. Editorial rows rather than a card grid; each
             offering keeps its own accent from the data. */}
-        <section id="offerings" data-services-scene="offerings" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+        <section id="offerings" data-services-scene="offerings" className="relative flex min-h-[170svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
           {/* Original generated strategy terrain: mist withdraws from a
               tactile topographic world while one pale route becomes
               clear. The six disciplines stay distinct in the foreground,
@@ -537,7 +560,7 @@ export default async function ServicesPage() {
         <section
           id="education"
           data-services-scene="education"
-          className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
+          className="relative flex min-h-[140svh] flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24"
           style={{ backgroundColor: "#F2EBDD" }}
         >
           <div data-perception-ambient-film="true" aria-hidden="true" className="absolute inset-0">

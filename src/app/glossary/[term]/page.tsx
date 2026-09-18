@@ -39,9 +39,17 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
   if (!entry) notFound();
 
   const siblings = entry.pillar.terms.filter((t) => t.slug !== entry.slug);
-  const article = entry.pillar.articleSlug
-    ? getInsightBySlug(entry.pillar.articleSlug)
-    : undefined;
+  // The essays where this idea does real work. Every slug resolves
+  // against the live library, so a retired essay drops out at build
+  // time instead of shipping a dead link. The pillar's anchor guide
+  // stays as the fallback for a term with no mapping of its own.
+  const essays = (entry.essaySlugs ?? [])
+    .map((slug) => getInsightBySlug(slug))
+    .filter((post): post is NonNullable<typeof post> => Boolean(post));
+  const article =
+    essays.length === 0 && entry.pillar.articleSlug
+      ? getInsightBySlug(entry.pillar.articleSlug)
+      : undefined;
 
   const schema = {
     "@context": "https://schema.org",
@@ -52,6 +60,15 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
         description: entry.definition,
         url: `${site.url}/glossary/${entry.slug}`,
         inDefinedTermSet: { "@type": "DefinedTermSet", name: "Branding Tatva Glossary", url: `${site.url}/glossary` },
+        ...(essays.length > 0
+          ? {
+              subjectOf: essays.map((post) => ({
+                "@type": "BlogPosting",
+                headline: post.title,
+                url: `${site.url}/insights/${post.slug}`,
+              })),
+            }
+          : {}),
       },
       {
         "@type": "BreadcrumbList",
@@ -155,6 +172,32 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                 </div>
               </div>
             </Reveal>
+
+            {essays.length > 0 && (
+              <Reveal>
+                <div className="mt-12 border-t border-border pt-8">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                    Essays that put this idea to work
+                  </p>
+                  <ul className="mt-4 space-y-4">
+                    {essays.map((post) => (
+                      <li key={post.slug}>
+                        <Link href={`/insights/${post.slug}`} className="group block">
+                          <span className="font-display text-lg leading-snug text-soil transition-colors duration-300 group-hover:text-clay">
+                            {post.title}
+                          </span>
+                          <span className="mt-0.5 flex items-center gap-3 text-xs text-foreground-secondary/70">
+                            <span>{post.readingTime}</span>
+                            <span aria-hidden="true">·</span>
+                            <span className="text-clay">Read the essay →</span>
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            )}
 
             {siblings.length > 0 && (
               <Reveal>

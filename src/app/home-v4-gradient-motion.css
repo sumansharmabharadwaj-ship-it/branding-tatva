@@ -160,7 +160,10 @@ html[data-motion="reduced"] .home-v4 .home-v4-button svg { transition: none; }
   fill: none;
   stroke: var(--lg-ink);
   stroke-width: 1.25;
-  opacity: .32;
+  /* Raised from .32 with the richer field colours: at the old level the
+     scroll drawn traces sank into the stronger blooms underneath, and the
+     one motion the visitor directly authors became the least visible one. */
+  opacity: .44;
   translate: calc(var(--field-x, 0px) * -.6) calc(var(--field-y, 0px) * .5);
   rotate: calc(var(--field-turn, 0deg) * -.6);
   scale: var(--current-breath, 1);
@@ -173,14 +176,14 @@ html[data-motion="reduced"] .home-v4 .home-v4-button svg { transition: none; }
   stroke-dashoffset: calc(1 - var(--current-draw, 1));
 }
 .home-v4-current__echo {
-  opacity: .35;
+  opacity: .42;
   stroke-dasharray: 1;
   stroke-dashoffset: calc(1 - var(--current-draw, 1) * .92);
 }
 .home-v4-current-light {
   position: absolute;
   inset: -10% -30%;
-  background: radial-gradient(ellipse at 50% 65%, color-mix(in srgb, var(--lg-light) 38%, transparent), transparent 60%);
+  background: radial-gradient(ellipse at 50% 65%, color-mix(in srgb, var(--lg-light) 46%, transparent), transparent 60%);
   translate: var(--current-sweep, 0%) 0;
   pointer-events: none;
 }

@@ -13,6 +13,10 @@ export type GlossaryTerm = {
   slug: string;
   expanded: string;
   practice: string;
+  // The essays where this idea does real work, newest thinking first.
+  // Rendered on the term page and exposed as subjectOf in its schema,
+  // so the vocabulary and the library cite each other.
+  essaySlugs?: string[];
 };
 
 export type Pillar = {
@@ -37,6 +41,7 @@ export const pillars: Pillar[] = [
       {
         term: "Positioning",
         slug: "positioning",
+        essaySlugs: ["brand-positioning-strategy-service-businesses", "brand-positioning-statement-examples-why-generic", "how-to-position-a-consulting-business"],
         definition:
           "The decision about which single idea a brand should own in a buyer's head, made before any design work begins.",
         expanded:
@@ -47,6 +52,7 @@ export const pillars: Pillar[] = [
       {
         term: "Category design",
         slug: "category-design",
+        essaySlugs: ["find-real-differentiator-crowded-service-market", "competitor-research-brand-strategy-without-copying-category"],
         definition:
           "Choosing, and sometimes creating, the market frame a brand competes in before competing in it.",
         expanded:
@@ -69,6 +75,7 @@ export const pillars: Pillar[] = [
       {
         term: "Distinctive assets",
         slug: "distinctive-assets",
+        essaySlugs: ["distinctive-brand-assets-audit", "what-rebrand-backlashes-teach-about-brand-memory", "why-ai-content-makes-brands-average"],
         definition:
           "The colors, shapes, sounds, and phrases a brand owns so thoroughly that people recognize it with the logo covered.",
         expanded:
@@ -79,6 +86,7 @@ export const pillars: Pillar[] = [
       {
         term: "Mental availability",
         slug: "mental-availability",
+        essaySlugs: ["how-ai-assistants-choose-brands-to-recommend", "brand-marketing-vs-performance-marketing", "brand-awareness-vs-brand-recall"],
         definition:
           "How easily a brand comes to mind in a buying moment. Built through consistent presence, well before any single campaign.",
         expanded:
@@ -89,6 +97,7 @@ export const pillars: Pillar[] = [
       {
         term: "Brand salience",
         slug: "brand-salience",
+        essaySlugs: ["brand-awareness-vs-brand-recall", "measure-brand-recall-limited-budget"],
         definition: "The share of buying situations in which a brand gets thought of at all.",
         expanded:
           "Salience widens when a brand attaches itself to more of the moments that trigger its category: the morning routine, the quarterly review, the gift search. Each new buying situation the brand gets linked to is another door into memory. Brands lose less often to rivals than to simply going unthought of.",
@@ -98,6 +107,7 @@ export const pillars: Pillar[] = [
       {
         term: "Recognition",
         slug: "recognition",
+        essaySlugs: ["why-beautiful-brand-identity-can-be-forgettable", "reposition-established-service-business-without-losing-recognition", "brand-consistency-checklist-service-businesses"],
         definition: "The compound return of consistency: being known again without reintroduction.",
         expanded:
           "Recognition is the asset every other branding decision feeds, and it only accrues while the decisions agree with each other. A message repeated consistently across channels compounds; the same budget spent on five disconnected looks buys five first impressions and zero memory.",
@@ -119,6 +129,7 @@ export const pillars: Pillar[] = [
       {
         term: "Verbal identity",
         slug: "verbal-identity",
+        essaySlugs: ["brand-voice-guidelines-writers-can-use", "why-ai-content-makes-brands-average", "homepage-messaging-service-businesses"],
         definition: "The words a brand owns: its vocabulary, its rhythm, the sentences only it would say.",
         expanded:
           "A verbal identity earns its place when three different writers can produce copy that reads as one author. It covers the vocabulary a brand reaches for, the words it refuses, the rhythm of its sentences, and the claims it is willing to stake. Logos get protected in brand books while language, the thing customers actually quote, gets improvised weekly.",
@@ -128,6 +139,7 @@ export const pillars: Pillar[] = [
       {
         term: "Tone of voice",
         slug: "tone-of-voice",
+        essaySlugs: ["brand-voice-guidelines-writers-can-use", "brand-messaging-framework"],
         definition:
           "The consistent personality in how a brand speaks, kept steady across every channel and every writer.",
         expanded:
@@ -150,6 +162,7 @@ export const pillars: Pillar[] = [
       {
         term: "Brand architecture",
         slug: "brand-architecture",
+        essaySlugs: ["brand-architecture-service-businesses", "founder-brand-vs-company-brand", "service-line-naming-strategy"],
         definition:
           "How multiple offers relate under one roof: what earns its own name and what borrows the parent's.",
         expanded:
@@ -168,6 +181,7 @@ export const pillars: Pillar[] = [
       {
         term: "Semiotics",
         slug: "semiotics",
+        essaySlugs: ["why-beautiful-brand-identity-can-be-forgettable", "what-rebrand-backlashes-teach-about-brand-memory"],
         definition:
           "The study of what signs and symbols mean to a culture, applied so a brand's codes say what it intends.",
         expanded:

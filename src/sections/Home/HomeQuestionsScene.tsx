@@ -194,7 +194,7 @@ export function HomeQuestionsScene() {
           <p className={styles.eyebrow}>Before we work together</p>
           <h2 id="home-questions-title">Know what you’re <em>saying yes to.</em></h2>
           <p className={styles.lede}>
-            Scope, timing, and working directly with Suman.
+            Straight answers on scope, timing, and what working directly with Suman looks like.
           </p>
           {/* Native fragment navigation carries keyboard focus into the next scene. */}
           <a href="#invitation" className={styles.textLink}>

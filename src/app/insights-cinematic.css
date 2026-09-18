@@ -4465,6 +4465,17 @@ body:has(.insights-library-scene[data-scene-active="true"]) [data-site-header] {
   clip-path: inset(0 0 0 50%);
 }
 
+/* The generated worksheets share one grammar: framework band up top,
+   handwritten brace note down the right. The lifted layers follow that
+   grammar, so every sheet floats its headline row and its conclusion. */
+.insight-editorial-row[data-depth-kind="worksheet"] .insight-editorial-row__panel-layer--middle {
+  clip-path: inset(4% 20% 58% 2%);
+}
+
+.insight-editorial-row[data-depth-kind="worksheet"] .insight-editorial-row__panel-layer--near {
+  clip-path: inset(8% 1% 8% 83%);
+}
+
 .insight-editorial-row[data-depth-active="true"] .insight-editorial-row__panel-depth {
   box-shadow:
     0 1.4rem 2.8rem rgb(40 35 31 / 12%),
