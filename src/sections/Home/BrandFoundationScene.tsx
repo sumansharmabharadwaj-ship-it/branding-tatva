@@ -14,33 +14,41 @@ const FOUNDATION_LAYERS = [
     id: "category",
     number: "01",
     label: "Category",
-    title: "Decide what people compare you with.",
-    description: "Name the market you belong to, the alternatives buyers consider, and the expectations your offer needs to meet or change.",
-    produces: ["Category definition", "Competitive context", "Market boundaries"],
+    title: "Know the alternatives your buyer considers.",
+    description: "Buyers may compare you with another provider, an internal team, or doing nothing. We identify the alternatives your offer must answer.",
+    produces: ["Buyer alternatives", "Category choice", "Market expectations"],
+    mapHint: "Your alternatives",
+    connectionCopy: "Start with the options your buyer already knows.",
   },
   {
     id: "audience",
     number: "02",
     label: "Audience",
-    title: "Know what makes the right buyer choose.",
-    description: "Understand the situation, hesitation, and expectations behind the decision. Give the brand a specific person to speak to.",
-    produces: ["Audience priorities", "Decision barriers", "Perception map"],
+    title: "What makes your buyer ready to choose?",
+    description: "We identify the problem buyers need solved, what makes them hesitate, and the evidence they need before they commit.",
+    produces: ["Priority buyer", "Buying barriers", "Reasons to choose"],
+    mapHint: "Who needs you",
+    connectionCopy: "Speak to the decision your buyer needs to make.",
   },
   {
     id: "belief",
     number: "03",
     label: "Belief",
-    title: "Choose a promise the business can keep.",
-    description: "What should people consistently associate with you? Settle the belief and the evidence that language, identity, and experience must reinforce.",
-    produces: ["Core brand belief", "Reasons to believe", "Message territory"],
+    title: "Make a promise you can prove.",
+    description: "We match the promise to evidence your business can show, then decide how your words, design, and service should carry it.",
+    produces: ["Brand promise", "Supporting evidence", "Message priorities"],
+    mapHint: "What you prove",
+    connectionCopy: "Give people evidence for the promise you make.",
   },
   {
     id: "position",
     number: "04",
     label: "Position",
-    title: "Make the reason to choose you clear.",
-    description: "Bring the category, audience, and belief into one position. Give the team a shared basis for deciding what belongs in the brand.",
-    produces: ["Positioning statement", "Value proposition", "Decision filters"],
+    title: "Give every touchpoint the same direction.",
+    description: "We bring the buyer, alternatives, and proof into one position your team can use across the website, sales pitch, and next campaign.",
+    produces: ["Positioning statement", "Reason to choose", "Brand decision rules"],
+    mapHint: "Why choose you",
+    connectionCopy: "One reason to choose you, carried through the brand.",
   },
 ] as const;
 
@@ -57,7 +65,7 @@ function FoundationMap({ activeIndex, reducedMotion }: { activeIndex: number; re
   const mapId = useId();
   return (
     <div className={styles.map} aria-hidden="true" data-foundation-map>
-      <p className={styles.mapLabel}>The decisions, connected</p>
+      <p className={styles.mapLabel}>How a position takes shape</p>
       <div className={styles.mapCanvas}>
         <svg className={styles.mapLines} viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
           {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => {
@@ -96,14 +104,29 @@ function FoundationMap({ activeIndex, reducedMotion }: { activeIndex: number; re
           >
             <span>{layer.number}</span>
             <strong>{layer.label}</strong>
+            <small className={styles.mapHint}>{layer.mapHint}</small>
           </div>
         ))}
         <div className={styles.mapPosition} data-active={activeIndex === 3}>
           <span>04</span>
           <strong>Position</strong>
+          <small className={styles.mapHint}>{FOUNDATION_LAYERS[3].mapHint}</small>
         </div>
       </div>
-      <p className={styles.mapCaption}>One shared basis for what the brand should mean.</p>
+      <p className={`${styles.mapCaption} ${styles.readingStack}`}>
+        <span className={styles.readingMeasure}>
+          {FOUNDATION_LAYERS.map((layer) => <span key={layer.id}>{layer.connectionCopy}</span>)}
+        </span>
+        <motion.span
+          key={`${activeIndex}-${reducedMotion}`}
+          initial={reducedMotion ? false : { y: 6 }}
+          animate={{ y: 0 }}
+          transition={{ duration: reducedMotion ? 0 : .36, ease: EASE }}
+          data-foundation-map-reading
+        >
+          {FOUNDATION_LAYERS[activeIndex].connectionCopy}
+        </motion.span>
+      </p>
     </div>
   );
 }
@@ -159,7 +182,7 @@ function FoundationDecision({ layer, direction, reducedMotion }: {
             <FoundationReading layer={layer} />
           </motion.div>
         </div>
-        <p className={styles.outputLabel}>What we define</p>
+        <p className={styles.outputLabel}>Decisions you can use</p>
         <ul className={styles.outputs}>
           {layer.produces.map((item, index) => (
             <li key={index}>
@@ -328,8 +351,8 @@ export function BrandFoundationScene() {
           <div className={styles.content} data-foundation-controls>
             <header>
               <p className={styles.eyebrow}>04 · The foundation</p>
-              <h2 id="brand-foundation-title">The decisions people never see.</h2>
-              <p className={styles.intro}>What should people understand, trust, and remember before they see the logo?</p>
+              <h2 id="brand-foundation-title">Give buyers a reason to choose you.</h2>
+              <p className={styles.intro}>Before the logo, decide who needs your business, what they compare you with, and which promise you can prove.</p>
             </header>
 
             <div className={styles.tabs} role="tablist" aria-label="Brand foundation layers">
@@ -372,7 +395,7 @@ export function BrandFoundationScene() {
             <FoundationDecision layer={active} direction={direction} reducedMotion={prefersReducedMotion} />
 
             <Link href="/services#package-brand-beginning" className={styles.link} data-cursor-label="foundation">
-              Walk the foundation path <ArrowUpRight size={18} aria-hidden="true" />
+              See the foundation scope <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
           </div>
           <FoundationMap activeIndex={activeIndex} reducedMotion={prefersReducedMotion} />
