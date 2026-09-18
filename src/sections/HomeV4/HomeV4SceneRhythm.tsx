@@ -22,7 +22,7 @@ const SCENES: readonly SceneSpec[] = [
     // the introduction and the chapter's own text transitions carry motion.
     [".home-v4-recognition__header > div", "intro"],
   ] },
-  { selector: '[data-home-v4-chapter="cost"]', ink: "clay", reading: "[data-home-cost-heading] h2 + p", layers: [
+  { selector: '[data-home-v4-chapter="cost"]', ink: "clay", reading: "header > p", layers: [
     // Keep the mode buttons and reading anchored. The comparison owns its
     // sequential text changes and native-scroll channel rules.
     ["[data-home-cost-heading]", "intro"],

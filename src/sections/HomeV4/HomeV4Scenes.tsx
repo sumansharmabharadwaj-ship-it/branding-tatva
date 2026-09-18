@@ -3,7 +3,7 @@
 import { useHydratedMotionPreference, useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import Link from "next/link";
 import { motion, useAnimationControls, useScroll, useTransform, type MotionStyle } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Mail, MessageSquare, Monitor } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { publishServicesSituation } from "@/lib/servicesJourney";
 import recognitionStyles from "./RecognitionChoices.module.css";
@@ -62,9 +62,9 @@ const RECOGNITION_STATES = [
 ] as const;
 
 const MESSAGE_TOUCHPOINTS = [
-  { channel: "Website", separate: "Eat for your goals.", shared: "Dinner, decided before six." },
-  { channel: "Email", separate: "Recipes for everyone.", shared: "A week of dinners. One short list." },
-  { channel: "Social", separate: "Count every calorie.", shared: "Five dinners from one Sunday shop." },
+  { channel: "Website", icon: Monitor, separate: "Eat for your goals.", shared: "Dinner, decided before six." },
+  { channel: "Email", icon: Mail, separate: "Recipes for everyone.", shared: "A week of dinners. One short list." },
+  { channel: "Social", icon: MessageSquare, separate: "Count every calorie.", shared: "Five dinners from one Sunday shop." },
 ] as const;
 
 type MessageMode = "separate" | "shared";
@@ -545,18 +545,20 @@ export function V4HiddenCostScene() {
           <div data-home-cost-heading>
             <p className={costStyles.eyebrow}>02 · The hidden cost</p>
             <h2 id="home-v4-cost-title">More content.<br /><em>The same introduction.</em></h2>
-            <p className={costStyles.intro}>
-              When the brand keeps changing, every campaign has to introduce you all over again. Your buyers keep meeting a stranger.
-            </p>
           </div>
-          <motion.div
-            ref={comparisonRef}
-            data-home-cost-comparison
-            className={costStyles.comparison}
-            data-message-mode={comparison.mode}
-            style={{ "--comparison-arrival": prefersReducedMotion ? 1 : comparisonArrival } as MotionStyle}
-            onFocusCapture={revealFocusedComparison}
-          >
+          <p className={costStyles.intro}>
+            When the brand keeps changing, every campaign has to introduce you all over again. Your buyers keep meeting a stranger.
+          </p>
+        </header>
+        <motion.div
+          ref={comparisonRef}
+          data-home-cost-comparison
+          className={costStyles.comparison}
+          data-message-mode={comparison.mode}
+          style={{ "--comparison-arrival": prefersReducedMotion ? 1 : comparisonArrival } as MotionStyle}
+          onFocusCapture={revealFocusedComparison}
+        >
+          <div className={costStyles.comparisonHeader}>
             <p className={costStyles.exampleLabel}>Illustrative example · Meal planning</p>
             <div className={costStyles.modeChoices} role="group" aria-label="Compare how a brand communicates">
               <button type="button" aria-pressed={comparison.mode === "separate"} aria-controls="brand-message-example" onClick={() => chooseMessageMode("separate")}>
@@ -566,51 +568,69 @@ export function V4HiddenCostScene() {
                 Shared position
               </button>
             </div>
+          </div>
 
-            <div
-              id="brand-message-example"
-              className={costStyles.messageExample}
-              role="region"
-              aria-label="Message comparison"
-              tabIndex={0}
-              onFocusCapture={settleComparison}
-              onPointerDown={settleComparison}
-            >
-              <dl className={costStyles.touchpoints}>
-                {MESSAGE_TOUCHPOINTS.map((touchpoint, index) => (
-                  <div key={touchpoint.channel} style={{ "--message-order": index } as React.CSSProperties}>
-                    <dt><span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{touchpoint.channel}</dt>
-                    <dd>
-                      <span className={costStyles.messageMeasure} aria-hidden="true" inert>
-                        <span>{touchpoint.separate}</span>
-                        <span>{touchpoint.shared}</span>
-                      </span>
-                      <span
-                        className={costStyles.messageText}
-                        data-message-transition={messageTransition}
-                        onAnimationEnd={(event) => {
-                          const last = comparison.direction > 0 ? MESSAGE_TOUCHPOINTS.length - 1 : 0;
-                          if (event.target === event.currentTarget && index === last) settleComparison();
-                        }}
-                      >
-                        {touchpoint[comparison.mode]}
-                      </span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-              <div className={costStyles.comparisonMeaning}>
-                <div className={costStyles.messageMeasure} aria-hidden="true" inert>
-                  <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.separate}</p>
-                  <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.shared}</p>
+          <div
+            id="brand-message-example"
+            className={costStyles.messageExample}
+            role="region"
+            aria-label="Message comparison"
+            tabIndex={0}
+            onFocusCapture={settleComparison}
+            onPointerDown={settleComparison}
+          >
+            <dl className={costStyles.touchpoints}>
+              {MESSAGE_TOUCHPOINTS.map((touchpoint, index) => (
+                <div key={touchpoint.channel} style={{ "--message-order": index } as React.CSSProperties}>
+                  <dt>
+                    <touchpoint.icon size={20} strokeWidth={1.4} aria-hidden="true" />
+                    {touchpoint.channel}
+                    <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  </dt>
+                  <dd>
+                    <span className={costStyles.messageMeasure} aria-hidden="true" inert>
+                      <span>{touchpoint.separate}</span>
+                      <span>{touchpoint.shared}</span>
+                    </span>
+                    <span
+                      className={costStyles.messageText}
+                      data-message-transition={messageTransition}
+                      onAnimationEnd={(event) => {
+                        const last = comparison.direction > 0 ? MESSAGE_TOUCHPOINTS.length - 1 : 0;
+                        if (event.target === event.currentTarget && index === last) settleComparison();
+                      }}
+                    >
+                      {touchpoint[comparison.mode]}
+                    </span>
+                  </dd>
                 </div>
-                <p className={costStyles.meaningText} role="status" aria-atomic="true" data-message-transition={messageTransition}>
-                  {MESSAGE_MEANINGS[comparison.mode]}
-                </p>
+              ))}
+            </dl>
+            {/* The diagram repeats the written comparison below. Its paths
+                carry motion while messages and hit targets stay in place. */}
+            <svg className={costStyles.connections} viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <g className={costStyles.separateConnections}>
+                <path d="M166 0V28" />
+                <path d="M500 0V44" />
+                <path d="M834 0V20" />
+              </g>
+              <g className={costStyles.sharedConnections}>
+                <path d="M166 0V22Q166 42 196 42H470Q500 42 500 68V90" pathLength="1" />
+                <path d="M500 0V90" pathLength="1" />
+                <path d="M834 0V22Q834 42 804 42H530Q500 42 500 68V90" pathLength="1" />
+              </g>
+            </svg>
+            <div className={costStyles.comparisonMeaning}>
+              <div className={costStyles.messageMeasure} aria-hidden="true" inert>
+                <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.separate}</p>
+                <p className={costStyles.meaningText}>{MESSAGE_MEANINGS.shared}</p>
               </div>
+              <p className={costStyles.meaningText} role="status" aria-atomic="true" data-message-transition={messageTransition}>
+                {MESSAGE_MEANINGS[comparison.mode]}
+              </p>
             </div>
-          </motion.div>
-        </header>
+          </div>
+        </motion.div>
 
         <div className={costStyles.rule} aria-hidden="true">
           <motion.span style={{ scaleX: prefersReducedMotion ? 1 : lineProgress }} />
