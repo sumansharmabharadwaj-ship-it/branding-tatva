@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowUpRight, Check, Copy, X } from "lucide-react";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import { packages } from "@/data/services";
 import { consultation, site } from "@/data/site";
 import { entityFacts } from "@/data/entityFacts";
@@ -200,6 +201,7 @@ export function StrategyRoomCTA() {
   const shouldFocusBriefHeadingRef = useRef(false);
   const shouldRestoreBriefStartFocusRef = useRef(false);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const lenis = useLenis();
 
   useEffect(() => {
     function applySituation(situation: ServicesSituationId | null) {
@@ -358,14 +360,33 @@ export function StrategyRoomCTA() {
       const safeBottom = Math.min(window.innerHeight, noticeTop) - 16;
 
       if (actionRect.bottom > safeBottom) {
-        window.scrollBy(0, actionRect.bottom - safeBottom);
+        const target = window.scrollY + actionRect.bottom - safeBottom;
+        if (lenis) {
+          lenis.resize();
+          lenis.scrollTo(target, { duration: 0.45, immediate: Boolean(prefersReducedMotion) });
+        } else {
+          window.scrollTo({ top: target, behavior: prefersReducedMotion ? "instant" : "smooth" });
+        }
       }
     };
 
-    // Recheck while the surrounding motion and fixed notice finish settling.
-    // Later checks are no-ops unless another layout shift hides the actions.
-    [450, 1400, 2800].forEach((delay) => window.setTimeout(reveal, delay));
-  }, []);
+    // Reveal the result once, after its entrance. Manual scrolling owns the
+    // reading position immediately; no later timer may pull the visitor back.
+    const timer = window.setTimeout(reveal, prefersReducedMotion ? 0 : 450);
+    const cancelReveal = () => window.clearTimeout(timer);
+    const cancelOnScrollKey = (event: KeyboardEvent) => {
+      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) cancelReveal();
+    };
+    window.addEventListener("wheel", cancelReveal, { passive: true });
+    window.addEventListener("touchstart", cancelReveal, { passive: true });
+    window.addEventListener("keydown", cancelOnScrollKey);
+    return () => {
+      cancelReveal();
+      window.removeEventListener("wheel", cancelReveal);
+      window.removeEventListener("touchstart", cancelReveal);
+      window.removeEventListener("keydown", cancelOnScrollKey);
+    };
+  }, [lenis, prefersReducedMotion]);
 
   const resetCalendarPosition = useCallback(() => {
     dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
@@ -603,7 +624,7 @@ export function StrategyRoomCTA() {
             Bring the brand decision that keeps returning.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ivory/90 lg:mx-0">
-            Thirty minutes directly with Suman. Bring the decision, the disagreement, or the sentence nobody can finish.
+            Bring the disagreement or the sentence nobody can finish.
             The unpolished version is enough.
           </p>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-ivory/68 lg:mx-0">
@@ -621,10 +642,13 @@ export function StrategyRoomCTA() {
                   data-strategy-agenda-step="true"
                   className="relative rounded-2xl border border-ivory/15 bg-[rgba(18,24,21,0.48)] px-4 py-3.5 backdrop-blur-md"
                 >
-                  <span className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/75">
+                  <span data-strategy-agenda-number="true" className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/75">
                     0{index + 1}
                   </span>
-                  <p className="mt-2 text-sm leading-relaxed text-ivory/78">{item}</p>
+                  <div data-strategy-agenda-copy="true">
+                    <p className="font-display">{["Describe", "Question", "Decide"][index]}</p>
+                    <p className="text-sm leading-relaxed">{item}</p>
+                  </div>
                 </li>
               ))}
             </ol>
@@ -637,12 +661,17 @@ export function StrategyRoomCTA() {
               <motion.div
                 key="booking-choice"
                 data-strategy-room-shell="true"
+                data-strategy-room-choice="true"
                 initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={transition}
                 className="mx-auto max-w-2xl rounded-[1.75rem] border border-ivory/18 bg-[rgba(18,24,21,0.68)] p-6 shadow-[0_28px_90px_rgba(6,10,8,0.26)] backdrop-blur-xl sm:p-8"
               >
+                <div data-strategy-room-session="true">
+                  <p><strong>{consultation.minutes}</strong><span>minutes</span></p>
+                  <p><span>Online with</span><strong>Suman Sharma</strong></p>
+                </div>
                 {carriedPackage || recognitionAudit ? (
                   <div
                     className={`mx-auto mb-6 grid max-w-xl gap-3 ${carriedPackage && recognitionAudit ? "sm:grid-cols-2" : ""}`}
@@ -668,27 +697,31 @@ export function StrategyRoomCTA() {
                     ) : null}
                   </div>
                 ) : null}
-                <p className="font-display text-2xl font-normal text-ivory">Choose a time or write first.</p>
-                <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-ivory/72">
+                <h3 data-strategy-room-invitation="true" className="font-display text-2xl font-normal text-ivory">Talk the decision through.</h3>
+                <p data-strategy-room-invitation-detail="true" className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-ivory/72">
                   {hasPartialBrief
                     ? "Your first answer is held. Continue when you are ready, or choose a time now."
-                    : "Open the calendar now, or answer two short questions so the call can begin with the real decision."}
+                    : "Choose a time for a brand diagnosis. Leave knowing which decision deserves attention first."}
                 </p>
                 <div data-strategy-room-actions="true" className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
                   <button
                     type="button"
                     data-strategy-control="true"
+                    data-strategy-calendar-trigger="true"
                     onClick={openCalendar}
                     className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
                   >
                     Choose a time
                     <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
                   </button>
+                </div>
+                <div data-strategy-room-preparation="true">
+                  <p>Prefer to gather your thoughts first?<span>Two questions. An optional note for the call.</span></p>
                   <button ref={registerBriefStartButton} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
                     {hasPartialBrief ? "Continue the brief" : "Add a short brief"}
+                    <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
                   </button>
                 </div>
-                <p data-strategy-room-note="true" className="mt-5 text-xs leading-relaxed text-ivory/48">The brief is optional and never blocks the calendar.</p>
               </motion.div>
             ) : (
               <motion.div
@@ -703,10 +736,11 @@ export function StrategyRoomCTA() {
                 <p ref={registerBriefHeading} tabIndex={-1} className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-ivory/60 outline-none">
                   {progressLabel}
                 </p>
-                <div className="mx-auto mt-3 flex max-w-sm justify-center gap-1.5" aria-hidden="true">
+                <div data-strategy-brief-progress="true" className="mx-auto mt-3 flex max-w-sm justify-center gap-1.5" aria-hidden="true">
                   {Array.from({ length: QUESTION_COUNT }).map((_, index) => (
                     <span
                       key={index}
+                      data-complete={index < step}
                       className={`h-1 flex-1 rounded-full transition-colors duration-500 ${
                         index < step ? "bg-sandstone" : "bg-ivory/15"
                       }`}
@@ -784,6 +818,7 @@ export function StrategyRoomCTA() {
                         <button
                           type="button"
                           data-strategy-control="true"
+                          data-strategy-calendar-trigger="true"
                           onClick={openCalendar}
                           className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
                         >

@@ -591,18 +591,15 @@ export default async function ServicesPage() {
           <SceneHandoff color="#27221E" />
         </section>
 
-        {/* Book call becomes the film's arrival rather than a
-            stock-location ending. Surface movement gradually settles
-            into one mineral-gold reflection, mirroring the visitor's
-            shift from scattered questions to a focused conversation.
-            The source is original, silent, mathematically seamless,
-            responsive, and preserved as a still under reduced motion. */}
+        {/* The final conversation rests on a light reading surface.
+            The existing valley remains visible around the invitation;
+            its still is also the reduced motion fallback. */}
         <TexturedDark
           id="book"
           image="/images/pexels-valley-first-light-poster.jpg"
           video="/videos/pexels-valley-first-light.mp4"
           videoWebm="/videos/pexels-valley-first-light.webm"
-          overlayGradient="linear-gradient(180deg, rgba(10,15,16,0.26) 0%, rgba(14,18,18,0.34) 52%, rgba(20,17,14,0.54) 100%)"
+          overlayGradient="linear-gradient(180deg, rgba(242,240,232,0.12) 0%, rgba(31,58,40,0.08) 52%, rgba(31,58,40,0.2) 100%)"
           className="flex min-h-[100svh] flex-col justify-center pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
           <StrategyRoomCTA />
