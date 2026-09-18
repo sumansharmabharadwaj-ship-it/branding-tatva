@@ -334,14 +334,16 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-field-ink] {
 
 [data-contact-film] [data-contact-booking-card],
 [data-contact-film] [data-contact-form-card],
-[data-contact-film] [data-contact-pathways-card] {
+[data-contact-film] [data-contact-pathways-card],
+[data-contact-film] [data-contact-faq-card] {
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (hover: hover) and (pointer: fine) {
   [data-contact-film] [data-contact-booking-card]:hover,
   [data-contact-film] [data-contact-form-card]:hover:not(:focus-within),
-  [data-contact-film] [data-contact-pathways-card]:hover {
+  [data-contact-film] [data-contact-pathways-card]:hover,
+  [data-contact-film] [data-contact-faq-card]:hover {
     transform: translateY(-4px);
     box-shadow: 0 40px 110px rgba(62, 48, 30, 0.24);
   }
@@ -350,7 +352,8 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-field-ink] {
 @supports (animation-timeline: view()) {
   [data-contact-film] [data-contact-booking-card],
   [data-contact-film] [data-contact-form-card],
-  [data-contact-film] [data-contact-pathways-card] {
+  [data-contact-film] [data-contact-pathways-card],
+  [data-contact-film] [data-contact-faq-card] {
     animation: contact-card-arrive linear both;
     animation-timeline: view(block);
     animation-range: entry 8% entry 62%;
@@ -386,6 +389,24 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-field-ink] {
 
   to {
     transform: translate3d(55%, 0, 0);
+  }
+}
+
+/* An opened answer rises into place instead of snapping. Native details
+   semantics stay untouched; only the revealed paragraph animates. */
+[data-contact-film] details[open] [data-contact-faq-answer] {
+  animation: contact-faq-reveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes contact-faq-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -2110,6 +2131,7 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-hero-cue] > span {
   opacity: 0;
 }
 
+html[data-motion="reduced"] [data-contact-film] details[open] [data-contact-faq-answer],
 html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card],
 html[data-motion="reduced"] [data-contact-film] [data-contact-form-card],
 html[data-motion="reduced"] [data-contact-film] [data-contact-pathways-card],
@@ -2258,6 +2280,7 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
     opacity: 0;
   }
 
+  [data-contact-film] details[open] [data-contact-faq-answer],
   [data-contact-film] [data-contact-booking-card],
   [data-contact-film] [data-contact-form-card],
   [data-contact-film] [data-contact-pathways-card],

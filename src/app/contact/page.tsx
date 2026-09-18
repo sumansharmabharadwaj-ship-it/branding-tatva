@@ -26,6 +26,35 @@ import { pageSchema, ORGANIZATION_ID } from "@/lib/pageSchema";
 import "./contact-cinematic.css";
 
 
+const CONTACT_QUESTIONS = [
+  {
+    q: "What happens after I send a note?",
+    a: "Suman reads it herself. The reply comes to your inbox from her, with a first read of the gap you described and a suggested next step.",
+  },
+  {
+    q: "What should I bring to the thirty minutes?",
+    a: "The question as it stands. A polished deck can wait; the conversation works from what your audience sees today and what you mean instead.",
+  },
+  {
+    q: "Which timezone do the calls run in?",
+    a: "Yours. The calendar converts every open slot before you pick one.",
+  },
+  {
+    q: "Is this a brand strategy consultation or a sales call?",
+    a: "A consultation. Thirty minutes on positioning, perception, and the decision in front of you. Selling has a way of ruining a first conversation, so it stays outside the room.",
+  },
+] as const;
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: CONTACT_QUESTIONS.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+};
+
 const pageJsonLd = pageSchema({
   type: "ContactPage",
   path: "/contact",
@@ -37,7 +66,7 @@ const pageJsonLd = pageSchema({
 });
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact Suman Sharma",
   description: "Schedule thirty minutes with Suman Sharma for a brand strategy consultation, call or WhatsApp directly, or send a written enquiry.",
   alternates: { canonical: "/contact" },
   openGraph: {
@@ -58,6 +87,7 @@ export default function ContactPage() {
       <Header transparent />
       <main id="main-content" data-contact-film>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
         {/* Contact opens as an immersive 88svh film rather than a utility-page
             banner. The hero now shows a real visual-editing process rather
             than a generic journey metaphor; a dedicated portrait derivative
@@ -499,6 +529,57 @@ export default function ContactPage() {
             </div>
           </Container>
         </ContactCinematicScene>
+
+        {/* Mined from the heyparker.ai round and built for three jobs at
+            once: the questions people actually ask before reaching out,
+            answered plainly in Suman's voice (conversion), marked up as
+            FAQPage data (ranking), and staged with the same glass, sheen
+            and gold underline grammar as the chapters above (warmth). */}
+        <section
+          id="asked"
+          aria-labelledby="contact-asked-heading"
+          className="relative border-t border-soil/10 bg-[#F2ECDF] py-16 sm:py-20"
+        >
+          <div data-contact-ambient aria-hidden="true">
+            <span />
+            <span />
+          </div>
+          <Container className="relative z-10 grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+            <div>
+              <p className="text-[0.7rem] font-medium uppercase tracking-[0.24em] text-soil/60">The short answers</p>
+              <h2
+                id="contact-asked-heading"
+                data-contact-scene-heading
+                className="mt-4 max-w-sm font-display text-[clamp(2rem,4.2vw,3.2rem)] font-normal leading-[1.02] text-soil"
+              >
+                Asked before, <em data-contact-heading-line="resolve" className="font-normal not-italic text-clay">answered plainly.</em>
+              </h2>
+              <p className="mt-5 max-w-sm text-sm leading-relaxed text-soil/70 sm:text-base">
+                Everything else belongs in the conversation itself.
+              </p>
+            </div>
+            <div data-contact-faq-card className="relative overflow-hidden rounded-[1.75rem] border border-white/60 bg-[#F8F4EC]/90 p-2 shadow-[0_28px_90px_rgba(62,48,30,0.14)] backdrop-blur-2xl sm:p-3">
+              <span data-contact-card-sheen aria-hidden="true" />
+              {CONTACT_QUESTIONS.map(({ q, a }) => (
+                <details key={q} data-contact-faq-item className="group border-b border-soil/8 last:border-b-0">
+                  <summary
+                    data-cursor-label="Open the answer"
+                    className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-4 py-4 font-display text-lg leading-snug text-soil transition-colors duration-300 hover:bg-white/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:px-5 sm:text-xl [&::-webkit-details-marker]:hidden"
+                  >
+                    {q}
+                    <span data-contact-faq-marker aria-hidden="true" className="relative h-5 w-5 shrink-0 text-clay">
+                      <span className="absolute left-0 top-1/2 h-px w-full bg-current" />
+                      <span className="absolute left-1/2 top-0 h-full w-px bg-current transition-transform duration-300 group-open:scale-y-0" />
+                    </span>
+                  </summary>
+                  <p data-contact-faq-answer className="px-4 pb-5 text-sm leading-relaxed text-soil/72 sm:px-5 sm:text-base">
+                    {a}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </Container>
+        </section>
 
         <ContactGratitude />
       </main>
