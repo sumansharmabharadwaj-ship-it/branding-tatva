@@ -37,29 +37,18 @@ import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { HomeV4Experience } from "@/sections/HomeV4/HomeV4Experience";
 import { site } from "@/data/site";
-import { faqs } from "@/data/faqs";
 import { entityFacts } from "@/data/entityFacts";
 
 export const metadata: Metadata = {
-  title: `${site.name}: Brand Strategy by ${site.founder}`,
+  title: { absolute: `${site.name} | Brand Strategy for UK Service Businesses` },
   description: site.description,
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${site.name}: Brand Strategy by ${site.founder}`,
+    title: `${site.name} | Brand Strategy for UK Service Businesses`,
     description: site.description,
     url: site.url,
     type: "website",
   },
-};
-
-const faqStructuredData = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: { "@type": "Answer", text: faq.answer },
-  })),
 };
 
 /* The home page's own node in the graph the root layout already
@@ -78,10 +67,11 @@ const homeStructuredData = {
       "@type": "WebPage",
       "@id": `${site.url}/#webpage`,
       url: site.url,
-      name: `${site.name}: Brand Strategy by ${site.founder}`,
+      name: `${site.name} | Brand Strategy for UK Service Businesses`,
       description: site.description,
       isPartOf: { "@id": `${site.url}/#website` },
       about: { "@id": `${site.url}/#organization` },
+      author: { "@id": `${site.url}/#person` },
       inLanguage: "en",
       speakable: {
         "@type": "SpeakableSpecification",
@@ -122,11 +112,6 @@ export default function Home() {
         <HomeV4Experience />
       </main>
       <Footer />
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
-      />
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger

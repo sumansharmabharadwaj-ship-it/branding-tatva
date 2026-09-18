@@ -62,7 +62,7 @@ const servicesJsonLd = {
   url: SERVICES_URL,
   name: "Brand Strategy & Systems | Branding Tatva",
   description:
-    "Founder led remote brand strategy, positioning, messaging, identity and content systems for service businesses in the United States, United Kingdom and India.",
+    "Brand strategy, positioning, messaging, identity and content systems for UK service businesses, led remotely by Suman Sharma. Also serving founders in India and the US.",
   author: { "@id": PERSON_ID },
   publisher: { "@id": ORGANIZATION_ID },
   breadcrumb: {
@@ -126,14 +126,14 @@ const engagementsJsonLd = {
 };
 
 export const metadata: Metadata = {
-  title: "Brand Strategy for Service Businesses",
+  title: "Brand Strategy for UK Service Businesses",
   description:
-    "Brand strategy that decides why buyers choose you, then builds the positioning, messaging, identity, and content to prove it. Remote and founder led for service businesses in the US, UK and India.",
+    "Brand strategy for UK service businesses, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Brand Strategy for Service Businesses | Branding Tatva",
+    title: "Brand Strategy for UK Service Businesses | Branding Tatva",
     description:
-      "Brand strategy that decides why buyers choose you, then builds the positioning, messaging, identity, and content to prove it. Remote and founder led for service businesses in the US, UK and India.",
+      "Brand strategy for UK service businesses, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
     type: "website",
   },
 };
@@ -294,8 +294,8 @@ export default async function ServicesPage() {
                   When the business has grown past its brand, begin with the position.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
-                  For founders launching, repositioning, or tired of correcting every channel: what gets decided,
-                  what gets built, what it costs, and what the evidence can support.
+                  Remote brand strategy for UK service businesses, led directly by Suman Sharma.
+                  See what gets decided, what gets built, and what the evidence can support.
                 </p>
                 {/* The hero's one quiet action — a visitor sold by the
                     opening claim previously had nowhere to act until the
