@@ -326,3 +326,53 @@
     }
   }
 }
+
+/* Packages and booking. SCROLL_OS §11 kept these still ("pricing and
+   booking stay stable, money hates motion"); Suman has asked for them to
+   move too. The part of that rule that protects conversion is kept: the
+   price panel and the booking controls are never animated, only the
+   material that leads into them, and both chapters finish before 0.455 so
+   a jump from the rail or a "book" link always lands on the finished state.
+
+   Packages: the three package cards rise into place in order and each
+   element glyph grows in. Framer moves these cards on hover and tap through
+   transform, so the rise uses the separate translate property and the
+   hover lift still works on top. Opacity floor 0.55: a package name is
+   never below readable while it arrives.
+
+   Booking: the three "Inside the diagnosis" steps arrive in order. The
+   calendar, brief form and "See available times" button are untouched. */
+@media (min-width: 1024px) {
+  #desire [data-package-choice="true"] {
+    --package-arrival: clamp(0, calc((var(--services-scene-progress, 1) - (0.3 + var(--package-index, 0) * 0.04)) / 0.06), 1);
+    translate: 0 calc((1 - var(--package-arrival)) * 1.4rem);
+    opacity: calc(0.55 + var(--package-arrival) * 0.45);
+  }
+
+  #desire [data-package-choice="true"]:nth-of-type(2) { --package-index: 1; }
+  #desire [data-package-choice="true"]:nth-of-type(3) { --package-index: 2; }
+  #desire [data-package-choice="true"]:nth-of-type(4) { --package-index: 3; }
+
+  #desire [data-package-choice="true"] > svg:first-child {
+    scale: calc(0.5 + var(--package-arrival) * 0.5);
+  }
+
+  #book [data-strategy-agenda-step="true"] {
+    --step-arrival: clamp(0, calc((var(--services-scene-progress, 1) - (0.28 + var(--step-index, 0) * 0.04)) / 0.06), 1);
+    translate: 0 calc((1 - var(--step-arrival)) * 1rem);
+    opacity: calc(0.5 + var(--step-arrival) * 0.5);
+  }
+
+  #book [data-strategy-agenda-step="true"]:nth-child(2) { --step-index: 1; }
+  #book [data-strategy-agenda-step="true"]:nth-child(3) { --step-index: 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #desire [data-package-choice="true"],
+  #book [data-strategy-agenda-step="true"] { translate: none; opacity: 1; }
+  #desire [data-package-choice="true"] > svg:first-child { scale: none; }
+}
+
+:root[data-motion="reduced"] #desire [data-package-choice="true"],
+:root[data-motion="reduced"] #book [data-strategy-agenda-step="true"] { translate: none; opacity: 1; }
+:root[data-motion="reduced"] #desire [data-package-choice="true"] > svg:first-child { scale: none; }
