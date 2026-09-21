@@ -181,7 +181,10 @@ export function TatvaStrip() {
           <video
             poster="/images/bt-home-tatva-mirror-lake-poster.jpg"
             muted
-            autoPlay={!prefersReducedMotion}
+            // autoplay overrides preload="none": with it set from mount, phones
+            // downloaded this whole 3MB film on first load, ten screens above
+            // where it plays. It now arms only once the chapter is in view.
+            autoPlay={!prefersReducedMotion && inView}
             loop
             playsInline
             preload={inView ? "metadata" : "none"}
