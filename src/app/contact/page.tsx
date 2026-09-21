@@ -51,8 +51,8 @@ const CONTACT_QUESTIONS = [
   {
     id: "cost",
     q: "What does the work cost?",
-    a: "Every engagement is scoped in the first conversation, against the decision actually on the table. The three shapes the work usually takes are described with the services.",
-    more: { label: "See the package shapes", href: "/services#package-recommendation" },
+    a: "Starting prices for the three shapes the work takes are published with the services, localised to your market. Every engagement is then scoped in the first conversation, against the decision actually on the table, and the final quotation follows that call.",
+    more: { label: "See the shapes and starting prices", href: "/services#package-recommendation" },
   },
   {
     id: "outside-india",
