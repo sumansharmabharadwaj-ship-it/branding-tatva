@@ -232,7 +232,7 @@ export const aiEraInsightPosts: SourcedInsightPost[] = [
       {
         title: "How Brands Grow: What Marketers Don't Know",
         publisher: "Byron Sharp, Oxford University Press",
-        url: "https://www.marketingscience.info/books/how-brands-grow/",
+        url: "https://marketingscience.info/learn-with-us/books",
         note:
           "The evidence base for mental availability and category entry points, the memory mechanics this guide applies to machine retrieval.",
       },
