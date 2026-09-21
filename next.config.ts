@@ -106,6 +106,15 @@ const nextConfig: NextConfig = {
         destination: "https://brandingtatva.com/:path*",
         permanent: true,
       },
+      // The retired production alias carries old shares and bookmarks
+      // to the real domain with the path intact. Review and preview
+      // hosts stay untouched.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "branding-tatva.vercel.app" }],
+        destination: "https://brandingtatva.com/:path*",
+        permanent: true,
+      },
       { source: "/work", destination: "/services#proof", permanent: true },
       ...LEGACY_INSIGHT_REDIRECTS.flatMap(({ slug, destination }) => [
         {
