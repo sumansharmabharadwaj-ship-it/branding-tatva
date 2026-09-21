@@ -1027,8 +1027,19 @@ export function ContactForm() {
                 <input maxLength={CONTACT_DRAFT_LIMITS.servicesNeeded} className={inputClass} {...register("servicesNeeded")} placeholder="Name the work you have in mind" />
               </Field>
               <div className="grid gap-5 sm:grid-cols-2">
+                {/* Anchored to the three published engagements rather than
+                    free numbers: shape answers qualify the enquiry better
+                    than a typed figure, and they hold true in every market
+                    the localised price book serves. */}
                 <Field label="Estimated budget (optional)" error={errors.budget?.message}>
-                  <input maxLength={CONTACT_DRAFT_LIMITS.budget} className={inputClass} {...register("budget")} />
+                  <select className={inputClass} defaultValue="" {...register("budget")}>
+                    <option value="">Choose the closest fit</option>
+                    <option>Around the Foundation starting price</option>
+                    <option>Between Foundation and the Full Brand System</option>
+                    <option>Above the Full Brand System starting price</option>
+                    <option>A monthly partnership</option>
+                    <option>Still taking shape</option>
+                  </select>
                 </Field>
                 <Field label="Desired timeline (optional)" error={errors.timeline?.message}>
                   <input maxLength={CONTACT_DRAFT_LIMITS.timeline} className={inputClass} {...register("timeline")} />
