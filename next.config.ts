@@ -98,6 +98,16 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  // Always render <title>, description, canonical and Open Graph tags in
+  // <head>. /services is request-rendered (it reads the region cookie and
+  // Vercel's country header so prices paint in the right currency), and on
+  // request-rendered routes Next 15 streams metadata into <body> for any
+  // user agent outside its built-in bot list. That list omits Googlebot,
+  // GPTBot, ClaudeBot and PerplexityBot, so every one of them received the
+  // Services page with an empty <head> (measured on production, Sep 21).
+  // Metadata here is static, so blocking on it costs nothing; static routes
+  // were already unaffected.
+  htmlLimitedBots: /.*/,
   async redirects() {
     return [
       {

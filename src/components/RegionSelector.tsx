@@ -11,7 +11,10 @@ export function RegionSelector() {
   return (
     <label data-region-selector="true" className="inline-flex items-center gap-2 text-xs text-ivory/70">
       <span data-region-selector-label="true">Prices shown for</span>
+      {/* Named directly as well as by the wrapping label: the visible label
+          text is hidden at some widths, which left the select nameless. */}
       <select
+        aria-label="Prices shown for"
         value={region}
         onChange={(e) => {
           if (isRegion(e.target.value)) setRegion(e.target.value);

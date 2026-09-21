@@ -280,7 +280,6 @@ export function PackageSelector() {
         <RegionSelector />
         <button
           type="button"
-          aria-label={compare ? "Return to the selected engagement" : "Compare engagement scope and starting prices"}
           aria-pressed={compare}
           onClick={() => {
             manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
