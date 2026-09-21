@@ -165,3 +165,26 @@ html[data-motion="reduced"] body .home-v4 #studio :is(a, button) {
   .home-v4 #studio .studio-cinematic__media-topline::after { display: none; }
   .home-v4 #studio :is(a, button) { transition: none; transform: none; }
 }
+
+/* The desktop gate above starts at 761px of viewport on purpose, yet the
+   grid's own padding (5.5rem top, 5rem bottom) and type scale push the
+   frame to 858 and 872px, so the fit check the first comment describes
+   could only ever pass on viewports of about 872px and up — which
+   excludes every real 1440x900 MacBook (~790px) and the 761px floor
+   the gate itself names. Same dead band class as the foundation and
+   invitation chapters, fixed the same way: inside the band the frame
+   gives back its spare padding and the heading steps down one size, so
+   the three beat hold this file exists to run actually runs on the
+   laptops the gate admits. Selectors match this file's own #studio
+   idiom because lighter selectors measurably lose this cascade. */
+@media (min-width: 1181px) and (max-height: 871px) {
+  .home-v4 #studio .studio-cinematic__grid {
+    min-height: calc(100svh - 1.5rem);
+    padding-top: 1.5rem;
+    padding-bottom: max(1.4rem, calc(env(safe-area-inset-bottom) + 1rem));
+  }
+
+  .home-v4 #studio .studio-cinematic__content h2 {
+    font-size: clamp(2.6rem, min(3.6vw, 5svh), 4.2rem);
+  }
+}
