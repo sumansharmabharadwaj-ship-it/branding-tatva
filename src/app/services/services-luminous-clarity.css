@@ -2025,10 +2025,16 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
   background: linear-gradient(
     to bottom,
     rgba(242, 235, 221, 0.96) 0%,
-    rgba(242, 235, 221, 0.86) 42%,
-    rgba(242, 235, 221, 0.55) 68%,
-    rgba(242, 235, 221, 0.1) 100%
+    rgba(242, 235, 221, 0.8) 42%,
+    rgba(242, 235, 221, 0.48) 68%,
+    rgba(242, 235, 221, 0.08) 100%
   );
+}
+
+/* The summit film was encoded bright but sits behind paper; a modest
+   lift keeps it luminous where the thinned wash lets it through. */
+#education [data-perception-ambient-film="true"] [data-background-video-stage="true"] {
+  filter: brightness(1.12) saturate(1.05);
 }
 
 #education [data-services-content-plane="true"] {

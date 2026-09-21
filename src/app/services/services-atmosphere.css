@@ -313,6 +313,72 @@
   animation: services-atmo-sage 67s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
+/* ---- pointer light ---------------------------------------------------- */
+
+/* The visitor's cursor carries a patch of light across a chapter
+   (ServicesPointerLight). The pool trails on a long organic transition
+   rather than tracking mechanically, and only exists for fine pointers
+   — the layer stays dormant everywhere else, so the designed
+   backgrounds never depend on it. */
+[data-services-pointer-light] {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+[data-services-pointer-light][data-pointer-light-awake="true"] {
+  opacity: 1;
+}
+
+[data-services-pointer-light] > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 52vmin;
+  height: 52vmin;
+  margin: -26vmin 0 0 -26vmin;
+  will-change: translate;
+  transition: translate 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-services-pointer-light="sun"] > span {
+  background: radial-gradient(
+    closest-side,
+    rgba(212, 185, 154, 0.34) 0%,
+    rgba(212, 185, 154, 0.12) 48%,
+    transparent 72%
+  );
+}
+
+[data-services-pointer-light="ember"] > span {
+  background: radial-gradient(
+    closest-side,
+    rgba(194, 138, 40, 0.3) 0%,
+    rgba(194, 138, 40, 0.1) 46%,
+    transparent 70%
+  );
+}
+
+/* ---- hover physics ----------------------------------------------------- */
+
+/* The decision map's question rows answer the hand the way the
+   recognition chapter's choices do: a quiet slide toward the panel.
+   `translate` composes with the row's own Framer layout animation. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-decision-map] button[role="tab"] {
+    transition: translate 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [data-decision-map] button[role="tab"]:hover {
+    translate: 6px 0;
+  }
+}
+
 /* ---- shared keyframes ------------------------------------------------- */
 
 @keyframes services-atmo-sun {
@@ -399,6 +465,10 @@
     animation: none;
   }
 
+  [data-services-pointer-light] {
+    display: none;
+  }
+
   #services-opening [data-services-atmosphere="hero"],
   #offerings [data-services-atmosphere="offerings"] {
     transform: none;
@@ -415,4 +485,8 @@
 [data-motion="reduced"] #services-opening [data-services-atmosphere="hero"],
 [data-motion="reduced"] #offerings [data-services-atmosphere="offerings"] {
   transform: none;
+}
+
+[data-motion="reduced"] [data-services-pointer-light] {
+  display: none;
 }

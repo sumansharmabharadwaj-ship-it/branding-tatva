@@ -32,6 +32,7 @@ import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { Magnetic } from "@/components/Magnetic";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { MOOD } from "@/lib/sectionWash";
+import { ServicesPointerLight } from "@/sections/Services/ServicesPointerLight";
 import { ArrowDown } from "lucide-react";
 
 const SERVICES_URL = `${site.url}/services`;
@@ -418,6 +419,9 @@ export default async function ServicesPage() {
             <span />
             <span />
           </div>
+          {/* The visitor's own hand carries an ember of the lamp light
+              across the dark room. */}
+          <ServicesPointerLight tone="ember" />
           {/* Complete the opening cross-dissolve. The hero already
               anticipates this chapter with a 24vh departure veil; the
               matching arrival veil lets that tone release into the
@@ -455,6 +459,7 @@ export default async function ServicesPage() {
             <span />
             <span />
           </div>
+          <ServicesPointerLight tone="sun" />
           <div
             className="absolute inset-0"
             data-services-media-wash="offerings"
@@ -615,6 +620,7 @@ export default async function ServicesPage() {
             <span />
             <span />
           </div>
+          <ServicesPointerLight tone="sun" />
           {/* The other transposed half: the arrival veil wears the
               authority chapter's charcoal and releases into daylight. */}
           <SceneVeil color="#191B16" heightClass="h-[20vh]" endOpacity={0.06} />

@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { Reveal } from "@/components/Reveal";
+import { ServicesPointerLight } from "@/sections/Services/ServicesPointerLight";
 import type { Project } from "@/data/projects";
 import { getWorkTaxonomy, WORK_NEEDS, type WorkFilterId } from "@/data/workTaxonomy";
 import { WORK, EASE_ORGANIC } from "@/sections/Work/palette";
@@ -61,6 +62,7 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
         <span />
         <span />
       </div>
+      <ServicesPointerLight tone="sun" />
       <Container className="relative max-w-6xl">
         <Reveal>
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
