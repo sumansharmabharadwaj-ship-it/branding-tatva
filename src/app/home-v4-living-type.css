@@ -1,0 +1,98 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 living typography                                               */
+/* -------------------------------------------------------------------------- */
+
+.home-v4-opening h1 em,
+.home-v4-recognition__header h2 em,
+.home-v4-cost__shell > header h2 em {
+  color: transparent;
+  background-image: linear-gradient(
+    96deg,
+    #d4b99a 0%,
+    #f4efe6 28%,
+    #c77752 56%,
+    #e4c7a2 78%,
+    #d4b99a 100%
+  );
+  background-size: 240% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: v4-living-ink-dark 8.6s ease-in-out infinite;
+}
+
+.paths-cinematic__header h2 em,
+.studio-cinematic__content h2 em {
+  color: transparent;
+  background-image: linear-gradient(
+    96deg,
+    #6f4e37 0%,
+    #9b7448 26%,
+    #556b4a 52%,
+    #8a6b3d 76%,
+    #6f4e37 100%
+  );
+  background-size: 240% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: v4-living-ink-light 9.4s ease-in-out infinite;
+}
+
+.home-v4-opening__eyebrow,
+.home-v4-recognition__header > div > p,
+.home-v4-cost__shell > header > p,
+.paths-cinematic__eyebrow,
+.studio-cinematic__eyebrow {
+  background-image: linear-gradient(90deg, currentColor 0%, rgba(244, 239, 230, 0.96) 48%, currentColor 100%);
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: v4-eyebrow-signal 10.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-v4-opening h1 em,
+  .home-v4-recognition__header h2 em,
+  .home-v4-cost__shell > header h2 em,
+  .paths-cinematic__header h2 em,
+  .studio-cinematic__content h2 em,
+  .home-v4-opening__eyebrow,
+  .home-v4-recognition__header > div > p,
+  .home-v4-cost__shell > header > p,
+  .paths-cinematic__eyebrow,
+  .studio-cinematic__eyebrow {
+    animation: none;
+    background-position: 50% 50%;
+  }
+}
+
+@keyframes v4-living-ink-dark {
+  0%, 100% {
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 0 rgba(212, 185, 154, 0));
+  }
+  48% {
+    background-position: 100% 50%;
+    filter: drop-shadow(0 0 18px rgba(212, 185, 154, 0.12));
+  }
+}
+
+@keyframes v4-living-ink-light {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  52% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes v4-eyebrow-signal {
+  0%, 18%, 100% {
+    background-position: 0% 50%;
+  }
+  55% {
+    background-position: 100% 50%;
+  }
+}

@@ -1,0 +1,354 @@
+#!/usr/bin/env node
+
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const ts = require("typescript");
+const deliverySource = fs.readFileSync(
+  path.resolve("src/lib/contact-delivery.ts"),
+  "utf8",
+);
+const compiled = ts.transpileModule(deliverySource, {
+  compilerOptions: {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2020,
+  },
+  fileName: "contact-delivery.ts",
+  reportDiagnostics: true,
+});
+const compileErrors = (compiled.diagnostics || []).filter(
+  (diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error,
+);
+assert.deepEqual(
+  compileErrors,
+  [],
+  "Contact delivery helper must transpile for the runtime gate.",
+);
+
+const deliveryModule = { exports: {} };
+const loadDeliveryModule = new Function(
+  "exports",
+  "module",
+  "require",
+  compiled.outputText,
+);
+loadDeliveryModule(
+  deliveryModule.exports,
+  deliveryModule,
+  require,
+);
+const {
+  CONTACT_DELIVERY_MONITOR_RECIPIENT,
+  deliverContactEnquiry,
+  probeContactDeliveryProvider,
+} = deliveryModule.exports;
+
+const readinessSource = fs.readFileSync(
+  path.resolve("src/lib/contact-readiness.ts"),
+  "utf8",
+);
+const readinessCompiled = ts.transpileModule(readinessSource, {
+  compilerOptions: {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2020,
+  },
+  fileName: "contact-readiness.ts",
+  reportDiagnostics: true,
+});
+const readinessCompileErrors = (readinessCompiled.diagnostics || []).filter(
+  (diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error,
+);
+assert.deepEqual(
+  readinessCompileErrors,
+  [],
+  "Contact readiness helper must transpile for the runtime gate.",
+);
+const readinessModule = { exports: {} };
+new Function("exports", "module", "require", readinessCompiled.outputText)(
+  readinessModule.exports,
+  readinessModule,
+  require,
+);
+const { getContactReadiness } = readinessModule.exports;
+
+assert.deepEqual(getContactReadiness({}), {
+  deliveryConfigured: false,
+  monitorConfigured: false,
+  monitorSchedule: "production-daily",
+  rateLimitScope: "instance-local",
+});
+assert.deepEqual(
+  getContactReadiness({
+    RESEND_API_KEY: "resend_key",
+    CONTACT_TO_EMAIL: "contact@example.com",
+  }),
+  {
+    deliveryConfigured: true,
+    monitorConfigured: false,
+    monitorSchedule: "production-daily",
+    rateLimitScope: "instance-local",
+  },
+);
+assert.deepEqual(
+  getContactReadiness({
+    RESEND_API_KEY: "resend_key",
+    CONTACT_TO_EMAIL: "contact@example.com",
+    CRON_SECRET: "cron_secret",
+  }),
+  {
+    deliveryConfigured: true,
+    monitorConfigured: true,
+    monitorSchedule: "production-daily",
+    rateLimitScope: "instance-local",
+  },
+);
+
+const submissionId = "123e4567-e89b-42d3-a456-426614174000";
+const request = {
+  apiKey: "resend_test_key",
+  fromEmail: "Branding Tatva <contact@brandingtatva.com>",
+  toEmail: "suman@brandingtatva.com",
+  replyTo: "visitor@example.com",
+  subject: "Branding Tatva enquiry · Visitor",
+  text: "A test enquiry body.",
+  submissionId,
+};
+
+const capturedRequests = [];
+const accepted = await deliverContactEnquiry(request, async (url, init) => {
+  capturedRequests.push({ url, init });
+  return new Response(JSON.stringify({ id: "  email_delivery_123  " }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+});
+
+assert.deepEqual(accepted, {
+  ok: true,
+  deliveryId: "email_delivery_123",
+});
+assert.equal(capturedRequests.length, 1);
+assert.equal(capturedRequests[0].url, "https://api.resend.com/emails");
+assert.equal(capturedRequests[0].init.method, "POST");
+
+const acceptedHeaders = new Headers(capturedRequests[0].init.headers);
+assert.equal(acceptedHeaders.get("Authorization"), "Bearer resend_test_key");
+assert.equal(acceptedHeaders.get("Content-Type"), "application/json");
+assert.equal(
+  acceptedHeaders.get("Idempotency-Key"),
+  `contact-enquiry-${submissionId}`,
+);
+assert.deepEqual(JSON.parse(capturedRequests[0].init.body), {
+  from: request.fromEmail,
+  to: [request.toEmail],
+  reply_to: request.replyTo,
+  subject: request.subject,
+  text: request.text,
+});
+
+const retryKeys = [];
+const retryFetcher = async (_url, init) => {
+  retryKeys.push(new Headers(init.headers).get("Idempotency-Key"));
+  return new Response(JSON.stringify({ id: "email_retry_123" }), {
+    status: 200,
+  });
+};
+await deliverContactEnquiry(request, retryFetcher);
+await deliverContactEnquiry(request, retryFetcher);
+assert.deepEqual(retryKeys, [
+  `contact-enquiry-${submissionId}`,
+  `contact-enquiry-${submissionId}`,
+]);
+
+const missingDeliveryId = await deliverContactEnquiry(
+  request,
+  async () => new Response(JSON.stringify({}), { status: 200 }),
+);
+assert.equal(missingDeliveryId.ok, false);
+assert.equal(missingDeliveryId.providerStatus, 200);
+
+const rejected = await deliverContactEnquiry(
+  request,
+  async () => new Response("rate limited", { status: 429 }),
+);
+assert.deepEqual(rejected, {
+  ok: false,
+  providerBody: "rate limited",
+  providerStatus: 429,
+});
+
+const unreadable = await deliverContactEnquiry(request, async () => ({
+  ok: true,
+  status: 200,
+  text: async () => {
+    throw new Error("body unavailable");
+  },
+}));
+assert.deepEqual(unreadable, {
+  ok: false,
+  providerBody: "Unknown delivery error",
+  providerStatus: 200,
+});
+
+await assert.rejects(
+  deliverContactEnquiry(request, async () => {
+    throw new Error("network unavailable");
+  }),
+  /network unavailable/,
+);
+
+const monitorRequests = [];
+const monitorFetcher = async (url, init) => {
+  monitorRequests.push({ url, init });
+  return new Response(JSON.stringify({ id: "monitor_delivery_123" }), {
+    status: 200,
+  });
+};
+const monitorRequest = {
+  apiKey: "resend_monitor_key",
+  fromEmail: "Branding Tatva <contact@brandingtatva.com>",
+  replyTo: "suman@brandingtatva.com",
+  scope: "preview/unsafe characters",
+};
+const monitorDate = new Date("2026-08-30T23:59:00.000Z");
+
+const monitorAccepted = await probeContactDeliveryProvider(
+  monitorRequest,
+  monitorFetcher,
+  monitorDate,
+);
+await probeContactDeliveryProvider(monitorRequest, monitorFetcher, monitorDate);
+await probeContactDeliveryProvider(
+  monitorRequest,
+  monitorFetcher,
+  new Date("2026-08-31T00:01:00.000Z"),
+);
+
+assert.deepEqual(monitorAccepted, {
+  ok: true,
+  deliveryId: "monitor_delivery_123",
+});
+assert.equal(monitorRequests.length, 3);
+const monitorBodies = monitorRequests.map(({ init }) => JSON.parse(init.body));
+for (const body of monitorBodies) {
+  assert.deepEqual(body.to, [CONTACT_DELIVERY_MONITOR_RECIPIENT]);
+  assert.equal(body.to.includes(monitorRequest.replyTo), false);
+  assert.match(body.text, /No visitor enquiry was submitted\./);
+}
+const monitorKeys = monitorRequests.map(({ init }) =>
+  new Headers(init.headers).get("Idempotency-Key"),
+);
+assert.equal(monitorKeys[0], monitorKeys[1]);
+assert.notEqual(monitorKeys[1], monitorKeys[2]);
+assert.match(monitorKeys[0], /provider-monitor-preview-unsafe-characters-2026-08-30$/);
+
+// Exercise the route as well as the helper: request-local diagnostics must
+// never change the provider payload for an unchanged submission retry.
+const routeSource = fs.readFileSync("src/app/api/contact/route.ts", "utf8");
+const routeCompiled = ts.transpileModule(routeSource, {
+  compilerOptions: {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2020,
+  },
+}).outputText;
+const routeModule = { exports: {} };
+const schemaModule = { exports: {} };
+const schemaCompiled = ts.transpileModule(
+  fs.readFileSync("src/lib/contact-schema.ts", "utf8"),
+  { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } },
+).outputText;
+new Function("exports", "module", "require", schemaCompiled)(
+  schemaModule.exports, schemaModule, require,
+);
+const providerAttempts = [];
+const acceptedBodies = new Map();
+let deliveredCount = 0;
+let requestNumber = 0;
+const routeDependencies = {
+  "@/lib/contact-schema": schemaModule.exports,
+  "@/data/services": { packages: [] },
+  "@/lib/contact-delivery": { deliverContactEnquiry },
+  "@/lib/api-protection": {
+    guardJsonRequest: () => null,
+    readJsonBody: async (req) => ({ ok: true, value: await req.json() }),
+    singleLine: (value) => value.replace(/[\r\n]/g, " "),
+    jsonNoStore: (body, init) => Response.json(body, init),
+    fetchWithTimeout: async (_url, init) => {
+      const key = new Headers(init.headers).get("Idempotency-Key");
+      providerAttempts.push({ key, body: init.body });
+      if (acceptedBodies.has(key) && acceptedBodies.get(key) !== init.body) {
+        return Response.json({ error: "invalid_idempotent_request" }, { status: 409 });
+      }
+      if (!acceptedBodies.has(key)) {
+        acceptedBodies.set(key, init.body);
+        deliveredCount += 1;
+      }
+      return Response.json({ id: "email_route_retry" });
+    },
+  },
+};
+new Function("exports", "module", "require", "process", "crypto", "console", routeCompiled)(
+  routeModule.exports,
+  routeModule,
+  (name) => {
+    assert.ok(name in routeDependencies, `Unexpected route dependency: ${name}`);
+    return routeDependencies[name];
+  },
+  { env: { RESEND_API_KEY: "test_key", CONTACT_TO_EMAIL: "test@example.com" } },
+  { randomUUID: () => `request-${++requestNumber}` },
+  { info() {}, error() {} },
+);
+const routeRequest = (details = {}) => new Request("https://preview.example/api/contact", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "X-Contact-Submission": submissionId },
+  body: JSON.stringify({ name: "Test visitor", email: "visitor@example.com",
+    description: "An unchanged enquiry retried after a lost confirmation.", ...details }),
+});
+const firstRouteResponse = await routeModule.exports.POST(routeRequest());
+const retryRouteResponse = await routeModule.exports.POST(routeRequest());
+assert.equal(firstRouteResponse.status, 200);
+assert.equal(retryRouteResponse.status, 200, "An unchanged retry must recover provider acceptance.");
+assert.deepEqual(providerAttempts[0], providerAttempts[1], "Retry key AND body must stay identical.");
+assert.equal(deliveredCount, 1, "Retry must not send a second email.");
+assert.notEqual((await firstRouteResponse.json()).requestId,
+  (await retryRouteResponse.json()).requestId, "Request diagnostics must remain distinct.");
+
+const blankStageResponse = await routeModule.exports.POST(routeRequest({ brandStage: "" }));
+assert.equal(blankStageResponse.status, 200, "Leaving the optional brand stage blank must allow sending.");
+assert.deepEqual(providerAttempts[2], providerAttempts[0], "A blank optional stage must be equivalent to an omitted stage.");
+assert.equal(deliveredCount, 1, "A blank optional stage must preserve retry identity.");
+const attemptsBeforeInvalidStage = providerAttempts.length;
+const invalidStageResponse = await routeModule.exports.POST(routeRequest({ brandStage: "made up stage" }));
+assert.equal(invalidStageResponse.status, 422, "An unsupported brand stage must still be rejected.");
+assert.equal(providerAttempts.length, attemptsBeforeInvalidStage, "Invalid details must never reach the provider.");
+for (const stage of schemaModule.exports.brandStages) {
+  assert.equal(schemaModule.exports.contactSchema.shape.brandStage.parse(stage), stage);
+}
+
+console.log(
+  JSON.stringify(
+    {
+      result: "passed",
+      providerAcceptance: true,
+      providerIdRequired: true,
+      stableRetryKey: true,
+      routeRetryPayloadStable: true,
+      routeRetrySendsOnce: true,
+      optionalBrandStageCanBeBlank: true,
+      invalidBrandStageRejectedBeforeDelivery: true,
+      providerRejection: true,
+      unreadableResponse: true,
+      networkFailure: true,
+      syntheticRecipientIsolated: true,
+      monitorRetryKeyStablePerUtcDay: true,
+      monitorRetryKeyRotatesNextUtcDay: true,
+      publicReadinessIsSecretsFree: true,
+      serverlessRateLimitScopeIsTruthful: true,
+    },
+    null,
+    2,
+  ),
+);

@@ -1,0 +1,354 @@
+.questions, .invitation {
+  position: relative; isolation: isolate; min-height: 100svh;
+  color: #342f27; background: #f1eadf;
+}
+.questionMedia, .invitationMedia {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+}
+.invitationMediaCamera { position: absolute; inset: 0; }
+/* Same correction as the paths chapter: media at .15 behind a wash that
+   is opaque cream to 8% and still 90% at midpoint leaves these two
+   closing scenes as flat paper, which is most of why the back half of
+   Home reads as one long beige run. Footage up, wash down, and the
+   contrast for the copy bought with a localized scrim where the column
+   actually sits. */
+.questionMedia { opacity: .52; }
+.invitationMedia { opacity: .58; }
+.questions::before, .invitation::before {
+  content: ""; position: absolute; z-index: 0; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(115% 92% at 7% 50%, #f1eadf 0%, rgb(241 234 223 / 90%) 32%, rgb(241 234 223 / 0%) 70%),
+    linear-gradient(105deg, rgb(241 234 223 / 62%) 0%, rgb(241 234 223 / 38%) 48%, rgb(241 234 223 / 24%) 100%);
+}
+.invitation::before {
+  background:
+    radial-gradient(115% 92% at 6% 52%, #eee5d7 0%, rgb(238 229 215 / 88%) 34%, rgb(238 229 215 / 0%) 72%),
+    linear-gradient(100deg, rgb(238 229 215 / 58%) 0%, rgb(238 229 215 / 36%) 55%, rgb(238 229 215 / 24%) 100%);
+}
+.questionFrame, .invitationFrame {
+  position: relative; z-index: 1; width: min(100%, 90rem); margin-inline: auto;
+  padding: clamp(6.5rem, 11svh, 8rem) clamp(1.5rem, 5.5vw, 5.5rem) clamp(3rem, 6svh, 5rem);
+}
+.questionFrame {
+  min-height: 100svh; display: grid;
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  /* A changing answer must expand down from the same origin. Centering
+     this row shifts even the first question when a later answer opens. */
+  align-items: start; align-content: start; gap: clamp(3rem, 8vw, 8rem);
+}
+.eyebrow {
+  margin: 0 0 1.1rem; color: #855035;
+  font: 500 .78rem/1.4 var(--font-sans, sans-serif);
+  letter-spacing: .14em; text-transform: uppercase;
+}
+.questionIntro h2, .invitationCopy h2 {
+  margin: 0; font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(2.7rem, 4.6vw, 4.5rem); font-weight: 400;
+  line-height: 1.04; letter-spacing: -.025em; text-wrap: balance;
+}
+.questionIntro h2 { max-width: 11ch; }
+.questionIntro h2 em { font-weight: 400; color: #855035; }
+.lede {
+  max-width: 39ch; margin: 1.5rem 0; color: #514b40;
+  font-size: clamp(1rem, 1.2vw, 1.125rem); line-height: 1.7; text-wrap: pretty;
+}
+.textLink {
+  display: inline-flex; align-items: center; gap: .7rem; max-width: 100%;
+  /* min-height 2.75rem = 44px, the touch-target floor. Padding alone put
+     these at 42px on a phone — close enough to look fine and still under
+     the line every accessibility guideline actually draws. */
+  min-height: 2.75rem;
+  padding-block: .65rem; color: #70482f; font-size: .875rem;
+  font-weight: 500; line-height: 1.5; text-decoration: underline;
+  text-decoration-color: rgb(112 72 47 / 35%); text-underline-offset: .3em;
+}
+.textLink svg { flex: 0 0 auto; transition: transform 220ms ease; }
+.textLink:hover svg { transform: translateX(3px); }
+.questionIntro .textLink:hover svg { transform: translateY(3px); }
+.textLink:hover { color: #342f27; }
+.questionList { min-width: 0; }
+.questionItem {
+  position: relative; isolation: isolate;
+  border-top: 1px solid rgb(91 78 58 / 24%);
+}
+.questionItem::before {
+  content: ""; position: absolute; z-index: -1; inset: 0 -.85rem;
+  border-radius: .35rem; pointer-events: none;
+  background: linear-gradient(100deg, rgb(255 249 237 / 48%), rgb(255 249 237 / 12%) 80%, transparent);
+  opacity: 0; transition: opacity 380ms cubic-bezier(.22,1,.36,1);
+}
+.questionItem[data-open="true"]::before { opacity: 1; }
+.questionItem h3 { margin: 0; }
+.questionRule {
+  position: absolute; inset: -1px 0 auto; height: 1px;
+  background: #98623f; pointer-events: none; transform-origin: left;
+}
+.questionItem[data-open="true"] .questionNumber { color: #70482f; }
+
+/* The dopamine layer. Rows arrive one after another as they cross into
+   view — CSS scroll driven, so an unfired observer can never strand
+   them invisible, and browsers without scroll timelines render the
+   settled state. Hover answers the pointer with a slide, an ignited
+   number, a warmed row and a quarter turn of the plus. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .questionItem {
+      animation: conversationRise both cubic-bezier(.22, 1, .36, 1);
+      animation-timeline: view();
+      animation-range: entry 8% entry 52%;
+    }
+  }
+}
+@keyframes conversationRise {
+  from { opacity: .1; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .questionButton > span:nth-child(2) { transition: translate 380ms cubic-bezier(.22, 1, .36, 1); }
+  .questionButton:hover > span:nth-child(2),
+  .questionButton:focus-visible > span:nth-child(2) { translate: 7px 0; }
+  .questionItem:not([data-open="true"]) .questionButton:hover .questionIcon { transform: rotate(90deg); }
+}
+.questionButton:hover .questionNumber,
+.questionButton:focus-visible .questionNumber { color: #b98534; }
+.questionItem:has(.questionButton:hover)::before { opacity: .55; }
+.questionButton {
+  display: grid; grid-template-columns: 1.8rem minmax(0, 1fr) 1.2rem;
+  align-items: start; gap: 1rem; width: 100%; min-height: 4.4rem;
+  padding: 1.3rem 0; border: 0; background: transparent; color: inherit;
+  font: 500 clamp(1rem, 1.35vw, 1.15rem)/1.45 var(--font-sans, sans-serif);
+  text-align: left; cursor: pointer; transition: color 220ms ease;
+}
+.questions :is(.questionButton, .answer, .textLink) { scroll-margin-block: 80px; }
+.questionButton:hover { color: #855035; }
+.questionNumber, .stepNumber {
+  padding-top: .2rem; font: 500 .75rem/1.5 var(--font-sans, sans-serif);
+  color: #906646; font-variant-numeric: tabular-nums;
+}
+.questionNumber { transition: color 280ms ease; }
+.questionIcon { margin-top: .2rem; transition: transform 280ms cubic-bezier(.22,1,.36,1); }
+.questionItem[data-open="true"] .questionIcon { transform: rotate(45deg); }
+.answer { position: relative; overflow: hidden; }
+.answerRail {
+  position: absolute; inset: .2rem auto 1.5rem .85rem; width: 2px;
+  background: rgb(152 98 63 / 16%); pointer-events: none;
+}
+.answerRail i {
+  position: absolute; inset: 0; background: #98623f;
+  transform-origin: top;
+}
+.answer:focus-within .answerRail i { transform: none !important; }
+.answer:focus-within > p { transform: none !important; }
+.answer[aria-hidden="true"] { visibility: hidden; }
+/* Focus can arrive before the opening animation finishes. Measure and reveal
+   the full answer immediately so its reading stays above the fixed controls. */
+.answer[aria-hidden="false"]:focus-within { height: auto !important; }
+.answer:focus-visible {
+  outline: 2px solid #855035; outline-offset: -3px; border-radius: 3px;
+}
+/* This light scene overrides the homepage's important ivory focus colour. */
+:global(.home-v4) .questions :is(a, button, [tabindex]):focus-visible {
+  outline-color: #855035 !important;
+}
+:global(.home-v4) .questions .answer:focus-visible { outline-offset: -3px; }
+.answer p {
+  margin: 0; padding: 0 2.2rem 1.5rem 2.8rem; color: #514b40;
+  font-size: 1rem; line-height: 1.7; text-wrap: pretty;
+}
+.auditNote {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  justify-content: space-between; gap: .3rem 1rem; padding-top: 1.4rem;
+  border-top: 1px solid rgb(91 78 58 / 24%);
+}
+.auditNote p { margin: 0; font-size: .875rem; line-height: 1.6; color: #514b40; }
+.invitationFrame {
+  min-height: 100svh; display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  column-gap: clamp(3rem, 7vw, 7rem); row-gap: clamp(1.5rem, 4svh, 2.5rem);
+  align-content: center; align-items: start;
+}
+.invitationRule {
+  grid-column: 1 / -1; height: 1px; background: #98623f; transform-origin: left;
+}
+.invitationCopy h2 { max-width: 15ch; font-size: clamp(2.8rem, min(5vw, 7.5svh), 5rem); }
+.invitationCopy .lede { max-width: 42ch; }
+.bookButton {
+  display: inline-flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; max-width: 100%; min-height: 3.5rem; margin-top: .6rem;
+  padding: 1rem 1.5rem; border: 1px solid #514936; border-radius: 999px;
+  background: #514936; color: #fff9ed; font-size: 1rem; font-weight: 500;
+  line-height: 1.4; transition: background-color 220ms ease, transform 220ms ease;
+}
+.bookButton svg { flex: 0 0 auto; transition: transform 220ms ease; }
+.bookButton:is(:hover, :focus-visible) { background: #3b3629; }
+.bookButton:is(:hover, :focus-visible) svg { transform: translateX(4px); }
+.preparation {
+  max-width: 37ch; margin: 1rem 0 1.5rem; color: #514b40;
+  font-size: .875rem; line-height: 1.6;
+}
+.conversation { padding-top: .2rem; }
+.conversationTopline {
+  display: flex; justify-content: space-between; flex-wrap: wrap;
+  gap: .5rem 1rem; padding-bottom: 1.5rem;
+}
+.conversationTopline span:first-child {
+  font-size: .875rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+}
+.conversationTopline span:last-child {
+  display: inline-flex; align-items: center; gap: .4rem; font-size: .875rem; color: #855035;
+}
+.conversationAgenda { position: relative; }
+.conversationTrack {
+  position: absolute; inset: .25rem auto .25rem 2.15rem; width: 2px;
+  background: rgb(152 98 63 / 13%); pointer-events: none;
+}
+.conversationTrack i {
+  position: absolute; inset: 0; background: #98623f; transform-origin: top;
+}
+.conversation ol { margin: 0; padding: 0; list-style: none; }
+.conversation li {
+  position: relative; isolation: isolate;
+  display: grid; grid-template-columns: 1.8rem minmax(0,1fr); gap: 1rem;
+  padding-block: 1.4rem; border-top: 1px solid rgb(91 78 58 / 24%);
+}
+.conversationRule {
+  position: absolute; z-index: -1; inset: 0 -.85rem;
+  border-radius: .35rem; pointer-events: none;
+  background: linear-gradient(100deg, rgb(152 98 63 / 12%), rgb(152 98 63 / 3%) 80%, transparent);
+}
+.conversationRule::before {
+  content: ""; position: absolute; inset: 0 .85rem auto; height: 1px;
+  background: linear-gradient(90deg, #98623f, rgb(152 98 63 / 12%));
+}
+.conversation :is(h3, .stepNumber) { transition: color 380ms cubic-bezier(.22,1,.36,1); }
+.conversation li[data-current="true"] .stepNumber { color: #855035; }
+.conversation li[data-current="true"] h3 { color: #70482f; }
+.conversation h3 {
+  margin: 0 0 .55rem; font: 400 clamp(1.35rem, 2vw, 1.8rem)/1.2 var(--font-display, Georgia, serif);
+}
+.conversation li p { margin: 0; color: #514b40; font-size: 1rem; line-height: 1.65; }
+.conversationFooter {
+  margin: 0; padding-top: 1rem; border-top: 1px solid rgb(91 78 58 / 24%);
+  color: #514b40; font-size: .875rem; line-height: 1.5;
+}
+.signoff {
+  grid-column: 1 / -1; margin: 0; color: #625a4d;
+  font: italic 400 1.25rem/1.4 var(--font-display, Georgia, serif);
+}
+.questions :is(a,button):focus-visible, .invitation a:focus-visible {
+  outline: 2px solid #855035; outline-offset: 5px; border-radius: 3px;
+}
+.invitation .bookButton:focus-visible { border-radius: 999px; }
+:global(.home-v4) .invitation a:focus-visible { outline-color: #855035 !important; }
+.invitation a { scroll-margin-block: 6rem 5rem; }
+
+/* The closing chapter's held story runs behind the same frameFits guard
+   as the foundation chapter, and it had the same dead band: the frame
+   measured 795px at a real 1440x900 MacBook's ~790px viewport and
+   786px at the 761px floor, so data-invitation-story fell to "flow"
+   and the camera sat inert on exactly the laptop class the site is
+   tuned for (held from 831px up, measured live). This block compresses
+   the frame under the cinematic band's ceiling so the hold survives
+   down to the 761px convention; the min-height stretch and centered
+   alignment keep the chapter filling the viewport either way. */
+@media (min-width: 1181px) and (max-height: 830px) {
+  .invitationFrame {
+    padding-top: 4.6rem;
+    padding-bottom: 2.2rem;
+    row-gap: 1.4rem;
+  }
+  .invitationCopy h2 { font-size: clamp(2.5rem, 6.8svh, 3.4rem); }
+  .conversationTopline { padding-bottom: 1rem; }
+  .conversation li { padding-block: 1.05rem; }
+  .preparation { margin: .75rem 0 1.1rem; }
+  .signoff { font-size: 1.15rem; }
+}
+
+@media (max-width: 900px) {
+  .questionFrame { gap: 2.5rem; grid-template-columns: minmax(0,.75fr) minmax(0,1.25fr); }
+  .invitationFrame { column-gap: 2.5rem; }
+}
+@media (max-width: 680px) {
+  .questionFrame, .invitationFrame {
+    grid-template-columns: minmax(0,1fr); padding: 6rem 1.5rem 3.5rem;
+    gap: 2.3rem; min-height: 100svh;
+  }
+  .questionFrame { padding-block: 5rem; gap: 1.5rem; }
+  .invitationFrame { padding-block: 5rem; row-gap: 1.5rem; }
+  .questionIntro h2 { max-width: 15ch; font-size: clamp(2.6rem, 10vw, 3.4rem); }
+  .questionIntro .lede { margin-block: 1rem .5rem; }
+  .questionButton {
+    grid-template-columns: 1.05rem minmax(0,1fr) 1.2rem; gap: .5rem; padding-block: 1rem;
+  }
+  .answer p { padding: 0 .25rem 1rem 1.55rem; }
+  .answerRail { left: .5rem; bottom: 1rem; }
+  .auditNote { display: block; }
+  .invitationCopy h2 { max-width: 15ch; font-size: clamp(2.8rem, 10.7vw, 3.8rem); }
+  .invitationCopy .lede { margin-top: 1.2rem; }
+  .bookButton { width: 100%; padding-inline: 1.15rem; gap: .7rem; }
+  .preparation { margin-bottom: .7rem; }
+  .conversation li {
+    grid-template-columns: 1.05rem minmax(0, 1fr); gap: .65rem;
+    padding-block: 1rem;
+  }
+  .conversationTrack { left: 1.325rem; }
+  .conversationTopline { padding-bottom: 1rem; }
+  /* Raised with the desktop value above, kept a little lower because the
+     mobile copy column spans the full width and has no clear side of
+     the frame to fall back on. */
+  .invitationMedia { opacity: .42; }
+  .signoff { font-size: 1.125rem; }
+}
+
+/* Parker-inspired pacing for the final conversation: the composed invitation
+   holds while the visitor's scroll moves through the three agenda steps.
+   The natural frame height decides whether it fits. Tall copy, touch, compact,
+   and reduced-motion contexts keep the original document flow. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :global(html:not([data-motion="reduced"])) .questionMedia,
+  :global(html:not([data-motion="reduced"])) .invitation[data-invitation-story="held"] .invitationMediaCamera {
+    will-change: transform;
+  }
+
+  :global(html:not([data-motion="reduced"])) .invitation[data-invitation-story="held"] {
+    height: 210svh;
+    min-height: 210svh;
+  }
+
+  :global(html:not([data-motion="reduced"])) .invitation[data-invitation-story="held"] .invitationMedia {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    width: 100%;
+    height: 100svh;
+    margin-bottom: -100svh;
+  }
+
+  :global(html:not([data-motion="reduced"])) .invitation[data-invitation-story="held"] .invitationFrame {
+    position: sticky;
+    top: 0;
+    height: auto;
+    min-height: 100svh;
+    box-sizing: border-box;
+  }
+
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .answerRail i { transform: none !important; }
+  .conversationTrack i { transform: none !important; }
+  .questionItem, .questionItem::before, .questionNumber, .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber { transition: none; }
+}
+
+:global(html[data-motion="reduced"]) .questionItem::before { transition: none; }
+:global(html[data-motion="reduced"]) .answerRail i { transform: none !important; }
+:global(html[data-motion="reduced"]) .conversationTrack i { transform: none !important; }
+
+:global(html[data-motion="reduced"]) .questions :is(.questionNumber, .questionIcon, .questionButton, .textLink svg) {
+  transition: none;
+}
+
+:global(html[data-motion="reduced"]) .invitation :is(.textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber) {
+  transition: none;
+}

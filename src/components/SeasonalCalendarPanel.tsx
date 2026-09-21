@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { CalendlyEmbed } from "./CalendlyEmbed";
 import { BackgroundVideo } from "./BackgroundVideo";
 import { EASE_AIR } from "@/lib/motion";
 import { useCurrentElement } from "@/lib/currentElement";
 import { site } from "@/data/site";
+import { track } from "@/lib/analytics";
 
 // A real glass-widget calendar (Weekly/Monthly toggle, an actual date
 // grid, today highlighted) — not a quote-card layout. Went through two
@@ -43,9 +45,10 @@ function buildMonthGrid(year: number, month: number): (number | null)[][] {
 }
 
 export function SeasonalCalendarPanel() {
-  const prefersReducedMotion = useReducedMotion();
-  const [expanded, setExpanded] = useState(false);
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [view, setView] = useState<"weekly" | "monthly">("weekly");
+  const [bookingOpened, setBookingOpened] = useState(false);
   // Resolved client-side only, after mount — computing new Date() during
   // render would let the server and client disagree on "now" and trip a
   // hydration mismatch (see useMediaQuery's own pattern elsewhere in
@@ -59,6 +62,12 @@ export function SeasonalCalendarPanel() {
   const year = now?.getFullYear() ?? 2026;
   const today = now?.getDate() ?? 1;
   const element = useCurrentElement();
+
+  function openBooking() {
+    setBookingOpened(true);
+    track("calendar_opened", { source: "footer_calendar" });
+    dialogRef.current?.showModal();
+  }
 
   // The Sunday-starting calendar week containing today, walked via
   // real Date arithmetic (not today ± 3) — a naive day-number offset
@@ -80,6 +89,7 @@ export function SeasonalCalendarPanel() {
   const monthGrid = useMemo(() => buildMonthGrid(year, month), [year, month]);
 
   return (
+    <>
     <div
       className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/15"
       style={{ boxShadow: "0 20px 60px -20px rgba(0,0,0,0.5)" }}
@@ -118,7 +128,7 @@ export function SeasonalCalendarPanel() {
               type="button"
               onClick={() => setView(v)}
               aria-pressed={view === v}
-              className="relative rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors duration-300"
+              className="relative inline-flex min-h-11 items-center justify-center rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors duration-300"
               style={{ color: view === v ? "#27221E" : "rgba(244,239,230,0.9)" }}
             >
               {view === v && (
@@ -146,7 +156,7 @@ export function SeasonalCalendarPanel() {
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE_AIR }}
+            transition={{ duration: 0.35, ease: EASE_AIR }}
           >
             <div className="mt-5 flex items-baseline justify-between">
               <span className="font-display text-3xl font-normal leading-none text-ivory">
@@ -183,7 +193,7 @@ export function SeasonalCalendarPanel() {
             initial={prefersReducedMotion ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: EASE_AIR }}
+            transition={{ duration: 0.35, ease: EASE_AIR }}
           >
             <div className="mt-5 grid grid-cols-7 text-center">
               {DAY_LETTERS.map((d, i) => (
@@ -235,59 +245,65 @@ export function SeasonalCalendarPanel() {
           className="text-xs text-ivory/85 sm:text-sm"
           style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
         >
-          Twenty minutes, just a real conversation.
+          Thirty minutes. One decision to untangle.
         </span>
         <motion.button
           type="button"
-          onClick={() => setExpanded(true)}
+          onClick={openBooking}
           whileHover={prefersReducedMotion ? undefined : { scale: 1.04 }}
           whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
           style={{ backgroundColor: element.color }}
-          // tabIndex/aria-hidden tied to the same `expanded` condition as
-          // the opacity/pointer-events classes below — a real bug found
-          // in audit: the button stayed keyboard-focusable while
-          // invisible, so Tab could land on an unseen control.
-          tabIndex={expanded ? -1 : 0}
-          aria-hidden={expanded}
-          className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-medium text-ivory transition-opacity duration-300 ${expanded ? "pointer-events-none opacity-0" : ""}`}
+          aria-haspopup="dialog"
+          aria-controls="footer-booking-dialog"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium text-ivory"
         >
-          + Book a call
+          Talk with Suman
         </motion.button>
       </div>
       </div>
-
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={prefersReducedMotion ? undefined : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: EASE_AIR }}
-            className="overflow-hidden"
-          >
-            <div className="mt-5 rounded-2xl bg-background p-1 sm:p-2">
-              <CalendlyEmbed url={site.calendlyUrl} />
-            </div>
-            {/* Audit found this embed had no fallback link, unlike the
-                main Contact page's own CalendlyEmbed usage, despite
-                CalendlyEmbed's own comment documenting that ad-blockers
-                can silently collapse the widget with no visible
-                failure. Same escape hatch, here too. */}
-            <p className="mt-3 text-center text-xs text-ivory/75">
-              Having trouble with the embed?{" "}
-              <a
-                href={site.calendlyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sandstone link-underline"
-              >
-                Open it directly instead
-              </a>
-              .
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
+
+    <dialog
+      ref={dialogRef}
+      id="footer-booking-dialog"
+      aria-labelledby="footer-booking-title"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) event.currentTarget.close();
+      }}
+      className="m-auto max-h-[92svh] w-[min(94vw,72rem)] overflow-auto rounded-2xl border border-white/15 bg-soil p-0 text-ivory shadow-[0_28px_100px_rgba(0,0,0,0.55)] backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+    >
+      <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-white/15 bg-soil px-5 py-4 sm:px-7">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-ivory/55">Your brand question</p>
+          <h2 id="footer-booking-title" className="mt-1 font-display text-2xl text-ivory sm:text-3xl">
+            Choose a time to examine it with Suman.
+          </h2>
+        </div>
+        <button
+          type="button"
+          onClick={() => dialogRef.current?.close()}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 text-xl text-ivory transition-colors hover:border-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
+          aria-label="Close booking dialog"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div className="bg-background p-2 sm:p-4">
+        {bookingOpened ? <CalendlyEmbed url={site.calendlyUrl} /> : null}
+      </div>
+      <p className="px-5 py-4 text-center text-xs text-ivory/75">
+        Having trouble with the embed?{" "}
+        <a
+          href={site.calendlyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sandstone link-underline"
+        >
+          Open Calendly directly
+        </a>
+        .
+      </p>
+    </dialog>
+    </>
   );
 }

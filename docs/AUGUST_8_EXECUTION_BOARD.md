@@ -1,0 +1,289 @@
+# Branding Tatva — August 8 execution board
+
+Branch: `august-8-isolated`  
+Permanent review alias: https://branding-tatva-git-august-8-isolated-suman22.vercel.app/  
+Production: protected until Suman explicitly approves.
+
+## Source coverage
+
+All five supplied workbooks were read as one system. The latest uploads are byte-identical to the previously supplied copies.
+
+- Motion / visualizer / video bible: `6fb2393dea44eeda19373fc4d7de3f15688be2ac1b72062384897b9005797b8e`
+- All-pages website bible: `7dd068f60265eb591d4c79150e18a6fca081a0bad960f629bf61e24cd7be7bda`
+- Master requirements register: `6809ac598561ef1d01614e3ed3eeba5699fd686b2c32f62d611903099694d5c5`
+- SEO / AEO / GEO / lead-growth master: `5e2521bcfa253973a348b111c9bbb597d0851aa1a3c7697a9e1b33cb86c75d0c`
+- Visual reference / UI / UX / video bank: `dc14760837295dbe0f4c18c05247c309601f53a09a108493b767d940c59927b5`
+
+Master register coverage: 1,858 requirements — 1,504 sitewide, 246 motion/interaction, 224 conversion, 203 SEO/content, 159 visual, 116 accessibility, 91 media, 53 engineering.
+
+## Governing rules
+
+- One scene, one business job, one dominant motion thesis.
+- Complex information becomes a semantic SVG/DOM visualizer.
+- Desktop chapters fit 1366×768 and 1440×900; mobile is separately directed.
+- Maximum two pinned scenes per page; none are consecutive; mobile normally has none.
+- Primary motion 70%, supporting motion 20%, ambient motion 10%.
+- Ambient films are unique, muted, poster-first, offscreen-paused and normally 1.08–1.15×.
+- No duplicate footage, generic office stock, random mountains, orange wash, autoplay audio or invented proof.
+- Preview deployments remain noindex. Production remains untouched.
+
+## M1 — shared foundation
+
+- [x] Create isolated August 8 branch and permanent branch alias.
+- [x] Centralize motion timing, easing, distance, scale, blur and pin budget.
+- [x] Centralize charcoal, slate-mist, forest, stone, deep-water and selective-gold palette.
+- [x] Merge navigation into Brand Strategy & Systems.
+- [x] Preserve semantic full-screen scene shell and mobile runway release.
+- [x] Add poster fallback, media IDs, mobile source, WebM source and playback controls.
+- [x] Preserve site motion preference and offscreen video budget.
+- [x] Add semantic accessible visualizer shell.
+- [x] Inventory 270 media files by path, size and Git blob.
+- [x] Add preview noindex controls.
+- [x] Install one golden sun cursor at the root layout and remove the Home-only cursor.
+- [ ] Map every media asset to route, scene, purpose, poster, crop and verified provenance.
+- [ ] Run exact and perceptual duplicate audit.
+- [ ] Record desktop/mobile LCP, INP, CLS, bundle and media baseline.
+
+## M2 — signature founder proof
+
+- [ ] Verify exact degree title, institution, fields/modules and display permission. **Blocked: source not supplied.**
+- [ ] Storyboard four states: verified degree → disciplines → strategy system → client decisions.
+- [ ] Build Home teaser with semantic fallback.
+- [ ] Build full About version with separate asset instance.
+- [ ] Build mobile tap-through and reduced-motion four-frame version.
+- [ ] Run comprehension, keyboard, screen-reader and performance tests.
+
+## M3 — Home
+
+- [x] Rewrite hero around audience, transformation and immediate action.
+- [x] Add Open the strategy room and See the work CTAs.
+- [x] Reduce ambient playback from 1.30× to 1.10×.
+- [x] Replace competing infinite hero effects with one forward camera move.
+- [x] Reduce identity veil to 220ms and remove pointer blocking.
+- [x] Recognition mirror: one state controller, user reading hold, mobile manual behavior and unique fog film.
+- [x] Five Tatvas: one mechanism per state with mobile panels.
+- [x] Why branding matters: qualitative causal signal visualizer with sourced annotations and zero invented percentages.
+- [x] Selected work: verified cases only, evidence index and unique media.
+- [x] Brand Strategy & Systems preview: three clear starting paths paired with verified project proof.
+- [ ] Founder proof: verified portrait, direct-access evidence and credential link.
+- [x] Brand Health Check: five ungated measures, transparent 0–10 scoring and a calm water response.
+- [x] Insights preview: one original insight plus two supporting field notes.
+- [ ] Session expectation scene and sunlit booking close.
+- [ ] Full desktop/mobile/reduced-motion/performance evidence.
+
+## M4 — Work + Services
+
+Canonical route: `/work`; redirect `/services` to `/work`.
+
+- [ ] Restore the root-system opening and outcome selector.
+- [ ] Pair every offer with verified evidence.
+- [ ] Build service constellation and flagship system assembly.
+- [ ] Build strategy distillation and channel adaptation visualizers.
+- [ ] Build case index and causal case-study spine.
+- [ ] Present proof metrics with unit, timeframe and source.
+- [ ] Build process, deliverables, ownership, packages, FAQ and close.
+- [ ] Remove generic card-grid treatments and duplicate Work/Services content.
+- [ ] Verify all case permissions before presenting any brand as a client.
+
+## M5 — About
+
+- [ ] Art-direct founder hero with approved portrait or static editorial alternative.
+- [ ] Build verified growth-ring timeline. **Blocked: real dates and turning points required.**
+- [x] Build psychology-to-brand method visualizer with ethical boundaries and sources.
+- [ ] Build philosophy prism, principles and founder-led comparison.
+- [ ] Build evidence ledger.
+- [ ] Publish partner strip only with five verified engagements. **Blocked: source required.**
+- [ ] Build complete degree-to-strategy scene after M2 verification.
+
+## M6 — Insights
+
+- [ ] Preserve the exact 22-guide authority source.
+- [ ] Build crawlable topic-led knowledge atlas with URL-preserving filters.
+- [ ] Select one featured guide for evidence-backed scrollytelling.
+- [ ] Add author, source, update and application modules.
+- [ ] Add an accessible original diagram or table to every priority guide.
+- [ ] Add contextual links to relevant work, service mechanisms and contact paths.
+- [ ] Validate Article, Breadcrumb and eligible VideoObject structured data.
+
+## M7 — Contact
+
+- [ ] Build calm first-light opening and intent selector.
+- [ ] Simplify accessible conditional form and preserve values on errors.
+- [ ] Verify 30-minute scheduling, timezone and fallback flow.
+- [ ] Verify phone `+91 84477 25381`, email, WhatsApp and privacy language.
+- [ ] Build explicit success state and next-step explanation.
+- [ ] Run end-to-end form and scheduling tests on mobile and desktop.
+
+## M8 — video production
+
+Each ID receives a unique shot, poster, desktop/mobile crop, safe zone, provenance and use.
+
+- [ ] V01 Home hero — misty forest trail, slow forward reveal, 14–18s.
+- [ ] V02 Home recognition — unique mist film and original keyframe integrated; custom 10–14s master remains in production.
+- [ ] V03 Five Tatvas — original directed master keyframe plus five semantic mechanisms integrated; responsive loop exports remain in production.
+- [ ] V04 Home services — live 12s stone/paper/water/root system assembly integrated; responsive encoded loop remains in production.
+- [ ] V05 Home health — live 15s clear-stream and five measurement-stone system integrated; responsive encoded loop remains in production.
+- [ ] V06 Home booking — one sunlight sweep over clean warm wood, 10–16s.
+- [ ] V07 About founder — restrained documentary portrait, 8–12s.
+- [ ] V08 About method — contour map becoming decision system, 10–14s.
+- [ ] V09 Work + Services hero — root system / mist trail, 14–18s.
+- [ ] V10 Authority — silver light revealing terrain, 12–18s.
+- [ ] V11 Stakes — graphite strata focus pull, 10–14s.
+- [ ] V12 Perception ladder — progressive ridge ascent, 12–18s.
+- [ ] V13 Package selector — deep water with forward gold reflection, 16–20s.
+- [ ] V14 Health diagnostic — moss and clear-stream macro, 12–18s.
+- [ ] V15 FAQ — slate-blue forward fog, 14–24s.
+- [ ] V16 Booking — sunlit wood with one-way light, 10–16s.
+- [ ] V17 Contact opening — path near water at first light, 12–18s.
+- [ ] Export WebM + MP4 at 24–30fps and AVIF/WebP poster.
+- [ ] Compress responsive versions and validate worst-frame contrast.
+- [ ] Confirm zero unintended exact, perceptual or conceptual repeats.
+
+## M9 — SEO, AEO, GEO and lead engine
+
+- [ ] Canonicalize Work + Services IA and redirect old Services URLs.
+- [ ] Validate server-rendered headings, copy, links, canonicals, sitemap and robots.
+- [x] Replace deprecated or unsupported schema choices with truthful graphs.
+- [x] Add image/video metadata, captions and transcript enforcement where meaningful.
+- [x] Preserve OAI-SearchBot access while previews remain noindex.
+- [x] Implement contextual internal-link graph.
+- [ ] Add consent-aware analytics for CTA, diagnostic, form and scheduling outcomes.
+- [x] Create entity fact sheet before expanding organization/person claims.
+
+## M10 — launch gate
+
+- [ ] TypeScript, lint and production build pass on the exact head.
+- [ ] Verify 1366×768, 1440×900, 1920×1080, 390×844 and 430×932.
+- [ ] Verify mouse, trackpad, touch, keyboard, reduced motion and slow network.
+- [ ] Verify Chrome, Safari, Firefox, Edge, iOS Safari and Android Chrome.
+- [ ] Check clipping, overlaps, blank frames, hard seams, dead space and console errors.
+- [ ] Attach evidence and classify anything without evidence as Unverified.
+- [ ] Record commit, hosted preview, blockers and rollback path.
+- [ ] Request Suman’s visual approval before production promotion.
+
+## Current deployed checkpoint — Home interaction batch
+
+- [x] One shared sun cursor renders across every canonical route.
+- [x] Recognition and Five Tatvas use one animation scheduler each; competing internal timers removed.
+- [x] Desktop demonstrations pause for real pointer, focus and keyboard intent.
+- [x] Touch stays visitor-led and reduced motion stays static.
+- [x] Five Tatvas uses affirmative contribution language and an original supporting motion plate.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current deployed checkpoint — Brand Strategy & Systems paths
+
+- [x] Foundation language explains category, audience, belief and position as one decision system.
+- [x] Three starting paths pair situation, intervention, practical outcome and a verified case file.
+- [x] MyShopInEurope, HerbalCart and Dr. Haley Nutrition proof copy comes directly from the project evidence source.
+- [x] Generic mountain mist footage removed from this chapter.
+- [x] A unique 12-second stone, paper, water and root assembly now supplies the chapter motion.
+- [x] Desktop may demonstrate; touch stays visitor-led; manual choice holds for reading.
+- [x] Keyboard arrow, Home and End controls switch the three path tabs.
+- [x] Reduced motion resolves to a complete static material composition.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current deployed checkpoint — Home Brand Health Check
+
+- [x] Five visible measures cover position, recognition, consistency, expression and preference.
+- [x] Every answer exposes its exact 0, 1 or 2 point value.
+- [x] The result shows the 0–10 total, strongest signal and clearest opportunity.
+- [x] Results remain ungated and link to the matching service path.
+- [x] A unique 15-second clear-stream and five-stone semantic motion system carries the response.
+- [x] Touch, mouse and keyboard use the same visitor-led question sequence.
+- [x] Reduced motion resolves to a complete static stream composition.
+- [x] Path and health choices now carry into the final booking invitation.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current checkpoint — Five Tatvas mechanisms
+
+- [x] Prithvi resolves as layered category, audience, belief and position strata.
+- [x] Jal resolves as a continuous five-touchpoint experience current.
+- [x] Agni resolves as one strategic difference releasing distinctive cues.
+- [x] Vayu resolves as a repeatable verbal rhythm travelling toward recall.
+- [x] Akash resolves as repeated assets compounding into a memory field.
+- [x] The illustrative 0–100 score is removed; every reading is qualitative and traceable.
+- [x] Mobile uses a swipeable control rail and a dedicated mechanism panel.
+- [x] Reduced motion presents every mechanism in a complete static state.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current checkpoint — Home Selected Work evidence archive
+
+- [x] Home presents the three featured case files only; the full five-case archive remains available at `/work`.
+- [x] Dr. Haley Nutrition, MyShopInEurope and Executive Springboard each use their own repository video and poster pair.
+- [x] Every selected file states its evidence type and source basis without adding client claims, metrics or dates.
+- [x] The archive uses one restrained semantic current instead of a generic shared background film.
+- [x] Fine-pointer desktop may demonstrate the archive; touch stays visitor-led and every manual choice holds for reading.
+- [x] Arrow, Home and End keys move through the case index; the project dialog traps focus, supports Escape and returns focus.
+- [x] Short-laptop layouts compress the evidence trail and mobile uses a horizontal snap rail.
+- [x] Reduced motion keeps the complete poster-led record visible.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current checkpoint — Home Insights argument current
+
+- [x] The canonical featured positioning guide leads the chapter without duplicating the full Insights library.
+- [x] Homepage hierarchy and client-proof articles appear as two supporting field notes.
+- [x] Each reading resolves into its own five-decision argument path and links to the exact published article route.
+- [x] The chapter uses one previously unused dandelion-release film and one dominant argument-line motion.
+- [x] Selection stays visitor-led across pointer and touch; Arrow, Home and End keys move through the reading tabs.
+- [x] Mobile uses a horizontal snap rail and a vertical argument path; reduced motion resolves to the poster and complete path.
+- [x] The guided homepage index now counts and names all thirteen chapters.
+- [ ] Verify the Pexels source URL before media launch approval.
+- [ ] Complete rendered viewport and cross-browser evidence for this checkpoint.
+
+## Current checkpoint — cross-page scene fit and autoplay stability
+
+Screenshot evidence received at 1202×626 showed Home Hidden Cost midway through
+guided playback with its heading and closing copy outside the frame. The cause
+was architectural: four states were bound to a 175svh sticky runway while the
+guide treated the whole runway as one short chapter.
+
+| Route family | Oversized owner found | Correction in this checkpoint | Remaining evidence |
+| --- | --- | --- | --- |
+| Home | Hidden Cost 175svh sticky runway | One 100svh frame; direct four-state controls; guided states sequence inside the existing dwell | Render 1366×768, 1440×900, 390×844 and 430×932 |
+| Home | Foundation 700px hard floor + 180svh runway | Hard floor removed; runway 145svh; short-laptop type, cards and close compressed | Confirm all four active states and final copy stay visible |
+| Home | Studio 52rem hard floor | Short-laptop floor released to 100svh; title, tabs and portrait compressed | Confirm portrait crop and authorship label |
+| Home | Five Tatvas 160svh hold | Hold reduced to 130svh; full mechanism remains inside the fixed frame | Confirm guide dwell and manual controls |
+| About | Psychology/Language convergence 220vh runway | Rebuilt as one responsive, visitor-led method frame with ethical boundary and sources | Confirm tab focus and mobile stacking |
+| Brand Strategy & Systems | Six-discipline 170svh scroll controller | Rebuilt as one direct-selection frame across pointer, touch and keyboard | Confirm all six panels at target viewports |
+| Brand Strategy & Systems | Authority 220svh assembly | Reduced to 175svh while retaining five-layer normalized progress | Confirm every layer reaches its complete state |
+| Brand Strategy & Systems | Education 190svh hold | Reduced to 150svh | Confirm perception ladder completes before handoff |
+| Work | Flagship steps at 62vh each | Reduced desktop steps to 46vh and close to 34vh | Confirm sticky evidence frame and case links |
+| Insights | 68–78svh article/topic openings | Within the one-frame budget; no artificial multi-screen runway found | Render article and topic templates |
+| Contact | 70vh opening | Within the one-frame budget; no artificial multi-screen runway found | Render form states and scheduling handoff |
+
+- [x] TypeScript, focused ESLint and whitespace checks pass for this source checkpoint.
+- [x] Touch-led and reduced-motion behavior preserved in every rebuilt controller.
+- [x] Production build passes for all 78 routes on the exact source checkpoint.
+- [x] Hosted-preview verification on the exact commit.
+- [ ] Browser viewport matrix remains launch evidence, never inferred from source checks.
+
+## Current checkpoint — Search + AI authority foundation
+
+- [x] One environment-aware robots contract keeps local and branch previews noindex while allowing public production indexing.
+- [x] The Insights article template can no longer override the preview noindex boundary.
+- [x] Production crawler rules explicitly allow Googlebot, Bingbot, OAI-SearchBot and ChatGPT-User.
+- [x] Organization and Person structured data draw from a conservative public entity fact sheet; unsupported biography, award, partner and outcome claims remain pending verification.
+- [x] A crawlable Editorial and Evidence Policy documents authorship, source, corrections, diagnostics, independent-study and Tatva Lab boundaries.
+- [x] Sitemap, footer and `llms.txt` expose the policy; machine-readable citations remain limited to sources visible on the corresponding guide.
+- [x] Preview-mode and production-mode builds pass for all 78 routes; runtime checks confirm the intended robots metadata in each environment.
+- [x] Complete the image/video metadata pass.
+- [x] Hosted-preview verification on the exact commit.
+
+## Current checkpoint — commercial internal-link graph
+
+- [x] All five topic hubs and all 29 Insight articles expose descriptive, server-rendered paths into a relevant service chapter, recorded project and contact route.
+- [x] Cross-topic recommendations follow an explicit adjacent-topic map instead of repeating the first three unrelated articles.
+- [x] The Services page states founder-led remote availability for the United States, United Kingdom and India in visible copy, metadata and service structured data.
+- [x] US/UK intent remains concentrated on the useful commercial page rather than duplicated across thin regional doorway pages.
+- [x] The graph uses only existing service anchors and recorded project routes, with an automated source gate guarding every target.
+- [ ] Validate the graph with production Search Console crawl data after launch approval.
+
+## Current checkpoint — media search and transcript contract
+
+- [x] All 29 Insight routes expose their representative image through article metadata and the XML sitemap.
+- [x] All five recorded project routes expose the editorial evidence diagram through descriptive alt text, `ImageObject` metadata and the XML sitemap.
+- [x] Home, About, Services, Insights and Contact expose one representative image each in the XML sitemap.
+- [x] Silent atmospheric loops are explicitly decorative and stay separate from client evidence.
+- [x] The media gate rejects future informational video without captions and a stable transcript reference.
+- [x] `VideoObject` remains reserved for a prominent, factual video page with verified title, description, thumbnail, duration, date and content URL.
+- [ ] Validate image discovery and indexing in Search Console after production launch approval.

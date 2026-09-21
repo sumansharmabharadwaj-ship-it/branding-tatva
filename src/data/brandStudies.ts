@@ -13,6 +13,21 @@
 // dashes or hyphens in rendered strings, no banned agency vocabulary,
 // opinionated claims a reader could disagree with.
 
+import type { SlotFill } from "@/components/MediaSlot";
+
+// Named media slots, one per section of the study template. Every one
+// is optional: a study with no approved footage renders exactly as it
+// does today, and approving a clip later is a data edit here rather
+// than a layout change in the template.
+export type StudyMedia = {
+  masthead?: SlotFill;
+  observations?: SlotFill;
+  applications?: SlotFill;
+  closing?: SlotFill;
+  /** Shown inside this study's opened panel on the Work page. */
+  card?: SlotFill;
+};
+
 export type BrandStudy = {
   slug: string;
   brand: string;
@@ -22,6 +37,38 @@ export type BrandStudy = {
   observations: { title: string; text: string }[];
   lesson: string;
   applications: string[];
+  media?: StudyMedia;
+};
+
+const sharedStudyMedia: StudyMedia = {
+  masthead: {
+    video: "/videos/generated/bt-studies-cultural-memory.mp4",
+    poster: "/images/generated/bt-studies-cultural-memory-poster.jpg",
+    position: "center",
+    playbackRate: 0.9,
+    credit: "Original Branding Tatva atmospheric study film",
+  },
+  observations: {
+    video: "/videos/generated/bt-studies-observation-field.mp4",
+    poster: "/images/generated/bt-studies-observation-field-poster.jpg",
+    position: "center",
+    playbackRate: 0.9,
+    credit: "Original Branding Tatva atmospheric study film",
+  },
+  applications: {
+    video: "/videos/generated/bt-studies-founder-roots.mp4",
+    poster: "/images/generated/bt-studies-founder-roots-poster.jpg",
+    position: "center",
+    playbackRate: 0.9,
+    credit: "Original Branding Tatva atmospheric study film",
+  },
+  closing: {
+    video: "/videos/generated/bt-studies-path-of-light.mp4",
+    poster: "/images/generated/bt-studies-path-of-light-poster.jpg",
+    position: "center",
+    playbackRate: 0.9,
+    credit: "Original Branding Tatva atmospheric study film",
+  },
 };
 
 export const brandStudies: BrandStudy[] = [
@@ -52,6 +99,7 @@ export const brandStudies: BrandStudy[] = [
       "Audit every touchpoint for the code that would survive with the name removed. That code deserves the budget.",
       "Treat rebrand impulses as a tax on memory. Evolution beats replacement almost every time.",
     ],
+    media: sharedStudyMedia,
   },
   {
     slug: "apple-brand-architecture",
@@ -80,6 +128,7 @@ export const brandStudies: BrandStudy[] = [
       "Position the maker before the product. Buyers join a worldview first and evaluate features second.",
       "Restraint reads as confidence at every scale. A calm page outsells a crowded one.",
     ],
+    media: sharedStudyMedia,
   },
   {
     slug: "nike-verbal-identity",
@@ -108,6 +157,7 @@ export const brandStudies: BrandStudy[] = [
       "Spend on consistency before spending on reach. A repeated idea compounds while a rotating one evaporates.",
       "Attach the brand to effort your audience already admires, and let stories carry the meaning.",
     ],
+    media: sharedStudyMedia,
   },
   {
     slug: "burberry-codes-reclaimed",
@@ -136,6 +186,7 @@ export const brandStudies: BrandStudy[] = [
       "Scarcity is a repair tool. Pulling a diluted asset back can restore the status it lost.",
       "Keep heritage circulating in customers' own hands rather than sealed inside a brand book.",
     ],
+    media: sharedStudyMedia,
   },
   {
     slug: "tim-hortons-ritual",
@@ -164,5 +215,6 @@ export const brandStudies: BrandStudy[] = [
       "Give buyers language of their own for your product, then defend it once they adopt it.",
       "Tie the brand to moments the culture already keeps: seasons, rituals, the real calendar.",
     ],
+    media: sharedStudyMedia,
   },
 ];

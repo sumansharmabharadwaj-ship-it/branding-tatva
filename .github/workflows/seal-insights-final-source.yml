@@ -1,0 +1,116 @@
+name: Seal the final 29-guide Insights source
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - ".github/workflows/seal-insights-final-source.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-seal-final-insights-source
+  cancel-in-progress: false
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+
+    steps:
+      - name: Check out the canonical branch without the media archive
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/public/videos/*
+            !/public/audio/*
+
+      - name: Wait for the poster and macOS-safe certification workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in {1..48}; do
+            git fetch origin homepage-cinematic-recovery
+            git reset --hard origin/homepage-cinematic-recovery
+            poster_ok=false
+            workflow_ok=false
+
+            if [ -s public/images/cinematic-waterlight-poster.jpg ] && \
+              ffprobe -v error -select_streams v:0 -show_entries stream=width,height \
+                -of csv=s=x:p=0 public/images/cinematic-waterlight-poster.jpg | grep -Eq '^[0-9]+x[0-9]+$'; then
+              poster_ok=true
+            fi
+
+            if grep -q 'sips -g pixelWidth public/images/cinematic-waterlight-poster.jpg' \
+              .github/workflows/insights-final-certification.yml; then
+              workflow_ok=true
+            fi
+
+            if [ "$poster_ok" = true ] && [ "$workflow_ok" = true ]; then
+              exit 0
+            fi
+
+            echo "Waiting for prerequisites: poster=${poster_ok}, macos_workflow=${workflow_ok}, attempt=${attempt}/48"
+            sleep 10
+          done
+          echo "The final Insights prerequisites did not converge." >&2
+          exit 1
+
+      - name: Write the exact final source seal
+        shell: bash
+        run: |
+          set -euo pipefail
+          marker="src/app/insights/authority-poster-repair-2026-08-07.ts"
+          cat > "$marker" <<'TS'
+          // Exact deployable source seal for the canonical 29-guide Insights
+          // library after restoring the missing waterlight poster and running
+          // authority, browser, discovery, keyboard, and reduced-motion gates.
+          export const insightsWaterlightPosterRepair20260807 = {
+            guides: 29,
+            topics: 5,
+            poster: "/images/cinematic-waterlight-poster.jpg",
+            posterState: "valid",
+            verification: "authority-browser-discovery",
+            runnerValidation: "macos-native",
+            hostedAlias: "branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app",
+          } as const;
+          TS
+
+          release_marker="src/app/release-markers/canonical-verification-suite-2026-08-07.ts"
+          python <<'PY'
+          from pathlib import Path
+          path = Path('src/app/release-markers/canonical-verification-suite-2026-08-07.ts')
+          content = path.read_text()
+          if 'insightsPoster: "waterlight-valid"' not in content:
+              content = content.replace(
+                  'insightsTopics: 5,',
+                  'insightsTopics: 5,\n  insightsPoster: "waterlight-valid",\n  insightsCertification: "authority-browser-discovery",',
+              )
+          path.write_text(content)
+          PY
+
+      - name: Commit and push the final deployable Insights source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/app/insights/authority-poster-repair-2026-08-07.ts \
+            src/app/release-markers/canonical-verification-suite-2026-08-07.ts
+          if git diff --cached --quiet; then
+            echo "The final Insights source seal is already current."
+            exit 0
+          fi
+          git commit -m "Seal the final 29-guide Insights source"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery

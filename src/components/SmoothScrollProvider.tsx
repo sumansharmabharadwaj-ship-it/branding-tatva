@@ -1,30 +1,20 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Lenis drives the actual page scroll (a real, eased scrollTo each frame
-// via GSAP's ticker — not a transform-based virtual scroll), so native
-// `window.scrollY` and the native `scroll` event both stay accurate.
-// The one prior failure here (see git history: "Revert Lenis + GSAP
-// ScrollTrigger integration") was a component reading window.scrollY via
-// its own addEventListener("scroll", ...) instead of Lenis's own scroll
-// event — Lenis batches/dispatches scroll updates through its own emitter,
-// and components need to subscribe to that via useLenis() rather than
-// assume the native event still fires on every tick.
-//
-// Skipped entirely under prefers-reduced-motion — smooth/eased scrolling
-// is exactly the kind of motion that preference exists to turn off.
-// Consumers of useLenis() must fall back to native scroll behavior when
-// this returns null.
-
-// window.lenis is already reserved by the lenis package's own type
-// declarations (an unrelated config-detection shape), hence the
-// underscore-prefixed name here instead.
 declare global {
   interface Window {
     __lenisInstance?: Lenis;
@@ -33,148 +23,226 @@ declare global {
 
 const LenisContext = createContext<Lenis | null>(null);
 
+function readCssPixelValue(value: string) {
+  const parsedValue = Number.parseFloat(value);
+  return Number.isFinite(parsedValue) ? parsedValue : 0;
+}
+
+function getAnchorRestingTop(target: HTMLElement, scrollRoot: HTMLElement) {
+  const targetStyles = window.getComputedStyle(target);
+  const rootStyles = window.getComputedStyle(scrollRoot);
+
+  return (
+    readCssPixelValue(targetStyles.scrollMarginTop) +
+    readCssPixelValue(rootStyles.scrollPaddingTop)
+  );
+}
+
 export function useLenis() {
   return useContext(LenisContext);
 }
 
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
+    // Home owns hydration-only fragment recovery in HomeV4ScrollCamera.
+    // Replaying this fallback on pause fights its reading-position correction.
+    if (pathname === "/" || pathname === "/contact" || !hydrated || !prefersReducedMotion || !window.location.hash) return;
 
-    // Options made explicit rather than left as unstated defaults, so a
-    // future edit doesn't accidentally change the scroll feel without
-    // realizing it was ever a deliberate choice:
-    //
-    // lerp: 0.1 — Lenis's own default, and the right one specifically
-    // because PinnedJourney/PinnedSlider/MeadowClosing all compute their
-    // progress from wrapper.getBoundingClientRect().top, which reflects
-    // this *smoothed* scroll position, not raw wheel delta. A lower lerp
-    // would lag those pinned sections behind the user's own scrolling; a
-    // higher one approaches "barely smoothed," undercutting the reason
-    // Lenis is here at all.
-    //
-    // duration/easing deliberately left unset — traced through Lenis's
-    // own source (node_modules/lenis/dist/lenis.mjs): every wheel/touch
-    // delta calls scrollTo() again, which resets the tween's elapsed
-    // time on every single input event. A duration+easing tween never
-    // gets to play out its curve under continuous scrolling; only
-    // lerp's frame-rate-independent damping is correct for that. That
-    // mode's real use case is a one-shot destination (see scrollToHash
-    // below, which intentionally uses `{ immediate: true }` instead
-    // since it's correcting drift after the fact, not the primary case
-    // duration/easing was built for).
-    //
-    // wheelMultiplier/touchMultiplier: 1 — kept at 1:1 since the three
-    // pinned sections' own scroll-distance math ((N+1) * 100vh wrapper
-    // heights) is tuned against real wheel/touch delta; rescaling either
-    // would require re-tuning all three together, a separate change.
-    //
-    // syncTouch: false — this site has no drag-synced canvas/WebGL scene
-    // that would need JS-mimicked touch scroll, and Lenis's own docs
-    // flag that mode as unstable on iOS < 16, so there's no reason to
-    // take on that risk for no benefit here.
+    let cancelled = false;
+    let attempts = 0;
+    let timer: number | null = null;
+
+    function cancelHashRecovery() {
+      cancelled = true;
+      if (timer !== null) {
+        window.clearTimeout(timer);
+        timer = null;
+      }
+    }
+
+    function onManualKey(event: KeyboardEvent) {
+      if (
+        event.key === "PageDown" ||
+        event.key === "PageUp" ||
+        event.key === "Home" ||
+        event.key === "End" ||
+        event.key === " " ||
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp"
+      ) {
+        cancelHashRecovery();
+      }
+    }
+
+    function alignHashWithoutMotion() {
+      if (cancelled || attempts >= 6) return;
+
+      let target: HTMLElement | null = null;
+      try {
+        target = document.querySelector<HTMLElement>(window.location.hash);
+      } catch {}
+      if (!target) return;
+
+      const restingTop = getAnchorRestingTop(target, document.documentElement);
+      const alreadyThere = Math.abs(target.getBoundingClientRect().top - restingTop) <= 1;
+      if (alreadyThere && attempts > 0) return;
+
+      attempts += 1;
+      /* "instant", not "auto": auto defers to the document's CSS
+         scroll-behavior, and Home now declares smooth for visitor
+         anchors — this re-alignment must never animate. */
+      target.scrollIntoView({ behavior: "instant", block: "start" });
+      if (attempts < 6 && !cancelled) {
+        timer = window.setTimeout(() => {
+          timer = null;
+          alignHashWithoutMotion();
+        }, 350);
+      }
+    }
+
+    // Native hash navigation may happen before fonts and client-only scenes
+    // settle. Re-align without animation, but immediately yield to any real
+    // visitor input so accessibility preferences never create scroll fights.
+    window.addEventListener("wheel", cancelHashRecovery, { passive: true });
+    window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
+    window.addEventListener("keydown", onManualKey);
+    alignHashWithoutMotion();
+    document.fonts?.ready?.then(alignHashWithoutMotion);
+
+    return () => {
+      cancelHashRecovery();
+      window.removeEventListener("wheel", cancelHashRecovery);
+      window.removeEventListener("touchstart", cancelHashRecovery);
+      window.removeEventListener("keydown", onManualKey);
+    };
+  }, [hydrated, pathname, prefersReducedMotion]);
+
+  useEffect(() => {
+    const usesNativeSceneScroll =
+      pathname === "/" ||
+      pathname === "/about" ||
+      pathname === "/services" ||
+      pathname === "/contact" ||
+      pathname === "/insights" ||
+      pathname.startsWith("/insights/");
+
+    // The five primary journeys all translate scroll into their own camera,
+    // chapter, rail, or reading motion. Keep input at a true 1:1 response on
+    // every one of them so moving between pages never changes the physical
+    // feel of the wheel, trackpad, touch gesture, or scrolling keys. Utility
+    // and legacy editorial routes retain the existing soft scroll.
+    if (!hydrated || prefersReducedMotion || usesNativeSceneScroll) return;
+
     const instance = new Lenis({
       lerp: 0.1,
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.92,
       touchMultiplier: 1,
       syncTouch: false,
     });
+
     instance.on("scroll", ScrollTrigger.update);
     setLenis(instance);
 
     function ticker(time: number) {
       instance.raf(time * 1000);
     }
+
     gsap.ticker.add(ticker);
     gsap.ticker.lagSmoothing(0);
-
-    // Exposed on window as a debugging hook (e.g. console-testing
-    // `window.__lenisInstance.scrollTo(...)`).
     window.__lenisInstance = instance;
 
-    // A URL like /services#brand-beginning relies on the browser's own
-    // native "scroll to the element matching location.hash" behavior on
-    // load — but Lenis takes over scroll control the moment it mounts,
-    // before that native scroll reliably resolves, and sections built on
-    // client-only pinned-scroll components (ProcessSection's 700vh
-    // wrapper, the Five Elements slider) don't establish their real
-    // height until they mount and measure themselves on the client. A
-    // single well-timed scroll consistently overshot by almost exactly
-    // one such section's own height, which points at something in that
-    // mounting process (GSAP's ScrollTrigger.refresh() among the likely
-    // culprits, since it runs right alongside this) nudging scroll
-    // position on its own terms after the fact — not worth chasing the
-    // exact mechanism when the actual goal is simple: land on the
-    // target and stay there. This scrolls once, then rechecks and
-    // re-corrects a few times over the next couple of seconds, so
-    // whatever moves the target after the first attempt gets overridden
-    // rather than needing to be predicted in advance.
     let hashScrollAttempts = 0;
+    let hashScrollCancelled = false;
+    // window.setTimeout returns a number in the browser. Deriving the type
+    // from typeof window.setTimeout picks up Node's overload once @types/node
+    // is in scope, which broke the build.
+    let hashTimer: number | null = null;
+
+    function cancelHashRecovery() {
+      hashScrollCancelled = true;
+      if (hashTimer !== null) {
+        window.clearTimeout(hashTimer);
+        hashTimer = null;
+      }
+    }
+
+    function onManualKey(event: KeyboardEvent) {
+      if (
+        event.key === "PageDown" ||
+        event.key === "PageUp" ||
+        event.key === "Home" ||
+        event.key === "End" ||
+        event.key === " " ||
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp"
+      ) {
+        cancelHashRecovery();
+      }
+    }
+
+    // Hash recovery exists only to repair initial browser alignment after
+    // fonts/layout hydrate. The moment the visitor wheels, touches, or uses a
+    // scrolling key, that explicit input wins and no delayed timeout may pull
+    // the page back to the original anchor.
+    window.addEventListener("wheel", cancelHashRecovery, { passive: true });
+    window.addEventListener("touchstart", cancelHashRecovery, { passive: true });
+    window.addEventListener("keydown", onManualKey);
+
     function scrollToHash() {
-      if (!window.location.hash || hashScrollAttempts >= 6) return;
+      if (hashScrollCancelled || !window.location.hash || hashScrollAttempts >= 6) return;
+
       let target: HTMLElement | null = null;
       try {
         target = document.querySelector<HTMLElement>(window.location.hash);
-      } catch {
-        // location.hash can contain characters that aren't a valid CSS
-        // selector (e.g. a bare numeric id) — not this site's own
-        // links, but worth not throwing on if one ever shows up.
-      }
+      } catch {}
       if (!target) return;
 
       const rect = target.getBoundingClientRect();
-      const alreadyThere = rect.top > -4 && rect.top < window.innerHeight * 0.5;
+      // Hydration can move a chapter by a few pixels after the browser's
+      // native hash jump. Finish recovery only when the anchor is genuinely
+      // aligned. Lenis honours the same CSS scroll margin and padding as the
+      // browser, so compare against that shared resting point instead of the
+      // viewport edge. This keeps anchored controls clear of fixed headers.
+      const restingTop = getAnchorRestingTop(target, instance.rootElement);
+      const alreadyThere = Math.abs(rect.top - restingTop) <= 1;
       if (alreadyThere && hashScrollAttempts > 0) return;
 
       hashScrollAttempts += 1;
       instance.resize();
       instance.scrollTo(target, { immediate: true });
-      if (hashScrollAttempts < 6) {
-        window.setTimeout(scrollToHash, 350);
+      if (hashScrollAttempts < 6 && !hashScrollCancelled) {
+        hashTimer = window.setTimeout(() => {
+          hashTimer = null;
+          scrollToHash();
+        }, 350);
       }
     }
 
-    // Every ScrollTrigger on the page (pinned or not) has its start/end
-    // positions computed from whatever the DOM measures at the moment
-    // each one is created — usually before images have finished loading
-    // or web fonts have swapped in, both of which can change section
-    // heights after the fact. A resize triggers GSAP's own automatic
-    // refresh, but neither of these does, so nothing currently corrects
-    // for it. Refreshing once after the page and fonts have actually
-    // settled catches both without forcing every trigger to guess at a
-    // width/height that hasn't stabilized yet.
     function refresh() {
+      instance.resize();
       ScrollTrigger.refresh();
       scrollToHash();
     }
-    if (document.readyState === "complete") {
-      refresh();
-    } else {
-      window.addEventListener("load", refresh);
-    }
+
+    if (document.readyState === "complete") refresh();
+    else window.addEventListener("load", refresh);
     document.fonts?.ready?.then(refresh);
 
-    // A backgrounded tab throttles rAF, which is what GSAP's ticker (and
-    // therefore every scrub/pin ScrollTrigger, including the Process
-    // section's horizontal pin) runs on. A tab minimized or switched away
-    // from mid-scroll can come back with a pinned section's `x` tween
-    // stalled at a stale scroll position while the *real* scroll offset
-    // has moved on underneath it — the pin's `position: fixed` state and
-    // the actual scroll position disagree, and until something forces a
-    // recalculation, the section renders wrong (in the worst case,
-    // pinned content sitting outside the current viewport entirely,
-    // which looks like the page going blank at that scroll depth). Same
-    // fix as the load-time refresh above, just triggered by regaining
-    // visibility instead of by the page finishing its first load.
     function onVisibilityChange() {
       if (!document.hidden) refresh();
     }
+
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
+      if (hashTimer !== null) window.clearTimeout(hashTimer);
+      window.removeEventListener("wheel", cancelHashRecovery);
+      window.removeEventListener("touchstart", cancelHashRecovery);
+      window.removeEventListener("keydown", onManualKey);
       gsap.ticker.remove(ticker);
       instance.destroy();
       setLenis(null);
@@ -182,7 +250,7 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("load", refresh);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, []);
+  }, [hydrated, pathname, prefersReducedMotion]);
 
   return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>;
 }

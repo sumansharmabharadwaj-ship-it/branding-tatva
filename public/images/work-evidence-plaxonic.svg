@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Plaxonic content-authority evidence</title>
+  <desc id="desc">An editorial system showing sixteen content pieces across research papers, perspective pieces, blogs, and articles.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#171311"/>
+      <stop offset="1" stop-color="#3A241C"/>
+    </linearGradient>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0V56" fill="none" stroke="#F2E8E1" stroke-opacity=".04"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="1200" fill="url(#bg)"/>
+  <rect width="1600" height="1200" fill="url(#grid)"/>
+  <circle cx="1380" cy="180" r="320" fill="#CD7A4C" fill-opacity=".1"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="96" y="104" font-size="22" letter-spacing="7" fill="#E3B69B">CONTENT AUTHORITY</text>
+    <text x="96" y="184" font-family="Georgia, 'Times New Roman', serif" font-size="72" fill="#F2E8E1">Four formats. Sixteen deliberate pieces.</text>
+    <text x="96" y="232" font-size="24" fill="#BDAAA1">Different fluency levels require different ways to earn trust.</text>
+  </g>
+
+  <g transform="translate(96 322)" font-family="Arial, Helvetica, sans-serif">
+    <g>
+      <rect width="674" height="318" rx="36" fill="#F2E8E1" fill-opacity=".055" stroke="#CD7A4C" stroke-opacity=".46"/>
+      <text x="34" y="56" font-size="17" letter-spacing="5" fill="#E3B69B">01 · RESEARCH PAPERS</text>
+      <text x="34" y="136" font-family="Georgia, 'Times New Roman', serif" font-size="54" fill="#F2E8E1">Validate.</text>
+      <text x="34" y="192" font-size="21" fill="#D8C8C0">Evidence, proof of concept,</text>
+      <text x="34" y="224" font-size="21" fill="#D8C8C0">and technical credibility.</text>
+      <text x="34" y="278" font-size="16" letter-spacing="3" fill="#A99A93">DELHI JAL BOARD PROOF POINT INCLUDED</text>
+    </g>
+    <g transform="translate(706 0)">
+      <rect width="706" height="318" rx="36" fill="#F2E8E1" fill-opacity=".055" stroke="#CD7A4C" stroke-opacity=".46"/>
+      <text x="34" y="56" font-size="17" letter-spacing="5" fill="#E3B69B">02 · PERSPECTIVE PIECES</text>
+      <text x="34" y="136" font-family="Georgia, 'Times New Roman', serif" font-size="54" fill="#F2E8E1">Challenge.</text>
+      <text x="34" y="192" font-size="21" fill="#D8C8C0">Questions that expose assumptions</text>
+      <text x="34" y="224" font-size="21" fill="#D8C8C0">leaders have yet to examine.</text>
+      <text x="34" y="278" font-size="16" letter-spacing="3" fill="#A99A93">POINT OF VIEW, NOT CONTENT FILLER</text>
+    </g>
+    <g transform="translate(0 350)">
+      <rect width="674" height="318" rx="36" fill="#F2E8E1" fill-opacity=".055" stroke="#CD7A4C" stroke-opacity=".46"/>
+      <text x="34" y="56" font-size="17" letter-spacing="5" fill="#E3B69B">03 · BLOGS</text>
+      <text x="34" y="136" font-family="Georgia, 'Times New Roman', serif" font-size="54" fill="#F2E8E1">Humanise.</text>
+      <text x="34" y="192" font-size="21" fill="#D8C8C0">Emerging technology translated</text>
+      <text x="34" y="224" font-size="21" fill="#D8C8C0">into relevance for daily life.</text>
+      <text x="34" y="278" font-size="16" letter-spacing="3" fill="#A99A93">ACCESS WITHOUT DILUTING THE IDEA</text>
+    </g>
+    <g transform="translate(706 350)">
+      <rect width="706" height="318" rx="36" fill="#CD7A4C" fill-opacity=".12" stroke="#E3B69B" stroke-opacity=".58"/>
+      <text x="34" y="56" font-size="17" letter-spacing="5" fill="#E3B69B">04 · ARTICLES</text>
+      <text x="34" y="136" font-family="Georgia, 'Times New Roman', serif" font-size="54" fill="#F2E8E1">Define.</text>
+      <text x="34" y="192" font-size="21" fill="#F2E8E1">Fast, high-visibility formats</text>
+      <text x="34" y="224" font-size="21" fill="#F2E8E1">for clear category language.</text>
+      <text x="34" y="278" font-size="16" letter-spacing="3" fill="#E3B69B">THE FINAL LAYER OF THE PORTFOLIO</text>
+    </g>
+  </g>
+
+  <g transform="translate(96 1050)" font-family="Arial, Helvetica, sans-serif">
+    <text x="0" y="0" font-family="Georgia, 'Times New Roman', serif" font-size="48" fill="#E3B69B">16</text>
+    <text x="72" y="-4" font-size="18" letter-spacing="4" fill="#BDAAA1">PIECES ACROSS FOUR FORMATS</text>
+    <text x="790" y="-4" font-size="18" letter-spacing="4" fill="#BDAAA1">VALIDATE · CHALLENGE · HUMANISE · DEFINE</text>
+  </g>
+</svg>

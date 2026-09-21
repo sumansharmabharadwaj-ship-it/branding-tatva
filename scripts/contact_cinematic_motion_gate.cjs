@@ -1,0 +1,142 @@
+#!/usr/bin/env node
+
+const fs = require("node:fs");
+const path = require("node:path");
+
+const root = path.resolve(__dirname, "..");
+
+function read(relativePath) {
+  return fs.readFileSync(path.join(root, relativePath), "utf8");
+}
+
+function fail(message) {
+  console.error(`[contact-cinema] ${message}`);
+  process.exitCode = 1;
+}
+
+function requireText(source, expected, message) {
+  if (!source.includes(expected)) fail(message);
+}
+
+function forbidPattern(source, pattern, message) {
+  if (pattern.test(source)) fail(message);
+}
+
+function requirePattern(source, pattern, message) {
+  if (!pattern.test(source)) fail(message);
+}
+
+const scene = read("src/components/ContactCinematicScene.tsx");
+const pathwayFilm = read("src/components/ContactPathwayFilm.tsx");
+const pathways = read("src/components/ContactPathways.tsx");
+const gratitude = read("src/components/ContactGratitude.tsx");
+const backgroundVideo = read("src/components/BackgroundVideo.tsx");
+const callSequence = read("src/components/ContactCallSequence.tsx");
+const form = read("src/components/ContactForm.tsx");
+const rail = read("src/components/ContactChapterRail.tsx");
+const page = read("src/app/contact/page.tsx");
+const css = read("src/app/contact/contact-cinematic.css");
+
+const sceneContracts = [
+  ["SCENE_EXPOSURE", "scene-specific exposure pulls are missing"],
+  ['data-contact-playback="authored"', "scene playback must retain its authored pace"],
+  ['data-contact-playback=', "playback mode is no longer inspectable"],
+  ['data-contact-scene-exposure="true"', "scene exposure layer is missing"],
+  ['data-contact-focus-pull=', "chapter focus pull is missing"],
+  ['data-contact-focus-pull="crisp"', "the reading plane must remain crisp throughout scroll"],
+];
+
+for (const [expected, message] of sceneContracts) requireText(scene, expected, message);
+forbidPattern(scene, /contentFocus|contentTranslate|useVelocity|playbackRate\s*=/, "scene scroll must not blur text, move controls, or modulate playback");
+requireText(pathways, "inert={!present}", "exiting pathway actions must leave keyboard and pointer navigation");
+const scrollRuntime = read("src/components/ContactScrollRuntime.tsx");
+forbidPattern(scrollRuntime, /dataset\.contactFilmSnap\s*=/, "Contact must not turn snapping back on during manual scrolling");
+
+requirePattern(
+  pathwayFilm,
+  /camera:\s*"folio"\s*\|\s*"conversation"\s*\|\s*"letter"/,
+  "pathway camera contract must keep three distinct signatures",
+);
+
+for (const camera of ["folio", "conversation", "letter"]) {
+  requireText(pathways, `camera: "${camera}"`, `pathway does not assign its ${camera} camera`);
+  requireText(css, `data-contact-pathway-camera="${camera}"`, `pathway camera styling is missing: ${camera}`);
+}
+
+requireText(pathways, 'data-contact-pathway-layout="stable"', "pathway transitions must preserve the card's layout frame");
+requireText(pathways, 'animate={present ? "centre" : "exit"}', "pathway changes must retain their directional cut");
+requireText(scene, "hydrated && !prefersReducedMotion", "chapters must render readable before the camera hydrates");
+requireText(pathways, "data-contact-pathway-shot", "pathway shot boundary is missing");
+// The selected sunlit invitation replaces the acknowledgement ledger.
+const invitationCss = read("src/components/ContactGratitude.module.css");
+for (const text of ["useScroll", "cameraScale", "cameraY", "useHydratedMotionPreference", "data-invitation-motion", "data-contact-invitation-camera", "coarsePointer", 'data-invitation-scroll="reversible"', "invitationMotionAt", "progress.jump(scrollYProgress.get())", "trackContentSize: true"]) {
+  requireText(gratitude, text, `sunlit invitation motion contract missing: ${text}`);
+}
+for (const text of ["prefers-reduced-motion: reduce", 'data-invitation-motion="reduced"', "animation: none !important", "transform: none !important", ":focus-visible", "min-height: 44px"]) {
+  requireText(invitationCss, text, `sunlit invitation accessibility contract missing: ${text}`);
+}
+requireText(invitationCss, ".scene:focus-within [data-invitation-layer]", "keyboard focus must resolve the still reading composition");
+forbidPattern(gratitude, /useInView|data-invitation-entered/, "sunlit motion must follow scroll in both directions instead of a one-time entrance");
+// The user requested a stronger Parker-inspired scroll film. Pin only a stage
+// that actually fits, and retain native flow for short screens/reduced motion.
+forbidPattern(invitationCss, /@keyframes/, "the invitation must follow scroll instead of running a timed loop");
+requireText(gratitude, 'data-invitation-pinned={pinEnabled ? "true" : "false"}', "pinning must follow the actual stage fit and motion preference");
+requireText(gratitude, "stage.offsetHeight <= window.innerHeight + 1", "an oversized stage must never be pinned");
+requireText(invitationCss, '.scene[data-invitation-motion="reduced"] .stage { position: relative; }', "reduced motion must restore normal document flow");
+requireText(invitationCss, "opacity: 1 !important", "keyboard focus and reduced motion must reveal all invitation copy");
+requireText(invitationCss, "clip-path: none !important", "keyboard focus and reduced motion must open the landscape");
+requirePattern(gratitude, /style=\{motionEnabled \? \{ scale: cameraScale, y: cameraY, rotate: cameraRotate(?:, x: cameraX)? \}/, "phones must retain the lighter scroll camera rather than disabling it");
+requirePattern(gratitude, /<div data-contact-invitation-actions className=\{styles.actions\}>/, "booking and writing actions must remain outside animated wrappers");
+forbidPattern(invitationCss, /opacity:\s*0(?:[;}\s])/, "invitation text and actions must never be hidden for motion");
+forbidPattern(gratitude, /role="progressbar"|visitedNotes|setTimeout|ScrollTrigger|tabIndex=\{-1\}/, "gratitude must never become a completion task or delay its next step");
+requireText(backgroundVideo, "loop = true", "background films must keep a safe default loop contract");
+requireText(backgroundVideo, "loop={loop}", "background films can no longer hold their final frame");
+requireText(callSequence, "data-contact-call-step", "call sequence no longer exposes its active step");
+requireText(form, "data-contact-form-completion", "written enquiry no longer exposes completion progress");
+requireText(form, "activeRequiredField", "written enquiry no longer follows the active required field");
+requireText(form, "data-contact-required-field", "required fields no longer expose their writing sequence");
+requireText(rail, "data-active-index", "chapter rail no longer exposes its film index");
+requireText(rail, "--contact-chapter-progress", "chapter rail no longer follows continuous journey progress");
+requireText(rail, 'data-contact-chapter-progress="continuous"', "continuous chapter progress is no longer inspectable");
+requireText(page, 'className="contact-footer-afterglow"', "gratitude no longer hands light into the footer");
+
+const cssContracts = [
+  ["contact-hero-matte-open-top", "hero aperture is missing"],
+  ["contact-signal-reveal", "hero signal no longer resolves once"],
+  ["contact-pathway-splice", "pathway light splice is missing"],
+  ["contact-footer-afterglow", "closing afterglow is missing"],
+  ['html[data-motion="reduced"]', "explicit reduced-motion styling is missing"],
+  ["@media (prefers-reduced-motion: reduce)", "system reduced-motion styling is missing"],
+  ["@media (max-width: 359px)", "ultra-narrow phone protection is missing"],
+  ["@media (max-width: 639px) and (max-height: 820px)", "short-phone fit protection is missing"],
+  ["[data-contact-film] .contact-hero-film", "short-phone hero frame protection is missing"],
+  ["[data-contact-film] [data-contact-hero-intro]", "short-phone hero copy protection is missing"],
+  ["[data-contact-film] [data-contact-hero-direct] > span", "ultra-narrow direct routes no longer shed their redundant prompt"],
+  ["width: calc(100vw - 1rem)", "ultra-narrow chapter dock fit protection is missing"],
+  ["grid-template-columns: repeat(2, minmax(0, 1fr))", "short-phone hero choices no longer share one row"],
+];
+
+for (const [expected, message] of cssContracts) requireText(css, expected, message);
+
+requireText(page, "data-contact-hero-intro", "Contact hero introduction is no longer addressable for short-phone fit");
+requireText(page, "data-contact-hero-direct", "Contact hero direct routes are missing from the full layout");
+
+forbidPattern(
+  css,
+  /contact-hero-signal-line[^}]*animation:[^;]*infinite/s,
+  "hero signal must resolve once instead of looping like a GIF",
+);
+forbidPattern(
+  callSequence,
+  /repeat:\s*Infinity/,
+  "call sequence must use finite arrival motion",
+);
+forbidPattern(
+  gratitude,
+  /repeat:\s*Infinity/,
+  "gratitude motion must resolve instead of looping like a GIF",
+);
+
+if (!process.exitCode) {
+  console.log("[contact-cinema] cinematic motion, interaction and reduced-motion contracts verified.");
+}

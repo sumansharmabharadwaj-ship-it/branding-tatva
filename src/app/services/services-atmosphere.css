@@ -1,0 +1,492 @@
+/* SERVICES ATMOSPHERE
+ *
+ * Suman's verdict on the current page: plain, no design background, no
+ * animation per section. The diagnosis behind it: the atmosphere layers
+ * exist but are painted over — Education's paper wash runs 97-99% solid
+ * over its summit film, the Work Index buries its living still under 86%
+ * cream, and the light chapters' gradient fields settle back to flat
+ * base tones. This file makes each chapter's weather visible and gives
+ * every section motion the visitor can actually see.
+ *
+ * Rules carried over from the rest of the site:
+ * - Transform-only animation on every moving layer (GPU composite, no
+ *   per-frame repaints). The one exception is the hero contour draw,
+ *   a one-shot entrance on a small SVG.
+ * - No negative z-index anywhere. DOM order layers the paint.
+ * - Every hue is an existing palette token from CLAUDE.md.
+ * - Scroll linkage rides the runtime's own per-scene variables
+ *   (--services-scene-progress / -presence), so the layers answer the
+ *   visitor's movement with zero new JavaScript.
+ * - Reduced motion keeps the designed colour and stops the clock.
+ */
+
+/* ---- shared shell ---------------------------------------------------- */
+
+[data-services-atmosphere] {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+}
+
+[data-services-atmosphere] > span {
+  position: absolute;
+  inset: -30%;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ---- opening: sunlit meadow, drawn horizon --------------------------- */
+
+/* The meadow field itself reads pale at rest; a scoped saturation lift
+   lets its existing drift register without touching the shared preset. */
+#services-opening [data-living-gradient="meadow"] {
+  filter: saturate(1.3) contrast(1.04);
+}
+
+/* Two saturated blooms over the field — morning sun and deep sage —
+   drifting on long alternating cycles. The wrapper leans upward as the
+   visitor scrolls the opening, so the light answers movement. */
+#services-opening [data-services-atmosphere="hero"] {
+  transform: translate3d(0, calc(var(--services-scene-progress, 0) * -34px), 0);
+}
+
+#services-opening [data-services-atmosphere="hero"] > span:nth-child(1) {
+  opacity: 0.62;
+  background: radial-gradient(
+    44% 40% at 24% 22%,
+    rgba(212, 185, 154, 0.5) 0%,
+    rgba(198, 169, 122, 0.22) 48%,
+    transparent 74%
+  );
+  animation: services-atmo-sun 47s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+#services-opening [data-services-atmosphere="hero"] > span:nth-child(2) {
+  opacity: 0.5;
+  background: radial-gradient(
+    48% 44% at 78% 74%,
+    rgba(143, 174, 131, 0.42) 0%,
+    rgba(125, 142, 82, 0.16) 50%,
+    transparent 74%
+  );
+  animation: services-atmo-sage 61s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+/* A slow halo turning behind the chapter map column: conic light with a
+   soft mask, rotating once per one and a half minutes. Registered as
+   weather rather than an effect — its edge never resolves. */
+#services-opening [data-services-atmosphere="hero"] > span:nth-child(3) {
+  inset: auto;
+  top: 6%;
+  right: -16%;
+  width: 58%;
+  aspect-ratio: 1;
+  opacity: 0.4;
+  background: conic-gradient(
+    from 40deg,
+    transparent 0deg,
+    rgba(242, 240, 232, 0.5) 70deg,
+    rgba(212, 185, 154, 0.34) 130deg,
+    transparent 210deg,
+    rgba(143, 174, 131, 0.2) 290deg,
+    transparent 360deg
+  );
+  -webkit-mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 0.9), transparent 72%);
+  mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 0.9), transparent 72%);
+  animation: services-atmo-halo 90s linear infinite;
+}
+
+/* The drawn meadow horizon: three contour strokes at the hero's foot,
+   drawn once on arrival the way a strategist would sketch a landline.
+   Pencil-on-paper register (wood and sage inks on the light field),
+   sitting under the charcoal handoff strip so the lines dissolve into
+   the next chapter rather than ending at a hard edge. */
+#services-opening .services-contour {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 52%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#services-opening .services-contour svg {
+  width: 100%;
+  height: 100%;
+}
+
+#services-opening .services-contour path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+#services-opening .services-contour path:nth-child(1) {
+  stroke: rgba(111, 78, 55, 0.4);
+  stroke-width: 1.6;
+  animation: services-contour-draw 3s cubic-bezier(0.22, 1, 0.36, 1) 0.5s backwards;
+}
+
+#services-opening .services-contour path:nth-child(2) {
+  stroke: rgba(125, 142, 82, 0.34);
+  stroke-width: 1.2;
+  animation: services-contour-draw 3.4s cubic-bezier(0.22, 1, 0.36, 1) 0.9s backwards;
+}
+
+#services-opening .services-contour path:nth-child(3) {
+  stroke: rgba(198, 169, 122, 0.42);
+  stroke-width: 1.1;
+  animation: services-contour-draw 3.8s cubic-bezier(0.22, 1, 0.36, 1) 1.3s backwards;
+}
+
+/* The glass card earns a quiet sunlit rim that swells and settles —
+   applied to a pseudo element so it can never fight the Reveal
+   wrapper's own inline transform. */
+#services-opening .services-hero-copy {
+  position: relative;
+}
+
+#services-opening .services-hero-copy::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 0 rgba(242, 240, 232, 0.34),
+    0 0 44px rgba(212, 185, 154, 0.24);
+  opacity: 0.55;
+  animation: services-atmo-breathe 7.5s ease-in-out infinite alternate;
+}
+
+/* ---- situation: the lamp in the dark room ---------------------------- */
+
+/* The orangery field's warm bloom, lifted into a visible lamp. The pool
+   brightens as the chapter centres (presence variable) and drifts on its
+   own long cycle, so the dark diagnosis room reads lit rather than flat. */
+#situation [data-services-atmosphere="situation"] {
+  opacity: calc(0.55 + var(--services-scene-presence, 0) * 0.45);
+}
+
+#situation [data-services-atmosphere="situation"] > span:nth-child(1) {
+  background: radial-gradient(
+    40% 34% at 72% 26%,
+    rgba(194, 138, 40, 0.34) 0%,
+    rgba(194, 138, 40, 0.12) 50%,
+    transparent 72%
+  );
+  animation: services-atmo-sun 52s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+#situation [data-services-atmosphere="situation"] > span:nth-child(2) {
+  opacity: 0.7;
+  background: radial-gradient(
+    46% 42% at 20% 78%,
+    rgba(85, 107, 74, 0.3) 0%,
+    rgba(85, 107, 74, 0.1) 52%,
+    transparent 74%
+  );
+  animation: services-atmo-sage 64s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+/* ---- offerings: light through the canopy ----------------------------- */
+
+/* Two diagonal light beams crossing the understory on long sweeps — the
+   god-ray grammar from the reference board, wide and soft enough to read
+   as weather. The wrapper answers scroll with a slow counter-drift. */
+#offerings [data-services-atmosphere="offerings"] {
+  transform: translate3d(0, calc(var(--services-scene-progress, 0) * -28px), 0);
+  opacity: calc(0.6 + var(--services-scene-presence, 0) * 0.4);
+}
+
+#offerings [data-services-atmosphere="offerings"] > span:nth-child(1) {
+  background: linear-gradient(
+    118deg,
+    transparent 30%,
+    rgba(143, 174, 131, 0.16) 44%,
+    rgba(242, 240, 232, 0.2) 50%,
+    rgba(143, 174, 131, 0.14) 56%,
+    transparent 70%
+  );
+  animation: services-atmo-beam 44s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+#offerings [data-services-atmosphere="offerings"] > span:nth-child(2) {
+  background: linear-gradient(
+    112deg,
+    transparent 40%,
+    rgba(198, 169, 122, 0.12) 52%,
+    rgba(242, 240, 232, 0.12) 57%,
+    transparent 72%
+  );
+  animation: services-atmo-beam-far 58s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+#offerings [data-services-atmosphere="offerings"] > span:nth-child(3) {
+  opacity: 0.8;
+  background: radial-gradient(
+    50% 44% at 16% 20%,
+    rgba(31, 58, 40, 0.55) 0%,
+    rgba(31, 58, 40, 0.2) 52%,
+    transparent 76%
+  );
+  animation: services-atmo-sage 71s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+/* ---- education: let the summit breathe ------------------------------- */
+
+/* A warm reading light pooled where the headline sits, answered by cool
+   mist low in the frame. Sits over the rebalanced paper wash (the wash
+   itself is thinned in services-luminous-clarity.css so the summit film
+   actually reads through the paper). */
+#education [data-services-atmosphere="education"] {
+  z-index: 2;
+  opacity: calc(0.5 + var(--services-scene-presence, 0) * 0.5);
+}
+
+#education [data-services-atmosphere="education"] > span:nth-child(1) {
+  background: radial-gradient(
+    42% 36% at 22% 18%,
+    rgba(212, 185, 154, 0.42) 0%,
+    rgba(212, 185, 154, 0.14) 50%,
+    transparent 72%
+  );
+  animation: services-atmo-sun 49s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+#education [data-services-atmosphere="education"] > span:nth-child(2) {
+  opacity: 0.65;
+  background: radial-gradient(
+    48% 40% at 80% 66%,
+    rgba(221, 226, 220, 0.5) 0%,
+    rgba(181, 179, 170, 0.18) 52%,
+    transparent 74%
+  );
+  animation: services-atmo-sage 66s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+/* ---- evidence stretch: the cream chapters get their weather ---------- */
+
+/* Work Index and the Lab both hold living stills that were sealed under
+   near-solid cream. The overlays are thinned in their components; these
+   drift layers put moving light back over the paper so the archive reads
+   as a lit room rather than a printout. Gold answers from one corner,
+   sage from the other — the Contact grammar, over paper. */
+[data-work-ambient] {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+}
+
+[data-work-ambient] > span {
+  position: absolute;
+  inset: -32%;
+  will-change: transform;
+}
+
+[data-work-ambient] > span:first-child {
+  opacity: 0.5;
+  background: radial-gradient(
+    42% 38% at 26% 24%,
+    rgba(212, 185, 154, 0.4) 0%,
+    rgba(212, 185, 154, 0.12) 52%,
+    transparent 74%
+  );
+  animation: services-atmo-sun 54s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+[data-work-ambient] > span:last-child {
+  opacity: 0.42;
+  background: radial-gradient(
+    46% 40% at 76% 74%,
+    rgba(143, 174, 131, 0.32) 0%,
+    rgba(143, 174, 131, 0.1) 50%,
+    transparent 72%
+  );
+  animation: services-atmo-sage 67s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+/* ---- pointer light ---------------------------------------------------- */
+
+/* The visitor's cursor carries a patch of light across a chapter
+   (ServicesPointerLight). The pool trails on a long organic transition
+   rather than tracking mechanically, and only exists for fine pointers
+   — the layer stays dormant everywhere else, so the designed
+   backgrounds never depend on it. */
+[data-services-pointer-light] {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+[data-services-pointer-light][data-pointer-light-awake="true"] {
+  opacity: 1;
+}
+
+[data-services-pointer-light] > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 52vmin;
+  height: 52vmin;
+  margin: -26vmin 0 0 -26vmin;
+  will-change: translate;
+  transition: translate 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-services-pointer-light="sun"] > span {
+  background: radial-gradient(
+    closest-side,
+    rgba(212, 185, 154, 0.34) 0%,
+    rgba(212, 185, 154, 0.12) 48%,
+    transparent 72%
+  );
+}
+
+[data-services-pointer-light="ember"] > span {
+  background: radial-gradient(
+    closest-side,
+    rgba(194, 138, 40, 0.3) 0%,
+    rgba(194, 138, 40, 0.1) 46%,
+    transparent 70%
+  );
+}
+
+/* ---- hover physics ----------------------------------------------------- */
+
+/* The decision map's question rows answer the hand the way the
+   recognition chapter's choices do: a quiet slide toward the panel.
+   `translate` composes with the row's own Framer layout animation. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-decision-map] button[role="tab"] {
+    transition: translate 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [data-decision-map] button[role="tab"]:hover {
+    translate: 6px 0;
+  }
+}
+
+/* ---- shared keyframes ------------------------------------------------- */
+
+@keyframes services-atmo-sun {
+  from {
+    transform: translate3d(-4%, -3%, 0) scale(1);
+  }
+
+  to {
+    transform: translate3d(6%, 5%, 0) scale(1.16);
+  }
+}
+
+@keyframes services-atmo-sage {
+  from {
+    transform: translate3d(5%, 4%, 0) scale(1.1);
+  }
+
+  to {
+    transform: translate3d(-5%, -4%, 0) scale(0.98);
+  }
+}
+
+@keyframes services-atmo-beam {
+  from {
+    transform: translate3d(-14%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(12%, 0, 0);
+  }
+}
+
+@keyframes services-atmo-beam-far {
+  from {
+    transform: translate3d(10%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-12%, 0, 0);
+  }
+}
+
+@keyframes services-atmo-halo {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes services-atmo-breathe {
+  from {
+    opacity: 0.35;
+  }
+
+  to {
+    opacity: 0.75;
+  }
+}
+
+@keyframes services-contour-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---- stillness -------------------------------------------------------- */
+
+/* Reduced motion keeps every designed layer at full colour and stops the
+   clock — the same contract LivingGradient ships. The scroll leans are
+   visitor-driven motion, but the sitewide rule treats them as motion all
+   the same. */
+@media (prefers-reduced-motion: reduce) {
+  [data-services-atmosphere] > span,
+  [data-work-ambient] > span,
+  #services-opening .services-contour path,
+  #services-opening .services-hero-copy::after {
+    animation: none;
+  }
+
+  [data-services-pointer-light] {
+    display: none;
+  }
+
+  #services-opening [data-services-atmosphere="hero"],
+  #offerings [data-services-atmosphere="offerings"] {
+    transform: none;
+  }
+}
+
+[data-motion="reduced"] [data-services-atmosphere] > span,
+[data-motion="reduced"] [data-work-ambient] > span,
+[data-motion="reduced"] #services-opening .services-contour path,
+[data-motion="reduced"] #services-opening .services-hero-copy::after {
+  animation: none;
+}
+
+[data-motion="reduced"] #services-opening [data-services-atmosphere="hero"],
+[data-motion="reduced"] #offerings [data-services-atmosphere="offerings"] {
+  transform: none;
+}
+
+[data-motion="reduced"] [data-services-pointer-light] {
+  display: none;
+}

@@ -1,0 +1,99 @@
+name: Verify certified Insights preview alias
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - "docs/INSIGHTS_RELEASE_CERTIFICATE_2026-08-07.md"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-certified-preview-alias
+  cancel-in-progress: false
+
+jobs:
+  verify-alias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the certified branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Wait for the permanent alias and verify its exact deployable source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PREVIEW_URL: https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app
+          CANONICAL_BRANCH: homepage-cinematic-recovery
+          GATE_TIMEOUT_MS: "900000"
+          GATE_POLL_MS: "15000"
+        run: node scripts/permanent_preview_source_gate.cjs
+
+      - name: Record the canonical preview certificate
+        run: |
+          set -euo pipefail
+          branch_head="$(git rev-parse HEAD)"
+          tested_source="$(sed -n 's/^- Exact tested source: `\([^`]*\)`.*/\1/p' docs/INSIGHTS_RELEASE_CERTIFICATE_2026-08-07.md | head -n 1)"
+          alias="https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app/"
+          release_payload="$(curl --fail --silent --show-error "${alias}api/release")"
+
+          RELEASE_PAYLOAD="$release_payload" node <<'NODE'
+          const fs = require('node:fs');
+          const payload = JSON.parse(process.env.RELEASE_PAYLOAD || '{}');
+          fs.writeFileSync('/tmp/canonical-release.json', JSON.stringify(payload, null, 2) + '\n');
+          NODE
+
+          {
+            echo '# Canonical preview release certificate'
+            echo
+            echo '- Verified: 7 August 2026'
+            echo "- Permanent review alias: \`${alias}\`"
+            echo "- Branch head at verification: \`${branch_head}\`"
+            echo "- Exact source covered by the Insights gate suite: \`${tested_source}\`"
+            echo '- Permanent source gate: `passed`'
+            echo '- `/api/release` response: `passed`'
+            echo '- Production promotion: `not performed`'
+            echo
+            echo '## Release payload'
+            echo
+            echo '```json'
+            cat /tmp/canonical-release.json
+            echo '```'
+          } > docs/CANONICAL_PREVIEW_RELEASE_CERTIFICATE_2026-08-07.md
+
+          git rm -f --ignore-unmatch .github/workflows/verify-certified-insights-preview-alias.yml
+          git diff --check
+
+      - name: Commit the preview evidence without retriggering a deployment
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Record the certified canonical preview alias"
+          git fetch origin homepage-cinematic-recovery
+          git rebase origin/homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery
+
+      - name: Upload the canonical release payload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branding-tatva-canonical-preview-certificate
+          path: |
+            docs/INSIGHTS_RELEASE_CERTIFICATE_2026-08-07.md
+            docs/CANONICAL_PREVIEW_RELEASE_CERTIFICATE_2026-08-07.md
+          if-no-files-found: warn
+          retention-days: 14

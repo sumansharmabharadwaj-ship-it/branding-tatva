@@ -1,0 +1,549 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 Tatva observatory                                               */
+/* -------------------------------------------------------------------------- */
+
+.home-v4-chapter--tatva {
+  background: #0d1514;
+  color: #f4efe6;
+}
+
+.tatva-observatory,
+.tatva-pressure-lab {
+  color: #f4efe6;
+}
+
+.tatva-observatory__stage::after,
+.tatva-pressure-lab::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.11;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.tatva-observatory__film {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.tatva-observatory__film video,
+.tatva-observatory__film > span {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tatva-observatory__film video {
+  object-fit: cover;
+  object-position: 58% 48%;
+  opacity: 0.52;
+  filter: saturate(0.72) contrast(1.1) brightness(0.54);
+  transform: scale(1.06);
+}
+
+.tatva-observatory__film > span {
+  background:
+    linear-gradient(96deg, rgba(7, 14, 13, 0.96) 0%, rgba(7, 14, 13, 0.77) 42%, rgba(7, 14, 13, 0.48) 100%),
+    linear-gradient(180deg, rgba(7, 14, 13, 0.65) 0%, rgba(7, 14, 13, 0.18) 38%, rgba(7, 14, 13, 0.88) 100%);
+}
+
+.tatva-observatory__copy h2,
+.tatva-pressure-lab__copy h2,
+.tatva-pressure-lab__board .font-display,
+.tatva-pressure-lab__core-copy .font-display,
+.tatva-pressure-lab__node .font-display,
+.tatva-pressure-lab__reading .font-display {
+  color: #f4efe6;
+  text-shadow: 0 5px 34px rgba(0, 0, 0, 0.22);
+}
+
+.tatva-observatory__copy > p:not(:first-child),
+.tatva-pressure-lab__intro > p:not(:first-child),
+.tatva-observatory__reading-question,
+.tatva-pressure-lab__reading > p:last-of-type {
+  color: rgba(244, 239, 230, 0.68);
+}
+
+.tatva-observatory__focus {
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(244, 239, 230, 0.04);
+  backdrop-filter: blur(18px) saturate(1.08);
+}
+
+.tatva-observatory__focus > div:first-child p {
+  color: rgba(244, 239, 230, 0.75);
+}
+
+.tatva-observatory__reading-title {
+  color: #f4efe6;
+}
+
+/* Choices precede the reading in document order. Desktop preserves the
+   established left-hand introduction and reading beside the five portraits. */
+.tatva-observatory__layout {
+  display: grid;
+  gap: 2rem;
+}
+
+.tatva-observatory__choices,
+.tatva-observatory__focus { min-width: 0; }
+
+@media (min-width: 1024px) {
+  .tatva-observatory__layout {
+    grid-template-columns: minmax(0, 21rem) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 1.75rem 4rem;
+    align-items: start;
+  }
+  .tatva-observatory__copy { grid-area: 1 / 1; }
+  .tatva-observatory__choices {
+    grid-area: 1 / 2 / 3 / 3;
+    align-self: center;
+  }
+  .tatva-observatory__focus { grid-area: 2 / 1; }
+}
+
+.tatva-observatory :is(.tatva-observatory__force, .tatva-observatory__focus) {
+  scroll-margin-block: 80px;
+}
+.tatva-observatory :is(.tatva-observatory__force, .tatva-observatory__focus):focus-visible {
+  outline: 2px solid #d4b99a !important;
+  outline-offset: 5px;
+}
+
+/* The five readings share one measured slot at the actual viewport width.
+   Only the live copy is exposed; switching never resizes the card or runway. */
+.tatva-observatory__reading,
+.tatva-observatory__reading-measure { display: grid; }
+.tatva-observatory__reading > *,
+.tatva-observatory__reading-measure > * { grid-area: 1 / 1; min-width: 0; }
+.tatva-observatory__reading-measure { visibility: hidden; pointer-events: none; user-select: none; }
+.tatva-observatory__focus:focus-visible {
+  outline: 2px solid #d4b99a;
+  outline-offset: 5px;
+}
+
+.tatva-observatory__force {
+  position: relative;
+  padding: 0.75rem 0.25rem 0.9rem;
+  border: 1px solid transparent;
+  transition:
+    border-color 360ms ease,
+    background-color 360ms ease,
+    box-shadow 360ms ease;
+}
+
+.tatva-observatory__force:hover,
+.tatva-observatory__force:focus-visible,
+.tatva-observatory__force[aria-pressed="true"] {
+  border-color: rgba(244, 239, 230, 0.1);
+  background: rgba(244, 239, 230, 0.035);
+  box-shadow: 0 20px 58px rgba(0, 0, 0, 0.18);
+}
+
+.tatva-observatory__portrait {
+  /* Decorative movement follows the native scroll while buttons stay put. */
+  translate: 0 calc((1 - clamp(0, (var(--tatva-arrival, 1) - var(--tatva-order, 0) * .04) * 1.5, 1)) * 8px);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.34),
+    inset 0 0 0 1px rgba(244, 239, 230, 0.06);
+}
+
+.tatva-observatory__force:focus-within .tatva-observatory__portrait { translate: none; }
+@media (max-width: 1180px), (max-height: 760px), (pointer: coarse) {
+  .tatva-observatory__portrait {
+    translate: 0 calc((1 - clamp(0, (var(--tatva-arrival, 1) - var(--tatva-order, 0) * .04) * 1.5, 1)) * 4px);
+  }
+}
+html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
+@media (prefers-reduced-motion: reduce) {
+  .tatva-observatory__portrait { translate: none; }
+}
+
+.tatva-observatory__name {
+  color: #f4efe6;
+}
+
+.tatva-observatory__line {
+  color: rgba(244, 239, 230, 0.78);
+}
+
+.tatva-observatory__connector {
+  opacity: 0.82;
+}
+
+.tatva-pressure-lab {
+  isolation: isolate;
+  background:
+    radial-gradient(44rem 30rem at 12% 18%, rgba(199, 119, 82, 0.13), transparent 68%),
+    radial-gradient(42rem 30rem at 88% 74%, rgba(82, 117, 111, 0.16), transparent 70%),
+    linear-gradient(145deg, #111a18 0%, #0a1211 100%) !important;
+}
+
+.tatva-pressure-lab::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    linear-gradient(rgba(244, 239, 230, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 239, 230, 0.055) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, transparent, black 16%, black 84%, transparent);
+}
+
+.tatva-pressure-lab > div:last-child {
+  position: relative;
+  z-index: 2;
+}
+
+.tatva-pressure-lab__intro > p:last-of-type {
+  color: rgba(244, 239, 230, 0.68);
+}
+
+.tatva-pressure-lab__force {
+  color: #f4efe6;
+  backdrop-filter: blur(14px);
+}
+
+.tatva-pressure-lab__force .font-display {
+  color: #f4efe6;
+}
+
+.tatva-pressure-lab__force span span:last-child {
+  color: rgba(244, 239, 230, 0.46);
+}
+
+.tatva-pressure-lab__restore {
+  color: #d4b99a;
+  text-decoration-color: rgba(212, 185, 154, 0.34);
+}
+
+.tatva-pressure-lab__restore:hover,
+.tatva-pressure-lab__restore:focus-visible {
+  color: #f4efe6;
+}
+
+.tatva-pressure-lab__board {
+  border-color: rgba(244, 239, 230, 0.13);
+  background:
+    radial-gradient(circle at 88% 8%, rgba(143, 162, 131, 0.13), transparent 38%),
+    linear-gradient(145deg, rgba(30, 43, 39, 0.82), rgba(8, 15, 14, 0.7));
+  box-shadow:
+    0 34px 100px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(244, 239, 230, 0.04);
+}
+
+.tatva-pressure-lab__board-top {
+  border-color: rgba(244, 239, 230, 0.1);
+}
+
+.tatva-pressure-lab__board-top p,
+.tatva-pressure-lab__board-top span,
+.tatva-pressure-lab__core-copy > span:first-child {
+  color: rgba(244, 239, 230, 0.48);
+}
+
+.tatva-pressure-lab__status {
+  border-color: rgba(244, 239, 230, 0.12);
+  background: rgba(244, 239, 230, 0.04);
+  color: rgba(244, 239, 230, 0.62);
+}
+
+.tatva-pressure-lab__diagram {
+  filter: drop-shadow(0 24px 58px rgba(0, 0, 0, 0.24));
+}
+
+.tatva-pressure-lab__core-copy > span:last-child,
+.tatva-pressure-lab__node > span:last-child {
+  color: #f4efe6;
+}
+
+.tatva-pressure-lab__node {
+  color: #f4efe6;
+}
+
+.tatva-pressure-lab__reading {
+  color: #f4efe6;
+  box-shadow: inset 0 1px 0 rgba(244, 239, 230, 0.035);
+  backdrop-filter: blur(14px);
+}
+
+.tatva-pressure-lab__reading > p:last-of-type {
+  color: rgba(244, 239, 230, 0.56);
+}
+
+[data-home-v4-chapter="evidence"] + .home-v4-handoff--constellation {
+  background: linear-gradient(180deg, #3a322a 0%, #0d1514 100%);
+}
+
+[data-home-v4-chapter="evidence"] + .home-v4-handoff--constellation .home-v4-handoff__veil {
+  background:
+    radial-gradient(ellipse at 18% 56%, rgba(199, 119, 82, 0.16), transparent 42%),
+    radial-gradient(ellipse at 78% 38%, rgba(82, 117, 111, 0.17), transparent 46%);
+}
+
+.home-v4-chapter--tatva + .home-v4-handoff--river {
+  background: linear-gradient(180deg, #0a1211 0%, #ece7dc 100%);
+}
+
+@media (max-width: 900px) {
+  .tatva-observatory__copy {
+    max-width: 42rem;
+  }
+
+  .tatva-observatory__orbit {
+    margin-top: 0.5rem;
+  }
+
+  .tatva-pressure-lab__board {
+    margin-top: 0.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .tatva-observatory__stage,
+  .tatva-pressure-lab {
+    padding-block: 4.75rem;
+  }
+
+  .tatva-observatory__copy h2,
+  .tatva-pressure-lab__copy h2 {
+    max-width: 100%;
+    font-size: clamp(2.7rem, 13vw, 4.4rem);
+    line-height: 0.98;
+    overflow-wrap: anywhere;
+  }
+
+  .tatva-observatory__focus {
+    padding: 1rem;
+  }
+
+  .tatva-observatory__orbit {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem 0.45rem;
+  }
+
+  .tatva-observatory__orbit > li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: min(11rem, 50%);
+    justify-self: center;
+  }
+
+  .tatva-observatory__force {
+    padding-inline: 0;
+  }
+
+  .tatva-observatory__name,
+  .tatva-observatory__role,
+  .tatva-observatory__line {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .tatva-pressure-lab__board {
+    padding: 1rem;
+    border-radius: 1.35rem;
+  }
+
+  .tatva-pressure-lab__board-top {
+    align-items: flex-start;
+  }
+
+  .tatva-pressure-lab__diagram {
+    min-height: 0;
+  }
+
+  .tatva-pressure-lab__node {
+    width: 4.75rem;
+    padding-inline: 0.15rem;
+  }
+
+  .tatva-pressure-lab__node > span:last-child {
+    font-size: 0.7rem;
+  }
+
+  .tatva-pressure-lab__core-copy {
+    width: 5.5rem;
+  }
+
+  .tatva-pressure-lab__core-copy > span:last-child {
+    font-size: 0.92rem;
+  }
+
+  .tatva-pressure-lab__reading {
+    padding: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tatva-observatory__film video {
+    transform: none;
+  }
+}
+
+/* Parker-inspired chapter pacing: the visitor's scroll holds one composed
+   frame while each Tatva comes into focus. Short screens, touch devices and
+   reduced-motion users keep the original document flow. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
+  .tatva-observatory {
+    height: 300svh;
+    min-height: 300svh;
+    overflow: clip;
+  }
+
+  .tatva-observatory__stage {
+    --tatva-scroll-progress: 0;
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100svh;
+    min-height: 100svh;
+    box-sizing: border-box;
+    align-items: center;
+    padding-block: clamp(5.4rem, 8svh, 6.8rem) clamp(2.1rem, 4svh, 3.4rem);
+  }
+
+  .tatva-observatory__frame {
+    width: 100%;
+  }
+
+  .tatva-observatory__film video {
+    transform: scale(calc(1.06 + var(--tatva-scroll-progress) * 0.065));
+    transform-origin: 58% 48%;
+    transition: transform 160ms linear;
+  }
+
+  .tatva-observatory__focus {
+    min-height: 12.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tatva-observatory {
+    height: auto;
+    min-height: auto;
+  }
+
+  .tatva-observatory__stage {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: 100svh;
+    transform: none;
+    transition: none;
+  }
+
+  .tatva-observatory__frame,
+  .tatva-observatory__film video {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* The page control gets the same compact reading as the device preference.
+   Keep one full frame while removing the inactive scroll-selection runway. */
+html[data-motion="reduced"] .tatva-observatory {
+  height: auto;
+  min-height: auto;
+}
+html[data-motion="reduced"] .tatva-observatory__stage {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 100svh;
+  transform: none;
+  transition: none;
+}
+html[data-motion="reduced"] .tatva-observatory__frame,
+html[data-motion="reduced"] .tatva-observatory__film video {
+  transform: none;
+  transition: none;
+}
+
+/* Keep the explanation and next action readable after each deliberate choice. */
+.tatva-pressure-lab__force span span:last-child { color: #c3c1b8; }
+.tatva-pressure-lab__consequence { color: #f4efe6; }
+.tatva-pressure-lab__stack { display: grid; }
+.tatva-pressure-lab__stack > * { grid-area: 1 / 1; min-width: 0; }
+.tatva-pressure-lab__measure { visibility: hidden; pointer-events: none; user-select: none; }
+.tatva-pressure-lab__reading-region:focus-visible {
+  outline: 2px solid #d4b99a !important;
+  outline-offset: 5px;
+  border-radius: 1rem;
+}
+.tatva-pressure-lab__signal { pointer-events: none; }
+.tatva-pressure-lab__force,
+.tatva-pressure-lab__node,
+.tatva-pressure-lab__restore,
+.tatva-pressure-lab__reading-region,
+.tatva-pressure-lab__audit { scroll-margin-block: 80px; }
+.tatva-pressure-lab__force:focus-visible,
+.tatva-pressure-lab__node:focus-visible,
+.tatva-pressure-lab__restore:focus-visible,
+.tatva-pressure-lab__audit:focus-visible { outline: 2px solid #d4b99a !important; }
+.tatva-pressure-lab__next-step {
+  position: relative;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(244, 239, 230, .2);
+}
+.tatva-pressure-lab__reading-copy .tatva-pressure-lab__next-step::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  inset-inline: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--pressure-accent, #8fa283), #d4b99a);
+  transform: scaleX(calc(.18 + var(--pressure-reading, 1) * .82));
+  transform-origin: left;
+  pointer-events: none;
+}
+.tatva-pressure-lab__reading-region:focus-within .tatva-pressure-lab__next-step::before,
+html[data-motion="reduced"] .tatva-pressure-lab__next-step::before { transform: none; }
+html[data-motion="reduced"] .tatva-pressure-lab__audit span { transition: none; transform: none; }
+.tatva-pressure-lab__next-step p:first-child {
+  margin: 0 0 .5rem;
+  color: #d4b99a;
+  font-size: .65rem;
+  line-height: 1.5;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.tatva-pressure-lab__next-step p:last-child {
+  margin: 0;
+  color: #e4ded2;
+  font-size: .875rem;
+  line-height: 1.6;
+}
+.tatva-pressure-lab__audit {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  min-height: 2.75rem;
+  margin-top: 1rem;
+  color: #e2c2a0;
+  font-size: .8rem;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: .3em;
+}
+.tatva-pressure-lab__audit span { transition: transform 220ms ease; }
+.tatva-pressure-lab__audit:hover span { transform: translateX(3px); }
+.tatva-pressure-lab__node { min-height: 2.75rem; }
+@media (prefers-reduced-motion: reduce) {
+  .tatva-pressure-lab__next-step::before { transform: none !important; }
+  .tatva-pressure-lab__audit span { transition: none; }
+  .tatva-pressure-lab__audit:hover span { transform: none; }
+}

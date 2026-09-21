@@ -131,6 +131,11 @@ export function VideoBreak({
   // put motion behind that text too.
   topContent?: React.ReactNode;
   children?: React.ReactNode;
+  // Retained for source compatibility with the later, now-unmounted
+  // HomeV4 composition. The restored 1 August homepage does not pass
+  // either option, so its original playback behaviour stays unchanged.
+  managedByHomepage?: boolean;
+  homePlaybackRate?: number;
 }) {
   const prefersReducedMotion = useReducedMotion();
   // Every break on the page otherwise mounts and starts downloading its

@@ -1,164 +1,863 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, ArrowUpRight, Check, Copy, X } from "lucide-react";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
-import { LinkButton } from "@/components/Button";
-import { brandStages } from "@/lib/contact-schema";
-import { site } from "@/data/site";
+import { useLenis } from "@/components/SmoothScrollProvider";
+import { packages } from "@/data/services";
+import { consultation, site } from "@/data/site";
+import { entityFacts } from "@/data/entityFacts";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  SERVICES_RECOGNITION_AUDIT_EVENT,
+  SITUATION_TO_PACKAGE,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  recognitionAuditGuidance,
+  type ServicesRecognitionAuditDetail,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
+import { track } from "@/lib/analytics";
 
-// The closing "Book call" section, reframed as a Strategy Room per
-// direct feedback: a few quick taps before the calendar appears,
-// instead of the calendar being the very first thing shown. This is a
-// pacing device, not a data-collection claim — nothing here promises
-// the booking flow personalizes based on the answers (it doesn't),
-// which would break this site's own commercial-honesty rule. Q1 reuses
-// the Contact form's own real brandStages options verbatim
-// (lib/contact-schema.ts); Q3 compresses the site's own real six
-// `offerings` names (data/services.ts) into four focus areas, rather
-// than inventing separate wording for either.
-const PRIORITIES = ["Getting positioning right", "Building recognition", "Staying consistent", "Still deciding"] as const;
-const FOCUS_AREAS = ["Positioning & identity", "Content & voice", "Ongoing management", "Still exploring"] as const;
+// The Strategy Room closes the page without turning booking into another
+// diagnosis. The visitor already chose a situation near the start of this
+// journey, so that route is carried forward when it exists. Availability is
+// always one action away; the two-question brief is useful preparation, never
+// a gate in front of the calendar.
+const PRIORITIES = ["Getting positioning right", "Building recognition", "Stopping brand drift", "Still deciding"] as const;
+const FOCUS_AREAS = ["Positioning and identity", "Content and voice", "Ongoing direction", "Still exploring"] as const;
+const QUESTION_COUNT = 2;
+const MODAL_INTERACTION_EVENT = "bt:services-modal-interaction";
 
-type Step = 0 | 1 | 2 | 3;
+type Priority = (typeof PRIORITIES)[number];
+type FocusArea = (typeof FOCUS_AREAS)[number];
 
-export function StrategyRoomCTA() {
-  const [step, setStep] = useState<Step>(0);
-  const [stage, setStage] = useState<string | null>(null);
-  const [priority, setPriority] = useState<string | null>(null);
-  const [focus, setFocus] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+const PRIORITY_NOTES: Record<Priority, string> = {
+  "Getting positioning right": "The pressure sits in the position: what the business should mean and why buyers should choose it.",
+  "Building recognition": "The pressure sits in memory: which meaning and cues deserve deliberate repetition.",
+  "Stopping brand drift": "The pressure sits in consistency: which decision should govern every live expression.",
+  "Still deciding": "The first task is to locate the decision that will make the rest easier to order.",
+};
 
-  function pickStage(value: string) {
-    setStage(value);
-    setStep(1);
+const FOCUS_NOTES: Record<FocusArea, string> = {
+  "Positioning and identity": "Test the position before the identity carries it.",
+  "Content and voice": "Name the voice rule before more content repeats the drift.",
+  "Ongoing direction": "Choose the rule that should guide every live expression.",
+  "Still exploring": "Find the decision that deserves attention first.",
+};
+
+const ROUTE_BRIEFS: Record<
+  ServicesSituationId,
+  {
+    invitation: string;
+    priorities: readonly Priority[];
+    focusAreas: readonly FocusArea[];
   }
-  function pickPriority(value: string) {
-    setPriority(value);
-    setStep(2);
-  }
-  function pickFocus(value: string) {
-    setFocus(value);
-    setStep(3);
-  }
+> = {
+  idea: {
+    invitation: "Begin with the position, then name the first expression that needs direction.",
+    priorities: ["Getting positioning right", "Building recognition", "Stopping brand drift", "Still deciding"],
+    focusAreas: ["Positioning and identity", "Content and voice", "Ongoing direction", "Still exploring"],
+  },
+  reposition: {
+    invitation: "Bring the meaning that no longer fits and the touchpoint where that confusion appears most clearly.",
+    priorities: ["Getting positioning right", "Building recognition", "Stopping brand drift", "Still deciding"],
+    focusAreas: ["Positioning and identity", "Content and voice", "Ongoing direction", "Still exploring"],
+  },
+  ongoing: {
+    invitation: "Bring the recurring decision that keeps drifting as more content and campaigns go live.",
+    priorities: ["Stopping brand drift", "Building recognition", "Getting positioning right", "Still deciding"],
+    focusAreas: ["Ongoing direction", "Content and voice", "Positioning and identity", "Still exploring"],
+  },
+};
 
-  const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
+const OPTION_BUTTON_CLASS =
+  "min-h-11 rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2.5 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone";
 
+const QUIET_ACTION_CLASS =
+  "inline-flex min-h-11 items-center justify-center rounded-full px-4 py-2.5 text-sm text-ivory/70 transition-colors duration-300 hover:bg-ivory/[0.06] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone";
+
+const CARRIED_CONTEXT_CLASS =
+  "rounded-2xl border border-sandstone/25 bg-sandstone/[0.07] px-4 py-3 text-left";
+
+type Step = 0 | 1 | 2;
+
+type StrategyDecisionNoteProps = {
+  priority: Priority;
+  focus: FocusArea;
+  carriedPackage: string | null;
+  recognitionAudit: ServicesRecognitionAuditDetail | null;
+  copyStatus: "idle" | "copied" | "error";
+  onCopy: () => void;
+  compact?: boolean;
+};
+
+function StrategyDecisionNote({
+  priority,
+  focus,
+  carriedPackage,
+  recognitionAudit,
+  copyStatus,
+  onCopy,
+  compact = false,
+}: StrategyDecisionNoteProps) {
   return (
-    <Container className="relative max-w-2xl text-center">
-      {/* Deliberately centered — the one symmetric composition on the
-          page, chosen as arrival rather than convenience: after seven
-          asymmetric chapters, the visitor reaches a calm, balanced
-          room. Typography breathes wider here than anywhere else. */}
-      {/* Phase 2 motion direction — "arrival": the single slowest
-          entrance on the page, one unhurried breath rather than a
-          staggered sequence. Everything after the visitor gets here is
-          meant to feel settled; the welcome moves accordingly. */}
-      <motion.div
-        initial={prefersReducedMotion ? undefined : { opacity: 0, y: 16 }}
-        whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book call</p>
-        <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
-          Open the strategy room.
-        </h2>
-        {/* Phase 4: the one trust line between Desire and the calendar —
-            a real fact (one person practice, already established on
-            About and in the Footer), placed at the exact moment the
-            visitor decides whether to hand over their time. */}
-        <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/90">
-          A few quick questions, then a real time on the calendar. Twenty minutes, honest feedback either way. You
-          talk directly with the person who does the work, from first question to final file.
+    <div
+      data-strategy-room-decision-note="true"
+      data-strategy-room-note-density={compact ? "compact" : "standard"}
+      className={`mx-auto max-w-xl rounded-2xl border border-sandstone/30 bg-sandstone/[0.075] text-left shadow-[0_18px_48px_rgba(6,10,8,0.18)] ${
+        compact ? "mt-5 p-4" : "mt-4 p-5"
+      }`}
+      aria-label="Your Strategy Room decision note"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-[0.6rem] font-medium uppercase tracking-[0.17em] text-sandstone/82">
+          Working decision note
         </p>
-      </motion.div>
-
-      {/* Audit found this fixed height could overflow on narrow
-          viewports — 6 brandStages options (some as long as "I am
-          beginning with an idea") wrapping to 4-5 lines inside
-          max-w-lg on a ~360px screen can exceed 220px, causing a jump
-          against the skip-link/CTA below it. More room on mobile,
-          where wrapping is likelier; the original value still holds on
-          larger screens. */}
-      <div className="relative mt-10 min-h-[280px] sm:min-h-[220px]">
-        <AnimatePresence mode="wait">
-          {step === 0 && (
-            <motion.div key="stage" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Where is your brand right now?</p>
-              <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
-                {brandStages.map((option) => (
-                  <motion.button
-                    key={option}
-                    type="button"
-                    onClick={() => pickStage(option)}
-                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
-                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
-                  >
-                    {option}
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 1 && (
-            <motion.div key="priority" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">What matters most right now?</p>
-              <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
-                {PRIORITIES.map((option) => (
-                  <motion.button
-                    key={option}
-                    type="button"
-                    onClick={() => pickPriority(option)}
-                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
-                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
-                  >
-                    {option}
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 2 && (
-            <motion.div key="focus" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">What&apos;s the main focus?</p>
-              <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
-                {FOCUS_AREAS.map((option) => (
-                  <motion.button
-                    key={option}
-                    type="button"
-                    onClick={() => pickFocus(option)}
-                    whileHover={prefersReducedMotion ? undefined : { y: -2 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
-                    transition={{ duration: 0.15 }}
-                    className="rounded-full border border-ivory/25 bg-ivory/[0.04] px-4 py-2 text-sm text-ivory/90 transition-colors duration-300 hover:border-sandstone/50 hover:bg-ivory/10"
-                  >
-                    {option}
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div key="calendar" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
-              <p className="text-sm text-ivory/90">Good. Grab a time that works.</p>
-              <div className="mt-2">
-                <CalendlyEmbed url={site.calendlyUrl} />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <span className="text-right text-[0.6rem] uppercase tracking-[0.12em] text-ivory/42">Prepared from 2 answers</span>
       </div>
-
-    </Container>
+      <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-ivory/12 pt-4">
+        <div>
+          <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Priority</dt>
+          <dd className="mt-1 text-sm leading-snug text-ivory/82">{priority}</dd>
+        </div>
+        <div className="border-l border-ivory/12 pl-4">
+          <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Conversation focus</dt>
+          <dd className="mt-1 text-sm leading-snug text-ivory/82">{focus}</dd>
+        </div>
+      </dl>
+      <p className={`font-display font-normal leading-snug text-ivory ${compact ? "mt-3 text-xl" : "mt-4 text-xl sm:text-2xl"}`}>
+        {FOCUS_NOTES[focus]}
+      </p>
+      <p className="mt-3 text-sm leading-relaxed text-ivory/72">{PRIORITY_NOTES[priority]}</p>
+      {carriedPackage || recognitionAudit ? (
+        <dl className={`mt-4 grid gap-3 border-t border-ivory/12 pt-4 ${carriedPackage && recognitionAudit ? "sm:grid-cols-2" : ""}`}>
+          {carriedPackage ? (
+            <div>
+              <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Likely engagement</dt>
+              <dd className="mt-1 font-display text-lg font-normal text-ivory/88">{carriedPackage}</dd>
+            </div>
+          ) : null}
+          {recognitionAudit ? (
+            <div className={carriedPackage ? "sm:border-l sm:border-ivory/12 sm:pl-4" : ""}>
+              <dt className="text-[0.56rem] font-medium uppercase tracking-[0.14em] text-ivory/45">Recognition evidence</dt>
+              <dd className="mt-1 font-display text-lg font-normal text-ivory/88">
+                {recognitionAudit.score} of {recognitionAudit.total} answers hold
+              </dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : null}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-ivory/12 pt-4">
+        <p className="min-w-0 flex-1 text-xs leading-relaxed text-ivory/52" role="status" aria-live="polite">
+          {copyStatus === "copied"
+            ? "Decision note copied."
+            : copyStatus === "error"
+              ? "Copy unavailable. The note remains here to select."
+              : "Keep this note for the call."}
+        </p>
+        <button
+          type="button"
+          onClick={onCopy}
+          data-strategy-control="true"
+          data-cursor-label="Copy decision note"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-sandstone/28 px-4 py-2 text-xs font-medium text-ivory/78 transition-colors hover:border-sandstone/55 hover:bg-sandstone/[0.08] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+        >
+          {copyStatus === "copied" ? (
+            <Check aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
+          ) : (
+            <Copy aria-hidden="true" className="mr-2 h-3.5 w-3.5" strokeWidth={1.5} />
+          )}
+          {copyStatus === "copied" ? "Copied" : "Copy note"}
+        </button>
+      </div>
+    </div>
   );
 }
 
+export function StrategyRoomCTA() {
+  const [briefStarted, setBriefStarted] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [step, setStep] = useState<Step>(0);
+  const [priority, setPriority] = useState<Priority | null>(null);
+  const [focus, setFocus] = useState<FocusArea | null>(null);
+  const [carriedPackage, setCarriedPackage] = useState<string | null>(null);
+  const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const [recognitionAudit, setRecognitionAudit] = useState<ServicesRecognitionAuditDetail | null>(null);
+  const [decisionCopyStatus, setDecisionCopyStatus] = useState<"idle" | "copied" | "error">("idle");
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const briefHeadingRef = useRef<HTMLParagraphElement>(null);
+  const briefStartButtonRef = useRef<HTMLButtonElement>(null);
+  const completedActionsRef = useRef<HTMLDivElement>(null);
+  const shouldFocusBriefHeadingRef = useRef(false);
+  const shouldRestoreBriefStartFocusRef = useRef(false);
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const lenis = useLenis();
+
+  useEffect(() => {
+    function applySituation(situation: ServicesSituationId | null) {
+      setCarriedSituation(situation);
+      if (!situation) {
+        setCarriedPackage(null);
+        return;
+      }
+      const packageSlug = SITUATION_TO_PACKAGE[situation];
+      const matchedPackage = packages.find((entry) => entry.slug === packageSlug);
+      setCarriedPackage(matchedPackage?.name ?? null);
+    }
+
+    try {
+      const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      const savedSituation = isServicesSituation(storedSituation)
+        ? storedSituation
+        : readCompletedHomeDiagnosis();
+      applySituation(savedSituation);
+    } catch {
+      applySituation(null);
+    }
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      const nextSituation = isServicesSituation(detail?.situation) ? detail.situation : null;
+      applySituation(nextSituation);
+      setPriority(null);
+      setFocus(null);
+      setStep(0);
+      setBriefStarted(false);
+      setDecisionCopyStatus("idle");
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+  }, []);
+
+  useEffect(() => {
+    function onRecognitionAudit(event: Event) {
+      const detail = (event as CustomEvent<ServicesRecognitionAuditDetail>).detail;
+      if (
+        !detail ||
+        !Number.isInteger(detail.score) ||
+        !Number.isInteger(detail.total) ||
+        detail.score < 0 ||
+        detail.score > detail.total
+      ) {
+        return;
+      }
+      setRecognitionAudit(detail.score > 0 ? detail : null);
+      setDecisionCopyStatus("idle");
+    }
+
+    window.addEventListener(SERVICES_RECOGNITION_AUDIT_EVENT, onRecognitionAudit as EventListener);
+    return () => window.removeEventListener(SERVICES_RECOGNITION_AUDIT_EVENT, onRecognitionAudit as EventListener);
+  }, []);
+
+  useEffect(() => {
+    if (!calendarOpen) return;
+
+    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.dispatchEvent(
+      new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: true, source: "calendar" } }),
+    );
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setCalendarOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => element.getClientRects().length > 0);
+      if (focusable.length === 0) {
+        event.preventDefault();
+        closeButtonRef.current?.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    window.addEventListener("keydown", closeOnEscape);
+    dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus({ preventScroll: true }));
+
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      window.removeEventListener("keydown", closeOnEscape);
+      document.body.style.overflow = previousOverflow;
+      window.dispatchEvent(
+        new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: false, source: "calendar" } }),
+      );
+      window.requestAnimationFrame(() => returnFocusRef.current?.focus());
+    };
+  }, [calendarOpen]);
+
+  useEffect(() => {
+    if (!briefStarted) return;
+    window.dispatchEvent(
+      new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: true, source: "brief" } }),
+    );
+
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: false, source: "brief" } }),
+      );
+    };
+  }, [briefStarted]);
+
+  function focusBriefHeading() {
+    window.requestAnimationFrame(() => briefHeadingRef.current?.focus());
+  }
+
+  function registerBriefHeading(node: HTMLParagraphElement | null) {
+    briefHeadingRef.current = node;
+    if (!node || !shouldFocusBriefHeadingRef.current) return;
+    shouldFocusBriefHeadingRef.current = false;
+    node.focus();
+  }
+
+  function registerBriefStartButton(node: HTMLButtonElement | null) {
+    briefStartButtonRef.current = node;
+    if (!node || !shouldRestoreBriefStartFocusRef.current) return;
+    shouldRestoreBriefStartFocusRef.current = false;
+    node.focus();
+  }
+
+  const registerCompletedActions = useCallback((node: HTMLDivElement | null) => {
+    completedActionsRef.current = node;
+    if (!node) return;
+
+    const reveal = () => {
+      if (completedActionsRef.current !== node) return;
+
+      const actionRect = node.getBoundingClientRect();
+      const notice = document.querySelector<HTMLElement>(".consent-notice");
+      const noticeTop = notice?.getBoundingClientRect().top ?? window.innerHeight;
+      const safeBottom = Math.min(window.innerHeight, noticeTop) - 16;
+
+      if (actionRect.bottom > safeBottom) {
+        const target = window.scrollY + actionRect.bottom - safeBottom;
+        if (lenis) {
+          lenis.resize();
+          lenis.scrollTo(target, { duration: 0.45, immediate: Boolean(prefersReducedMotion) });
+        } else {
+          window.scrollTo({ top: target, behavior: prefersReducedMotion ? "instant" : "smooth" });
+        }
+      }
+    };
+
+    // Reveal the result once, after its entrance. Manual scrolling owns the
+    // reading position immediately; no later timer may pull the visitor back.
+    const timer = window.setTimeout(reveal, prefersReducedMotion ? 0 : 450);
+    const cancelReveal = () => window.clearTimeout(timer);
+    const cancelOnScrollKey = (event: KeyboardEvent) => {
+      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) cancelReveal();
+    };
+    window.addEventListener("wheel", cancelReveal, { passive: true });
+    window.addEventListener("touchstart", cancelReveal, { passive: true });
+    window.addEventListener("keydown", cancelOnScrollKey);
+    return () => {
+      cancelReveal();
+      window.removeEventListener("wheel", cancelReveal);
+      window.removeEventListener("touchstart", cancelReveal);
+      window.removeEventListener("keydown", cancelOnScrollKey);
+    };
+  }, [lenis, prefersReducedMotion]);
+
+  const resetCalendarPosition = useCallback(() => {
+    dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    closeButtonRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  function startBrief() {
+    shouldFocusBriefHeadingRef.current = true;
+    setBriefStarted(true);
+  }
+
+  function closeBrief() {
+    shouldRestoreBriefStartFocusRef.current = true;
+    restart();
+    setBriefStarted(false);
+  }
+
+  function openCalendar() {
+    track("calendar_opened", {
+      source: "services-strategy-room",
+      brief: step === QUESTION_COUNT ? "completed" : "skipped",
+      route: carriedSituation ?? "unselected",
+    });
+    setCalendarOpen(true);
+  }
+
+  function pickPriority(value: Priority) {
+    setDecisionCopyStatus("idle");
+    setPriority(value);
+    setFocus(null);
+    setStep(1);
+    focusBriefHeading();
+  }
+
+  function pickFocus(value: FocusArea) {
+    setDecisionCopyStatus("idle");
+    setFocus(value);
+    setStep(2);
+    focusBriefHeading();
+  }
+
+  function goBack() {
+    if (step === 1) {
+      setPriority(null);
+      setFocus(null);
+      setStep(0);
+      focusBriefHeading();
+      return;
+    }
+    if (step === 2) {
+      setFocus(null);
+      setStep(1);
+      focusBriefHeading();
+    }
+  }
+
+  function restart() {
+    setDecisionCopyStatus("idle");
+    setPriority(null);
+    setFocus(null);
+    setStep(0);
+  }
+
+  function skipBriefAndOpenCalendar() {
+    openCalendar();
+    setBriefStarted(false);
+  }
+
+  async function copyDecisionNote() {
+    if (!priority || !focus) return;
+    const note = [
+      "Working decision note",
+      `Priority: ${priority}`,
+      `Conversation focus: ${focus}`,
+      "",
+      FOCUS_NOTES[focus],
+      PRIORITY_NOTES[priority],
+      carriedPackage ? `Likely engagement: ${carriedPackage}` : null,
+      recognitionAudit
+        ? `Recognition evidence: ${recognitionAudit.score} of ${recognitionAudit.total} answers hold`
+        : null,
+    ]
+      .filter((line): line is string => line !== null)
+      .join("\n");
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(note);
+      } else {
+        const fallback = document.createElement("textarea");
+        fallback.value = note;
+        fallback.setAttribute("readonly", "");
+        fallback.style.position = "fixed";
+        fallback.style.opacity = "0";
+        document.body.appendChild(fallback);
+        fallback.select();
+        const copied = document.execCommand("copy");
+        fallback.remove();
+        if (!copied) throw new Error("Copy command was unavailable");
+      }
+      setDecisionCopyStatus("copied");
+      track("strategy_note_copied", {
+        route: carriedSituation ?? "unselected",
+        audit: Boolean(recognitionAudit),
+      });
+    } catch {
+      setDecisionCopyStatus("error");
+    }
+  }
+
+  const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const };
+  const routeBrief = carriedSituation ? ROUTE_BRIEFS[carriedSituation] : null;
+  const priorityOptions = routeBrief?.priorities ?? PRIORITIES;
+  const focusOptions = routeBrief?.focusAreas ?? FOCUS_AREAS;
+  const progressLabel = step < QUESTION_COUNT ? `Question ${step + 1} of ${QUESTION_COUNT}` : "Brief ready";
+  const hasCompletedBrief = Boolean(priority && focus);
+  const hasPartialBrief = step > 0 && step < QUESTION_COUNT;
+  const answers = [
+    carriedPackage ? `Route: ${carriedPackage}` : null,
+    recognitionAudit ? `Recognition: ${recognitionAudit.score} / ${recognitionAudit.total} answers hold` : null,
+    priority,
+    focus,
+  ].filter(
+    (answer): answer is string => Boolean(answer),
+  );
+
+  const calendarDialog =
+    typeof document !== "undefined"
+      ? createPortal(
+          <AnimatePresence>
+            {calendarOpen ? (
+              <motion.div
+                key="strategy-calendar-dialog"
+                className="fixed inset-0 z-[1200] flex items-center justify-center bg-black/75 p-3 backdrop-blur-md sm:p-6"
+                initial={prefersReducedMotion ? undefined : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.24 }}
+                onMouseDown={(event) => {
+                  if (event.target === event.currentTarget) setCalendarOpen(false);
+                }}
+              >
+                <motion.div
+                  ref={dialogRef}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="strategy-calendar-title"
+                  aria-describedby="strategy-calendar-description"
+                  className="relative max-h-[calc(100svh-1.5rem)] w-full max-w-4xl overflow-y-auto rounded-[1.75rem] border border-sandstone/35 bg-[#171D19] p-4 shadow-[0_35px_120px_rgba(0,0,0,0.55)] sm:p-6"
+                  initial={prefersReducedMotion ? undefined : { opacity: 0, y: 18, scale: 0.985 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.99 }}
+                  transition={transition}
+                >
+                  <div
+                    data-strategy-calendar-titlebar="true"
+                    className="flex items-start justify-between gap-6 px-1"
+                  >
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.18em] text-sandstone">30 minute brand diagnosis</p>
+                      <h3 id="strategy-calendar-title" className="mt-2 font-display text-3xl font-normal text-ivory sm:text-4xl">
+                        Choose a time that feels unhurried.
+                      </h3>
+                    </div>
+                    <button
+                      ref={closeButtonRef}
+                      type="button"
+                      onClick={() => setCalendarOpen(false)}
+                      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ivory/20 text-xl text-ivory/75 transition-colors hover:border-sandstone/55 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                      aria-label="Close scheduling calendar"
+                    >
+                      <X aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
+                    </button>
+                  </div>
+                  <div data-strategy-calendar-support="true" className="px-1">
+                    <p id="strategy-calendar-description" className="mt-2 max-w-2xl text-sm leading-relaxed text-ivory/72">
+                      {hasCompletedBrief
+                        ? "Your decision note stays in view while you choose a time."
+                        : answers.length > 0
+                          ? "The context you have already named stays in view while you choose a time."
+                          : "Choose a time now; the unpolished version of the question is enough."}
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm leading-relaxed text-ivory/65">
+                      <span>No times showing in the calendar? {hasCompletedBrief ? "Send this decision directly." : "Write the decision directly."}</span>
+                      <Link
+                        href="/contact"
+                        className="inline-flex min-h-11 items-center rounded-full border border-sandstone/35 px-4 py-2 font-medium text-ivory transition-colors hover:border-sandstone/65 hover:bg-sandstone/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+                      >
+                        Open the contact room
+                        <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
+                      </Link>
+                    </div>
+                  </div>
+                  {priority && focus ? (
+                    <StrategyDecisionNote
+                      priority={priority}
+                      focus={focus}
+                      carriedPackage={carriedPackage}
+                      recognitionAudit={recognitionAudit}
+                      copyStatus={decisionCopyStatus}
+                      onCopy={copyDecisionNote}
+                      compact
+                    />
+                  ) : answers.length > 0 ? (
+                    <div className="mt-5 flex flex-wrap gap-2 px-1" aria-label="Your Strategy Room brief">
+                      {answers.map((answer) => (
+                        <span
+                          key={answer}
+                          className="rounded-full border border-sandstone/25 bg-sandstone/[0.07] px-3 py-1.5 text-xs text-ivory/78"
+                        >
+                          {answer}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                  <CalendlyEmbed url={`${site.calendlyUrl}/30min`} onReady={resetCalendarPosition} />
+                </motion.div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>,
+          document.body,
+        )
+      : null;
+
+  return (
+    <>
+      <Container className="relative max-w-6xl">
+        <div
+          data-strategy-room-stage="true"
+          className="relative grid items-center gap-7 lg:grid-cols-[minmax(19rem,0.82fr)_minmax(28rem,1.18fr)] lg:gap-12"
+        >
+          <div data-strategy-room-copy="true" data-services-chapter-copy="true" className="text-center lg:text-left">
+          <p className="text-sm font-medium uppercase tracking-[0.2em] text-sandstone">Book a brand diagnosis</p>
+          <h2 className="mt-3 text-display-md font-display font-normal leading-[1.06] text-ivory">
+            Bring the brand decision that keeps returning.
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-ivory/90 lg:mx-0">
+            Bring the disagreement or the sentence nobody can finish.
+            The unpolished version is enough.
+          </p>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-ivory/68 lg:mx-0">
+            Remote projects led directly by Suman are available across {entityFacts.delivery.regions.slice(0, -1).join(", ")} and{" "}
+            {entityFacts.delivery.regions.at(-1)}.
+          </p>
+          <div data-strategy-room-agenda="true" className="mx-auto mt-7 max-w-2xl lg:mx-0">
+            <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-sandstone/78">
+              Inside the diagnosis
+            </p>
+            <ol aria-label="What happens in the diagnosis" className="mt-3 grid gap-2.5 text-left sm:grid-cols-3 lg:grid-cols-1">
+              {consultation.steps.map((item, index) => (
+                <li
+                  key={item}
+                  data-strategy-agenda-step="true"
+                  className="relative rounded-2xl border border-ivory/15 bg-[rgba(18,24,21,0.48)] px-4 py-3.5 backdrop-blur-md"
+                >
+                  <span data-strategy-agenda-number="true" className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/75">
+                    0{index + 1}
+                  </span>
+                  <div data-strategy-agenda-copy="true">
+                    <p className="font-display">{["Describe", "Question", "Decide"][index]}</p>
+                    <p className="text-sm leading-relaxed">{item}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+          </div>
+
+          <div data-services-chapter-resolution="true" className="relative min-h-[18rem]" aria-live="off">
+          <AnimatePresence mode="wait" initial={false}>
+            {!briefStarted ? (
+              <motion.div
+                key="booking-choice"
+                data-strategy-room-shell="true"
+                data-strategy-room-choice="true"
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={transition}
+                className="mx-auto max-w-2xl rounded-[1.75rem] border border-ivory/18 bg-[rgba(18,24,21,0.68)] p-6 shadow-[0_28px_90px_rgba(6,10,8,0.26)] backdrop-blur-xl sm:p-8"
+              >
+                <div data-strategy-room-session="true">
+                  <p><strong>{consultation.minutes}</strong><span>minutes</span></p>
+                  <p><span>Online with</span><strong>Suman Sharma</strong></p>
+                </div>
+                {carriedPackage || recognitionAudit ? (
+                  <div
+                    className={`mx-auto mb-6 grid max-w-xl gap-3 ${carriedPackage && recognitionAudit ? "sm:grid-cols-2" : ""}`}
+                    data-strategy-room-context="true"
+                  >
+                    {carriedPackage ? (
+                      <div className={CARRIED_CONTEXT_CLASS}>
+                        <p className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Carried from your situation</p>
+                        <p className="mt-1 font-display text-lg font-normal text-ivory">{carriedPackage}</p>
+                        {routeBrief ? <p className="mt-1 text-xs leading-relaxed text-ivory/62">{routeBrief.invitation}</p> : null}
+                      </div>
+                    ) : null}
+                    {recognitionAudit ? (
+                      <div className={CARRIED_CONTEXT_CLASS} data-carried-recognition-audit="true">
+                        <p className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Carried from your audit</p>
+                        <p className="mt-1 font-display text-lg font-normal text-ivory">
+                          {recognitionAudit.score} of {recognitionAudit.total} answers hold
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-ivory/62">
+                          {recognitionAuditGuidance(recognitionAudit.score, recognitionAudit.total)}
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+                <h3 data-strategy-room-invitation="true" className="font-display text-2xl font-normal text-ivory">Talk the decision through.</h3>
+                <p data-strategy-room-invitation-detail="true" className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-ivory/72">
+                  {hasPartialBrief
+                    ? "Your first answer is held. Continue when you are ready, or choose a time now."
+                    : "Choose a time for a brand diagnosis. Leave knowing which decision deserves attention first."}
+                </p>
+                <div data-strategy-room-actions="true" className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    data-strategy-control="true"
+                    data-strategy-calendar-trigger="true"
+                    onClick={openCalendar}
+                    className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
+                  >
+                    Choose a time
+                    <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
+                  </button>
+                </div>
+                <div data-strategy-room-preparation="true">
+                  <p>Prefer to gather your thoughts first?<span>Two questions. An optional note for the call.</span></p>
+                  <button ref={registerBriefStartButton} type="button" data-strategy-control="true" onClick={startBrief} className={OPTION_BUTTON_CLASS}>
+                    {hasPartialBrief ? "Continue the brief" : "Add a short brief"}
+                    <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="conversation-brief"
+                data-strategy-room-shell="true"
+                initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={transition}
+                className="mx-auto max-w-2xl rounded-[1.75rem] border border-ivory/18 bg-[rgba(18,24,21,0.68)] p-6 shadow-[0_28px_90px_rgba(6,10,8,0.26)] backdrop-blur-xl sm:p-8"
+              >
+                <p ref={registerBriefHeading} tabIndex={-1} className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-ivory/60 outline-none">
+                  {progressLabel}
+                </p>
+                <div data-strategy-brief-progress="true" className="mx-auto mt-3 flex max-w-sm justify-center gap-1.5" aria-hidden="true">
+                  {Array.from({ length: QUESTION_COUNT }).map((_, index) => (
+                    <span
+                      key={index}
+                      data-complete={index < step}
+                      className={`h-1 flex-1 rounded-full transition-colors duration-500 ${
+                        index < step ? "bg-sandstone" : "bg-ivory/15"
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <AnimatePresence mode="wait" initial={false}>
+                  {step === 0 && (
+                    <motion.div key="priority" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
+                      <p className="mt-6 text-sm font-medium uppercase tracking-wide text-ivory/78">What matters most right now?</p>
+                      <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
+                        {priorityOptions.map((option) => (
+                          <motion.button
+                            key={option}
+                            type="button"
+                            data-strategy-control="true"
+                            onClick={() => pickPriority(option)}
+                            whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                            whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                            transition={{ duration: 0.18 }}
+                            className={OPTION_BUTTON_CLASS}
+                          >
+                            {option}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {step === 1 && (
+                    <motion.div key="focus" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
+                      <p className="mt-6 text-sm font-medium uppercase tracking-wide text-ivory/78">Where should the conversation focus?</p>
+                      <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
+                        {focusOptions.map((option) => (
+                          <motion.button
+                            key={option}
+                            type="button"
+                            data-strategy-control="true"
+                            onClick={() => pickFocus(option)}
+                            whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+                            whileTap={prefersReducedMotion ? undefined : { scale: 0.97 }}
+                            transition={{ duration: 0.18 }}
+                            className={OPTION_BUTTON_CLASS}
+                          >
+                            {option}
+                          </motion.button>
+                        ))}
+                      </div>
+                      <button type="button" data-strategy-control="true" onClick={goBack} className={`${QUIET_ACTION_CLASS} mt-5`}>
+                        <ArrowLeft aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
+                        <span className="ml-2">Previous question</span>
+                      </button>
+                    </motion.div>
+                  )}
+
+                  {step === 2 && (
+                    <motion.div key="ready" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
+                      <p className="mt-6 font-display text-2xl font-normal text-ivory">Your decision note is ready.</p>
+                      {priority && focus ? (
+                        <StrategyDecisionNote
+                          priority={priority}
+                          focus={focus}
+                          carriedPackage={carriedPackage}
+                          recognitionAudit={recognitionAudit}
+                          copyStatus={decisionCopyStatus}
+                          onCopy={copyDecisionNote}
+                        />
+                      ) : null}
+                      <div
+                        ref={registerCompletedActions}
+                        data-strategy-room-completed-actions="true"
+                        className="mt-6 flex flex-col items-center justify-center gap-2 sm:flex-row"
+                      >
+                        <button
+                          type="button"
+                          data-strategy-control="true"
+                          data-strategy-calendar-trigger="true"
+                          onClick={openCalendar}
+                          className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
+                        >
+                          Choose a time
+                          <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
+                        </button>
+                        <button type="button" data-strategy-control="true" onClick={restart} className={QUIET_ACTION_CLASS}>
+                          Change answers
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {step < QUESTION_COUNT ? (
+                  <div className="mt-5 flex flex-wrap justify-center gap-2">
+                    {step === 0 ? (
+                      <button type="button" data-strategy-control="true" onClick={closeBrief} className={QUIET_ACTION_CLASS}>
+                        Back to availability
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      data-strategy-control="true"
+                      onClick={skipBriefAndOpenCalendar}
+                      className={QUIET_ACTION_CLASS}
+                    >
+                      Skip the brief and view times
+                    </button>
+                  </div>
+                ) : null}
+              </motion.div>
+            )}
+          </AnimatePresence>
+          </div>
+        </div>
+      </Container>
+
+      {calendarDialog}
+    </>
+  );
+}

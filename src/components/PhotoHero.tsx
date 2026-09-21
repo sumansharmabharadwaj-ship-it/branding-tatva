@@ -1,21 +1,19 @@
 "use client";
 
-import { useRef } from "react";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
-import { kenBurnsAnimation } from "@/animations/kenBurns";
 import { toSvh } from "@/lib/media";
 import { useVideoFadeIn } from "@/hooks/useVideoFadeIn";
-
-const KEN_BURNS = kenBurnsAnimation({ scale: 1.07, duration: 22 });
+import { LivingImage } from "@/components/LivingImage";
+import { usesLivingStill } from "@/lib/mediaMode";
 
 // Full-bleed hero, the structure used across every reference site
 // (Nevada House, Haven, Sylvan): a real photo or video fills the
 // section, a dark gradient keeps text legible, content sits on top.
 // Height varies by page: tall on the homepage, shorter elsewhere so
-// secondary pages get to their content faster. When only a still image
-// is given, it holds a slow continuous Ken Burns drift so it's never
-// sitting completely still; a video background moves on its own.
+// secondary pages get to their content faster. Still images respond to
+// scroll and pointer position through LivingImage; there is no timed loop.
 //
 // Height is a deliberate four-tier system across the site, not one
 // value standardized everywhere or an accident of each page being
@@ -40,26 +38,61 @@ const gradient =
 
 export function PhotoHero({
   children,
+  id,
   image,
   video,
+  videoMobile,
   poster,
+  mediaMode = "auto",
   minHeight = "60vh",
   imagePosition = "center",
   className,
   accentColor,
+  overlayGradient = gradient,
+  overlayGradientMobile,
+  playbackRate = 1,
 }: {
   children?: React.ReactNode;
+  // A server rendered anchor keeps chapter links stable before client
+  // motion and smooth scrolling hydrate.
+  id?: string;
   image?: string;
   video?: string;
+  videoMobile?: string;
   poster?: string;
+  mediaMode?: "auto" | "video" | "living-image";
   minHeight?: string;
   imagePosition?: string;
   className?: string;
   accentColor?: string;
+  overlayGradient?: string;
+  // A hero graded for a wide frame can over-veil the same footage's
+  // portrait crop, where one desktop scrim ends up covering the whole
+  // phone screen. When provided, this gradient replaces the desktop one
+  // below the sm breakpoint; every existing call site is untouched.
+  overlayGradientMobile?: string;
+  playbackRate?: number;
 }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
-  useVideoFadeIn(videoRef, Boolean(video) && !prefersReducedMotion);
+  const livingStill =
+    mediaMode === "living-image" ||
+    (mediaMode === "auto" && usesLivingStill(video));
+  useVideoFadeIn(
+    videoRef,
+    Boolean(video) && !prefersReducedMotion && !livingStill,
+  );
+
+  // Keep ambient films inside a calm range. The Services hero opts into
+  // 1.15x so its defining visual event arrives before attention drifts,
+  // while every existing call site retains the native 1x pace.
+  useEffect(() => {
+    const element = videoRef.current;
+    if (!element || livingStill) return;
+    const safePlaybackRate = Math.min(1.5, Math.max(0.75, playbackRate));
+    element.defaultPlaybackRate = safePlaybackRate;
+    element.playbackRate = safePlaybackRate;
+  }, [livingStill, playbackRate, video]);
 
   // A case study's hero footage is industry-specific (an office, a
   // warehouse) rather than generic nature photography, so an
@@ -71,10 +104,11 @@ export function PhotoHero({
 
   return (
     <section
+      id={id}
       className={`relative flex items-center overflow-hidden bg-soil ${className ?? ""}`}
       style={{ minHeight: toSvh(minHeight) }}
     >
-      {video && !prefersReducedMotion ? (
+      {video && !prefersReducedMotion && !livingStill ? (
         <>
           {/* A next/image base layer instead of relying solely on the
               <video poster> attribute — that's a native browser fetch
@@ -97,33 +131,44 @@ export function PhotoHero({
             ref={videoRef}
             className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700"
             style={{ objectPosition: imagePosition }}
-            src={video}
             autoPlay
             muted
             loop
             playsInline
-          />
+            aria-hidden="true"
+            preload="auto"
+          >
+            {videoMobile && <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />}
+            <source src={video} type="video/mp4" />
+          </video>
           {accentWash}
-          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
+          {overlayGradientMobile ? (
+            <>
+              <div className="absolute inset-0 hidden sm:block" style={{ backgroundImage: overlayGradient }} />
+              <div className="absolute inset-0 sm:hidden" style={{ backgroundImage: overlayGradientMobile }} />
+            </>
+          ) : (
+            <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          )}
         </>
       ) : (
-        <motion.div
-          className="absolute inset-0"
-          initial={KEN_BURNS.initial}
-          animate={prefersReducedMotion ? undefined : KEN_BURNS.animate}
-          transition={KEN_BURNS.transition}
-        >
-          <Image
+        <>
+          <LivingImage
             src={poster ?? image ?? ""}
-            alt=""
-            fill
             priority
-            sizes="100vw"
-            style={{ objectFit: "cover", objectPosition: imagePosition }}
+            imagePosition={imagePosition}
+            intensity="hero"
           />
           {accentWash}
-          <div className="absolute inset-0" style={{ backgroundImage: gradient }} />
-        </motion.div>
+          {overlayGradientMobile ? (
+            <>
+              <div className="absolute inset-0 hidden sm:block" style={{ backgroundImage: overlayGradient }} />
+              <div className="absolute inset-0 sm:hidden" style={{ backgroundImage: overlayGradientMobile }} />
+            </>
+          ) : (
+            <div className="absolute inset-0" style={{ backgroundImage: overlayGradient }} />
+          )}
+        </>
       )}
       {children}
     </section>

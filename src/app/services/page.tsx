@@ -1,45 +1,166 @@
 import type { Metadata } from "next";
-import { preload } from "react-dom";
+import Image from "next/image";
+import { cookies, headers } from "next/headers";
+import { site } from "@/data/site";
+import { entityFacts } from "@/data/entityFacts";
+import { offerings, packages } from "@/data/services";
 import { Header } from "@/layouts/Header";
 import { Footer } from "@/sections/Footer";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
-import { ScrollCue } from "@/components/ScrollCue";
-import { ScrollProgress } from "@/components/ScrollProgress";
-import { PhotoHero } from "@/components/PhotoHero";
+import { LivingGradient } from "@/components/LivingGradient";
 import { TexturedDark } from "@/components/TexturedDark";
 import { SectionJumpNav } from "@/components/SectionJumpNav";
-import { DecisionClearing } from "@/sections/Services/DecisionClearing";
-import { ClearingMist } from "@/sections/Services/ClearingMist";
+import { SituationPath } from "@/sections/Services/SituationPath";
+import { ServiceDisciplineExplorer } from "@/sections/Services/ServiceDisciplineExplorer";
+import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
+import { PricingProvider } from "@/components/PricingProvider";
+import {
+  REGION_COOKIE,
+  isRegion,
+  regionFromCountry,
+  priceFor,
+  currencyFor,
+  type Region,
+  type PackageSlug,
+} from "@/data/pricing";
+import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
+import { WorkIndex } from "@/sections/Work/WorkIndex";
+import { DecisionMap } from "@/sections/Work/DecisionMap";
+import { TatvaLab } from "@/sections/Work/TatvaLab";
+import { projects } from "@/data/projects";
 import { SceneVeil } from "@/sections/Services/SceneVeil";
 import { SceneHandoff } from "@/sections/Services/SceneHandoff";
 import { SplitReveal } from "@/components/SplitReveal";
 import { HeroReveal } from "@/sections/Services/HeroReveal";
 import { PinnedBrandBuild } from "@/sections/Services/PinnedBrandBuild";
-import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { PackageSelector } from "@/sections/Services/PackageSelector";
-import { WeakBrandingCost } from "@/sections/Services/WeakBrandingCost";
-import { DeliverablesReveal } from "@/sections/Services/DeliverablesReveal";
-import { BrandHealthCheck } from "@/sections/Services/BrandHealthCheck";
 import { StrategyRoomCTA } from "@/sections/Services/StrategyRoomCTA";
-import { LazyAmbientShader } from "@/components/LazyAmbientShader";
+import { PerceptionLadder } from "@/sections/Services/PerceptionLadder";
 import { Magnetic } from "@/components/Magnetic";
-import { DustMotes } from "@/components/DustMotes";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { SkyLife } from "@/components/SkyLife";
-import { ParallaxDrift } from "@/components/ParallaxDrift";
 import { MOOD } from "@/lib/sectionWash";
+import { ServicesPointerLight } from "@/sections/Services/ServicesPointerLight";
+import { ArrowDown } from "lucide-react";
+
+const SERVICES_URL = `${site.url}/services`;
+const PERSON_ID = `${site.url}/#person`;
+const ORGANIZATION_ID = `${site.url}/#organization`;
+const REMOTE_SERVICE_AREAS = entityFacts.delivery.regions.map((name) => ({
+  "@type": "Country",
+  name,
+}));
+
+/*
+ * Structured data for this page. It carried only the sitewide Person and
+ * ProfessionalService before, so the actual service lines and engagement
+ * formats were invisible to search and answer engines even though they are
+ * the whole point of the page.
+ *
+ * Prices were deliberately absent while data/services.ts carried draft
+ * figures. Suman confirmed the data/pricing.ts book as the real starting
+ * prices on September 21, 2026 (recorded in data/services.ts), so the
+ * engagement offers below now publish minPrice per resolved region —
+ * see the comment on engagementsJsonLd for why minPrice and not price.
+ */
+const servicesJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${SERVICES_URL}#page`,
+  url: SERVICES_URL,
+  name: "Brand Strategy & Systems | Branding Tatva",
+  description:
+    "Brand strategy, positioning, messaging, identity and content systems for UK service businesses, led remotely by Suman Sharma. Also serving founders in India and the US.",
+  author: { "@id": PERSON_ID },
+  publisher: { "@id": ORGANIZATION_ID },
+  breadcrumb: {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+      { "@type": "ListItem", position: 2, name: "Brand Strategy & Systems", item: SERVICES_URL },
+    ],
+  },
+  mainEntity: { "@id": `${SERVICES_URL}#catalog` },
+};
+
+// The six service lines: what the practice actually does.
+const serviceCatalogJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "OfferCatalog",
+  "@id": `${SERVICES_URL}#catalog`,
+  name: "Brand strategy service lines",
+  url: SERVICES_URL,
+  provider: { "@id": ORGANIZATION_ID },
+  itemListElement: offerings.map((offering, index) => ({
+    "@type": "Offer",
+    position: index + 1,
+    itemOffered: {
+      "@type": "Service",
+      "@id": `${SERVICES_URL}#service-${index + 1}`,
+      name: offering.name,
+      description: offering.detail,
+      serviceType: offering.name,
+      provider: { "@id": ORGANIZATION_ID },
+      brand: { "@id": ORGANIZATION_ID },
+      areaServed: REMOTE_SERVICE_AREAS,
+    },
+  })),
+};
+
+// The three engagement formats: how a project is shaped. Each carries the
+// audience it is written for, which is the part an answer engine can use to
+// match a real question ("who is this for") to a real answer.
+//
+// Prices joined on September 21, 2026, after Suman confirmed the price
+// book in data/pricing.ts as the real starting figures (recorded in
+// data/services.ts alongside the book). The page already publishes them
+// visibly per region, and the pricing guide in Insights quotes the same
+// numbers, so the schema now says what the page says. minPrice rather
+// than price, because every engagement is "projects begin at" with the
+// final quotation following the discovery call — a flat price claim
+// would overstate what is on offer. Built per request so the offer
+// carries the same region the visible price book resolved for this
+// visitor.
+const engagementsJsonLd = (region: Region) => ({
+  "@context": "https://schema.org",
+  "@type": "OfferCatalog",
+  "@id": `${SERVICES_URL}#engagements`,
+  name: "Engagement formats",
+  url: SERVICES_URL,
+  provider: { "@id": ORGANIZATION_ID },
+  itemListElement: packages.map((pkg, index) => ({
+    "@type": "Offer",
+    position: index + 1,
+    priceSpecification: {
+      "@type": pkg.billing === "monthly" ? "UnitPriceSpecification" : "PriceSpecification",
+      minPrice: priceFor(region, pkg.slug as PackageSlug),
+      priceCurrency: currencyFor(region),
+      ...(pkg.billing === "monthly" ? { unitText: "month" } : null),
+    },
+    itemOffered: {
+      "@type": "Service",
+      "@id": `${SERVICES_URL}#${pkg.slug}`,
+      name: pkg.name,
+      description: pkg.description,
+      provider: { "@id": ORGANIZATION_ID },
+      audience: { "@type": "Audience", audienceType: pkg.forWho },
+      areaServed: REMOTE_SERVICE_AREAS,
+      serviceOutput: pkg.includes.map((item) => ({ "@type": "Thing", name: item })),
+    },
+  })),
+});
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Brand Strategy for UK Service Businesses",
   description:
-    "A brand discovery experience: why branding works, why it fails, what a project actually involves, and where your own brand stands today.",
+    "Brand strategy for UK service businesses, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Services | Branding Tatva",
+    title: "Brand Strategy for UK Service Businesses | Branding Tatva",
     description:
-      "A brand discovery experience: why branding works, why it fails, what a project actually involves, and where your own brand stands today.",
+      "Brand strategy for UK service businesses, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
     type: "website",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
 };
 
@@ -47,105 +168,157 @@ export const metadata: Metadata = {
 // one section per objection a visitor actually carries into the page
 // (Curiosity → Authority → Education → Desire → Risk removal → Book
 // call), not a service-by-service list. Trust, Proof, and Future
-// vision (the founder bio, the case study, and the six-stage pinned
-// process) were removed after a Creative Direction Audit — the pinned
+// vision (the founder bio, the case study, and the six-stage extended
+// process) were removed after a Creative Direction Audit — the former
 // process sequence was also rendering with overlapping text, a real
 // bug, not just a pacing call. See the plan doc (Phase 14) for the
-// full original reasoning, including why GSAP ScrollTrigger.pin
-// appears exactly once (PinnedBrandBuild) and Three.js exactly once
-// (inside PerceptionLadder, via AmbientElementShader) rather than
-// throughout — every other pinned moment on this page and site runs on
-// the same sticky mechanism already proven everywhere else.
+// original reasoning. PinnedBrandBuild now resolves inside one native
+// scroll frame, and the recognition ladder stays a light DOM instrument
+// rather than becoming a page-wide Three.js effect.
 
+// Conversion order (Phase 2 of the redesign brief): the commercial
+// path — situation, packages, proof — comes before the teaching
+// chapters, so a ready visitor can act inside the first two scrolls.
+// Every immersive chapter needs an escape, and this array feeds both
+// the floating index and the hero's own chapter list. It covered the
+// first three of nine, so a visitor eight chapters deep had no entry
+// to point at and no way back to booking except scrolling the whole
+// way. All nine anchors already exist and already carry scroll-mt-24.
 const JUMP_ITEMS = [
-  { href: "#authority", label: "Authority" },
-  { href: "#education", label: "Education" },
-  { href: "#desire", label: "Desire" },
-  { href: "#risk", label: "FAQ" },
+  { href: "#services-opening", label: "Where this starts" },
+  { href: "#situation", label: "Your situation" },
+  { href: "#offerings", label: "What the work covers" },
+  { href: "#desire", label: "Ways to work" },
+  { href: "#proof", label: "Client evidence" },
+  { href: "#index", label: "Every case" },
+  { href: "#authority", label: "What holds the brand" },
+  { href: "#education", label: "How buyers remember" },
+  { href: "#audit", label: "Brand check" },
+  { href: "#book", label: "Book a diagnosis" },
 ];
 
-export default function ServicesPage() {
-  // The hero poster is the page's first paint — a high priority preload
-  // hint so the awakening scene arrives before the veil starts lifting.
-  preload("/images/pexels-aspen-sunburst-poster.jpg", { as: "image", fetchPriority: "high" });
+// The fixed chapter rail carries the complete nine-part journey once the
+// visitor is moving. The opening needs a quicker read: four commercial acts
+// that explain the page before asking someone to process its full contents.
+const HERO_ACTS = [
+  { href: "#situation", number: "01", label: "Name the real problem", note: "The business, the buyer, the gap" },
+  { href: "#offerings", number: "02", label: "Connect the decisions", note: "Position into language, identity, and action" },
+  { href: "#proof", number: "03", label: "See what holds up", note: "Real projects and the decisions behind them" },
+  { href: "#book", number: "04", label: "Talk it through", note: "Thirty minutes directly with Suman" },
+];
+
+// Ambient consolidation (Suman's review: "duplicated ambient effects",
+// "one motion language"): this page stacked twenty five atmosphere
+// layers — six shaders, particle fields, and the veil/handoff seams —
+// so every chapter competed with its own background. The seams stay as
+// the site's one transition grammar; repeated shaders and particle
+// fields are gone, leaving original films and material stills to carry
+// atmosphere without competing with the chapter interaction.
+export default async function ServicesPage() {
+  // Market aware pricing (governing bible §10): the visitor's explicit
+  // region cookie always wins; otherwise Vercel's country header picks
+  // the starting price book; unknown falls to rest of world. Detection
+  // is server side so the first paint already shows the right
+  // currency; the manual selector beside the prices stays in control.
+  const cookieStore = await cookies();
+  const hdrs = await headers();
+  const savedRegion = cookieStore.get(REGION_COOKIE)?.value;
+  const region = isRegion(savedRegion) ? savedRegion : regionFromCountry(hdrs.get("x-vercel-ip-country"));
+  // The living gradient opening needs no media preload; the retired
+  // aspen poster hint was fetching 200KB nobody renders.
   return (
     <>
       <Header transparent />
-      <ScrollProgress />
-      {/* Charcoal ground for the whole experience — the permanent fix
-          for the "white space at left and right" class of bug. The
-          site's body ground is cream; on this page every full-bleed
-          scene paints its own dark background, and the one section
-          whose paint is delegated to a GSAP-pinned child
-          (PinnedBrandBuild) can transiently narrow when the pin's
-          cached width measurement goes stale — the documented pin
-          artifact class — exposing cream at both edges. With the page
-          ground itself charcoal (and the #authority wrapper painting
-          charcoal below), no measurement artifact anywhere on this
-          page can ever expose a light edge again: worst case is
-          charcoal on charcoal, invisible. The parchment chapter still
-          paints its own bg-background-alt deliberately. */}
-      <main id="main-content" style={{ backgroundColor: MOOD.charcoal }}>
-        {/* Curiosity — the opening objection: why care about branding at
-            all. Two short opinionated lines build the claim (Framer
-            Motion AnimatePresence, CyclingStatement.tsx) before handing
-            off to the same char-level SplitText reveal every other
-            headline moment already uses — visitors experience a claim
-            forming rather than reading a static question. Height stays
-            Tier 3 (70vh), the documented mid-page tier in PhotoHero's
-            own comment — this page's ambition shows in what follows the
-            hero, not in breaking the site's hero-height hierarchy. A
-            newly-sourced "ink dispersing in dark water" clip was tried
-            here and reverted immediately on direct feedback — a black-
-            background studio abstraction breaks the site's own
-            established warm, sunlit, natural register (documented in
-            CLAUDE.md's own video-sourcing standard), regardless of how
-            cinematically it reads on its own. Back to the calm misty
-            pine trail already proven here.
-            Redesigned from the centered pill-badge-plus-headline
-            template (identical to what Work/Contact used to share)
-            into the same asymmetric masthead already proven on those
-            pages and on the case-study/blog-post templates: a large
-            offset headline in one column, a real-data aside in the
-            other. The aside reuses this exact page's own SectionJumpNav
-            items — real wayfinding, not decoration — so the hero itself
-            previews the four objections the rest of the page answers. */}
-        <PhotoHero
-          video="/videos/pexels-aspen-sunburst.mp4"
-          poster="/images/pexels-aspen-sunburst-poster.jpg"
-          minHeight="70vh"
+      {/* Charcoal is the page-level ground beneath every full-bleed
+          chapter and scene handoff. It prevents the cream body colour
+          from flashing at a sticky or transformed boundary, while the
+          deliberately light contextual CTA continues to paint its own
+          surface. */}
+      <main id="main-content" data-services-page="true" style={{ backgroundColor: "#3f4d44" }}>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceCatalogJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd(region)) }} />
+        {/* SCROLL RUNWAY. Measured against /about, which Suman names as the
+            closest thing on this site to the scroll character she wants:
+
+              about     sections 1043-1501px   dScale 0.90-1.00   dY 82-190px
+              services  sections 790px (=1vh)  dScale 0.03-0.04   dY 17-85px
+
+            About lets content define height, so a chapter spans 1.3 to 1.9
+            viewports and scroll-linked motion has distance to play out.
+            Services locked every chapter to exactly one viewport, so its own
+            runtime — which already publishes scene progress, content x/y/
+            rotate/scale, camera x/y/scale and copy opacity — had no travel to
+            spend them across. The choreography was built and then starved.
+
+            Per SCROLL_OS §11 (Services: one major and two minor) rather than
+            giving every chapter runway: offerings is the major at 170svh,
+            situation and education the minors at 140svh. #desire and #book
+            stay at one frame deliberately, because pricing and booking are
+            where money hates motion.
+
+            #authority is NOT given runway here. It holds PinnedBrandBuild,
+            the one place this codebase uses GSAP ScrollTrigger.pin, which
+            CLAUDE.md records as twice built and twice abandoned. Restoring a
+            pinned runway there needs its own careful pass. */}
+        <PricingProvider initialRegion={region}>
+        {/* Curiosity opens as a complete first scene rather than a
+            compact masthead. One viewport belongs to the opening film,
+            proposition, proof, and chapter map; the Situation chapter
+            only begins after the visitor has finished this frame. The
+            scene still advances quickly because the veil and word reveal
+            respond inside the viewport, not by shortening it.
+
+            The film is the aspen sunburst Suman approved in August against
+            her own five-question bar, replacing a near-black procedural
+            render. Her recorded media verdict on that set was "dark, vague,
+            low quality, serving no purpose", and the standard she set after
+            it asks for footage that stays bright while glass panels carry
+            readability. This is the first delivery of that re-foundation;
+            the remaining procedural slots are still dark. */}
+        {/* The aspen film is retired on Suman's direct verdict (the first
+            two sections' footage read as noise, and the page before it
+            read as clean). The opening frame now follows the reference
+            she sent: a calm, stable ground where the type is the event.
+            LivingGradient is the proven Home base — a slow canopy field
+            with one drifting light shaft, CSS only, nothing competing
+            with the headline. */}
+        <section
+          id="services-opening"
+          className="relative flex min-h-[100vh] flex-col justify-center overflow-clip bg-soil"
         >
-          {/* Approved awakening footage (Pexels 31883946, Joshua
-              Woroniecki, free license): a sun star breaking through
-              backlit trembling aspens, birch trunks in bokeh depth —
-              the first candidate to pass all five hero questions
-              (clear visual event, revealing light, layered depth,
-              scroll-stopping, stronger than its predecessor). Full 20s
-              slowed to 24s, 2s forward dissolve, no reverse motion.
-              The reveal veil below lifts the forest darkness so the
-              page wakes into the burst. */}
+          <LivingGradient preset="meadow" />
+          {/* Sunlit weather over the meadow field: a morning bloom, a deep
+              sage answer, and a slow halo turning behind the chapter map.
+              The wrapper leans with the visitor's own scroll via the
+              runtime's scene progress variable. CSS only — the opening
+              stays filmless per the media loading contract. */}
+          <div aria-hidden="true" data-services-atmosphere="hero">
+            <span />
+            <span />
+            <span />
+          </div>
+          {/* The drawn meadow horizon: three contour strokes sketched on
+              arrival, dissolving into the charcoal handoff below. */}
+          <div aria-hidden="true" className="services-contour">
+            <svg viewBox="0 0 1400 460" preserveAspectRatio="xMidYMax slice" focusable="false">
+              <path pathLength="1" d="M-40 330C180 300 320 208 520 226S840 372 1060 318 1330 176 1460 196" />
+              <path pathLength="1" d="M-40 388C210 356 380 268 570 282S870 420 1090 368 1350 244 1460 262" />
+              <path pathLength="1" d="M-40 440C240 410 430 330 620 340S900 460 1120 414 1370 310 1460 324" />
+            </svg>
+          </div>
           <HeroReveal />
-          {/* Phase 1 hero pass. Two localized layers on top of
-              PhotoHero's own base gradient: a cool tint pulling the
-              warm trail footage toward the page's opening-chapter mood
-              (the color script starts cool; gold only arrives at
-              Desire), and a directional left-heavy scrim so the
-              masthead column reads perfectly while the right of the
-              frame stays open and cinematic. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{ backgroundImage: "linear-gradient(90deg, rgba(15,18,17,0.38) 0%, rgba(15,18,17,0.12) 45%, transparent 70%)" }}
-          />
-          {/* Phase 2, hero motion language: "typography forming." The
-              claim assembles (CyclingStatement), and the giant page
-              title drifts at a slower rate than the scroll around it —
-              depth through type, no imagery involved. */}
-          <Container className="relative py-20">
-            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
-              <Reveal delay={1.7}>
+          {/* The headline resolves by word, not character. It
+              participates in the scene without delaying basic
+              comprehension. */}
+          <Container className="relative py-20 sm:py-28">
+            <div className="services-opening-layout grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-16">
+              <Reveal
+                delay={0.08}
+                className="services-hero-copy rounded-[1.75rem] border border-ivory/10 bg-[rgba(22,30,25,0.36)] p-5 shadow-[0_28px_90px_rgba(10,16,13,0.2)] backdrop-blur-xl sm:p-7"
+              >
                 <span className="inline-flex items-center rounded-full border border-ivory/30 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory/90">
-                  Curiosity
+                  Brand strategy &amp; systems
                 </span>
                 {/* Phase 4 persuasion pass: the old headline asked a
                     question ("Why should a business care about
@@ -160,16 +333,14 @@ export default function ServicesPage() {
                     immediately for every visitor, stable at every width. */}
                 <SplitReveal
                   as="h1"
-                  splitType="chars"
+                  splitType="words"
                   className="mt-6 max-w-3xl font-display text-[clamp(2.5rem,6vw,4.6rem)] font-normal leading-[1.04] tracking-[-0.01em] text-ivory"
                 >
-                  Branding is how a business gets chosen before it gets compared.
+                  Decide why they choose you. Build the brand around that.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
-                  One client&apos;s engagement moved from{" "}
-                  <span className="font-medium text-sandstone">0.71%</span> to{" "}
-                  <span className="font-medium text-sandstone">2.81%</span> in eight weeks of this exact work. The
-                  chapters below show what made that happen, and where your brand would start.
+                  Remote brand strategy for UK service businesses, led directly by Suman Sharma.
+                  Position, language, identity, and the places buyers meet you.
                 </p>
                 {/* The hero's one quiet action — a visitor sold by the
                     opening claim previously had nowhere to act until the
@@ -182,34 +353,44 @@ export default function ServicesPage() {
                 <div className="mt-7">
                   <Magnetic>
                     <a
-                      href="#book"
-                      className="group inline-flex items-baseline gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
+                      href="#situation"
+                      className="group inline-flex min-h-11 items-center gap-2 text-sm tracking-wide text-ivory/90 transition-colors duration-300 hover:text-ivory"
                     >
-                      <span className="link-underline">Ready already? Open the strategy room</span>
-                      <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-y-0.5">
-                        ↓
-                      </span>
+                      <span className="link-underline">Find your starting point</span>
+                      <ArrowDown
+                        aria-hidden="true"
+                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5"
+                        strokeWidth={1.8}
+                      />
                     </a>
                   </Magnetic>
                 </div>
               </Reveal>
-              {/* Editorial chapter index — the page's four acts listed
-                  the way a film lists chapters, replacing a row of
-                  generic pill buttons. Real navigation (same anchors
-                  as SectionJumpNav), presented with editorial weight. */}
-              <Reveal delay={0.1} className="hidden lg:block lg:pb-2">
-                <ol className="lg:min-w-52">
-                  {JUMP_ITEMS.map((item, i) => (
+              {/* Four acts are enough to orient the opening frame. The
+                  complete nine-chapter rail takes over once the visitor
+                  moves, so the headline never has to compete with a table
+                  of contents before its argument has landed. */}
+              <Reveal delay={0.18} className="services-opening-map lg:pb-2">
+                <p className="services-opening-map-label">A clearer path from here</p>
+                <ol
+                  aria-label="The Brand Strategy journey"
+                  data-services-hero-index="true"
+                  className="lg:min-w-64"
+                >
+                  {HERO_ACTS.map((item) => (
                     <li key={item.href}>
                       <a
                         href={item.href}
-                        className="group flex items-baseline justify-end gap-3 border-b border-ivory/15 py-2.5 transition-colors duration-200 hover:border-ivory/40"
+                        className="group grid grid-cols-[auto_1fr] items-start gap-x-3 border-b border-ivory/20 py-3.5 text-left transition-colors duration-200 hover:border-ivory/45 focus-visible:border-ivory/60"
                       >
-                        <span className="font-display text-sm text-ivory/70 transition-colors duration-200 group-hover:text-sandstone">
-                          {String(i + 1).padStart(2, "0")}
+                        <span className="row-span-2 font-display text-sm text-sandstone/90 transition-colors duration-200 group-hover:text-sandstone">
+                          {item.number}
                         </span>
-                        <span className="text-sm tracking-wide text-ivory/90 transition-colors duration-200 group-hover:text-ivory">
+                        <span className="text-sm tracking-wide text-ivory transition-colors duration-200">
                           {item.label}
+                        </span>
+                        <span className="mt-1 text-[0.68rem] leading-snug tracking-[0.02em] text-ivory/72 transition-colors duration-200 group-hover:text-ivory/86">
+                          {item.note}
                         </span>
                       </a>
                     </li>
@@ -218,493 +399,317 @@ export default function ServicesPage() {
               </Reveal>
             </div>
           </Container>
-          <ScrollCue />
-          {/* Scene dissolve system, boundary 1 of 7: the hero's last
-              frames darken into Authority's charcoal, so the cut into
-              the pinned build reads as the same shot getting darker
-              rather than a new page section starting. Every following
-              chapter opens with the same device — a veil of the
-              PREVIOUS chapter's mood color dissolving into its own —
-              one continuous color journey instead of stacked blocks. */}
-          <SceneHandoff color="#171A17" heightClass="h-[24vh]" />
-        </PhotoHero>
+          {/* The hero's last frames darken into the Situation
+              chapter's charcoal. Every later chapter uses the same
+              veil-and-handoff grammar, so the page reads as one colour
+              journey rather than a stack of unrelated blocks.
 
-        {/* Authority — the one deliberate ScrollTrigger.pin section. */}
-        {/* The wrapper paints charcoal itself — it sits in normal flow,
-            is never transformed by GSAP, and therefore always spans the
-            full viewport regardless of what the pin does to its child.
-            See the main-level comment above for the full root cause. */}
-        <section id="authority" className="relative scroll-mt-24" style={{ backgroundColor: MOOD.charcoal }}>
-          <PinnedBrandBuild />
-          <SceneHandoff color="#191B16" />
+              The light hero needs one guarantee the dark one never did:
+              SceneHandoff's opacity scrubs in as the boundary crosses
+              the viewport, so at first contact the bright meadow foot
+              used to sit directly against the Situation chapter's full
+              charcoal veil — a hard line across the frame. The static
+              strip below keeps the boundary pixel charcoal on both
+              sides at every scroll position; the scrubbed handoff
+              still deepens the anticipation above it. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[14vh]"
+            style={{ background: "linear-gradient(0deg, #171A17 0%, #171A17 22%, transparent 100%)" }}
+          />
+          <SceneHandoff color="#171A17" heightClass="h-[24vh]" endOpacity={1} reducedOpacity={1} />
         </section>
 
-        {/* An extension of Authority, not a new act — shows the real
-            stakes behind "marketing amplifies whatever is already
-            there" before Education explains the recognition ladder.
-            Grounded in established branding theory (mental
-            availability, distinctive assets), described as a general
-            pattern rather than a specific company's story — the
-            honest version of the requested comparison, since no real
-            two-business case study exists yet to build a factual one
-            from. Same ambient shader as Authority/Education/Desire —
-            direct feedback that stacking several new flat bg-soil
-            sections back to back recreated the exact "dead zone"
-            problem already fixed once on Desire; the fix is the same
-            each time, continuing one visual system rather than adding
-            a new device per section. */}
-        {/* Mood: STONE. Part of the Phase 1 cinematic color script —
-            each Services section sits on its own temperature-shifted
-            dark (see MOOD in sectionWash.ts) instead of the one warm
-            soil veil that was re-warming the whole page into a single
-            amber wash. The overlay gradient is tinted with the
-            section's own mood tone, never soil. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.stone }}>
-          {/* Approved Positioning footage (Pexels 6134369, standard
-              license). This is the arrival shot — one dominant summit
-              above the cloud inversion, stillness and hierarchy — so it
-              lives on THIS chapter (positioned generically vs
-              distinctly), per the direction that Positioning means
-              standing above the market while Education means climbing
-              toward it. Cool grade per the same direction: warmth pulled
-              across shadows and mids, depth carried by contrast and the
-              sun's own luminance rather than color, so the peak stays
-              unmistakably above everything without the golden postcard. */}
-          <BackgroundVideo
-            parallax
-            video="/videos/pexels-summit-inversion.mp4"
-            videoWebm="/videos/pexels-summit-inversion.webm"
-            poster="/images/pexels-summit-inversion-poster.jpg"
-          />
-          {/* Tertiary life, story-first: a single distant bird crossing
-              above the cloud sea at long, irregular intervals — the one
-              thing moving higher than the summit's own stillness,
-              underlining elevation without disturbing it. */}
-          <SkyLife density="rare" solitary band={[8, 26]} color="rgba(18,22,24,0.75)" />
-          {/* Overlay stays a step cooler than the stone base and a touch
-              denser at the top where the sky sits — the summit clip is
-              already graded slate, so this only steadies type contrast
-              without dulling the cloud sea's own shadow depth. */}
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(24,27,23,0.78) 0%, rgba(24,27,23,0.55) 50%, rgba(24,27,23,0.75) 100%)",
-            }}
-          />
-          {/* Scene dissolve: Authority's charcoal handing off into
-              Stakes' stone. */}
-          <SceneVeil color="#171A17" />
-          <LazyAmbientShader opacity={0.1} />
-          {/* Same ghost watermark word technique Home ("ELEMENTS"), About
-              ("WHY"), and Blog ("NOTES") already use, extended here — a
-              recurring graphic motif tying new sections into the same
-              visual system rather than each reading as a one-off. */}
-          <div className="relative">
-            <WeakBrandingCost />
+        {/* Choose your situation — the visitor places themselves before
+            any package is pitched. Reads the Home page's saved choice
+            (the shared localStorage key VisitorRecognition writes) so
+            the site remembers where they stand instead of asking twice.
+            A quiet interstitial on the page's charcoal ground; the
+            chapters around it carry the media. */}
+        <section id="situation" data-services-scene="situation" className="relative flex min-h-[140svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: "#3f4d44" }}>
+          {/* Original procedural Situation film: one coherent material
+              world holds three different starting conditions. A pale
+              mineral seed begins, shifted strata wait to realign, and
+              repeating rings carry consistency forward. The chapter now
+              teaches diagnosis without borrowing the Package selector's
+              separate water-current metaphor. */}
+          {/* The moss stream film is retired with the hero's aspen on the
+              same verdict. The diagnosis chapter reads as a quiet dark
+              room: a near black orangery field with a warm lamp bloom,
+              so the three situation sentences are the only thing moving. */}
+          <LivingGradient preset="orangery" />
+          {/* The lamp made visible: a warm pool that brightens as the
+              chapter centres, answered by moss from the low corner. */}
+          <div aria-hidden="true" data-services-atmosphere="situation">
+            <span />
+            <span />
           </div>
-          <SceneHandoff color="#1A2026" />
+          {/* The visitor's own hand carries an ember of the lamp light
+              across the dark room. */}
+          <ServicesPointerLight tone="ember" />
+          {/* Complete the opening cross-dissolve. The hero already
+              anticipates this chapter with a 24vh departure veil; the
+              matching arrival veil lets that tone release into the
+              Situation film instead of exposing a hard horizontal cut. */}
+          <SceneVeil color="#171A17" heightClass="h-[24vh]" endOpacity={1} />
+          <div data-services-content-plane="true" className="relative">
+            <SituationPath />
+          </div>
+          <SceneHandoff color="#171A17" />
         </section>
 
-        {/* Education — the one Three.js moment (inside PerceptionLadder,
-            via AmbientElementShader), scoped and ambient. Chapter identity
-            per direct creative direction: the CLIMB — movement upward,
-            evolving perspective, rising through layers. Its footage slot
-            is reserved for an approved ascending shot. */}
-        {/* Mood: MIST — blue-grey, the coolest chapter so far, directly
-            after Stakes' dry stone. See MOOD in sectionWash.ts. */}
-        <section id="education" className="relative scroll-mt-24 overflow-hidden" style={{ backgroundColor: MOOD.mist }}>
-          {/* Approved Education footage (Pexels 8522207, David Roberts,
-              free license): seedlings rising out of dark soil in
-              timelapse — the climb performed by nature itself, growth
-              stages upward from unknown ground, no human needed. Also
-              the film's best cut: Authority ends underground in roots;
-              this chapter opens with what those roots push above the
-              surface. Crossfade loop (never ping-pong — reversed growth
-              reads as shrinking). */}
-          <BackgroundVideo
-            parallax
-            video="/videos/pexels-redwood-ferns.mp4"
-            videoWebm="/videos/pexels-redwood-ferns.webm"
-            poster="/images/pexels-redwood-ferns-poster.jpg"
-          />
+        {/* The full practice — every real service on offer, answered
+            plainly before the packages bundle them. Restored per
+            direct instruction: the offerings list (data/services.ts)
+            lost its section in the discovery rebuild, which left
+            "what do you actually do" with no complete answer anywhere
+            on the page. Editorial rows rather than a card grid; each
+            offering keeps its own accent from the data. */}
+        <section id="offerings" data-services-scene="offerings" className="relative flex min-h-[170svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          {/* Original generated strategy terrain: mist withdraws from a
+              tactile topographic world while one pale route becomes
+              clear. The six disciplines stay distinct in the foreground,
+              but the moving terrain makes the shared strategic foundation
+              visible without turning the chapter into another card grid. */}
+          {/* The root network macro read as a harsh tangle on black, the
+              exact register the media standard bans. The understory field
+              was built to sit under frosted panels, and this chapter is
+              frosted panels; the disciplines are the only subject left. */}
+          <LivingGradient preset="understory" />
+          {/* Light through the canopy: two soft diagonal beams on long
+              sweeps and a deep forest bloom, so the understory reads as a
+              lit place while the discipline panels carry the reading. */}
+          <div aria-hidden="true" data-services-atmosphere="offerings">
+            <span />
+            <span />
+            <span />
+          </div>
+          <ServicesPointerLight tone="sun" />
           <div
             className="absolute inset-0"
+            data-services-media-wash="offerings"
             aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(26,32,38,0.5) 0%, rgba(26,32,38,0.3) 55%, rgba(26,32,38,0.52) 100%)",
-            }}
           />
-          {/* Scene dissolve: Stakes' dry stone into Education's mist. */}
-          <SceneVeil color="#191B16" />
-          <div className="relative">
-            <PerceptionLadder />
+          <div data-services-content-plane="true" className="relative w-full">
+            <ServiceDisciplineExplorer />
           </div>
           <SceneHandoff color="#0E1714" />
         </section>
 
-        {/* CommonMistakes used to be its own full-viewport section here
-            — a Creative Direction Audit found it taught the same idea
-            as Stakes (WeakBrandingCost) above with a separate video
-            beat, directly contributing to "the page is longer than
-            necessary and repeats branding concepts." Its four real
-            observations now live as a compact addendum inside Stakes
-            instead; the separate section, video, and shader are gone. */}
-
-        {/* Trust (FounderLens) removed on direct request following the
-            Creative Direction Audit. Founder credibility still lives on
-            the About page; not duplicated here. */}
-
-        {/* Desire — the real package selector. Direct feedback flagged
-            this section as flat and motionless (plain bg-soil, three
-            outlined boxes, no texture at all) against Authority and
-            Education right above it, which both carry the same ambient
-            shader. Extending that shader here, not a new visual, keeps
-            the throughline the brief itself asked for: one visual
-            system continuing through the page rather than a new device
-            per section. Opacity dropped slightly below Authority's
-            (0.3) and Education's (0.16) since PackageSelector's own
-            interactive cards need to stay the clearest thing on screen.
-            Direct feedback confirmed this section still read blank —
-            a wide Himalayan valley opening up behind the choice, a real
-            visual echo of "where does my brand actually stand," reused
-            from Home's own elements row since nothing on Services
-            claims it. Direct, repeated feedback that text was blending
-            into video across the page — every overlay on this page is
-            now a flat, consistent bg-soil/80 (was a hand-tuned 70/76/78
-            spread), a real contrast increase applied as one system
-            rather than guessed per clip. */}
-        {/* Media replaced per direct confirmation: the wide Himalayan
-            valley vista read as "travel," against the quiet, intimate,
-            water-driven register every Pinterest reference shares.
-            Golden-hour light rippling on dark water now (Pexels id
-            38132728, standard license) — reflection as the literal
-            visual metaphor for "where does your brand actually
-            stand." Built into the same seamless ping-pong loop as the
-            Book Call clip; WebM first, MP4 fallback. Overlay eased
-            from the blanket bg-soil/80 to a vertical gradient — the
-            gold streak stays visible between the content blocks while
-            both text zones (heading up top, package card below) sit on
-            the darker stops. */}
-        {/* Mood: DEEP WATER — night-blue dark; the water clip's gold
-            streak is the page's first warm accent, jewelry against a
-            cool ground rather than an amber section. */}
-        <section id="desire" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.deepwater }}>
-          <BackgroundVideo parallax
+        {/* Desire exposes the packages early enough for a ready
+            visitor to act before the teaching chapters. Its original
+            deep-water film keeps three legitimate currents visible,
+            then lets them resolve into one legible scope. */}
+        <section id="desire" data-services-scene="desire" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-14 sm:py-16 lg:py-16" style={{ backgroundColor: MOOD.deepwater }}>
+          {/* Original procedural package-choice loop: three
+              legitimate currents remain visible, then settle into one
+              legible channel. The restrained mineral-gold trace marks
+              choice without turning the section into a prize animation. */}
+          <BackgroundVideo
+            parallax
             push
-            video="/videos/pexels-forest-floor-fungi.mp4"
-            videoWebm="/videos/pexels-forest-floor-fungi.webm"
-            poster="/images/pexels-forest-floor-fungi-poster.jpg"
+            video="/videos/pexels-golden-fog-sea.mp4"
+            videoWebm="/videos/pexels-golden-fog-sea.webm"
+            poster="/images/pexels-golden-fog-sea-poster.jpg"
           />
           <div
             className="absolute inset-0"
             aria-hidden="true"
             style={{
               backgroundImage:
-                "linear-gradient(180deg, rgba(14,23,20,0.55) 0%, rgba(14,23,20,0.35) 45%, rgba(14,23,20,0.58) 100%)",
+                "linear-gradient(180deg, rgba(14,23,20,0.34) 0%, rgba(14,23,20,0.16) 45%, rgba(14,23,20,0.4) 100%)",
             }}
           />
-          {/* Scene dissolve: Education's blue mist into Desire's deep
-              water. */}
-          <SceneVeil color="#1A2026" />
-          <div className="relative">
+          {/* Scene dissolve: the situation chapter's charcoal into
+              Desire's deep water. */}
+          <SceneVeil color="#171A17" />
+          <div data-services-content-plane="true" className="relative">
             <PackageSelector />
           </div>
-          <SceneHandoff color="#172019" />
+          <SceneHandoff color="#171A17" />
         </section>
 
-        {/* An extension of Desire, not a new act — direct feedback
-            wanted the deliverables to feel tangible right after picking
-            a package, not left as bullet points inside a card. Every
-            item traces to real services.ts data (see the component's
-            own comment). No id/jump-nav entry — a supporting beat within
-            Desire's own objection. Same shader treatment as the
-            sections around it — see WeakBrandingCost's comment above
-            for why. */}
-        {/* Mood: THE STUDY — final art direction on this chapter, per
-            direct screenshot feedback: the abstract room (lamp glows,
-            cloth light, empty dark field) broke the site's own visual
-            standard — every other chapter lives in serene nature. The
-            study now sits over the emerald river (the approved clip
-            held in the reassignment pool since Phase 1): slow green
-            water, the Pinterest register exactly, darkened by a
-            walnut-tinted overlay so the ivory documents stay the
-            brightest thing in frame. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.study }}>
-          {/* Fresh clip per direct instruction and the glassmorphism
-              references (Pexels id 27065369, standard free license):
-              mist drifting over a calm lake at dawn, tree silhouette
-              framing — the serene register of the Home and About
-              backdrops. The overlay is deliberately light: the scene
-              is meant to SHOW, the frosted glass cards carry their own
-              readability. Strongest 8s, slowed 0.9x, near native
-              grade, seamless ping-pong loop. 3.2MB MP4 / 2.0MB WebM. */}
+        {/* Verified outcome — proof directly after the packages, every
+            number from projects.ts verified stats. Charcoal ground so
+            the numbers themselves are the visual; it also hands
+            seamlessly into Authority's identical charcoal. */}
+        <section id="proof" data-services-scene="verified-outcome" className="relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-hidden py-16 sm:py-20 lg:py-24" style={{ backgroundColor: MOOD.charcoal }}>
+          <BackgroundVideo
+            video="/videos/pexels-redwood-ferns.mp4"
+            videoWebm="/videos/pexels-redwood-ferns.webm"
+            poster="/images/pexels-redwood-ferns-poster.jpg"
+            parallax
+            playbackRate={0.94}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(13,18,18,0.58) 0%, rgba(13,18,18,0.36) 48%, rgba(13,18,18,0.28) 100%)",
+            }}
+          />
+          <SceneVeil color="#0E1714" />
+          <div data-services-content-plane="true" className="relative">
+            <VerifiedOutcome />
+          </div>
+        </section>
+
+        {/* The case index, restored. /work redirects here to #proof, which left
+            a single flagship outcome as the only reachable evidence: a visitor
+            convinced by it had nowhere to go to see the rest. WorkIndex was
+            built for the old /work page and stranded complete and unimported
+            when that route was folded in, so this rewires the existing
+            component rather than rebuilding it (M4: "Build case index"). It
+            carries its own <section id="index">, filters from data/workTaxonomy
+            and renders only verified projects from data/projects. */}
+        <WorkIndex projects={projects} />
+
+        {/* The causal spine behind the cases above (M4: "case index and causal
+            case-study spine"). The index answers which project resembles your
+            situation; this answers what was actually decided inside them, which
+            is the part that teaches. Also stranded from the old /work page:
+            196 lines, zero importers, pulling its own verified projects.
+            No jump-nav entry on purpose — it reads as the second half of the
+            evidence chapter rather than a tenth destination in a rail that
+            already carries nine. */}
+        <DecisionMap />
+
+        {/* Concept studies. The three chapters above are all client evidence,
+            which only speaks to buyers whose situation already resembles one of
+            five engagements. The Lab shows the method itself on brands nobody
+            hired us for, which is the only honest way to demonstrate range
+            beyond the client list.
+
+            Safe to show beside real work because its framing is explicit and
+            enforced in the data: data/conceptProjects.ts opens with an honesty
+            contract ("Zero clients, zero engagements, zero outcomes are
+            implied"), the component repeats it on screen, and measurement
+            sections there are plans rather than results. That is what keeps it
+            clear of CLAUDE.md's rule against implying experience. 415 lines,
+            zero importers before this. */}
+        <TatvaLab />
+
+        {/* Authority now resolves inside one viewport. The shared services
+            camera assembles its five layers during entry, discovery, and
+            resolution, so the chapter keeps its teaching sequence without
+            holding the visitor inside a long sticky runway. */}
+        <section id="authority" className="relative" style={{ backgroundColor: MOOD.charcoal }}>
+          <PinnedBrandBuild />
+          {/* This boundary's dissolve colors were transposed: the dark
+              chapter closed in its own dark and the cream chapter opened
+              in its own cream, so both halves were invisible and the
+              page's one dark to daylight moment was a razor cut. The
+              handoff now anticipates the perception chapter's paper. */}
+          <SceneHandoff color="#F2EBDD" endOpacity={0.62} reducedOpacity={0.4} />
+          {/* Same guarantee the light hero needed in reverse: the scrub
+              is never complete at first contact, so the boundary pixel
+              itself stays paper on both sides at every scroll position. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[10vh]"
+            style={{ background: "linear-gradient(0deg, #F2EBDD 0%, #F2EBDD 14%, transparent 100%)" }}
+          />
+        </section>
+
+        {/* A content-sized memory model. Deliberate tab choices stay stable
+            while native scrolling carries the reader toward the audit. */}
+        <section
+          id="education"
+          data-services-scene="education"
+          className="relative flex flex-col overflow-hidden py-16 sm:py-20 lg:py-24"
+          style={{ backgroundColor: "#F2EBDD" }}
+        >
+          <div data-perception-ambient-film="true" aria-hidden="true" className="absolute inset-0">
+            <BackgroundVideo
+              parallax
+              video="/videos/pexels-summit-inversion.mp4"
+              videoWebm="/videos/pexels-summit-inversion.webm"
+              poster="/images/pexels-summit-inversion-poster.jpg"
+              playbackRate={0.82}
+            />
+          </div>
+          <div data-perception-landscape="true" aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[35%] sm:h-[38%]">
+            <Image
+              src="/images/generated/bt-services-memory-horizon.webp"
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+          </div>
+          <div data-perception-paper-wash="true" aria-hidden="true" className="absolute inset-0" />
+          {/* Reading light over the thinned paper: a warm pool where the
+              headline sits, mist answering from the low corner. */}
+          <div aria-hidden="true" data-services-atmosphere="education">
+            <span />
+            <span />
+          </div>
+          <ServicesPointerLight tone="sun" />
+          {/* The other transposed half: the arrival veil wears the
+              authority chapter's charcoal and releases into daylight. */}
+          <SceneVeil color="#191B16" heightClass="h-[20vh]" endOpacity={0.06} />
+          <div data-services-content-plane="true" className="relative">
+            <PerceptionLadder />
+          </div>
+          <SceneHandoff color="#EEE6D7" />
+        </section>
+
+        {/* The Recognition Audit becomes a tactile field note. Five private
+            answers remain open before the same explicit Mailchimp consent
+            handoff reveals the remaining questions. */}
+        <section
+          id="audit"
+          data-services-scene="audit"
+          className="relative flex min-h-[100svh] scroll-mt-24 flex-col items-center justify-center overflow-hidden"
+          style={{ backgroundColor: "#EEE6D7" }}
+        >
+          {/* The clarity footage finally has a consumer. A single trout over
+              sunlit sand through glass-clear water is the audit chapter's own
+              metaphor: you can see all the way to the bottom. Until now the
+              whole of generatedMediaManifest.ts was orphaned, so this clip and
+              the eight beside it were encoded, correct, and rendered nowhere.
+
+              The paper tone stays on top at 0.82 rather than being replaced.
+              This chapter is dark type on light paper and it carries the text
+              that was just brought to the reading floor; the footage is meant
+              to be sensed at the edges of the card, never to sit under body
+              copy. Media standard: footage stays bright, the panel carries
+              readability. */}
           <BackgroundVideo
             parallax
-            push
-            video="/videos/pexels-dandelion-release.mp4"
-            videoWebm="/videos/pexels-dandelion-release.webm"
-            poster="/images/pexels-dandelion-release-poster.jpg"
+            video="/videos/generated/bt-services-healthcheck-clarity.mp4"
+            videoMobile="/videos/generated/bt-services-healthcheck-clarity-mobile.mp4"
+            poster="/images/generated/bt-services-healthcheck-clarity-poster.jpg"
+            playbackRate={0.92}
           />
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(23,32,25,0.55) 0%, rgba(23,32,25,0.28) 45%, rgba(23,32,25,0.6) 100%)",
-            }}
-          />
-          <DustMotes />
-          {/* Scene dissolve: Desire's deep water hands into the river
-              study. */}
-          <SceneVeil color="#0E1714" heightClass="h-[15vh]" />
-          <div className="relative">
-            <DeliverablesReveal room />
+          {/* Thinned from 82%: the clarity still was all but sealed under
+              the paper. 74% keeps the field-note card legible while the
+              water actually reads at the edges. */}
+          <div aria-hidden="true" className="absolute inset-0" style={{ backgroundColor: "rgb(238 230 215 / 74%)" }} />
+          <div data-services-content-plane="true" className="relative w-full">
+            <RecognitionAudit />
           </div>
-          <SceneHandoff color="#141A15" />
+          <SceneHandoff color="#27221E" />
         </section>
 
-        {/* Proof (the Dr. Haley Nutrition case study) and Future vision
-            (the six-stage pinned process) removed on direct request
-            following the Creative Direction Audit — the pinned process
-            sequence was also rendering with overlapping text (a real
-            bug: stage numerals, headings, and the bottom stage-list row
-            all painting on top of each other). The pacing "breath" quote
-            that used to sit between them ("Proof only matters if the
-            process behind it repeats") named both by concept and no
-            longer made sense with neither present, so it's gone too. */}
-
-        {/* A slower alternative to Desire's one-click pick, for a visitor
-            who wants to think it through before Risk removal and the
-            booking CTA — direct feedback wanted the visitor to feel
-            invested before the calendar appears. Transparent scoring,
-            real package mapping, see the component's own comment for
-            why it's a distinct mechanism from PackageSelector rather
-            than a duplicate of it. Same shader treatment as the
-            sections around it — see WeakBrandingCost's comment above
-            for why. */}
-        {/* Mood: FOREST — deep green-black after the light editorial
-            break; the stream clip's mossy greens finally read as green
-            instead of being re-warmed to amber by a soil overlay. */}
-        <section className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.forest }}>
-          {/* Media replaced per direct approval (Pexels id 38507614,
-              standard license): near-black still water carrying green
-              foliage reflections — the chapter's own question made
-              visual, a self assessment as looking into still water,
-              replacing the generic forest stream. Trimmed to the
-              strongest 8s, slowed 0.85x, graded a step darker and
-              quieter into the forest mood, built into the same
-              seamless ping-pong loop as the other Pexels assets.
-              2.0MB MP4 / 0.7MB WebM. */}
-          <BackgroundVideo
-            parallax
-            video="/videos/pexels-moss-stream.mp4"
-            videoWebm="/videos/pexels-moss-stream.webm"
-            poster="/images/pexels-moss-stream-poster.jpg"
-          />
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(20,26,21,0.55) 0%, rgba(20,26,21,0.35) 50%, rgba(20,26,21,0.6) 100%)",
-            }}
-          />
-          {/* Scene dissolve: the dossier's parchment light spills into
-              the top of the forest — light traveling downward into the
-              next scene. */}
-          {/* Scene dissolve: the study's warm dark hands into the
-              forest — lamplight dimming into green-black. */}
-          <SceneVeil color="#172019" heightClass="h-[14vh]" />
-          <div className="relative">
-            <BrandHealthCheck />
-          </div>
-          <SceneHandoff color="#17201C" />
-        </section>
-
-        {/* Risk removal — the real FAQ content, reframed, merged with the
-            "before you book" preview into one section instead of two
-            back-to-back blocks. Direct feedback that the wildflowers clip
-            here read as generic stock footage, with a direct instruction
-            not to reuse footage but to preserve atmosphere through
-            another medium rather than simply removing it. Layered four
-            real, already-built, reduced-motion-safe atmospheric devices
-            instead of video — the same toolkit TexturedDark/Hero/About's
-            hero already use, just never combined here: AmbientElementShader
-            (ambient WebGL colour drift), .aurora-glow (two slow-drifting
-            warm colour blooms), .light-rays (a soft diagonal light sweep,
-            TexturedDark's own device, screen-blended so it lifts rather
-            than darkens), and Fireflies (warm wandering glow points,
-            About's forest-hero device) — together the "volumetric light,
-            soft floating particles, quiet warmth" register asked for,
-            built from motion and light rather than a filmed clip. Video
-            genuinely doesn't fit a pure reading section regardless —
-            "atmosphere without overpowering the FAQ" is closer to what
-            this layered, lower-key treatment does than a looping video
-            ever could. RiskRemovalFAQ/StrategySessionPreview both take
-            the same `dark` prop ProcessSection already exposes
-            elsewhere on this site. */}
-        {/* Was a single centered max-w-2xl column — on a real desktop
-            viewport that left roughly two fifths of the section empty
-            on both sides, the weakest composition on the page, and the
-            plain accordion sitting alone in that empty space read as
-            exactly the "template" pattern flagged directly. Two real
-            columns now: the "what happens on the call" preview (already
-            a real, separate piece of content, previously stacked below
-            with its own border and a large uneven gap) sits as a sticky
-            left rail, and the FAQ accordion fills the right column —
-            both pieces of real content the section always had, just
-            given an actual layout instead of one narrow stack. */}
-        {/* Mood: SLATE — the emotional decompression chamber before
-            Book Call. Phase 3 completed this chapter's atmosphere:
-            mist breathing over dark water (Pexels id 2534297, standard
-            license; slowed 1.5x into an 18s seamless ping-pong loop so
-            the drift reads as breathing, never as a video), and it is
-            now the section's ONLY atmospheric layer — the light-rays
-            sweep, fireflies, and ambient shader that used to stack
-            here competed with each other and with the calm this
-            chapter exists to create. One overlay keeps the fog
-            subconscious and the reading surface generous; a warm
-            gradient at the foot of the section lets slate dissolve
-            into Book Call's golden wood — light traveling into the
-            final room rather than a hard cut. */}
-        <section id="risk" className="relative scroll-mt-24 overflow-hidden py-16 sm:py-24" style={{ backgroundColor: MOOD.slate }}>
-          <BackgroundVideo parallax
-            video="/videos/pexels-living-meadow.mp4"
-            videoWebm="/videos/pexels-living-meadow.webm"
-            poster="/images/pexels-living-meadow-poster.jpg"
-          />
-          {/* Tertiary life, story-first: birds crossing the open sky
-              above the fog at irregular intervals, with pollen motes
-              drifting below — openness, exploration, possibility, the
-              exact feeling this chapter's question deserves. Randomized
-              spawn cadence so the sky never repeats itself. */}
-          <SkyLife density="occasional" band={[5, 32]} color="rgba(24,28,26,0.7)" />
-          <DustMotes />
-          {/* Overlay lightened through the middle (direct feedback that
-              the fog disappeared behind it) — the filmed mist now reads
-              through the whole reading zone, while the top edge and the
-              warm foot keep their density for the transition in and out. */}
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, rgba(23,32,28,0.52) 0%, rgba(23,32,28,0.32) 45%, rgba(23,32,28,0.45) 82%, rgba(35,31,27,0.8) 100%)",
-            }}
-          />
-          {/* Readability system: a LOCAL left-column mask under the
-              chapter heading and call list — the meadow's palest sky
-              sits exactly behind "Is this the right fit?", and a global
-              overlay dark enough to fix it would kill the whole scene.
-              This gradient shields only the text column and dissolves
-              before the meadow's living half of the frame. */}
-          <div
-            className="absolute inset-y-0 left-0 w-[58%]"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "linear-gradient(100deg, rgba(20,26,23,0.55) 0%, rgba(20,26,23,0.35) 55%, transparent 100%)",
-            }}
-          />
-          {/* Three mist depth planes above the overlay — the filmed fog
-              is the far plane; these are the mid and near planes, so the
-              atmosphere has real parallax instead of one flat backdrop.
-              The near sheet rides ParallaxDrift, moving against scroll —
-              fog passing between the visitor and the page. All layers
-              pointer-events-none, constant blur, transform/opacity only. */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div
-              className="mist-layer-a absolute -left-[18%] top-[6%] h-[55%] w-[75%] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, rgba(216,224,230,0.17) 0%, rgba(216,224,230,0.05) 48%, transparent 72%)",
-                
-              }}
-            />
-            <div
-              className="mist-layer-b absolute -right-[22%] top-[38%] h-[58%] w-[80%] rounded-full"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, rgba(198,208,216,0.14) 0%, rgba(198,208,216,0.04) 50%, transparent 74%)",
-                
-              }}
-            />
-          </div>
-          {/* Scene dissolve: the quiz's forest dark hands off into the
-              FAQ's slate mist. */}
-          <SceneVeil color="#141A15" />
-          {/* Scroll-controlled atmosphere — the fog is densest entering
-              the chapter and clears as the visitor descends through the
-              answers, arriving at Book Call in the clearest air on the
-              page. The guided-descent device this section was missing. */}
-          <ClearingMist />
-          <ParallaxDrift distance={130} className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%]">
-            <div
-              aria-hidden="true"
-              className="mist-layer-a h-full w-full"
-              style={{
-                background: "linear-gradient(0deg, rgba(206,214,221,0.15) 0%, rgba(206,214,221,0.05) 55%, transparent 85%)",
-                
-                animationDuration: "58s",
-              }}
-            />
-          </ParallaxDrift>
-          <Container className="relative max-w-6xl">
-            <DecisionClearing />
-          </Container>
-          <SceneHandoff color="#27221E" heightClass="h-[26vh]" />
-        </section>
-
-        {/* Book call — the strategy room. Direct feedback that the
-            previous asset (a blurred coffee cup and notebook photo)
-            read as a generic desk stock cliché on the page's single
-            most consequential section. Replaced after a real search
-            against the site's own established language (rejected along
-            the way: a portrait-oriented curtain clip, a cluttered dark
-            cabin interior, a cluttered kids' playroom) with sunlight
-            drifting across weathered wood grain (Pexels id 4102353,
-            standard license) — genuinely macro, muted, and quiet,
-            verified across the full clip's motion, not just its poster
-            frame. Trimmed to a 5s graded segment, then built into a
-            mathematically seamless 10s ping-pong loop (forward +
-            time-reversed twin), so there is no loop-point jump. First
-            WebM asset on the site (TexturedDark's own comment covers
-            why), MP4 fallback alongside it. */}
-        {/* Phase 1: the emotional resting point before conversion — the
-            page's kept golden moment gets the most generous vertical
-            breathing room on the page, arriving like a quiet studio
-            after the cool chapters rather than "the end of a website." */}
+        {/* The final conversation rests on a light reading surface.
+            The existing valley remains visible around the invitation;
+            its still is also the reduced motion fallback. */}
         <TexturedDark
           id="book"
           image="/images/pexels-valley-first-light-poster.jpg"
           video="/videos/pexels-valley-first-light.mp4"
           videoWebm="/videos/pexels-valley-first-light.webm"
-          className="scroll-mt-24 pb-16 pt-24 sm:pb-20 sm:pt-32"
+          overlayGradient="linear-gradient(180deg, rgba(242,240,232,0.12) 0%, rgba(31,58,40,0.08) 52%, rgba(31,58,40,0.2) 100%)"
+          className="flex min-h-[100svh] flex-col justify-center pb-16 pt-24 sm:pb-20 sm:pt-32"
         >
-          {/* The last of the FAQ's fog arrives with the visitor and
-              burns off in the warm room — the mist itself crosses the
-              final boundary instead of stopping at it. Same drifting
-              mist device as the FAQ's own layers, cool-tinted, fading
-              over the section's first stretch. */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[30vh] overflow-hidden">
-            <div
-              className="mist-layer-b absolute -left-[10%] top-0 h-full w-[120%]"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(200,209,216,0.12) 0%, rgba(200,209,216,0.04) 55%, transparent 100%)",
-                
-                animationDuration: "40s",
-              }}
-            />
-          </div>
           <StrategyRoomCTA />
         </TexturedDark>
+        </PricingProvider>
       </main>
-      <Footer />
-      <SectionJumpNav items={JUMP_ITEMS} />
+      <Footer compact />
+      <SectionJumpNav items={JUMP_ITEMS} hideOnLast showActiveLabel={false} guidedMobile />
     </>
   );
 }

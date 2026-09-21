@@ -1,0 +1,278 @@
+/* The compounding-cost chapter.
+ *
+ * Structure mined from heyparker.ai's step sequence, which is the
+ * reference Suman gave for scroll: a short run of cards that each pin
+ * and let the next one arrive on top, so the reader ends up looking at
+ * a pile rather than a row. Same stack this site already runs on
+ * (Lenis + Framer Motion + real CSS sticky, no ScrollTrigger pinning,
+ * which has been built and rolled back twice here).
+ *
+ * Why this content and not a decorative copy of the reference: these
+ * three costs compound, and a row of three columns states that while
+ * showing the opposite. Stacked, the form carries the argument — by the
+ * third card the first two are still physically there, under it. That
+ * is the local bar: a section that still means the same thing with the
+ * animation removed has failed.
+ *
+ * CSS sticky owns positioning. A small local director only draws the
+ * number-row meter and scales a covered card behind the arriving one.
+ *
+ * Sticky safety: nothing here sets `overflow: hidden`. The two
+ * ancestors that do clip (.home-v4 and .home-v4-chapter) use
+ * `overflow: clip`, which per spec does NOT create a scroll container
+ * and so leaves sticky working — the same thing HomePaths already
+ * relies on.
+ */
+
+.scene {
+  position: relative;
+  isolation: isolate;
+  color: #f2f0e8;
+  background: #14180f;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 74rem);
+  margin-inline: auto;
+  padding: clamp(5rem, 11svh, 8rem) clamp(1.5rem, 5.5vw, 5.5rem) clamp(5rem, 12svh, 9rem);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: #d4b99a;
+  font-size: .75rem;
+  line-height: 1.5;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 19ch;
+  margin: 0;
+  font: 400 clamp(2.5rem, 5vw, 4.5rem)/1.02 var(--font-display), Georgia, serif;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+
+.title em {
+  color: #d4b99a;
+  font-weight: 400;
+}
+
+.lede {
+  max-width: 44ch;
+  margin: 1.25rem 0 0;
+  color: rgb(242 240 232 / 72%);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+/* Grid row-gap, deliberately, rather than margin on the cards.
+ *
+ * A sticky element stops sticking when its own MARGIN box runs out of
+ * room in the container, so spacing the cards with margin-bottom caps
+ * each card's hold at roughly the size of that margin: card one
+ * released exactly as card two arrived, and the result was a hand off,
+ * one card at a time, with empty field between them. Verified that way
+ * on a real render before this was written.
+ *
+ * row-gap puts the same space in the container instead, leaving each
+ * card's margin box equal to its own height, so every card holds until
+ * the list itself ends. That is what makes the three actually pile up
+ * rather than take turns. */
+.stack {
+  display: grid;
+  row-gap: clamp(8rem, 28svh, 18rem);
+  margin: clamp(2.5rem, 7svh, 4.5rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The stagger is what makes the pile legible, and 4.2rem is not an
+   arbitrary gap: it is deep enough to clear a card's top padding plus
+   its number row, so a covered card keeps showing its own numeral. By
+   the third card the reader sees 01 and 02 still sitting underneath 03,
+   which is the whole argument of the chapter stated as layout. A
+   smaller offset left only a blank rounded edge showing, which says
+   nothing. */
+.card {
+  --title-travel: 8px;
+  --body-travel: 12px;
+  position: sticky;
+  transform-origin: top center;
+  scale: calc(1 - var(--stack-cover, 0) * .045);
+  top: calc(15svh + var(--i) * 4.2rem);
+  scroll-margin-block: 80px;
+  padding: clamp(1.75rem, 3.4vw, 2.9rem);
+  border: 1px solid rgb(242 240 232 / 14%);
+  border-radius: 1.75rem;
+  /* Opaque surfaces keep covered text from ghosting through the next card. */
+  background: linear-gradient(148deg, #1c221a 0%, #141812 100%);
+  box-shadow: 0 32px 90px rgb(6 10 8 / 52%), 0 2px 0 rgb(242 240 232 / 6%) inset;
+  /* Solid surfaces need no live backdrop blur. */
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  gap: 1.1rem;
+  margin-bottom: .9rem;
+}
+
+.number {
+  color: #c6a97a;
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .1em;
+}
+
+.meter {
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  height: 1px;
+  background: rgb(242 240 232 / 14%);
+}
+
+.meter::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #c6a97a;
+  transform: scaleX(var(--stack-arrival, 1));
+  transform-origin: left center;
+}
+
+/* Pointer reward: a card rises a breath to meet the hand, its edge and
+   numeral catch warm light, and the meter brightens — the same warmth
+   the scroll choreography already speaks, answered at the cursor. The
+   lift uses `translate` so the stack's `scale` and sticky geometry are
+   untouched. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card {
+    translate: 0 0;
+    transition:
+      translate 460ms cubic-bezier(.22, 1, .36, 1),
+      border-color 460ms cubic-bezier(.22, 1, .36, 1),
+      box-shadow 460ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .card:hover {
+    translate: 0 -6px;
+    border-color: rgb(198 169 122 / 44%);
+    box-shadow: 0 40px 110px rgb(6 10 8 / 62%), 0 2px 0 rgb(242 240 232 / 9%) inset;
+  }
+  .number { transition: color 320ms ease; }
+  .card:hover .number { color: #e4c391; }
+  .card:hover .meter { background: rgb(242 240 232 / 26%); }
+}
+
+.card h3 {
+  margin: 0;
+  font: 400 clamp(1.85rem, 3.3vw, 2.9rem)/1.08 var(--font-display), Georgia, serif;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+  translate: 0 calc((1 - var(--stack-title, 1)) * var(--title-travel));
+}
+
+.card p {
+  max-width: 52ch;
+  margin: .85rem 0 0;
+  color: rgb(242 240 232 / 74%);
+  font-size: 1rem;
+  line-height: 1.65;
+  translate: 0 calc((1 - var(--stack-body, 1)) * var(--body-travel));
+}
+
+/* A covered reading rises above the pile when reached with Tab, including
+   reverse Tab. Its content stays still without changing document geometry. */
+.card:focus-within {
+  z-index: 4;
+  scale: 1;
+}
+
+.card:focus-within :is(h3, p) { translate: none; }
+.card:focus-within .meter::after { transform: none; }
+
+.scene :is(.card, .link):focus-visible {
+  outline: 2px solid #d4b99a !important;
+  outline-offset: 5px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: clamp(3rem, 8svh, 5rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(242 240 232 / 16%);
+}
+
+.footer > p {
+  max-width: 46ch;
+  margin: 0;
+  color: rgb(242 240 232 / 78%);
+  font-size: .95rem;
+  line-height: 1.6;
+}
+
+.link {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  min-height: 3rem;
+  scroll-margin-block: 80px;
+  padding: .75rem 1.35rem;
+  border: 1px solid rgb(242 240 232 / 30%);
+  border-radius: 999px;
+  color: #14180f;
+  background: #e9e2d4;
+  font-size: .9rem;
+  line-height: 1.4;
+  transition: background-color 200ms ease;
+}
+
+.link:hover {
+  background: #fff9ed;
+}
+
+/* Below this width a card plus its heading stops fitting inside one
+   viewport, and a sticky frame whose content overflows the screen
+   cannot hold cleanly — it just clips. Measured rule from this
+   project, so the stack degrades to ordinary flow rather than pinning
+   something the reader cannot finish reading. */
+@media (max-width: 900px), (max-height: 700px) {
+  .stack { row-gap: 1.1rem; }
+  .card {
+    --title-travel: 4px;
+    --body-travel: 6px;
+    position: static;
+    scale: 1;
+    padding: 1.5rem 1.35rem;
+    border-radius: 1.35rem;
+    backdrop-filter: none;
+  }
+  .card h3 { font-size: clamp(1.7rem, 6.4vw, 2.2rem); }
+  .card p { font-size: .95rem; }
+  .footer { flex-direction: column; align-items: flex-start; }
+  .link { width: 100%; }
+}
+
+/* Pause only decorative motion. Native sticky positioning and spacing keep
+   exactly the same geometry, so toggling cannot move a reading to its old
+   flow position. Compact screens keep their ordinary-flow list in both modes. */
+@media (prefers-reduced-motion: reduce) {
+  .card { scale: 1; }
+  .card :is(h3, p) { translate: none; }
+  .link { transition: none; }
+  .meter::after { transform: none; }
+}
+
+:global(html[data-motion="reduced"]) .card { scale: 1; }
+:global(html[data-motion="reduced"]) .card :is(h3, p) { translate: none; }
+:global(html[data-motion="reduced"]) .link { transition: none; }
+:global(html[data-motion="reduced"]) .meter::after { transform: none; }
