@@ -266,6 +266,28 @@ html[data-services-experience="active"] [data-services-journey-thread] {
 }
 :root[data-motion="reduced"] #offerings .services-discipline-rail > button { transition: none; }
 
+/* Keep the preceding chapter's height stable when a package changes its
+   route, so the choice below cannot shift because of copy above it. */
+#offerings [data-service-route-context] { display: grid; }
+#offerings [data-service-route-state] {
+  display: block !important;
+  grid-area: 1 / 1;
+  visibility: hidden;
+  overflow: visible !important;
+  -webkit-line-clamp: unset !important;
+  color: #4a5b43;
+}
+#offerings [data-service-route-state][data-active="true"] { visibility: visible; }
+#offerings [data-service-route-state] > span:first-child { color: #556b4a; }
+
+/* Scope expansion adds room below the controls. Anchored phone arrivals
+   also keep the heading beneath the fixed navigation. */
+#desire {
+  justify-content: flex-start !important;
+  padding-top: max(6.5rem, 11svh) !important;
+  padding-bottom: 4rem !important;
+}
+
 /* Additional proof is available on demand, between the case and foundation. */
 [data-services-evidence-library] { background: #eee8db; color: #25392e; }
 [data-services-evidence-library] > summary {
