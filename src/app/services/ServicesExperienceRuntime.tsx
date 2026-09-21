@@ -80,6 +80,11 @@ export function ServicesExperienceRuntime() {
     const firstScene = scenes[0];
     if (!firstScene) return;
     const hero = firstScene;
+    // The journey thread is the only reader of --services-journey-progress,
+    // so the value is written on it rather than restyling the whole page.
+    let journeyTarget: HTMLElement =
+      document.querySelector<HTMLElement>("[data-services-journey-thread]") ??
+      document.documentElement;
 
     document.documentElement.dataset.servicesExperience = "active";
     const generatedIds = new Set<HTMLElement>();
@@ -336,12 +341,11 @@ export function ServicesExperienceRuntime() {
     // why the rail could still announce Opening signal beside Client proof.
     // The focal line follows the content plane and resolves identically for
     // wheel, trackpad, touch, keyboard and direct anchors.
-    function chapterAtFocalLine(viewportHeight: number) {
+    function chapterAtFocalLine(viewportHeight: number, sceneBounds: DOMRect[]) {
       const focalY = viewportHeight * 0.34;
 
       if (pendingAnchorIndex !== null) {
-        const anchorScene = scenes[pendingAnchorIndex];
-        const anchorBounds = anchorScene?.getBoundingClientRect();
+        const anchorBounds = sceneBounds[pendingAnchorIndex];
         const anchorIndex = pendingAnchorIndex;
 
         if (anchorBounds && anchorBounds.top <= focalY && anchorBounds.bottom > focalY) {
@@ -354,8 +358,7 @@ export function ServicesExperienceRuntime() {
       let nearestIndex = 0;
       let nearestDistance = Number.POSITIVE_INFINITY;
 
-      scenes.forEach((scene, index) => {
-        const bounds = scene.getBoundingClientRect();
+      sceneBounds.forEach((bounds, index) => {
         if (bounds.top <= focalY && bounds.bottom > focalY) {
           nearestIndex = index;
           nearestDistance = -1;
@@ -373,8 +376,7 @@ export function ServicesExperienceRuntime() {
       return nearestIndex;
     }
 
-    function updateHeroProgress(viewportHeight: number) {
-      const bounds = hero.getBoundingClientRect();
+    function updateHeroProgress(viewportHeight: number, bounds: DOMRect) {
       const exitProgress = clamp(-bounds.top / Math.max(1, viewportHeight * 0.78));
       const resolveProgress = clamp((window.scrollY + 24) / Math.max(1, viewportHeight * 0.34));
       const copyExit = clamp((exitProgress - 0.48) / 0.52);
@@ -418,9 +420,19 @@ export function ServicesExperienceRuntime() {
 
     function updateSceneProgress() {
       frame = 0;
+      // Measure everything first, then write. Every style write below
+      // invalidates layout, so a getBoundingClientRect() after one forces a
+      // synchronous style and layout pass. Interleaving reads and writes cost
+      // one forced pass per scene on every scroll frame (traced at ~23s of
+      // main-thread time in a few seconds of scrolling on production); one
+      // read phase costs a single pass.
       const viewportHeight = Math.max(1, window.innerHeight);
       const rootBounds = servicesRoot.getBoundingClientRect();
       const rootTravel = Math.max(1, servicesRoot.scrollHeight - viewportHeight);
+      const heroBounds = hero.getBoundingClientRect();
+      const sceneBounds = scenes.map((scene) => scene.getBoundingClientRect());
+      const focalChapter = chapterAtFocalLine(viewportHeight, sceneBounds);
+      const progressEvents: CustomEvent[] = [];
       const journeyProgress = clamp(-rootBounds.top / rootTravel);
       const now = performance.now();
       const elapsed = Math.max(16, now - lastFrameTime);
@@ -431,20 +443,24 @@ export function ServicesExperienceRuntime() {
       lastScrollY = window.scrollY;
       lastFrameTime = now;
 
-      document.documentElement.dataset.servicesScrollDirection = scrollDirection;
-      document.documentElement.style.setProperty(
-        "--services-scroll-velocity",
-        smoothedVelocity.toFixed(4),
-      );
-      document.documentElement.style.setProperty(
+      // Scroll velocity and direction used to be written to <html> here on
+      // every frame. Nothing reads them, and any custom property set on the
+      // root restyles every element on the page, so they are gone. The
+      // journey progress is written to the thread that draws it.
+      if (journeyTarget === document.documentElement) {
+        journeyTarget =
+          document.querySelector<HTMLElement>("[data-services-journey-thread]") ??
+          document.documentElement;
+      }
+      journeyTarget.style.setProperty(
         "--services-journey-progress",
         `${(journeyProgress * 100).toFixed(3)}%`,
       );
-      updateHeroProgress(viewportHeight);
-      publishChapter(chapterAtFocalLine(viewportHeight));
+      updateHeroProgress(viewportHeight, heroBounds);
+      publishChapter(focalChapter);
 
       scenes.forEach((scene, index) => {
-        const bounds = scene.getBoundingClientRect();
+        const bounds = sceneBounds[index];
         if (bounds.bottom < -viewportHeight || bounds.top > viewportHeight * 2) return;
 
         const measuredProgress = clamp(
@@ -604,7 +620,7 @@ export function ServicesExperienceRuntime() {
                   : "handoff";
 
         if (bounds.bottom >= -viewportHeight * 0.2 && bounds.top <= viewportHeight * 1.2) {
-          window.dispatchEvent(
+          progressEvents.push(
             new CustomEvent(SCENE_PROGRESS_EVENT, {
               detail: {
                 id: scene.id,
@@ -622,6 +638,10 @@ export function ServicesExperienceRuntime() {
           );
         }
       });
+
+      // Listeners run after every write, so any measuring they do sees one
+      // settled layout instead of forcing a pass between scenes.
+      progressEvents.forEach((event) => window.dispatchEvent(event));
 
       if (Math.abs(scrollDelta) < 0.4 && smoothedVelocity > 0.006) {
         frame = window.requestAnimationFrame(updateSceneProgress);
@@ -799,8 +819,8 @@ export function ServicesExperienceRuntime() {
       delete document.documentElement.dataset.servicesChapterCount;
       document.documentElement.style.removeProperty("--services-chapter-progress");
       document.documentElement.style.removeProperty("--services-chapter-angle");
-      document.documentElement.style.removeProperty("--services-scroll-velocity");
       document.documentElement.style.removeProperty("--services-journey-progress");
+      journeyTarget.style.removeProperty("--services-journey-progress");
       servicesRoot.style.removeProperty("--services-pointer-x");
       servicesRoot.style.removeProperty("--services-pointer-y");
 
