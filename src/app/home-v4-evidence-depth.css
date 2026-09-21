@@ -435,6 +435,26 @@
   outline: none;
 }
 
+/* The translateY above never renders: home-v4-evidence-scroll.css sets
+   `transform: none` on these buttons at html-body specificity so the
+   scroll choreography owns transform. The lift therefore rides the
+   independent `translate` property, which that contract cannot flatten
+   — the same route the cost stack uses beside its scale. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .evidence-cinematic__index button {
+    translate: 0 0;
+    transition:
+      border-color 320ms ease,
+      background-color 320ms ease,
+      box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1),
+      translate 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .evidence-cinematic__index button:hover,
+  .evidence-cinematic__index button:focus-visible {
+    translate: 0 -4px;
+  }
+}
+
 /* A finite selection cue keeps the archive still while a case is being read. */
 .evidence-cinematic__index button::after {
   content: "";
