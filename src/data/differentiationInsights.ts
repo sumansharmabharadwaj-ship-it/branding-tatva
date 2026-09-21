@@ -16,7 +16,7 @@ export const differentiationInsightPosts: InsightPost[] = [
       "service business differentiation",
       "brand differentiator",
       "competitive differentiation strategy",
-      "how to stand out in a crowded market",
+      "how to differentiate in a crowded service market",
       "brand positioning differentiation",
     ],
     searchIntent:
