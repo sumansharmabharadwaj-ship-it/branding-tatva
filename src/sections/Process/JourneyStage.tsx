@@ -100,12 +100,19 @@ export function JourneyStage({
                 className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
                 style={{ opacity: videoReady ? 1 : 0 }}
                 onCanPlay={() => setVideoReady(true)}
-                src={stage.video}
                 muted
                 loop
                 playsInline
                 preload="metadata"
-              />
+              >
+                {/* No src attribute: it silently disables <source> children,
+                    and the narrow screen source must come first because
+                    browsers take the first matching source. */}
+                {stage.videoMobile && (
+                  <source media="(max-width: 767px)" src={stage.videoMobile} type="video/mp4" />
+                )}
+                <source src={stage.video} type="video/mp4" />
+              </video>
             )}
             <div className="absolute inset-0" style={{ backgroundImage: BREAK_OVERLAY_GRADIENT }} />
             <div className="absolute inset-0 bg-soil/35" />

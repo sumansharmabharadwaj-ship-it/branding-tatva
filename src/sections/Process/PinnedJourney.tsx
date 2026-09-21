@@ -278,12 +278,19 @@ export function PinnedJourney({ stages, elementColor }: ProcessSectionProps) {
                       return next;
                     })
                   }
-                  src={stage.video}
                   muted
                   loop
                   playsInline
                   preload="auto"
-                />
+                >
+                  {/* No src attribute: it silently disables <source> children,
+                      and the narrow screen source must come first because
+                      browsers take the first matching source. */}
+                  {stage.videoMobile && (
+                    <source media="(max-width: 767px)" src={stage.videoMobile} type="video/mp4" />
+                  )}
+                  <source src={stage.video} type="video/mp4" />
+                </video>
               )}
             </div>
           ))}

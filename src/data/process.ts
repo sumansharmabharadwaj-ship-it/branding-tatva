@@ -10,6 +10,9 @@ export type ProcessStage = {
   // six autoplaying videos in a plain scrolling list isn't worth the
   // mobile data cost for a section without the pinned scroll payoff.
   video?: string;
+  // 768 wide same framing derivative, listed as the FIRST <source> behind
+  // a narrow screen media query so phones never pull the desktop encode.
+  videoMobile?: string;
   poster?: string;
 };
 
