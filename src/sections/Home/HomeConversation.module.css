@@ -84,6 +84,34 @@
   background: #98623f; pointer-events: none; transform-origin: left;
 }
 .questionItem[data-open="true"] .questionNumber { color: #70482f; }
+
+/* The dopamine layer. Rows arrive one after another as they cross into
+   view — CSS scroll driven, so an unfired observer can never strand
+   them invisible, and browsers without scroll timelines render the
+   settled state. Hover answers the pointer with a slide, an ignited
+   number, a warmed row and a quarter turn of the plus. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .questionItem {
+      animation: conversationRise both cubic-bezier(.22, 1, .36, 1);
+      animation-timeline: view();
+      animation-range: entry 8% entry 52%;
+    }
+  }
+}
+@keyframes conversationRise {
+  from { opacity: .1; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .questionButton > span:nth-child(2) { transition: translate 380ms cubic-bezier(.22, 1, .36, 1); }
+  .questionButton:hover > span:nth-child(2),
+  .questionButton:focus-visible > span:nth-child(2) { translate: 7px 0; }
+  .questionItem:not([data-open="true"]) .questionButton:hover .questionIcon { transform: rotate(90deg); }
+}
+.questionButton:hover .questionNumber,
+.questionButton:focus-visible .questionNumber { color: #b98534; }
+.questionItem:has(.questionButton:hover)::before { opacity: .55; }
 .questionButton {
   display: grid; grid-template-columns: 1.8rem minmax(0, 1fr) 1.2rem;
   align-items: start; gap: 1rem; width: 100%; min-height: 4.4rem;

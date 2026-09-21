@@ -275,6 +275,29 @@ html[data-motion="reduced"] .studio-cinematic__aurora--sage {
 
 .studio-cinematic__chooser button:hover { color: #fffaf0; }
 .studio-cinematic__chooser button[aria-selected="true"] { color: #332e25; }
+
+/* Pointer reward on the discipline switch: unselected tabs answer the
+   hand with a ghost of the pill and a breath of lift before the click,
+   and the proof and footer arrows lean the way they point. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .studio-cinematic__chooser button {
+    translate: 0 0;
+    transition: color 220ms ease, translate 360ms cubic-bezier(.22, 1, .36, 1), background-color 360ms ease;
+  }
+  .studio-cinematic__chooser button:not([aria-selected="true"]):hover {
+    translate: 0 -2px;
+    background: rgba(244, 239, 230, 0.09);
+  }
+  .studio-cinematic__proof > i,
+  .studio-cinematic__footer a span[aria-hidden] {
+    display: inline-block;
+    transition: translate 360ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .studio-cinematic__proof:hover > i,
+  .studio-cinematic__footer a:hover span[aria-hidden] {
+    translate: 5px 0;
+  }
+}
 .studio-cinematic__selection {
   position: absolute;
   inset: 0;

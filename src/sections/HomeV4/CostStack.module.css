@@ -145,6 +145,29 @@
   transform-origin: left center;
 }
 
+/* Pointer reward: a card rises a breath to meet the hand, its edge and
+   numeral catch warm light, and the meter brightens — the same warmth
+   the scroll choreography already speaks, answered at the cursor. The
+   lift uses `translate` so the stack's `scale` and sticky geometry are
+   untouched. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card {
+    translate: 0 0;
+    transition:
+      translate 460ms cubic-bezier(.22, 1, .36, 1),
+      border-color 460ms cubic-bezier(.22, 1, .36, 1),
+      box-shadow 460ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .card:hover {
+    translate: 0 -6px;
+    border-color: rgb(198 169 122 / 44%);
+    box-shadow: 0 40px 110px rgb(6 10 8 / 62%), 0 2px 0 rgb(242 240 232 / 9%) inset;
+  }
+  .number { transition: color 320ms ease; }
+  .card:hover .number { color: #e4c391; }
+  .card:hover .meter { background: rgb(242 240 232 / 26%); }
+}
+
 .card h3 {
   margin: 0;
   font: 400 clamp(1.85rem, 3.3vw, 2.9rem)/1.08 var(--font-display), Georgia, serif;
