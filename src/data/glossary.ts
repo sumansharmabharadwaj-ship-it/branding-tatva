@@ -162,7 +162,7 @@ export const pillars: Pillar[] = [
       {
         term: "Verbal identity",
         slug: "verbal-identity",
-        essaySlugs: ["brand-voice-guidelines-writers-can-use", "why-ai-content-makes-brands-average", "homepage-messaging-service-businesses"],
+        essaySlugs: ["brand-voice-guidelines-writers-can-use", "why-ai-content-makes-brands-average", "homepage-messaging-service-businesses", "how-to-name-a-brand-when-good-names-are-taken"],
         definition: "The words a brand owns: its vocabulary, its rhythm, the sentences only it would say.",
         expanded:
           "A verbal identity earns its place when three different writers can produce copy that reads as one author. It covers the vocabulary a brand reaches for, the words it refuses, the rhythm of its sentences, and the claims it is willing to stake. Logos get protected in brand books while language, the thing customers actually quote, gets improvised weekly.",
@@ -179,6 +179,17 @@ export const pillars: Pillar[] = [
           "Tone frames value before any claim lands: the same offer sounds assured or desperate depending on the sentence carrying it. Tone shifts by moment, warmer in support, plainer in checkout, while the underlying personality stays recognizable. Losing that thread across channels reads to the audience as several companies wearing one logo.",
         practice:
           "Voice work in the Brand Foundation engagement documents tone as decisions with examples, so the next writer inherits rules instead of vibes.",
+      },
+      {
+        term: "Sound symbolism",
+        slug: "sound-symbolism",
+        essaySlugs: ["how-to-name-a-brand-when-good-names-are-taken", "brand-voice-guidelines-writers-can-use"],
+        definition:
+          "The meaning a word carries in its sound alone: vowels and consonants signalling size, speed, weight, and warmth before the dictionary arrives.",
+        expanded:
+          "People across languages match the invented word kiki to a spiky shape and bouba to a rounded one, agreement running near total, which shows the ear assigns meaning without any definition to lean on. Brand name research made the effect commercial: front vowels read small, quick, and precise, back vowels read large, heavy, and warm, plosive consonants snap while fricatives glide. A name whose sound argues with its positioning fights that argument in every exposure, so sound is a screening criterion rather than a garnish.",
+        practice:
+          "The naming audition this practice runs scores every candidate aloud before any trademark search, keeping only the names whose sound agrees with the strategy.",
       },
     ],
   },
