@@ -15,7 +15,15 @@ import { SituationPath } from "@/sections/Services/SituationPath";
 import { ServiceDisciplineExplorer } from "@/sections/Services/ServiceDisciplineExplorer";
 import { RecognitionAudit } from "@/sections/Services/RecognitionAudit";
 import { PricingProvider } from "@/components/PricingProvider";
-import { REGION_COOKIE, isRegion, regionFromCountry } from "@/data/pricing";
+import {
+  REGION_COOKIE,
+  isRegion,
+  regionFromCountry,
+  priceFor,
+  currencyFor,
+  type Region,
+  type PackageSlug,
+} from "@/data/pricing";
 import { VerifiedOutcome } from "@/sections/Services/VerifiedOutcome";
 import { WorkIndex } from "@/sections/Work/WorkIndex";
 import { DecisionMap } from "@/sections/Work/DecisionMap";
@@ -49,12 +57,11 @@ const REMOTE_SERVICE_AREAS = entityFacts.delivery.regions.map((name) => ({
  * formats were invisible to search and answer engines even though they are
  * the whole point of the page.
  *
- * Prices are deliberately absent. data/services.ts states plainly that its
- * figures are a first draft and should be read as agreed pricing by nobody.
- * Schema.org is machine readable and can surface as firm pricing in a search
- * result, which would turn a working draft into a public quote. Names,
- * descriptions and audiences are all real copy already on the page, so they
- * go in; the numbers wait until they are confirmed.
+ * Prices were deliberately absent while data/services.ts carried draft
+ * figures. Suman confirmed the data/pricing.ts book as the real starting
+ * prices on September 21, 2026 (recorded in data/services.ts), so the
+ * engagement offers below now publish minPrice per resolved region —
+ * see the comment on engagementsJsonLd for why minPrice and not price.
  */
 const servicesJsonLd = {
   "@context": "https://schema.org",
@@ -103,7 +110,18 @@ const serviceCatalogJsonLd = {
 // The three engagement formats: how a project is shaped. Each carries the
 // audience it is written for, which is the part an answer engine can use to
 // match a real question ("who is this for") to a real answer.
-const engagementsJsonLd = {
+//
+// Prices joined on September 21, 2026, after Suman confirmed the price
+// book in data/pricing.ts as the real starting figures (recorded in
+// data/services.ts alongside the book). The page already publishes them
+// visibly per region, and the pricing guide in Insights quotes the same
+// numbers, so the schema now says what the page says. minPrice rather
+// than price, because every engagement is "projects begin at" with the
+// final quotation following the discovery call — a flat price claim
+// would overstate what is on offer. Built per request so the offer
+// carries the same region the visible price book resolved for this
+// visitor.
+const engagementsJsonLd = (region: Region) => ({
   "@context": "https://schema.org",
   "@type": "OfferCatalog",
   "@id": `${SERVICES_URL}#engagements`,
@@ -113,6 +131,12 @@ const engagementsJsonLd = {
   itemListElement: packages.map((pkg, index) => ({
     "@type": "Offer",
     position: index + 1,
+    priceSpecification: {
+      "@type": pkg.billing === "monthly" ? "UnitPriceSpecification" : "PriceSpecification",
+      minPrice: priceFor(region, pkg.slug as PackageSlug),
+      priceCurrency: currencyFor(region),
+      ...(pkg.billing === "monthly" ? { unitText: "month" } : null),
+    },
     itemOffered: {
       "@type": "Service",
       "@id": `${SERVICES_URL}#${pkg.slug}`,
@@ -124,7 +148,7 @@ const engagementsJsonLd = {
       serviceOutput: pkg.includes.map((item) => ({ "@type": "Thing", name: item })),
     },
   })),
-};
+});
 
 export const metadata: Metadata = {
   title: "Brand Strategy for UK Service Businesses",
@@ -212,7 +236,7 @@ export default async function ServicesPage() {
       <main id="main-content" data-services-page="true" style={{ backgroundColor: "#3f4d44" }}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceCatalogJsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(engagementsJsonLd(region)) }} />
         {/* SCROLL RUNWAY. Measured against /about, which Suman names as the
             closest thing on this site to the scroll character she wants:
 

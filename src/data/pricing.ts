@@ -56,6 +56,17 @@ export function isRegion(value: string | undefined | null): value is Region {
   return REGIONS.some((r) => r.id === value);
 }
 
+// Structured data needs the raw book, no locale formatting: the services
+// page publishes each engagement's confirmed starting price for the
+// visitor's own region as schema.org minPrice.
+export function priceFor(region: Region, slug: PackageSlug): number {
+  return BOOK[region][slug];
+}
+
+export function currencyFor(region: Region): string {
+  return REGIONS.find((r) => r.id === region)?.currency ?? "USD";
+}
+
 export function formatPrice(region: Region, slug: PackageSlug): string {
   const currency = REGIONS.find((r) => r.id === region)?.currency ?? "USD";
   return new Intl.NumberFormat(LOCALE[region], {
