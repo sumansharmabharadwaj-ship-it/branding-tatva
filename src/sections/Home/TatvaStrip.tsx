@@ -179,7 +179,7 @@ export function TatvaStrip() {
               silently ignored, and the narrow screen source must be first
               because browsers take the first matching source. */}
           <video
-            poster="/images/higgsfield-confident-light-poster.jpg"
+            poster="/images/bt-home-tatva-mirror-lake-poster.jpg"
             muted
             autoPlay={!prefersReducedMotion}
             loop
@@ -187,8 +187,8 @@ export function TatvaStrip() {
             preload={inView ? "metadata" : "none"}
             data-home-playback-rate="1.2"
           >
-            <source media="(max-width: 767px)" src="/videos/higgsfield-confident-light-mobile.mp4" type="video/mp4" />
-            <source src="/videos/higgsfield-confident-light.mp4" type="video/mp4" />
+            <source media="(max-width: 767px)" src="/videos/bt-home-tatva-mirror-lake-mobile.mp4" type="video/mp4" />
+            <source src="/videos/bt-home-tatva-mirror-lake.mp4" type="video/mp4" />
           </video>
           <span />
         </div>

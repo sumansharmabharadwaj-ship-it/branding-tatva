@@ -18,8 +18,8 @@ const DISCIPLINES = [
     line:
       "Understand what buyers hesitate over, what they value, and how they judge the options. Use those findings to choose the position.",
     result: "Audience tension and perception map",
-    video: "/videos/higgsfield-process-listen.mp4",
-    poster: "/images/higgsfield-process-listen-poster.jpg",
+    video: "/videos/bt-home-studio-psychology.mp4",
+    poster: "/images/bt-home-studio-psychology-poster.jpg",
     proofLabel: "Applied in HerbalCart",
     proofLine:
       "The content reframed supplements as practical support for modern lifestyles.",
@@ -34,8 +34,8 @@ const DISCIPLINES = [
     line:
       "Turn the position into a voice, a message, and a story the team can use consistently.",
     result: "Verbal identity and narrative",
-    video: "/videos/higgsfield-idea-sketch.mp4",
-    poster: "/images/higgsfield-idea-sketch.jpg",
+    video: "/videos/bt-home-studio-literature.mp4",
+    poster: "/images/bt-home-studio-literature-poster.jpg",
     proofLabel: "Applied in MyShopInEurope",
     proofLine:
       "Craft and origin replaced cheap access as the story European buyers could pass on to their own customers.",
@@ -50,8 +50,8 @@ const DISCIPLINES = [
     line:
       "Connect positioning, identity, website, content, and campaigns so each part supports the same commercial direction.",
     result: "A brand system that can keep moving",
-    video: "/videos/higgsfield-process-shape.mp4",
-    poster: "/images/higgsfield-process-shape-poster.jpg",
+    video: "/videos/bt-home-studio-strategy.mp4",
+    poster: "/images/bt-home-studio-strategy-poster.jpg",
     proofLabel: "Applied in Dr. Haley Nutrition",
     proofLine:
       "Engagement rose from 0.71% to 2.81% with fewer posts.",
