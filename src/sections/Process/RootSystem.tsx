@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useAnimationControls, useInView, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls, useInView, useTransform } from "framer-motion";
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -216,7 +217,33 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         <article id="project-stage-panel" role="tabpanel" aria-labelledby={`project-stage-tab-${active}`} tabIndex={0} className={styles.panel} onFocusCapture={settleReading} onPointerDownCapture={settleReading}>
           <div className={styles.media}>
             <motion.div className={styles.imagePlane} data-process-camera style={{ x: desktopStory ? imageX : 0, y: desktopStory ? imageY : 0, scale: desktopStory ? imageScale : 1 }}>
-              <Image src="/images/strategy-working-desk.webp" alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />
+              {/* Wave 3.5 of the footage re-foundation: the six approved
+                  pollination films finally render. They were wired into the
+                  stage data in wave two, but the renderers that read
+                  stage.video were unmounted legacy (production-verified by
+                  the design overhaul session), so the films sat invisible.
+                  The keyed crossfade is the studio chapter's proven pattern;
+                  the surrounding shade, desk note and caption already carry
+                  readability, so the parchment reading column is untouched.
+                  Stages without a film keep the original desk photograph. */}
+              {stage.video && stage.poster ? (
+                <AnimatePresence mode="sync" initial={false}>
+                  <motion.div
+                    key={stage.video}
+                    /* The fill Image positioned itself; a plain wrapper must
+                       claim the plane explicitly or it collapses to zero. */
+                    style={{ position: "absolute", inset: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
+                  >
+                    <BackgroundVideo video={stage.video} videoMobile={stage.videoMobile} poster={stage.poster} loop={false} />
+                  </motion.div>
+                </AnimatePresence>
+              ) : (
+                <Image src="/images/strategy-working-desk.webp" alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />
+              )}
             </motion.div>
             <div className={styles.imageShade} />
             <div className={styles.deskNote} data-process-note>
