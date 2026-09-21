@@ -241,6 +241,29 @@
 .invitation .bookButton:focus-visible { border-radius: 999px; }
 :global(.home-v4) .invitation a:focus-visible { outline-color: #855035 !important; }
 .invitation a { scroll-margin-block: 6rem 5rem; }
+
+/* The closing chapter's held story runs behind the same frameFits guard
+   as the foundation chapter, and it had the same dead band: the frame
+   measured 795px at a real 1440x900 MacBook's ~790px viewport and
+   786px at the 761px floor, so data-invitation-story fell to "flow"
+   and the camera sat inert on exactly the laptop class the site is
+   tuned for (held from 831px up, measured live). This block compresses
+   the frame under the cinematic band's ceiling so the hold survives
+   down to the 761px convention; the min-height stretch and centered
+   alignment keep the chapter filling the viewport either way. */
+@media (min-width: 1181px) and (max-height: 830px) {
+  .invitationFrame {
+    padding-top: 4.6rem;
+    padding-bottom: 2.2rem;
+    row-gap: 1.4rem;
+  }
+  .invitationCopy h2 { font-size: clamp(2.5rem, 6.8svh, 3.4rem); }
+  .conversationTopline { padding-bottom: 1rem; }
+  .conversation li { padding-block: 1.05rem; }
+  .preparation { margin: .75rem 0 1.1rem; }
+  .signoff { font-size: 1.15rem; }
+}
+
 @media (max-width: 900px) {
   .questionFrame { gap: 2.5rem; grid-template-columns: minmax(0,.75fr) minmax(0,1.25fr); }
   .invitationFrame { column-gap: 2.5rem; }
