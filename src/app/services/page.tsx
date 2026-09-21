@@ -160,6 +160,7 @@ export const metadata: Metadata = {
     description:
       "Brand strategy for UK service businesses, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
     type: "website",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
 };
 

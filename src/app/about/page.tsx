@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     title: `${site.founder}, Brand Strategist | ${site.name}`,
     description: `A master's in clinical psychology, a degree in English literature, and the brand strategy practice built on both.`,
     type: "profile",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
 };
 
