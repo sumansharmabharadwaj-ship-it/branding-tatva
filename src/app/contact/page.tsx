@@ -154,6 +154,11 @@ export default function ContactPage() {
                 keeps reading as morning light on a working surface. */}
             <span data-contact-hero-sun />
           </div>
+          {/* The hero's half of the dawn handoff: an always on strip that
+              closes the frame into the same opaque wood tone the branch
+              scene's arrival veil wears, so the boundary pixel matches at
+              every scroll position instead of cutting from footage to water. */}
+          <div data-contact-hero-ground aria-hidden="true" />
           {/* A wordless invitation at the foot of the frame: a fine gold
               thread with a drop of light travelling down it, pointing the
               way into the film below. */}

@@ -195,7 +195,7 @@ export function ContactCinematicScene({ id, labelledBy, variant, media, children
           data-contact-light-timeline="shared"
           style={{ x: enabled ? sunlightX : 0, y: enabled ? sunlightY : 0, scale: enabled ? sunlightScale : 1, opacity: enabled ? sunlightOpacity : 0.16 }}
         />
-        {(variant === "paper" || variant === "daybreak") && (
+        {(variant === "branch" || variant === "paper" || variant === "daybreak") && (
           <motion.div
             aria-hidden="true"
             data-contact-scene-seam="arrival"

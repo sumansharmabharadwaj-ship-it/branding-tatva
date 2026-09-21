@@ -738,6 +738,22 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-booking-sheen] {
   animation: contact-hero-matte-open-bottom 1.45s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* The hero's half of the dawn handoff. Always on and unanimated: the frame's
+   foot settles into the exact opaque edge colour the branch chapter's arrival
+   veil holds (see the seam palette near the end of this file), so the page's
+   one dark to daylight boundary meets on a matching pixel at every scroll
+   position. The vertical mask keeps the strip a dissolve, never a bar. */
+[data-contact-film] [data-contact-hero-ground] {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  height: clamp(84px, 16svh, 180px);
+  background: linear-gradient(90deg, #38291b, #49361f);
+  mask-image: linear-gradient(transparent, #000);
+  pointer-events: none;
+}
+
 [data-contact-film] [data-contact-hero-light-open] {
   position: absolute;
   inset: -8%;
@@ -2414,6 +2430,11 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-heading-ink] { tra
 /* Neighbouring chapters meet on the same fully opaque edge colour. Only
    the feather's depth moves with the shared camera; content stays above it. */
 [data-contact-film] [data-contact-scene="branch"] {
+  /* The water chapter wears the wood it receives: its arrival veil holds the
+     hero's dawn shadow tone, and the hero's own foot closes into the same
+     opaque edge (see [data-contact-hero-ground]) so the one dark to daylight
+     boundary on this page reads as light lifting rather than a cut. */
+  --contact-seam-in: linear-gradient(90deg, #38291b, #49361f);
   --contact-seam-out: linear-gradient(90deg, #dfe3d4, #eee1ca);
   border-bottom-width: 0;
 }
