@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { motion } from "framer-motion";
 
 import Link from "next/link";
@@ -142,19 +142,18 @@ export function PinnedBrandBuild() {
     const wrap = wrapRef.current;
     if (!wrap) return;
 
-    function update(progress: number, direction: "up" | "down", velocity: number) {
+    function update(progress: number, direction: "up" | "down") {
       if (!wrap) return;
       // Resolve the complete system before the chapter reaches the viewport
       // focal line. Direct chapter links therefore arrive on a readable,
       // finished diagram, while ordinary scrolling still controls the build
       // during the chapter's anticipation and activation phases.
-      const assembly = Math.min(1, Math.max(0, (progress - 0.04) / 0.58));
-      const signedVelocity = Math.min(1, velocity) * (direction === "down" ? 1 : -1);
+      const assembly = Math.min(1, Math.max(0, (progress - 0.04) / 0.38));
 
       wrap.dataset.authorityDirection = direction;
       wrap.style.setProperty("--authority-progress", assembly.toFixed(4));
-      wrap.style.setProperty("--authority-camera-y", `${((0.5 - progress) * 28 + signedVelocity * 8).toFixed(2)}px`);
-      wrap.style.setProperty("--authority-camera-scale", (1.035 - assembly * 0.025 + velocity * 0.012).toFixed(4));
+      wrap.style.setProperty("--authority-camera-y", `${((0.5 - progress) * 18).toFixed(2)}px`);
+      wrap.style.setProperty("--authority-camera-scale", (1.035 - assembly * 0.025).toFixed(4));
 
       layerRefs.current.forEach((layer, i) => {
         if (!layer) return;
@@ -168,7 +167,7 @@ export function PinnedBrandBuild() {
       });
 
       if (waveRef.current) {
-        waveRef.current.style.transform = `translate3d(${(signedVelocity * 7).toFixed(2)}px, 0, 0) scaleY(${(0.12 + 0.88 * assembly).toFixed(3)})`;
+        waveRef.current.style.transform = `scaleY(${(0.12 + 0.88 * assembly).toFixed(3)})`;
         waveRef.current.style.opacity = (0.48 + 0.52 * assembly).toFixed(3);
       }
     }
@@ -183,10 +182,10 @@ export function PinnedBrandBuild() {
         }>
       ).detail;
       if (detail?.id !== "authority" || typeof detail.progress !== "number") return;
-      update(detail.progress, detail.direction ?? "down", detail.velocity ?? 0);
+      update(detail.progress, detail.direction ?? "down");
     }
 
-    update(0, "down", 0);
+    update(0, "down");
     window.addEventListener(SCENE_PROGRESS_EVENT, onProgress as EventListener);
     return () => {
       window.removeEventListener(SCENE_PROGRESS_EVENT, onProgress as EventListener);
@@ -198,6 +197,17 @@ export function PinnedBrandBuild() {
       wrap.style.removeProperty("--authority-copy-opacity");
     };
   }, [prefersReducedMotion]);
+
+  function focusLayer(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    const next = event.key === "ArrowDown" ? (index + 1) % LAYERS.length
+      : event.key === "ArrowUp" ? (index + LAYERS.length - 1) % LAYERS.length
+      : event.key === "Home" ? 0
+      : event.key === "End" ? LAYERS.length - 1 : null;
+    if (next === null) return;
+    event.preventDefault();
+    layerRefs.current[next]?.focus({ preventScroll: true });
+    setInspectedLayer(next);
+  }
 
   return (
     <div
@@ -248,25 +258,10 @@ export function PinnedBrandBuild() {
               <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
                 When category, experience, expression, voice, or presence is weak, every campaign has to compensate.
               </p>
-              {/* The insight produces an action (manual p11): the
-                  package that builds every layer, one step away. */}
-              <Link
-                href="#desire"
-                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
-              >
-                {authorityAction}: {recommendedPackage?.name ?? "Full Brand System"}
-                <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-            <MobileAuthorityDeck layers={LAYERS} wavePath={WAVE_PATH} />
-            <div data-authority-diagram="true" data-services-chapter-instrument="true" className="relative hidden lg:block">
-              {/* The output signal — a wave whose oscillation widens as
-                  the layers beneath it assemble. Decorative twin of the
-                  rows below, which carry the full text alternative. */}
-              <div data-authority-wave="true" className="mb-6 border-b border-ivory/10 pb-4">
+              <div id="authority-signal-details" data-authority-wave="true" className="mt-7">
                 <div data-authority-signal-header="true">
                   <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
-                    What must exist before promotion
+                    Decisions that travel together
                   </p>
                   <p
                     data-authority-signal-status="true"
@@ -291,7 +286,16 @@ export function PinnedBrandBuild() {
                 </div>
                 <svg aria-hidden="true" viewBox="0 0 400 80" className="mt-2 h-14 w-full max-w-lg" fill="none">
                   <g ref={waveRef} style={{ transformOrigin: "50% 50%" }}>
-                    <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+                    <motion.path
+                      key={inspectedLayer ?? "system"}
+                      d={WAVE_PATH}
+                      stroke="#C6A97A"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      initial={prefersReducedMotion ? false : { pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: prefersReducedMotion ? 0 : 0.8, ease: motionTokens.easeOrganic }}
+                    />
                     <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="5" strokeLinecap="round" opacity="0.12" />
                   </g>
                 </svg>
@@ -305,12 +309,35 @@ export function PinnedBrandBuild() {
                   ))}
                 </ul>
               </div>
+              {/* The insight produces an action (manual p11): the
+                  package that builds every layer, one step away. */}
+              <Link
+                href="#desire"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
+              >
+                {authorityAction}: {recommendedPackage?.name ?? "Full Brand System"}
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+            <MobileAuthorityDeck layers={LAYERS} wavePath={WAVE_PATH} />
+            <div data-authority-diagram="true" data-services-chapter-instrument="true" className="relative hidden lg:block">
+              {/* The output signal — a wave whose oscillation widens as
+                  the layers beneath it assemble. Decorative twin of the
+                  rows below, which carry the full text alternative. */}
+              <div data-authority-index-heading="true">
+                <p>Five connected layers</p>
+                <p>Select a layer to see its decisions.</p>
+              </div>
               {LAYERS.map((layer, i) => (
                 <button
                   key={layer.slug}
                   data-authority-desktop-layer="true"
                   type="button"
                   aria-pressed={inspectedLayer === i}
+                  aria-controls="authority-signal-details"
+                  aria-label={`${layer.label}: ${layer.line}`}
+                  style={{ "--layer-color": layer.color } as CSSProperties}
+                  onKeyDown={(event) => focusLayer(event, i)}
                   onClick={() => setInspectedLayer((current) => (current === i ? null : i))}
                   ref={(node) => {
                     layerRefs.current[i] = node;
@@ -341,10 +368,16 @@ export function PinnedBrandBuild() {
                       <p className="mt-1 max-w-lg text-xs leading-relaxed text-ivory/60 xl:text-sm">{layer.skipped}</p>
                     </div>
                   </div>
+                  <span data-authority-choice-mark="true" aria-hidden="true">
+                    {inspectedLayer === i ? "✓" : "↗"}
+                  </span>
                 </button>
               ))}
             </div>
           </div>
+          <Link href="#education" data-authority-next="true">
+            How buyers remember <span aria-hidden="true">↓</span>
+          </Link>
         </div>
       </div>
     </div>

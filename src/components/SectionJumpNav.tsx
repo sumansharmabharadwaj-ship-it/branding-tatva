@@ -87,6 +87,9 @@ export function SectionJumpNav({
   const navigationItems = isServicesRoute && servicesItems?.length ? servicesItems : items;
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopOpen, setDesktopOpen] = useState(false);
+  const desktopNavRef = useRef<HTMLElement>(null);
+  const desktopTriggerRef = useRef<HTMLButtonElement>(null);
   const [mobileYielding, setMobileYielding] = useState(false);
   const [mobileTargetHref, setMobileTargetHref] = useState<string | null>(null);
   const [mobileStatus, setMobileStatus] = useState("");
@@ -374,7 +377,26 @@ export function SectionJumpNav({
     };
   }, [mobileOpen]);
 
+  useEffect(() => {
+    if (!desktopOpen) return;
+    function dismiss(event: PointerEvent) {
+      if (!desktopNavRef.current?.contains(event.target as Node)) setDesktopOpen(false);
+    }
+    function escape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setDesktopOpen(false);
+      desktopTriggerRef.current?.focus({ preventScroll: true });
+    }
+    document.addEventListener("pointerdown", dismiss);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [desktopOpen]);
+
   function choose(href: string) {
+    setDesktopOpen(false);
     setActiveHref(href);
     setMobileOpen(false);
   }
@@ -737,7 +759,10 @@ export function SectionJumpNav({
       {resolvedDesktopMode === "rail" ? (
         <nav
           aria-label="Jump to section"
+          ref={desktopNavRef}
           data-section-jump-nav-desktop-mode="rail"
+          data-services-nav={isServicesRoute ? "true" : undefined}
+          data-services-nav-expanded={isServicesRoute && desktopOpen ? "true" : "false"}
           data-section-jump-progress-mode={continuousProgress ? "continuous" : "chapters"}
           data-section-jump-tone={tone}
           data-section-jump-desktop-yielding={guidedMobile && mobileYielding ? "true" : "false"}
@@ -750,6 +775,20 @@ export function SectionJumpNav({
               lightTone ? "border-soil/12 bg-ivory/90" : "border-ivory/12 bg-soil/88"
             }`}
           >
+            {isServicesRoute && (
+              <button
+                ref={desktopTriggerRef}
+                type="button"
+                data-services-nav-toggle="true"
+                aria-expanded={desktopOpen}
+                aria-controls="services-desktop-chapters"
+                aria-label={`${desktopOpen ? "Close" : "Open"} page sections. Current section: ${activeItem?.label}`}
+                onClick={() => setDesktopOpen((open) => !open)}
+              >
+                <span>{String(activeIndex + 1).padStart(2, "0")} <span>{activeItem?.label}</span></span>
+                {desktopOpen ? <X size={17} aria-hidden="true" /> : <List size={17} aria-hidden="true" />}
+              </button>
+            )}
             <span className="font-display text-[0.68rem] leading-none text-terracotta" aria-hidden="true">
               {String(activeIndex + 1).padStart(2, "0")}
             </span>
@@ -760,7 +799,11 @@ export function SectionJumpNav({
               / {String(navigationItems.length).padStart(2, "0")}
             </span>
 
-            <div className="relative mt-3">
+            <div
+              className="relative mt-3"
+              id={isServicesRoute ? "services-desktop-chapters" : undefined}
+              hidden={isServicesRoute && !desktopOpen}
+            >
               <span
                 aria-hidden="true"
                 className={`absolute bottom-2 left-1/2 top-2 w-px -translate-x-1/2 overflow-hidden ${lightTone ? "bg-soil/12" : "bg-ivory/10"}`}

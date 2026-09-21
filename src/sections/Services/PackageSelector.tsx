@@ -1,7 +1,7 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
@@ -28,37 +28,24 @@ import {
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 
-// Three choices map to the three real packages. Scroll may demonstrate the
-// paths, but only a carried diagnosis or explicit click is treated as a real
-// recommendation. Passive preview never writes preference or analytics.
+// Three choices map to the three real packages. The carried diagnosis and
+// explicit choices determine the recommendation; scrolling keeps it intact.
 const CHOICES = [
   { slug: "brand-beginning", label: "Launching a new business", shortLabel: "Idea", element: "earth" },
   { slug: "brand-clarity", label: "Repositioning an established business", shortLabel: "Reposition", element: "water" },
   { slug: "brand-partnership", label: "Stopping drift across channels", shortLabel: "Ongoing", element: "space" },
 ] as const;
 
-const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
-const MANUAL_HOLD_MS = 16000;
 
-type SelectionSource = "situation" | "manual" | "scroll" | null;
-type ServicesProgressDetail = {
-  id?: string;
-  progress?: number;
-  storyProgress?: number;
-};
-
+type SelectionSource = "situation" | "manual" | null;
 export function PackageSelector() {
-  // Start with a complete, useful recommendation. Scroll can still preview
-  // the other paths, but a blocked observer or reduced-motion preference no
-  // longer leaves this chapter looking unfinished.
+  // Start with a complete recommendation and keep it in view until chosen.
   const [active, setActive] = useState<PackageSlug | null>(CHOICES[0].slug);
   const [selectionSource, setSelectionSource] = useState<SelectionSource>(null);
   const [compare, setCompare] = useState(false);
   const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
   const [routeReady, setRouteReady] = useState(false);
-  const manualUntilRef = useRef(0);
-  const committedRouteRef = useRef(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activePackage = packages.find((pkg) => pkg.slug === active);
   const activeSituation = active ? PACKAGE_TO_SITUATION[active] : null;
@@ -72,7 +59,6 @@ export function PackageSelector() {
 
   useEffect(() => {
     function applySituation(situation: ServicesSituationId) {
-      committedRouteRef.current = true;
       setActive(SITUATION_TO_PACKAGE[situation]);
       setSelectionSource("situation");
       setCompare(false);
@@ -88,8 +74,6 @@ export function PackageSelector() {
       if (!linkedChoice) return false;
 
       const linkedSituation = PACKAGE_TO_SITUATION[linkedChoice.slug];
-      committedRouteRef.current = true;
-      manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
       setActive(linkedChoice.slug);
       setSelectionSource("manual");
       setCompare(false);
@@ -133,32 +117,7 @@ export function PackageSelector() {
     };
   }, []);
 
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-
-    function onSceneProgress(event: Event) {
-      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
-      if (detail?.id !== "desire" || typeof detail.progress !== "number") return;
-      if (committedRouteRef.current) return;
-      if (compare || selectionSource === "situation" || selectionSource === "manual") return;
-      if (Date.now() < manualUntilRef.current) return;
-      const storyProgress = detail.storyProgress ?? detail.progress;
-
-      const index = Math.min(
-        CHOICES.length - 1,
-        Math.max(0, Math.floor(storyProgress * CHOICES.length)),
-      );
-      const choice = CHOICES[index] ?? CHOICES[0];
-      setActive((current) => (current === choice.slug ? current : choice.slug));
-      setSelectionSource("scroll");
-      setCarriedSituation(null);
-    }
-
-    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
-    return () => {
-      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
-    };
-  }, [compare, prefersReducedMotion, selectionSource]);
+  // Keep this choice stable as the visitor scrolls through its explanation.
 
   function settlePackageChapter() {
     window.dispatchEvent(new CustomEvent(ANCHOR_SETTLE_EVENT, { detail: { id: "desire" } }));
@@ -166,8 +125,6 @@ export function PackageSelector() {
 
   function choosePackage(slug: PackageSlug) {
     const situation = PACKAGE_TO_SITUATION[slug];
-    committedRouteRef.current = true;
-    manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setActive(slug);
     setSelectionSource("manual");
     setCarriedSituation(situation);
@@ -214,19 +171,6 @@ export function PackageSelector() {
               )}
             </motion.p>
           )}
-          {selectionSource === "scroll" && activePackage && !compare && (
-            <motion.p
-              key="scroll-package-preview"
-              data-scroll-package-preview="true"
-              initial={{ opacity: 0, y: 7 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={transition}
-              className="mx-auto mt-5 max-w-xl text-xs font-medium uppercase tracking-[0.15em] text-sandstone/80"
-            >
-              Previewing: {activePackage.name}
-            </motion.p>
-          )}
         </AnimatePresence>
       </div>
 
@@ -243,10 +187,9 @@ export function PackageSelector() {
               key={choice.slug}
               id={`package-${choice.slug}`}
               type="button"
-              aria-pressed={isActive && selectionSource !== "scroll"}
+              aria-pressed={isActive}
               aria-controls="package-recommendation"
               data-package-choice="true"
-              data-package-preview={isActive && selectionSource === "scroll" ? "true" : undefined}
               onClick={() => choosePackage(choice.slug)}
               whileHover={prefersReducedMotion ? undefined : { y: -5 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
@@ -282,7 +225,6 @@ export function PackageSelector() {
           type="button"
           aria-pressed={compare}
           onClick={() => {
-            manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
             setCompare((current) => {
               if (!current) track("packages_compared");
               return !current;

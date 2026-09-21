@@ -555,40 +555,22 @@ export default async function ServicesPage() {
           </div>
         </section>
 
-        {/* The case index, restored. /work redirects here to #proof, which left
-            a single flagship outcome as the only reachable evidence: a visitor
-            convinced by it had nowhere to go to see the rest. WorkIndex was
-            built for the old /work page and stranded complete and unimported
-            when that route was folded in, so this rewires the existing
-            component rather than rebuilding it (M4: "Build case index"). It
-            carries its own <section id="index">, filters from data/workTaxonomy
-            and renders only verified projects from data/projects. */}
-        <WorkIndex projects={projects} />
-
-        {/* The causal spine behind the cases above (M4: "case index and causal
-            case-study spine"). The index answers which project resembles your
-            situation; this answers what was actually decided inside them, which
-            is the part that teaches. Also stranded from the old /work page:
-            196 lines, zero importers, pulling its own verified projects.
-            No jump-nav entry on purpose — it reads as the second half of the
-            evidence chapter rather than a tenth destination in a rail that
-            already carries nine. */}
-        <DecisionMap />
-
-        {/* Concept studies. The three chapters above are all client evidence,
-            which only speaks to buyers whose situation already resembles one of
-            five engagements. The Lab shows the method itself on brands nobody
-            hired us for, which is the only honest way to demonstrate range
-            beyond the client list.
-
-            Safe to show beside real work because its framing is explicit and
-            enforced in the data: data/conceptProjects.ts opens with an honesty
-            contract ("Zero clients, zero engagements, zero outcomes are
-            implied"), the component repeats it on screen, and measurement
-            sections there are plans rather than results. That is what keeps it
-            clear of CLAUDE.md's rule against implying experience. 415 lines,
-            zero importers before this. */}
-        <TatvaLab />
+        {/* Keep the primary evidence in the journey; visitors can open the
+            full archive without crossing three extra chapters to continue. */}
+        <details data-services-evidence-library="true">
+          <summary>
+            <span>
+              <span>More project evidence</span>
+              <span>Browse all client work, brand decisions, and concept studies.</span>
+            </span>
+            <span aria-hidden="true">+</span>
+          </summary>
+          <div>
+            <WorkIndex projects={projects} />
+            <DecisionMap />
+            <TatvaLab />
+          </div>
+        </details>
 
         {/* Authority now resolves inside one viewport. The shared services
             camera assembles its five layers during entry, discovery, and
@@ -709,7 +691,7 @@ export default async function ServicesPage() {
         </PricingProvider>
       </main>
       <Footer compact />
-      <SectionJumpNav items={JUMP_ITEMS} hideOnLast showActiveLabel={false} guidedMobile />
+      <SectionJumpNav items={JUMP_ITEMS} hideOnFirst hideOnLast showActiveLabel={false} guidedMobile />
     </>
   );
 }
