@@ -162,9 +162,9 @@ No P0, P1, or P2 visual, interaction, responsive, accessibility, or motion issue
 
 ### Evidence
 
-- Source visual truth: release 145, `https://branding-tatva-cyp020aeb-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
-- Implementation: release 148, `https://branding-tatva-d8p4t91ce-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
-- Mobile implementation: release 148, `https://branding-tatva-d8p4t91ce-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=mobile`
+- Source visual truth: release 145, `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
+- Implementation: release 148, `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
+- Mobile implementation: release 148, `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=mobile`
 - Browser-rendered source and implementation screenshots were emitted together in one comparison input.
 - Capture pixels: 1348 × 926 for both desktop screenshots.
 - CSS comparison viewport: 1440 × 900 in the responsive QA iframe; identical outer crop and browser density were used for both captures.
@@ -282,9 +282,9 @@ final result: passed
 
 ### Evidence
 
-- Source visual truth: release 154, `https://branding-tatva-aumv2fdqy-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
-- Implementation: release 158, `https://branding-tatva-h21okox68-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
-- Mobile implementation: release 158, `https://branding-tatva-h21okox68-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=mobile`
+- Source visual truth: release 154, `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
+- Implementation: release 158, `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=desktop`
+- Mobile implementation: release 158, `https://branding-tatva-git-august-8-isolated-suman22.vercel.app/qa/homepage-responsive?path=%2F&preset=mobile`
 - Browser-rendered source and implementation screenshots were emitted together in one comparison input.
 - Capture pixels: 1348 × 926 for both desktop screenshots.
 - CSS comparison viewport: 1440 × 900 in the responsive QA iframe; identical scroll position and outer crop were used.
