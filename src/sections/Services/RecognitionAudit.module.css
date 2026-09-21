@@ -730,7 +730,7 @@
 
   .questionView,
   .unlockForm {
-    min-height: 26rem;
+    min-height: 24rem;
     padding: 1.2rem;
   }
 
@@ -976,7 +976,7 @@
   .paper,
   .questionView,
   .unlockForm {
-    min-height: 26rem;
+    min-height: 24rem;
   }
 
   .paper:has(.unlockForm),
@@ -1011,6 +1011,13 @@
 
   .formIntro h3 {
     font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .paper,
+  .questionView {
+    min-height: 26rem;
   }
 }
 

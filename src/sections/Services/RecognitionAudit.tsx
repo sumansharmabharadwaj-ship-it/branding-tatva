@@ -81,9 +81,7 @@ export function RecognitionAudit() {
   const pageIndexes = Array.from({ length: PRIVATE_CHECK_COUNT }, (_, index) => pageStart + index);
   const scoreGuidance = !complete
     ? "Answer each question, then review which cues hold."
-    : markedCount === 0
-      ? "Recognition is still relying on isolated cues."
-      : recognitionAuditGuidance(markedCount, scoreTotal);
+    : recognitionAuditGuidance(markedCount, scoreTotal);
 
   function publish(nextAnswers: (boolean | null)[], total = scoreTotal) {
     const relevantAnswers = nextAnswers.slice(0, total);

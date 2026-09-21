@@ -273,6 +273,10 @@ export function SectionJumpNav({
   }, [hiddenForFirstScene, hiddenForFinalScene, mobileYielding]);
 
   useEffect(() => {
+    if (isServicesRoute && mobileYielding) setDesktopOpen(false);
+  }, [isServicesRoute, mobileYielding]);
+
+  useEffect(() => {
     if (!guidedMobile) return;
     const main = document.getElementById("main-content");
     if (!main) return;
@@ -286,6 +290,13 @@ export function SectionJumpNav({
 
       if (yielding && mobileNavRef.current?.contains(document.activeElement)) {
         intersecting.values().next().value?.focus({ preventScroll: true });
+      }
+
+      if (yielding && isServicesRoute && desktopNavRef.current?.contains(document.activeElement)) {
+        const action = intersecting.values().next().value;
+        const target = action?.querySelector<HTMLElement>("h2, h3") ?? action;
+        target?.setAttribute("tabindex", "-1");
+        target?.focus({ preventScroll: true });
       }
 
       setMobileYielding((current) => (current === yielding ? current : yielding));
@@ -338,7 +349,7 @@ export function SectionJumpNav({
       observed.clear();
       intersecting.clear();
     };
-  }, [guidedMobile]);
+  }, [guidedMobile, isServicesRoute]);
 
   useEffect(() => {
     if (!guidedMobile || !mobileOpen) return;

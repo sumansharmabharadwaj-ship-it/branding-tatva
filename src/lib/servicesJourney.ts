@@ -91,7 +91,7 @@ export type ServicesRecognitionAuditDetail = {
 };
 
 export function recognitionAuditGuidance(score: number, total: number) {
-  if (score === 0) return "Mark each statement that already holds.";
+  if (score === 0) return "Recognition is still relying on isolated cues.";
   if (score < Math.ceil(total * 0.5)) return "Buyers are being asked to learn several versions of the brand.";
   if (score < total) return "Some cues repeat. The answers marked for attention show where memory breaks.";
   return total > 5 ? "All ten answers currently hold." : "The first five answers hold. Five further questions remain.";
