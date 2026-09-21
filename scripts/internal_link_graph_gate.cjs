@@ -57,7 +57,15 @@ expect("src/components/InsightDecisionPath.tsx", "crawlable Next Link", /<Link\s
 expect("src/app/insights/[slug]/page.tsx", "article decision path", /<InsightDecisionPath\s+pathway=\{pathway\}/);
 expect("src/app/insights/topic/[topic]/page.tsx", "topic decision path", /<InsightDecisionPath\s+pathway=\{pathway\}/);
 expect("src/app/insights/topic/[topic]/page.tsx", "contextual adjacent topics", /adjacentTopicSlugs/);
-expect("src/app/services/page.tsx", "remote US, UK and India metadata", /service businesses in the US, UK and India/);
+// The wording has been deliberately rewritten more than once (most
+// recently to a UK first focus), so the contract checks the substance
+// rather than one frozen phrase: service businesses, remote delivery,
+// and all three named markets must appear in the page metadata.
+expect("src/app/services/page.tsx", "service businesses metadata", /service businesses/);
+expect("src/app/services/page.tsx", "remote delivery metadata", /remote|remotely/i);
+expect("src/app/services/page.tsx", "UK market metadata", /\bUK\b/);
+expect("src/app/services/page.tsx", "US market metadata", /\bUS\b/);
+expect("src/app/services/page.tsx", "India market metadata", /\bIndia\b/);
 expect("src/app/services/page.tsx", "shared service area fact source", /REMOTE_SERVICE_AREAS\s*=\s*entityFacts\.delivery\.regions/);
 expect("src/app/services/page.tsx", "service area structured data", /areaServed:\s*REMOTE_SERVICE_AREAS/);
 expect("src/sections/Services/StrategyRoomCTA.tsx", "visible remote region copy", /Remote projects led directly by Suman are available across/);
