@@ -244,7 +244,7 @@ export function PackageSelector() {
                       }}
                       className={styles.more}
                     >
-                      <summary>View all {pkg.includes.length} inclusions <span aria-hidden="true">+</span></summary>
+                      <summary>{isActive && expanded ? "Show fewer inclusions" : `View all ${pkg.includes.length} inclusions`} <span aria-hidden="true">+</span></summary>
                       <ol start={4} className={styles.inclusions}>
                         {pkg.includes.slice(3).map((item, index) => (
                           <li key={item}><span aria-hidden="true">0{index + 4}</span><span>{item}</span></li>

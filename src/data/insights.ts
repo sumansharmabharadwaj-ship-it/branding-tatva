@@ -1,7 +1,6 @@
 import { agenticBuyingInsightPosts } from "@/data/agenticBuyingInsights";
 import { namingInsightPosts } from "@/data/namingInsights";
 import { strategyIdentityInsightPosts } from "@/data/strategyIdentityInsights";
-import { choosingAgencyInsightPosts } from "@/data/choosingAgencyInsights";
 import { aiEraInsightPosts } from "@/data/aiEraInsights";
 import { answerEngineInsightPosts } from "@/data/answerEngineInsights";
 import { pricingInsightPosts } from "@/data/pricingInsights";
@@ -80,7 +79,6 @@ const combinedPosts = [
   ...agenticBuyingInsightPosts,
   ...namingInsightPosts,
   ...strategyIdentityInsightPosts,
-  ...choosingAgencyInsightPosts,
 ];
 
 const uniquePosts = combinedPosts.filter(

@@ -136,9 +136,7 @@ export function ServiceDisciplineExplorer() {
                   One position. Six ways to put it to work.
                 </h2>
                 <p data-discipline-intro="true" className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/75">
-                  {routePlan
-                    ? `${routePlan.label} sets the starting point. Each discipline carries that decision into the places buyers meet you.`
-                    : "Choose a situation above to see the relevant order, or inspect every discipline here."}
+                  Each discipline carries the position into the places buyers meet you.
                 </p>
                 <div data-discipline-progress="true" className="mt-7 flex items-center gap-4" aria-hidden="true">
                   <span className="font-display text-2xl text-ivory">
@@ -270,16 +268,19 @@ export function ServiceDisciplineExplorer() {
 
                     <div data-discipline-panel-footer="true" className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ivory/12 pt-5">
                       <p data-service-route-context="true" className="max-w-sm text-sm leading-relaxed text-ivory/60">
-                        {routePlan ? (
-                          <>
-                            <span className="block text-[0.58rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
-                              Your route: {routePlan.label}
+                        {[null, ...Object.values(ROUTE_PLANS)].map((plan) => {
+                          const isActive = plan?.label === routePlan?.label;
+                          return (
+                            <span key={plan?.label ?? "default"} data-service-route-state="true" data-active={isActive} aria-hidden={!isActive} inert={!isActive}>
+                              {plan ? (
+                                <>
+                                  <span className="block text-[0.58rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Your route: {plan.label}</span>
+                                  <span className="mt-1 block">{plan.summary}</span>
+                                </>
+                              ) : "Included when the engagement requires it. Nothing is added to fill a list."}
                             </span>
-                            <span className="mt-1 block">{routePlan.summary}</span>
-                          </>
-                        ) : (
-                          "Included when the engagement requires it. Nothing is added to fill a list."
-                        )}
+                          );
+                        })}
                       </p>
                       <a
                         href="#desire"
