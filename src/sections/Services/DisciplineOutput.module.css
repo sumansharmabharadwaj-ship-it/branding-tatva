@@ -16,7 +16,7 @@
 .paper > strong { margin-block: 0.55rem; }
 .inkLine { display: block; width: 88%; height: 1px; margin-top: 0.55rem; background: #72815b55; }
 .inkLine + .inkLine { width: 60%; }
-.identity { display: grid; gap: 0.65rem; align-content: center; min-height: 8rem; }
+.identity { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.65rem; align-content: center; min-height: 8rem; }
 .wordmark { display: flex; align-items: baseline; gap: 0.7rem; font-family: var(--font-display), Georgia, serif; font-size: 3rem; line-height: 1; }
 .wordmark > span { font-size: 1.7rem; }
 .swatches { display: flex; gap: 0.25rem; }
