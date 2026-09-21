@@ -25,6 +25,11 @@ export const faqs = [
       "Yes. Dr. Haley Nutrition and Executive Springboard show ongoing content direction, creation, and review across several months.",
   },
   {
+    question: "What does the work cost?",
+    answer:
+      "Starting prices for the three engagement shapes are published with the services, localised to your market. Scope is settled in the first conversation and the final quotation follows it.",
+  },
+  {
     question: "How long does a project take?",
     answer:
       "Timing depends on the decisions and deliverables involved. After the first conversation, you receive a schedule based on the actual work instead of an estimate broad enough to mean nothing.",

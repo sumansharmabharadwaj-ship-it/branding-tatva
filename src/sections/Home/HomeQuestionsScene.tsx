@@ -15,6 +15,7 @@ const QUESTION_ORDER = [
   "Can you help a brand new business?",
   "Can you help an existing brand that already has an identity?",
   "Can you actually implement, or just strategise?",
+  "What does the work cost?",
   "How long does a project take?",
   "Can we work remotely?",
 ] as const satisfies readonly (typeof faqs)[number]["question"][];
