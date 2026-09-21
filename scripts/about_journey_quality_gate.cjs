@@ -61,8 +61,12 @@ assert(
 );
 assert(
   aboutPage.includes("data-reading-scene") &&
-    /\[data-about-film-scene\]\[data-reading-scene\] \[data-about-film-plane\]\s*\{[^}]*opacity:\s*calc\(0\.93 \+ var\(--scene-focus\) \* 0\.07\);/.test(globalStyles),
+    /\[data-about-film-scene\]\[data-reading-scene\] \[data-about-film-plane\]\s*\{[^}]*opacity:\s*calc\(\(0\.3 \+ var\(--scene-enter\) \* 0\.7\)/.test(globalStyles),
   "The copy dense origin chapter can fade below its protected reading exposure.",
+);
+assert(
+  !/\[data-about-film-scene\]\[data-reading-scene\] \[data-about-film-plane\]\s*\{[^}]*var\(--scene-focus\)[^}]*opacity/.test(globalStyles),
+  "Reading exposure must key to scene enter (settles at full strength), never to focus.",
 );
 assert(
   /id="about-convergence"[^>]*data-reading-scene/.test(aboutPage),

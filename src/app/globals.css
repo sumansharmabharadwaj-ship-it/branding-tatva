@@ -1050,22 +1050,53 @@ html[data-about-film-snap="true"] {
   scroll-snap-stop: normal;
 }
 
+/* Arrival amplitudes retuned on Suman's "do the same for the about
+   page": chapters now visibly arrive (low opacity, real travel, slight
+   scale) instead of fading the last few percent. Exposure is keyed to
+   --scene-enter, which completes as the chapter rises and then holds,
+   so a settled chapter reads at full strength regardless of focus —
+   which also retires the old washing-into-the-pale-film failure that
+   the previous 0.93 focus floor was patching. Exit eases the chapter
+   out with a shorter, dimmer gesture so reversing scroll reverses the
+   composition. */
 [data-about-film-scene] [data-about-film-plane] {
-  opacity: calc(0.78 + var(--scene-focus) * 0.22);
+  opacity: calc((0.12 + var(--scene-enter) * 0.88) * (1 - var(--scene-exit) * 0.2));
   transform:
     perspective(90rem)
-    translate3d(0, calc((1 - var(--scene-enter)) * 2.8svh - var(--scene-exit) * 1.8svh), 0)
-    scale(calc(0.986 + var(--scene-focus) * 0.014));
+    translate3d(0, calc((1 - var(--scene-enter)) * 7.5svh - var(--scene-exit) * 2.6svh), 0)
+    scale(calc(0.974 + var(--scene-enter) * 0.026));
   transform-origin: 50% 45%;
   transition: opacity 160ms linear;
   will-change: transform, opacity;
 }
 
-/* Copy dense chapters keep a firmer exposure floor while retaining the
-   shared camera movement. The origin record was visually washing into its
-   pale film still whenever the scene sat just outside perfect focus. */
+/* Copy dense chapters arrive from a firmer exposure so long text is
+   never far from readable mid gesture, and settle at full exposure
+   regardless of focus — a stronger reading protection than the old
+   0.93 focus floor, which the journey gate now asserts in this form. */
 [data-about-film-scene][data-reading-scene] [data-about-film-plane] {
-  opacity: calc(0.93 + var(--scene-focus) * 0.07);
+  opacity: calc((0.3 + var(--scene-enter) * 0.7) * (1 - var(--scene-exit) * 0.12));
+  transform:
+    perspective(90rem)
+    translate3d(0, calc((1 - var(--scene-enter)) * 6svh - var(--scene-exit) * 2.2svh), 0)
+    scale(calc(0.98 + var(--scene-enter) * 0.02));
+}
+
+/* The pointer reward the rest of the site now speaks, shared across
+   every About chapter: interactive surfaces rise a breath to meet the
+   hand. The lift rides the independent `translate` property so no
+   component transform or scene camera is disturbed. */
+@media (min-width: 941px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-about-film-scene] :is(button, [role="tab"], a) {
+    translate: 0 0;
+    transition-property: translate;
+    transition-duration: 380ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-about-film-scene] :is(button, [role="tab"], a):hover,
+  [data-about-film-scene] :is(button, [role="tab"], a):focus-visible {
+    translate: 0 -3px;
+  }
 }
 
 [data-about-film-scene] [data-about-film-background] {
