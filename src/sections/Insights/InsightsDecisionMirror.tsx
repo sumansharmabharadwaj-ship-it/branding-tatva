@@ -225,7 +225,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
           <span>Relevant decision</span>
         </div>
 
-          <article
+          <div
             key={activeQuest.topicSlug}
             id={`decision-mirror-panel-${activeQuest.topicSlug}`}
             role="tabpanel"
@@ -280,7 +280,7 @@ export function InsightsDecisionMirror({ quests }: InsightsDecisionMirrorProps) 
               See all {activeQuest.pathName.toLowerCase()} essays
               <ArrowDown aria-hidden="true" className="h-4 w-4" />
             </a>
-          </article>
+          </div>
         <p className="sr-only" aria-live="polite">
           {committedSlug === activeQuest.topicSlug
             ? `${activeQuest.pathName} is selected for the topic map.`

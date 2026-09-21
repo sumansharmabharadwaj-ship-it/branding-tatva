@@ -484,7 +484,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
             }}
             onPointerCancel={() => setPaused(false)}
           >
-            <article
+            <div
               key={activePath.slug}
               id={`atlas-panel-${activePath.slug}`}
               role="tabpanel"
@@ -576,7 +576,7 @@ export function InsightsKnowledgeAtlas({ paths }: InsightsKnowledgeAtlasProps) {
                   Read all {activePath.name.toLowerCase()} essays
                   <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                 </Link>
-            </article>
+            </div>
           </div>
         </div>
       </Container>

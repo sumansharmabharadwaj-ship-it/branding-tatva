@@ -814,7 +814,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
         );
       })}
 
-      <footer ref={reviewSummaryRef} className="insights-worksheet__footer" role="region" aria-label="Worksheet review" tabIndex={-1}>
+      <section ref={reviewSummaryRef} className="insights-worksheet__footer" aria-label="Worksheet review" tabIndex={-1}>
         <div className="insights-worksheet__review" role="group" aria-label="Your review list">
           <AnimatePresence initial={false} mode="popLayout">
             {markedCount === 0 ? (
@@ -869,7 +869,7 @@ export function InsightsEvidenceLedger({ layers }: InsightsEvidenceLedgerProps) 
             </motion.div>
           </AnimatePresence>
         </div>
-      </footer>
+      </section>
     </div>
   );
 }

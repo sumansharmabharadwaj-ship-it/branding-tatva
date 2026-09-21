@@ -236,7 +236,7 @@
 }
 
 .insight-reading-index__head p {
-  color: var(--reading-accent);
+  color: color-mix(in srgb, var(--reading-accent) 55%, #27221e);
   font-size: 0.62rem;
   font-weight: 650;
   letter-spacing: 0.16em;
@@ -244,7 +244,7 @@
 }
 
 .insight-reading-index__head span {
-  color: rgb(39 34 30 / 40%);
+  color: rgb(39 34 30 / 70%);
   font-size: 0.7rem;
   letter-spacing: 0.08em;
 }
@@ -281,7 +281,7 @@
 
 .insight-reading-index__current span,
 .insight-reading-index__moves span {
-  color: var(--reading-accent);
+  color: color-mix(in srgb, var(--reading-accent) 55%, #27221e);
   font-size: 0.55rem;
   font-weight: 650;
   letter-spacing: 0.14em;
@@ -349,7 +349,7 @@
   min-height: 2.4rem;
   padding-inline: 0.35rem;
   border-radius: 0.6rem;
-  color: rgb(39 34 30 / 62%);
+  color: rgb(39 34 30 / 70%);
   font-size: 0.65rem;
   font-weight: 650;
   letter-spacing: 0.12em;
@@ -361,7 +361,7 @@
 }
 
 .insight-reading-index__all summary small {
-  color: var(--reading-accent);
+  color: color-mix(in srgb, var(--reading-accent) 55%, #27221e);
   font-size: 0.7rem;
 }
 
@@ -696,7 +696,7 @@
 }
 
 .insight-framework__eyebrow {
-  color: var(--framework-accent);
+  color: color-mix(in srgb, var(--framework-accent) 55%, #27221e);
   font-size: 0.68rem;
   font-weight: 650;
   letter-spacing: 0.18em;
@@ -716,7 +716,7 @@
 .insight-framework__introduction {
   max-width: 42rem;
   margin-top: 1.2rem;
-  color: rgb(39 34 30 / 65%);
+  color: rgb(39 34 30 / 72%);
   font-size: 1rem;
   line-height: 1.75;
 }
@@ -743,7 +743,7 @@
   min-height: 3.9rem;
   padding: 0.8rem 1rem;
   border-bottom: 1px solid rgb(39 34 30 / 8%);
-  color: rgb(39 34 30 / 48%);
+  color: rgb(39 34 30 / 70%);
   text-align: left;
   transition: background-color 260ms ease, color 260ms ease;
 }
@@ -761,7 +761,7 @@
 
 .insight-framework__steps button[data-reached="true"]:not(.is-active) {
   background: color-mix(in srgb, var(--framework-accent) 4%, #eae6dd);
-  color: rgb(39 34 30 / 68%);
+  color: rgb(39 34 30 / 72%);
 }
 
 .insight-framework__steps button:focus-visible {
@@ -770,7 +770,7 @@
 }
 
 .insight-framework__steps span {
-  color: var(--framework-accent);
+  color: color-mix(in srgb, var(--framework-accent) 55%, #27221e);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
 }
@@ -891,7 +891,7 @@
 }
 
 .insight-framework__active p {
-  color: var(--framework-accent);
+  color: color-mix(in srgb, var(--framework-accent) 55%, #27221e);
   font-size: 0.65rem;
   font-weight: 650;
   letter-spacing: 0.17em;
@@ -954,7 +954,7 @@
 }
 
 .insight-framework__controls span {
-  color: var(--framework-accent);
+  color: color-mix(in srgb, var(--framework-accent) 55%, #27221e);
   font-size: 0.54rem;
   font-weight: 650;
   letter-spacing: 0.14em;
@@ -1112,7 +1112,7 @@
 .insight-application-card > p {
   padding: 0.9rem 1rem;
   border-bottom: 1px solid rgb(39 34 30 / 9%);
-  color: var(--article-accent);
+  color: color-mix(in srgb, var(--article-accent) 55%, #27221e);
   font-size: 0.58rem;
   font-weight: 650;
   letter-spacing: 0.14em;
@@ -1136,7 +1136,7 @@
 }
 
 .insight-application-card small {
-  color: rgb(39 34 30 / 44%);
+  color: rgb(39 34 30 / 70%);
   font-size: 0.54rem;
   font-weight: 650;
   letter-spacing: 0.12em;
@@ -1156,7 +1156,7 @@
   display: -webkit-box;
   overflow: hidden;
   margin-top: 0.4rem;
-  color: rgb(39 34 30 / 56%);
+  color: rgb(39 34 30 / 70%);
   font-size: 0.7rem;
   line-height: 1.45;
   -webkit-box-orient: vertical;

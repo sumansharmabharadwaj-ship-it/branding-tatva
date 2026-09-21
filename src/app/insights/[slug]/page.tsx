@@ -142,6 +142,7 @@ export default async function InsightArticlePage({ params }: Props) {
   const topic = getInsightTopic(post.topicSlug);
   const pathway = getInsightPathway(post.topicSlug, post.slug);
   const color = element?.color ?? "#B85A34";
+  const inkColor = `color-mix(in srgb, ${color} 55%, #27221E)`;
   const application = getInsightApplication(post.topicSlug);
   const applicationProof = projects.find(
     (project) => project.slug === application?.projectSlug
@@ -418,7 +419,7 @@ export default async function InsightArticlePage({ params }: Props) {
                       aria-labelledby="takeaways-heading"
                       className="insight-reading-chapter insight-article-summary scroll-mt-32 rounded-[1.5rem] border border-soil/10 bg-background-elevated p-6 shadow-elevation-sm sm:p-8"
                     >
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay-ink">
                         Five conclusions
                       </p>
                       <h2
@@ -580,7 +581,7 @@ export default async function InsightArticlePage({ params }: Props) {
                       aria-labelledby="faq-heading"
                       className="insight-reading-chapter insight-article-faq scroll-mt-32 pt-20"
                     >
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay-ink">
                         Before you use it
                       </p>
                       <h2
@@ -618,7 +619,7 @@ export default async function InsightArticlePage({ params }: Props) {
                         aria-labelledby="research-sources-heading"
                         className="insight-reading-chapter insight-article-sources scroll-mt-32 pt-20"
                       >
-                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay-ink">
                           Research record
                         </p>
                         <h2
@@ -642,7 +643,7 @@ export default async function InsightArticlePage({ params }: Props) {
                               <div className="flex gap-4">
                                 <span
                                   className="font-display text-2xl leading-none"
-                                  style={{ color }}
+                                  style={{ color: inkColor }}
                                   aria-hidden="true"
                                 >
                                   {String(index + 1).padStart(2, "0")}
@@ -657,7 +658,7 @@ export default async function InsightArticlePage({ params }: Props) {
                                     {source.title}
                                     <span aria-hidden="true"> ↗</span>
                                   </a>
-                                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-clay">
+                                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-clay-ink">
                                     {source.publisher}
                                   </p>
                                   {source.note && (
@@ -688,7 +689,7 @@ export default async function InsightArticlePage({ params }: Props) {
                         />
                       </div>
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay-ink">
                           Written by {site.founder}
                         </p>
                         <p className="mt-3 text-sm leading-7 text-foreground-secondary">
@@ -755,7 +756,7 @@ export default async function InsightArticlePage({ params }: Props) {
                     <Link
                       href={pathway.service.href}
                       className="link-underline block text-xs font-semibold uppercase tracking-[0.14em]"
-                      style={{ color }}
+                      style={{ color: inkColor }}
                     >
                       {pathway.service.label}
                     </Link>
@@ -781,7 +782,7 @@ export default async function InsightArticlePage({ params }: Props) {
               <Reveal>
                 <div className="insight-related-reading__header grid gap-6 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay-ink">
                       Adjacent decision
                     </p>
                     <h2 className="mt-4 font-display text-display-md font-normal text-soil">

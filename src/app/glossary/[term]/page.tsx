@@ -159,14 +159,14 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                 </ul>
                 <div className="mt-6 flex flex-col gap-2 text-sm">
                   {article && (
-                    <Link href={`/insights/${article.slug}`} className="link-underline inline-flex min-h-11 items-center gap-2 text-clay">
+                    <Link href={`/insights/${article.slug}`} className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
                       Read Suman&apos;s guide: {article.title} <span aria-hidden="true">→</span>
                     </Link>
                   )}
-                  <Link href="/services#offerings" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay">
+                  <Link href="/services#offerings" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
                     See how Suman handles this decision <span aria-hidden="true">→</span>
                   </Link>
-                  <Link href="/services#proof" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay">
+                  <Link href="/services#proof" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
                     Read the project evidence <span aria-hidden="true">→</span>
                   </Link>
                 </div>
@@ -176,7 +176,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             {essays.length > 0 && (
               <Reveal>
                 <div className="mt-12 border-t border-border pt-8">
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary/70">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-foreground-secondary">
                     Essays that put this idea to work
                   </p>
                   <ul className="mt-4 space-y-4">
@@ -186,10 +186,10 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                           <span className="font-display text-lg leading-snug text-soil transition-colors duration-300 group-hover:text-clay">
                             {post.title}
                           </span>
-                          <span className="mt-0.5 flex items-center gap-3 text-xs text-foreground-secondary/70">
+                          <span className="mt-0.5 flex items-center gap-3 text-xs text-foreground-secondary">
                             <span>{post.readingTime}</span>
                             <span aria-hidden="true">·</span>
-                            <span className="text-clay">Read the essay →</span>
+                            <span className="text-clay-ink">Read the essay →</span>
                           </span>
                         </Link>
                       </li>

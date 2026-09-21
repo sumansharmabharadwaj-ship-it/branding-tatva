@@ -76,6 +76,7 @@ export function InsightCard({
   onOpen,
 }: InsightCardProps) {
   const color = ELEMENT_COLORS[post.element];
+  const inkColor = `color-mix(in srgb, ${color} 55%, #27221E)`;
   const topicName = TOPIC_NAMES[post.topicSlug] ?? post.element;
 
   return (
@@ -201,14 +202,14 @@ export function InsightCard({
                 </span>
                 <strong>{post.frameworkTitle}</strong>
               </span>
-              <span className="insight-card__open" style={{ color }}>
+              <span className="insight-card__open" style={{ color: inkColor }}>
                 Read the framework <span aria-hidden="true">→</span>
               </span>
             </span>
           ) : (
             <span
               className="mt-auto inline-flex items-center gap-2 pt-4 text-xs font-semibold uppercase tracking-[0.16em] transition-transform duration-300 group-hover:translate-x-1"
-              style={{ color }}
+              style={{ color: inkColor }}
             >
               Read the essay <span aria-hidden="true">→</span>
             </span>

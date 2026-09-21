@@ -20,7 +20,7 @@ export function InsightDecisionPath({
     >
       <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:gap-12">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-clay-ink">
             Three routes from here
           </p>
           <h2
@@ -38,7 +38,7 @@ export function InsightDecisionPath({
                 href={link.href}
                 className="group grid gap-3 py-5 sm:grid-cols-[2.5rem_1fr_auto] sm:items-start sm:gap-4"
               >
-                <span className="font-display text-lg text-clay/75">
+                <span className="font-display text-lg text-clay-ink">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span>
