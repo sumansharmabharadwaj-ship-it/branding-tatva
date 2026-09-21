@@ -292,6 +292,26 @@
 .brand-orbit__result { min-height:0; display:grid; grid-template-columns:minmax(0,1.18fr) minmax(18rem,.72fr); align-items:end; gap:clamp(3rem,10vw,10rem); padding-bottom:clamp(2rem,8svh,6rem); }
 .brand-orbit__result-copy h3 { margin:0 0 1rem; font:400 clamp(3rem,5vw,5.5rem)/.93 var(--font-display), Georgia, serif; letter-spacing:-.05em; }
 .brand-orbit__result-copy span { display:block; max-width:34rem; font-size:clamp(.95rem,1.2vw,1.15rem); line-height:1.65; }
+/* The answer trace: the three chosen signals come back as chips, each a
+   button that reopens exactly its own question. Same glass register as the
+   rest of the light world; the loose result-copy span rule above is
+   re-scoped inside the chips so the question number stays inline. */
+.brand-orbit__result-trace { margin:1.8rem 0 0; padding:0; display:flex; flex-wrap:wrap; gap:.55rem; list-style:none; }
+.brand-orbit__result-trace button { display:inline-flex; align-items:center; gap:.6rem; min-height:2.75rem; padding:.35rem 1.05rem; border:1px solid rgba(32,50,40,.34); border-radius:999px; background:rgba(255,255,255,.24); color:inherit; font-size:.68rem; font-weight:650; text-transform:uppercase; letter-spacing:.15em; }
+.brand-orbit__result-trace button span { display:inline; max-width:none; font-size:inherit; line-height:1; opacity:.55; }
+.brand-orbit__result-trace button:focus-visible { outline:2px solid rgba(32,50,40,.7); outline-offset:2px; }
+@media (prefers-reduced-motion: no-preference) {
+  .brand-orbit__result-trace button { translate:0 0; transition:
+    translate 420ms cubic-bezier(.22,1,.36,1),
+    box-shadow 420ms cubic-bezier(.22,1,.36,1),
+    background-color 450ms cubic-bezier(.22,1,.36,1); }
+  .brand-orbit__result-trace button:hover,
+  .brand-orbit__result-trace button:focus-visible {
+    translate:0 -3px;
+    background:rgba(255,255,255,.4);
+    box-shadow:0 14px 28px rgba(18,26,20,.22);
+  }
+}
 .brand-orbit__result-action { align-self:center; display:flex; flex-direction:column; align-items:flex-start; }
 .brand-orbit__result-action>span { font-size:.66rem; text-transform:uppercase; letter-spacing:.2em; }
 .brand-orbit__result-action>strong { margin:.65rem 0 2rem; font:400 clamp(1.7rem,2.5vw,2.6rem)/1.04 var(--font-display), Georgia, serif; }

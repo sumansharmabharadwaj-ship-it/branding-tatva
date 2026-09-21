@@ -15,7 +15,7 @@ export type HomeDiagnosticAction =
   | { type: "continue" }
   | { type: "back" }
   | { type: "complete"; answers: Array<HomeDiagnosis | null> }
-  | { type: "review" }
+  | { type: "review"; step?: number }
   | { type: "preview"; selection: number | null }
   | { type: "reset" };
 
@@ -99,9 +99,15 @@ export function homeDiagnosticReducer(
   }
 
   if (action.type === "review") {
+    // A review can reopen one specific question (the result screen's answer
+    // trace names each one); without a target it reopens the last question.
+    const target =
+      action.step === undefined
+        ? HOME_DIAGNOSTIC_QUESTION_COUNT - 1
+        : Math.min(Math.max(0, action.step), HOME_DIAGNOSTIC_QUESTION_COUNT - 1);
     return {
       ...state,
-      step: HOME_DIAGNOSTIC_QUESTION_COUNT - 1,
+      step: target,
       resultVisible: false,
       result: null,
       preview: null,

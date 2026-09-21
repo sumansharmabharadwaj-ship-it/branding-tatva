@@ -304,11 +304,11 @@ export function HomeBrandHealthCheck() {
     dispatch({ type: "back" });
   }
 
-  function reviewAnswers() {
+  function reviewAnswers(targetStep?: number) {
     clearServicesSituation();
     diagnosticDirectionRef.current = "backward";
     focusRequestedRef.current = true;
-    dispatch({ type: "review" });
+    dispatch({ type: "review", step: targetStep });
   }
 
   function revealReading(event: FocusEvent<HTMLElement>) {
@@ -445,6 +445,39 @@ export function HomeBrandHealthCheck() {
                 <p>Your answers point toward</p>
                 <h3 id="brand-orbit-result-title">{result.title}</h3>
                 <span>{result.detail}</span>
+                {/* The diagnosis quotes its own symptoms: the three chosen
+                    signals return as chips, and each one reopens exactly its
+                    question, so changing one answer costs one step instead of
+                    walking the whole sequence backward. */}
+                <ul className="brand-orbit__result-trace" aria-label="Your three answers, each one reopens its question">
+                  {QUESTIONS.map((question, index) => {
+                    const selection = selections[index];
+                    const choice = selection === null ? null : question.choices[selection];
+                    if (!choice) return null;
+                    return (
+                      <motion.li
+                        key={question.prompt}
+                        initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: reducedMotion ? 0 : 0.42,
+                          ease: EASE,
+                          delay: reducedMotion ? 0 : 0.34 + index * 0.09,
+                        }}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => reviewAnswers(index)}
+                          data-cursor-label="Change this"
+                          aria-label={`Question ${index + 1}, you chose: ${choice.label} Change this answer.`}
+                        >
+                          <span aria-hidden="true">0{index + 1}</span>
+                          {choice.shortLabel}
+                        </button>
+                      </motion.li>
+                    );
+                  })}
+                </ul>
               </div>
 
               <div className="brand-orbit__result-action">
@@ -463,7 +496,7 @@ export function HomeBrandHealthCheck() {
                 >
                   Discuss this diagnosis <i aria-hidden="true">→</i>
                 </Link>
-                <button type="button" onClick={reviewAnswers}>Change an answer</button>
+                <button type="button" onClick={() => reviewAnswers()}>Change an answer</button>
               </div>
             </motion.div>
           ) : (
