@@ -48,9 +48,7 @@ const OPTIONS: ReadonlyArray<{
 
 const FIRST_OPTION = OPTIONS[0];
 const EASE = [0.22, 1, 0.36, 1] as const;
-const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
-const MANUAL_HOLD_MS = 14000;
 const ROUTE_PANEL_VARIANTS = {
   enter: (direction: number) => ({
     opacity: 0.62,
@@ -77,12 +75,6 @@ const ROUTE_PANEL_VARIANTS = {
     filter: "blur(1.5px)",
   }),
   reducedExit: { opacity: 0 },
-};
-
-type ServicesProgressDetail = {
-  id?: string;
-  progress?: number;
-  storyProgress?: number;
 };
 
 function publishSituation(id: ServicesSituationId) {
@@ -114,7 +106,6 @@ export function SituationPath() {
   const [selected, setSelected] = useState<ServicesSituationId | null>(null);
   const [preview, setPreview] = useState<ServicesSituationId>(FIRST_OPTION.id);
   const [carried, setCarried] = useState(false);
-  const holdUntilRef = useRef(0);
   const previousDisplayedIndexRef = useRef(0);
   const mobileTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -144,31 +135,9 @@ export function SituationPath() {
     } catch {}
   }, []);
 
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-
-    function onSceneProgress(event: Event) {
-      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
-      if (detail?.id !== "situation" || typeof detail.progress !== "number") return;
-      if (selected || Date.now() < holdUntilRef.current) return;
-      const storyProgress = detail.storyProgress ?? detail.progress;
-
-      const index = Math.min(
-        OPTIONS.length - 1,
-        Math.max(0, Math.floor(storyProgress * OPTIONS.length)),
-      );
-      const next = OPTIONS[index]?.id ?? FIRST_OPTION.id;
-      setPreview((current) => (current === next ? current : next));
-    }
-
-    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
-    return () => {
-      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
-    };
-  }, [prefersReducedMotion, selected]);
+  // Keep this choice stable as the visitor scrolls through its explanation.
 
   function pick(id: ServicesSituationId) {
-    holdUntilRef.current = Date.now() + MANUAL_HOLD_MS;
     setPreview(id);
     setSelected((previous) => (previous === id ? previous : id));
     publishSituation(id);

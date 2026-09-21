@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, KeyboardEvent, PointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/Container";
@@ -20,8 +20,6 @@ import {
 } from "@/lib/servicesJourney";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-const HOVER_INTENT_MS = 180;
-const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 const DEFAULT_DISCIPLINE_ORDER = offerings.map((_, index) => index);
 const PANEL_VARIANTS = {
   enter: (direction: number) => ({ opacity: 0.84, y: direction * 12 }),
@@ -30,7 +28,7 @@ const PANEL_VARIANTS = {
 
 // A situation changes sequencing, not scope. Every route can still inspect all
 // six disciplines, while the work most consequential at that stage appears
-// first in the scroll-led chapter and keyboard order.
+// first in the chapter and keyboard order.
 const ROUTE_PLANS: Record<
   ServicesSituationId,
   { label: string; summary: string; order: readonly number[] }
@@ -52,12 +50,6 @@ const ROUTE_PLANS: Record<
   },
 };
 
-type ServicesProgressDetail = {
-  id?: string;
-  progress?: number;
-  storyProgress?: number;
-};
-
 // Six stacked description rows made the complete Services list read like
 // a catalogue and consumed almost two screens before the visitor reached
 // the package decision. All six now resolve inside one responsive frame:
@@ -67,14 +59,9 @@ type ServicesProgressDetail = {
 export function ServiceDisciplineExplorer() {
   const railViewportRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const explorerRef = useRef<HTMLDivElement>(null);
-  const manualChoiceRef = useRef(false);
-  const pointerInsideRef = useRef(false);
-  const hoverIntentRef = useRef<number | null>(null);
   const previousPositionRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [situation, setSituation] = useState<ServicesSituationId | null>(null);
-  const [routeReady, setRouteReady] = useState(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const active = offerings[activeIndex];
@@ -87,13 +74,6 @@ export function ServiceDisciplineExplorer() {
     previousPositionRef.current = activePosition;
   }, [activePosition]);
 
-  useEffect(() => {
-    return () => {
-      if (hoverIntentRef.current !== null) {
-        window.clearTimeout(hoverIntentRef.current);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     function applySituation(nextSituation: ServicesSituationId | null) {
@@ -103,7 +83,6 @@ export function ServiceDisciplineExplorer() {
           ? (ROUTE_PLANS[nextSituation].order[0] ?? DEFAULT_DISCIPLINE_ORDER[0])
           : DEFAULT_DISCIPLINE_ORDER[0],
       );
-      setRouteReady(true);
     }
 
     try {
@@ -141,46 +120,9 @@ export function ServiceDisciplineExplorer() {
     });
   }, [activeIndex, isDesktop, prefersReducedMotion]);
 
-  useEffect(() => {
-    if (prefersReducedMotion || !routeReady || !isDesktop) return;
+  // Keep this choice stable as the visitor scrolls through its explanation.
 
-    function onSceneProgress(event: Event) {
-      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
-      if (detail?.id !== "offerings" || typeof detail.progress !== "number") return;
-      // A deliberate choice stays put while the visitor reads or tabs.
-      // Rejoin the scroll sequence only after leaving the chapter. Phones
-      // keep explicit selection because scrolling is also how copy is read.
-      const hasFocus = explorerRef.current?.contains(document.activeElement);
-      if ((detail.progress < 0.04 || detail.progress > 0.96) && !hasFocus) {
-        manualChoiceRef.current = false;
-      }
-      if (manualChoiceRef.current || hasFocus || pointerInsideRef.current) return;
-      const storyProgress = detail.storyProgress ?? detail.progress;
-
-      const position = Math.min(
-        disciplineOrder.length - 1,
-        Math.max(0, Math.floor(storyProgress * disciplineOrder.length)),
-      );
-      const index = disciplineOrder[position] ?? DEFAULT_DISCIPLINE_ORDER[0];
-      setActiveIndex((current) => (current === index ? current : index));
-    }
-
-    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
-
-    return () => {
-      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
-    };
-  }, [disciplineOrder, prefersReducedMotion, routeReady, isDesktop]);
-
-  function clearHoverIntent() {
-    if (hoverIntentRef.current === null) return;
-    window.clearTimeout(hoverIntentRef.current);
-    hoverIntentRef.current = null;
-  }
-
-  function activate(index: number, source: "hover" | "focus" | "click") {
-    clearHoverIntent();
-    manualChoiceRef.current = true;
+  function activate(index: number, source: "focus" | "click") {
     if (index === activeIndex) return;
     setActiveIndex(index);
     track("capability_selected", {
@@ -188,18 +130,6 @@ export function ServiceDisciplineExplorer() {
       source,
       page: "services",
     });
-  }
-
-  function handlePointerEnter(index: number, event: PointerEvent<HTMLButtonElement>) {
-    // Touch browsers can retain a synthetic hover state after a tap.
-    // Only a deliberate fine-pointer hover previews; touch remains click-led.
-    if (explorerRef.current?.contains(document.activeElement)) return;
-    if (event.pointerType === "mouse" || event.pointerType === "pen") {
-      clearHoverIntent();
-      hoverIntentRef.current = window.setTimeout(() => {
-        activate(index, "hover");
-      }, HOVER_INTENT_MS);
-    }
   }
 
   function handleTabKey(index: number, event: KeyboardEvent<HTMLButtonElement>) {
@@ -221,10 +151,7 @@ export function ServiceDisciplineExplorer() {
   }
 
   return (
-    <div ref={explorerRef} data-services-discipline-journey="true" className="relative min-h-svh"
-      onPointerEnter={(event) => { if (event.pointerType === "mouse") pointerInsideRef.current = true; }}
-      onPointerLeave={() => { pointerInsideRef.current = false; }}
-    >
+    <div data-services-discipline-journey="true" className="relative min-h-svh">
       <div className="relative lg:flex lg:min-h-svh lg:items-center lg:overflow-hidden">
         <Container className="relative max-w-7xl py-2 lg:py-12">
           <div
@@ -291,8 +218,6 @@ export function ServiceDisciplineExplorer() {
                         aria-selected={isActive}
                         aria-controls={`service-discipline-panel-${offeringIndex}`}
                         tabIndex={isActive ? 0 : -1}
-                        onPointerEnter={(event) => handlePointerEnter(offeringIndex, event)}
-                        onPointerLeave={clearHoverIntent}
                         onFocus={() => activate(offeringIndex, "focus")}
                         onClick={() => activate(offeringIndex, "click")}
                         onKeyDown={(event) => handleTabKey(offeringIndex, event)}

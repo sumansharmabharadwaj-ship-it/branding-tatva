@@ -1,0 +1,196 @@
+/* Decision controls stay in normal flow; motion explains their relationships. */
+html[data-services-experience="active"] #situation[data-services-scene] {
+  min-height: 100svh !important;
+}
+
+#authority [data-authority-copy] {
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, #18261ee8, #18261edb);
+  border: 1px solid #f2f0e81a;
+}
+#authority [data-authority-copy] > p:nth-of-type(2) {
+  margin-top: 1.25rem;
+  font-style: normal;
+  line-height: 1.65;
+}
+#authority [data-authority-wave] {
+  padding-top: 1.25rem;
+  border-top: 1px solid #f2f0e829;
+}
+#authority [data-authority-signal-header] { display: block; }
+#authority [data-authority-signal-header] > p:first-child { color: #c4cbbb; font-size: 0.65rem; }
+#authority [data-authority-signal-status] { margin-top: 0.75rem; text-align: left; }
+#authority [data-authority-signal-status] > span:first-child { display: none; }
+#authority [data-authority-signal-status] > span:last-child {
+  margin-left: 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.75rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+#authority [data-authority-wave] svg { width: 100%; max-width: none; height: 3rem; }
+#authority [data-authority-decisions] { gap: 0.75rem; }
+#authority [data-authority-decisions] li { min-height: 2.75rem; font-size: 0.8125rem; }
+#authority [data-authority-index-heading] { padding: 0 0.25rem 1rem; border-bottom: 1px solid #f2f0e824; }
+#authority [data-authority-index-heading] p:first-child {
+  color: #f2f0e8;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+#authority [data-authority-index-heading] p:last-child { color: #c4cbbb; font-size: 0.875rem; margin-top: 0.45rem; }
+#authority [data-authority-desktop-layer] {
+  position: relative;
+  align-items: center;
+  padding: 1rem 0.5rem !important;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  box-shadow: none;
+}
+#authority [data-authority-desktop-layer]::before {
+  content: "";
+  position: absolute;
+  inset: 0.8rem auto 0.8rem 0;
+  width: 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--layer-color) 65%, #f2f0e8);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+#authority [data-authority-desktop-layer][aria-pressed="true"]::before { transform: scaleY(1); }
+#authority [data-authority-desktop-layer]:is(:hover, [aria-pressed="true"]) { background: #f2f0e80a; }
+#authority [data-authority-desktop-layer] > span:first-child { flex-basis: 2.75rem; gap: 0.5rem; }
+#authority [data-authority-desktop-layer] > span:first-child > span:last-child {
+  color: color-mix(in srgb, var(--layer-color) 60%, #f2f0e8) !important;
+  font-size: 1.65rem;
+  opacity: 1;
+}
+#authority [data-authority-desktop-layer] > div { flex: 1; }
+#authority [data-authority-desktop-layer] > div > svg { display: none; }
+#authority [data-authority-choice-mark] {
+  display: grid;
+  place-items: center;
+  flex: 0 0 1.65rem !important;
+  height: 1.65rem;
+  border: 1px solid #f2f0e824;
+  border-radius: 50%;
+  color: #c6a97a;
+  font-size: 0.875rem;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+#authority [aria-pressed="true"] [data-authority-choice-mark] { background: #c6a97a22; border-color: #c6a97a80; }
+#authority [data-authority-next] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: fit-content;
+  min-height: 44px;
+  margin: 1.5rem 0 0 auto;
+  color: #f2f0e8;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #c6a97a80;
+}
+#authority [data-authority-next]:focus-visible { outline: 2px solid #c6a97a; outline-offset: 5px; }
+
+/* The section list opens on request. Labels and 44px links replace tiny dots. */
+nav[data-services-nav="true"] {
+  top: auto;
+  bottom: 1.25rem;
+  left: 50%;
+  right: auto !important;
+  transform: translateX(-50%);
+}
+nav[data-services-nav="true"] > div {
+  width: 16rem;
+  align-items: stretch;
+  flex-direction: column-reverse;
+  padding: 0.25rem;
+  border-radius: 1rem !important;
+  background: #203227f5;
+  backdrop-filter: none;
+}
+nav[data-services-nav="true"] > div > span { display: none; }
+[data-services-nav-toggle] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding: 0.65rem 0.85rem;
+  color: #c6a97a;
+  border-radius: 0.75rem;
+  text-align: left;
+  font-size: 0.75rem;
+}
+[data-services-nav-toggle] > span > span { color: #f2f0e8; margin-left: 0.65rem; }
+[data-services-nav-toggle]:focus-visible { outline: 2px solid #c6a97a; outline-offset: 2px; }
+#services-desktop-chapters { max-height: calc(100svh - 13rem); overflow-y: auto; margin-top: 0.25rem; }
+#services-desktop-chapters[hidden] { display: none; }
+[data-services-nav-expanded="true"] #services-desktop-chapters { animation: services-menu-arrive 240ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes services-menu-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+#services-desktop-chapters > span { display: none; }
+#services-desktop-chapters ol { align-items: stretch; padding: 0.25rem; gap: 0; }
+#services-desktop-chapters li { width: 100%; }
+#services-desktop-chapters a { width: 100%; min-height: 44px; justify-content: space-between; padding: 0.5rem 0.85rem; border-radius: 0.6rem; }
+#services-desktop-chapters a > span:first-child {
+  position: static;
+  padding: 0;
+  opacity: 1;
+  transform: none;
+  border: none;
+  box-shadow: none;
+  background: none;
+  backdrop-filter: none;
+  color: #e1e5da;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.8125rem;
+}
+#services-desktop-chapters a:is(:hover, [aria-current="location"]) { background: #f2f0e810; }
+#services-desktop-chapters a[aria-current="location"] > span:first-child { color: #dfc39d; }
+
+/* The former moving glass medallion crossed headlines. The edge signal now
+   uses compositor transforms and stays outside the reading gutter. */
+html[data-services-experience="active"] [data-services-journey-thread] {
+  --services-thread-x: 0.65rem;
+  mask-image: none;
+  opacity: 0.55;
+}
+[data-services-thread-focus] { display: none; }
+[data-services-thread-rail] { transition: background 400ms ease; }
+[data-services-thread-progress] {
+  height: 100%;
+  min-height: 0;
+  transform: scaleY(var(--services-journey-fraction, 0));
+  transform-origin: top;
+  transition: none;
+  box-shadow: none;
+}
+
+@media (min-width: 1024px) {
+  #authority [data-authority-grid] { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.3fr) !important; }
+  #authority [data-authority-copy] { padding: clamp(1.25rem, 2.3vw, 2rem); }
+  #authority [data-authority-copy] h2 { font-size: clamp(2.1rem, 3.1vw, 3.3rem); line-height: 1.04; }
+  #authority [data-authority-diagram] { border-radius: 1.25rem; }
+  #authority [data-authority-shell] { padding-top: 7rem !important; }
+}
+@media (max-width: 1023px) {
+  html[data-services-experience="active"] #situation[data-services-scene] { min-height: 0 !important; padding-block: 5rem !important; }
+  #authority [data-authority-copy] { padding: 1.25rem; }
+  #authority [data-authority-copy] [data-authority-wave] { display: none; }
+  #authority [data-authority-grid] { gap: 0; }
+  #authority [data-authority-mobile-deck] { margin-top: 1.5rem; }
+  #authority [data-authority-mobile-deck] :is([role="tablist"], [role="tabpanel"]) { backdrop-filter: none; background-color: #18261ef5; }
+  #authority [data-authority-next] { margin-top: 1.75rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #authority [data-authority-desktop-layer]::before { transition: none; }
+  [data-services-thread-progress] { transform: none; }
+  [data-services-nav-expanded="true"] #services-desktop-chapters { animation: none; }
+}
+:root[data-motion="reduced"] #authority [data-authority-desktop-layer]::before { transition: none; }
+:root[data-motion="reduced"] [data-services-thread-progress] { transform: none; }
+
+:root[data-motion="reduced"] [data-services-nav-expanded="true"] #services-desktop-chapters { animation: none; }

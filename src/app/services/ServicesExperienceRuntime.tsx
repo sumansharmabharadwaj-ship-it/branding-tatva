@@ -8,8 +8,6 @@ const CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
 const ACTIVE_CHAPTER_EVENT = "bt:services-active-chapter";
 const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
 const DIRECT_ANCHOR_PROGRESS = 0.455;
-const INTERACTIVE_SELECTOR =
-  "a[href], button, input, textarea, select, [role='button'], [role='tab'], [contenteditable='true']";
 
 type AnchorSettleDetail = {
   id?: string;
@@ -80,13 +78,25 @@ export function ServicesExperienceRuntime() {
     const firstScene = scenes[0];
     if (!firstScene) return;
     const hero = firstScene;
-    // The journey thread is the only reader of --services-journey-progress,
+    // The journey thread is the only reader of --services-journey-fraction,
     // so the value is written on it rather than restyling the whole page.
     let journeyTarget: HTMLElement =
       document.querySelector<HTMLElement>("[data-services-journey-thread]") ??
       document.documentElement;
 
     document.documentElement.dataset.servicesExperience = "active";
+    const styleValues = new WeakMap<HTMLElement, Map<string, string>>();
+    function setStyle(element: HTMLElement, property: string, value: string) {
+      let values = styleValues.get(element);
+      if (!values) {
+        values = new Map();
+        styleValues.set(element, values);
+      }
+      if (values.get(property) === value) return;
+      values.set(property, value);
+      element.style.setProperty(property, value);
+    }
+
     const generatedIds = new Set<HTMLElement>();
     let heroMedia: HTMLElement[] = [];
     let heroHeading: HTMLElement | null = null;
@@ -98,19 +108,14 @@ export function ServicesExperienceRuntime() {
     let pendingAnchorIndex: number | null = null;
     let frame = 0;
     let scrollSettleTimer = 0;
-    let pointerFrame = 0;
-    let threadEngagementTimer = 0;
     let anchorAlignTimer = 0;
     let anchorAlignAttempts = 0;
     let anchorAlignCancelled = false;
-    let pointerX = 0;
-    let pointerY = 0;
     let lastScrollY = window.scrollY;
     let lastFrameTime = performance.now();
     let smoothedVelocity = 0;
     let scrollDirection: "up" | "down" = "down";
     const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
     function isMotionReduced() {
       return reducedMotionQuery.matches || document.documentElement.dataset.motion === "reduced";
@@ -172,31 +177,31 @@ export function ServicesExperienceRuntime() {
         scene.id = meta.id;
         generatedIds.add(scene);
       }
-      scene.style.setProperty("--services-scene-progress", index === 0 ? "0" : "-1");
-      scene.style.setProperty("--services-scene-presence", index === 0 ? "1" : "0");
-      scene.style.setProperty("--services-scene-axis", "0");
-      scene.style.setProperty("--services-content-x", "0px");
-      scene.style.setProperty("--services-content-y", "0px");
-      scene.style.setProperty("--services-content-rotate", "0deg");
-      scene.style.setProperty("--services-content-scale", "1");
-      scene.style.setProperty("--services-camera-x", "0px");
-      scene.style.setProperty("--services-camera-y", "0px");
-      scene.style.setProperty("--services-camera-scale", "1.02");
-      scene.style.setProperty("--services-anticipation", index === 0 ? "1" : "0");
-      scene.style.setProperty("--services-activation", index === 0 ? "1" : "0");
-      scene.style.setProperty("--services-discovery", index === 0 ? "1" : "0");
-      scene.style.setProperty("--services-resolution", index === 0 ? "1" : "0");
-      scene.style.setProperty("--services-departure", "0");
-      scene.style.setProperty("--services-copy-x", "0px");
-      scene.style.setProperty("--services-copy-y", "0px");
-      scene.style.setProperty("--services-copy-opacity", "1");
-      scene.style.setProperty("--services-instrument-x", "0px");
-      scene.style.setProperty("--services-instrument-y", "0px");
-      scene.style.setProperty("--services-instrument-scale", "1");
-      scene.style.setProperty("--services-instrument-opacity", "1");
-      scene.style.setProperty("--services-instrument-mask", "0%");
-      scene.style.setProperty("--services-resolution-y", "0px");
-      scene.style.setProperty("--services-resolution-opacity", "1");
+      setStyle(scene, "--services-scene-progress", index === 0 ? "0" : "-1");
+      setStyle(scene, "--services-scene-presence", index === 0 ? "1" : "0");
+      setStyle(scene, "--services-scene-axis", "0");
+      setStyle(scene, "--services-content-x", "0px");
+      setStyle(scene, "--services-content-y", "0px");
+      setStyle(scene, "--services-content-rotate", "0deg");
+      setStyle(scene, "--services-content-scale", "1");
+      setStyle(scene, "--services-camera-x", "0px");
+      setStyle(scene, "--services-camera-y", "0px");
+      setStyle(scene, "--services-camera-scale", "1.02");
+      setStyle(scene, "--services-anticipation", index === 0 ? "1" : "0");
+      setStyle(scene, "--services-activation", index === 0 ? "1" : "0");
+      setStyle(scene, "--services-discovery", index === 0 ? "1" : "0");
+      setStyle(scene, "--services-resolution", index === 0 ? "1" : "0");
+      setStyle(scene, "--services-departure", "0");
+      setStyle(scene, "--services-copy-x", "0px");
+      setStyle(scene, "--services-copy-y", "0px");
+      setStyle(scene, "--services-copy-opacity", "1");
+      setStyle(scene, "--services-instrument-x", "0px");
+      setStyle(scene, "--services-instrument-y", "0px");
+      setStyle(scene, "--services-instrument-scale", "1");
+      setStyle(scene, "--services-instrument-opacity", "1");
+      setStyle(scene, "--services-instrument-mask", "0%");
+      setStyle(scene, "--services-resolution-y", "0px");
+      setStyle(scene, "--services-resolution-opacity", "1");
 
     });
 
@@ -282,6 +287,7 @@ export function ServicesExperienceRuntime() {
 
     function cancelAnchorAlignment() {
       anchorAlignCancelled = true;
+      pendingAnchorIndex = null;
       window.clearTimeout(anchorAlignTimer);
       anchorAlignTimer = 0;
     }
@@ -382,35 +388,35 @@ export function ServicesExperienceRuntime() {
       const copyExit = clamp((exitProgress - 0.48) / 0.52);
       const apertureProgress = clamp((exitProgress - 0.22) / 0.78);
 
-      hero.style.setProperty(
+      setStyle(hero,
         "--services-hero-scale",
         (1.075 - resolveProgress * 0.055 + exitProgress * 0.035).toFixed(4),
       );
-      hero.style.setProperty(
+      setStyle(hero,
         "--services-hero-media-y",
         `${(-3.4 * exitProgress).toFixed(3)}%`,
       );
-      hero.style.setProperty(
+      setStyle(hero,
         "--services-hero-copy-y",
         `${(-20 * copyExit).toFixed(2)}px`,
       );
-      hero.style.setProperty(
+      setStyle(hero,
         "--services-hero-copy-opacity",
         (1 - copyExit * 0.76).toFixed(4),
       );
-      hero.style.setProperty(
+      setStyle(hero,
         "--services-hero-index-x",
         `${(18 * (1 - resolveProgress)).toFixed(2)}px`,
       );
-      hero.style.setProperty(
+      setStyle(hero,
         "--services-hero-index-opacity",
         (0.72 + resolveProgress * 0.28 - copyExit * 0.28).toFixed(4),
       );
-      hero.style.setProperty(
+      setStyle(hero,
         "--services-hero-aperture-scale",
         (0.58 + apertureProgress * 2.72).toFixed(4),
       );
-      hero.style.setProperty(
+      setStyle(hero,
         "--services-hero-aperture-opacity",
         (0.08 + apertureProgress * 0.72).toFixed(4),
       );
@@ -452,9 +458,9 @@ export function ServicesExperienceRuntime() {
           document.querySelector<HTMLElement>("[data-services-journey-thread]") ??
           document.documentElement;
       }
-      journeyTarget.style.setProperty(
-        "--services-journey-progress",
-        `${(journeyProgress * 100).toFixed(3)}%`,
+      setStyle(journeyTarget,
+        "--services-journey-fraction",
+        journeyProgress.toFixed(4),
       );
       // Off-screen hero writes still restyle its large subtree. Set its
       // departure once, then leave it alone until it approaches the viewport.
@@ -465,7 +471,7 @@ export function ServicesExperienceRuntime() {
 
       scenes.forEach((scene, index) => {
         const bounds = sceneBounds[index];
-        if (bounds.bottom < -viewportHeight || bounds.top > viewportHeight * 2) return;
+        if (bounds.bottom < -viewportHeight * 0.15 || bounds.top > viewportHeight * 1.15) return;
 
         const measuredProgress = clamp(
           (viewportHeight - bounds.top) / (viewportHeight + bounds.height),
@@ -499,31 +505,38 @@ export function ServicesExperienceRuntime() {
         const arrival = 1 - activation;
         const travelAxis = -arrival + departure;
         const signedVelocity = smoothedVelocity * (scrollDirection === "down" ? 1 : -1);
-        scene.style.setProperty("--services-scene-progress", progress.toFixed(4));
-        scene.style.setProperty("--services-scene-presence", centred.toFixed(4));
-        scene.style.setProperty("--services-scene-axis", axis.toFixed(4));
-        scene.style.setProperty("--services-anticipation", anticipation.toFixed(4));
-        scene.style.setProperty("--services-activation", activation.toFixed(4));
-        scene.style.setProperty("--services-discovery", discovery.toFixed(4));
-        scene.style.setProperty("--services-resolution", resolution.toFixed(4));
-        scene.style.setProperty("--services-departure", departure.toFixed(4));
-        scene.style.setProperty("--services-scroll-kick", signedVelocity.toFixed(4));
+        setStyle(scene, "--services-scene-progress", progress.toFixed(4));
+        setStyle(scene, "--services-scene-presence", centred.toFixed(4));
+        setStyle(scene, "--services-scene-axis", axis.toFixed(4));
+        setStyle(scene, "--services-anticipation", anticipation.toFixed(4));
+        setStyle(scene, "--services-activation", activation.toFixed(4));
+        setStyle(scene, "--services-discovery", discovery.toFixed(4));
+        setStyle(scene, "--services-resolution", resolution.toFixed(4));
+        setStyle(scene, "--services-departure", departure.toFixed(4));
+        setStyle(scene, "--services-scroll-kick", signedVelocity.toFixed(4));
 
         const lateralSign = motion?.contentX && motion.contentX < 0 ? -1 : 1;
         if (isMotionReduced()) {
+          setStyle(scene, "--services-content-x", "0px");
+          setStyle(scene, "--services-content-y", "0px");
+          setStyle(scene, "--services-content-rotate", "0deg");
+          setStyle(scene, "--services-content-scale", "1");
+          setStyle(scene, "--services-camera-x", "0px");
+          setStyle(scene, "--services-camera-y", "0px");
+          setStyle(scene, "--services-camera-scale", "1.02");
           // The beat variables previously kept animating under reduced
           // motion; at the new amplitudes that would be a real violation
           // rather than a rounding error, so the composition settles.
-          scene.style.setProperty("--services-copy-x", "0px");
-          scene.style.setProperty("--services-copy-y", "0px");
-          scene.style.setProperty("--services-copy-opacity", "1");
-          scene.style.setProperty("--services-instrument-x", "0px");
-          scene.style.setProperty("--services-instrument-y", "0px");
-          scene.style.setProperty("--services-instrument-scale", "1");
-          scene.style.setProperty("--services-instrument-opacity", "1");
-          scene.style.setProperty("--services-instrument-mask", "0%");
-          scene.style.setProperty("--services-resolution-y", "0px");
-          scene.style.setProperty("--services-resolution-opacity", "1");
+          setStyle(scene, "--services-copy-x", "0px");
+          setStyle(scene, "--services-copy-y", "0px");
+          setStyle(scene, "--services-copy-opacity", "1");
+          setStyle(scene, "--services-instrument-x", "0px");
+          setStyle(scene, "--services-instrument-y", "0px");
+          setStyle(scene, "--services-instrument-scale", "1");
+          setStyle(scene, "--services-instrument-opacity", "1");
+          setStyle(scene, "--services-instrument-mask", "0%");
+          setStyle(scene, "--services-resolution-y", "0px");
+          setStyle(scene, "--services-resolution-opacity", "1");
         } else {
         /* Amplitudes retuned on Suman's direct verdict that the page reads
            as having no animation: copy now rises from near invisible, the
@@ -532,76 +545,76 @@ export function ServicesExperienceRuntime() {
            so every entrance still completes before the 0.455 progress a
            rail or hash arrival forces, and reversing scroll still reverses
            the composition with no hidden state. */
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-copy-x",
           `${(travelAxis * 30 * lateralSign).toFixed(2)}px`,
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-copy-y",
           `${(arrival * 44 - departure * 16).toFixed(2)}px`,
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-copy-opacity",
           clamp(0.18 + activation * 0.82 - departure * 0.18, 0.14, 1).toFixed(4),
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-instrument-x",
           `${((1 - discovery) * -60 * lateralSign + departure * 22 * lateralSign).toFixed(2)}px`,
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-instrument-y",
           `${((1 - discovery) * 38 - departure * 12).toFixed(2)}px`,
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-instrument-scale",
           clamp(0.94 + discovery * 0.06 - departure * 0.008, 0.93, 1.02).toFixed(4),
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-instrument-opacity",
           clamp(0.12 + discovery * 0.88 - departure * 0.14, 0.1, 1).toFixed(4),
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-instrument-mask",
           `${((1 - discovery) * 22 + departure * 3.5).toFixed(3)}%`,
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-resolution-y",
           `${((1 - resolution) * 32 - departure * 12).toFixed(2)}px`,
         );
-        scene.style.setProperty(
+        setStyle(scene,
           "--services-resolution-opacity",
           clamp(0.16 + resolution * 0.84 - departure * 0.12, 0.12, 1).toFixed(4),
         );
         }
 
         if (motion && !isMotionReduced()) {
-          scene.style.setProperty(
+          setStyle(scene,
             "--services-content-x",
             `${(travelAxis * motion.contentX).toFixed(2)}px`,
           );
-          scene.style.setProperty(
+          setStyle(scene,
             "--services-content-y",
             `${(travelAxis * motion.contentY).toFixed(2)}px`,
           );
-          scene.style.setProperty(
+          setStyle(scene,
             "--services-content-rotate",
             `${(travelAxis * motion.rotate).toFixed(3)}deg`,
           );
-          scene.style.setProperty(
+          setStyle(scene,
             "--services-content-scale",
             (1 - arrival * motion.scale - departure * motion.scale * 0.55).toFixed(4),
           );
-          scene.style.setProperty(
+          setStyle(scene,
             "--services-camera-x",
-            `${(travelAxis * motion.cameraX + pointerX * 5 + signedVelocity * 6).toFixed(2)}px`,
+            `${(travelAxis * motion.cameraX).toFixed(2)}px`,
           );
-          scene.style.setProperty(
+          setStyle(scene,
             "--services-camera-y",
-            `${(travelAxis * motion.cameraY + pointerY * 4 + signedVelocity * 9).toFixed(2)}px`,
+            `${(travelAxis * motion.cameraY).toFixed(2)}px`,
           );
-          scene.style.setProperty(
+          setStyle(scene,
             "--services-camera-scale",
-            (1.014 + arrival * 0.024 + departure * 0.018 + smoothedVelocity * 0.018).toFixed(4),
+            (1.014 + arrival * 0.024 + departure * 0.018).toFixed(4),
           );
         }
 
@@ -647,9 +660,6 @@ export function ServicesExperienceRuntime() {
       // settled layout instead of forcing a pass between scenes.
       progressEvents.forEach((event) => window.dispatchEvent(event));
 
-      if (Math.abs(scrollDelta) < 0.4 && smoothedVelocity > 0.006) {
-        frame = window.requestAnimationFrame(updateSceneProgress);
-      }
     }
 
     function scheduleProgress() {
@@ -670,32 +680,7 @@ export function ServicesExperienceRuntime() {
       scheduleSettledProgress();
     }
 
-    function publishPointer() {
-      pointerFrame = 0;
-      // Camera values are consumed locally below. These unused inherited
-      // properties previously invalidated styles across the whole page.
-      scheduleProgress();
-    }
-
-    function onPointerMove(event: PointerEvent) {
-      if (!finePointer || isMotionReduced()) return;
-      pointerX = clamp(event.clientX / Math.max(1, window.innerWidth) - 0.5, -0.5, 0.5) * 2;
-      pointerY = clamp(event.clientY / Math.max(1, window.innerHeight) - 0.5, -0.5, 0.5) * 2;
-      if (!pointerFrame) pointerFrame = window.requestAnimationFrame(publishPointer);
-    }
-
-    function onPointerLeave() {
-      if (!finePointer || isMotionReduced()) return;
-      pointerX = 0;
-      pointerY = 0;
-      if (!pointerFrame) pointerFrame = window.requestAnimationFrame(publishPointer);
-    }
-
     function onMotionPreferenceChange() {
-      if (isMotionReduced()) {
-        pointerX = 0;
-        pointerY = 0;
-      }
       scheduleProgress();
     }
 
@@ -706,61 +691,6 @@ export function ServicesExperienceRuntime() {
     });
     reducedMotionQuery.addEventListener("change", onMotionPreferenceChange);
 
-    function closestInteractive(target: EventTarget | null) {
-      return target instanceof Element ? target.closest(INTERACTIVE_SELECTOR) : null;
-    }
-
-    function hasFocusedInteractive() {
-      return Boolean(
-        document.activeElement instanceof Element &&
-          servicesRoot.contains(document.activeElement) &&
-          closestInteractive(document.activeElement),
-      );
-    }
-
-    function publishThreadEngagement(active: boolean) {
-      document.documentElement.dataset.servicesThreadEngaged = active ? "true" : "false";
-    }
-
-    function onInteractivePointerOver(event: PointerEvent) {
-      if (!closestInteractive(event.target)) return;
-      window.clearTimeout(threadEngagementTimer);
-      publishThreadEngagement(true);
-    }
-
-    function onInteractivePointerOut(event: PointerEvent) {
-      const from = closestInteractive(event.target);
-      if (!from) return;
-      const to = closestInteractive(event.relatedTarget);
-      if (to && servicesRoot.contains(to)) return;
-      if (!hasFocusedInteractive()) publishThreadEngagement(false);
-    }
-
-    function onInteractiveFocusIn(event: FocusEvent) {
-      if (!closestInteractive(event.target)) return;
-      window.clearTimeout(threadEngagementTimer);
-      publishThreadEngagement(true);
-    }
-
-    function onInteractiveFocusOut() {
-      window.setTimeout(() => {
-        if (!hasFocusedInteractive()) publishThreadEngagement(false);
-      }, 0);
-    }
-
-    function onInteractivePointerDown(event: PointerEvent) {
-      if (!closestInteractive(event.target)) return;
-      window.clearTimeout(threadEngagementTimer);
-      publishThreadEngagement(true);
-    }
-
-    function onInteractivePointerUp() {
-      window.clearTimeout(threadEngagementTimer);
-      threadEngagementTimer = window.setTimeout(() => {
-        if (!hasFocusedInteractive()) publishThreadEngagement(false);
-      }, 420);
-    }
-
     const initialAnchorIndex = chapterIndexForHash();
     if (initialAnchorIndex >= 0) {
       pendingAnchorIndex = initialAnchorIndex;
@@ -770,6 +700,9 @@ export function ServicesExperienceRuntime() {
       publishChapter(0);
     }
     updateSceneProgress();
+    const layoutObserver = new ResizeObserver(scheduleProgress);
+    layoutObserver.observe(servicesRoot);
+    scenes.forEach((scene) => layoutObserver.observe(scene));
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", scheduleProgress, { passive: true });
     window.addEventListener("pageshow", scheduleProgress);
@@ -778,21 +711,11 @@ export function ServicesExperienceRuntime() {
     window.addEventListener("wheel", cancelAnchorAlignment, { passive: true });
     window.addEventListener("touchmove", cancelAnchorAlignment, { passive: true });
     window.addEventListener("keydown", onManualAnchorKey);
-    servicesRoot.addEventListener("pointermove", onPointerMove, { passive: true });
-    servicesRoot.addEventListener("pointerleave", onPointerLeave);
-    servicesRoot.addEventListener("pointerover", onInteractivePointerOver, { passive: true });
-    servicesRoot.addEventListener("pointerout", onInteractivePointerOut, { passive: true });
-    servicesRoot.addEventListener("pointerdown", onInteractivePointerDown, { passive: true });
-    servicesRoot.addEventListener("pointerup", onInteractivePointerUp, { passive: true });
-    servicesRoot.addEventListener("focusin", onInteractiveFocusIn);
-    servicesRoot.addEventListener("focusout", onInteractiveFocusOut);
 
     return () => {
       window.cancelAnimationFrame(frame);
-      window.cancelAnimationFrame(pointerFrame);
       window.clearTimeout(scrollSettleTimer);
       window.clearTimeout(anchorAlignTimer);
-      window.clearTimeout(threadEngagementTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
@@ -801,16 +724,9 @@ export function ServicesExperienceRuntime() {
       window.removeEventListener("wheel", cancelAnchorAlignment);
       window.removeEventListener("touchmove", cancelAnchorAlignment);
       window.removeEventListener("keydown", onManualAnchorKey);
-      servicesRoot.removeEventListener("pointermove", onPointerMove);
-      servicesRoot.removeEventListener("pointerleave", onPointerLeave);
-      servicesRoot.removeEventListener("pointerover", onInteractivePointerOver);
-      servicesRoot.removeEventListener("pointerout", onInteractivePointerOut);
-      servicesRoot.removeEventListener("pointerdown", onInteractivePointerDown);
-      servicesRoot.removeEventListener("pointerup", onInteractivePointerUp);
-      servicesRoot.removeEventListener("focusin", onInteractiveFocusIn);
-      servicesRoot.removeEventListener("focusout", onInteractiveFocusOut);
       motionSettingObserver.disconnect();
       heroPartsObserver.disconnect();
+      layoutObserver.disconnect();
       reducedMotionQuery.removeEventListener("change", onMotionPreferenceChange);
       delete document.documentElement.dataset.servicesExperience;
       delete document.documentElement.dataset.servicesScrollDirection;
@@ -822,7 +738,7 @@ export function ServicesExperienceRuntime() {
       document.documentElement.style.removeProperty("--services-chapter-progress");
       document.documentElement.style.removeProperty("--services-chapter-angle");
       document.documentElement.style.removeProperty("--services-journey-progress");
-      journeyTarget.style.removeProperty("--services-journey-progress");
+      journeyTarget.style.removeProperty("--services-journey-fraction");
 
       heroAperture.remove();
       heroFragments.remove();
