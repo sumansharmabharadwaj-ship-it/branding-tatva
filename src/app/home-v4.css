@@ -367,6 +367,57 @@
   object-position: 36% 44%;
 }
 
+/* Exit parallax for the opening: as the visitor scrolls out of the
+   hero, the forest recedes more slowly than the page and the reading
+   quietly dims — depth on the way out, nothing moved on the way in.
+   Scroll driven CSS only: the timeline is NAMED on the section, which
+   is never transformed, so the animated children cannot feed back into
+   the timeline that drives them (animating a view() subject's own
+   translate risks exactly that loop). The media moves on `translate`
+   and the shell on `opacity`, so neither collides with any transform
+   an entrance system owns. Only `to` keyframes exist: at exit start
+   every property sits at its stylesheet base, and browsers without
+   scroll driven animations keep today's behavior through the
+   @supports guard. The uncovered strip above the shifted media stays
+   off screen for the whole exit range, so no overscan is needed. */
+@supports (animation-timeline: view()) {
+  .home-v4-opening {
+    view-timeline: --home-opening-exit block;
+  }
+
+  .home-v4-opening__media {
+    animation: homeOpeningMediaExit linear both;
+    animation-timeline: --home-opening-exit;
+    animation-range: exit 0% exit 100%;
+  }
+
+  .home-v4-opening__shell {
+    animation: homeOpeningShellExit linear both;
+    animation-timeline: --home-opening-exit;
+    animation-range: exit 0% exit 90%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-v4-opening__media,
+    .home-v4-opening__shell {
+      animation: none;
+    }
+  }
+}
+
+html[data-motion="reduced"] .home-v4-opening__media,
+html[data-motion="reduced"] .home-v4-opening__shell {
+  animation: none;
+}
+
+@keyframes homeOpeningMediaExit {
+  to { translate: 0 16%; }
+}
+
+@keyframes homeOpeningShellExit {
+  to { opacity: 0.22; }
+}
+
 .home-v4-opening__camera {
   inset: -4%;
   background:
