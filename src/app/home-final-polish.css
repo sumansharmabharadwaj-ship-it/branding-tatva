@@ -1,0 +1,48 @@
+/* Final visual safeguards discovered through screenshot review. */
+
+.cinematic-home h1,
+.cinematic-home h2,
+.cinematic-home p[role="text"],
+.studio-cinematic__media-caption,
+.studio-cinematic__panel {
+  filter: none !important;
+}
+
+/* Chapter navigation remains available on wide desktop without sitting over
+   mobile conversion content. Native scrolling and the authored section
+   controls carry the smaller viewports. */
+[data-chapter-ladder-mobile],
+[data-auto-journey-control="true"] {
+  display: none !important;
+}
+
+/* Ambient sound is an optional edge control, not a floating object inside
+   the composition. Coarse-pointer and compact devices keep the interface
+   clear; the audio preference still persists for returning desktop users. */
+[data-ambient-audio-toggle] {
+  opacity: 0.58;
+  transform: translateX(0.12rem);
+}
+
+[data-ambient-audio-toggle]:hover,
+[data-ambient-audio-toggle]:focus-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 1199px), (pointer: coarse) {
+  [data-ambient-audio-toggle] {
+    display: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .studio-cinematic__panel {
+    min-height: 0;
+  }
+
+  .studio-cinematic__panel,
+  .studio-cinematic__panel * {
+    filter: none !important;
+  }
+}

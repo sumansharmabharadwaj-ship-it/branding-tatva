@@ -1,0 +1,405 @@
+/* Assembly choreography for Services.
+
+   Measured against /about, which Suman names as the scroll character she
+   wants: About's large scale values are not a camera zoom. They come from
+   things arriving as the visitor scrolls — marker bars drawing from 0 to
+   0.9, diagram nodes growing from 0.2 to 1, a core assembling. Services
+   moved its content around but nothing in it was ever built in front of
+   the reader. This file adds that, driven entirely by the progress value
+   ServicesExperienceRuntime already writes to every scene:
+
+     --services-scene-progress  0 as the scene enters, 1 as it leaves,
+                                -1 before the runtime has measured it
+
+   Rules this obeys:
+   - Everything completes by 0.455, DIRECT_ANCHOR_PROGRESS in the runtime,
+     so a jump from the chapter rail never lands on a half-built ladder.
+   - Nothing ever falls below readable. Nodes start at 35% size and labels
+     at 45% opacity: an unmeasured or early scene looks like it is still
+     arriving, never like it is missing.
+   - var(..., 1) means no JavaScript renders the finished state.
+   - Individual `scale` and `translate` properties compose with the
+     existing `transform` on these elements instead of replacing it, so the
+     active rung keeps its own emphasis from services-luminous-clarity.css.
+   - Desktop only, where the ladder is a horizontal horizon. Mobile keeps
+     its current layout untouched.
+   - Both reduced-motion signals render the finished state. */
+
+@media (min-width: 1024px) {
+  /* The horizon draws itself left to right before the rungs arrive. */
+  #education [data-perception-horizon="true"] {
+    --horizon-draw: clamp(0, calc((var(--services-scene-progress, 1) - 0.26) / 0.12), 1);
+  }
+
+  #education [data-perception-horizon="true"]::before {
+    transform-origin: left center;
+    scale: var(--horizon-draw) 1;
+  }
+
+  /* Each rung then lands on it in order, one fortieth of the scene apart. */
+  #education [data-perception-stage-tab="true"] {
+    --rung-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.3 + var(--rung-index, 0) * 0.025)) / 0.05),
+      1
+    );
+    translate: 0 calc((1 - var(--rung-arrival)) * 1.1rem);
+    opacity: calc(0.45 + var(--rung-arrival) * 0.55);
+  }
+
+  #education [data-perception-stage-tab="true"]::before {
+    scale: calc(0.35 + var(--rung-arrival) * 0.65);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #education [data-perception-horizon="true"]::before,
+  #education [data-perception-stage-tab="true"]::before {
+    scale: none;
+  }
+
+  #education [data-perception-stage-tab="true"] {
+    translate: none;
+    opacity: 1;
+  }
+}
+
+:root[data-motion="reduced"] #education [data-perception-horizon="true"]::before,
+:root[data-motion="reduced"] #education [data-perception-stage-tab="true"]::before {
+  scale: none;
+}
+
+:root[data-motion="reduced"] #education [data-perception-stage-tab="true"] {
+  translate: none;
+  opacity: 1;
+}
+
+/* Situation: the same grammar as the ladder, for a list instead of a line.
+   The four hairline rules draw themselves across in order, then each of the
+   three situations rises onto its rule. The copy column beside this list is
+   lg:sticky, so nothing here transforms an ancestor of it — only the rules
+   and the option buttons themselves move. The runtime already sweeps the
+   whole instrument in with a mask during its discovery beat; these windows
+   start as that sweep settles, so the two layer rather than compete. Same
+   completion point (0.455) and the same readable floors as the ladder. */
+@media (min-width: 1024px) {
+  #situation [data-situation-rule="true"] {
+    transform-origin: left center;
+    scale: clamp(
+        0,
+        calc((var(--services-scene-progress, 1) - (0.24 + var(--option-index, 0) * 0.03)) / 0.07),
+        1
+      )
+      1;
+  }
+
+  #situation [data-situation-option="true"] > button {
+    --option-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.3 + var(--option-index, 0) * 0.035)) / 0.06),
+      1
+    );
+    translate: 0 calc((1 - var(--option-arrival)) * 1.1rem);
+    opacity: calc(0.45 + var(--option-arrival) * 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #situation [data-situation-rule="true"] {
+    scale: none;
+  }
+
+  #situation [data-situation-option="true"] > button {
+    translate: none;
+    opacity: 1;
+  }
+}
+
+:root[data-motion="reduced"] #situation [data-situation-rule="true"] {
+  scale: none;
+}
+
+:root[data-motion="reduced"] #situation [data-situation-option="true"] > button {
+  translate: none;
+  opacity: 1;
+}
+
+/* Offerings: six disciplines as one system, so the system assembles. On
+   desktop the rail is a 3x2 grid; each discipline rises into its cell in
+   reading order and its coloured dot — the node that marks it as part of
+   the system — grows into place.
+
+   These buttons already carry state of their own in
+   services-discipline-journey.css: unselected at opacity 0.76 and
+   transform: scale(0.965), selected at 1 and scale(1). So:
+   - rise uses the separate `translate` property, which nothing else sets
+     and nothing transitions, so it tracks scroll exactly;
+   - fade is multiplied into each state's opacity rather than replacing it,
+     so the selected discipline still reads as selected while it arrives.
+     The arrival factor floors at 0.6 here, not 0.45, because 0.76 x 0.45
+     would put unselected tabs at 0.34, below readable;
+   - the dot grows through `transform`, which composes with the Tailwind
+     `scale-125` active state (the `scale` property) instead of replacing it.
+   Six items, 0.018 apart, complete by 0.45 — inside the runtime's
+   DIRECT_ANCHOR_PROGRESS of 0.455. */
+@media (min-width: 1024px) {
+  #offerings .services-discipline-rail > button {
+    --disc-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.3 + var(--disc-index, 0) * 0.018)) / 0.06),
+      1
+    );
+    translate: 0 calc((1 - var(--disc-arrival)) * 0.9rem);
+  }
+
+  #offerings .services-discipline-rail > button[aria-selected="false"] {
+    opacity: calc(0.76 * (0.6 + var(--disc-arrival) * 0.4));
+  }
+
+  #offerings .services-discipline-rail > button[aria-selected="true"] {
+    opacity: calc(0.6 + var(--disc-arrival) * 0.4);
+  }
+
+  #offerings [data-discipline-dot="true"] {
+    transform: scale(calc(0.2 + var(--disc-arrival) * 0.8));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #offerings .services-discipline-rail > button {
+    translate: none;
+  }
+
+  /* The fade above is multiplied into state, so restore the state values
+     themselves; otherwise a scene whose progress never advances would hold
+     unselected tabs at 0.46 instead of their intended 0.76. */
+  #offerings .services-discipline-rail > button[aria-selected="false"] {
+    opacity: 0.76;
+  }
+
+  #offerings .services-discipline-rail > button[aria-selected="true"] {
+    opacity: 1;
+  }
+
+  #offerings [data-discipline-dot="true"] {
+    transform: none;
+  }
+}
+
+:root[data-motion="reduced"] #offerings .services-discipline-rail > button {
+  translate: none;
+}
+
+:root[data-motion="reduced"] #offerings .services-discipline-rail > button[aria-selected="false"] {
+  opacity: 0.76;
+}
+
+:root[data-motion="reduced"] #offerings .services-discipline-rail > button[aria-selected="true"] {
+  opacity: 1;
+}
+
+:root[data-motion="reduced"] #offerings [data-discipline-dot="true"] {
+  transform: none;
+}
+
+/* Proof: the evidence arrives as a chain. The thread draws down, each of
+   its three nodes appears as the line reaches it and then grows, and the
+   proof beats land in order.
+
+   The thread is a 1px div whose three nodes are its own absolutely placed
+   children, so a vertical scale would squash them. It is drawn with a clip
+   instead, which also means each node is hidden until the line reaches it.
+   The clip's side insets are negative so the 0.55rem nodes are not trimmed
+   to the line's 1px width. Nodes already use transform for placement, so
+   their growth uses the separate scale property.
+
+   Each beat button's opacity is set inline by Framer Motion, which would
+   silently win over any stylesheet opacity on the button. So the list item
+   is animated instead: its opacity multiplies with the button's own, and
+   the active/complete/waiting treatment survives.
+
+   Indices come from attribute values and nth-child, so VerifiedOutcome is
+   unchanged. Everything completes by 0.45, inside DIRECT_ANCHOR_PROGRESS. */
+@media (min-width: 1024px) {
+  #proof [data-verified-proof-thread="true"] {
+    --thread-draw: clamp(0, calc((var(--services-scene-progress, 1) - 0.26) / 0.14), 1);
+    clip-path: inset(0 -2rem calc((1 - var(--thread-draw)) * 100%) -2rem);
+  }
+
+  #proof [data-verified-proof-node] {
+    --node-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.28 + var(--node-index, 0) * 0.04)) / 0.05),
+      1
+    );
+    scale: calc(0.3 + var(--node-arrival) * 0.7);
+  }
+
+  #proof [data-verified-proof-node="2"] { --node-index: 1; }
+  #proof [data-verified-proof-node="3"] { --node-index: 2; }
+
+  #proof [data-proof-beat="true"] {
+    --beat-arrival: clamp(
+      0,
+      calc((var(--services-scene-progress, 1) - (0.3 + var(--beat-index, 0) * 0.03)) / 0.06),
+      1
+    );
+    translate: 0 calc((1 - var(--beat-arrival)) * 1rem);
+    opacity: calc(0.5 + var(--beat-arrival) * 0.5);
+  }
+
+  #proof [data-proof-beat="true"]:nth-child(2) { --beat-index: 1; }
+  #proof [data-proof-beat="true"]:nth-child(3) { --beat-index: 2; }
+  #proof [data-proof-beat="true"]:nth-child(4) { --beat-index: 3; }
+  #proof [data-proof-beat="true"]:nth-child(5) { --beat-index: 4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #proof [data-verified-proof-thread="true"] { clip-path: none; }
+  #proof [data-verified-proof-node] { scale: none; }
+  #proof [data-proof-beat="true"] { translate: none; opacity: 1; }
+}
+
+:root[data-motion="reduced"] #proof [data-verified-proof-thread="true"] { clip-path: none; }
+:root[data-motion="reduced"] #proof [data-verified-proof-node] { scale: none; }
+:root[data-motion="reduced"] #proof [data-proof-beat="true"] { translate: none; opacity: 1; }
+
+/* The three chapters restored from the old /work page — case index,
+   decision spine, concept studies — are not runtime scenes, so no
+   --services-scene-progress reaches them. Registering them as scenes would
+   renumber the chapter rail. Instead each item uses the browser's own
+   scroll timeline: it arrives as it enters the viewport and is settled by
+   the time it is a third of the way in.
+
+   Progressive enhancement: inside @supports, so a browser without scroll
+   timelines renders everything finished. Desktop only, and excluded under
+   both reduced-motion signals.
+
+   Case index cards are animated by Framer Motion (inline opacity and y), and
+   a CSS animation on opacity would outrank that inline style and flatten its
+   filter transitions. So they get translate and scale only. The decision
+   entries and concept dossiers are plain elements and also fade. */
+@keyframes bt-arrive-rise {
+  from { translate: 0 2.25rem; scale: 0.965; }
+  to   { translate: 0 0;       scale: 1; }
+}
+
+@keyframes bt-arrive-rise-fade {
+  from { translate: 0 1.75rem; opacity: 0.35; }
+  to   { translate: 0 0;       opacity: 1; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    /* A view() timeline binds to the nearest scroll container, and an
+       overflow:hidden element is one. #index and the concept studies
+       section were both overflow-hidden, so their items measured against a
+       box that never scrolls and sat at their finished state at every
+       scroll position (verified on release 421: translate 0, opacity 1 from
+       "just entering" onward), while the decision entries, with no such
+       ancestor, animated correctly. overflow:clip clips painting the same
+       way, still containing the parallax video, but is not a scroll
+       container, so the timeline binds to the page. Both sections carry
+       their own padding, so no margin collapses through. Scoped to the same
+       conditions as the animations. */
+    #index,
+    section:has([aria-label="Concept study dossiers"]) {
+      overflow: clip;
+    }
+
+    :root:not([data-motion="reduced"]) #index [role="listitem"] {
+      animation: bt-arrive-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+
+    :root:not([data-motion="reduced"]) [data-decision-map="true"] .border-t {
+      animation: bt-arrive-rise-fade linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+
+    :root:not([data-motion="reduced"]) [aria-label="Concept study dossiers"] > article {
+      animation: bt-arrive-rise-fade linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+  }
+}
+
+/* Packages and booking. SCROLL_OS §11 kept these still ("pricing and
+   booking stay stable, money hates motion"); Suman has asked for them to
+   move too. The part of that rule that protects conversion is kept: the
+   price panel and the booking controls are never animated, only the
+   material that leads into them, and both chapters finish before 0.455 so
+   a jump from the rail or a "book" link always lands on the finished state.
+
+   Packages: the three package cards rise into place in order and each
+   element glyph grows in. Framer moves these cards on hover and tap through
+   transform, so the rise uses the separate translate property and the
+   hover lift still works on top. Opacity floor 0.55: a package name is
+   never below readable while it arrives.
+
+   Booking: the three "Inside the diagnosis" steps arrive in order. The
+   calendar, brief form and "See available times" button are untouched. */
+@media (min-width: 1024px) {
+  #desire [data-package-choice="true"] {
+    --package-arrival: clamp(0, calc((var(--services-scene-progress, 1) - (0.3 + var(--package-index, 0) * 0.04)) / 0.06), 1);
+    translate: 0 calc((1 - var(--package-arrival)) * 1.4rem);
+    opacity: calc(0.55 + var(--package-arrival) * 0.45);
+  }
+
+  #desire [data-package-choice="true"]:nth-of-type(2) { --package-index: 1; }
+  #desire [data-package-choice="true"]:nth-of-type(3) { --package-index: 2; }
+  #desire [data-package-choice="true"]:nth-of-type(4) { --package-index: 3; }
+
+  #desire [data-package-choice="true"] > svg:first-child {
+    scale: calc(0.5 + var(--package-arrival) * 0.5);
+  }
+
+  #book [data-strategy-agenda-step="true"] {
+    --step-arrival: clamp(0, calc((var(--services-scene-progress, 1) - (0.28 + var(--step-index, 0) * 0.04)) / 0.06), 1);
+    translate: 0 calc((1 - var(--step-arrival)) * 1rem);
+    opacity: calc(0.5 + var(--step-arrival) * 0.5);
+  }
+
+  #book [data-strategy-agenda-step="true"]:nth-child(2) { --step-index: 1; }
+  #book [data-strategy-agenda-step="true"]:nth-child(3) { --step-index: 2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #desire [data-package-choice="true"],
+  #book [data-strategy-agenda-step="true"] { translate: none; opacity: 1; }
+  #desire [data-package-choice="true"] > svg:first-child { scale: none; }
+}
+
+:root[data-motion="reduced"] #desire [data-package-choice="true"],
+:root[data-motion="reduced"] #book [data-strategy-agenda-step="true"] { translate: none; opacity: 1; }
+:root[data-motion="reduced"] #desire [data-package-choice="true"] > svg:first-child { scale: none; }
+
+/* Phones. Measured on production at 390x844: every Services chapter moves
+   on scroll except two, the "Five questions" decision map and the
+   recognition field-notes folio, which sat completely still. Give both the
+   same native scroll-timeline arrival the desktop decision map uses. It runs
+   on the compositor, so it costs nothing on the main thread, and browsers
+   without view() timelines simply show the finished layout. */
+@supports (animation-timeline: view()) {
+  @media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+    /* #audit clips with overflow: hidden, which makes it the folio's scroll
+       container and freezes a view() timeline at its end state. clip crops
+       identically without creating a scroll container. */
+    #audit { overflow: clip; }
+
+    :root:not([data-motion="reduced"]) [data-decision-map="true"] .border-t {
+      animation: bt-arrive-rise-fade linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+
+    :root:not([data-motion="reduced"]) [aria-label="Brand recognition field notes"] {
+      animation: bt-arrive-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}

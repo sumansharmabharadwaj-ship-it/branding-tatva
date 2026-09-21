@@ -1,0 +1,59 @@
+name: Shared runtime audit
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Permanent preview source gate
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: shared-runtime-audit
+  cancel-in-progress: true
+
+jobs:
+  shared-runtime:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out canonical preview source
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Audit navigation, mobile menu, reduced motion, Contact, Insights, and About
+        env:
+          PREVIEW_URL: https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app
+          AUDIT_OUTPUT_DIR: artifacts/shared-runtime-audit
+        run: node scripts/shared_runtime_audit.cjs
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-runtime-audit-${{ github.run_id }}
+          path: artifacts/shared-runtime-audit
+          if-no-files-found: warn
+          retention-days: 14

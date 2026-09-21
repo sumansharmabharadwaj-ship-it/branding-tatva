@@ -1,76 +1,262 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/Container";
 import { LinkButton } from "@/components/Button";
 import { ElementGlyph } from "@/components/ElementGlyph";
+import { PackageComparisonDeck } from "@/sections/Services/PackageComparisonDeck";
 import { packages } from "@/data/services";
 import { projects } from "@/data/projects";
 import { blendHex } from "@/lib/sectionWash";
+import { track } from "@/lib/analytics";
+import { usePricing } from "@/components/PricingProvider";
+import { RegionSelector } from "@/components/RegionSelector";
+import { formatPrice, type PackageSlug } from "@/data/pricing";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  PACKAGE_TO_SITUATION,
+  SITUATION_TO_PACKAGE,
+  SITUATION_TO_PROOF_SLUG,
+  isServicesSituation,
+  publishServicesSituation,
+  readCompletedHomeDiagnosis,
+  servicesContactHref,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
-// The brief's "interactive decision moment" idea, built honestly: three
-// buttons map to the site's three real packages (data/services.ts) —
-// picking one reveals that package's own real description/includes/
-// price, not invented content branching from a fake quiz. Short button
-// labels are compressed from each package's own real `forWho` field
-// rather than new copy. Element glyph per choice reuses each package's
-// own already-documented element mapping (see the color comments next
-// to each package in data/services.ts: clay/Earth, indigo/Water,
-// rose-earth/Space) rather than inventing new iconography.
+// Three choices map to the three real packages. Scroll may demonstrate the
+// paths, but only a carried diagnosis or explicit click is treated as a real
+// recommendation. Passive preview never writes preference or analytics.
 const CHOICES = [
-  { slug: "brand-beginning", label: "Starting with an idea", element: "earth" },
-  { slug: "brand-clarity", label: "Feeling unclear or inconsistent", element: "water" },
-  { slug: "brand-partnership", label: "Needing ongoing consistency", element: "space" },
+  { slug: "brand-beginning", label: "Launching a new business", shortLabel: "Idea", element: "earth" },
+  { slug: "brand-clarity", label: "Repositioning an established business", shortLabel: "Reposition", element: "water" },
+  { slug: "brand-partnership", label: "Stopping drift across channels", shortLabel: "Ongoing", element: "space" },
 ] as const;
 
-export function PackageSelector() {
-  const [active, setActive] = useState<string | null>(null);
-  const prefersReducedMotion = useReducedMotion();
-  const activePackage = packages.find((p) => p.slug === active);
-  const proof = activePackage?.proofSlug ? projects.find((p) => p.slug === activePackage.proofSlug) : undefined;
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
+const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
+const MANUAL_HOLD_MS = 16000;
 
-  const transition = prefersReducedMotion ? { duration: 0 } : { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const };
+type SelectionSource = "situation" | "manual" | "scroll" | null;
+type ServicesProgressDetail = {
+  id?: string;
+  progress?: number;
+  storyProgress?: number;
+};
+
+export function PackageSelector() {
+  // Start with a complete, useful recommendation. Scroll can still preview
+  // the other paths, but a blocked observer or reduced-motion preference no
+  // longer leaves this chapter looking unfinished.
+  const [active, setActive] = useState<PackageSlug | null>(CHOICES[0].slug);
+  const [selectionSource, setSelectionSource] = useState<SelectionSource>(null);
+  const [compare, setCompare] = useState(false);
+  const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const [routeReady, setRouteReady] = useState(false);
+  const manualUntilRef = useRef(0);
+  const committedRouteRef = useRef(false);
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const activePackage = packages.find((pkg) => pkg.slug === active);
+  const activeSituation = active ? PACKAGE_TO_SITUATION[active] : null;
+  const proof = activeSituation
+    ? projects.find((project) => project.slug === SITUATION_TO_PROOF_SLUG[activeSituation])
+    : undefined;
+  const transition = prefersReducedMotion
+    ? { duration: 0 }
+    : { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const };
+  const { region } = usePricing();
+
+  useEffect(() => {
+    function applySituation(situation: ServicesSituationId) {
+      committedRouteRef.current = true;
+      setActive(SITUATION_TO_PACKAGE[situation]);
+      setSelectionSource("situation");
+      setCompare(false);
+      setCarriedSituation(situation);
+    }
+
+    function applyLinkedPackage() {
+      const hash = window.location.hash.replace(/^#/, "");
+      const linkedChoice = CHOICES.find(
+        (choice) => `package-${choice.slug}` === hash,
+      );
+
+      if (!linkedChoice) return false;
+
+      const linkedSituation = PACKAGE_TO_SITUATION[linkedChoice.slug];
+      committedRouteRef.current = true;
+      manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+      setActive(linkedChoice.slug);
+      setSelectionSource("manual");
+      setCompare(false);
+      setCarriedSituation(linkedSituation);
+      publishServicesSituation(linkedSituation, "services_package");
+      return true;
+    }
+
+    if (!applyLinkedPackage()) {
+      try {
+        const saved = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+        const savedSituation = isServicesSituation(saved)
+          ? saved
+          : readCompletedHomeDiagnosis();
+        if (savedSituation) applySituation(savedSituation);
+      } catch {}
+    }
+
+    // The server renders Foundation as the useful no-JS fallback. Keep that
+    // default visually neutral until the browser has had one synchronous pass
+    // to resolve a linked or saved route, so returning visitors never see the
+    // wrong recommendation flash before their actual package appears.
+    setRouteReady(true);
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      if (!detail || !isServicesSituation(detail.situation)) return;
+      if (detail.origin === "services_package") return;
+      applySituation(detail.situation);
+    }
+
+    function onHashChange() {
+      applyLinkedPackage();
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
+    window.addEventListener("hashchange", onHashChange);
+    return () => {
+      window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+      window.removeEventListener("hashchange", onHashChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    function onSceneProgress(event: Event) {
+      const detail = (event as CustomEvent<ServicesProgressDetail>).detail;
+      if (detail?.id !== "desire" || typeof detail.progress !== "number") return;
+      if (committedRouteRef.current) return;
+      if (compare || selectionSource === "situation" || selectionSource === "manual") return;
+      if (Date.now() < manualUntilRef.current) return;
+      const storyProgress = detail.storyProgress ?? detail.progress;
+
+      const index = Math.min(
+        CHOICES.length - 1,
+        Math.max(0, Math.floor(storyProgress * CHOICES.length)),
+      );
+      const choice = CHOICES[index] ?? CHOICES[0];
+      setActive((current) => (current === choice.slug ? current : choice.slug));
+      setSelectionSource("scroll");
+      setCarriedSituation(null);
+    }
+
+    window.addEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    return () => {
+      window.removeEventListener(SCENE_PROGRESS_EVENT, onSceneProgress as EventListener);
+    };
+  }, [compare, prefersReducedMotion, selectionSource]);
+
+  function settlePackageChapter() {
+    window.dispatchEvent(new CustomEvent(ANCHOR_SETTLE_EVENT, { detail: { id: "desire" } }));
+  }
+
+  function choosePackage(slug: PackageSlug) {
+    const situation = PACKAGE_TO_SITUATION[slug];
+    committedRouteRef.current = true;
+    manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+    setActive(slug);
+    setSelectionSource("manual");
+    setCarriedSituation(situation);
+    setCompare(false);
+    publishServicesSituation(situation, "services_package");
+    track("package_viewed", { package: slug, situation, source: "manual" });
+    settlePackageChapter();
+  }
 
   return (
-    <Container className="max-w-3xl text-center">
-      <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Desire</p>
-      <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-        Where does your brand actually stand?
-      </h2>
-      {/* Was a flat, always-transparent bordered row (color only
-          appeared once a choice was already active) and a one-line
-          label with no real substance behind it. Each card now carries
-          its own package color as a quiet top accent from the start —
-          three real options presented as considered, not a plain
-          button row — and a second line pulled straight from that
-          package's own real `forWho` field, not new copy. */}
-      <div className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-3">
-        {/* Phase 2 motion direction — "touching the surface": the three
-            choices rise from below in sequence (scroll), lift with real
-            depth on hover, and press down under the pointer on tap —
-            the one section where interaction should feel physical. */}
-        {CHOICES.map((choice, ci) => {
-          const pkg = packages.find((p) => p.slug === choice.slug);
-          const isActive = active === choice.slug;
+    <Container
+      data-package-selector="true"
+      data-package-route-ready={routeReady ? "true" : "false"}
+      aria-busy={!routeReady}
+      className="text-center transition-[max-width] duration-500 ease-out motion-reduce:transition-none"
+      style={{ maxWidth: compare ? "64rem" : "48rem" }}
+    >
+      <div data-services-chapter-copy="true">
+        <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Ways to work</p>
+        <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
+          Choose the condition, then inspect the scope and price.
+        </h2>
+
+        <AnimatePresence initial={false}>
+          {carriedSituation && activePackage && !compare && (
+            <motion.p
+              data-carried-package="true"
+              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={transition}
+              className="mx-auto mt-3 max-w-xl rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.48)] px-4 py-1.5 text-xs text-ivory/80 backdrop-blur-md"
+            >
+              {selectionSource === "manual" ? (
+                <>
+                  Your selected engagement: <span className="font-medium text-sandstone">{activePackage.name}</span>.
+                  The examples and booking brief now follow this choice.
+                </>
+              ) : (
+                <>
+                  From your earlier choice: <span className="font-medium text-sandstone">{activePackage.name}</span>. You
+                  can still compare below.
+                </>
+              )}
+            </motion.p>
+          )}
+          {selectionSource === "scroll" && activePackage && !compare && (
+            <motion.p
+              key="scroll-package-preview"
+              data-scroll-package-preview="true"
+              initial={{ opacity: 0, y: 7 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={transition}
+              className="mx-auto mt-5 max-w-xl text-xs font-medium uppercase tracking-[0.15em] text-sandstone/80"
+            >
+              Previewing: {activePackage.name}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div
+        data-services-chapter-instrument="true"
+        aria-label="Choose a package route"
+        className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7"
+      >
+        {CHOICES.map((choice) => {
+          const pkg = packages.find((entry) => entry.slug === choice.slug);
+          const isActive = routeReady && active === choice.slug;
           return (
             <motion.button
               key={choice.slug}
+              id={`package-${choice.slug}`}
               type="button"
-              onClick={() => setActive(choice.slug)}
-              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 22 }}
-              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "0px 0px -12% 0px" }}
+              aria-pressed={isActive && selectionSource !== "scroll"}
+              aria-controls="package-recommendation"
+              data-package-choice="true"
+              data-package-preview={isActive && selectionSource === "scroll" ? "true" : undefined}
+              onClick={() => choosePackage(choice.slug)}
               whileHover={prefersReducedMotion ? undefined : { y: -5 }}
               whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
-              transition={{ duration: 0.45, delay: ci * 0.09, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center gap-3 rounded-lg border-t-2 p-6 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)]"
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex scroll-mt-28 flex-col items-center gap-2.5 rounded-2xl border-t-2 p-5 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)] lg:min-h-[196px]"
               style={{
                 borderColor: pkg?.color,
-                // Glass over deep water (Phase 1 reading surface) — the
-                // cards previously sat near-transparent on the shimmer,
-                // so their descriptions dissolved into the highlights.
-                backgroundColor: isActive ? blendHex(pkg?.color ?? "#B85A34", "#0F151C", 22) : "rgba(15,21,28,0.55)",
+                backgroundColor: isActive
+                  ? blendHex(pkg?.color ?? "#B85A34", "#0F151C", 22)
+                  : "rgba(15,21,28,0.55)",
               }}
             >
               <ElementGlyph
@@ -78,75 +264,148 @@ export function PackageSelector() {
                 className="h-7 w-7"
                 style={{ color: isActive ? pkg?.color : "rgba(244,239,230,0.7)" }}
               />
-              <span className="font-display text-lg font-normal text-ivory">{choice.label}</span>
-              {pkg && <span className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
+              <span data-package-choice-short="true" className="font-display text-sm font-normal text-ivory sm:hidden">
+                {choice.shortLabel}
+              </span>
+              <span data-package-choice-label="true" className="hidden font-display text-lg font-normal text-ivory sm:inline">
+                {choice.label}
+              </span>
+              {pkg && <span data-package-choice-audience="true" className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
             </motion.button>
           );
         })}
       </div>
 
-      <div className="relative mt-10 min-h-[240px] text-left">
-        <AnimatePresence mode="wait">
-          {activePackage ? (
+      <div data-package-controls="true" className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+        <RegionSelector />
+        <button
+          type="button"
+          aria-pressed={compare}
+          onClick={() => {
+            manualUntilRef.current = Date.now() + MANUAL_HOLD_MS;
+            setCompare((current) => {
+              if (!current) track("packages_compared");
+              return !current;
+            });
+            settlePackageChapter();
+          }}
+          className="inline-flex min-h-11 items-center gap-3 rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.42)] px-4 py-2.5 text-sm font-medium text-ivory/85 backdrop-blur-md transition-[border-color,background-color,color] duration-300 hover:border-sandstone/65 hover:bg-ivory/[0.07] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
+        >
+          <span className="sm:hidden">{compare ? "Selected path" : "Compare paths"}</span>
+          <span className="hidden sm:inline">{compare ? "Return to the selected engagement" : "Compare scope and starting prices"}</span>
+          <span
+            aria-hidden="true"
+            className="rounded-full border border-ivory/15 bg-ivory/[0.05] px-2 py-0.5 text-[0.56rem] font-medium uppercase tracking-[0.14em] text-sandstone"
+          >
+            {compare ? "1 view" : "3 paths"}
+          </span>
+        </button>
+      </div>
+
+      <div
+        id="package-recommendation"
+        data-services-chapter-resolution="true"
+        aria-live="polite"
+        className={`relative mt-5 min-h-[220px] text-left transition-opacity duration-200 motion-reduce:transition-none ${
+          routeReady ? "visible opacity-100" : "invisible opacity-0"
+        }`}
+      >
+        {compare ? (
+            <motion.div
+              key="compare"
+              initial={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0.2, clipPath: "inset(0 0 82% 0 round 1.25rem)", filter: "blur(5px)" }
+              }
+              animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
+              transition={transition}
+            >
+              <PackageComparisonDeck region={region} />
+            </motion.div>
+          ) : activePackage ? (
             <motion.div
               key={activePackage.slug}
-              // "Surfacing" — the recommendation rises from beneath the
-              // water with a soft settle, discovered rather than shown.
-              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 28, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 170, damping: 24 }}
-              className="rounded-lg border-t-2 p-6 backdrop-blur-md sm:p-8"
+              initial={
+                prefersReducedMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0.2, clipPath: "inset(0 0 76% 0 round 1rem)", filter: "blur(4px)" }
+              }
+              animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : {
+                      opacity: { duration: 0.14, ease: [0.4, 0, 1, 1] },
+                      clipPath: { duration: 0.52, ease: [0.16, 1, 0.3, 1] },
+                      filter: { duration: 0.38, ease: [0.16, 1, 0.3, 1] },
+                    }
+              }
+              data-package-card="true"
+              className="rounded-2xl border-t-2 p-5 backdrop-blur-md sm:p-6"
               style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#0F151C", 14) }}
             >
-              <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
-              <div className="mt-2 flex items-baseline gap-1.5">
-                {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">from</span>}
-                <span className="font-display text-2xl font-normal text-ivory">
-                  £{activePackage.price.toLocaleString("en-GB")}
-                </span>
-                {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
-              </div>
-              <p className="mt-4 text-ivory/90">{activePackage.description}</p>
-              {/* "Open folder" stagger reveal — each real include item
-                  animates in with a short delay instead of appearing as
-                  a static bulleted list, so what a visitor actually
-                  receives reads as something being handed over rather
-                  than a spec sheet. Same real services.ts data either
-                  way, only the presentation changed. */}
-              <ul className="mt-4 space-y-1.5">
-                {activePackage.includes.map((item, i) => (
-                  <motion.li
-                    key={item}
-                    initial={prefersReducedMotion ? undefined : { opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.15 + i * 0.08 }}
-                    className="text-sm text-ivory/90 before:mr-2 before:content-['•']"
-                  >
-                    {item}
-                  </motion.li>
-                ))}
-              </ul>
-              <div className="mt-6 flex flex-wrap gap-3">
-                {proof && (
-                  <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                    See it in action: {proof.title}
-                  </LinkButton>
-                )}
-                {/* Named after the real package chosen, not a generic
-                    "Get started" repeated on every card. */}
-                <LinkButton href="/contact" style={{ backgroundColor: activePackage.color }}>
-                  Start with {activePackage.name}
-                </LinkButton>
+              <div data-package-card-grid="true" className="grid gap-5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-7">
+                <div data-package-summary="true">
+                  <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
+                  <div data-package-price="true" className="mt-2 flex items-baseline gap-1.5">
+                    <span className="text-sm text-ivory/70">
+                      {activePackage.billing === "monthly" ? "from" : "Projects begin at"}
+                    </span>
+                    <span className="font-display text-2xl font-normal text-ivory">
+                      {formatPrice(region, activePackage.slug as PackageSlug)}
+                    </span>
+                    {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
+                  </div>
+                  <p className="mt-1 text-xs text-ivory/60">Final quotation follows the discovery call.</p>
+                  <p data-package-description="true" className="mt-3 text-sm leading-relaxed text-ivory/90 sm:text-base">{activePackage.description}</p>
+                </div>
+                <div data-package-details="true" className="border-ivory/10 sm:border-l sm:pl-7">
+                  <ul data-package-inclusions="true" className="grid gap-y-1">
+                    {activePackage.includes.map((item, index) => (
+                      <motion.li
+                        key={item}
+                        initial={prefersReducedMotion ? undefined : { opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.15 + index * 0.08 }}
+                        className="text-sm text-ivory/90 before:mr-2 before:content-['•']"
+                      >
+                        {item}
+                      </motion.li>
+                    ))}
+                  </ul>
+                  <div data-package-actions="true" className="mt-4 flex flex-wrap gap-3">
+                    {proof && (
+                      <div data-package-proof-action="true">
+                        <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
+                          See it in action: {proof.title}
+                        </LinkButton>
+                      </div>
+                    )}
+                    <LinkButton href={servicesContactHref(activePackage.slug as PackageSlug)} style={{ backgroundColor: activePackage.color }}>
+                      Start with {activePackage.name}
+                    </LinkButton>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ) : (
             <motion.p key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-sm text-ivory/70">
-              Pick the one closest to true. The right package appears below.
+              Three engagements, each built for a different business condition.
             </motion.p>
           )}
-        </AnimatePresence>
       </div>
+
+      <details data-package-disclaimer="true" className="group mx-auto mt-3 max-w-2xl text-left text-[0.68rem] leading-relaxed text-ivory/55">
+        <summary className="mx-auto w-fit cursor-pointer rounded-full px-3 py-1 text-center font-medium uppercase tracking-[0.14em] transition-colors hover:text-ivory/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone">
+          Pricing notes
+        </summary>
+        <p className="mt-2">
+          Prices are localised by market and shown in the selected currency. Final scope and quotation are confirmed
+          after the discovery conversation. Taxes and third party production, media, printing, development, travel or
+          licensing are listed separately where relevant.
+        </p>
+      </details>
     </Container>
   );
 }

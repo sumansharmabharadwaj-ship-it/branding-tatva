@@ -1,0 +1,382 @@
+/* -------------------------------------------------------------------------- */
+/* Three paths chapter                                                         */
+/* -------------------------------------------------------------------------- */
+
+.paths-cinematic {
+  --paths-accent: #6f4e37;
+  background: #f2f0e8;
+  color: #27221e;
+  transition: background-color 900ms ease;
+}
+
+.paths-cinematic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(54rem 30rem at 11% 12%, color-mix(in srgb, var(--paths-accent) 12%, transparent), transparent 68%),
+    linear-gradient(180deg, #f2f0e8 0%, #ede8de 100%);
+}
+
+.paths-cinematic__glow {
+  position: absolute;
+  z-index: -1;
+  width: 32rem;
+  height: 32rem;
+  border-radius: 999px;
+  filter: blur(90px);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.paths-cinematic__glow--left {
+  left: -16rem;
+  top: 4%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--paths-accent) 22%, transparent), transparent 68%);
+}
+
+.paths-cinematic__glow--right {
+  right: -15rem;
+  bottom: -23%;
+  background: radial-gradient(circle, rgba(198, 169, 122, 0.22), transparent 70%);
+}
+
+.paths-cinematic__shell {
+  width: min(96rem, calc(100% - 3rem));
+  margin-inline: auto;
+  padding-block: clamp(5.25rem, 8vw, 8rem);
+}
+
+.paths-cinematic__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(18rem, 0.72fr);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 7rem);
+}
+
+.paths-cinematic__eyebrow,
+.paths-cinematic__map-heading span,
+.paths-cinematic__focus-topline span,
+.paths-cinematic__focus > p:first-of-type,
+.paths-cinematic__focus-result span {
+  margin: 0;
+  color: #8a6b3d;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.21em;
+  text-transform: uppercase;
+}
+
+.paths-cinematic__header h2 {
+  max-width: 14ch;
+  margin: 0.82rem 0 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3rem, 5.2vw, 6rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+}
+
+.paths-cinematic__header h2 em {
+  color: #8a6b3d;
+  font-weight: 400;
+}
+
+.paths-cinematic__intro {
+  padding-bottom: 0.3rem;
+}
+
+.paths-cinematic__intro p {
+  margin: 0;
+  color: #5a5148;
+  font-size: clamp(0.9rem, 1.15vw, 1.04rem);
+  line-height: 1.75;
+}
+
+.paths-cinematic__intro span {
+  display: block;
+  margin-top: 1rem;
+  color: rgba(90, 81, 72, 0.64);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.paths-cinematic__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.42fr) minmax(18rem, 0.66fr);
+  gap: 1rem;
+  margin-top: clamp(2.6rem, 5vw, 4.75rem);
+}
+
+.paths-cinematic__map,
+.paths-cinematic__focus {
+  position: relative;
+  min-width: 0;
+  min-height: 29rem;
+  overflow: hidden;
+  border: 1px solid rgba(39, 34, 30, 0.1);
+  border-radius: 1.7rem;
+  box-shadow: 0 28px 85px rgba(39, 34, 30, 0.08);
+}
+
+.paths-cinematic__map {
+  padding: clamp(1.2rem, 2.2vw, 2rem);
+  background:
+    linear-gradient(rgba(39, 34, 30, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(39, 34, 30, 0.035) 1px, transparent 1px),
+    rgba(255, 255, 255, 0.44);
+  background-size: 54px 54px;
+}
+
+.paths-cinematic__map-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.paths-cinematic__map-heading strong {
+  color: var(--paths-accent);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.paths-cinematic__map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 23.5rem;
+  margin-top: -0.5rem;
+  overflow: visible;
+}
+
+.paths-cinematic__svg-label,
+.paths-cinematic__svg-step,
+.paths-cinematic__svg-result {
+  fill: #5a5148;
+  font-family: var(--font-body), Arial, sans-serif;
+}
+
+.paths-cinematic__svg-label {
+  font-size: 13px;
+}
+
+.paths-cinematic__svg-step {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.paths-cinematic__svg-result {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 18px;
+}
+
+.paths-cinematic__spine {
+  stroke: #c6a97a;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.paths-cinematic__mobile-route {
+  display: none;
+}
+
+.paths-cinematic__focus {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.5rem, 2.6vw, 2.35rem);
+  background:
+    radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--paths-accent) 18%, transparent), transparent 36%),
+    rgba(255, 255, 255, 0.68);
+}
+
+.paths-cinematic__focus-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paths-cinematic__focus-topline i {
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  background: var(--paths-accent);
+  box-shadow:
+    0 0 0 0.38rem color-mix(in srgb, var(--paths-accent) 12%, transparent),
+    0 0 20px color-mix(in srgb, var(--paths-accent) 52%, transparent);
+}
+
+.paths-cinematic__focus > p:first-of-type {
+  margin-top: clamp(2rem, 4vw, 3.6rem);
+  color: var(--paths-accent);
+}
+
+.paths-cinematic__focus h3 {
+  max-width: 10ch;
+  margin: 0.7rem 0 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2.25rem, 3.2vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
+}
+
+.paths-cinematic__focus-body {
+  margin: 1.2rem 0 0;
+  color: #5a5148;
+  font-size: 0.9rem;
+  line-height: 1.68;
+}
+
+.paths-cinematic__focus-result {
+  margin-top: auto;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(39, 34, 30, 0.1);
+}
+
+.paths-cinematic__focus-result span {
+  color: rgba(90, 81, 72, 0.68);
+  font-size: 0.56rem;
+}
+
+.paths-cinematic__focus-result strong {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.paths-cinematic__focus > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3rem;
+  margin-top: 1.2rem;
+  padding-inline: 1.05rem;
+  border: 1px solid color-mix(in srgb, var(--paths-accent) 48%, transparent);
+  border-radius: 999px;
+  color: #27221e;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 320ms ease;
+}
+
+.paths-cinematic__focus > a:hover,
+.paths-cinematic__focus > a:focus-visible {
+  background: color-mix(in srgb, var(--paths-accent) 10%, transparent);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.paths-cinematic__choices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+}
+
+.paths-cinematic__choices button {
+  --path-tint: #6f4e37;
+  position: relative;
+  min-width: 0;
+  min-height: 8.4rem;
+  padding: 1.25rem 1.25rem 1.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(39, 34, 30, 0.1);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.42);
+  color: #27221e;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 350ms ease,
+    box-shadow 350ms ease,
+    background-color 350ms ease;
+}
+
+.paths-cinematic__choices button:hover,
+.paths-cinematic__choices button:focus-visible,
+.paths-cinematic__choices button.is-active {
+  border-color: color-mix(in srgb, var(--path-tint) 52%, transparent);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 20px 56px color-mix(in srgb, var(--path-tint) 13%, transparent);
+  transform: translateY(-3px);
+  outline: none;
+}
+
+.paths-cinematic__choices button > span {
+  color: var(--path-tint);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.paths-cinematic__choices button > strong {
+  display: block;
+  margin-top: 0.62rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.25rem, 1.8vw, 1.62rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.paths-cinematic__choices button > p {
+  max-width: 28rem;
+  margin: 0.55rem 0 0;
+  color: rgba(90, 81, 72, 0.72);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.paths-cinematic__choices button > i {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(39, 34, 30, 0.07);
+}
+
+.paths-cinematic__choices button > i > b {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--path-tint);
+  animation-name: paths-choice-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+.paths-cinematic__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.8rem;
+  color: rgba(90, 81, 72, 0.72);
+  font-size: 0.68rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.paths-cinematic__footer a {
+  color: #8a6b3d;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(138, 107, 61, 0.3);
+  text-underline-offset: 0.35rem;
+}

@@ -1,0 +1,78 @@
+name: Apply exact Work verification repairs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - "scripts/apply_work_verification_repairs.py"
+      - ".github/workflows/apply-work-verification-repairs.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-work-verification-repairs
+  cancel-in-progress: true
+
+jobs:
+  repair-current-work-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out the canonical preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 0
+
+      - name: Apply the idempotent source repairs
+        run: python scripts/apply_work_verification_repairs.py
+
+      - name: Detect whether source changed
+        id: changes
+        shell: bash
+        run: |
+          if git diff --quiet -- src/sections/Work/WorkOpening.tsx src/sections/Work/MobileNarrativeEnhancers.tsx; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up pnpm
+        if: steps.changes.outputs.changed == 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        if: steps.changes.outputs.changed == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify types and focused lint
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          pnpm exec tsc --noEmit
+          pnpm exec eslint src/sections/Work/WorkOpening.tsx src/sections/Work/MobileNarrativeEnhancers.tsx
+
+      - name: Verify production build
+        if: steps.changes.outputs.changed == 'true'
+        run: pnpm build
+
+      - name: Commit the verified repairs
+        if: steps.changes.outputs.changed == 'true'
+        shell: bash
+        run: |
+          git config user.name "branding-tatva-release-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/sections/Work/WorkOpening.tsx src/sections/Work/MobileNarrativeEnhancers.tsx
+          git commit -m "Integrate exact Work verification repairs [skip ci]"
+          git push origin HEAD:homepage-cinematic-recovery

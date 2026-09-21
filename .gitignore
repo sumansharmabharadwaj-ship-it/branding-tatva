@@ -5,6 +5,7 @@
 
 # testing
 /coverage
+/contact-hosted-audit/
 
 # next.js
 /.next/

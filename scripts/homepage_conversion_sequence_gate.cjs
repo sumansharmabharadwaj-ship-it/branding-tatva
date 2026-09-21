@@ -1,0 +1,215 @@
+const fs = require("node:fs");
+const path = require("node:path");
+
+const root = path.resolve(__dirname, "..");
+const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
+const experience = read("src/sections/HomeV4/HomeV4Experience.tsx");
+const scenes = read("src/sections/HomeV4/HomeV4Scenes.tsx");
+const interfaceSource = read("src/sections/HomeV4/HomeV4Interface.tsx");
+const mediaDirector = read("src/sections/HomeV4/HomeV4MediaDirector.tsx");
+const evidenceWall = read("src/sections/Home/EvidenceWall.tsx");
+const evidenceDepth = read("src/app/home-v4-evidence-depth.css");
+const page = read("src/app/page.tsx");
+const pacing = read("src/sections/Home/HomePacingDirector.tsx");
+const refinement = read("src/app/home-v4-refinement.css");
+const consentManager = read("src/components/ConsentManager.tsx");
+const camera = read("src/sections/HomeV4/HomeV4ScrollCamera.tsx");
+const atmosphereStyles = [
+  read("src/components/LivingGradient.module.css"),
+  read("src/app/home-v4-gradient-motion.css"),
+  read("src/app/home-v4-scene-rhythm.css"),
+  read("src/app/home-v4.css"),
+].join("\n");
+
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
+// A visual layer can compile while silently reading an abandoned signal.
+// Keep the CSS consumers connected to a live camera publisher across files.
+const atmosphereSignals = new Set(
+  [...atmosphereStyles.matchAll(/var\((--(?:field-|home-camera-|home-handoff-)[\w-]+)/g)].map((match) => match[1]),
+);
+const cameraPublishers = new Set([...camera.matchAll(/setProperty\(\s*"([^"]+)"/g)].map((match) => match[1]));
+for (const signal of atmosphereSignals) {
+  assert(cameraPublishers.has(signal), `Atmosphere signal ${signal} has no camera publisher.`);
+}
+
+const sequence = [
+  "<V4OpeningScene />",
+  "<V4RecognitionScene />",
+  "<V4HiddenCostScene />",
+  "<V4CostStackScene />",
+  'id="foundation"',
+  'data-home-v4-chapter="paths"',
+  'id="process"',
+  'id="evidence"',
+  'id="tatva"',
+  'data-home-v4-chapter="studio"',
+  'id="decision"',
+  "<HomeBrandHealthCheck />",
+  'id="invitation"',
+];
+
+let previous = -1;
+for (const marker of sequence) {
+  const index = experience.indexOf(marker);
+  assert(index > previous, `Homepage chapter order is missing or drifted at ${marker}.`);
+  previous = index;
+}
+
+// One handoff per chapter transition. Two chapters have been added since
+// this was ten: the compounding-cost stack between the hidden cost scene
+// and the foundation, and the brand health check between decision and
+// invitation. Thirteen chapters means twelve transitions. The invariant is
+// unchanged; only the chapter count moved.
+assert(
+  (experience.match(/<SceneHandoff motif=/g) || []).length === 12,
+  "Every homepage chapter transition must keep one quiet handoff.",
+);
+for (const runtime of [
+  "<HomeV4MediaDirector />",
+  "<HomeV4HeaderDirector />",
+  "<HomeV4SceneRhythm />",
+  "<GuidedView />",
+  "<HomePacingDirector />",
+]) {
+  assert(experience.includes(runtime), `Homepage runtime is missing ${runtime}.`);
+}
+// One cursor for the whole site: the layout's SparkCursor. A homepage-only
+// cursor mount is exactly the bug that made the pointer change identity
+// between routes, so its absence here is asserted rather than its presence.
+assert(!experience.includes("LivingCursor"), "The homepage must inherit the sitewide cursor instead of mounting its own.");
+assert(read("src/app/layout.tsx").includes("<SparkCursor />"), "The root layout must mount the sitewide SparkCursor.");
+assert(!experience.includes("HomeV4ProcessTempo"), "The working method must keep the visitor's chosen stage instead of restoring automatic selection.");
+
+for (const marker of [
+  'href="#recognition"',
+  "Find the gap in your brand",
+  'href="#evidence"',
+  "See recorded proof",
+  "Audience psychology · brand systems",
+  "Strategy led directly by Suman",
+]) {
+  assert(scenes.includes(marker), `Opening decision path is missing ${marker}.`);
+}
+
+for (const staleInstruction of [
+  "The page is alive before you touch it",
+  "Watch the conditions change, or choose the one that sounds familiar.",
+  "Open the evidence",
+]) {
+  assert(!scenes.includes(staleInstruction), `Homepage restored competing instruction copy: ${staleInstruction}`);
+}
+
+assert((scenes.match(/<h1\b/g) || []).length === 1, "Homepage opening must contain exactly one h1.");
+for (const mediaMarker of ["muted", "autoPlay", "loop", "playsInline"]) {
+  assert(scenes.includes(mediaMarker), `Homepage films are missing ${mediaMarker}.`);
+}
+assert(interfaceSource.includes("useHydratedReducedMotion"), "Homepage controls ignore reduced motion.");
+assert(interfaceSource.includes('aria-label="Guided homepage controls"'), "Guided journey has no accessible name.");
+assert(interfaceSource.includes('aria-pressed={mode === "guided"}'), "Guided journey does not expose its state.");
+assert(mediaDirector.includes("IntersectionObserver"), "Homepage media no longer follows viewport admission.");
+assert(
+  evidenceWall.includes('opacity: { delay: mediaDuration, duration: 0 }'),
+  "Evidence media transition can fall through to a blank project frame.",
+);
+assert(
+  evidenceWall.includes('<article className="evidence-cinematic__media">') &&
+    evidenceWall.includes('<aside className="evidence-cinematic__dossier"') &&
+    evidenceWall.includes('data-evidence-trail-reading') &&
+    !evidenceWall.includes('key={`copy-${activeProject.slug}`}') &&
+    evidenceWall.includes("preservePanelFocus: true") &&
+    !evidenceWall.includes('filter: "blur('),
+  "Evidence copy and actions must stay mounted and sharp during project changes.",
+);
+assert(
+  (evidenceWall.match(/<AnimatePresence mode="sync" initial=\{false\}>/g) || []).length === 1,
+  "Only evidence scenery may overlap during a project transition.",
+);
+assert(
+  evidenceDepth.includes("grid-column: 1;") && evidenceDepth.includes("grid-column: 2;"),
+  "Evidence media and decision record must keep their stable grid cells.",
+);
+assert(
+  page.includes('import "./home-v4-scene-rhythm.css";'),
+  "Homepage scene rhythm styles are not mounted.",
+);
+assert(
+  pacing.includes('const SECTION_SELECTOR = "[data-home-v4-chapter]";'),
+  "Homepage pacing can assign multiple owners to one nested chapter.",
+);
+assert(
+  pacing.includes('const wasActive = section.dataset.homeSceneState === "active";') &&
+    pacing.includes("if (active && !wasActive) {"),
+  "Homepage chapter arrival can replay at observer thresholds.",
+);
+assert(
+  pacing.includes("const hasScrollIntent = Date.now() <= scrollIntentUntil;") &&
+    pacing.includes("if (Math.abs(delta) > 0.5 && hasScrollIntent) {") &&
+    pacing.indexOf('root.dataset.homeMotion = "live";') >
+      pacing.indexOf("if (Math.abs(delta) > 0.5 && hasScrollIntent) {") &&
+    (pacing.match(/root\.dataset\.homeMotion = "live";/g) || []).length === 1 &&
+    pacing.includes('} else if (root.dataset.homeMotion !== "live") {') &&
+    pacing.includes("smoothedVelocity = 0;") &&
+    pacing.includes('window.addEventListener("wheel", markPointerScrollIntent, { passive: true });') &&
+    pacing.includes('window.addEventListener("touchmove", markPointerScrollIntent, { passive: true });') &&
+    pacing.includes('window.addEventListener("keydown", markKeyboardScrollIntent);'),
+  "Homepage layout updates can wake the cinematic motion layer without visitor scrolling.",
+);
+
+assert(page.includes('import "./home-v4-refinement.css";'), "Homepage refinement layer is not mounted.");
+assert(
+  page.indexOf('home-v4-refinement.css') > page.indexOf('home-v4-screen-fit.css'),
+  "Homepage refinement must load after the restored screen-fit layer.",
+);
+for (const cssMarker of [
+  "text-wrap: balance",
+  ":focus-visible",
+  'data-guide-hint="visible"',
+  ".home-v4 #evidence .evidence-cinematic__shell",
+  "grid-template-rows: auto auto minmax(0, 1fr)",
+  "position: relative !important",
+  "padding-block: 0 !important",
+  "overflow: clip !important",
+  "@media (max-width: 560px)",
+  "@media (prefers-reduced-motion: reduce)",
+]) {
+  assert(refinement.includes(cssMarker), `Homepage refinement is missing ${cssMarker}.`);
+}
+assert(!/\b(?:click here|learn more)\b/i.test(scenes), "Homepage contains a generic action label.");
+assert(
+  !consentManager.includes('matchMedia("(min-width: 1024px)")'),
+  "The homepage privacy control can still cover compact-screen calls to action.",
+);
+assert(
+  refinement.includes('.consent-notice[data-consent-compact="true"]') &&
+    refinement.includes("width: 3rem !important") &&
+    refinement.includes("left: auto !important"),
+  "The scrolled homepage privacy control does not dock into its compact safe area.",
+);
+assert(
+  refinement.includes(
+    'html[data-consent-banner-compact="true"]',
+  ) && refinement.includes("margin-right: 4rem"),
+  "The short-laptop cost action does not reserve room for the compact privacy control.",
+);
+assert(
+  refinement.includes("@media (min-width: 561px) and (max-width: 820px)") &&
+    refinement.includes("min-width: 5.25rem") &&
+    refinement.includes(".home-v4-guide__status"),
+  "The 200%-zoom homepage guide can still expand across the reading area.",
+);
+assert(
+  refinement.includes("@media (max-width: 820px) and (max-height: 520px)") &&
+    refinement.includes("html body .home-v4 .home-v4-opening__shell") &&
+    refinement.includes("grid-template-rows: auto auto") &&
+    refinement.includes("max-height: none") &&
+    refinement.includes("overflow: visible") &&
+    refinement.includes("font-size: clamp(2.5rem, 8vw, 3.25rem)") &&
+    refinement.includes('html[data-consent-banner="visible"] body .home-v4 .home-v4-opening__shell') &&
+    refinement.includes(".consent-notice__action-icon"),
+  "The browser-zoom opening must reflow past clipped cinematic spacing.",
+);
+
+console.log("Homepage source gate passed: thirteen ordered chapters, clear opening decisions, restrained guidance, readable motion, and reduced-motion ownership verified.");

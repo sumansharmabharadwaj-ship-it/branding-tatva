@@ -1,0 +1,87 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 · continuous scene fit                                          */
+/* -------------------------------------------------------------------------- */
+
+/* The handoff motifs were painted as independent bands between every chapter.
+   On a real browser they read as empty spacers (and their glow made the seam
+   look like a broken sticky layer). The chapters already carry their own
+   opening and closing atmospheres, so the handoffs stay in the DOM as semantic
+   separators but no longer consume or paint layout space. */
+.home-v4 .home-v4-handoff {
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.home-v4 .home-v4-handoff::before,
+.home-v4 .home-v4-handoff::after,
+.home-v4 .home-v4-handoff > * {
+  display: none !important;
+}
+
+.home-v4 [data-home-v4-chapter] {
+  margin-block: 0 !important;
+}
+
+/* A sticky narrative may own more scroll travel than one viewport, but the
+   authored frame inside it must always be exactly one viewport. Keeping that
+   distinction explicit prevents content from leaking into the next chapter. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
+  .home-v4 .evidence-cinematic__shell {
+    width: 100%;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    box-sizing: border-box;
+    overflow: hidden !important;
+  }
+
+  /* Recognition: preserve the August 8 split composition while fitting the
+     headline, decision card, diagram and cue inside the frame together. */
+
+  /* Foundation/process/evidence: make their existing instruments use the
+     available vertical space instead of adding a second scene floor. */
+
+  .home-v4 .evidence-cinematic__shell {
+    justify-content: flex-start;
+    padding-block: clamp(5.35rem, 7.2svh, 6.2rem) clamp(0.7rem, 1.4svh, 1.15rem) !important;
+  }
+
+  /* Studio/About preview: the previous cascade left the content column 27px
+     taller than the sticky viewport. This owns the frame and gently tightens
+     only the vertical rhythm; the portrait and interactive tabs remain. */
+
+  /* The legacy portrait asset contained a baked grey lower half and the old
+     translate/scale treatment exposed it as a blank panel. Use the complete
+     portrait and let it cover the authored column without synthetic motion. */
+
+  /* Insights preview: keep the full interactive argument inside the sticky
+     canvas so its final CTA is visible before the next scene arrives. */
+}
+
+/* Ordinary document flow owns short screens and touch devices. No fixed scene
+   height means copy expands naturally instead of being clipped by animation
+   geometry that cannot fit in the available browser chrome. */
+@media (max-width: 1180px), (max-height: 760px), (pointer: coarse) {
+  .home-v4 [data-scroll-story],
+.home-v4 .evidence-cinematic {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .home-v4 .evidence-cinematic__shell {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+}

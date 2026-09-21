@@ -1,0 +1,43 @@
+/* Services chapter anchors are partly server-authored and partly assigned by
+   ServicesExperienceRuntime after hydration. Every chapter is a full viewport
+   composition with its own top clearance, so the frame itself should meet the
+   viewport edge. A header sized scroll margin exposed the previous chapter's
+   image and made direct links look like broken cinematic seams. */
+
+[data-services-scroll-scene] {
+  scroll-margin-top: 0;
+}
+
+/* The closing film already keeps its content beneath the fixed header with
+   section padding. Let the section itself meet the viewport edge so a direct
+   #book arrival cannot leave a strip of the Recognition Audit above it. */
+#book[data-services-scroll-scene] {
+  scroll-margin-top: 0;
+}
+
+/* The server rail starts from the page's short editorial index, while the
+   client runtime discovers the complete cinematic chapter map. Keep that
+   provisional guide quiet until the runtime can publish a truthful active
+   chapter; otherwise a cold #proof or #desire entry briefly announces the
+   wrong scene beside already-correct content. */
+main[data-services-page="true"] ~ nav[aria-label="Jump to section"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html[data-services-experience="active"]
+  main[data-services-page="true"]
+  ~ nav[aria-label="Jump to section"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 767px) {
+  [data-services-scroll-scene] {
+    scroll-margin-top: 0;
+  }
+
+  #book[data-services-scroll-scene] {
+    scroll-margin-top: 0;
+  }
+}

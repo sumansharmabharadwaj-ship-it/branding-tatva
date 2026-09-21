@@ -1,0 +1,51 @@
+/* Branding Tatva cinematic homepage recovery
+   A semantic, viewport-safe scene system. The page keeps its nature-led
+   editorial character while removing brittle utility-selector patches. */
+
+.cinematic-home {
+  position: relative;
+  overflow-x: clip;
+  background: #141210;
+}
+
+.cinematic-home *,
+.cinematic-home *::before,
+.cinematic-home *::after {
+  box-sizing: border-box;
+}
+
+.home-scene {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  overflow-x: clip;
+  scroll-margin-top: 5.5rem;
+}
+
+.home-scene > * {
+  min-width: 0;
+}
+
+.home-scene[data-home-scene-state="active"] {
+  --scene-presence: 1;
+}
+
+.home-scene[data-home-scene-state="resting"] {
+  --scene-presence: 0.72;
+}
+
+.cinematic-home h1,
+.cinematic-home h2,
+.cinematic-home h3 {
+  max-width: 100%;
+  text-wrap: balance;
+}
+
+.cinematic-home p {
+  text-wrap: pretty;
+}
+
+[data-home-scene-state="resting"] .studio-cinematic__aurora,
+[data-home-scene-state="resting"] .paths-cinematic__glow {
+  opacity: 0.26;
+}

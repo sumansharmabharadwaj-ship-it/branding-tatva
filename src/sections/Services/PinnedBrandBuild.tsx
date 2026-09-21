@@ -1,244 +1,361 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useReducedMotion } from "framer-motion";
-import Image from "next/image";
-import { Container } from "@/components/Container";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+
+import Link from "next/link";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ELEMENT_HEX, MOOD } from "@/lib/sectionWash";
+import { motionTokens } from "@/lib/motionTokens";
 import { elements } from "@/data/elements";
-import { AmbientElementShader } from "@/components/AmbientElementShader";
+import { packages } from "@/data/services";
+import { MobileAuthorityDeck, type AuthorityLayer } from "@/sections/Services/MobileAuthorityDeck";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  SITUATION_TO_PACKAGE,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
-gsap.registerPlugin(ScrollTrigger);
+const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
 
-// The one deliberate ScrollTrigger.pin on the site. Every other pinned
-// section (PinnedSlider, PinnedJourney, SelectedWorkPinned, PinnedHold)
-// runs on plain CSS position: sticky, rebuilt that way after real,
-// repeated pin-desync bugs (see CLAUDE.md and this file's own history:
-// git log "Revert Lenis + GSAP ScrollTrigger integration"). This one
-// section is the exception, and on purpose: it needs five independent
-// layers accumulating on top of each other while a single scrubbed
-// GSAP timeline keeps their entrances relative to one another exactly
-// in sync with scroll position — a genuinely different job than
-// crossfading between discrete stages, which sticky + manual rect-top
-// math already does well elsewhere on this site.
+// Authority uses the page's shared native scroll camera rather than a
+// second pinned runway. The GSAP ScrollTrigger version repeatedly
+// desynchronised and introduced dead space. A later CSS sticky version
+// fixed the width bug, but still asked for more than two viewports. The
+// current one frame build keeps the progressive layer assembly while
+// every pixel of travel remains ordinary page scroll.
 //
-// Guards applied specifically against the two documented failure
-// classes:
-// - invalidateOnRefresh: true — recomputes the pin/scrub range from
-//   live DOM on every ScrollTrigger.refresh() (SmoothScrollProvider
-//   already calls this on window load, document.fonts.ready, and
-//   visibilitychange) instead of trusting a cached start/end captured
-//   before images/fonts settled.
-// - anticipatePin: 1 — removes the one-frame jump at pin start.
-// - pinSpacing left at its default (true) — ScrollTrigger owns the
-//   compensating space itself rather than a manually-sized wrapper.
-// - Wrapped in gsap.context(), reverted on unmount — matters under App
-//   Router client navigation, where this can unmount without a full
-//   page reload and would otherwise leave an orphaned pin spacer.
-// - Scoped to exactly this one section, desktop/motion-allowed only
-//   (useMediaQuery, not a CSS hidden/sm:block split — a pin registered
-//   against a hidden 0-height element would compute a broken range).
-const LAYERS = elements.map((el) => ({
+// One responsive structure now serves every visitor: the server, the
+// crawler, mobile, and reduced motion all get the five layers fully
+// visible in normal flow (which also removes the old hydration height
+// swap that once measured 0.21 CLS); desktop with motion gets the
+// one viewport where the layers assemble one by one as the shared
+// services camera crosses the chapter. The same progress reverses
+// when the visitor scrolls upward, while touch and reduced motion keep
+// the complete tabbed deck in normal flow.
+// Manual guide p11/p65: the scene must DEMONSTRATE amplification
+// rather than caption it — each layer carries the marketing
+// consequence of skipping it, and the output wave at the top of the
+// diagram literally grows as the layers assemble. Teaching lines,
+// zero invented client facts.
+const SKIPPED: Record<string, string> = {
+  earth: "Without this: every campaign has to explain the business from the beginning.",
+  water: "Without this: attention arrives, but the experience gives buyers no reason to stay.",
+  fire: "Without this: the message may be right, yet nothing earns a second look.",
+  air: "Without this: five channels sound like five different businesses.",
+  space: "Without this: each campaign works alone and leaves little memory behind.",
+};
+
+const LAYER_DECISIONS = {
+  earth: { line: "A position buyers can explain in one sentence.", outputs: ["Category", "Audience", "Promise"] },
+  water: { line: "The same promise, from first enquiry to delivery.", outputs: ["Touchpoints", "Service cues", "Handoffs"] },
+  fire: { line: "A small set of cues people can recognise.", outputs: ["Colour", "Type", "Image rules"] },
+  air: { line: "One point of view in every channel.", outputs: ["Point of view", "Vocabulary", "Tone"] },
+  space: { line: "The brand that comes to mind when the need appears.", outputs: ["Buying moments", "Repeated cues", "Presence"] },
+} as const;
+
+const LAYERS: AuthorityLayer[] = elements.map((el) => ({
   slug: el.slug,
   label: el.name.split("·")[1]?.trim() ?? el.name,
-  line: el.manifesto[0],
-  color: ELEMENT_HEX[el.slug],
+  line: LAYER_DECISIONS[el.slug].line,
+  outputs: LAYER_DECISIONS[el.slug].outputs,
+  skipped: SKIPPED[el.slug] ?? "",
+  color: ELEMENT_HEX[el.slug] ?? "#C6A97A",
 }));
 
+const AUTHORITY_ROUTE_ACTION: Record<ServicesSituationId, string> = {
+  idea: "Build the foundation first",
+  reposition: "Rebuild every layer",
+  ongoing: "Keep every layer recognisable",
+};
+
+// The amplified signal: one path whose oscillation widens left to
+// right — small input, growing output. Scaled vertically by scroll
+// progress so the wave visibly gains amplitude as layers activate.
+const WAVE_PATH = (() => {
+  const points: string[] = [];
+  for (let x = 0; x <= 400; x += 4) {
+    const amp = 4 + (x / 400) * 30;
+    const y = 40 + Math.sin((x / 400) * Math.PI * 7) * amp;
+    points.push(`${x === 0 ? "M" : "L"}${x} ${y.toFixed(1)}`);
+  }
+  return points.join(" ");
+})();
+
 export function PinnedBrandBuild() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const prefersReducedMotion = useReducedMotion();
-  const isDesktop = useMediaQuery("(min-width: 640px)");
-  const runPinned = isDesktop && !prefersReducedMotion;
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const layerRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const waveRef = useRef<SVGGElement>(null);
+  const [situation, setSituation] = useState<ServicesSituationId | null>(null);
+  const [inspectedLayer, setInspectedLayer] = useState<number | null>(null);
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const recommendedPackage = packages.find(
+    (pkg) => pkg.slug === (situation ? SITUATION_TO_PACKAGE[situation] : "brand-clarity"),
+  );
+  const authorityAction = situation
+    ? AUTHORITY_ROUTE_ACTION[situation]
+    : "The package that builds every layer";
 
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section || !runPinned) return;
+    try {
+      const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      setSituation(
+        isServicesSituation(storedSituation)
+          ? storedSituation
+          : readCompletedHomeDiagnosis(),
+      );
+    } catch {
+      setSituation(null);
+    }
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: () => `+=${window.innerHeight * (LAYERS.length - 1) * 0.9}`,
-          scrub: 0.6,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      setSituation(isServicesSituation(detail?.situation) ? detail.situation : null);
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+  }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      // Static contexts keep every layer fully visible and the output
+      // wave at full amplitude.
+      layerRefs.current.forEach((layer) => {
+        if (!layer) return;
+        layer.style.opacity = "";
+        layer.style.transform = "";
+        layer.style.setProperty("--act", "1");
       });
+      if (waveRef.current) {
+        waveRef.current.style.transform = "";
+        waveRef.current.style.opacity = "";
+      }
+      return;
+    }
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+
+    function update(progress: number, direction: "up" | "down", velocity: number) {
+      if (!wrap) return;
+      // Resolve the complete system before the chapter reaches the viewport
+      // focal line. Direct chapter links therefore arrive on a readable,
+      // finished diagram, while ordinary scrolling still controls the build
+      // during the chapter's anticipation and activation phases.
+      const assembly = Math.min(1, Math.max(0, (progress - 0.04) / 0.58));
+      const signedVelocity = Math.min(1, velocity) * (direction === "down" ? 1 : -1);
+
+      wrap.dataset.authorityDirection = direction;
+      wrap.style.setProperty("--authority-progress", assembly.toFixed(4));
+      wrap.style.setProperty("--authority-camera-y", `${((0.5 - progress) * 28 + signedVelocity * 8).toFixed(2)}px`);
+      wrap.style.setProperty("--authority-camera-scale", (1.035 - assembly * 0.025 + velocity * 0.012).toFixed(4));
+      wrap.style.setProperty("--authority-copy-x", `${((1 - assembly) * -20 + signedVelocity * 6).toFixed(2)}px`);
+      wrap.style.setProperty("--authority-copy-opacity", (0.82 + assembly * 0.18).toFixed(4));
 
       layerRefs.current.forEach((layer, i) => {
         if (!layer) return;
-        tl.fromTo(
-          layer,
-          { opacity: 0, y: 36, scale: 0.97 },
-          { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power2.out" },
-          i * 0.85
-        );
+        const start = i * 0.095;
+        const local = Math.min(1, Math.max(0, (assembly - start) / 0.34));
+        const eased = 1 - Math.pow(1 - local, 3);
+        const orbit = (1 - eased) * (i % 2 === 0 ? -1 : 1) * (38 + i * 5);
+        const lift = (1 - eased) * (24 + i * 3) + signedVelocity * (5 + i);
+        const rotation = (1 - eased) * (i % 2 === 0 ? -1 : 1) * 1.2;
+        // Keep every consequence readable while the system assembles. The
+        // unfinished rows still yield to the active layer through position,
+        // scale, colour and the activation signal rather than disappearing
+        // into the moving material beneath them.
+        // A row being inspected stays still under keyboard, pointer and
+        // deliberate selection; scrolling only assembles the other rows.
+        const reading = layer.matches(":focus-within, :hover") || layer.getAttribute("aria-pressed") === "true";
+        layer.style.opacity = reading ? "1" : String(0.68 + eased * 0.32);
+        layer.style.transform = reading ? "none" : `translate3d(${orbit.toFixed(1)}px, ${lift.toFixed(1)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${(0.965 + 0.035 * eased).toFixed(3)})`;
+        layer.style.setProperty("--act", reading ? "1" : (0.34 + eased * 0.66).toFixed(3));
       });
-    }, section);
 
-    return () => ctx.revert();
-  }, [runPinned]);
+      if (waveRef.current) {
+        waveRef.current.style.transform = `translate3d(${(signedVelocity * 7).toFixed(2)}px, 0, 0) scaleY(${(0.12 + 0.88 * assembly).toFixed(3)})`;
+        waveRef.current.style.opacity = (0.48 + 0.52 * assembly).toFixed(3);
+      }
+    }
 
-  if (!runPinned) {
-    // Mobile / reduced-motion / pre-hydration fallback — the exact same
-    // five layers, stacked in normal document flow, no pin.
-    //
-    // The wrapper is no longer `sm:hidden`: this branch is also what
-    // the SERVER renders (useMediaQuery only flips true after
-    // hydration), and hiding it at desktop widths meant desktop
-    // visitors got zero Authority section in the server HTML — then a
-    // full-viewport pinned section popped into existence at hydration,
-    // shifting every section below it by ~100vh. A Lighthouse trace
-    // measured that single insertion as a 0.21+ CLS, the whole page's
-    // worth. (Slow eager video preloading used to push hydration past
-    // the trace window, which is why the score only surfaced after the
-    // perf round sped loading up — the shift itself was always there.)
-    // It also meant desktop reduced-motion visitors permanently saw
-    // nothing here at all. min-h-screen at sm+ reserves exactly the
-    // height the pinned branch occupies, so the hydration swap is
-    // height-neutral and shifts nothing.
-    return (
-      <section className="relative flex flex-col justify-center overflow-hidden py-16 sm:min-h-screen" style={{ backgroundColor: MOOD.charcoal }}>
-        <Image
-          src="/images/higgsfield-mountain-mist-poster.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          style={{ objectFit: "cover" }}
-          className="opacity-30"
-        />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.35)" }} />
-        <Container className="relative">
-          <p className="hidden text-sm font-medium uppercase tracking-wide text-ivory/70 sm:block">Authority</p>
-          <h2 className="hidden max-w-xl text-display-sm font-display font-normal text-ivory sm:mt-2 sm:block">
-            Marketing amplifies whatever is already there.
-          </h2>
-          <div className="space-y-8 sm:mt-10 sm:space-y-6">
-            {LAYERS.map((layer, i) => (
-              <div key={layer.slug} className="flex items-start gap-4">
-                <span
-                  className="font-display text-2xl font-normal opacity-50"
-                  style={{ color: layer.color }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <ElementGlyph slug={layer.slug} className="h-4 w-4" style={{ color: layer.color }} />
-                    <p className="font-display text-lg font-normal text-ivory">{layer.label}</p>
-                  </div>
-                  <p className="mt-1 text-sm text-ivory/90">{layer.line}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-    );
-  }
+    function onProgress(event: Event) {
+      const detail = (
+        event as CustomEvent<{
+          id?: string;
+          progress?: number;
+          direction?: "up" | "down";
+          velocity?: number;
+        }>
+      ).detail;
+      if (detail?.id !== "authority" || typeof detail.progress !== "number") return;
+      update(detail.progress, detail.direction ?? "down", detail.velocity ?? 0);
+    }
+
+    update(0, "down", 0);
+    window.addEventListener(SCENE_PROGRESS_EVENT, onProgress as EventListener);
+    return () => {
+      window.removeEventListener(SCENE_PROGRESS_EVENT, onProgress as EventListener);
+      delete wrap.dataset.authorityDirection;
+      wrap.style.removeProperty("--authority-progress");
+      wrap.style.removeProperty("--authority-camera-y");
+      wrap.style.removeProperty("--authority-camera-scale");
+      wrap.style.removeProperty("--authority-copy-x");
+      wrap.style.removeProperty("--authority-copy-opacity");
+    };
+  }, [prefersReducedMotion]);
 
   return (
-    // Mood: CHARCOAL — neutral-cool architectural dark (see MOOD in
-    // sectionWash.ts); the warm soil base + soil overlay here were the
-    // page's second-largest amber contributor after the shared veil.
-    <div ref={sectionRef} className="relative hidden h-screen overflow-hidden sm:block" style={{ backgroundColor: MOOD.charcoal }}>
-      {/* Direct feedback that this section read as flat and motionless —
-          the shader alone (opacity 0.22) is too subtle as the section's
-          only source of visible movement while the five layers are
-          still building. Mist slowly clearing over a ridge doubles as a
-          literal echo of the section's own line ("marketing amplifies
-          whatever is already there") — the shape is already there
-          underneath, becoming visible. Shared with PerceptionLadder's
-          own AmbientElementShader right after it, so both "Authority"
-          and "Education" keep reading as one continuous visual system. */}
-      {/* Approved Chapter 02 footage (Pexels 38390292, standard
-          license): root network in extreme macro — hidden intelligence
-          beneath the surface, exactly what strategy is. Full frame,
-          slow, no crop, no zoom; the layer parallax carries the
-          movement. */}
-      {/* Background spans 100vw from the pinned element's own center,
-          deliberately independent of the element's measured width.
-          ScrollTrigger pins by stamping the pre-pin measured width as
-          inline style; a resize or scrollbar-state change between
-          measure and pin can leave that width a strip narrower than
-          the real viewport (direct screenshot report: grey bands down
-          both edges of this chapter on a real display — the charcoal
-          ground showing through). A viewport-width background makes
-          that entire failure class invisible instead of trying to
-          out-guess GSAP's measurement timing. */}
-      <div className="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 overflow-hidden">
-        <BackgroundVideo video="/videos/pexels-root-network.mp4" videoWebm="/videos/pexels-root-network.webm" poster="/images/pexels-root-network-poster.jpg" />
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(23,24,26,0.3)" }} />
-        <AmbientElementShader opacity={0.08} />
-      </div>
-      {/* Direct, repeated feedback (two screenshots) that this pinned
-          frame read as a narrow content strip with empty video on both
-          sides on a real wide display, and that the stacked
-          heading-above-layers arrangement overflowed the frame's own
-          height (the heading visibly scrolled out of the top mid-pin).
-          A first attempt answered it with a decorative watermark —
-          wrong diagnosis. The actual fix is the layout: the frame is
-          now a real two-column composition on its own wider grid (the
-          site's max-w-6xl Container is deliberately not used here — a
-          full-viewport cinematic frame earns a wider stage), heading
-          and closing line locked in the left column, the five layers
-          building in the right, both vertically centered. Total column
-          height now fits inside h-screen at every common desktop
-          height, so nothing gets clipped mid-pin. */}
-      <div className="relative mx-auto flex h-full w-full max-w-[100rem] flex-col justify-center px-6 sm:px-10 lg:px-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Authority</p>
-            <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
-              Marketing amplifies whatever is already there.
-            </h2>
-            <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
-              Skip one layer, and marketing amplifies the gap instead of the position.
-            </p>
-          </div>
-          {/* The GSAP scrub timeline targets these exact ref nodes by
-              index — DOM structure and ref wiring unchanged from the
-              working version, only the surrounding layout moved. */}
-          <div className="relative">
-            {LAYERS.map((layer, i) => (
-              <div
-                key={layer.slug}
-                ref={(node) => {
-                  layerRefs.current[i] = node;
-                }}
-                // Micro-motion (Phase 2): hovering a layer nudges it
-                // forward and brightens its divider — inspecting one
-                // stratum of the build. Deliberately the ONLY motion
-                // added to this section: the scrub assembly is its
-                // primary motion, and anything running alongside it
-                // would compete rather than support.
-                className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 opacity-0 transition-[border-color,transform] duration-300 last:border-b-0 hover:translate-x-1.5 hover:border-ivory/30 xl:py-5"
-                style={{ marginLeft: `${i * 18}px` }}
+    <div
+      ref={wrapRef}
+      data-authority-story="true"
+      data-authority-route={situation ?? "default"}
+      className="relative min-h-[100svh] lg:h-[100svh]"
+      style={{ backgroundColor: MOOD.charcoal }}
+    >
+      <div
+        data-authority-frame="true"
+        className="relative overflow-hidden lg:flex lg:h-[100svh] lg:flex-col lg:justify-center"
+      >
+        {/* Original procedural Authority film: a restrained signal rises
+            through five natural material layers and widens only after
+            the full system is present. The assembling rows remain the primary
+            scroll-led demonstration; the film gives them one coherent
+            material world instead of repeating the hero's root metaphor. */}
+        <div data-authority-media-plane="true" className="absolute inset-0 overflow-hidden">
+          <BackgroundVideo
+            video="/videos/generated/bt-services-authority-layers.mp4"
+            videoMobile="/videos/generated/bt-services-authority-layers-mobile.mp4"
+            poster="/images/generated/bt-services-authority-layers-poster.jpg"
+            playbackRate={1.04}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, rgba(15,17,19,0.58) 0%, rgba(15,17,19,0.34) 46%, rgba(15,17,19,0.18) 100%)",
+            }}
+          />
+        </div>
+
+        <div
+          data-authority-shell="true"
+          className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:px-10 sm:py-20 lg:px-20 lg:py-0"
+        >
+          <div
+            data-authority-grid="true"
+            className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-20"
+          >
+            <div data-authority-copy="true">
+              <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Before promotion</p>
+              <h2 className="mt-2 text-display-sm font-display font-normal text-ivory lg:text-display-md">
+                Marketing can only repeat what the brand has already decided.
+              </h2>
+              <p className="mt-8 max-w-md text-sm italic text-ivory/90 lg:text-base">
+                When category, experience, expression, voice, or presence is weak, every campaign has to compensate.
+              </p>
+              {/* The insight produces an action (manual p11): the
+                  package that builds every layer, one step away. */}
+              <Link
+                href="#desire"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-sandstone underline decoration-sandstone/40 underline-offset-4 transition-colors hover:text-ivory"
               >
-                <span
-                  className="font-display text-3xl font-normal leading-none opacity-40 xl:text-4xl"
-                  style={{ color: layer.color }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="flex items-start gap-4 pt-1">
-                  <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
-                  <div>
-                    <p className="font-display text-2xl font-normal text-ivory xl:text-3xl">{layer.label}</p>
-                    <p className="mt-1 max-w-lg text-sm text-ivory/90 xl:text-base">{layer.line}</p>
-                  </div>
+                {authorityAction}: {recommendedPackage?.name ?? "Full Brand System"}
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+            <MobileAuthorityDeck layers={LAYERS} wavePath={WAVE_PATH} />
+            <div data-authority-diagram="true" data-services-chapter-instrument="true" className="relative hidden lg:block">
+              {/* The output signal — a wave whose oscillation widens as
+                  the layers beneath it assemble. Decorative twin of the
+                  rows below, which carry the full text alternative. */}
+              <div data-authority-wave="true" className="mb-6 border-b border-ivory/10 pb-4">
+                <div data-authority-signal-header="true">
+                  <p className="text-[0.62rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
+                    What must exist before promotion
+                  </p>
+                  <p
+                    data-authority-signal-status="true"
+                    className="text-right text-[0.58rem] font-medium uppercase tracking-[0.16em] text-ivory/55"
+                    aria-live="polite"
+                  >
+                    <span className="text-ivory/40">Layer in focus</span>
+                    <motion.span
+                      key={inspectedLayer === null ? "system" : LAYERS[inspectedLayer]?.slug}
+                      className="ml-2 inline-block text-sandstone"
+                      initial={prefersReducedMotion ? false : { opacity: 0, y: 3 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={
+                        prefersReducedMotion
+                          ? { duration: 0 }
+                          : { duration: motionTokens.durationFast, ease: motionTokens.easeOrganic }
+                      }
+                    >
+                      {inspectedLayer === null ? "Entire brand system" : LAYERS[inspectedLayer]?.label}
+                    </motion.span>
+                  </p>
                 </div>
+                <svg aria-hidden="true" viewBox="0 0 400 80" className="mt-2 h-14 w-full max-w-lg" fill="none">
+                  <g ref={waveRef} style={{ transformOrigin: "50% 50%" }}>
+                    <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+                    <path d={WAVE_PATH} stroke="#C6A97A" strokeWidth="5" strokeLinecap="round" opacity="0.12" />
+                  </g>
+                </svg>
+                <ul
+                  key={inspectedLayer ?? "system"}
+                  data-authority-decisions="true"
+                  aria-label={inspectedLayer === null ? "The connected brand system" : `Decisions within ${LAYERS[inspectedLayer].label}`}
+                >
+                  {(inspectedLayer === null ? ["Position", "Experience", "Recognition"] : LAYERS[inspectedLayer].outputs).map((output) => (
+                    <li key={output}>{output}</li>
+                  ))}
+                </ul>
               </div>
-            ))}
+              {LAYERS.map((layer, i) => (
+                <button
+                  key={layer.slug}
+                  data-authority-desktop-layer="true"
+                  type="button"
+                  aria-pressed={inspectedLayer === i}
+                  onClick={() => setInspectedLayer((current) => (current === i ? null : i))}
+                  ref={(node) => {
+                    layerRefs.current[i] = node;
+                  }}
+                  className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 text-left transition-[border-color,background-color,box-shadow] duration-300 last:border-b-0 hover:border-ivory/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone xl:py-5"
+                  style={{ marginLeft: `${i * 18}px` }}
+                >
+                  <span className="relative flex items-start gap-3">
+                    {/* Activation node: fills with the layer's own color
+                        as the layer arrives, tying row and diagram into
+                        one system. */}
+                    <span
+                      aria-hidden="true"
+                      className="mt-3 h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: layer.color, opacity: "var(--act, 1)" }}
+                    />
+                    <span
+                      className="font-display text-3xl font-normal leading-none opacity-[0.78] xl:text-4xl"
+                      style={{ color: layer.color }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </span>
+                  <div className="flex items-start gap-4 pt-1">
+                    <ElementGlyph slug={layer.slug} className="mt-1 h-6 w-6 shrink-0" style={{ color: layer.color }} />
+                    <div>
+                      <p className="font-display text-2xl font-normal text-ivory xl:text-3xl">{layer.label}</p>
+                      <p className="mt-1 max-w-lg text-sm text-ivory/90 xl:text-base">{layer.line}</p>
+                      <p className="mt-1 max-w-lg text-xs leading-relaxed text-ivory/60 xl:text-sm">{layer.skipped}</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

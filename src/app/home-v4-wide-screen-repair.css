@@ -1,0 +1,37 @@
+/* -------------------------------------------------------------------------- */
+/* Homepage V4 wide-screen repair                                              */
+/* -------------------------------------------------------------------------- */
+
+/* The August 8 layout was composed around a narrower desktop. On 16:10 and
+   wide laptop displays the fluid type, absolute cards and full-height media
+   were scaling independently, so content fell below the scene boundary. This
+   last cascade layer makes each authored chapter a measured viewport frame. */
+
+@media (min-width: 821px) {
+  .home-v4 [data-home-v4-chapter] {
+    scroll-margin-top: 0;
+  }
+
+  /* Light refinement changed the Recognition surface without changing the
+     earlier dark-theme type rules. Own the contrast in the final layer. */
+
+  /* The moving film and the active tabs already identify the discipline. The
+     second oversized caption was decorative duplication and caused the bottom
+     collision visible in both the supplied and cloud-browser screenshots. */
+}
+
+@media (min-width: 1440px) and (min-height: 850px) {
+  /* Recognition: keep the split composition but restore readable contrast and
+     make the card + decision map share the same bounded row. */
+
+  /* Foundation: the four decisions are one horizontal instrument. Absolute
+     percentage placement was the direct cause of the clipped lower cards. */
+
+  /* Studio/About: preserve the August 8 scene and portrait, but remove the
+     duplicate cinematic caption and fit the interactive story into the frame. */
+  .home-v4-chapter--studio {
+    height: 100svh;
+    min-height: 100svh;
+    overflow: hidden;
+  }
+}

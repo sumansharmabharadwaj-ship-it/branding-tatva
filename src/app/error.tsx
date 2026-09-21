@@ -24,14 +24,13 @@ export default function Error({
         <section className="pb-28 pt-36 text-center sm:pt-40">
           <Container>
             <p className="text-sm font-medium uppercase tracking-wide text-action-secondary">
-              Something went wrong
+              The page stopped here
             </p>
             <h1 className="mt-3 text-display-lg font-display font-normal text-soil">
-              That loaded differently than it should have.
+              This page did not load.
             </h1>
             <p className="mx-auto mt-4 max-w-md text-foreground-secondary">
-              Nothing on your end went wrong. Try again, or head back to the
-              homepage.
+              Reload this page once. If it stops here again, return to the homepage.
             </p>
             <div className="mt-8 flex justify-center gap-4">
               <button
@@ -39,10 +38,10 @@ export default function Error({
                 onClick={reset}
                 className="group/btn inline-flex items-center justify-center gap-1.5 rounded-full bg-action-primary px-6 py-3 text-sm font-medium text-white transition-all duration-300 ease-earth hover:bg-action-primary-hover hover:-translate-y-0.5 hover:shadow-elevation-lg focus-ring-halo"
               >
-                Try again
+                Reload this page
               </button>
               <LinkButton href="/" variant="secondary">
-                Back to home
+                Go to the homepage
               </LinkButton>
             </div>
           </Container>

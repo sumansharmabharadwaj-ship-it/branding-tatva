@@ -1,0 +1,49 @@
+name: Reconcile historical controlled preview statuses
+
+on:
+  push:
+    branches: [august-8-isolated]
+    paths: [.github/workflows/reconcile-preview-statuses.yml]
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify and link the two completed previews
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const releases = [
+              { release: 181, source: '9874198bc559bff575f4673d3aca4241474e9dde', trigger: 'a3e1a97089b9a191c18eb8f3cf6b104c8b4f9af3' },
+              { release: 182, source: '5afe72c2e1d6958a7f7a997ab1a8d34fe345a789', trigger: '7f87b2d02c34d79059181da2e6872c1e6525814b' },
+            ];
+            for (const item of releases) {
+              const { data: comparison } = await github.rest.repos.compareCommits({
+                ...context.repo, base: item.source, head: item.trigger,
+              });
+              if (comparison.status !== 'ahead' || comparison.ahead_by !== 1 ||
+                  comparison.files.length !== 1 || comparison.files[0].filename !== 'vercel.json') {
+                throw new Error('Unexpected source-to-trigger changes for release ' + item.release);
+              }
+              const { data: combined } = await github.rest.repos.getCombinedStatusForRef({
+                ...context.repo, ref: item.trigger,
+              });
+              const vercel = combined.statuses.find(s => s.context === 'Vercel');
+              if (vercel?.state !== 'success' ||
+                  !vercel.target_url?.startsWith('https://vercel.com/suman22/branding-tatva/')) {
+                throw new Error('No verified successful Vercel result for release ' + item.release);
+              }
+              await github.rest.repos.createCommitStatus({
+                ...context.repo, sha: item.source, context: 'Controlled preview',
+                state: 'success', target_url: vercel.target_url,
+                description: 'Release ' + item.release + ' ready; verified trigger ' + item.trigger.slice(0, 8) + '.',
+              });
+              core.summary.addRaw('Release ' + item.release + ': source ' + item.source +
+                ' → trigger ' + item.trigger + ' → ' + vercel.target_url, true);
+            }
+            await core.summary.write();

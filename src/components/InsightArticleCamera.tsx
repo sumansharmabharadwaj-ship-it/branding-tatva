@@ -1,0 +1,266 @@
+"use client";
+
+import { useEffect } from "react";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { readInsightsLibraryState } from "@/lib/insights-library-state";
+
+const clamp = (value: number) => Math.min(1, Math.max(0, value));
+
+export function InsightArticleCamera() {
+  const prefersReducedMotion = useHydratedReducedMotion();
+
+  useEffect(() => {
+    const root = document.querySelector<HTMLElement>(".insight-article-page");
+    if (!root) return;
+
+    const articleRoot = root;
+    const hero = articleRoot.querySelector<HTMLElement>(".insight-article-hero");
+    const observedChapters = new Set<HTMLElement>();
+    let arrivalStartTimer = 0;
+    let arrivalReleaseTimer = 0;
+
+    const libraryState = readInsightsLibraryState();
+    if (
+      !prefersReducedMotion &&
+      libraryState?.selectedArticleSlug === articleRoot.dataset.articleSlug
+    ) {
+      articleRoot.dataset.articleArrival = "opening";
+      arrivalStartTimer = window.setTimeout(() => {
+        articleRoot.dataset.articleArrival = "settled";
+      }, 48);
+      arrivalReleaseTimer = window.setTimeout(() => {
+        delete articleRoot.dataset.articleArrival;
+      }, 1180);
+    }
+
+    function clearArticleArrival() {
+      if (arrivalStartTimer) window.clearTimeout(arrivalStartTimer);
+      if (arrivalReleaseTimer) window.clearTimeout(arrivalReleaseTimer);
+      delete articleRoot.dataset.articleArrival;
+    }
+
+    function readChapters() {
+      const chapters = Array.from(
+        articleRoot.querySelectorAll<HTMLElement>(".insight-reading-chapter"),
+      );
+
+      chapters.forEach((chapter) => observedChapters.add(chapter));
+      return chapters;
+    }
+
+    function clearChapterMotion(chapter: HTMLElement) {
+      delete chapter.dataset.active;
+      chapter.style.removeProperty("--chapter-focus");
+      chapter.style.removeProperty("--chapter-progress");
+      chapter.style.removeProperty("--chapter-shift");
+      chapter.style.removeProperty("--chapter-velocity");
+      chapter.style.removeProperty("--chapter-pointer-x");
+      chapter.style.removeProperty("--chapter-pointer-y");
+    }
+
+    if (prefersReducedMotion) {
+      function settleChapters() {
+        articleRoot.style.setProperty("--article-hero-progress", "0");
+        articleRoot.style.setProperty("--article-scroll-progress", "0");
+        articleRoot.style.removeProperty("--article-reading-progress");
+        readChapters().forEach((chapter) => {
+          chapter.style.setProperty("--chapter-shift", "0px");
+          chapter.style.setProperty("--chapter-focus", "1");
+          chapter.style.setProperty("--chapter-progress", "1");
+          chapter.style.setProperty("--chapter-velocity", "0");
+        });
+      }
+
+      settleChapters();
+      const reducedMotionObserver = new MutationObserver(settleChapters);
+      reducedMotionObserver.observe(articleRoot, { childList: true, subtree: true });
+
+      return () => {
+        reducedMotionObserver.disconnect();
+        clearArticleArrival();
+        articleRoot.style.removeProperty("--article-hero-progress");
+        articleRoot.style.removeProperty("--article-scroll-progress");
+        articleRoot.style.removeProperty("--article-reading-progress");
+        delete articleRoot.dataset.readingMotion;
+        observedChapters.forEach(clearChapterMotion);
+      };
+    }
+
+    let frame = 0;
+    let pointerFrame = 0;
+    let velocityFrame = 0;
+    let readingVelocity = 0;
+    let lastVelocityUpdate = performance.now();
+    let previousY = window.scrollY;
+
+    function settleVelocity() {
+      const idleFor = performance.now() - lastVelocityUpdate;
+      if (idleFor < 84) {
+        velocityFrame = requestAnimationFrame(settleVelocity);
+        return;
+      }
+
+      readingVelocity *= 0.8;
+      if (readingVelocity < 0.012) readingVelocity = 0;
+      articleRoot.style.setProperty(
+        "--reading-velocity",
+        readingVelocity.toFixed(3),
+      );
+      readChapters().forEach((chapter) => {
+        chapter.style.setProperty(
+          "--chapter-velocity",
+          readingVelocity.toFixed(3),
+        );
+      });
+      articleRoot.dataset.readingMotion =
+        readingVelocity > 0 ? "moving" : "settled";
+
+      velocityFrame =
+        readingVelocity > 0 ? requestAnimationFrame(settleVelocity) : 0;
+    }
+
+    function requestVelocitySettle() {
+      if (velocityFrame) return;
+      velocityFrame = requestAnimationFrame(settleVelocity);
+    }
+
+    function render() {
+      const viewportHeight = window.innerHeight;
+      const currentY = window.scrollY;
+      const distanceTravelled = currentY - previousY;
+      const direction = distanceTravelled >= 0 ? "forward" : "back";
+      const velocity = clamp(Math.abs(distanceTravelled) / 52);
+      readingVelocity = velocity;
+      lastVelocityUpdate = performance.now();
+      const documentTravel = Math.max(
+        1,
+        document.documentElement.scrollHeight - viewportHeight,
+      );
+      const articleProgress = clamp(currentY / documentTravel);
+      const heroProgress = hero
+        ? clamp(-hero.getBoundingClientRect().top / Math.max(1, hero.offsetHeight))
+        : 0;
+      const chapters = readChapters();
+      const firstChapter = chapters[0];
+      const lastChapter = chapters.at(-1);
+      const readingStart = firstChapter
+        ? currentY + firstChapter.getBoundingClientRect().top
+        : 0;
+      const readingEnd = lastChapter
+        ? currentY + lastChapter.getBoundingClientRect().bottom
+        : readingStart + 1;
+      const readingTravel = Math.max(
+        1,
+        readingEnd - readingStart - viewportHeight * 0.58,
+      );
+      const readingProgress = clamp(
+        (currentY + viewportHeight * 0.42 - readingStart) / readingTravel,
+      );
+
+      articleRoot.dataset.readingDirection = direction;
+      articleRoot.dataset.readingMotion =
+        readingVelocity > 0.04 ? "moving" : "settled";
+      articleRoot.style.setProperty(
+        "--reading-velocity",
+        readingVelocity.toFixed(3),
+      );
+      articleRoot.style.setProperty(
+        "--article-scroll-progress",
+        articleProgress.toFixed(4),
+      );
+      articleRoot.style.setProperty(
+        "--article-hero-progress",
+        heroProgress.toFixed(4),
+      );
+      articleRoot.style.setProperty(
+        "--article-reading-progress",
+        `${(readingProgress * 100).toFixed(2)}%`,
+      );
+      previousY = currentY;
+
+      chapters.forEach((chapter) => {
+        const rect = chapter.getBoundingClientRect();
+        const center = rect.top + rect.height * 0.42;
+        const distance = Math.abs(center - viewportHeight * 0.5);
+        const focus = clamp(1 - distance / (viewportHeight * 0.78));
+        const progress = clamp(
+          (viewportHeight * 0.84 - rect.top) /
+            Math.max(viewportHeight * 0.72, rect.height),
+        );
+
+        chapter.style.setProperty("--chapter-focus", focus.toFixed(3));
+        chapter.style.setProperty("--chapter-progress", progress.toFixed(3));
+        chapter.style.setProperty(
+          "--chapter-velocity",
+          readingVelocity.toFixed(3),
+        );
+        chapter.style.setProperty(
+          "--chapter-shift",
+          `${((1 - focus) * (direction === "forward" ? 18 : -12)).toFixed(2)}px`,
+        );
+        chapter.dataset.active = focus > 0.54 ? "true" : "false";
+      });
+      requestVelocitySettle();
+    }
+
+    function renderPointer(event: PointerEvent) {
+      const target = event.target;
+      const chapter =
+        target instanceof Element
+          ? target.closest<HTMLElement>(".insight-article-section")
+          : null;
+
+      if (!chapter) {
+        pointerFrame = 0;
+        return;
+      }
+
+      const rect = chapter.getBoundingClientRect();
+      const x = clamp((event.clientX - rect.left) / rect.width);
+      const y = clamp((event.clientY - rect.top) / rect.height);
+      chapter.style.setProperty("--chapter-pointer-x", `${(x * 100).toFixed(2)}%`);
+      chapter.style.setProperty("--chapter-pointer-y", `${(y * 100).toFixed(2)}%`);
+      pointerFrame = 0;
+    }
+
+    function requestPointerRender(event: PointerEvent) {
+      if (pointerFrame) cancelAnimationFrame(pointerFrame);
+      pointerFrame = requestAnimationFrame(() => renderPointer(event));
+    }
+
+    function requestRender() {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        render();
+      });
+    }
+
+    render();
+    const chapterObserver = new MutationObserver(requestRender);
+    chapterObserver.observe(articleRoot, { childList: true, subtree: true });
+    window.addEventListener("scroll", requestRender, { passive: true });
+    window.addEventListener("resize", requestRender);
+    document.addEventListener("pointermove", requestPointerRender, { passive: true });
+
+    return () => {
+      chapterObserver.disconnect();
+      window.removeEventListener("scroll", requestRender);
+      window.removeEventListener("resize", requestRender);
+      document.removeEventListener("pointermove", requestPointerRender);
+      if (frame) window.cancelAnimationFrame(frame);
+      if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
+      if (velocityFrame) window.cancelAnimationFrame(velocityFrame);
+      clearArticleArrival();
+      delete articleRoot.dataset.readingDirection;
+      delete articleRoot.dataset.readingMotion;
+      articleRoot.style.removeProperty("--reading-velocity");
+      articleRoot.style.removeProperty("--article-scroll-progress");
+      articleRoot.style.removeProperty("--article-hero-progress");
+      articleRoot.style.removeProperty("--article-reading-progress");
+      observedChapters.forEach(clearChapterMotion);
+    };
+  }, [prefersReducedMotion]);
+
+  return null;
+}

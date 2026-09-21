@@ -1,0 +1,156 @@
+name: Generate clean procedural Services core media
+run-name: Clean core media pass 4 · ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/generate-services-clean-core-media.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-services-clean-core-media
+  cancel-in-progress: false
+
+jobs:
+  generate-and-integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the generator and generated-media contract
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/generate-services-clean-core-media.yml
+            scripts/generate_services_clean_core_media.py
+            src/app/services/generatedMediaManifest.ts
+            public/videos/generated
+            public/images/generated
+
+      - name: Use Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install rendering dependencies
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install --disable-pip-version-check --no-cache-dir numpy pillow
+
+      - name: Render clean hero, strategy, and diagnostic films
+        shell: bash
+        run: |
+          python -m py_compile scripts/generate_services_clean_core_media.py
+          python scripts/generate_services_clean_core_media.py
+
+      - name: Validate dimensions, duration, silence, provenance, and loop closure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          families=(
+            bt-services-hero-root-system
+            bt-services-strategy-topography
+            bt-services-health-reflection
+          )
+
+          for family in "${families[@]}"; do
+            desktop="public/videos/generated/${family}.mp4"
+            mobile="public/videos/generated/${family}-mobile.mp4"
+            poster="public/images/generated/${family}-poster.jpg"
+
+            test -s "$desktop"
+            test -s "$mobile"
+            test -s "$poster"
+
+            for video in "$desktop" "$mobile"; do
+              duration="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$video")"
+              python -c 'import sys; duration=float(sys.argv[1]); assert 4.8 <= duration <= 5.2, duration' "$duration"
+              audio_streams="$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$video" | wc -l)"
+              test "$audio_streams" -eq 0
+            done
+
+            test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$desktop")" = "1280x720"
+            test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$mobile")" = "960x540"
+          done
+
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+
+          import numpy as np
+
+          generator_path = Path("scripts/generate_services_clean_core_media.py")
+          spec = importlib.util.spec_from_file_location("services_clean_core_media", generator_path)
+          assert spec and spec.loader
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+
+          for name, frame_function in module.FAMILIES.items():
+              opening = np.asarray(frame_function(0.0, 320, 180))
+              closing = np.asarray(frame_function(1.0, 320, 180))
+              assert np.array_equal(opening, closing), f"{name} is not mathematically seamless"
+          PY
+
+          ! grep -q 'Image.open' scripts/generate_services_clean_core_media.py
+          grep -q 'coreMediaRevision: "clean-procedural-v2"' src/app/services/generatedMediaManifest.ts
+          grep -q 'no imported raster footage, third-party title card, logo, or watermark' public/videos/generated/README.txt
+          test -s public/videos/generated/SHA256SUMS.txt
+
+      - name: Upload the clean poster evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: services-clean-core-media-preview
+          path: |
+            public/images/generated/bt-services-hero-root-system-poster.jpg
+            public/images/generated/bt-services-strategy-topography-poster.jpg
+            public/images/generated/bt-services-health-reflection-poster.jpg
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Commit the clean media in place
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config rerere.enabled true
+          git add \
+            public/videos/generated \
+            public/images/generated \
+            src/app/services/generatedMediaManifest.ts
+
+          if git diff --cached --quiet; then
+            echo "The clean core media is already current."
+            exit 0
+          fi
+
+          git diff --cached --check
+          git commit -m "feat: replace contaminated Services core films with clean procedural media"
+
+          for attempt in 1 2 3 4 5; do
+            echo "Integration attempt ${attempt}/5"
+            git fetch origin homepage-cinematic-recovery
+            git rebase origin/homepage-cinematic-recovery
+
+            if git push origin HEAD:homepage-cinematic-recovery; then
+              echo "Clean Services media integrated successfully."
+              exit 0
+            fi
+
+            sleep $((attempt * 2))
+          done
+
+          echo "The branch kept moving after five integration attempts."
+          exit 1

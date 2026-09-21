@@ -1,0 +1,186 @@
+.paths {
+  position: relative; isolation: isolate; min-height: 100svh;
+  background: #eae1d2; color: #342f27;
+}
+.scene { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; }
+/* This chapter reads as 1800px of flat cream on a real scroll-through,
+   and these two rules were why. The footage sat at opacity .2 behind a
+   wash whose first stop was fully opaque cream to 10% and still 85% at
+   midpoint — so the clip underneath was a ghost nobody could identify,
+   and the whole scene collapsed to one beige field with no ground for
+   the cards to sit on.
+   Corrected the same way the Contact scenes were, and for the same
+   reason the media standard gives: footage stays legible, the wash goes
+   light, and readability is bought with a localized scrim exactly where
+   the copy column sits rather than by blanketing the entire plate. */
+.film { position: absolute; inset: 0; z-index: -1; overflow: hidden; opacity: .58; pointer-events: none; }
+.scene::before {
+  content: ""; position: absolute; z-index: 0; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(118% 92% at 6% 50%, #eae1d2 0%, rgb(234 225 210 / 88%) 32%, rgb(234 225 210 / 0%) 70%),
+    linear-gradient(105deg, rgb(234 225 210 / 60%) 0%, rgb(234 225 210 / 36%) 55%, rgb(234 225 210 / 26%) 100%);
+}
+.frame {
+  position: relative; z-index: 1; width: min(100%, 90rem); min-height: 100svh;
+  display: grid; align-content: center; gap: clamp(1.25rem, 2.6svh, 1.65rem);
+  margin-inline: auto;
+  /* Sticky content cannot scroll farther inside its frame. Reserve the same
+     bottom clearance as the keyboard focus margin before enabling the hold. */
+  padding: clamp(6.5rem, 11svh, 8rem) clamp(1.5rem, 5.5vw, 5.5rem) max(5rem, 6svh);
+}
+.header { display: grid; grid-template-columns: 1.15fr .85fr; gap: 4rem; align-items: end; }
+.eyebrow {
+  margin: 0 0 .85rem; color: #805239;
+  font: 500 .75rem/1.45 var(--font-sans, sans-serif);
+  letter-spacing: .13em; text-transform: uppercase;
+}
+.header h2 {
+  max-width: 20ch; margin: 0; font: 400 clamp(2.3rem, 4.2vw, 3.6rem)/1.06 var(--font-display, Georgia, serif);
+  letter-spacing: -.025em; text-wrap: balance;
+}
+.header h2 em { font-weight: 400; color: #805239; }
+.intro { max-width: 39ch; margin: 0; color: #514b40; font-size: 1rem; line-height: 1.65; text-wrap: pretty; }
+.tabs {
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .35rem;
+  width: min(100%, 44rem); border: 1px solid rgb(94 76 51 / 25%);
+  padding: .35rem; border-radius: 999px; background: rgb(250 245 235 / 40%);
+}
+.tab {
+  position: relative; display: grid; gap: .25rem; place-content: center;
+  min-height: 3.65rem; border: 0; border-radius: 999px;
+  padding: .65rem 1rem; color: #514b40; background: transparent;
+  font: inherit; cursor: pointer;
+}
+.selection { position: absolute; inset: 0; border-radius: inherit; background: #d8c8ae; }
+.tabLabel, .tabContext { position: relative; z-index: 1; }
+.tabLabel { font-size: .95rem; font-weight: 500; line-height: 1.3; }
+.tabContext { font-size: .8125rem; line-height: 1.4; }
+.tab:hover .tabLabel { color: #805239; }
+.tab[aria-selected="true"] { color: #342f27; }
+.panel { min-height: 20rem; }
+.detail { min-width: 0; display: grid; grid-template-columns: 1.15fr .85fr; gap: 4rem; }
+.copy { min-width: 0; }
+/* The invisible, inert copies reserve the tallest reading at the real width
+   and font size. Only one copy is exposed to assistive technology. */
+.readingStack, .readingMeasure { display: grid; min-width: 0; }
+.readingStack > *, .readingMeasure > * { grid-area: 1 / 1; min-width: 0; }
+.readingMeasure { visibility: hidden; pointer-events: none; user-select: none; }
+.pathNumber {
+  display: flex; align-items: baseline; gap: 1rem; margin: 0 0 1rem;
+  font: 400 1.75rem/1 var(--font-display, Georgia, serif); color: #805239;
+  font-variant-numeric: tabular-nums;
+}
+.pathNumber span { font: 500 .75rem/1.5 var(--font-sans, sans-serif); letter-spacing: .07em; text-transform: uppercase; }
+.copy h3 {
+  max-width: 18ch; margin: 0; font: 400 clamp(2.1rem, 3.3vw, 3rem)/1.1 var(--font-display, Georgia, serif);
+  letter-spacing: -.015em; text-wrap: balance;
+}
+.description { max-width: 47ch; margin: 1.2rem 0; color: #514b40; font-size: 1rem; line-height: 1.65; text-wrap: pretty; }
+.action {
+  display: inline-flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  width: min(100%, 19rem); max-width: 100%; min-height: 3.1rem; margin-top: .3rem; padding: .8rem 1.3rem;
+  border: 1px solid #514936; border-radius: 999px; background: #514936; color: #fff9ed;
+  font-size: .875rem; line-height: 1.45; transition: background-color 220ms ease;
+}
+.action svg, .footer svg { flex: 0 0 auto; transition: transform 220ms ease; }
+.action:hover { background: #3b3629; }
+.action:hover svg, .footer a:hover svg { transform: translateX(4px); }
+.scope { border: 1px solid rgb(94 76 51 / 18%); border-radius: 1.25rem; padding: 1.2rem 1.5rem; background: rgb(250 246 237 / 78%); box-shadow: 0 18px 45px rgb(76 62 41 / 7%); }
+.questionStack { margin-bottom: 1.15rem; }
+.question { max-width: 30ch; margin: 0; font: 400 clamp(1.45rem, 1.9vw, 1.7rem)/1.25 var(--font-display, Georgia, serif); text-wrap: pretty; }
+.scopeLabel { margin: 0 0 .7rem; color: #514b40; font-size: .875rem; line-height: 1.5; }
+.decisionTrail { margin: 0; padding: 0; list-style: none; }
+.decisionTrail li {
+  display: grid; grid-template-columns: 1.9rem minmax(0,1fr); gap: .8rem;
+  min-width: 0; padding-block: .6rem;
+}
+.decisionTrail li:first-child { padding-top: 0; }
+.decisionTrail li:last-child { padding-bottom: 0; }
+.decisionMarker { position: relative; display: block; align-self: stretch; }
+.decisionNumber {
+  position: relative; z-index: 1; display: grid; place-items: center;
+  width: 1.9rem; height: 1.9rem; border: 1px solid rgb(128 82 57 / 45%);
+  border-radius: 50%; background: #f2eadc; color: #805239;
+  font: 500 .75rem/1 var(--font-sans, sans-serif); font-variant-numeric: tabular-nums;
+}
+.decisionConnector {
+  position: absolute; top: .95rem; left: calc(.95rem - 1px);
+  width: 2px; height: calc(100% + 1.2rem); background: rgb(128 82 57 / 16%);
+}
+.decisionConnector > span {
+  position: absolute; inset: 0; background: #805239; transform-origin: top;
+}
+.decisionTitle { display: block; padding-top: .15rem; color: #342f27; font-size: 1rem; line-height: 1.45; font-weight: 500; }
+.decisionNote { display: block; margin-top: .25rem; color: #514b40; font-size: .9375rem; line-height: 1.55; text-wrap: pretty; }
+.footer {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .25rem 1rem;
+  padding-top: 1rem; border-top: 1px solid rgb(94 76 51 / 25%); color: #514b40;
+}
+.footer p { margin: 0; font-size: .875rem; }
+.footer a {
+  display: inline-flex; align-items: center; gap: .65rem; min-height: 2.75rem;
+  color: #70482f; font-size: .875rem; line-height: 1.5;
+  text-decoration: underline; text-decoration-color: rgb(112 72 47 / 35%); text-underline-offset: .3em;
+}
+.paths :is(a,button,[role="tabpanel"]) { scroll-margin-block: 80px; }
+.paths :is(a,button,[role="tabpanel"]):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 5px; }
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
+  .paths[data-path-story="held"] { height: 200svh; min-height: 200svh; overflow: clip; }
+  .paths[data-path-story="held"] .scene { position: sticky; top: 0; }
+  /* Anchor the whole reading frame, with no header offset pushing its footer
+     below the viewport when a chapter link is used. */
+  :global(html body .home-v4) .paths { scroll-margin-top: 0; }
+}
+@media (max-width: 900px) {
+  .header, .detail { gap: 2rem; grid-template-columns: 1fr 1fr; }
+  .scope { padding: 1.2rem; }
+}
+@media (max-width: 680px) {
+  .frame { padding: 6rem 1.5rem 3.5rem; gap: 1.65rem; }
+  .header, .detail { grid-template-columns: minmax(0,1fr); gap: 1.3rem; }
+  .header h2 { max-width: 18ch; font-size: clamp(2.35rem, 9.5vw, 3.2rem); }
+  .intro { max-width: 40ch; font-size: 1rem; }
+  .tabs { gap: .15rem; padding: .3rem; }
+  .tab { min-height: 2.8rem; padding: .6rem .3rem; }
+  .tabLabel { font-size: .875rem; }
+  .tabContext { display: none; }
+  .panel { min-height: 0; }
+  .copy h3 { max-width: 18ch; font-size: clamp(2rem, 8vw, 2.8rem); }
+  .description { margin-block: 1rem; }
+  .action { width: 100%; }
+  .scope { padding: 1.25rem; }
+  .question { max-width: 28ch; }
+  .questionStack { margin-bottom: 1.3rem; }
+  .footer { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .paths { height: auto; min-height: 100svh; }
+  .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
+  .action, .action svg, .footer svg { transition: none; }
+  .decisionConnector > span { transform: none !important; }
+}
+:global(html[data-motion="reduced"]) .paths { height: auto; min-height: 100svh; }
+:global(html[data-motion="reduced"]) .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
+:global(html[data-motion="reduced"]) .decisionConnector > span { transform: none !important; }
+
+/* No delayed row animation can restart on resume or while reading by key. */
+:global(html[data-motion="reduced"]) .action,
+:global(html[data-motion="reduced"]) .action svg,
+:global(html[data-motion="reduced"]) .footer svg { transition: none; }
+
+/* Fifth instance of the frameFits dead band. The frame's natural height
+   measured 921 to 929px at every viewport tried, so the held story ran
+   only on screens taller than about 930px — no laptop qualifies, and
+   data-path-story sat in "flow" for the whole class the desktop gate
+   admits. Measured decomposition at a 790px viewport: 184px of frame
+   padding + header 153 + tabs 76 + panel 387 + footer 61 + 62 of gaps.
+   Inside the band the frame gives back the spare padding and gap; the
+   ceiling sits just under the natural frame height so the uncompressed
+   layout takes over the moment it genuinely fits. */
+@media (min-width: 1181px) and (max-height: 929px) {
+  .frame {
+    gap: 0.75rem;
+    padding-top: 1.75rem;
+    padding-bottom: 1.25rem;
+  }
+}

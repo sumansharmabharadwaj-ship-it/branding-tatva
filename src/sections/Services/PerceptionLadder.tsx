@@ -1,128 +1,241 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import type { KeyboardEvent } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowDown, ArrowRight } from "lucide-react";
+import styles from "./PerceptionLadder.module.css";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
-import { LazyAmbientShader } from "@/components/LazyAmbientShader";
-import { AnimatedStat } from "@/components/AnimatedStat";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { track } from "@/lib/analytics";
+import {
+  SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_STORAGE_KEY,
+  isServicesSituation,
+  readCompletedHomeDiagnosis,
+  type ServicesSituationDetail,
+  type ServicesSituationId,
+} from "@/lib/servicesJourney";
 
-// "Education" objection — why premium-reading brands look different.
-// Reframed from the brief's literal "looks expensive / feels expensive"
-// ladder (trips the banned-adjective list — "expensive," close enough
-// to "premium," reads as the exact agency-cliché register this site's
-// copy standard exists to avoid) into the site's own established
-// recognition/mental-availability vocabulary. Sits on the one Three.js
-// ambient shader moment (AmbientElementShader) as a quiet backdrop —
-// color and light, not literal 3D objects.
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 const RUNGS = [
-  { label: "Unknown", text: "Zero recall, zero association. Where every brand starts." },
-  { label: "Recognized", text: "Seen enough times to register. Still replaceable by the next thing seen." },
-  { label: "Remembered", text: "Recalled without being shown again. Mental availability doing its actual job." },
-  { label: "Preferred", text: "The default choice, decided before any comparison even starts." },
+  {
+    label: "Unfamiliar",
+    thought: "What does this business do?",
+    sequence: ["Encounter", "Explanation", "Understanding"],
+    caption: "Each encounter starts the explanation again.",
+    signal: "Buyers understand only after a full explanation.",
+    explanation: "The market has no reliable shortcut to the business yet. Every encounter must rebuild category, meaning, and relevance from the beginning.",
+    decision: "Define the category and the belief the brand will own.",
+    evidence: "Independent descriptions of what the business is and who it is for.",
+    system: "Category and position",
+  },
+  {
+    label: "Recognised",
+    thought: "I have seen them before.",
+    sequence: ["Familiar cue", "Brand name", "Recognition"],
+    caption: "A familiar cue brings the name back.",
+    signal: "The name or cues register, but the meaning still moves.",
+    explanation: "Familiarity has begun, but recognition alone leaves the brand hard to describe or choose. Inconsistent cues can still make it interchangeable.",
+    decision: "Repeat a small set of distinctive verbal and visual codes.",
+    evidence: "Correct identification from cues other than the name, plus repeated language across interviews.",
+    system: "Distinctive codes",
+  },
+  {
+    label: "Recalled",
+    thought: "They come to mind for this.",
+    sequence: ["Buying need", "Memory", "Your brand"],
+    caption: "The need itself brings the brand to mind.",
+    signal: "The brand returns in a relevant buying moment.",
+    explanation: "Recognition needs a prompt. Recall happens when the need appears and the brand comes to mind without one. Repetition can support that memory; distribution and relevance still matter.",
+    decision: "Link the same meaning to the situations in which buyers need it.",
+    evidence: "Unaided mentions, branded searches, and repeat direct visits at relevant moments.",
+    system: "Mental availability",
+  },
+  {
+    label: "Considered",
+    thought: "They belong on my shortlist.",
+    sequence: ["Your position", "Evidence", "Shortlist"],
+    caption: "A relevant position earns a closer look.",
+    signal: "The brand enters the shortlist before price alone decides.",
+    explanation: "Recall creates an opportunity rather than guaranteed preference. Relevance, proof, availability, experience, and price still shape the final decision.",
+    decision: "Protect the position and support it with evidence buyers can inspect.",
+    evidence: "Shortlist mentions, qualified enquiries, and sales notes that cite the position.",
+    system: "Consideration",
+  },
 ] as const;
 
+const ROUTE_FOCUS: Record<
+  ServicesSituationId,
+  { transition: string; note: string }
+> = {
+  idea: {
+    transition: "From unfamiliar to recognised",
+    note: "Foundation gives the business a category, position, and repeatable identity before launch.",
+  },
+  reposition: {
+    transition: "From recognised to recalled",
+    note: "Full Brand System aligns the meaning and cues already circulating among buyers.",
+  },
+  ongoing: {
+    transition: "From recalled to considered",
+    note: "Brand Partnership keeps each live expression recognisable as the business moves.",
+  },
+};
+
 export function PerceptionLadder() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-  // Direct critique (Creative Direction Audit) flagged this as the
-  // weakest execution on the page — real content, but a plain bordered
-  // list with zero motion. The ladder metaphor now literally climbs:
-  // a fill line tracks scroll progress through the list instead of a
-  // static border, the same target-scoped useScroll technique already
-  // proven lightweight elsewhere, no new scroll-math system invented.
-  const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ["start 0.75", "end 0.4"],
-  });
-  const fillScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [routeFocus, setRouteFocus] = useState<(typeof ROUTE_FOCUS)[ServicesSituationId] | null>(null);
+  const prefersReducedMotion = useHydratedReducedMotion();
+  const activeRung = RUNGS[activeIndex] ?? RUNGS[0];
+
+  useEffect(() => {
+    function applySituation(situation: ServicesSituationId | null) {
+      setRouteFocus(situation ? ROUTE_FOCUS[situation] : null);
+    }
+
+    try {
+      const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      applySituation(
+        isServicesSituation(storedSituation)
+          ? storedSituation
+          : readCompletedHomeDiagnosis(),
+      );
+    } catch {
+      applySituation(null);
+    }
+
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      applySituation(isServicesSituation(detail?.situation) ? detail.situation : null);
+    }
+
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+  }, []);
+
+  // Tabs are deliberate choices. Scrolling never replaces the state being read.
+  function activate(index: number, source: "click" | "keyboard") {
+    setActiveIndex(index);
+    track("capability_selected", {
+      page: "services",
+      capability: `Recognition ladder: ${RUNGS[index]?.label ?? "stage"}`,
+      source: `perception_${source}`,
+    });
+  }
+
+  function handleKeyDown(index: number, event: KeyboardEvent<HTMLButtonElement>) {
+    let nextIndex: number | undefined;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % RUNGS.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + RUNGS.length) % RUNGS.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = RUNGS.length - 1;
+    if (nextIndex === undefined) return;
+    event.preventDefault();
+    activate(nextIndex, "keyboard");
+    tabRefs.current[nextIndex]?.focus();
+  }
 
   return (
-    <div className="relative py-20 sm:py-28">
-      <LazyAmbientShader opacity={0.16} />
-      {/* Was a single centered max-w-2xl column — the same dead-space
-          pattern already fixed on the Risk removal section, left
-          unaddressed here. The ladder itself is unchanged; a real proof
-          companion now fills the second column instead of empty space
-          on wide viewports — the exact 0.71% to 2.81% climb already
-          named in this page's own hero, restated here as the concrete
-          instance of the abstract ladder a visitor just read. */}
-      <Container className="relative max-w-5xl">
-        <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-ivory/70">Education</p>
-          {/* Phase 4 persuasion pass: "why some brands look different"
-              was observation at a distance — this makes the ladder about
-              the reader's own brand, already being ranked whether they
-              participate or so much as know about it. */}
-          <h2 className="mt-2 max-w-xl text-display-sm font-display font-normal text-ivory">
-            Your brand is already on this ladder.
-          </h2>
-          <p className="mt-4 max-w-xl text-ivory/90">
-            Buyers place it there with or without your involvement. Climbing deliberately is the whole discipline of
-            branding.
-          </p>
-        </Reveal>
-
-        <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_minmax(0,20rem)] lg:gap-16">
-          <div ref={trackRef} className="relative space-y-8 pl-6 sm:pl-8">
-            <div className="absolute inset-y-0 left-0 w-[2px] bg-ivory/15" aria-hidden="true" />
-            {!prefersReducedMotion && (
-              <motion.div
-                className="absolute left-0 top-0 w-[2px] origin-top bg-[#A0A690]"
-                style={{ height: "100%", scaleY: fillScale }}
-                aria-hidden="true"
-              />
-            )}
-            {/* Phase 2 motion direction — "the climb": each rung's dot
-                ignites in sequence as the fill line draws past it, so
-                the ladder is climbed rather than shown. Hover inspects
-                a rung — the row leans in, its dot glows. */}
-            {RUNGS.map((rung, i) => (
-              <Reveal key={rung.label} delay={i * 0.1}>
-                <div className="group relative transition-transform duration-300 hover:translate-x-1">
-                  <motion.span
-                    className="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 bg-soil transition-shadow duration-300 group-hover:shadow-[0_0_10px_rgba(160,166,144,0.55)] sm:-left-[33px]"
-                    aria-hidden="true"
-                    initial={prefersReducedMotion ? { borderColor: "#A0A690" } : { borderColor: "rgba(244,239,230,0.25)", scale: 1 }}
-                    whileInView={
-                      prefersReducedMotion
-                        ? undefined
-                        : {
-                            borderColor: "#A0A690",
-                            scale: [1, 1.35, 1],
-                            transition: { delay: 0.35 + i * 0.18, duration: 0.5 },
-                          }
-                    }
-                    viewport={{ once: true, margin: "0px 0px -25% 0px" }}
-                  />
-                  <p className="font-display text-xl font-normal text-ivory sm:text-2xl">{rung.label}</p>
-                  <p className="mt-1 text-sm text-ivory/90 transition-colors duration-300 group-hover:text-ivory/95 sm:text-base">
-                    {rung.text}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
+    <Container className={styles.container}>
+      <div className={styles.system} data-memory-stage={activeIndex + 1}>
+        <header className={styles.heading}>
+          <div>
+            <p className={styles.eyebrow}>How buyers remember</p>
+            <h2>Being seen and being remembered are different jobs.</h2>
           </div>
+          <p className={styles.intro}>
+            Four states of buyer memory. Each calls for a different decision.
+            Choose the one that sounds like your business.
+          </p>
+        </header>
 
-          <Reveal delay={0.15} className="lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-2xl border border-ivory/15 p-6 backdrop-blur-md sm:p-8" style={{ backgroundColor: "rgba(26,32,38,0.55)" }}>
-              <p className="text-xs font-medium uppercase tracking-wide text-ivory/70">One real climb</p>
-              <p className="mt-4 font-display text-4xl font-normal text-ivory sm:text-5xl">
-                <AnimatedStat value="0.71%" />
-              </p>
-              <p className="mt-1 text-sm text-ivory/70">Where one client&apos;s engagement started.</p>
-              <div className="my-6 h-px bg-ivory/15" aria-hidden="true" />
-              {/* The climb's destination keeps a highlight — sage tint
-                  (blendHex(sage, ivory, 45) precomputed), the same
-                  accent as the ladder's own fill line. */}
-              <p className="font-display text-4xl font-normal text-[#A0A690] sm:text-5xl">
-                <AnimatedStat value="2.81%" />
-              </p>
-              <p className="mt-1 text-sm text-ivory/70">Eight weeks after climbing this exact ladder.</p>
-            </div>
-          </Reveal>
+        <div className={styles.tabs} role="tablist" aria-label="Four states of brand recognition">
+          {RUNGS.map((rung, index) => (
+            <button
+              key={rung.label}
+              ref={(node) => { tabRefs.current[index] = node; }}
+              id={`perception-stage-tab-${index}`}
+              type="button"
+              role="tab"
+              aria-selected={index === activeIndex}
+              aria-controls="perception-stage-panel"
+              tabIndex={index === activeIndex ? 0 : -1}
+              onClick={() => activate(index, "click")}
+              onKeyDown={(event) => handleKeyDown(index, event)}
+              className={styles.tab}
+            >
+              <span className={styles.tabNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+              <span>{rung.label}</span>
+              <ArrowRight aria-hidden="true" size={17} strokeWidth={1.5} />
+            </button>
+          ))}
         </div>
-      </Container>
-    </div>
+
+        <div
+          id="perception-stage-panel"
+          role="tabpanel"
+          tabIndex={0}
+          aria-labelledby={`perception-stage-tab-${activeIndex}`}
+          className={styles.panel}
+        >
+          <motion.div
+            key={activeRung.label}
+            className={styles.reading}
+            initial={prefersReducedMotion ? false : { opacity: 0.88, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.4, ease: EASE }}
+          >
+            <div className={styles.visual}>
+              <p className={styles.eyebrow}>In the buyer’s mind</p>
+              <p className={styles.thought}>“{activeRung.thought}”</p>
+              <ol className={styles.sequence} aria-label="How this memory state works">
+                {activeRung.sequence.map((step, index) => (
+                  <li key={step}>
+                    <span className={styles.node} aria-hidden="true">
+                      {index === 0 ? <span className={styles.seed} /> : index === 1 ? <span className={styles.rings} /> : <span className={styles.mark}>✳</span>}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+              <p className={styles.caption}>{activeRung.caption}</p>
+              <div className={styles.systemResult}>
+                <span>System to build</span>
+                <strong>{activeRung.system}</strong>
+              </div>
+            </div>
+
+            <div className={styles.copy}>
+              <p className={styles.eyebrow}>What buyers currently do</p>
+              <h3>{activeRung.signal}</h3>
+              <p className={styles.explanation}>{activeRung.explanation}</p>
+              <dl className={styles.decisions}>
+                <div>
+                  <dt>What to decide next</dt>
+                  <dd>{activeRung.decision}</dd>
+                </div>
+                <div>
+                  <dt>Evidence to collect</dt>
+                  <dd>{activeRung.evidence}</dd>
+                </div>
+              </dl>
+            </div>
+          </motion.div>
+        </div>
+
+        <div className={styles.footer}>
+          <p className={styles.context}>
+            {routeFocus ? <><span>Your selected engagement</span>{routeFocus.note}</> :
+              <>These are market conditions. Familiarity alone promises neither recall nor a place on the shortlist.</>}
+          </p>
+          <a href="#audit" data-section-jump-yield="true" className={styles.auditLink}>
+            Check your brand <ArrowDown aria-hidden="true" size={17} />
+          </a>
+        </div>
+      </div>
+    </Container>
   );
 }

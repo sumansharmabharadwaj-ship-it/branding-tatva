@@ -1,0 +1,111 @@
+name: Generate original Services Strategy Room media
+
+on:
+  push:
+    branches:
+      - homepage-cinematic-recovery
+    paths:
+      - .github/workflows/generate-services-strategy-room-media.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: branding-tatva-services-strategy-room-media
+  cancel-in-progress: false
+
+jobs:
+  generate-and-integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the generator and its integration targets
+        uses: actions/checkout@v4
+        with:
+          ref: homepage-cinematic-recovery
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/generate-services-strategy-room-media.yml
+            scripts/generate_services_strategy_room_media.py
+            src/app/services/page.tsx
+            src/app/services/generatedMediaManifest.ts
+            public/videos/generated
+            public/images/generated
+
+      - name: Use Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install rendering dependencies
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install --disable-pip-version-check --no-cache-dir numpy pillow
+
+      - name: Validate and render the original arrival film
+        shell: bash
+        run: |
+          python -m py_compile scripts/generate_services_strategy_room_media.py
+          python scripts/generate_services_strategy_room_media.py
+
+      - name: Validate duration, dimensions, audio state, loop, and wiring
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          desktop="public/videos/generated/bt-services-strategy-room.mp4"
+          mobile="public/videos/generated/bt-services-strategy-room-mobile.mp4"
+
+          for video in "$desktop" "$mobile"; do
+            test -s "$video"
+            duration="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$video")"
+            python -c 'import sys; d=float(sys.argv[1]); assert 4.8 <= d <= 5.2, d' "$duration"
+            audio_streams="$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$video" | wc -l)"
+            test "$audio_streams" -eq 0
+          done
+
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$desktop")" = "1280x720"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$mobile")" = "960x540"
+          test -s public/images/generated/bt-services-strategy-room-poster.jpg
+
+          python - <<'PY'
+          import numpy as np
+          from scripts.generate_services_strategy_room_media import strategy_room_frame
+
+          opening = np.asarray(strategy_room_frame(0.0, 320, 180))
+          closing = np.asarray(strategy_room_frame(1.0, 320, 180))
+          assert np.array_equal(opening, closing), "Strategy Room loop endpoints are not identical"
+          PY
+
+          grep -q 'bt-services-strategy-room.mp4' src/app/services/page.tsx
+          grep -q 'bt-services-strategy-room-mobile.mp4' src/app/services/page.tsx
+          grep -q 'strategyRoom:' src/app/services/generatedMediaManifest.ts
+          grep -q 'Strategy Room / booking' public/videos/generated/README.txt
+
+      - name: Commit the rendered media and final Services scene
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            public/videos/generated \
+            public/images/generated \
+            src/app/services/page.tsx \
+            src/app/services/generatedMediaManifest.ts
+
+          if git diff --cached --quiet; then
+            echo "Strategy Room media is already current."
+            exit 0
+          fi
+
+          git diff --cached --check
+          git commit -m "feat: install original Strategy Room arrival film"
+          git pull --rebase origin homepage-cinematic-recovery
+          git push origin HEAD:homepage-cinematic-recovery

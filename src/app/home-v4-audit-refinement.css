@@ -1,0 +1,6 @@
+/* Homepage audit refinements: clarity, trust and one control language. */
+
+.home-v4 .final-invitation__details {
+  max-width: 34rem;
+  line-height: 1.6;
+}

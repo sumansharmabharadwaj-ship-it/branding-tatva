@@ -40,7 +40,7 @@ This was tightened over many rounds this session into a strict, load-bearing sta
 
 ## Motion & animation — read this before touching scroll, pin, or 3D
 
-This is the single most important section in this file. This project has **twice built and abandoned GSAP ScrollTrigger `pin: true`** (real, repeated bugs: pin desync on tab backgrounding, stale trigger positions, dead scroll space after unpinning) and **twice built and rejected WebGL/Three.js scenes** ("cartoonish and disconnected from the brand," per direct feedback on both the About page closing scene and a five-elements 3D moment). The current pinned sections (`PinnedSlider`, `PinnedJourney`, `ElementsIntroPinned`, `MeadowClosing`, `SelectedWorkPinned`, `PinnedHold`, `PinnedVideoBreak`) all use plain CSS `position: sticky` + `getBoundingClientRect()`-driven opacity/progress math instead, specifically *because* sticky can't fall out of sync with its own wrapper's layout the way a cached GSAP trigger position can.
+This is the single most important section in this file. This project has **twice built and abandoned GSAP ScrollTrigger `pin: true`** (real, repeated bugs: pin desync on tab backgrounding, stale trigger positions, dead scroll space after unpinning) and **twice built and rejected WebGL/Three.js scenes** ("cartoonish and disconnected from the brand," per direct feedback on both the About page closing scene and a five-elements 3D moment). Pinned sections here always use plain CSS `position: sticky` + `getBoundingClientRect()`-driven opacity/progress math instead, specifically *because* sticky can't fall out of sync with its own wrapper's layout the way a cached GSAP trigger position can. (The original exemplars — PinnedSlider, PinnedJourney, MeadowClosing, and the rest — were removed in the Sep 21 2026 dead-code cleanup along with their whole retired sections; the pattern lives on in the current chapter stacks, e.g. the HomeV4 cost stack. Recoverable from git history if ever needed as reference.)
 
 If a future brief asks for GSAP ScrollTrigger pinning or a Three.js/WebGL scene: **flag this history explicitly before building it**, don't silently comply or silently refuse. The lesson isn't "never use these tools" — GSAP itself (non-pin usage), Framer Motion, and Lenis are all in active, working use — the lesson is specifically about `ScrollTrigger.pin` and full WebGL scenes, which have a proven failure/rejection history *in this exact codebase*. A future attempt should either use a materially different, more defensive approach than what already failed, or the person asking should be told directly why past attempts were rolled back before time is spent rebuilding them.
 
@@ -48,7 +48,7 @@ Other hard-won motion lessons:
 - **The bare `autoplay` video attribute is not reliable.** Confirmed multiple times live: a fully-loaded, muted, autoplay video can sit `paused: true` with nothing to ever start it. Every video component must call `.play()` explicitly — use the shared `useVideoFadeIn` hook (`src/hooks/useVideoFadeIn.ts`), which also closes a race between a fast-loading video's native `loadeddata` event and React's synthetic listener attachment.
 - **Lenis owns scroll — don't fight it.** Raw `window.scrollTo`/`scrollBy` calls get silently overridden by Lenis's own virtual scroll state. Use `useLenis()` (`SmoothScrollProvider.tsx`) and `lenis.scrollTo(...)` instead.
 - **`position: sticky` breaks the moment an ancestor has `overflow` other than `visible`.** Scope any `overflow-hidden` (for a ghost watermark, a video mask, etc.) to the smallest wrapper that needs it — never the section that also contains a sticky/pinned child.
-- **`ClipReveal`/`PerspectiveReveal` clip their entire children to zero at rest**, background included. A background video/image meant to always be visible (not just the revealed content) must sit as a sibling outside the reveal wrapper, not nested inside it — otherwise a slow-to-fire reveal trigger shows blank page background during fast real-device scrolling.
+- **Reveal wrappers that clip children to zero at rest** (historically `ClipReveal`/`PerspectiveReveal`, both since removed as dead code — the lesson outlives them and applies to `ElementReveal`-style successors), background included. A background video/image meant to always be visible (not just the revealed content) must sit as a sibling outside the reveal wrapper, not nested inside it — otherwise a slow-to-fire reveal trigger shows blank page background during fast real-device scrolling.
 - Every animated component needs a `prefers-reduced-motion` equivalent before it ships — either a static fallback or a zero-duration render, matching the existing per-component pattern (`useReducedMotion()` from Framer Motion) plus the sitewide CSS rule in `globals.css`.
 - No auto-playing carousels. No scroll hijacking. Nothing that blocks or delays reading a headline.
 
@@ -60,12 +60,13 @@ npx eslint <changed files>
 pnpm build
 git add <specific files>          # never -A blind; review what's staged
 git commit -m "..."               # explain why, not just what
-git push
-vercel --prod --yes --force
-curl -sI https://branding-tatva.vercel.app/ | grep -i age:   # confirm age: 0 = fresh deploy
+git push origin august-8-isolated
+curl -s https://branding-tatva-git-august-8-isolated-suman22.vercel.app/api/release
 ```
 
-Browser-verify visually before deploying whenever the change is observable (`preview_start` the dev server, screenshot/scroll through it). **This sandbox's Browser pane has a documented, recurring flakiness**: `document.visibilityState`/`hasFocus` can read `hidden`/`false` even when nothing is actually wrong, which stalls IntersectionObserver-gated lazy-mounts, `<video>` autoplay/pause state, and rAF-driven timers (a loading veil can appear stuck at "0" indefinitely). When this happens, trust direct DOM/computed-style JS extraction over screenshots or `.paused`/`.readyState` reads, and don't mistake it for a real site bug — cross-check against the actual production deploy before "fixing" something that's actually just the sandbox pane.
+The permanent review alias above is the only Vercel URL to share. Keep production untouched until Suman explicitly approves promotion. Before calling a preview current, confirm `/api/release` reports the exact `august-8-isolated` commit. Browser-verify visually whenever a change is observable (`preview_start` the dev server, screenshot/scroll through it), then verify the same deployed commit rather than an older alias target.
+
+**This sandbox's Browser pane has a documented, recurring flakiness**: `document.visibilityState`/`hasFocus` can read `hidden`/`false` even when nothing is actually wrong, which stalls IntersectionObserver-gated lazy-mounts, `<video>` autoplay/pause state, and rAF-driven timers (a loading veil can appear stuck at "0" indefinitely). When this happens, trust direct DOM/computed-style JS extraction over screenshots or `.paused`/`.readyState` reads, and don't mistake it for a real site bug — cross-check against the actual preview deployment before "fixing" something that's actually just the sandbox pane.
 
 ## Working with Suman
 

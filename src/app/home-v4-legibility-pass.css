@@ -1,0 +1,26 @@
+/* Homepage V4 · final legibility and control-state pass.
+   This layer leaves the opening composition untouched. */
+
+/* Recognition works best as a diagnosis-to-decision exchange, not a lone
+   display line floating between the chapter title and selector rail. Restore
+   the already-written diagnosis on wide screens and keep the decisive move
+   as the dominant counterweight. */
+
+/* The Tatva system shifts to a light observatory in the final grade, while
+   the complete-system core intentionally stays dark. Give the two lines
+   inside that core their own inverse colors instead of inheriting the light
+   scene's dark SVG label color. */
+
+/* Keep every branch discoverable while retaining a clear active route. */
+
+/* Evidence is most persuasive when its provenance can be read without
+   leaning into the screen. Preserve the compact dossier, but raise the
+   smallest copy above the decorative-contrast tier. */
+
+.home-v4 #evidence .evidence-cinematic__index button.is-active {
+  border-color: color-mix(in srgb, var(--project-accent) 58%, rgba(32, 50, 40, 0.18));
+  background: color-mix(in srgb, var(--project-accent) 7%, rgba(249, 245, 236, 0.32));
+}
+
+/* The editorial room can stay quiet without making its framework labels
+   smaller than the rest of the homepage's reading copy. */

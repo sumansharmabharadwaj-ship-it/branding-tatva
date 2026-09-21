@@ -2,55 +2,60 @@ export const faqs = [
   {
     question: "What does branding actually include?",
     answer:
-      "More than a logo. Purpose, positioning, audience, voice, identity, content, and consistency. I work across all five, using whichever a business actually needs.",
+      "Branding decides what the business should mean to buyers, how that meaning sounds and looks, and how consistently people meet it. The exact scope can include positioning, voice, identity, website structure, content, and campaigns.",
   },
   {
     question: "Do you design logos?",
     answer:
-      "I work on brand strategy, voice, positioning, and content: the thinking that a visual identity should be built on. Logo design itself sits outside what I offer directly.",
+      "A logo is the last decision in the sequence, never the first. I define the position, verbal direction, and creative principles a visual identity must express, then include identity work when the agreed project needs it.",
   },
   {
     question: "Can you help a brand new business?",
     answer:
-      "Yes. That's Brand Beginning work: discovery, positioning, and audience definition before anything else gets built.",
+      "Yes. We decide the category, priority buyer, position, promise, and proof before the name, identity, website, or launch begins.",
   },
   {
     question: "Can you help an existing brand that already has an identity?",
     answer:
-      "Yes. That's usually Brand Clarity or Brand Elevation work, depending on whether the issue is confusion or just needing sharper expression.",
+      "Yes. I first find whether the problem sits in what the brand means, how it expresses that meaning, or how inconsistently people encounter it. We keep what still earns recognition and rebuild what no longer fits the business.",
   },
   {
     question: "Do you manage ongoing content and campaigns?",
     answer:
-      "Yes. Dr. Haley Nutrition and Executive Springboard are both examples of sustained, month over month content management rather than one off projects.",
+      "Yes. Dr. Haley Nutrition and Executive Springboard show ongoing content direction, creation, and review across several months.",
   },
   {
     question: "How long does a project take?",
     answer:
-      "It depends on scope. A positioning project moves faster than an ongoing content engagement. I'll give you a real timeline after understanding what you need, rather than a generic estimate up front.",
+      "Timing depends on the decisions and deliverables involved. After the first conversation, you receive a schedule based on the actual work instead of an estimate broad enough to mean nothing.",
   },
   {
     question: "What should I prepare before we start?",
     answer:
-      "Whatever you already have, even if it's messy. Past content, a rough idea of your audience, competitor examples that stood out to you, for better or worse. I'll tell you if anything's missing.",
+      "Bring whatever already exists, even when it is messy: past content, sales material, customer language, competitor examples, and the questions still open. I will tell you what else would be useful.",
   },
   {
     question: "Can we work remotely?",
     answer: "Yes. All of the work shown here was done remotely.",
   },
   {
+    question: "Why a solo strategist instead of an agency?",
+    answer:
+      "The person who hears your problem is the person who thinks it through, writes the words, and directs the design. Agencies hand strategy from the pitch team to the delivery team, and every handoff loses part of the reasoning. Here the reasoning stays whole from the first conversation to the launched work.",
+  },
+  {
     question: "Will branding increase revenue?",
     answer:
-      "Branding works as an indirect revenue lever. It makes your marketing and sales work harder, aligned with a clear story instead of fighting one. One client's engagement rate moved from 0.71% to 2.81% over two months on the same posting budget, a real example of compounding done right, specific to that business rather than a universal promise.",
+      "Branding can improve how quickly buyers understand, remember, and trust the offer, but revenue also depends on price, distribution, demand, sales, and delivery. For Dr. Haley Nutrition, engagement moved from 0.71% to 2.81% while posting less. That is evidence from one account. Every business earns its own numbers.",
   },
   {
     question: "How long before I see results?",
     answer:
-      "Depends what you mean by results. Positioning and identity land in weeks. Recognition, the kind that shows up as more inbound trust, builds gradually over months, well beyond the span of one campaign.",
+      "The strategic and creative work can be completed in weeks. Buyer recognition takes repeated exposure over months. The project schedule will separate what can change immediately from what must be earned through use.",
   },
   {
-    question: "Can you actually implement, or just strategize?",
+    question: "Can you actually implement, or just strategise?",
     answer:
-      "Both. Strategy only counts once it gets built. I carry the work through to the actual website, content, and campaigns, always beyond the plan alone.",
+      "Both. Strategy can continue into messaging, visual direction, website structure, content, and campaigns. The exact implementation depends on the agreed scope.",
   },
 ] as const;
