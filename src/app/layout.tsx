@@ -42,9 +42,17 @@ export const metadata: Metadata = {
   description: site.description,
   alternates: { canonical: "/" },
   robots: searchRobotsMetadata(),
-  verification: process.env.GOOGLE_SITE_VERIFICATION
-    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
-    : undefined,
+  verification:
+    process.env.GOOGLE_SITE_VERIFICATION || process.env.BING_SITE_VERIFICATION
+      ? {
+          google: process.env.GOOGLE_SITE_VERIFICATION,
+          // Bing's index also feeds ChatGPT search, so its verification tag
+          // carries answer-engine weight beyond Bing itself.
+          other: process.env.BING_SITE_VERIFICATION
+            ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+            : undefined,
+        }
+      : undefined,
   openGraph: {
     title: site.name,
     description: site.description,
