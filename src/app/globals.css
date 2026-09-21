@@ -1131,10 +1131,31 @@ html[data-about-film-snap="true"] {
     transform: none;
   }
 
+  /* The desktop scene camera never runs here, which used to leave
+     phones with completely static chapters while every other page
+     arrived — the recurring desktop and mobile drift. The browser's
+     own scroll timeline provides the arrival instead: no JavaScript,
+     an unfired observer can never strand a chapter, and browsers
+     without scroll timelines simply render the settled state above. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      [data-about-film-scene] [data-about-film-plane] {
+        animation: aboutPlaneArrive both cubic-bezier(0.22, 1, 0.36, 1);
+        animation-timeline: view();
+        animation-range: entry 6% entry 48%;
+      }
+    }
+  }
+
   [data-about-film-scene] [data-about-film-background] {
     transform: scale(1.025);
     filter: none;
   }
+}
+
+@keyframes aboutPlaneArrive {
+  from { opacity: 0.24; transform: translateY(34px); }
+  to { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
