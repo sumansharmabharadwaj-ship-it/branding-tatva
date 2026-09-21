@@ -294,8 +294,8 @@ export function SectionJumpNav({
 
       if (yielding && isServicesRoute && desktopNavRef.current?.contains(document.activeElement)) {
         const action = intersecting.values().next().value;
-        const target = action?.querySelector<HTMLElement>("h2, h3") ?? action;
-        target?.setAttribute("tabindex", "-1");
+        const target = action?.hasAttribute("tabindex") ? action : action?.querySelector<HTMLElement>("h2, h3") ?? action;
+        if (target && !target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
         target?.focus({ preventScroll: true });
       }
 
