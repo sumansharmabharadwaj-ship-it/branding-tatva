@@ -821,6 +821,16 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-booking-sheen] {
   will-change: transform, opacity;
 }
 
+/* Below lg the hero grid stacks and the founder card fills the frame's
+   foot, so the centre bottom thread lands inside the card as a stray
+   line through its text. Touch scrolling needs no invitation; the cue
+   is a wide viewport gesture only. */
+@media (max-width: 1023px) {
+  [data-contact-film] [data-contact-hero-cue] {
+    display: none;
+  }
+}
+
 @keyframes contact-hero-cue-drop {
   0% {
     opacity: 0;
