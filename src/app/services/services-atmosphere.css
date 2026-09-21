@@ -402,11 +402,15 @@
     transform: translateX(6px);
   }
 
-  [data-services-hero-index] a > span:first-child {
+  /* The id prefix is load bearing: the numeral also carries a Tailwind
+     group hover colour ((0,3,0), ivory) that outranks a bare attribute
+     selector — and ivory on the light meadow makes the numeral vanish
+     at the exact moment it should ignite. Warm sand stays visible. */
+  #services-opening [data-services-hero-index] a > span:first-child {
     transition: color 300ms ease, opacity 300ms ease;
   }
 
-  [data-services-hero-index] a:hover > span:first-child {
+  #services-opening [data-services-hero-index] a:hover > span:first-child {
     color: #c6a97a;
     opacity: 1;
   }
