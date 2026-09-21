@@ -410,6 +410,37 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-field-ink] {
   }
 }
 
+/* The optional context cascade. The disclosure's height already glides;
+   its contents used to arrive as one block the moment the panel opened.
+   The intro line and the two fieldsets now rise in sequence, so opening
+   "Add useful context" reads as the page making room rather than a form
+   snapping into existence. Keyed off aria-hidden so closing resets the
+   animation and every reopen replays it. */
+[data-contact-film] #contact-more[aria-hidden="false"] > div > p,
+[data-contact-film] #contact-more[aria-hidden="false"] > div > fieldset {
+  animation: contact-optional-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-contact-film] #contact-more[aria-hidden="false"] > div > fieldset:nth-of-type(1) {
+  animation-delay: 0.12s;
+}
+
+[data-contact-film] #contact-more[aria-hidden="false"] > div > fieldset:nth-of-type(2) {
+  animation-delay: 0.24s;
+}
+
+@keyframes contact-optional-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Living ground. Beneath the dust, two broad fields of colour wander the
    light chapters on minute long paths — morning gold from one corner, a
    cool sage answer from the other — so the wash behind the glass is never
@@ -2158,6 +2189,8 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-hero-cue] > span {
 }
 
 html[data-motion="reduced"] [data-contact-film] details[open] [data-contact-faq-answer],
+html[data-motion="reduced"] [data-contact-film] #contact-more[aria-hidden="false"] > div > p,
+html[data-motion="reduced"] [data-contact-film] #contact-more[aria-hidden="false"] > div > fieldset,
 html[data-motion="reduced"] [data-contact-film] [data-contact-booking-card],
 html[data-motion="reduced"] [data-contact-film] [data-contact-form-card],
 html[data-motion="reduced"] [data-contact-film] [data-contact-pathways-card],
@@ -2307,6 +2340,8 @@ html[data-motion="reduced"] .contact-footer-afterglow::after {
   }
 
   [data-contact-film] details[open] [data-contact-faq-answer],
+  [data-contact-film] #contact-more[aria-hidden="false"] > div > p,
+  [data-contact-film] #contact-more[aria-hidden="false"] > div > fieldset,
   [data-contact-film] [data-contact-booking-card],
   [data-contact-film] [data-contact-form-card],
   [data-contact-film] [data-contact-pathways-card],
