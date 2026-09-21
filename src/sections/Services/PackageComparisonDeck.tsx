@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type UIEvent } from "react";
+import { useLayoutEffect, useRef, useState, type UIEvent } from "react";
 import { Plus } from "lucide-react";
 import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
@@ -17,11 +17,22 @@ import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 // while the page only spends one card's vertical height. A live position
 // label, previous/next controls, and direct dots make the sideways route
 // explicit instead of relying on a mystery swipe.
-export function PackageComparisonDeck({ region }: { region: Region }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+export function PackageComparisonDeck({ region, initialPackage }: { region: Region; initialPackage?: PackageSlug }) {
+  const initialIndex = Math.max(0, packages.findIndex((pkg) => pkg.slug === initialPackage));
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
+
+  // Open at the visitor's selected engagement. The positioned track makes
+  // card offsets local to the scroll container, including inside a grid.
+  useLayoutEffect(() => {
+    const trackNode = trackRef.current;
+    const cardNode = cardRefs.current[initialIndex];
+    if (trackNode && cardNode && trackNode.scrollWidth > trackNode.clientWidth) {
+      trackNode.scrollLeft = Math.max(0, cardNode.offsetLeft - (trackNode.clientWidth - cardNode.clientWidth) / 2);
+    }
+  }, [initialIndex]);
 
   function goTo(index: number, source: "previous" | "next" | "dot") {
     const nextIndex = Math.max(0, Math.min(packages.length - 1, index));
@@ -102,7 +113,7 @@ export function PackageComparisonDeck({ region }: { region: Region }) {
         role="list"
         aria-label="All three package comparisons"
         onScroll={handleScroll}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-3 pr-[12%] lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0 lg:pr-0"
+        className="relative flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-3 pr-[12%] lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0 lg:pr-0"
         style={{ scrollbarWidth: "none" }}
       >
         {packages.map((pkg, index) => (
@@ -198,7 +209,6 @@ export function PackageComparisonDeck({ region }: { region: Region }) {
             </button>
           ))}
         </div>
-        <p className="text-[0.58rem] uppercase tracking-[0.16em] text-ivory/45">Swipe or use arrows</p>
       </div>
     </div>
   );

@@ -1,15 +1,13 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Container } from "@/components/Container";
-import { LinkButton } from "@/components/Button";
-import { ElementGlyph } from "@/components/ElementGlyph";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import Link from "next/link";
+import { useInView } from "framer-motion";
+import styles from "./PackageSelector.module.css";
 import { PackageComparisonDeck } from "@/sections/Services/PackageComparisonDeck";
 import { packages } from "@/data/services";
 import { projects } from "@/data/projects";
-import { blendHex } from "@/lib/sectionWash";
 import { track } from "@/lib/analytics";
 import { usePricing } from "@/components/PricingProvider";
 import { RegionSelector } from "@/components/RegionSelector";
@@ -36,25 +34,19 @@ const CHOICES = [
   { slug: "brand-partnership", label: "Stopping drift across channels", shortLabel: "Ongoing", element: "space" },
 ] as const;
 
-const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
-
 type SelectionSource = "situation" | "manual" | null;
 export function PackageSelector() {
   // Start with a complete recommendation and keep it in view until chosen.
   const [active, setActive] = useState<PackageSlug | null>(CHOICES[0].slug);
   const [selectionSource, setSelectionSource] = useState<SelectionSource>(null);
   const [compare, setCompare] = useState(false);
-  const [carriedSituation, setCarriedSituation] = useState<ServicesSituationId | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const choiceRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const inView = useInView(rootRef, { once: true, amount: 0.15 });
   const [routeReady, setRouteReady] = useState(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activePackage = packages.find((pkg) => pkg.slug === active);
-  const activeSituation = active ? PACKAGE_TO_SITUATION[active] : null;
-  const proof = activeSituation
-    ? projects.find((project) => project.slug === SITUATION_TO_PROOF_SLUG[activeSituation])
-    : undefined;
-  const transition = prefersReducedMotion
-    ? { duration: 0 }
-    : { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const };
   const { region } = usePricing();
 
   useEffect(() => {
@@ -62,7 +54,7 @@ export function PackageSelector() {
       setActive(SITUATION_TO_PACKAGE[situation]);
       setSelectionSource("situation");
       setCompare(false);
-      setCarriedSituation(situation);
+      setExpanded(false);
     }
 
     function applyLinkedPackage() {
@@ -77,7 +69,7 @@ export function PackageSelector() {
       setActive(linkedChoice.slug);
       setSelectionSource("manual");
       setCompare(false);
-      setCarriedSituation(linkedSituation);
+      setExpanded(false);
       publishServicesSituation(linkedSituation, "services_package");
       return true;
     }
@@ -117,237 +109,165 @@ export function PackageSelector() {
     };
   }, []);
 
-  // Keep this choice stable as the visitor scrolls through its explanation.
-
-  function settlePackageChapter() {
-    window.dispatchEvent(new CustomEvent(ANCHOR_SETTLE_EVENT, { detail: { id: "desire" } }));
-  }
-
   function choosePackage(slug: PackageSlug) {
     const situation = PACKAGE_TO_SITUATION[slug];
     setActive(slug);
     setSelectionSource("manual");
-    setCarriedSituation(situation);
+    setExpanded(false);
     setCompare(false);
     publishServicesSituation(situation, "services_package");
     track("package_viewed", { package: slug, situation, source: "manual" });
-    settlePackageChapter();
+  }
+
+  function handleChoiceKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight") next = (index + 1) % CHOICES.length;
+    else if (event.key === "ArrowLeft") next = (index - 1 + CHOICES.length) % CHOICES.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = CHOICES.length - 1;
+    else return;
+    event.preventDefault();
+    choiceRefs.current[next]?.focus({ preventScroll: true });
+    choosePackage(CHOICES[next].slug);
   }
 
   return (
-    <Container
-      data-package-selector="true"
+    <div
+      ref={rootRef}
+      data-engagement-selector="true"
       data-package-route-ready={routeReady ? "true" : "false"}
+      data-section-jump-yield="true"
+      data-animate={inView && !prefersReducedMotion}
       aria-busy={!routeReady}
-      className="text-center transition-[max-width] duration-500 ease-out motion-reduce:transition-none"
-      style={{ maxWidth: compare ? "64rem" : "48rem" }}
+      className={`container-page ${styles.root}`}
     >
-      <div data-services-chapter-copy="true">
-        <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Ways to work</p>
-        <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-          Choose the condition, then inspect the scope and price.
-        </h2>
+      <header className={styles.heading}>
+        <p>Ways to work</p>
+        <h2>Three engagements. Different decisions.</h2>
+        <p className={styles.intro}>Choose your condition. See the scope and starting price.</p>
+      </header>
 
-        <AnimatePresence initial={false}>
-          {carriedSituation && activePackage && !compare && (
-            <motion.p
-              data-carried-package="true"
-              initial={prefersReducedMotion ? undefined : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={transition}
-              className="mx-auto mt-3 max-w-xl rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.48)] px-4 py-1.5 text-xs text-ivory/80 backdrop-blur-md"
-            >
-              {selectionSource === "manual" ? (
-                <>
-                  Your selected engagement: <span className="font-medium text-sandstone">{activePackage.name}</span>.
-                  The examples and booking brief now follow this choice.
-                </>
-              ) : (
-                <>
-                  From your earlier choice: <span className="font-medium text-sandstone">{activePackage.name}</span>. You
-                  can still compare below.
-                </>
-              )}
-            </motion.p>
-          )}
-        </AnimatePresence>
+      <div role="group" aria-label="Choose a package route" className={styles.choices}>
+        {CHOICES.map((choice, index) => (
+          <button
+            ref={(node) => { choiceRefs.current[index] = node; }}
+            key={choice.slug}
+            id={`package-${choice.slug}`}
+            type="button"
+            aria-pressed={routeReady && active === choice.slug}
+            aria-controls="package-recommendation"
+            onClick={() => choosePackage(choice.slug)}
+            onKeyDown={(event) => handleChoiceKey(event, index)}
+            className={styles.choice}
+          >
+            <span aria-hidden="true">0{index + 1}</span>
+            <strong>{choice.shortLabel}</strong>
+            <small>{choice.label}</small>
+          </button>
+        ))}
       </div>
 
-      <div
-        data-services-chapter-instrument="true"
-        aria-label="Choose a package route"
-        className="mx-auto mt-6 grid max-w-2xl gap-4 sm:grid-cols-3 lg:mt-7"
-      >
-        {CHOICES.map((choice) => {
-          const pkg = packages.find((entry) => entry.slug === choice.slug);
-          const isActive = routeReady && active === choice.slug;
-          return (
-            <motion.button
-              key={choice.slug}
-              id={`package-${choice.slug}`}
-              type="button"
-              aria-pressed={isActive}
-              aria-controls="package-recommendation"
-              data-package-choice="true"
-              onClick={() => choosePackage(choice.slug)}
-              whileHover={prefersReducedMotion ? undefined : { y: -5 }}
-              whileTap={prefersReducedMotion ? undefined : { scale: 0.98, y: -1 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="flex scroll-mt-28 flex-col items-center gap-2.5 rounded-2xl border-t-2 p-5 text-center backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_14px_36px_rgba(0,0,0,0.35)] lg:min-h-[196px]"
-              style={{
-                borderColor: pkg?.color,
-                backgroundColor: isActive
-                  ? blendHex(pkg?.color ?? "#B85A34", "#0F151C", 22)
-                  : "rgba(15,21,28,0.55)",
-              }}
-            >
-              <ElementGlyph
-                slug={choice.element}
-                className="h-7 w-7"
-                style={{ color: isActive ? pkg?.color : "rgba(244,239,230,0.7)" }}
-              />
-              <span data-package-choice-short="true" className="font-display text-sm font-normal text-ivory sm:hidden">
-                {choice.shortLabel}
-              </span>
-              <span data-package-choice-label="true" className="hidden font-display text-lg font-normal text-ivory sm:inline">
-                {choice.label}
-              </span>
-              {pkg && <span data-package-choice-audience="true" className="text-xs leading-relaxed text-ivory/75">{pkg.forWho}</span>}
-            </motion.button>
-          );
-        })}
-      </div>
-
-      <div data-package-controls="true" className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+      <div className={styles.controls}>
         <RegionSelector />
         <button
           type="button"
           aria-pressed={compare}
+          aria-controls="package-recommendation"
           onClick={() => {
-            setCompare((current) => {
-              if (!current) track("packages_compared");
-              return !current;
-            });
-            settlePackageChapter();
+            if (!compare) track("packages_compared");
+            setCompare(!compare);
+            setExpanded(false);
           }}
-          className="inline-flex min-h-11 items-center gap-3 rounded-full border border-sandstone/35 bg-[rgba(15,21,28,0.42)] px-4 py-2.5 text-sm font-medium text-ivory/85 backdrop-blur-md transition-[border-color,background-color,color] duration-300 hover:border-sandstone/65 hover:bg-ivory/[0.07] hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
         >
-          <span className="sm:hidden">{compare ? "Selected path" : "Compare paths"}</span>
-          <span className="hidden sm:inline">{compare ? "Return to the selected engagement" : "Compare scope and starting prices"}</span>
-          <span
-            aria-hidden="true"
-            className="rounded-full border border-ivory/15 bg-ivory/[0.05] px-2 py-0.5 text-[0.56rem] font-medium uppercase tracking-[0.14em] text-sandstone"
-          >
-            {compare ? "1 view" : "3 paths"}
-          </span>
+          {compare ? "Return to selection" : "Compare all three"}
+          <span aria-hidden="true">{compare ? "↩" : "↔"}</span>
         </button>
       </div>
 
-      <div
-        id="package-recommendation"
-        data-services-chapter-resolution="true"
-        aria-live="polite"
-        className={`relative mt-5 min-h-[220px] text-left transition-opacity duration-200 motion-reduce:transition-none ${
-          routeReady ? "visible opacity-100" : "invisible opacity-0"
-        }`}
-      >
+      <p className={styles.selection} role="status">
+        {selectionSource === "manual"
+          ? "Your choice carries into the examples and booking brief."
+          : selectionSource === "situation"
+            ? "Your earlier choice is selected. Every engagement is here to compare."
+            : "Select the condition closest to your business."}
+      </p>
+
+      <div id="package-recommendation" className={styles.recommendation}>
         {compare ? (
-            <motion.div
-              key="compare"
-              initial={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0.2, clipPath: "inset(0 0 82% 0 round 1.25rem)", filter: "blur(5px)" }
-              }
-              animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
-              transition={transition}
-            >
-              <PackageComparisonDeck region={region} />
-            </motion.div>
-          ) : activePackage ? (
-            <motion.div
-              key={activePackage.slug}
-              initial={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0.2, clipPath: "inset(0 0 76% 0 round 1rem)", filter: "blur(4px)" }
-              }
-              animate={{ opacity: 1, clipPath: "inset(0 0 0% 0 round 0rem)", filter: "blur(0px)" }}
-              transition={
-                prefersReducedMotion
-                  ? { duration: 0 }
-                  : {
-                      opacity: { duration: 0.14, ease: [0.4, 0, 1, 1] },
-                      clipPath: { duration: 0.52, ease: [0.16, 1, 0.3, 1] },
-                      filter: { duration: 0.38, ease: [0.16, 1, 0.3, 1] },
-                    }
-              }
-              data-package-card="true"
-              className="rounded-2xl border-t-2 p-5 backdrop-blur-md sm:p-6"
-              style={{ borderColor: activePackage.color, backgroundColor: blendHex(activePackage.color, "#0F151C", 14) }}
-            >
-              <div data-package-card-grid="true" className="grid gap-5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-7">
-                <div data-package-summary="true">
-                  <p className="font-display text-xl font-normal text-ivory">{activePackage.name}</p>
-                  <div data-package-price="true" className="mt-2 flex items-baseline gap-1.5">
-                    <span className="text-sm text-ivory/70">
-                      {activePackage.billing === "monthly" ? "from" : "Projects begin at"}
-                    </span>
-                    <span className="font-display text-2xl font-normal text-ivory">
-                      {formatPrice(region, activePackage.slug as PackageSlug)}
-                    </span>
-                    {activePackage.billing === "monthly" && <span className="text-sm text-ivory/70">/mo</span>}
+          <div className={styles.comparison}>
+            <PackageComparisonDeck
+              region={region}
+              initialPackage={activePackage?.slug as PackageSlug | undefined}
+            />
+          </div>
+        ) : (
+          <div className={styles.cardStack}>
+            {packages.map((pkg) => {
+              const isActive = active === pkg.slug;
+              const situation = PACKAGE_TO_SITUATION[pkg.slug as PackageSlug];
+              const proof = projects.find((project) => project.slug === SITUATION_TO_PROOF_SLUG[situation]);
+              return (
+                <article
+                  key={pkg.slug}
+                  aria-hidden={!isActive}
+                  inert={!isActive}
+                  data-active={isActive}
+                  data-engagement-card={pkg.slug}
+                  className={styles.card}
+                  aria-labelledby={`engagement-${pkg.slug}`}
+                >
+                  <div className={styles.summary}>
+                    <p className={styles.eyebrow}>Selected engagement</p>
+                    <h3 id={`engagement-${pkg.slug}`}>{pkg.name}</h3>
+                    <p className={styles.price}>
+                      <span>From</span>
+                      <strong>{formatPrice(region, pkg.slug as PackageSlug)}</strong>
+                      {pkg.billing === "monthly" && <span>/ month</span>}
+                    </p>
+                    <p className={styles.quotation}>Final quotation follows the discovery call.</p>
+                    <p className={styles.description}>{pkg.description}</p>
+                    {proof && <Link className={styles.proof} href={`/work/${proof.slug}`}>Project record: {proof.title} <span aria-hidden="true">↗</span></Link>}
                   </div>
-                  <p className="mt-1 text-xs text-ivory/60">Final quotation follows the discovery call.</p>
-                  <p data-package-description="true" className="mt-3 text-sm leading-relaxed text-ivory/90 sm:text-base">{activePackage.description}</p>
-                </div>
-                <div data-package-details="true" className="border-ivory/10 sm:border-l sm:pl-7">
-                  <ul data-package-inclusions="true" className="grid gap-y-1">
-                    {activePackage.includes.map((item, index) => (
-                      <motion.li
-                        key={item}
-                        initial={prefersReducedMotion ? undefined : { opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.35, delay: prefersReducedMotion ? 0 : 0.15 + index * 0.08 }}
-                        className="text-sm text-ivory/90 before:mr-2 before:content-['•']"
-                      >
-                        {item}
-                      </motion.li>
-                    ))}
-                  </ul>
-                  <div data-package-actions="true" className="mt-4 flex flex-wrap gap-3">
-                    {proof && (
-                      <div data-package-proof-action="true">
-                        <LinkButton href={`/work/${proof.slug}`} variant="secondary" className="border-ivory/30 text-ivory hover:bg-ivory/10">
-                          See it in action: {proof.title}
-                        </LinkButton>
-                      </div>
-                    )}
-                    <LinkButton href={servicesContactHref(activePackage.slug as PackageSlug)} style={{ backgroundColor: activePackage.color }}>
-                      Start with {activePackage.name}
-                    </LinkButton>
+                  <div className={styles.scope}>
+                    <p className={styles.eyebrow}>Included scope</p>
+                    <ol className={styles.inclusions}>
+                      {pkg.includes.slice(0, 3).map((item, index) => (
+                        <li key={item} style={{ "--scope-index": index } as CSSProperties}>
+                          <span aria-hidden="true">0{index + 1}</span><span>{item}</span>
+                        </li>
+                      ))}
+                    </ol>
+                    <details
+                      open={isActive && expanded}
+                      onToggle={(event) => {
+                        if (isActive) setExpanded(event.currentTarget.open);
+                      }}
+                      className={styles.more}
+                    >
+                      <summary>View all {pkg.includes.length} inclusions <span aria-hidden="true">+</span></summary>
+                      <ol start={4} className={styles.inclusions}>
+                        {pkg.includes.slice(3).map((item, index) => (
+                          <li key={item}><span aria-hidden="true">0{index + 4}</span><span>{item}</span></li>
+                        ))}
+                      </ol>
+                    </details>
+                    <Link className={styles.start} href={servicesContactHref(pkg.slug as PackageSlug)}>
+                      Start with {pkg.name}<span aria-hidden="true">→</span>
+                    </Link>
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.p key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center text-sm text-ivory/70">
-              Three engagements, each built for a different business condition.
-            </motion.p>
-          )}
+                </article>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      <details data-package-disclaimer="true" className="group mx-auto mt-3 max-w-2xl text-left text-[0.68rem] leading-relaxed text-ivory/55">
-        <summary className="mx-auto w-fit cursor-pointer rounded-full px-3 py-1 text-center font-medium uppercase tracking-[0.14em] transition-colors hover:text-ivory/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone">
-          Pricing notes
-        </summary>
-        <p className="mt-2">
-          Prices are localised by market and shown in the selected currency. Final scope and quotation are confirmed
+      <details className={styles.disclaimer}>
+        <summary>Pricing notes <span aria-hidden="true">+</span></summary>
+        <p>Prices are localised by market and shown in the selected currency. Final scope and quotation are confirmed
           after the discovery conversation. Taxes and third party production, media, printing, development, travel or
-          licensing are listed separately where relevant.
-        </p>
+          licensing are listed separately where relevant.</p>
       </details>
-    </Container>
+    </div>
   );
 }
