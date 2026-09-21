@@ -20,7 +20,7 @@ export const entityFacts = {
   },
   delivery: {
     mode: "Remote",
-    regions: ["United States", "United Kingdom", "India"],
+    regions: ["United States", "United Kingdom", "Canada", "India"],
   },
   knowledgeAreas: [
     "Brand positioning",
