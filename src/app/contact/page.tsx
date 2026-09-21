@@ -136,6 +136,7 @@ export default function ContactPage() {
           minHeight="88vh"
           imagePosition="62% 56%"
           playbackRate={0.84}
+          mediaMode="video"
           className="contact-hero-film"
           overlayGradient="linear-gradient(180deg, rgba(43,32,20,0.08) 0%, rgba(43,32,20,0.18) 48%, rgba(38,28,18,0.54) 100%), radial-gradient(95% 85% at 12% 52%, rgba(40,29,18,0.58) 0%, rgba(40,29,18,0.3) 42%, rgba(40,29,18,0) 74%)"
           overlayGradientMobile="linear-gradient(180deg, rgba(43,32,20,0.28) 0%, rgba(43,32,20,0.34) 55%, rgba(38,28,18,0.52) 100%)"
@@ -261,6 +262,7 @@ export default function ContactPage() {
                 push
                 posterPriority={false}
                 pauseMargin={0.85}
+                mediaMode="video"
               />
               {/* The veil used to be one flat 0.84 → 0.62 wash across the
                   whole plate, which is the failure the media standard
@@ -322,6 +324,7 @@ export default function ContactPage() {
                 playbackRate={0.8}
                 posterPriority={false}
                 pauseMargin={0.85}
+                mediaMode="video"
               />
               {/* Same correction as the pathways scene above, and for the
                   same reason: a 0.88 peak wash left the desk footage as
@@ -427,6 +430,7 @@ export default function ContactPage() {
                 push
                 posterPriority={false}
                 pauseMargin={0.85}
+                mediaMode="video"
               />
               <div
                 className="absolute inset-0"

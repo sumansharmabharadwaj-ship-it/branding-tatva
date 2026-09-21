@@ -48,6 +48,7 @@ export function BackgroundVideo({
   posterPriority = false,
   managedByHomepage = false,
   pauseMargin = 0.25,
+  mediaMode = "auto",
 }: {
   video: string;
   // Optional lower-bandwidth MP4 selected by the browser on phones.
@@ -92,10 +93,16 @@ export function BackgroundVideo({
   // pausing. Full viewport scene films (Contact) pass a wider band so their
   // freeze frame never lands inside a visible chapter handoff.
   pauseMargin?: number;
+  // Mirrors PhotoHero's override. The sitewide living photography rule was
+  // written for long reading sections where a loop reset distracts; a scene
+  // composed around its footage can opt back into native motion explicitly.
+  mediaMode?: "auto" | "video" | "living-image";
 }) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const livingStill = usesLivingStill(video);
+  const livingStill =
+    mediaMode === "living-image" ||
+    (mediaMode === "auto" && usesLivingStill(video));
   const safePlaybackRate = Math.min(1.5, Math.max(0.65, playbackRate));
   // The bare `autoplay` attribute alone isn't reliable — confirmed
   // elsewhere on this site (PhotoHero/TexturedDark hero videos, via
