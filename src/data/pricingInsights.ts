@@ -183,7 +183,174 @@ export const pricingInsightPosts: InsightPost[] = [
     relatedSlugs: [
       "how-to-position-a-consulting-business",
       "brand-refresh-vs-rebrand-how-much-change",
-      "brand-marketing-vs-performance-marketing",
+      "brand-strategist-vs-branding-agency",
+    ],
+  },
+  {
+    slug: "brand-strategist-vs-branding-agency",
+    title: "Brand strategist or branding agency: who should you hire?",
+    seoTitle: "Brand strategist vs branding agency: which to hire in 2026",
+    excerpt:
+      "The choice between an independent strategist and an agency decides who actually thinks about your brand. This guide gives the fit test, the risks of each, and the questions that expose both.",
+    directAnswer:
+      "Hire an independent brand strategist when the work is thinking: positioning, message, voice, and the decisions underneath identity. The person you evaluate does the work, attention stays senior, and fees fund substance. Hire a branding agency when the work is coordination: many markets, many teams, heavy production alongside strategy, or a board that requires institutional cover. The common failure is buying agency structure for a thinking problem, paying for account layers while the strategy gets written by the most junior person in the building.",
+    element: "earth",
+    topicSlug: "positioning",
+    primaryKeyword: "brand strategist vs branding agency",
+    secondaryKeywords: [
+      "should i hire a brand strategist or an agency",
+      "independent brand consultant vs agency",
+      "hire a brand strategist",
+      "branding agency alternative",
+      "solo brand strategist for startups",
+    ],
+    searchIntent:
+      "Decide between hiring an independent brand strategist and a branding agency, with criteria and risks for each.",
+    publishedAt: "2026-09-21",
+    updatedAt: "2026-09-21",
+    readingTime: "10 min read",
+    heroImage: "/images/generated/insights-v2/case-study-decision-record.webp",
+    heroVideo: "/videos/generated/insights-v2/case-study-decision-record.mp4",
+    heroImageAlt:
+      "A decision record laid open on a desk, two candidate folders weighed side by side under a reading lamp",
+    keyTakeaways: [
+      "The real question is who does the thinking. Agencies sell a building; independents sell a brain. Both can be right, for different problems.",
+      "Agency fees fund coordination: account layers, specialist departments, process. Valuable for twelve markets, wasted on a founder led business with one.",
+      "The senior partner who wins the pitch is rarely the person who writes the strategy. With an independent, those are the same person by construction.",
+      "The independent's honest risks are capacity and coverage: one brain, finite hours, and design production usually contracted out rather than in house.",
+      "Five questions expose either kind of provider before a contract: author, decisions, evidence, artefacts, aftermath.",
+    ],
+    framework: {
+      title: "The fit test",
+      introduction:
+        "Five contrasts that decide the choice for your stage. Read each pair and mark which side describes your situation; the majority answers the question.",
+      steps: [
+        {
+          title: "Problem shape",
+          description:
+            "Thinking problem, position, message, difference, favours the independent. Coordination problem, many markets, teams, and channels moving at once, favours the agency.",
+        },
+        {
+          title: "Who you need thinking",
+          description:
+            "If the work lives or dies on senior judgement, buy a person whose name is on it. If it lives on throughput, buy a team with process.",
+        },
+        {
+          title: "Production weight",
+          description:
+            "Strategy plus a focused identity suits an independent with a trusted design partner. Packaging systems, film, and campaign production at volume suit an agency's bench.",
+        },
+        {
+          title: "Decision culture",
+          description:
+            "A founder who decides fast gets full value from an independent's pace. A committee that needs workshops, decks, and cover often needs the agency's apparatus to move at all.",
+        },
+        {
+          title: "Budget honesty",
+          description:
+            "Fund substance first. If the budget covers an agency only by squeezing scope until juniors do the thinking, the same money buys an independent's full attention.",
+        },
+      ],
+    },
+    sections: [
+      {
+        id: "the-question-behind-the-question",
+        heading: "The question behind the question",
+        paragraphs: [
+          "Founders comparing a strategist against an agency usually frame it as small versus large, or cheap versus expensive. The truer frame: you are choosing who does the thinking, and how many layers sit between that person and you.",
+          "A branding agency is a structure for coordinating many hands: strategists, designers, writers, producers, account managers. An independent strategist is one senior brain with a network. Neither is superior in the abstract. Each is built for a different shape of problem, and most bad engagements trace back to a shape mismatch rather than a talent gap.",
+          "The market rarely helps you see this, because agencies pitch structure as if it were substance, and independents pitch intimacy as if it were capacity. This guide takes the buyer's side of that table.",
+        ],
+        callout: {
+          label: "The frame",
+          text: "You are hiring a brain or a building. Decide which one your problem needs before anyone shows you a deck.",
+        },
+      },
+      {
+        id: "what-an-agency-is-built-for",
+        heading: "What an agency is actually built for",
+        paragraphs: [
+          "Agencies earn their premium on coordination. A rebrand across twelve markets, four product lines, a packaging system, a campaign launch, and a legal review in three jurisdictions is a logistics problem wearing a creative coat, and an agency's process, bench, and account structure exist precisely for it.",
+          "The bench matters when production is heavy: motion designers, packaging specialists, retail environment people, each excellent at a narrow thing. And institutional cover is real: when a board or an investor needs the reassurance of a known firm behind a risky change, the agency's name is part of the product.",
+          "The cost of that machine is where founder led businesses get hurt. The senior partner who won the pitch hands the work down, the strategy gets drafted by whoever is available, and the account layer, the part you interact with most, produces meetings rather than decisions. Founders who have bought both tiers describe the same pattern with striking consistency.",
+        ],
+      },
+      {
+        id: "what-an-independent-is-built-for",
+        heading: "What an independent is built for",
+        paragraphs: [
+          "An independent strategist sells the thing agencies find hardest to guarantee: the person you evaluated is the person who does the work. Positioning, message architecture, voice, the decisions underneath identity, all senior judgement problems, all done best by one accountable brain close to the founder.",
+          "Pace is the second advantage. Decisions travel from conversation to document without passing through an account team, so an engagement that takes a quarter through agency process often lands in weeks. For a founder who decides quickly, that speed compounds.",
+          "The honest risks sit in capacity and coverage. One brain has finite hours, so a strategist worth hiring keeps few clients and says so; treat easy availability as a signal, in either direction. Heavy design production is usually contracted to trusted partners rather than held in house, which works well when the strategist directs it and poorly when nobody does. Ask exactly how that handoff runs.",
+        ],
+        bullets: [
+          "Ask an independent: how many clients do you hold at once, and who does your design production?",
+          "Ask an agency: name the person who will write our strategy, and put them in the room.",
+          "Ask both: show a redacted decision record from a past engagement, the artefact itself, before signing anything.",
+        ],
+      },
+      {
+        id: "the-money-follows-the-structure",
+        heading: "The money follows the structure",
+        paragraphs: [
+          "The pricing guide on this site covers the figures in detail; the structural summary belongs here. Agency fees carry the building: offices, layers, pitch losses, bench idle time. Independent fees carry attention. At every tier you pay for both substance and structure; the ratio is what changes.",
+          "This produces the market's quietest trap: the squeezed agency engagement. A founder stretches to afford a known firm, the fee only covers the agency's junior capacity, and the result is structure without substance, a process that feels serious and thinking that would have cost a third as much done well by one senior person.",
+          "The inverse trap exists too: hiring an independent for a coordination problem and watching one brain drown in production logistics that a bench would have absorbed. The fee saved gets spent twice in delays.",
+        ],
+        callout: {
+          label: "The trap",
+          text: "The worst purchase in this market is agency structure at a squeezed price: the process of the tier above, the thinking of the tier below.",
+        },
+      },
+      {
+        id: "how-this-practice-fits",
+        heading: "Where this practice sits, stated plainly",
+        paragraphs: [
+          "Branding Tatva is an independent practice by deliberate choice, and its published starting prices sit in the independent tier while the engagement structure mirrors what the tiers above sell: recorded decisions, evidence before opinions, artefacts a team can act on, direction available monthly after delivery.",
+          "The fit follows from everything above. Founder led businesses in the UK, US, and India whose problem is thinking, positioning that undersells the work, a message that explains everything except why to choose you, a brand that drifts between channels, get the model's full advantage: senior attention, founder pace, published prices. A multinational packaging rollout should hire the building, and this page will still be here when the thinking needs redoing.",
+          "That candour is the working method: the discovery call exists to establish fit in both directions, and a mismatch named early is cheaper for everyone than a polite engagement that serves nobody.",
+        ],
+      },
+      {
+        id: "the-five-questions-that-expose-both",
+        heading: "The five questions that expose both",
+        paragraphs: [
+          "Whichever way you lean, the same five questions from the fit test separate substance from theatre in any proposal. Who authors the strategy, named, in the room. Which decisions the engagement commits to on paper. What evidence gathering the fee includes. Which artefacts survive delivery, shown as a redacted example. And what happens in month two, when the brand starts drifting the way every brand does.",
+          "Providers of both kinds who welcome those questions are selling the work. Providers who deflect to process diagrams and culture decks are selling the building. The questions cost nothing, and they routinely save the price of the entire engagement.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        question: "Is a brand strategist cheaper than a branding agency?",
+        answer:
+          "Substantially, for the thinking itself. Independent strategists typically open defined engagements in the low four figures where boutique agencies open in the mid four to five figures and large agencies far above. The gap funds the agency's coordination structure rather than better decisions. Where an agency earns the difference is heavy multi market production, which an independent contracts out instead.",
+      },
+      {
+        question: "Can a solo strategist handle a full rebrand?",
+        answer:
+          "The strategy, naming, voice, and message architecture, yes, and often better, since one senior brain holds the whole picture. The production half depends on their partner network: identity design, web build, and asset production are usually delivered with trusted specialists under the strategist's direction. Ask exactly who those partners are and how the handoff runs; a good independent answers with names.",
+      },
+      {
+        question: "When is a branding agency genuinely the right choice?",
+        answer:
+          "When coordination is the problem: several markets or product lines moving at once, heavy packaging or campaign production, tight legal or regulatory review, or a board that requires an institutional name behind the change. In those situations the account structure founders otherwise overpay for becomes the product, and a solo practitioner would spend your fee drowning in logistics.",
+      },
+      {
+        question: "What should I ask before hiring either one?",
+        answer:
+          "Five things: the named author of the strategy, present in the room; the decisions the engagement commits to on paper; the evidence gathering included in the fee; a redacted example of the artefact that survives delivery; and the plan for month two, once the brand starts drifting. Both kinds of provider reveal themselves fast under those questions.",
+      },
+      {
+        question: "Does an independent strategist work with international clients?",
+        answer:
+          "Routinely. Strategy work runs on conversations and documents, which travel better than production does, so remote founder led engagements across time zones have become the independent tier's normal mode. Branding Tatva, for example, works with founders across the United Kingdom, United States, and India with published starting prices for each region.",
+      },
+    ],
+    relatedSlugs: [
+      "how-much-does-brand-strategy-cost",
+      "how-to-position-a-consulting-business",
+      "founder-brand-vs-company-brand",
     ],
   },
 ];
