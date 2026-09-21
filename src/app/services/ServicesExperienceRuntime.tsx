@@ -471,6 +471,10 @@ export function ServicesExperienceRuntime() {
 
       scenes.forEach((scene, index) => {
         const bounds = sceneBounds[index];
+        const ambientState = !document.hidden && !isMotionReduced() &&
+          bounds.bottom >= -viewportHeight * 0.15 && bounds.top <= viewportHeight * 1.15
+          ? "running" : "paused";
+        if (scene.dataset.servicesAmbient !== ambientState) scene.dataset.servicesAmbient = ambientState;
         if (bounds.bottom < -viewportHeight * 0.15 || bounds.top > viewportHeight * 1.15) return;
 
         const measuredProgress = clamp(
@@ -684,6 +688,13 @@ export function ServicesExperienceRuntime() {
       scheduleProgress();
     }
 
+    function onVisibilityChange() {
+      // rAF can stop in a background tab. Pause immediately there, then use
+      // fresh geometry on return so reverse scrolling resumes the same scene.
+      if (document.hidden) scenes.forEach(scene => { scene.dataset.servicesAmbient = "paused"; });
+      else scheduleProgress();
+    }
+
     const motionSettingObserver = new MutationObserver(onMotionPreferenceChange);
     motionSettingObserver.observe(document.documentElement, {
       attributes: true,
@@ -706,6 +717,7 @@ export function ServicesExperienceRuntime() {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", scheduleProgress, { passive: true });
     window.addEventListener("pageshow", scheduleProgress);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("hashchange", publishAnchorChapter);
     window.addEventListener(ANCHOR_SETTLE_EVENT, onAnchorSettle as EventListener);
     window.addEventListener("wheel", cancelAnchorAlignment, { passive: true });
@@ -719,6 +731,7 @@ export function ServicesExperienceRuntime() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("hashchange", publishAnchorChapter);
       window.removeEventListener(ANCHOR_SETTLE_EVENT, onAnchorSettle as EventListener);
       window.removeEventListener("wheel", cancelAnchorAlignment);
@@ -768,6 +781,7 @@ export function ServicesExperienceRuntime() {
         delete scene.dataset.servicesActive;
         delete scene.dataset.servicesPhase;
         delete scene.dataset.servicesRhythm;
+        delete scene.dataset.servicesAmbient;
         if (generatedIds.has(scene)) scene.removeAttribute("id");
         scene.style.removeProperty("--services-scene-progress");
         scene.style.removeProperty("--services-scene-presence");

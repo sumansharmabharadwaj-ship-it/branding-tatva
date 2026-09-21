@@ -201,6 +201,71 @@ html[data-services-experience="active"] [data-services-journey-thread] {
 
 :root[data-motion="reduced"] [data-services-nav-expanded="true"] #services-desktop-chapters { animation: none; }
 
+/* Stable choices and a quiet reading plane; the work illustration carries
+   the motion. These solid surfaces avoid filtering the moving backdrop. */
+#offerings .services-discipline-rail,
+#offerings [data-service-discipline-panel-shell="true"] {
+  border-color: #c0c6b7 !important;
+  background: #f4f1e8 !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 14px 36px #12281c12;
+  color: #25392e;
+}
+#offerings .services-discipline-rail > button {
+  min-height: 3.7rem;
+  padding: 0.75rem;
+  gap: 0.65rem;
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #344832;
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease;
+}
+#offerings .services-discipline-rail > button:hover { background: #e1e7d9; border-color: #b4bfaa; }
+#offerings .services-discipline-rail > button[aria-selected="true"] { background: #29432f; color: #f4f1e8; border-color: #29432f; }
+#offerings .services-discipline-rail > button > span { color: inherit !important; }
+#offerings .services-discipline-rail > button > span[data-discipline-label] {
+  font-family: var(--font-body), Manrope, sans-serif;
+  font-size: 0.93rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+#offerings .services-discipline-rail > button::after,
+#offerings [data-discipline-dot],
+#offerings [data-service-discipline-panel-shell]::before { display: none; }
+#offerings [data-service-discipline-panel-shell] { min-height: 0 !important; }
+#offerings [role="tabpanel"] { min-height: 0 !important; }
+#offerings [role="tabpanel"]:focus-visible,
+#offerings [data-service-discipline-panel-shell]:focus-visible,
+#offerings .services-discipline-rail > button:focus-visible { outline: 2px solid #6f4e37; outline-offset: 3px; }
+#offerings [data-discipline-copy-deck] { display: grid; }
+#offerings [data-discipline-copy] { grid-area: 1 / 1; visibility: hidden; }
+#offerings [data-discipline-copy][data-active="true"] { visibility: visible; }
+#offerings [data-discipline-panel-heading] { color: #25392e; }
+#offerings [data-discipline-panel-meta] > p,
+#offerings [data-discipline-panel-detail],
+#offerings [data-service-route-context] { color: #4a5b43 !important; text-shadow: none; }
+#offerings [data-discipline-panel-footer] { display: flex; justify-content: space-between; align-items: center; border-color: #c0c6b7; gap: 1rem; }
+#offerings [data-service-route-context] { flex: 1 1 16rem; max-width: 24rem; }
+#offerings [data-service-route-context] > span:first-child { color: #556b4a; }
+#offerings [data-discipline-next] { flex: 0 1 auto; min-height: 3rem; padding: 0.7rem 1rem; border-radius: 999px; background: #29432f; color: #f4f1e8; text-decoration: none; line-height: 1.4; }
+#offerings [data-discipline-next]:hover { background: #435b3c; }
+#offerings [data-discipline-next]:focus-visible { outline: 2px solid #6f4e37; outline-offset: 3px; }
+@media (max-width: 767px) {
+  #offerings .services-discipline-rail > button { padding: 0.65rem 0.5rem; gap: 0.4rem; }
+  #offerings .services-discipline-rail > button > span[data-discipline-label] { font-size: 0.85rem; }
+  #offerings [data-discipline-panel-footer] { align-items: stretch; flex-direction: column; }
+  #offerings [data-service-route-context] { flex: auto; }
+  #offerings [data-discipline-next] { justify-content: space-between; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #offerings .services-discipline-rail > button { transition: none; }
+}
+:root[data-motion="reduced"] #offerings .services-discipline-rail > button { transition: none; }
+
 /* Additional proof is available on demand, between the case and foundation. */
 [data-services-evidence-library] { background: #eee8db; color: #25392e; }
 [data-services-evidence-library] > summary {
