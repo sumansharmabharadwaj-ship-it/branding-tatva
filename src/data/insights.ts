@@ -1,4 +1,5 @@
 import { agenticBuyingInsightPosts } from "@/data/agenticBuyingInsights";
+import { namingInsightPosts } from "@/data/namingInsights";
 import { aiEraInsightPosts } from "@/data/aiEraInsights";
 import { answerEngineInsightPosts } from "@/data/answerEngineInsights";
 import { pricingInsightPosts } from "@/data/pricingInsights";
@@ -75,6 +76,7 @@ const combinedPosts = [
   ...founderBrandInsightPosts,
   ...brandVsPerformanceInsightPosts,
   ...agenticBuyingInsightPosts,
+  ...namingInsightPosts,
 ];
 
 const uniquePosts = combinedPosts.filter(
@@ -129,6 +131,7 @@ const relatedRegistrations = [
   { supportingSlug: "founder-brand-vs-company-brand", pillarSlugs: ["brand-architecture-service-businesses", "brand-positioning-strategy-service-businesses", "turn-client-proof-into-positioning-advantage"] },
   { supportingSlug: "brand-marketing-vs-performance-marketing", pillarSlugs: ["brand-awareness-vs-brand-recall", "measure-brand-recall-limited-budget", "how-ai-assistants-choose-brands-to-recommend"] },
   { supportingSlug: "brand-strategy-when-ai-agents-buy", pillarSlugs: ["how-ai-assistants-choose-brands-to-recommend", "distinctive-brand-assets-audit", "brand-awareness-vs-brand-recall"] },
+  { supportingSlug: "how-to-name-a-brand-when-good-names-are-taken", pillarSlugs: ["service-line-naming-strategy", "why-ai-content-makes-brands-average", "brand-voice-guidelines-writers-can-use", "distinctive-brand-assets-audit"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {

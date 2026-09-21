@@ -220,6 +220,12 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "worksheet",
     aspectRatio: 990 / 374,
   },
+  "how-to-name-a-brand-when-good-names-are-taken": {
+    src: "/images/generated/insights-editorial/how-to-name-a-brand-when-good-names-are-taken.png",
+    alt: "The naming audition, drawn as an annotated worksheet: job, sound, distance, rights, and deposit, with the decision it settles",
+    depthKind: "worksheet",
+    aspectRatio: 990 / 377,
+  },
   "how-ai-assistants-choose-brands-to-recommend": {
     src: "/images/generated/insights-editorial/ai-retrieval-path.png",
     alt: "A buyer's prompt above the four memory checks an AI assistant runs: entity, category, situations, and evidence",
