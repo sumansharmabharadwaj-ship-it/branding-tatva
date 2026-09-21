@@ -497,3 +497,18 @@
 [data-motion="reduced"] [data-services-pointer-light] {
   display: none;
 }
+
+/* The native scroll runtime owns nearby-scene visibility. Keep the animation
+   clock paused outside that range, preserving its phase for the return trip. */
+[data-services-scroll-scene] :is([data-services-atmosphere], [data-work-ambient]) > span,
+#services-opening[data-services-scroll-scene] .services-hero-copy::after {
+  animation-play-state: paused !important;
+  will-change: auto;
+}
+[data-services-ambient="running"] :is([data-services-atmosphere], [data-work-ambient]) > span,
+#services-opening[data-services-ambient="running"] .services-hero-copy::after {
+  animation-play-state: running !important;
+}
+[data-services-ambient="running"] :is([data-services-atmosphere], [data-work-ambient]) > span {
+  will-change: transform;
+}

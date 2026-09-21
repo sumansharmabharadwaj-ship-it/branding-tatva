@@ -7,7 +7,6 @@ import { Container } from "@/components/Container";
 import { DisciplineOutput } from "./DisciplineOutput";
 import { Reveal } from "@/components/Reveal";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { offerings } from "@/data/services";
 import { track } from "@/lib/analytics";
 import {
@@ -21,10 +20,6 @@ import {
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const DEFAULT_DISCIPLINE_ORDER = offerings.map((_, index) => index);
-const PANEL_VARIANTS = {
-  enter: (direction: number) => ({ opacity: 0.84, y: direction * 12 }),
-  center: { opacity: 1, y: 0 },
-};
 
 // A situation changes sequencing, not scope. Every route can still inspect all
 // six disciplines, while the work most consequential at that stage appears
@@ -57,23 +52,14 @@ const ROUTE_PLANS: Record<
 // changes in place. This removes another scroll runway and gives touch,
 // keyboard and pointer visitors the same predictable control.
 export function ServiceDisciplineExplorer() {
-  const railViewportRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const previousPositionRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [situation, setSituation] = useState<ServicesSituationId | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const active = offerings[activeIndex];
   const routePlan = situation ? ROUTE_PLANS[situation] : null;
   const disciplineOrder = routePlan?.order ?? DEFAULT_DISCIPLINE_ORDER;
   const activePosition = Math.max(0, disciplineOrder.indexOf(activeIndex));
-  const panelDirection = activePosition >= previousPositionRef.current ? 1 : -1;
-
-  useEffect(() => {
-    previousPositionRef.current = activePosition;
-  }, [activePosition]);
-
 
   useEffect(() => {
     function applySituation(nextSituation: ServicesSituationId | null) {
@@ -105,21 +91,6 @@ export function ServiceDisciplineExplorer() {
     return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
   }, []);
 
-  useEffect(() => {
-    if (!isDesktop) return;
-    const viewport = railViewportRef.current;
-    const button = viewport?.querySelector<HTMLElement>(
-      `[data-service-discipline-index="${activeIndex}"]`,
-    );
-    if (!viewport || !button) return;
-
-    const targetLeft = button.offsetLeft - (viewport.clientWidth - button.offsetWidth) / 2;
-    viewport.scrollTo({
-      left: Math.max(0, targetLeft),
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-    });
-  }, [activeIndex, isDesktop, prefersReducedMotion]);
-
   // Keep this choice stable as the visitor scrolls through its explanation.
 
   function activate(index: number, source: "focus" | "click") {
@@ -147,7 +118,7 @@ export function ServiceDisciplineExplorer() {
     event.preventDefault();
     const nextIndex = disciplineOrder[nextPosition] ?? DEFAULT_DISCIPLINE_ORDER[0];
     activate(nextIndex, "focus");
-    tabRefs.current[nextIndex]?.focus();
+    tabRefs.current[nextIndex]?.focus({ preventScroll: true });
   }
 
   return (
@@ -190,7 +161,6 @@ export function ServiceDisciplineExplorer() {
 
             <div data-services-chapter-instrument="true" className="min-w-0">
               <div
-                ref={railViewportRef}
                 className="services-discipline-rail-viewport overflow-visible lg:overflow-hidden"
               >
                 <div
@@ -216,7 +186,7 @@ export function ServiceDisciplineExplorer() {
                         type="button"
                         role="tab"
                         aria-selected={isActive}
-                        aria-controls={`service-discipline-panel-${offeringIndex}`}
+                        aria-controls="service-discipline-panel"
                         tabIndex={isActive ? 0 : -1}
                         onFocus={() => activate(offeringIndex, "focus")}
                         onClick={() => activate(offeringIndex, "click")}
@@ -224,18 +194,6 @@ export function ServiceDisciplineExplorer() {
                         className="group relative flex min-h-14 min-w-0 items-center gap-3 overflow-hidden rounded-xl px-3 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone sm:px-4 lg:w-[13.5rem] lg:flex-none"
                         style={{ "--discipline-color": offer.color, "--disc-index": sequenceIndex } as CSSProperties}
                       >
-                        {isActive && (
-                          <motion.span
-                            layoutId="active-service-discipline"
-                            aria-hidden="true"
-                            className="absolute inset-0 rounded-xl border"
-                            style={{
-                              borderColor: `${offer.color}99`,
-                              background: `linear-gradient(100deg, ${offer.color}2E 0%, rgba(244,239,230,0.035) 76%)`,
-                            }}
-                            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.42, ease: EASE }}
-                          />
-                        )}
                         <span
                           aria-hidden="true"
                           className={`relative font-display text-sm transition-colors duration-300 ${
@@ -245,6 +203,7 @@ export function ServiceDisciplineExplorer() {
                           {String(sequenceIndex + 1).padStart(2, "0")}
                         </span>
                         <span
+                          data-discipline-label="true"
                           className={`relative flex-1 font-display text-[1.05rem] font-normal leading-tight transition-colors duration-300 sm:text-lg ${
                             isActive ? "text-ivory" : "text-ivory/72 group-hover:text-ivory"
                           }`}
@@ -267,14 +226,10 @@ export function ServiceDisciplineExplorer() {
 
               <div
                 data-service-discipline-panel-shell="true"
+                data-section-jump-yield="true"
+                tabIndex={-1}
                 className="relative mt-4 min-h-[22rem] overflow-hidden rounded-3xl border border-ivory/14 bg-[rgba(10,16,16,0.58)] p-6 backdrop-blur-lg sm:p-8 lg:min-h-[24rem]"
               >
-                <motion.div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full blur-3xl"
-                  animate={{ backgroundColor: `${active.color}28`, scale: [0.96, 1.04, 1] }}
-                  transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.72, ease: EASE }}
-                />
                 <motion.div
                   key={`discipline-thread-${active.name}`}
                   aria-hidden="true"
@@ -285,16 +240,11 @@ export function ServiceDisciplineExplorer() {
                   transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.56, ease: EASE }}
                 />
 
-                  <motion.div
-                    key={active.name}
-                    custom={panelDirection}
-                    id={`service-discipline-panel-${activeIndex}`}
+                  <div
+                    id="service-discipline-panel"
                     role="tabpanel"
+                    tabIndex={0}
                     aria-labelledby={`service-discipline-tab-${activeIndex}`}
-                    variants={PANEL_VARIANTS}
-                    initial={prefersReducedMotion ? false : "enter"}
-                    animate="center"
-                    transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.34, ease: EASE }}
                     className="relative flex min-h-[18rem] flex-col justify-between lg:min-h-[20rem]"
                   >
                     <div data-discipline-panel-copy="true">
@@ -306,10 +256,14 @@ export function ServiceDisciplineExplorer() {
                           {String(activePosition + 1).padStart(2, "0")}
                         </span>
                       </div>
-                      <h3 data-discipline-panel-heading="true" className="mt-5 max-w-xl font-display text-3xl font-normal leading-tight text-ivory sm:text-4xl">
-                        {active.name}
-                      </h3>
-                      <p data-discipline-panel-detail="true" className="mt-6 max-w-2xl text-base leading-relaxed text-ivory/[0.88] sm:text-lg">{active.detail}</p>
+                      <div data-discipline-copy-deck="true">
+                        {offerings.map((offer, index) => (
+                          <div key={offer.name} data-discipline-copy="true" data-active={index === activeIndex} aria-hidden={index !== activeIndex} inert={index !== activeIndex}>
+                            <h3 data-discipline-panel-heading="true" className="mt-5 max-w-xl font-display text-3xl font-normal leading-tight sm:text-4xl">{offer.name}</h3>
+                            <p data-discipline-panel-detail="true" className="mt-6 max-w-2xl text-base leading-relaxed sm:text-lg">{offer.detail}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
                     <DisciplineOutput index={activeIndex} />
@@ -336,7 +290,7 @@ export function ServiceDisciplineExplorer() {
                         <span aria-hidden="true">↓</span>
                       </a>
                     </div>
-                  </motion.div>
+                  </div>
 
               </div>
             </div>
