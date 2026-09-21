@@ -3,6 +3,7 @@ import { namingInsightPosts } from "@/data/namingInsights";
 import { strategyIdentityInsightPosts } from "@/data/strategyIdentityInsights";
 import { choosingAgencyInsightPosts } from "@/data/choosingAgencyInsights";
 import { healthcareInsightPosts } from "@/data/healthcareInsights";
+import { professionalPracticeInsightPosts } from "@/data/professionalPracticeInsights";
 import { identityPackageInsightPosts } from "@/data/identityPackageInsights";
 import { aiEraInsightPosts } from "@/data/aiEraInsights";
 import { answerEngineInsightPosts } from "@/data/answerEngineInsights";
@@ -84,6 +85,7 @@ const combinedPosts = [
   ...strategyIdentityInsightPosts,
   ...choosingAgencyInsightPosts,
   ...healthcareInsightPosts,
+  ...professionalPracticeInsightPosts,
   ...identityPackageInsightPosts,
 ];
 
@@ -133,6 +135,7 @@ const relatedRegistrations = [
   { supportingSlug: "aeo-vs-seo-vs-geo", pillarSlugs: ["how-ai-assistants-choose-brands-to-recommend", "brand-awareness-vs-brand-recall", "brand-marketing-vs-performance-marketing"] },
   { supportingSlug: "generative-engine-optimisation-guide", pillarSlugs: ["aeo-vs-seo-vs-geo", "how-ai-assistants-choose-brands-to-recommend", "why-ai-content-makes-brands-average"] },
   { supportingSlug: "branding-for-clinics-and-healthcare-practices", pillarSlugs: ["customer-journey-mapping-service-businesses", "distinctive-brand-assets-audit", "how-much-does-brand-strategy-cost"] },
+  { supportingSlug: "branding-for-accountants-and-professional-practices", pillarSlugs: ["how-to-position-a-consulting-business", "how-much-does-brand-strategy-cost", "turn-client-proof-into-positioning-advantage"] },
   { supportingSlug: "how-much-does-brand-strategy-cost", pillarSlugs: ["how-to-position-a-consulting-business", "brand-refresh-vs-rebrand-how-much-change", "brand-marketing-vs-performance-marketing"] },
   { supportingSlug: "brand-strategist-vs-branding-agency", pillarSlugs: ["how-much-does-brand-strategy-cost", "how-to-position-a-consulting-business", "founder-brand-vs-company-brand"] },
   { supportingSlug: "why-ai-content-makes-brands-average", pillarSlugs: ["why-beautiful-brand-identity-can-be-forgettable", "brand-voice-guidelines-writers-can-use", "find-real-differentiator-crowded-service-market"] },
