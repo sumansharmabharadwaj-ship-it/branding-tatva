@@ -502,13 +502,21 @@ export function HomeBrandHealthCheck() {
                       role="radio"
                       aria-checked={selected === index}
                       aria-label={`${String(index + 1).padStart(2, "0")} ${choice.label}`}
+                      data-cursor-label={choice.shortLabel}
                       tabIndex={selected === index || (selected === null && index === 0) ? 0 : -1}
                       onKeyDown={(event) => onChoiceKeyDown(event, index)}
+                      initial={reducedMotion ? false : { opacity: 0, y: 22 }}
                       animate={{
                         opacity: 1,
-                        scale: selected === index ? 0.985 : 1,
+                        y: 0,
+                        scale: selected === index ? (reducedMotion ? 1 : [1, 1.028, 0.985]) : 1,
                       }}
-                      transition={{ duration: reducedMotion ? 0 : 0.46, ease: EASE }}
+                      transition={{
+                        duration: reducedMotion ? 0 : 0.52,
+                        ease: EASE,
+                        delay: reducedMotion ? 0 : 0.1 + index * 0.09,
+                        scale: { duration: reducedMotion ? 0 : 0.42, ease: EASE, delay: 0 },
+                      }}
                     >
                       <span className="brand-orbit__choice-number">0{index + 1}</span>
                       <strong>{choice.label}</strong>

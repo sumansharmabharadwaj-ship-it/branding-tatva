@@ -236,6 +236,30 @@
   outline:none;
   text-shadow:0 1px 2px rgba(32,50,40,.82), 0 0 18px rgba(91,58,20,.52), 0 0 36px rgba(91,58,20,.28);
 }
+/* The pick should feel physical: cards rise to meet the pointer and
+   cast light, the way the glass cards do on Contact. Framer owns the
+   selection pop; this hover lift is CSS so it costs nothing when idle.
+   The wrapper translate keeps clear of Framer's scale on the button. */
+@media (prefers-reduced-motion: no-preference) {
+  .brand-orbit__choices button { translate: 0 0; transition:
+    color 450ms cubic-bezier(.22,1,.36,1),
+    background-color 450ms cubic-bezier(.22,1,.36,1),
+    border-color 450ms cubic-bezier(.22,1,.36,1),
+    translate 420ms cubic-bezier(.22,1,.36,1),
+    box-shadow 420ms cubic-bezier(.22,1,.36,1); }
+  .brand-orbit__choices button:hover,
+  .brand-orbit__choices button:focus-visible {
+    translate: 0 -5px;
+    box-shadow: 0 22px 44px rgba(18,26,20,.34);
+  }
+  .brand-orbit__continue:not(:disabled) {
+    animation: brandOrbitInvite 6.5s cubic-bezier(.22,1,.36,1) infinite alternate;
+  }
+}
+@keyframes brandOrbitInvite {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(5px); }
+}
 .brand-orbit__choices button:hover::after,.brand-orbit__choices button:focus-visible::after,.brand-orbit__choices button.is-selected::after { transform:scaleX(1); }
 .brand-orbit__choices button.is-selected { color:#e4ad50; border-top-color:#e4ad50; background:rgba(42,47,32,.42); }
 .brand-orbit__choice-number { padding-top:0; font-size:.66rem; letter-spacing:.17em; }
@@ -365,11 +389,16 @@
   .brand-orbit__result-action button { min-height:2.75rem; display:inline-flex; align-items:center; }
 }
 
-@media (min-width: 900px) and (max-height: 760px) {
+/* Suman's own 1440x900 MacBook gives ~790px of viewport, and the old
+   760px gate missed it: the vw sized question collided with the bottom
+   anchored choice cards by a measured 56px on the live site. The gate
+   now covers every laptop height where the collision is geometrically
+   possible, and the question loses enough size to clear the cards. */
+@media (min-width: 900px) and (max-height: 880px) {
   .brand-orbit { min-height:38rem; }
   .brand-orbit__shell { padding-top:6.5rem; padding-bottom:.9rem; }
   .brand-orbit__prompt { top:.8rem; }
-  .brand-orbit__prompt h3 { font-size:clamp(2.5rem,4.4vw,4.4rem); }
+  .brand-orbit__prompt h3 { font-size:clamp(2.3rem,3.6vw,3.8rem); }
   .brand-orbit__choices { bottom:.35rem; }
   .brand-orbit__choices button { min-height:7rem; gap:.7rem; }
 }
