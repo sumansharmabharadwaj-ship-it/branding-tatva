@@ -1023,8 +1023,17 @@
 
 /* About film: one shared camera grammar for every scene after the protected
    opening. The client runtime only writes numbers; CSS owns the rendering. */
-html[data-about-film-snap="true"]:not([data-motion="reduced"]) {
-  scroll-snap-type: y proximity;
+/* Page-level snapping is off. It used to be y proximity once the visitor
+   passed the opening, but several About scenes are taller than the
+   viewport, and Chrome resolves an oversized snap area by pulling the
+   scroll back to its edge: on a 1440x790 desktop every wheel tick past the
+   founder field notes returned the page to the same 1099px, so a mouse or
+   trackpad could not get past it (keyboard and links still could). Suman
+   reported the site as "not smooth"; with snapping off the same wheel input
+   travels the full page. The scene camera (--scene-* values) is unchanged,
+   so every chapter still arrives and settles as before. */
+html[data-about-film-snap="true"] {
+  scroll-snap-type: none;
 }
 
 [data-about-film-scene] {
