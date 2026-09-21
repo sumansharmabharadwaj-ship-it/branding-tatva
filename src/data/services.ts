@@ -20,18 +20,19 @@ export type Package = {
   popular?: boolean;
 };
 
-// GBP, aimed at the UK solo-consultant/boutique market specifically
-// (per direct request) rather than a generic USD figure — these are a
-// first draft grounded in typical UK freelance brand-strategy rates,
-// not confirmed real prices. Flagged for Suman to review and adjust
-// before treating them as final; nothing here should be read as
-// already-agreed pricing.
+// The rendered price book lives in data/pricing.ts (region aware,
+// confirmed by Suman as the real starting prices on September 21,
+// 2026). Nothing renders the price fields below — they exist for the
+// Package type's completeness and mirror the approved UK column of
+// the book so any future consumer starts from agreed figures. Change
+// prices in data/pricing.ts, with her explicit sign off, and keep
+// these in step.
 export const packages: Package[] = [
   {
     slug: "brand-beginning",
     name: "Foundation",
     forWho: "For founders with a credible offer and no settled market position.",
-    price: 1850,
+    price: 1950,
     billing: "one-time",
     description:
       "This engagement settles what the business should mean, who should choose it, and which promise it can prove, before identity or launch work begins.",
@@ -48,7 +49,7 @@ export const packages: Package[] = [
     slug: "brand-clarity",
     name: "Full Brand System",
     forWho: "For established businesses whose brand no longer represents the work, value, or market they serve.",
-    price: 4200,
+    price: 4500,
     billing: "one-time",
     description:
       "The work begins with what buyers still recognise, decides the stronger position, then rebuilds the language and identity around it.",
@@ -67,7 +68,7 @@ export const packages: Package[] = [
     slug: "brand-partnership",
     name: "Brand Partnership",
     forWho: "For businesses whose website, content, and campaigns keep drifting into different voices.",
-    price: 950,
+    price: 1100,
     billing: "monthly",
     description:
       "I direct the brand across live work, correct drift early, and keep repeated decisions recognisable as the business moves.",
