@@ -741,6 +741,44 @@ html[data-motion="reduced"] .home-v4-recognition__shell {
   to { opacity: 0.25; }
 }
 
+/* The cost chapter's wanderlust field settles into place on arrival,
+   continuing the depth recognition's exit establishes at the seam
+   above it. Same construction and the same safety: timeline named on
+   the untransformed section, the field child moving on `translate`
+   (its blobs own keyframed transforms; the properties compose), and
+   the uncovered strip below the shifted field stays outside the
+   viewport for the whole entry. Entry only — the chapter's counting
+   interaction owns its middle and its exit hands to the cost stack's
+   own dark arrival. */
+@supports (animation-timeline: view()) {
+  [data-home-v4-chapter="cost"] {
+    view-timeline: --home-cost-depth block;
+  }
+
+  [data-home-v4-chapter="cost"] [data-living-gradient] {
+    animation: homeCostFieldEntry linear none;
+    animation-timeline: --home-cost-depth;
+    animation-range: entry 0% entry 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-home-v4-chapter="cost"] [data-living-gradient] {
+      animation: none;
+      translate: 0 0;
+    }
+  }
+}
+
+html[data-motion="reduced"] [data-home-v4-chapter="cost"] [data-living-gradient] {
+  animation: none;
+  translate: 0 0;
+}
+
+@keyframes homeCostFieldEntry {
+  from { translate: 0 -3%; }
+  to { translate: 0 0%; }
+}
+
 .home-v4-recognition__reflection {
   left: -20%;
   right: auto;
