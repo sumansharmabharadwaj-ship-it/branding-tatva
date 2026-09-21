@@ -185,7 +185,7 @@ html[data-services-experience="active"] {
     )
     scale(var(--services-camera-scale, 1.02));
   transform-origin: 50% 50%;
-  transition: transform 110ms linear;
+  transition: none;
 }
 
 [data-services-scroll-scene] > [data-services-content-plane="true"],
@@ -200,7 +200,7 @@ html[data-services-experience="active"] {
     rotateZ(var(--services-content-rotate, 0deg))
     scale(var(--services-content-scale, 1));
   transform-origin: 50% 50%;
-  transition: transform 100ms linear;
+  transition: none;
 }
 
 /* Four semantic beats inside every chapter. Copy anticipates the scene,
@@ -215,9 +215,7 @@ html[data-services-experience="active"] {
     0
   );
   transform-origin: 25% 50%;
-  transition:
-    transform 95ms linear,
-    opacity 95ms linear;
+  transition: none;
 }
 
 [data-services-scroll-scene] [data-services-chapter-instrument="true"] {
@@ -236,10 +234,7 @@ html[data-services-experience="active"] {
     )
     scale(var(--services-instrument-scale, 1));
   transform-origin: 70% 50%;
-  transition:
-    transform 95ms linear,
-    opacity 95ms linear,
-    clip-path 120ms linear;
+  transition: none;
 }
 
 /* Once a chapter owns the focal line, its reading instrument is complete.
@@ -255,39 +250,30 @@ html[data-services-experience="active"] {
   opacity: var(--services-resolution-opacity, 1);
   transform: translate3d(0, var(--services-resolution-y, 0px), 0);
   transform-origin: 50% 70%;
-  transition:
-    transform 110ms linear,
-    opacity 110ms linear;
+  transition: none;
 }
 
 [data-authority-media-plane="true"] {
   transform: translate3d(0, var(--authority-camera-y, 0px), 0)
     scale(var(--authority-camera-scale, 1.02));
   transform-origin: 50% 50%;
-  transition: transform 95ms linear;
+  transition: none;
 }
 
 [data-authority-copy="true"] {
   opacity: var(--authority-copy-opacity, 1);
   transform: translate3d(var(--authority-copy-x, 0px), 0, 0);
   transform-origin: left center;
-  transition:
-    transform 95ms linear,
-    opacity 95ms linear;
+  transition: none;
 }
 
 [data-authority-desktop-layer="true"] {
   transform-origin: 70% 50%;
-  transition:
-    transform 95ms linear,
-    opacity 95ms linear,
-    border-color 300ms ease;
+  transition: border-color 300ms ease;
 }
 
 [data-authority-wave="true"] g {
-  transition:
-    transform 95ms linear,
-    opacity 95ms linear;
+  transition: none;
 }
 
 [data-services-scroll-scene="situation"] > [data-services-content-plane="true"],

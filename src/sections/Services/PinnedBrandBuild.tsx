@@ -155,27 +155,16 @@ export function PinnedBrandBuild() {
       wrap.style.setProperty("--authority-progress", assembly.toFixed(4));
       wrap.style.setProperty("--authority-camera-y", `${((0.5 - progress) * 28 + signedVelocity * 8).toFixed(2)}px`);
       wrap.style.setProperty("--authority-camera-scale", (1.035 - assembly * 0.025 + velocity * 0.012).toFixed(4));
-      wrap.style.setProperty("--authority-copy-x", `${((1 - assembly) * -20 + signedVelocity * 6).toFixed(2)}px`);
-      wrap.style.setProperty("--authority-copy-opacity", (0.82 + assembly * 0.18).toFixed(4));
 
       layerRefs.current.forEach((layer, i) => {
         if (!layer) return;
         const start = i * 0.095;
         const local = Math.min(1, Math.max(0, (assembly - start) / 0.34));
         const eased = 1 - Math.pow(1 - local, 3);
-        const orbit = (1 - eased) * (i % 2 === 0 ? -1 : 1) * (38 + i * 5);
-        const lift = (1 - eased) * (24 + i * 3) + signedVelocity * (5 + i);
-        const rotation = (1 - eased) * (i % 2 === 0 ? -1 : 1) * 1.2;
-        // Keep every consequence readable while the system assembles. The
-        // unfinished rows still yield to the active layer through position,
-        // scale, colour and the activation signal rather than disappearing
-        // into the moving material beneath them.
-        // A row being inspected stays still under keyboard, pointer and
-        // deliberate selection; scrolling only assembles the other rows.
-        const reading = layer.matches(":focus-within, :hover") || layer.getAttribute("aria-pressed") === "true";
-        layer.style.opacity = reading ? "1" : String(0.68 + eased * 0.32);
-        layer.style.transform = reading ? "none" : `translate3d(${orbit.toFixed(1)}px, ${lift.toFixed(1)}px, 0) rotate(${rotation.toFixed(2)}deg) scale(${(0.965 + 0.035 * eased).toFixed(3)})`;
-        layer.style.setProperty("--act", reading ? "1" : (0.34 + eased * 0.66).toFixed(3));
+        // The connecting signal builds, while the reading surface stays
+        // fixed. Velocity-driven row offsets made short trackpad reversals
+        // wobble the text and push the last row into the chapter fade.
+        layer.style.setProperty("--act", (0.34 + eased * 0.66).toFixed(3));
       });
 
       if (waveRef.current) {
@@ -215,12 +204,12 @@ export function PinnedBrandBuild() {
       ref={wrapRef}
       data-authority-story="true"
       data-authority-route={situation ?? "default"}
-      className="relative min-h-[100svh] lg:h-[100svh]"
+      className="relative min-h-[100svh]"
       style={{ backgroundColor: MOOD.charcoal }}
     >
       <div
         data-authority-frame="true"
-        className="relative overflow-hidden lg:flex lg:h-[100svh] lg:flex-col lg:justify-center"
+        className="relative overflow-hidden lg:flex lg:min-h-[100svh] lg:flex-col lg:justify-center"
       >
         {/* Original procedural Authority film: a restrained signal rises
             through five natural material layers and widens only after
@@ -245,7 +234,7 @@ export function PinnedBrandBuild() {
 
         <div
           data-authority-shell="true"
-          className="relative mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:px-10 sm:py-20 lg:px-20 lg:py-0"
+          className="relative z-20 mx-auto flex w-full max-w-[100rem] flex-col justify-center px-6 py-16 sm:px-10 sm:py-20 lg:px-20 lg:py-0"
         >
           <div
             data-authority-grid="true"
@@ -327,7 +316,6 @@ export function PinnedBrandBuild() {
                     layerRefs.current[i] = node;
                   }}
                   className="group/layer flex items-start gap-6 border-b border-ivory/10 py-4 text-left transition-[border-color,background-color,box-shadow] duration-300 last:border-b-0 hover:border-ivory/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone xl:py-5"
-                  style={{ marginLeft: `${i * 18}px` }}
                 >
                   <span className="relative flex items-start gap-3">
                     {/* Activation node: fills with the layer's own color

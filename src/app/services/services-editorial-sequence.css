@@ -320,10 +320,44 @@
 @media (min-width: 1024px) {
   #authority [data-authority-story],
   #authority [data-authority-frame] { height: auto !important; min-height: 100svh; }
-  #authority [data-authority-shell] { padding-block: 6rem 4rem !important; }
-  #authority [data-authority-grid] { transform: none; }
+  #authority [data-authority-shell] { padding-block: 6rem max(5rem, 12svh) !important; }
+  #authority [data-authority-grid] {
+    transform: none;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.35fr) !important;
+    gap: clamp(2rem, 4vw, 4rem) !important;
+  }
+  #authority [data-authority-copy] {
+    transform: none;
+    opacity: 1;
+    backdrop-filter: none;
+  }
+  #authority [data-authority-diagram] {
+    transform: none;
+    clip-path: none;
+    opacity: 1;
+    overflow: visible;
+    backdrop-filter: none;
+    background: linear-gradient(135deg, #1d2a22f5, #152119f5);
+    padding: clamp(1rem, 2vw, 1.75rem);
+  }
+  #authority [data-authority-signal-header] { flex-wrap: wrap; gap: 0.4rem 1rem; }
+  #authority [data-authority-signal-header] > p { font-size: 0.75rem; }
+  #authority [data-authority-desktop-layer] {
+    width: 100%;
+    min-width: 0;
+    gap: 1rem;
+    margin-left: 0;
+    transform: none;
+    opacity: 1;
+    padding-block: 0.75rem !important;
+    text-shadow: none;
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+  #authority [data-authority-desktop-layer] > span { flex: 0 0 3.25rem; }
+  #authority [data-authority-desktop-layer] > div { min-width: 0; gap: 0.75rem; }
+  #authority [data-authority-desktop-layer]::after { display: none; }
   #authority [data-authority-desktop-layer] > div p:nth-child(2) { font-size: 0.94rem !important; line-height: 1.5; }
-  #authority [data-authority-desktop-layer] > div p:nth-child(3) { font-size: 0.84rem !important; line-height: 1.5; }
+  #authority [data-authority-desktop-layer] > div p:nth-child(3) { font-size: 0.875rem !important; line-height: 1.5; color: #d3d6ca; }
 }
 @media (max-width: 1023px) {
   #authority [data-authority-copy] h2 { font-size: clamp(2rem, 7vw, 3rem); line-height: 1.06; }
