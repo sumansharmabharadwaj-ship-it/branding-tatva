@@ -167,3 +167,20 @@
 :global(html[data-motion="reduced"]) .action,
 :global(html[data-motion="reduced"]) .action svg,
 :global(html[data-motion="reduced"]) .footer svg { transition: none; }
+
+/* Fifth instance of the frameFits dead band. The frame's natural height
+   measured 921 to 929px at every viewport tried, so the held story ran
+   only on screens taller than about 930px — no laptop qualifies, and
+   data-path-story sat in "flow" for the whole class the desktop gate
+   admits. Measured decomposition at a 790px viewport: 184px of frame
+   padding + header 153 + tabs 76 + panel 387 + footer 61 + 62 of gaps.
+   Inside the band the frame gives back the spare padding and gap; the
+   ceiling sits just under the natural frame height so the uncompressed
+   layout takes over the moment it genuinely fits. */
+@media (min-width: 1181px) and (max-height: 929px) {
+  .frame {
+    gap: 0.75rem;
+    padding-top: 1.75rem;
+    padding-bottom: 1.25rem;
+  }
+}
