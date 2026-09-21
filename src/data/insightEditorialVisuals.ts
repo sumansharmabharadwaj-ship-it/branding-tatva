@@ -220,6 +220,12 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "worksheet",
     aspectRatio: 990 / 374,
   },
+  "brand-strategy-vs-brand-identity": {
+    src: "/images/generated/insights-editorial/brand-strategy-vs-brand-identity.png",
+    alt: "The spend order, drawn as an annotated worksheet: diagnosis, decisions, translation, system, and repetition, with the decision it settles",
+    depthKind: "worksheet",
+    aspectRatio: 990 / 374,
+  },
   "how-to-name-a-brand-when-good-names-are-taken": {
     src: "/images/generated/insights-editorial/how-to-name-a-brand-when-good-names-are-taken.png",
     alt: "The naming audition, drawn as an annotated worksheet: job, sound, distance, rights, and deposit, with the decision it settles",
