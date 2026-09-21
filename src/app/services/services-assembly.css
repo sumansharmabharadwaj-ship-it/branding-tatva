@@ -376,3 +376,30 @@
 :root[data-motion="reduced"] #desire [data-package-choice="true"],
 :root[data-motion="reduced"] #book [data-strategy-agenda-step="true"] { translate: none; opacity: 1; }
 :root[data-motion="reduced"] #desire [data-package-choice="true"] > svg:first-child { scale: none; }
+
+/* Phones. Measured on production at 390x844: every Services chapter moves
+   on scroll except two, the "Five questions" decision map and the
+   recognition field-notes folio, which sat completely still. Give both the
+   same native scroll-timeline arrival the desktop decision map uses. It runs
+   on the compositor, so it costs nothing on the main thread, and browsers
+   without view() timelines simply show the finished layout. */
+@supports (animation-timeline: view()) {
+  @media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+    /* #audit clips with overflow: hidden, which makes it the folio's scroll
+       container and freezes a view() timeline at its end state. clip crops
+       identically without creating a scroll container. */
+    #audit { overflow: clip; }
+
+    :root:not([data-motion="reduced"]) [data-decision-map="true"] .border-t {
+      animation: bt-arrive-rise-fade linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+
+    :root:not([data-motion="reduced"]) [aria-label="Brand recognition field notes"] {
+      animation: bt-arrive-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
