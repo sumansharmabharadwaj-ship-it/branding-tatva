@@ -7,6 +7,7 @@ import { ContactPathways } from "@/components/ContactPathways";
 import { ContactCinematicScene } from "@/components/ContactCinematicScene";
 import { ContactKineticHeading } from "@/components/ContactKineticHeading";
 import { ContactRotatingGap } from "@/components/ContactRotatingGap";
+import { ContactAskedDeepLink } from "@/components/ContactAskedDeepLink";
 import { ContactGratitude } from "@/components/ContactGratitude";
 import { ContactCallSequence } from "@/components/ContactCallSequence";
 import { ContactScrollRuntime } from "@/components/ContactScrollRuntime";
@@ -28,27 +29,33 @@ import "./contact-cinematic.css";
 
 const CONTACT_QUESTIONS = [
   {
+    id: "after-a-note",
     q: "What happens after I send a note?",
     a: "Suman reads it herself. The reply comes to your inbox from her, with a first read of the gap you described and a suggested next step.",
   },
   {
+    id: "what-to-bring",
     q: "What should I bring to the thirty minutes?",
     a: "The question as it stands. A polished deck can wait; the conversation works from what your audience sees today and what you mean instead.",
   },
   {
+    id: "timezone",
     q: "Which timezone do the calls run in?",
     a: "Yours. The calendar converts every open slot before you pick one.",
   },
   {
+    id: "consultation",
     q: "Is this a brand strategy consultation or a sales call?",
     a: "A consultation. Thirty minutes on positioning, perception, and the decision in front of you. Selling has a way of ruining a first conversation, so it stays outside the room.",
   },
   {
+    id: "cost",
     q: "What does the work cost?",
     a: "Every engagement is scoped in the first conversation, against the decision actually on the table. The three shapes the work usually takes are described with the services.",
     more: { label: "See the package shapes", href: "/services#package-recommendation" },
   },
   {
+    id: "outside-india",
     q: "Do you work with businesses outside India?",
     a: "Yes. The work runs over video, in your timezone, wherever the brand lives.",
   },
@@ -57,7 +64,8 @@ const CONTACT_QUESTIONS = [
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: CONTACT_QUESTIONS.map(({ q, a }) => ({
+  mainEntity: CONTACT_QUESTIONS.map(({ id, q, a }) => ({
+    "@id": `https://brandingtatva.com/contact#asked-${id}`,
     "@type": "Question",
     name: q,
     acceptedAnswer: { "@type": "Answer", text: a },
@@ -590,8 +598,8 @@ export default function ContactPage() {
             </div>
             <div data-contact-faq-card className="relative overflow-hidden rounded-[1.75rem] border border-white/60 bg-[#F8F4EC]/90 p-2 shadow-[0_28px_90px_rgba(62,48,30,0.14)] backdrop-blur-2xl sm:p-3">
               <span data-contact-card-sheen aria-hidden="true" />
-              {CONTACT_QUESTIONS.map(({ q, a, ...rest }) => (
-                <details key={q} data-contact-faq-item className="group border-b border-soil/8 last:border-b-0">
+              {CONTACT_QUESTIONS.map(({ id: questionId, q, a, ...rest }) => (
+                <details key={q} id={`asked-${questionId}`} data-contact-faq-item className="group scroll-mt-24 border-b border-soil/8 last:border-b-0">
                   <summary
                     data-cursor-label="Open the answer"
                     className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-4 py-4 font-display text-lg leading-snug text-soil transition-colors duration-300 hover:bg-white/45 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-clay sm:px-5 sm:text-xl [&::-webkit-details-marker]:hidden"
@@ -620,6 +628,7 @@ export default function ContactPage() {
               ))}
             </div>
           </Container>
+          <ContactAskedDeepLink />
         </section>
 
         <ContactGratitude />
