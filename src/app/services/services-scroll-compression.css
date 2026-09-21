@@ -148,7 +148,7 @@ html[data-services-experience="active"] {
    rather than by holding the visitor inside a second viewport of pin travel. */
 @media (min-width: 1024px) {
   #authority > div:first-child {
-    height: 100svh !important;
+    height: auto !important;
     min-height: 100svh;
   }
 }
@@ -156,7 +156,7 @@ html[data-services-experience="active"] {
 @supports not (height: 1svh) {
   @media (min-width: 1024px) {
     #authority > div:first-child {
-      height: 100vh !important;
+      height: auto !important;
       min-height: 100vh;
     }
   }
