@@ -221,7 +221,8 @@
     z-index: 1;
     pointer-events: none;
     opacity: 0.05;
-    filter: blur(70px);
+    /* Radial gradients already feather to transparent. A second 70px blur
+       on a moving, oversized fixed layer added a full-screen filter pass. */
     background:
       radial-gradient(circle at 18% 20%, #C28A28 0%, transparent 42%),
       radial-gradient(circle at 82% 12%, #B85A34 0%, transparent 42%),
@@ -244,15 +245,14 @@
 
   /* A whisper of paper grain over the flat cream sections, so the base
      background reads as material rather than a solid digital fill.
-     Fixed + very low opacity + multiply so it never fights photos or
-     videos sitting on top of it — those already have their own detail. */
+     Normal compositing avoids blending the entire scrolling page into a
+     fixed texture on every frame; its low opacity keeps the same quiet grain. */
   .paper-grain {
     position: fixed;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.05;
-    mix-blend-mode: multiply;
+    opacity: 0.025;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 

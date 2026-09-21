@@ -456,7 +456,11 @@ export function ServicesExperienceRuntime() {
         "--services-journey-progress",
         `${(journeyProgress * 100).toFixed(3)}%`,
       );
-      updateHeroProgress(viewportHeight, heroBounds);
+      // Off-screen hero writes still restyle its large subtree. Set its
+      // departure once, then leave it alone until it approaches the viewport.
+      if (heroBounds.bottom >= -viewportHeight || hero.dataset.servicesHeroPhase !== "handoff") {
+        updateHeroProgress(viewportHeight, heroBounds);
+      }
       publishChapter(focalChapter);
 
       scenes.forEach((scene, index) => {
@@ -530,11 +534,11 @@ export function ServicesExperienceRuntime() {
            the composition with no hidden state. */
         scene.style.setProperty(
           "--services-copy-x",
-          `${(travelAxis * 30 * lateralSign + signedVelocity * 5).toFixed(2)}px`,
+          `${(travelAxis * 30 * lateralSign).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-copy-y",
-          `${(arrival * 44 - departure * 16 + signedVelocity * 8).toFixed(2)}px`,
+          `${(arrival * 44 - departure * 16).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-copy-opacity",
@@ -542,15 +546,15 @@ export function ServicesExperienceRuntime() {
         );
         scene.style.setProperty(
           "--services-instrument-x",
-          `${((1 - discovery) * -60 * lateralSign + departure * 22 * lateralSign + signedVelocity * 9).toFixed(2)}px`,
+          `${((1 - discovery) * -60 * lateralSign + departure * 22 * lateralSign).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-instrument-y",
-          `${((1 - discovery) * 38 - departure * 12 + signedVelocity * 11).toFixed(2)}px`,
+          `${((1 - discovery) * 38 - departure * 12).toFixed(2)}px`,
         );
         scene.style.setProperty(
           "--services-instrument-scale",
-          clamp(0.94 + discovery * 0.06 + smoothedVelocity * 0.012 - departure * 0.008, 0.93, 1.02).toFixed(4),
+          clamp(0.94 + discovery * 0.06 - departure * 0.008, 0.93, 1.02).toFixed(4),
         );
         scene.style.setProperty(
           "--services-instrument-opacity",
@@ -573,15 +577,15 @@ export function ServicesExperienceRuntime() {
         if (motion && !isMotionReduced()) {
           scene.style.setProperty(
             "--services-content-x",
-            `${(travelAxis * motion.contentX + signedVelocity * motion.contentX * 0.16).toFixed(2)}px`,
+            `${(travelAxis * motion.contentX).toFixed(2)}px`,
           );
           scene.style.setProperty(
             "--services-content-y",
-            `${(travelAxis * motion.contentY + signedVelocity * 8).toFixed(2)}px`,
+            `${(travelAxis * motion.contentY).toFixed(2)}px`,
           );
           scene.style.setProperty(
             "--services-content-rotate",
-            `${(travelAxis * motion.rotate + signedVelocity * motion.rotate * 0.28).toFixed(3)}deg`,
+            `${(travelAxis * motion.rotate).toFixed(3)}deg`,
           );
           scene.style.setProperty(
             "--services-content-scale",
@@ -668,8 +672,8 @@ export function ServicesExperienceRuntime() {
 
     function publishPointer() {
       pointerFrame = 0;
-      servicesRoot.style.setProperty("--services-pointer-x", pointerX.toFixed(4));
-      servicesRoot.style.setProperty("--services-pointer-y", pointerY.toFixed(4));
+      // Camera values are consumed locally below. These unused inherited
+      // properties previously invalidated styles across the whole page.
       scheduleProgress();
     }
 
@@ -691,8 +695,6 @@ export function ServicesExperienceRuntime() {
       if (isMotionReduced()) {
         pointerX = 0;
         pointerY = 0;
-        servicesRoot.style.setProperty("--services-pointer-x", "0");
-        servicesRoot.style.setProperty("--services-pointer-y", "0");
       }
       scheduleProgress();
     }
@@ -821,8 +823,6 @@ export function ServicesExperienceRuntime() {
       document.documentElement.style.removeProperty("--services-chapter-angle");
       document.documentElement.style.removeProperty("--services-journey-progress");
       journeyTarget.style.removeProperty("--services-journey-progress");
-      servicesRoot.style.removeProperty("--services-pointer-x");
-      servicesRoot.style.removeProperty("--services-pointer-y");
 
       heroAperture.remove();
       heroFragments.remove();
