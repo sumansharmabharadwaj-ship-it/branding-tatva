@@ -218,7 +218,7 @@ export const pillars: Pillar[] = [
         definition:
           "The study of what signs and symbols mean to a culture, applied so a brand's codes say what it intends.",
         expanded:
-          "Every color, typeface, and image carries meanings a culture already assigned; semiotics reads those meanings before the brand inherits them by accident. A serif says something before the words do. The question is never whether your visual choices communicate, only whether they communicate what you decided.",
+          "Every color, typeface, and image carries meanings a culture already assigned; semiotics reads those meanings before the brand inherits them by accident. A serif, the small foot at the end of a letter stroke, says tradition and authority before the words do. The question is never whether your visual choices communicate, only whether they communicate what you decided.",
         practice:
           "Suman reads visual and verbal choices for the associations they carry before deciding which ones a brand should repeat.",
       },
