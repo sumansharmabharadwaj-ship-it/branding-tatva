@@ -460,3 +460,42 @@ html body .home-v4 section#process {
 /* Insights is one editorial reading room: one active argument, one compact
    selector rail. The stacked card catalogue was removed because it repeated
    the same content and crowded the viewport. */
+
+/* The diagnostic joins the journey's scroll depth: the flower water
+   landscape settles into place as the chapter arrives, matching the
+   opening's exit and recognition's entry language. Scroll driven CSS
+   only, on the independent `translate` property — the landscape's own
+   `transform` carries the pointer camera and the two compose instead
+   of fighting. The settle stays inside the landscape's 1.035 overscan
+   for the visible part of the entry, and the timeline is named on the
+   untransformed section so the animated child cannot feed back into
+   it. Entry only: this chapter is the conversion tool, and its exit
+   stays quiet on purpose. */
+@supports (animation-timeline: view()) {
+  .brand-orbit {
+    view-timeline: --home-orbit-depth block;
+  }
+
+  .brand-orbit__landscape {
+    animation: homeOrbitLandscapeEntry linear none;
+    animation-timeline: --home-orbit-depth;
+    animation-range: entry 0% entry 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brand-orbit__landscape {
+      animation: none;
+      translate: 0 0;
+    }
+  }
+}
+
+html[data-motion="reduced"] .brand-orbit__landscape {
+  animation: none;
+  translate: 0 0;
+}
+
+@keyframes homeOrbitLandscapeEntry {
+  from { translate: 0 -3%; }
+  to { translate: 0 0%; }
+}

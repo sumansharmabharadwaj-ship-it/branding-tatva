@@ -352,3 +352,38 @@
 :global(html[data-motion="reduced"]) .invitation :is(.textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber) {
   transition: none;
 }
+
+/* The decision chapter joins the journey's scroll depth: the golden
+   fog settles into place as the chapter arrives. The timeline is
+   named on the section (sticky lives only on descendants, never
+   here), and the media moves on the independent translate property so
+   it composes with the Framer scale that owns this chapter's closing
+   zoom. Entry only; the disclosure interaction owns the middle. */
+@supports (animation-timeline: view()) {
+  .questions {
+    view-timeline: --home-decision-depth block;
+  }
+
+  .questionMedia {
+    animation: homeDecisionMediaEntry linear none;
+    animation-timeline: --home-decision-depth;
+    animation-range: entry 0% entry 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .questionMedia {
+      animation: none;
+      translate: 0 0;
+    }
+  }
+}
+
+:global(html[data-motion="reduced"]) .questionMedia {
+  animation: none;
+  translate: 0 0;
+}
+
+@keyframes homeDecisionMediaEntry {
+  from { translate: 0 -3%; }
+  to { translate: 0 0%; }
+}

@@ -321,3 +321,10 @@ html[data-services-experience="active"] [data-services-journey-thread] {
 [data-services-evidence-library] > summary:focus-visible { outline: 2px solid #6f4e37; outline-offset: -5px; }
 @media (prefers-reduced-motion: reduce) { [data-services-evidence-library] > summary > span:last-child { transition: none; } }
 :root[data-motion="reduced"] [data-services-evidence-library] > summary > span:last-child { transition: none; }
+
+/* The case study remains a native reading chapter on every viewport. */
+#proof {
+  justify-content: flex-start !important;
+  padding-top: max(6.5rem, 11svh) !important;
+  padding-bottom: 5rem !important;
+}

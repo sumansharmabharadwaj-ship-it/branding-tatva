@@ -97,7 +97,7 @@ export const supportingInsightPosts: InsightPost[] = [
         paragraphs: [
           "The first screen should help a visitor answer three questions quickly: what kind of business is this, is it relevant to my situation, and what direction of change does it offer?",
           "Category language creates a comparison frame. Audience tension creates relevance. The promise creates movement. These elements can live across a headline, supporting line, visual, and short action rather than being compressed into one overloaded sentence.",
-          "Avoid beginning with an abstract ambition that could belong to several industries. A phrase about unlocking potential may sound expansive while leaving the visitor unsure whether the business provides consulting, software, coaching, or design.",
+          "Avoid beginning with an abstract ambition that could belong to several industries. A phrase about reaching potential may sound expansive while leaving the visitor unsure whether the business provides consulting, software, coaching, or design.",
         ],
         bullets: [
           "Can a visitor arriving for the first time name the category after one screen?",
