@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useCallback, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, LockKeyhole } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CircleDot, LockKeyhole } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
 import { motionTokens } from "@/lib/motionTokens";
@@ -44,12 +44,20 @@ export function RecognitionAudit() {
   const [consent, setConsent] = useState(false);
   const [answers, setAnswers] = useState<(boolean | null)[]>(EMPTY_ANSWERS);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const stageRef = useRef<HTMLDivElement>(null);
+  const questionHeadingRef = useRef<HTMLHeadingElement>(null);
+  const focusQuestionRef = useRef(false);
   const formHeadingRef = useRef<HTMLHeadingElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const unlocked = status === "done";
+
+  const setQuestionHeadingRef = useCallback((node: HTMLHeadingElement | null) => {
+    questionHeadingRef.current = node;
+    if (node && focusQuestionRef.current) {
+      focusQuestionRef.current = false;
+      node.focus({ preventScroll: true });
+    }
+  }, []);
 
   const setFormHeadingRef = useCallback(
     (node: HTMLHeadingElement | null) => {
@@ -68,28 +76,36 @@ export function RecognitionAudit() {
     .filter((answer) => answer !== null).length;
   const answeredCount = answers.slice(0, scoreTotal).filter((answer) => answer !== null).length;
   const privateComplete = privateAnswerCount === PRIVATE_CHECK_COUNT;
+  const complete = answeredCount === scoreTotal;
   const pageStart = currentIndex >= PRIVATE_CHECK_COUNT ? PRIVATE_CHECK_COUNT : 0;
   const pageIndexes = Array.from({ length: PRIVATE_CHECK_COUNT }, (_, index) => pageStart + index);
-  const scoreGuidance =
-    markedCount === 0 && answeredCount > 0
-      ? "Recognition is still relying on isolated cues."
-      : recognitionAuditGuidance(markedCount, scoreTotal);
+  const scoreGuidance = !complete
+    ? "Answer each question, then review which cues hold."
+    : recognitionAuditGuidance(markedCount, scoreTotal);
 
   function publish(nextAnswers: (boolean | null)[], total = scoreTotal) {
-    const score = nextAnswers.slice(0, total).filter((answer) => answer === true).length;
+    const relevantAnswers = nextAnswers.slice(0, total);
+    // An unfinished check is progress, not a recognition result.
+    if (relevantAnswers.some((answer) => answer === null)) return;
+    const score = relevantAnswers.filter((answer) => answer === true).length;
     publishServicesRecognitionAudit(score, total);
   }
 
   function goToQuestion(nextIndex: number, focusTab = false) {
     const upperBound = unlocked ? CHECKS.length - 1 : PRIVATE_CHECK_COUNT - 1;
     const safeIndex = Math.min(Math.max(nextIndex, 0), upperBound);
-    setDirection(safeIndex >= currentIndex ? 1 : -1);
+    focusQuestionRef.current = !focusTab;
     setCurrentIndex(safeIndex);
     setView("question");
     setNotice(null);
-    if (focusTab) {
-      requestAnimationFrame(() => tabRefs.current[safeIndex % PRIVATE_CHECK_COUNT]?.focus());
-    }
+    requestAnimationFrame(() => {
+      if (focusTab) {
+        tabRefs.current[safeIndex % PRIVATE_CHECK_COUNT]?.focus({ preventScroll: true });
+      } else if (focusQuestionRef.current && questionHeadingRef.current) {
+        focusQuestionRef.current = false;
+        questionHeadingRef.current.focus({ preventScroll: true });
+      }
+    });
   }
 
   function answerCurrent(holds: boolean) {
@@ -98,12 +114,20 @@ export function RecognitionAudit() {
     setAnswers(next);
     setNotice(null);
     publish(next);
+  }
 
-    const finalIndex = unlocked ? CHECKS.length - 1 : PRIVATE_CHECK_COUNT - 1;
-    if (currentIndex < finalIndex) {
-      setDirection(1);
-      setCurrentIndex(currentIndex + 1);
-    }
+  function finishAnswers() {
+    const firstUnanswered = answers.slice(0, scoreTotal).findIndex((answer) => answer === null);
+    if (firstUnanswered < 0) return;
+    goToQuestion(firstUnanswered);
+    const remaining = scoreTotal - answeredCount;
+    setNotice(`${remaining} ${remaining === 1 ? "answer remains" : "answers remain"}. Choose an answer below.`);
+  }
+
+  function continueCheck() {
+    if (currentIndex < scoreTotal - 1) goToQuestion(currentIndex + 1);
+    else if (!complete) finishAnswers();
+    else openUnlock();
   }
 
   function handleTabKey(event: KeyboardEvent<HTMLButtonElement>, visibleIndex: number) {
@@ -133,11 +157,7 @@ export function RecognitionAudit() {
 
   function openUnlock() {
     if (!privateComplete) {
-      const firstUnanswered = answers.slice(0, PRIVATE_CHECK_COUNT).findIndex((answer) => answer === null);
-      setNotice(
-        `${PRIVATE_CHECK_COUNT - privateAnswerCount} private ${PRIVATE_CHECK_COUNT - privateAnswerCount === 1 ? "answer remains" : "answers remain"}.`,
-      );
-      goToQuestion(Math.max(firstUnanswered, 0));
+      finishAnswers();
       return;
     }
     setError(null);
@@ -172,27 +192,12 @@ export function RecognitionAudit() {
       track("lead_magnet_requested");
       setStatus("done");
       setView("question");
-      setDirection(1);
+      focusQuestionRef.current = true;
       setCurrentIndex(PRIVATE_CHECK_COUNT);
-      publish(answers, CHECKS.length);
     } catch {
       setError("The audit form cannot reach the server. Check the connection, then send again.");
       setStatus("error");
     }
-  }
-
-  function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
-    if (prefersReducedMotion || event.pointerType === "touch" || !stageRef.current) return;
-    const bounds = stageRef.current.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-    stageRef.current.style.setProperty("--field-x", `${(x * 5).toFixed(2)}px`);
-    stageRef.current.style.setProperty("--field-y", `${(y * 4).toFixed(2)}px`);
-  }
-
-  function settlePointer() {
-    stageRef.current?.style.setProperty("--field-x", "0px");
-    stageRef.current?.style.setProperty("--field-y", "0px");
   }
 
   const questionTransition = prefersReducedMotion
@@ -201,20 +206,16 @@ export function RecognitionAudit() {
 
   return (
     <div
-      ref={stageRef}
       data-recognition-audit-desk="true"
       data-section-jump-yield="true"
       className={styles.stage}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={settlePointer}
-      style={{ "--audit-progress": `${(markedCount / scoreTotal) * 100}%` } as CSSProperties}
     >
       <Image
         src="/images/generated/bt-services-recognition-field-notes.webp"
         alt=""
         fill
         sizes="(max-width: 899px) 100vw, 96rem"
-        loading="eager"
+        loading="lazy"
         className={styles.stageImage}
         aria-hidden="true"
       />
@@ -223,7 +224,7 @@ export function RecognitionAudit() {
 
       <header className={styles.intro}>
         <h2>Ten questions that expose where the brand loses recognition.</h2>
-        <p>Mark what is true today.</p>
+        <p>Choose an answer, then continue. Each answer stays editable.</p>
       </header>
 
       <aside className={styles.privacyNote} aria-label="Private first pass">
@@ -325,16 +326,16 @@ export function RecognitionAudit() {
               </motion.form>
             ) : (
               <motion.div
-                key={`question-${currentIndex}`}
+                key="question"
                 className={styles.questionView}
                 data-copy-density={CHECKS[currentIndex].length > 78 ? "compact" : "standard"}
-                initial={prefersReducedMotion ? undefined : { opacity: 0, x: direction * 18 }}
+                initial={prefersReducedMotion ? undefined : { opacity: 0 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0, x: direction * -14 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
                 transition={questionTransition}
               >
                 <div className={styles.paperEyebrow}>
-                  <span>{unlocked && currentIndex >= PRIVATE_CHECK_COUNT ? "Complete check" : "Question"}</span>
+                  <span>{answeredCount} of {scoreTotal} answered</span>
                   {unlocked && (
                     <button
                       type="button"
@@ -346,17 +347,33 @@ export function RecognitionAudit() {
                   )}
                 </div>
 
-                <p className={styles.questionNumber}>{numberLabel(currentIndex)}</p>
-                <h3>{CHECKS[currentIndex]}</h3>
+                <div className={styles.answerProgress} aria-hidden="true">
+                  <motion.span
+                    initial={false}
+                    animate={{ scaleX: answeredCount / scoreTotal }}
+                    transition={questionTransition}
+                  />
+                </div>
+                <p className={styles.questionNumber}>Question {numberLabel(currentIndex)}</p>
+                <motion.h3
+                  key={currentIndex}
+                  ref={setQuestionHeadingRef}
+                  tabIndex={-1}
+                  initial={prefersReducedMotion ? undefined : { opacity: 0.65, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={questionTransition}
+                >
+                  {CHECKS[currentIndex]}
+                </motion.h3>
 
                 <div className={styles.answerStatus} role="status" aria-live="polite">
-                  {answers[currentIndex] === true && (
+                  {notice ? <span>{notice}</span> : answers[currentIndex] === true ? (
                     <span>
                       <Check aria-hidden="true" /> This already holds
                     </span>
-                  )}
-                  {answers[currentIndex] === false && <span>Marked for attention</span>}
-                  {answers[currentIndex] === null && <span>Choose what is true today</span>}
+                  ) : answers[currentIndex] === false ? (
+                    <span><CircleDot aria-hidden="true" /> Marked for attention</span>
+                  ) : <span>Choose what is true today</span>}
                 </div>
 
                 <div className={styles.questionActions}>
@@ -366,18 +383,34 @@ export function RecognitionAudit() {
                     aria-pressed={answers[currentIndex] === true}
                     onClick={() => answerCurrent(true)}
                   >
-                    This already holds
-                    <ArrowRight aria-hidden="true" />
+                    <Check aria-hidden="true" />
+                    Already holds
                   </button>
                   <button
                     type="button"
-                    className={styles.notYetButton}
+                    className={styles.attentionButton}
                     aria-pressed={answers[currentIndex] === false}
                     onClick={() => answerCurrent(false)}
                   >
-                    Not yet
+                    <CircleDot aria-hidden="true" />
+                    Needs attention
                   </button>
                 </div>
+                <nav className={styles.questionNavigation} aria-label="Move through recognition questions">
+                  <button type="button" onClick={() => goToQuestion(currentIndex - 1)} disabled={currentIndex === 0}>
+                    <ArrowLeft aria-hidden="true" /> Previous
+                  </button>
+                  {unlocked && complete && currentIndex === scoreTotal - 1 ? (
+                    <a href="#book" onClick={() => publish(answers)}>
+                      Discuss result <ArrowRight aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <button type="button" onClick={continueCheck} disabled={answers[currentIndex] === null}>
+                      {currentIndex < scoreTotal - 1 ? "Next question" : complete ? "Continue check" : "Finish answers"}
+                      <ArrowRight aria-hidden="true" />
+                    </button>
+                  )}
+                </nav>
               </motion.div>
             )}
           </AnimatePresence>
@@ -401,24 +434,35 @@ export function RecognitionAudit() {
                 className={styles.questionTab}
                 data-active={active ? "true" : "false"}
                 data-answered={answer !== null ? "true" : "false"}
-                onClick={() => goToQuestion(checkIndex)}
+                onClick={() => goToQuestion(checkIndex, true)}
                 onKeyDown={(event) => handleTabKey(event, visibleIndex)}
                 disabled={view === "handoff"}
                 aria-label={`Question ${checkIndex + 1}${answer === true ? ", already holds" : answer === false ? ", marked for attention" : ""}`}
               >
-                {answer === true ? <Check aria-hidden="true" /> : numberLabel(checkIndex)}
+                <span>{numberLabel(checkIndex)}</span>
+                {answer === true ? <Check className={styles.tabAnswer} aria-hidden="true" /> : answer === false ? <CircleDot className={styles.tabAnswer} aria-hidden="true" /> : null}
               </button>
             );
           })}
         </div>
 
-        <aside className={styles.signal} aria-label={`${markedCount} of ${scoreTotal} recognition answers hold`}>
+        <aside className={styles.signal} aria-label={complete ? `${markedCount} of ${scoreTotal} recognition answers hold` : `${answeredCount} of ${scoreTotal} questions answered`}>
           <div className={styles.dialReadout} aria-hidden="true">
-            <strong>{markedCount}</strong>
+            <svg className={styles.dialProgress} viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="46" />
+              <motion.circle
+                cx="50" cy="50" r="46" pathLength="1"
+                strokeDasharray="1"
+                initial={false}
+                animate={{ strokeDashoffset: 1 - answeredCount / scoreTotal }}
+                transition={questionTransition}
+              />
+            </svg>
+            <strong>{complete ? markedCount : answeredCount}</strong>
             <span>of {scoreTotal}</span>
           </div>
           <div className={styles.signalCopy}>
-            <p>Recognition signal</p>
+            <p>{complete ? "Cues that hold" : "Questions answered"}</p>
             <span>{scoreGuidance}</span>
           </div>
         </aside>
@@ -427,25 +471,25 @@ export function RecognitionAudit() {
           {!unlocked ? (
             <button type="button" onClick={openUnlock} data-ready={privateComplete ? "true" : "false"}>
               <span>
-                Continue to all ten questions
-                <small>{privateAnswerCount} of 5 answered</small>
+                {privateComplete ? "Continue to all ten questions" : "Finish the private five"}
+                <small>{privateComplete ? "First five complete" : `${privateAnswerCount} of 5 answered`}</small>
               </span>
               <ArrowRight aria-hidden="true" />
             </button>
-          ) : (
+          ) : complete ? (
             <a
               href="#book"
               data-recognition-audit-handoff="true"
-              onClick={() => publishServicesRecognitionAudit(markedCount, CHECKS.length)}
+              onClick={() => publish(answers)}
             >
               <span>Bring this result to the Strategy Room</span>
               <ArrowRight aria-hidden="true" />
             </a>
-          )}
-          {notice && (
-            <p role="status" aria-live="polite">
-              {notice}
-            </p>
+          ) : (
+            <button type="button" onClick={finishAnswers}>
+              <span>Finish your check<small>{answeredCount} of 10 answered</small></span>
+              <ArrowRight aria-hidden="true" />
+            </button>
           )}
         </div>
       </section>

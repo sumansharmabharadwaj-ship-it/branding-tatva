@@ -103,6 +103,10 @@ nav[data-services-nav="true"] {
   transform: translateX(-50%);
   translate: none;
 }
+nav[data-services-nav="true"][data-section-jump-desktop-yielding="true"] {
+  visibility: hidden;
+  pointer-events: none;
+}
 nav[data-services-nav="true"] > div {
   width: 16rem;
   align-items: stretch;

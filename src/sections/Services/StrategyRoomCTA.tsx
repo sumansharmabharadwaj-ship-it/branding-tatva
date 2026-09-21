@@ -247,12 +247,13 @@ export function StrategyRoomCTA() {
         !detail ||
         !Number.isInteger(detail.score) ||
         !Number.isInteger(detail.total) ||
+        detail.total < 1 ||
         detail.score < 0 ||
         detail.score > detail.total
       ) {
         return;
       }
-      setRecognitionAudit(detail.score > 0 ? detail : null);
+      setRecognitionAudit(detail);
       setDecisionCopyStatus("idle");
     }
 
