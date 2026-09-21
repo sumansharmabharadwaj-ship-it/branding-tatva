@@ -357,7 +357,21 @@ export default async function ServicesPage() {
           {/* The hero's last frames darken into the Situation
               chapter's charcoal. Every later chapter uses the same
               veil-and-handoff grammar, so the page reads as one colour
-              journey rather than a stack of unrelated blocks. */}
+              journey rather than a stack of unrelated blocks.
+
+              The light hero needs one guarantee the dark one never did:
+              SceneHandoff's opacity scrubs in as the boundary crosses
+              the viewport, so at first contact the bright meadow foot
+              used to sit directly against the Situation chapter's full
+              charcoal veil — a hard line across the frame. The static
+              strip below keeps the boundary pixel charcoal on both
+              sides at every scroll position; the scrubbed handoff
+              still deepens the anticipation above it. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[14vh]"
+            style={{ background: "linear-gradient(0deg, #171A17 0%, #171A17 22%, transparent 100%)" }}
+          />
           <SceneHandoff color="#171A17" heightClass="h-[24vh]" endOpacity={1} reducedOpacity={1} />
         </section>
 
@@ -519,7 +533,20 @@ export default async function ServicesPage() {
             holding the visitor inside a long sticky runway. */}
         <section id="authority" className="relative" style={{ backgroundColor: MOOD.charcoal }}>
           <PinnedBrandBuild />
-          <SceneHandoff color="#191B16" />
+          {/* This boundary's dissolve colors were transposed: the dark
+              chapter closed in its own dark and the cream chapter opened
+              in its own cream, so both halves were invisible and the
+              page's one dark to daylight moment was a razor cut. The
+              handoff now anticipates the perception chapter's paper. */}
+          <SceneHandoff color="#F2EBDD" endOpacity={0.62} reducedOpacity={0.4} />
+          {/* Same guarantee the light hero needed in reverse: the scrub
+              is never complete at first contact, so the boundary pixel
+              itself stays paper on both sides at every scroll position. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[10vh]"
+            style={{ background: "linear-gradient(0deg, #F2EBDD 0%, #F2EBDD 14%, transparent 100%)" }}
+          />
         </section>
 
         {/* A content-sized memory model. Deliberate tab choices stay stable
@@ -549,7 +576,9 @@ export default async function ServicesPage() {
             />
           </div>
           <div data-perception-paper-wash="true" aria-hidden="true" className="absolute inset-0" />
-          <SceneVeil color="#F2EBDD" />
+          {/* The other transposed half: the arrival veil wears the
+              authority chapter's charcoal and releases into daylight. */}
+          <SceneVeil color="#191B16" heightClass="h-[20vh]" endOpacity={0.06} />
           <div data-services-content-plane="true" className="relative">
             <PerceptionLadder />
           </div>
