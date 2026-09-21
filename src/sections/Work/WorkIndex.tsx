@@ -52,7 +52,15 @@ export function WorkIndex({ projects }: { projects: Project[] }) {
         parallax
         playbackRate={0.88}
       />
-      <div aria-hidden="true" className="absolute inset-0 bg-[#F2F0E8]/86" />
+      {/* Thinned from /86: the vellum-roots still was sealed under the
+          cream, which left the archive reading as a flat printout. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-[#F2F0E8]/76" />
+      {/* Moving light over the paper — gold from one corner, sage from
+          the other (services-atmosphere.css). */}
+      <div aria-hidden="true" data-work-ambient="true">
+        <span />
+        <span />
+      </div>
       <Container className="relative max-w-6xl">
         <Reveal>
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">

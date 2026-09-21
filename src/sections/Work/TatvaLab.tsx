@@ -81,7 +81,13 @@ export function TatvaLab() {
         parallax
         playbackRate={0.88}
       />
-      <div aria-hidden="true" className="absolute inset-0 bg-[#F2F0E8]/85" />
+      {/* Thinned from /85 and given moving light, same treatment as the
+          Work Index above it: the mineral-field still finally reads. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-[#F2F0E8]/76" />
+      <div aria-hidden="true" data-work-ambient="true">
+        <span />
+        <span />
+      </div>
       <Container className="relative max-w-6xl">
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.72fr)] lg:items-end lg:gap-16">
           <div>

@@ -2016,12 +2016,18 @@ html[data-services-experience="active"] nav[aria-label="Jump to section"]
 
 #education [data-perception-paper-wash="true"] {
   z-index: 1;
+  /* Thinned from 99/97/70/16: the summit inversion film was sealed
+     behind near-solid paper down to 78% of the frame, which is why the
+     chapter read as flat cream ("plain, no design background" — direct
+     verdict). The headline zone keeps enough paper for dark type; the
+     film is bright sky and fog, so the mid-frame bleed stays legible
+     while the chapter finally reads as a place. */
   background: linear-gradient(
     to bottom,
-    rgba(242, 235, 221, 0.99) 0%,
-    rgba(242, 235, 221, 0.97) 58%,
-    rgba(242, 235, 221, 0.7) 78%,
-    rgba(242, 235, 221, 0.16) 100%
+    rgba(242, 235, 221, 0.96) 0%,
+    rgba(242, 235, 221, 0.86) 42%,
+    rgba(242, 235, 221, 0.55) 68%,
+    rgba(242, 235, 221, 0.1) 100%
   );
 }
 

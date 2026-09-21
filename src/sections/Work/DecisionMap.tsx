@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/Container";
+import { LivingGradient } from "@/components/LivingGradient";
 import { Reveal } from "@/components/Reveal";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { projects } from "@/data/projects";
@@ -63,8 +64,13 @@ export function DecisionMap() {
   const current = entries[active];
 
   return (
-    <section data-decision-map="true" className="py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
-      <Container className="max-w-6xl">
+    <section data-decision-map="true" className="relative overflow-hidden py-16 sm:py-24" style={{ backgroundColor: WORK.mist }}>
+      {/* The one chapter on this page that was a genuinely flat fill.
+          The bone Wanderlust field puts slow drifting light behind the
+          five questions; it carries soil type, which is what this
+          section already sets. */}
+      <LivingGradient preset="wanderlust" />
+      <Container className="relative max-w-6xl">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-[0.2em]" style={{ color: WORK.mossInk }}>
             Decision map

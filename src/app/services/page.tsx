@@ -262,6 +262,25 @@ export default async function ServicesPage() {
           className="relative flex min-h-[100vh] flex-col justify-center overflow-clip bg-soil"
         >
           <LivingGradient preset="meadow" />
+          {/* Sunlit weather over the meadow field: a morning bloom, a deep
+              sage answer, and a slow halo turning behind the chapter map.
+              The wrapper leans with the visitor's own scroll via the
+              runtime's scene progress variable. CSS only — the opening
+              stays filmless per the media loading contract. */}
+          <div aria-hidden="true" data-services-atmosphere="hero">
+            <span />
+            <span />
+            <span />
+          </div>
+          {/* The drawn meadow horizon: three contour strokes sketched on
+              arrival, dissolving into the charcoal handoff below. */}
+          <div aria-hidden="true" className="services-contour">
+            <svg viewBox="0 0 1400 460" preserveAspectRatio="xMidYMax slice" focusable="false">
+              <path pathLength="1" d="M-40 330C180 300 320 208 520 226S840 372 1060 318 1330 176 1460 196" />
+              <path pathLength="1" d="M-40 388C210 356 380 268 570 282S870 420 1090 368 1350 244 1460 262" />
+              <path pathLength="1" d="M-40 440C240 410 430 330 620 340S900 460 1120 414 1370 310 1460 324" />
+            </svg>
+          </div>
           <HeroReveal />
           {/* The headline resolves by word, not character. It
               participates in the scene without delaying basic
@@ -393,6 +412,12 @@ export default async function ServicesPage() {
               room: a near black orangery field with a warm lamp bloom,
               so the three situation sentences are the only thing moving. */}
           <LivingGradient preset="orangery" />
+          {/* The lamp made visible: a warm pool that brightens as the
+              chapter centres, answered by moss from the low corner. */}
+          <div aria-hidden="true" data-services-atmosphere="situation">
+            <span />
+            <span />
+          </div>
           {/* Complete the opening cross-dissolve. The hero already
               anticipates this chapter with a 24vh departure veil; the
               matching arrival veil lets that tone release into the
@@ -422,6 +447,14 @@ export default async function ServicesPage() {
               was built to sit under frosted panels, and this chapter is
               frosted panels; the disciplines are the only subject left. */}
           <LivingGradient preset="understory" />
+          {/* Light through the canopy: two soft diagonal beams on long
+              sweeps and a deep forest bloom, so the understory reads as a
+              lit place while the discipline panels carry the reading. */}
+          <div aria-hidden="true" data-services-atmosphere="offerings">
+            <span />
+            <span />
+            <span />
+          </div>
           <div
             className="absolute inset-0"
             data-services-media-wash="offerings"
@@ -576,6 +609,12 @@ export default async function ServicesPage() {
             />
           </div>
           <div data-perception-paper-wash="true" aria-hidden="true" className="absolute inset-0" />
+          {/* Reading light over the thinned paper: a warm pool where the
+              headline sits, mist answering from the low corner. */}
+          <div aria-hidden="true" data-services-atmosphere="education">
+            <span />
+            <span />
+          </div>
           {/* The other transposed half: the arrival veil wears the
               authority chapter's charcoal and releases into daylight. */}
           <SceneVeil color="#191B16" heightClass="h-[20vh]" endOpacity={0.06} />
@@ -613,7 +652,10 @@ export default async function ServicesPage() {
             poster="/images/generated/bt-services-healthcheck-clarity-poster.jpg"
             playbackRate={0.92}
           />
-          <div aria-hidden="true" className="absolute inset-0" style={{ backgroundColor: "rgb(238 230 215 / 82%)" }} />
+          {/* Thinned from 82%: the clarity still was all but sealed under
+              the paper. 74% keeps the field-note card legible while the
+              water actually reads at the edges. */}
+          <div aria-hidden="true" className="absolute inset-0" style={{ backgroundColor: "rgb(238 230 215 / 74%)" }} />
           <div data-services-content-plane="true" className="relative w-full">
             <RecognitionAudit />
           </div>
