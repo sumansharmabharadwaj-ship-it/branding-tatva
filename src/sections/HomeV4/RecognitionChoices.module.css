@@ -42,6 +42,39 @@
 .choice:not([aria-selected="true"]):hover { background: rgb(94 76 51 / 6%); }
 .number { color: #805239; font-size: .75rem; font-variant-numeric: tabular-nums; }
 .choice[aria-selected="true"] .number { color: #e4c7a6; }
+
+/* The pointer reward the other chapters now speak. Choices arrive in a
+   scroll driven cascade (CSS view timeline: an unfired observer can
+   never strand them, and browsers without scroll timelines render the
+   settled state). Hover slides the row toward the reading panel it
+   controls, ignites the numeral, and previews the arrow that selection
+   completes. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .choice {
+      animation: recognitionArrive both cubic-bezier(.22, 1, .36, 1);
+      animation-timeline: view();
+      animation-range: entry 8% entry 55%;
+    }
+  }
+}
+@keyframes recognitionArrive {
+  from { opacity: .1; transform: translateX(-26px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .choice {
+    translate: 0 0;
+    transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease,
+      translate 380ms cubic-bezier(.22, 1, .36, 1), box-shadow 380ms cubic-bezier(.22, 1, .36, 1);
+  }
+  .choice:not([aria-selected="true"]):hover {
+    translate: 5px 0;
+    box-shadow: 0 14px 34px rgb(52 47 39 / 10%);
+  }
+  .choice:not([aria-selected="true"]):hover .number { color: #5e3d28; }
+  .choice:not([aria-selected="true"]):hover .choiceArrow { opacity: .55; translate: -1px -1px; }
+}
 .choiceLabel { font: 400 clamp(1.15rem, 1.6vw, 1.5rem)/1.2 var(--font-display), Georgia, serif; }
 .choiceArrow { color: #d9b48c; opacity: 0; translate: -3px -3px; transition: opacity 220ms ease, translate 300ms cubic-bezier(.22, 1, .36, 1); }
 .choice[aria-selected="true"] .choiceArrow { opacity: 1; translate: 0 0; }
