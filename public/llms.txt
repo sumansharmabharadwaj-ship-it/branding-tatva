@@ -23,6 +23,10 @@ Legacy `/blog` URLs, the retired `/work` index, and superseded Insight slugs per
 
 ## New and notable guides
 
+- [What brand strategy costs, and what decides the price](https://brandingtatva.com/insights/how-much-does-brand-strategy-cost): the market's three-tier price logic, with Branding Tatva's published starting figures for the United Kingdom (£1,950 / £4,500 / £1,100 monthly) and United States ($2,800 / $6,500 / $1,500 monthly)
+- [Brand strategist or branding agency: who should you hire?](https://brandingtatva.com/insights/brand-strategist-vs-branding-agency): the fit test between an independent strategist and an agency, the risks of each, and the five questions that expose any proposal
+- [AEO vs SEO vs GEO: three acronyms, one contest](https://brandingtatva.com/insights/aeo-vs-seo-vs-geo): what each discipline names, the shared record underneath all three, and where a small team should spend first
+- [Generative engine optimisation, without the tricks](https://brandingtatva.com/insights/generative-engine-optimisation-guide): how generative engines assemble answers, what the KDD 2024 research measured, and a ninety-day sequence for a service business
 - [How AI assistants decide which brands to recommend](https://brandingtatva.com/insights/how-ai-assistants-choose-brands-to-recommend): why assistants name some brands and skip others, explained through entity consistency, mental availability, and third-party corroboration
 - [Why AI content makes brands average, and what escapes it](https://brandingtatva.com/insights/why-ai-content-makes-brands-average): the statistical mechanism behind AI sameness and the distinctiveness system that survives it
 - [When the customer sends an agent: brand strategy for buying you never see](https://brandingtatva.com/insights/brand-strategy-when-ai-agents-buy): agentic commerce read through memory, with the instruction test for surviving the handoff from human to buying agent
