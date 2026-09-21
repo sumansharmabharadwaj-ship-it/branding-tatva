@@ -249,3 +249,77 @@ html[data-motion="reduced"] body .home-v4 #evidence :is(.evidence-cinematic__ind
 }
 html[data-motion="reduced"] .evidence-cinematic__pager button { transition: none; }
 @media (prefers-reduced-motion: reduce) { .evidence-cinematic__pager button { transition: none; } }
+
+/* The desktop gate above admits viewports from 761px up, yet the shell
+   could never pass the frameFits check the hold depends on at ANY
+   height: its svh scaled paddings grow with the viewport, so the
+   measured shell tracked about 19px taller than every viewport tried
+   (892 at 790, 911 at 872, 919 at 900) and data-evidence-layout sat
+   permanently in "flow" — the hold this file exists to run was dead
+   code on desktop. Fourth instance of the dead band pattern after the
+   foundation, invitation and studio chapters. The fix is a fixed rem
+   rhythm instead of a viewport scaled one, retuned against the
+   measured decomposition (shell = padding + header 185 + index 100 +
+   stage, stage driven by the dossier's three trail steps): with these
+   values the shell lands near 741px at a 790px viewport and clears
+   the 761px floor. No max-height ceiling on purpose — a layout whose
+   natural height is viewport + 19 has no region where it genuinely
+   fits, so the compressed rhythm IS the desktop layout. Idiom and
+   !important weight match the gate rules above because lighter rules
+   measurably lose this cascade. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    gap: clamp(0.4rem, 1svh, 0.7rem);
+    padding-block: 1.4rem 1rem !important;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__index button {
+    min-height: 5.1rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__index-copy {
+    padding-block: 0.5rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__index-copy strong {
+    margin-top: 0.3rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__index-copy em {
+    margin-top: 0.25rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__shell {
+    padding-bottom: 0.85rem !important;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__header h2 {
+    margin-top: 0.5rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__media {
+    min-height: 22.5rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__header {
+    padding-bottom: 0.4rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__trail-step {
+    min-height: 5.6rem;
+    padding-block: 0.65rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__dossier-footer {
+    margin-top: 0.5rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__dossier {
+    padding-block: 0.75rem;
+  }
+
+  html body .home-v4 #evidence .evidence-cinematic__reading-stack {
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+}
