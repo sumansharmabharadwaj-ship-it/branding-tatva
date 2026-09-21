@@ -683,6 +683,64 @@ html[data-motion="reduced"] .home-v4-opening__shell {
     linear-gradient(180deg, rgba(230, 232, 228, 0.62) 0%, rgba(230, 232, 228, 0.2) 48%, rgba(230, 232, 228, 0.9) 100%);
 }
 
+/* Recognition joins the opening's scroll depth: the fog settles into
+   place as the chapter arrives and recedes behind the page as it
+   leaves, and the reading dims only on the way out. Same construction
+   as the opening's exit — the timeline is NAMED on the section, which
+   is never transformed, so the animated children cannot feed back into
+   the timeline driving them; the media moves on `translate` and the
+   shell on `opacity` with only boundary keyframes, so nothing collides
+   with entrance systems that own `transform`. The two media animations
+   use fill none with disjoint ranges: entry drives the settle, exit
+   drives the recede, and between them the stylesheet base holds. The
+   uncovered strips sit outside the viewport for the whole of each
+   range. @supports leaves unsupporting browsers exactly as today. */
+@supports (animation-timeline: view()) {
+  .home-v4-recognition {
+    view-timeline: --home-recognition-depth block;
+  }
+
+  .home-v4-recognition__media {
+    animation:
+      homeRecognitionMediaEntry linear none,
+      homeRecognitionMediaExit linear none;
+    animation-timeline: --home-recognition-depth, --home-recognition-depth;
+    animation-range: entry 0% entry 100%, exit 0% exit 100%;
+  }
+
+  .home-v4-recognition__shell {
+    animation: homeRecognitionShellExit linear both;
+    animation-timeline: --home-recognition-depth;
+    animation-range: exit 0% exit 90%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-v4-recognition__media,
+    .home-v4-recognition__shell {
+      animation: none;
+    }
+  }
+}
+
+html[data-motion="reduced"] .home-v4-recognition__media,
+html[data-motion="reduced"] .home-v4-recognition__shell {
+  animation: none;
+}
+
+@keyframes homeRecognitionMediaEntry {
+  from { translate: 0 -5%; }
+  to { translate: 0 0%; }
+}
+
+@keyframes homeRecognitionMediaExit {
+  from { translate: 0 0%; }
+  to { translate: 0 12%; }
+}
+
+@keyframes homeRecognitionShellExit {
+  to { opacity: 0.25; }
+}
+
 .home-v4-recognition__reflection {
   left: -20%;
   right: auto;

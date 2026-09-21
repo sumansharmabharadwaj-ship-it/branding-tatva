@@ -386,6 +386,58 @@
   }
 }
 
+/* The hero's four act rows answer the hand with the same reward grammar
+   as the rest of the site: the numeral ignites, the row leans toward
+   its destination, and a warm sand underline draws along the row's own
+   baseline. `transform` rather than `translate` for the lean — the new
+   standing rule after the decision map hover was silenced by an
+   entrance animation that owned `translate` (grep the served css
+   before ever choosing that property again). */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-services-hero-index] a {
+    transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [data-services-hero-index] a:hover {
+    transform: translateX(6px);
+  }
+
+  /* The id prefix is load bearing: the numeral also carries a Tailwind
+     group hover colour ((0,3,0), ivory) that outranks a bare attribute
+     selector — and ivory on the light meadow makes the numeral vanish
+     at the exact moment it should ignite. Warm sand stays visible. */
+  #services-opening [data-services-hero-index] a > span:first-child {
+    transition: color 300ms ease, opacity 300ms ease;
+  }
+
+  #services-opening [data-services-hero-index] a:hover > span:first-child {
+    color: #c6a97a;
+    opacity: 1;
+  }
+
+  [data-services-hero-index] li {
+    position: relative;
+  }
+
+  [data-services-hero-index] li::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, #c6a97a, rgba(198, 169, 122, 0));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+
+  [data-services-hero-index] li:hover::after,
+  [data-services-hero-index] li:focus-within::after {
+    transform: scaleX(1);
+  }
+}
+
 /* ---- shared keyframes ------------------------------------------------- */
 
 @keyframes services-atmo-sun {
