@@ -316,6 +316,30 @@ html body .home-v4 #evidence .evidence-cinematic__index button.is-active {
   letter-spacing: 0.12em;
 }
 
+/* The project files join the pointer reward the rest of Home now
+   speaks: the file rises a breath toward the hand and its still
+   wakes with light. The lift rides the `translate` property so this
+   file's deliberate `transform: none` contract stays untouched. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html body .home-v4 #evidence .evidence-cinematic__index button {
+    translate: 0 0;
+    transition:
+      color 320ms ease,
+      border-color 320ms ease,
+      translate 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  html body .home-v4 #evidence .evidence-cinematic__index button:hover,
+  html body .home-v4 #evidence .evidence-cinematic__index button:focus-visible {
+    translate: 0 -4px;
+  }
+  .home-v4 .evidence-cinematic__index-image img {
+    transition: filter 460ms ease;
+  }
+  .home-v4 .evidence-cinematic__index button:hover .evidence-cinematic__index-image img {
+    filter: saturate(1.12) brightness(1.06);
+  }
+}
+
 html body .home-v4 #evidence .evidence-cinematic__index-copy {
   position: relative;
   z-index: 1;
