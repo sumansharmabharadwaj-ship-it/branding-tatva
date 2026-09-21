@@ -9,7 +9,7 @@ export const site = {
   positioning:
     "Branding Tatva finds the reason buyers choose a business, then gives that reason language, identity, and repetition.",
   description:
-    "Brand strategy for UK service businesses. Work remotely with Suman Sharma on positioning, messaging and identity. Also serving founders in India and the US.",
+    "Brand strategy for service businesses in the UK, US and Canada. Work remotely with Suman Sharma on positioning, messaging and identity. Also serving founders in India.",
   url: "https://brandingtatva.com",
   email: "suman@brandingtatva.com",
   phone: {

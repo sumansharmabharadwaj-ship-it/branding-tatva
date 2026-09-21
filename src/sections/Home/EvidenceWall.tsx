@@ -461,7 +461,10 @@ export function EvidenceWall() {
                   poster={activeProject.cardImage}
                   muted
                   loop
-                  autoPlay={!prefersReducedMotion}
+                  // In view only: autoplay overrides preload="none", so a
+                  // mount-time autoplay fetched this film on first load. The
+                  // effect below still starts it once the wall is in view.
+                  autoPlay={!prefersReducedMotion && inView}
                   playsInline
                   preload={inView ? "metadata" : "none"}
                   data-home-playback-rate="1.2"

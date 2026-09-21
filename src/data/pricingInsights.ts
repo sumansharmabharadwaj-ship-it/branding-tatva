@@ -12,7 +12,7 @@ export const pricingInsightPosts: InsightPost[] = [
   {
     slug: "how-much-does-brand-strategy-cost",
     title: "What brand strategy costs, and what decides the price",
-    seoTitle: "How much does brand strategy cost in 2026? UK and US rates",
+    seoTitle: "How much does brand strategy cost in 2026? UK, US and Canada rates",
     excerpt:
       "Buyers comparing strategists meet quotes that differ by a factor of fifty with no explanation. This guide explains the market's price logic and publishes this practice's own starting figures.",
     directAnswer:
@@ -23,6 +23,7 @@ export const pricingInsightPosts: InsightPost[] = [
     secondaryKeywords: [
       "brand strategy cost uk",
       "brand strategist fees usa",
+      "brand strategy cost canada",
       "brand strategy pricing 2026",
       "hire a brand strategist cost",
       "brand strategist vs branding agency price",
@@ -116,7 +117,7 @@ export const pricingInsightPosts: InsightPost[] = [
         id: "this-practices-published-figures",
         heading: "This practice's published figures",
         paragraphs: [
-          "Branding Tatva publishes its starting prices, region by region, because a buyer comparing quotes deserves numbers before a call. Brand Beginning, the defined starting engagement, begins at £1,950 in the United Kingdom and $2,800 in the United States. Brand Clarity, the full strategy engagement, begins at £4,500 or $6,500. Brand Partnership, ongoing direction, begins at £1,100 or $1,500 monthly. Indian founders see the same book in rupees on the services page.",
+          "Branding Tatva publishes its starting prices, region by region, because a buyer comparing quotes deserves numbers before a call. Brand Beginning, the defined starting engagement, begins at £1,950 in the United Kingdom and $2,800 in the United States. Brand Clarity, the full strategy engagement, begins at £4,500 or $6,500. Brand Partnership, ongoing direction, begins at £1,100 or $1,500 monthly. Canadian founders see the same book in their own currency, beginning at CA$3,200, CA$7,500, and CA$1,900 monthly, and Indian founders see it in rupees on the services page.",
           "Begins at is meant literally. A final price follows scope: how many offers need positioning, how much evidence gathering the situation demands, how much of the identity system needs rebuilding. The discovery call exists to settle scope, so the number quoted after it is a commitment rather than an estimate.",
           "The figures sit deliberately in the solo tier while the engagement structure, recorded decisions, evidence before opinions, artefacts a team can use, mirrors what the tiers above sell. That gap between structure funded and substance delivered is the position, stated as a price.",
         ],
@@ -163,6 +164,11 @@ export const pricingInsightPosts: InsightPost[] = [
         question: "How much does brand strategy cost in the USA?",
         answer:
           "United States pricing runs higher than the UK across every tier. Independent strategists commonly open in the mid four figures, boutiques in the high four to five figures, and large agencies from the high five figures upward. Branding Tatva's published US starting points are $2,800 for the defined starting engagement, $6,500 for the full engagement, and $1,500 monthly for ongoing direction.",
+      },
+      {
+        question: "How much does brand strategy cost in Canada?",
+        answer:
+          "Canadian pricing sits close to United States levels across the tiers, with independents opening in the mid four figures Canadian and agencies far above. Branding Tatva's published Canadian starting points are CA$3,200 for the defined starting engagement, CA$7,500 for the full strategy engagement, and CA$1,900 monthly for ongoing direction, with the final figure settled by scope on a discovery call.",
       },
       {
         question: "Why do agencies charge so much more for the same work?",
@@ -344,7 +350,7 @@ export const pricingInsightPosts: InsightPost[] = [
       {
         question: "Does an independent strategist work with international clients?",
         answer:
-          "Routinely. Strategy work runs on conversations and documents, which travel better than production does, so remote founder led engagements across time zones have become the independent tier's normal mode. Branding Tatva, for example, works with founders across the United Kingdom, United States, and India with published starting prices for each region.",
+          "Routinely. Strategy work runs on conversations and documents, which travel better than production does, so remote founder led engagements across time zones have become the independent tier's normal mode. Branding Tatva, for example, works with founders across the United Kingdom, United States, Canada, and India with published starting prices for each region.",
       },
     ],
     relatedSlugs: [

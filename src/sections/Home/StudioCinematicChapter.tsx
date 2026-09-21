@@ -19,6 +19,7 @@ const DISCIPLINES = [
       "Understand what buyers hesitate over, what they value, and how they judge the options. Use those findings to choose the position.",
     result: "Audience tension and perception map",
     video: "/videos/bt-home-studio-psychology.mp4",
+    videoMobile: "/videos/bt-home-studio-psychology-mobile.mp4",
     poster: "/images/bt-home-studio-psychology-poster.jpg",
     proofLabel: "Applied in HerbalCart",
     proofLine:
@@ -35,6 +36,7 @@ const DISCIPLINES = [
       "Turn the position into a voice, a message, and a story the team can use consistently.",
     result: "Verbal identity and narrative",
     video: "/videos/bt-home-studio-literature.mp4",
+    videoMobile: "/videos/bt-home-studio-literature-mobile.mp4",
     poster: "/images/bt-home-studio-literature-poster.jpg",
     proofLabel: "Applied in MyShopInEurope",
     proofLine:
@@ -51,6 +53,7 @@ const DISCIPLINES = [
       "Connect positioning, identity, website, content, and campaigns so each part supports the same commercial direction.",
     result: "A brand system that can keep moving",
     video: "/videos/bt-home-studio-strategy.mp4",
+    videoMobile: "/videos/bt-home-studio-strategy-mobile.mp4",
     poster: "/images/bt-home-studio-strategy-poster.jpg",
     proofLabel: "Applied in Dr. Haley Nutrition",
     proofLine:
@@ -307,7 +310,7 @@ export function StudioCinematicChapter() {
               exit={prefersReducedMotion ? undefined : "exit"}
               transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: EASE }}
             >
-              <BackgroundVideo video={active.video} poster={active.poster} managedByHomepage loop={false} />
+              <BackgroundVideo video={active.video} videoMobile={active.videoMobile} poster={active.poster} managedByHomepage loop={false} />
             </motion.div>
           </AnimatePresence>
           <div className="studio-cinematic__media-wash" />
