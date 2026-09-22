@@ -107,11 +107,15 @@ export function InsightReadingRail({
 
     if (!item || !rail) return;
 
-    const centeredPosition =
-      item.offsetLeft - (rail.clientWidth - item.clientWidth) / 2;
+    const viewport = rail.getBoundingClientRect();
+    const selected = item.getBoundingClientRect();
+    const offset = selected.left < viewport.left
+      ? selected.left - viewport.left
+      : selected.right > viewport.right ? selected.right - viewport.right : 0;
+    if (Math.abs(offset) < 1) return;
     rail.scrollTo({
-      left: Math.max(0, centeredPosition),
-      behavior: prefersReducedMotion ? "auto" : "smooth",
+      left: rail.scrollLeft + offset,
+      behavior: prefersReducedMotion ? "instant" : "smooth",
     });
   }, [activeId, prefersReducedMotion]);
 

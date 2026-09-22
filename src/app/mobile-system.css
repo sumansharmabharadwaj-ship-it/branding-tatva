@@ -278,3 +278,12 @@ html[data-site-menu="open"] [data-auto-journey-control] {
   main :is(button, summary, [role="tab"], input, select, textarea) { overflow-wrap: anywhere; }
   .site-footer-meta > div { flex-wrap: wrap; justify-content: center; }
 }
+
+@media (max-width: 959px) {
+  /* Give the keyboard and the field the lower edge while someone writes.
+     The notice returns on blur; the footer preference link remains available. */
+  html:has(main :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]), textarea, select):focus) .consent-notice {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}

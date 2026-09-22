@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { motion } from "framer-motion";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import type { InsightElement, InsightFramework } from "@/data/insights";
@@ -19,6 +19,7 @@ export function InsightFrameworkVisualizer({
 }: InsightFrameworkVisualizerProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const stepsRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const activeStep = framework.steps[activeIndex];
   const previousIndex =
@@ -26,6 +27,25 @@ export function InsightFrameworkVisualizer({
   const nextIndex = (activeIndex + 1) % framework.steps.length;
   const previousStep = framework.steps[previousIndex];
   const nextStep = framework.steps[nextIndex];
+
+  useEffect(() => {
+    const strip = stepsRef.current;
+    const selected = strip?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!strip || !selected || strip.scrollWidth <= strip.clientWidth) return;
+
+    // Reveal only the selected decision inside its strip. scrollIntoView
+    // would also move the article while the visitor uses the lower controls.
+    const viewport = strip.getBoundingClientRect();
+    const item = selected.getBoundingClientRect();
+    const offset = item.left < viewport.left
+      ? item.left - viewport.left
+      : item.right > viewport.right ? item.right - viewport.right : 0;
+    if (Math.abs(offset) < 1) return;
+    strip.scrollTo({
+      left: strip.scrollLeft + offset,
+      behavior: prefersReducedMotion ? "instant" : "smooth",
+    });
+  }, [activeIndex, prefersReducedMotion]);
 
   function chooseStep(index: number) {
     if (index === activeIndex) return;
@@ -59,6 +79,7 @@ export function InsightFrameworkVisualizer({
 
       <div className="insight-framework__visualizer">
         <div
+          ref={stepsRef}
           className="insight-framework__steps"
           role="tablist"
           aria-label={`${framework.title} steps`}
@@ -86,7 +107,9 @@ export function InsightFrameworkVisualizer({
                     event.key !== "ArrowRight" &&
                     event.key !== "ArrowDown" &&
                     event.key !== "ArrowLeft" &&
-                    event.key !== "ArrowUp"
+                    event.key !== "ArrowUp" &&
+                    event.key !== "Home" &&
+                    event.key !== "End"
                   ) {
                     return;
                   }
@@ -94,9 +117,9 @@ export function InsightFrameworkVisualizer({
                   event.preventDefault();
                   const direction =
                     event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : -1;
-                  const nextIndex =
-                    (index + direction + framework.steps.length) %
-                    framework.steps.length;
+                  const nextIndex = event.key === "Home" ? 0
+                    : event.key === "End" ? framework.steps.length - 1
+                    : (index + direction + framework.steps.length) % framework.steps.length;
                   chooseStep(nextIndex);
                   const next = event.currentTarget.parentElement?.querySelectorAll("button")[
                     nextIndex
@@ -158,12 +181,14 @@ export function InsightFrameworkVisualizer({
             className="insight-framework__glyph h-9 w-9"
             strokeWidth={1.15}
           />
-          <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+          <div
+            id="framework-active-step"
+            role="tabpanel"
+            aria-labelledby={`framework-step-${activeIndex}`}
+          >
             <motion.div
               key={activeStep.title}
-              id="framework-active-step"
-              role="tabpanel"
-              aria-labelledby={`framework-step-${activeIndex}`}
+              className="insight-framework__copy"
               custom={direction}
               variants={{
                 enter: (stepDirection: 1 | -1) => ({
@@ -176,15 +201,9 @@ export function InsightFrameworkVisualizer({
                   x: 0,
                   filter: "blur(0px)",
                 },
-                exit: (stepDirection: 1 | -1) => ({
-                  opacity: 0,
-                  x: stepDirection * -18,
-                  filter: "blur(4px)",
-                }),
               }}
               initial={prefersReducedMotion ? false : "enter"}
               animate="active"
-              exit={prefersReducedMotion ? undefined : "exit"}
               transition={{
                 duration: prefersReducedMotion ? 0 : 0.44,
                 ease: [0.22, 1, 0.36, 1],
@@ -196,33 +215,35 @@ export function InsightFrameworkVisualizer({
               </p>
               <h3>{activeStep.title}</h3>
               <blockquote>{activeStep.description}</blockquote>
-              {framework.steps.length > 1 && previousStep && nextStep ? (
-                <nav
-                  className="insight-framework__controls"
-                  aria-label="Framework decision navigation"
-                >
-                  <button
-                    type="button"
-                    onClick={() => chooseStep(previousIndex)}
-                    aria-label={`Show previous decision: ${previousStep.title}`}
-                  >
-                    <span>Previous decision</span>
-                    <strong>{previousStep.title}</strong>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => chooseStep(nextIndex)}
-                    aria-label={`Show next decision: ${nextStep.title}`}
-                  >
-                    <span>
-                      {activeIndex === framework.steps.length - 1 ? "Review first decision" : "Next decision"}
-                    </span>
-                    <strong>{nextStep.title}</strong>
-                  </button>
-                </nav>
-              ) : null}
             </motion.div>
-          </AnimatePresence>
+            {/* Keep navigation mounted while the decision text changes so
+                repeated taps and keyboard activation retain their target. */}
+            {framework.steps.length > 1 && previousStep && nextStep ? (
+              <nav
+                className="insight-framework__controls"
+                aria-label="Framework decision navigation"
+              >
+                <button
+                  type="button"
+                  onClick={() => chooseStep(previousIndex)}
+                  aria-label={`Show previous decision: ${previousStep.title}`}
+                >
+                  <span>Previous decision</span>
+                  <strong>{previousStep.title}</strong>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => chooseStep(nextIndex)}
+                  aria-label={`Show next decision: ${nextStep.title}`}
+                >
+                  <span>
+                    {activeIndex === framework.steps.length - 1 ? "Review first decision" : "Next decision"}
+                  </span>
+                  <strong>{nextStep.title}</strong>
+                </button>
+              </nav>
+            ) : null}
+          </div>
         </div>
       </div>
     </section>

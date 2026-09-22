@@ -52,3 +52,16 @@
 .questions details p { max-width: 75ch; padding: 0 .25rem 1.5rem; line-height: 1.85; color: #5a5148; }
 @media (max-width: 600px) { .decisions > div { grid-template-columns: 1fr; gap: .5rem; } }
 @media (max-width: 760px) { .hero { padding-top: 7.5rem; padding-bottom: 3rem; } .breadcrumb { margin-bottom: 2rem; } .scope, .preparation { grid-template-columns: 1fr; gap: 1.5rem; } .content { padding-top: 3rem; } .opening { margin-bottom: 2.5rem; } .outputs { padding: 1.5rem; } }
+
+@media (max-width: 639px) {
+  .page :is(h1, h2, h3, p, dd, a) { overflow-wrap: anywhere; }
+  .actions { align-items: stretch; flex-direction: column; gap: .75rem; }
+  .button { width: 100%; min-width: 0; gap: .75rem; font-size: 1rem; line-height: 1.5; }
+  .button svg, .reading a svg { flex-shrink: 0; }
+  .textLink { justify-content: center; font-size: 1rem; text-align: center; }
+  .breadcrumb a { display: inline-flex; min-height: 2.75rem; align-items: center; }
+  .breadcrumb { align-items: center; gap: .35rem .65rem; }
+  .step { grid-template-columns: 1.5rem minmax(0, 1fr); gap: .75rem; }
+  .outputs li { font-size: 1rem; }
+  .reading a { min-width: 0; font-size: 1rem; }
+}
