@@ -1,6 +1,12 @@
 name: Deploy one controlled august preview
 
 on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Current controlled release number to request or retry
+        required: true
+        type: string
   push:
     branches:
       - august-8-isolated
@@ -17,7 +23,7 @@ concurrency:
 
 jobs:
   deploy-preview:
-    if: contains(github.event.head_commit.message, '[deploy]')
+    if: github.ref == 'refs/heads/august-8-isolated' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -34,6 +40,9 @@ jobs:
       - name: Validate the controlled release contract
         id: release
         shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REQUESTED_RELEASE: ${{ inputs.release }}
         run: |
           set -euo pipefail
 
@@ -42,7 +51,12 @@ jobs:
 
           release="$(node -p "require('./vercel-preview-release.json').release")"
           message="$(git log -1 --format=%B)"
-          if [[ "$message" != *"[deploy]"* ]] || [[ "$message" != *"[release:${release}]"* ]]; then
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ "$REQUESTED_RELEASE" != "$release" ]; then
+              echo "Requested release ${REQUESTED_RELEASE} differs from current release ${release}." >&2
+              exit 1
+            fi
+          elif [[ "$message" != *"[deploy]"* ]] || [[ "$message" != *"[release:${release}]"* ]]; then
             echo "The source commit must contain [deploy] and [release:${release}]." >&2
             exit 1
           fi
@@ -80,18 +94,31 @@ jobs:
               core.setFailed(`Vercel cooldown until ${result.retryAfter}; the preview branch remains disabled.`);
             }
 
+      - name: Check the previous Vercel result before requesting a build
+        id: preflight
+        uses: actions/github-script@v7
+        env:
+          RELEASE: ${{ steps.release.outputs.release }}
+        with:
+          script: |
+            const { preflight } = require('./scripts/vercel_preview_status.cjs');
+            await preflight({ github, context, core, branch: context.ref.replace('refs/heads/', ''), release: process.env.RELEASE });
+
       - name: Set up pnpm for the delivery check
+        if: steps.preflight.outputs.reuse_sha == ''
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
       - name: Set up Node.js for the delivery check
+        if: steps.preflight.outputs.reuse_sha == ''
         uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: pnpm
 
       - name: Enable one Git integrated preview
+        if: steps.preflight.outputs.reuse_sha == ''
         id: enable
         shell: bash
         env:
@@ -141,63 +168,64 @@ jobs:
           git push origin "HEAD:${GITHUB_REF_NAME}"
           echo "enable_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Wait for Vercel to finish
-        id: wait
+      - name: Close the Git deployment trigger before waiting
+        id: close
+        if: always() && steps.enable.outputs.enable_sha != ''
         shell: bash
-        env:
-          ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
-          SOURCE_SHA: ${{ steps.release.outputs.source_sha }}
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
-          for attempt in $(seq 1 120); do
-            curl --fail --silent --show-error \
-              --url "https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${ENABLE_SHA}/status" \
-              --header "Authorization: Bearer ${GITHUB_TOKEN}" \
-              --header "Accept: application/vnd.github+json" \
-              --header "X-GitHub-Api-Version: 2022-11-28" \
-              > /tmp/vercel-commit-status.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-            state="$(node -e 'const x=require("/tmp/vercel-commit-status.json"); const s=x.statuses?.find((item)=>item.context==="Vercel"); process.stdout.write(s?.state || "waiting")')"
-            target_url="$(node -e 'const x=require("/tmp/vercel-commit-status.json"); const s=x.statuses?.find((item)=>item.context==="Vercel"); process.stdout.write(s?.target_url || "")')"
-            echo "Vercel status for ${ENABLE_SHA}: ${state}"
+          for attempt in $(seq 1 5); do
+            git fetch origin "$GITHUB_REF_NAME"
+            git rebase "origin/$GITHUB_REF_NAME"
 
-            if [ "$state" = "success" ] || [ "$state" = "failure" ] || [ "$state" = "error" ]; then
-              echo "vercel_state=${state}" >> "$GITHUB_OUTPUT"
-              echo "target_url=${target_url}" >> "$GITHUB_OUTPUT"
+            node <<'NODE'
+            const fs = require("node:fs");
+            const file = "vercel.json";
+            const config = JSON.parse(fs.readFileSync(file, "utf8"));
+            config.git ??= {};
+            config.git.deploymentEnabled ??= {};
+            config.git.deploymentEnabled["august-8-isolated"] = false;
+            fs.writeFileSync(file, `${JSON.stringify(config, null, 2)}\n`);
+          NODE
+
+            if ! git diff --quiet -- vercel.json; then
+              git add vercel.json
+              git commit -m "Return august preview to controlled mode"
             fi
 
-            if [ "$state" = "success" ]; then
-              {
-                echo "## Controlled august preview"
-                echo
-                echo "- Release source: \`${SOURCE_SHA}\`"
-                echo "- Deployment trigger: \`${ENABLE_SHA}\`"
-                echo "- Inspector: ${target_url}"
-                echo "- Branch alias: https://branding-tatva-git-august-8-isolated-suman22.vercel.app/"
-                echo "- Target: preview only"
-                echo "- Status: READY"
-              } >> "$GITHUB_STEP_SUMMARY"
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
               exit 0
             fi
-
-            if [ "$state" = "failure" ] || [ "$state" = "error" ]; then
-              echo "Vercel reported ${state} for ${ENABLE_SHA}." >&2
-              exit 1
-            fi
-
-            sleep 6
           done
 
-          echo "Vercel did not finish within 12 minutes." >&2
+          echo "Could not return august-8-isolated to controlled deployment mode." >&2
           exit 1
 
+      - name: Wait for Vercel to finish
+        id: wait
+        if: steps.enable.outputs.enable_sha != ''
+        uses: actions/github-script@v7
+        env:
+          ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
+          SOURCE_SHA: ${{ steps.release.outputs.source_sha }}
+        with:
+          script: |
+            const { waitForVercel } = require('./scripts/vercel_preview_status.cjs');
+            const fs = require('node:fs');
+            await waitForVercel({ github, context, core, trigger: process.env.ENABLE_SHA, source: process.env.SOURCE_SHA,
+              onStatus: data => fs.writeFileSync('/tmp/vercel-commit-status.json', JSON.stringify(data)),
+            });
+
       - name: Refresh the permanent preview alias when API credentials are available
-        if: steps.wait.outputs.vercel_state == 'success'
+        id: alias
+        if: steps.wait.outputs.vercel_state == 'success' || steps.preflight.outputs.reuse_sha != ''
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
+          ENABLE_SHA: ${{ steps.enable.outputs.enable_sha || steps.preflight.outputs.reuse_sha }}
         run: |
           node --input-type=module <<'NODE'
           // Use only the existing CI credential. Git integration can deploy
@@ -285,8 +313,11 @@ jobs:
         if: always()
         uses: actions/github-script@v7
         env:
-          VERCEL_STATE: ${{ steps.wait.outputs.vercel_state }}
-          VERCEL_URL: ${{ steps.wait.outputs.target_url }}
+          VERCEL_STATE: ${{ steps.wait.outputs.vercel_state || steps.preflight.outputs.vercel_state }}
+          VERCEL_URL: ${{ steps.wait.outputs.target_url || steps.preflight.outputs.target_url }}
+          VERCEL_DESCRIPTION: ${{ steps.wait.outputs.description || steps.preflight.outputs.description }}
+          REUSE_SHA: ${{ steps.preflight.outputs.reuse_sha }}
+          ALIAS_OUTCOME: ${{ steps.alias.outcome }}
           ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
           CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
           COOLDOWN_BLOCKED: ${{ steps.cooldown.outputs.blocked }}
@@ -296,17 +327,20 @@ jobs:
             const observed = process.env.VERCEL_STATE;
             const trigger = process.env.ENABLE_SHA || '';
             const cleanupIncomplete = Boolean(trigger) && process.env.CLEANUP_OUTCOME !== 'success';
-            const state = cleanupIncomplete
+            const aliasFailed = process.env.ALIAS_OUTCOME === 'failure';
+            const state = cleanupIncomplete || aliasFailed
               ? 'error'
               : ['success', 'failure', 'error'].includes(observed) ? observed : 'error';
             const description = process.env.COOLDOWN_BLOCKED === 'true'
               ? `Vercel cooldown until ${process.env.RETRY_AFTER}; no deployment requested.`
               : cleanupIncomplete
               ? `Controlled-mode cleanup unconfirmed; Vercel ${observed || 'result unavailable'}.`
-              : observed === 'success'
-                ? `Preview ready; deployment trigger ${trigger.slice(0, 8)}.`
+              : aliasFailed
+                ? 'Preview built, but permanent alias assignment failed; inspect the workflow.'
+                : observed === 'success'
+                ? `Preview ready; deployment trigger ${(trigger || process.env.REUSE_SHA).slice(0, 8)}.`
                 : observed === 'failure' || observed === 'error'
-                  ? `Vercel reported ${observed}; trigger ${trigger.slice(0, 8)}.`
+                  ? (process.env.VERCEL_DESCRIPTION || `Vercel reported ${observed}; trigger ${trigger.slice(0, 8)}.`)
                   : trigger
                     ? 'Preview result unconfirmed: status polling failed, timed out, or was cancelled.'
                     : 'Preview request failed before a deployment trigger was recorded.';
@@ -316,6 +350,6 @@ jobs:
               sha: context.sha,
               context: 'Controlled preview',
               state,
-              description,
-              target_url: cleanupIncomplete ? workflowUrl : process.env.VERCEL_URL || workflowUrl,
+              description: description.slice(0, 140),
+              target_url: cleanupIncomplete || aliasFailed ? workflowUrl : process.env.VERCEL_URL || workflowUrl,
             });
