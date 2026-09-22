@@ -554,5 +554,12 @@
 :global(html[data-motion="reduced"]) .shell { position: relative; top: auto; height: auto; min-height: 46rem; }
 
 @media (max-width: 900px) {
-  .mobileResolution a { min-height: 2.75rem; }
+  .eyebrow,
+  .mobileSynthesis > ol > li > p,
+  .mobileResolution small { font-size: .75rem; line-height: 1.5; letter-spacing: .06em; }
+  .mobileSynthesis > ol > li > p { flex-wrap: wrap; }
+  .mobileSynthesis > ol > li > div p,
+  .mobileResolution > p { font-size: 1rem; line-height: 1.65; }
+  .mobileResolution li { font-size: .875rem; line-height: 1.5; }
+  .mobileResolution a { min-height: 2.75rem; font-size: .875rem; line-height: 1.5; letter-spacing: .02em; }
 }

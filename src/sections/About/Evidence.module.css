@@ -93,3 +93,18 @@
 :global(html[data-motion="reduced"]) .header { grid-template-columns: 1fr; gap: 1rem; }
 :global(html[data-motion="reduced"]) .camera { display: none; }
 :global(html[data-motion="reduced"]) .staticExperience { display: block; margin-top: 2rem; }
+
+@media (max-width: 1023px) {
+  /* Preserve card separation when reduced motion replaces the desktop scene. */
+  :global(html) .root .staticExperience { display: grid; gap: 1rem; }
+  .intro,
+  .staticExperience li p { font-size: 1rem; line-height: 1.65; }
+  .eyebrow,
+  .staticExperience small,
+  .staticExperience li > span,
+  .staticResolution span { font-size: .75rem; line-height: 1.5; letter-spacing: .06em; }
+  .staticBasis,
+  .staticTrace { font-size: .875rem; line-height: 1.6; }
+  .staticExperience article > a { font-size: .875rem; line-height: 1.5; letter-spacing: .02em; }
+  .staticExperience article header { grid-template-columns: 2.7rem minmax(0, 1fr); }
+}
