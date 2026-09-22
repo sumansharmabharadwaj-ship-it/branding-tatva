@@ -130,7 +130,7 @@ export function AboutSplitHero({
         style={prefersReducedMotion ? undefined : { opacity: contentOpacity }}
       >
         <Reveal>
-          <span className="inline-flex items-center rounded-full border border-ivory/55 bg-soil/35 px-4 py-1.5 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-ivory shadow-[0_8px_24px_rgba(20,17,14,0.16)] backdrop-blur-[2px] [text-shadow:0_2px_12px_rgba(0,0,0,0.72)]">
+          <span className="inline-flex items-center rounded-full border border-ivory/55 bg-soil/35 px-4 py-1.5 text-[clamp(0.7rem,1.2vw,0.8rem)] font-medium uppercase tracking-[0.25em] text-ivory shadow-[0_8px_24px_rgba(20,17,14,0.16)] backdrop-blur-[2px] [text-shadow:0_2px_12px_rgba(0,0,0,0.72)]">
             {eyebrow}
           </span>
         </Reveal>
@@ -199,7 +199,7 @@ export function AboutSplitHero({
                     className="absolute inset-x-0 bottom-0 px-5 pb-4 pt-10"
                     style={{ backgroundImage: "linear-gradient(0deg, rgba(20,17,14,0.9) 0%, rgba(20,17,14,0.06) 82%, rgba(20,17,14,0) 100%)" }}
                   >
-                    <p className="font-body text-[0.65rem] uppercase tracking-[0.18em] text-ivory/90">{body}</p>
+                    <p className="font-body text-[clamp(0.7rem,1.1vw,0.8rem)] uppercase tracking-[0.18em] text-ivory/90">{body}</p>
                   </div>
                 </div>
               </motion.div>
