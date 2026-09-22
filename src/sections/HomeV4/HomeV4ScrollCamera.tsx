@@ -7,6 +7,7 @@ import { useMotionPreference } from "@/components/MotionPreference";
 import { Pause, Play } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 import { focusHomeReading, isAvailableHomeTabStop } from "./homeReadingFocus";
+import { homeReadingOwnsMotion, watchHomeMotionOwnership } from "./homeMotionOwnership";
 
 const HANDOFF_SELECTOR = ".home-v4-handoff";
 const SCROLL_KEYS = new Set([
@@ -56,15 +57,38 @@ export function HomeV4ScrollCamera() {
     let targetY = 0;
     let frame = 0;
     let disposed = false;
+    let held = false;
     let lastY = window.scrollY;
     let lastTime = performance.now();
     let easedVelocity = 0;
     let easedShift = 0;
     let lastDirection = 1;
 
+    function resetScrollBaseline() {
+      lastY = window.scrollY;
+      lastTime = performance.now();
+    }
+
+    function holdCamera() {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
+      held = true;
+      surfaces.forEach((field) => {
+        if (field.dataset.gradientActive !== "false") field.dataset.gradientActive = "false";
+      });
+    }
+
     function renderCamera(now: number) {
       frame = 0;
-      if (disposed || document.hidden) return;
+      if (disposed) return;
+      if (document.hidden || homeReadingOwnsMotion(root)) {
+        holdCamera();
+        return;
+      }
+      if (held) {
+        resetScrollBaseline();
+        held = false;
+      }
       const viewport = Math.max(1, window.innerHeight);
       const currentY = window.scrollY;
       // A long idle interval must not swallow the next wheel gesture.
@@ -162,7 +186,11 @@ export function HomeV4ScrollCamera() {
     }
 
     function onPointerMove(event: PointerEvent) {
-      if (!finePointer.matches || event.pointerType === "touch") return;
+      if (disposed || !finePointer.matches || event.pointerType === "touch") return;
+      if (document.hidden || homeReadingOwnsMotion(root)) {
+        holdCamera();
+        return;
+      }
       const x = clamp(event.clientX / Math.max(1, window.innerWidth), 0, 1);
       const y = clamp(event.clientY / Math.max(1, window.innerHeight), 0, 1);
       targetX = x * 2 - 1;
@@ -176,39 +204,37 @@ export function HomeV4ScrollCamera() {
       scheduleCamera();
     }
 
-    function onVisibilityChange() {
-      window.cancelAnimationFrame(frame);
-      frame = 0;
-      if (document.hidden) {
-        surfaces.forEach((field) => { field.dataset.gradientActive = "false"; });
-      } else {
-        lastY = window.scrollY;
-        lastTime = performance.now();
-        easedVelocity = 0;
-        easedShift = 0;
-        scheduleCamera();
-      }
+    function onReadingChange() {
+      if (disposed) return;
+      if (document.hidden || homeReadingOwnsMotion(root)) holdCamera();
+      scheduleCamera();
+    }
+
+    function onLayoutChange() {
+      if (disposed) return;
+      resetScrollBaseline();
+      scheduleCamera();
     }
 
     root.dataset.cameraReady = "true";
     scheduleCamera();
 
     window.addEventListener("scroll", scheduleCamera, { passive: true });
-    window.addEventListener("resize", scheduleCamera, { passive: true });
+    window.addEventListener("resize", onLayoutChange, { passive: true });
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", onPointerLeave);
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    const resize = new ResizeObserver(scheduleCamera);
+    const stopWatchingOwnership = watchHomeMotionOwnership(onReadingChange);
+    const resize = new ResizeObserver(onLayoutChange);
     resize.observe(root);
 
     return () => {
       disposed = true;
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", scheduleCamera);
-      window.removeEventListener("resize", scheduleCamera);
+      window.removeEventListener("resize", onLayoutChange);
       window.removeEventListener("pointermove", onPointerMove);
       document.documentElement.removeEventListener("pointerleave", onPointerLeave);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
+      stopWatchingOwnership();
       resize.disconnect();
       surfaces.forEach((field) => {
         delete field.dataset.gradientActive;

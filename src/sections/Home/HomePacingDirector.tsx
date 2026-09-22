@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
+import { homeReadingOwnsMotion, watchHomeMotionOwnership } from "../HomeV4/homeMotionOwnership";
 
 const SECTION_SELECTOR = "[data-home-v4-chapter]";
 const SCROLL_INTENT_KEYS = new Set(["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "]);
@@ -17,9 +18,9 @@ function clamp(value: number, min = 0, max = 1) {
  * signal for the restored handoffs.
  */
 export function HomePacingDirector() {
-  const paused = useHydratedReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   useEffect(() => {
-    if (paused) return;
+    if (!hydrated || prefersReducedMotion) return;
     const main = document.getElementById("main-content");
     const homeRoot = main?.querySelector<HTMLElement>("[data-home-v4]");
     if (!main || !homeRoot) return;
@@ -36,25 +37,48 @@ export function HomePacingDirector() {
     let previousScrollY = window.scrollY;
     let smoothedVelocity = 0;
     let scrollIntentUntil = 0;
+    let disposed = false;
+
+    function motionIsHeld() {
+      return document.hidden || reducedMotion.matches || homeReadingOwnsMotion(root);
+    }
 
     function markScrollIntent(duration = SCROLL_INTENT_WINDOW_MS) {
       scrollIntentUntil = Date.now() + duration;
     }
 
-    function markPointerScrollIntent() {
+    function markPointerScrollIntent(event: WheelEvent | TouchEvent) {
+      if (disposed || event.defaultPrevented || event.ctrlKey || motionIsHeld()) return;
+      if ("touches" in event && event.touches.length > 1) return;
       markScrollIntent();
     }
 
     function markKeyboardScrollIntent(event: KeyboardEvent) {
-      if (!SCROLL_INTENT_KEYS.has(event.key)) return;
+      if (disposed || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.isComposing || !SCROLL_INTENT_KEYS.has(event.key) || motionIsHeld()) return;
       const target = event.target as HTMLElement | null;
-      if (target?.closest("a, button, input, select, textarea, [contenteditable='true']")) return;
+      if (target?.closest("a, button, input, select, textarea, [contenteditable]:not([contenteditable='false'])")) return;
       markScrollIntent(720);
+    }
+
+    function settleMotionState() {
+      window.clearTimeout(settleTimer);
+      settleTimer = 0;
+      scrollIntentUntil = 0;
+      previousScrollY = window.scrollY;
+      smoothedVelocity = 0;
+      root.dataset.homeMotion = "idle";
+      delete root.dataset.homeScrollDirection;
+      root.style.setProperty("--home-scroll-velocity", "0");
+    }
+
+    function holdMotionState() {
+      window.cancelAnimationFrame(motionFrame);
+      motionFrame = 0;
+      settleMotionState();
     }
 
     function clearMotionState() {
       window.clearTimeout(settleTimer);
-      scrollIntentUntil = 0;
       delete root.dataset.homeMotion;
       delete root.dataset.homeScrollDirection;
       root.style.removeProperty("--home-page-progress");
@@ -64,8 +88,9 @@ export function HomePacingDirector() {
 
     function publishMotionState() {
       motionFrame = 0;
-      if (reducedMotion.matches) {
-        clearMotionState();
+      if (disposed) return;
+      if (motionIsHeld()) {
+        holdMotionState();
         return;
       }
 
@@ -82,11 +107,7 @@ export function HomePacingDirector() {
         root.dataset.homeMotion = "live";
         window.clearTimeout(settleTimer);
         settleTimer = window.setTimeout(() => {
-          scrollIntentUntil = 0;
-          root.dataset.homeMotion = "idle";
-          delete root.dataset.homeScrollDirection;
-          smoothedVelocity = 0;
-          root.style.setProperty("--home-scroll-velocity", "0");
+          if (!disposed) settleMotionState();
         }, 160);
       } else if (root.dataset.homeMotion !== "live") {
         smoothedVelocity = 0;
@@ -100,12 +121,26 @@ export function HomePacingDirector() {
     }
 
     function scheduleMotionState() {
-      if (motionFrame) return;
+      if (disposed || document.hidden || motionFrame) return;
       motionFrame = window.requestAnimationFrame(publishMotionState);
+    }
+
+    function onReadingChange() {
+      if (disposed) return;
+      if (motionIsHeld()) holdMotionState();
+      else previousScrollY = window.scrollY;
+      scheduleMotionState();
+    }
+
+    function onLayoutChange() {
+      if (disposed) return;
+      holdMotionState();
+      scheduleMotionState();
     }
 
     sectionObserver = new IntersectionObserver(
       (entries) => {
+        if (disposed) return;
         entries.forEach((entry) => {
           const section = entry.target as HTMLElement;
           const active = entry.isIntersecting && entry.intersectionRatio >= 0.1;
@@ -132,6 +167,7 @@ export function HomePacingDirector() {
     );
 
     function registerSections() {
+      if (disposed) return;
       mainContent.querySelectorAll<HTMLElement>(SECTION_SELECTOR).forEach((section) => {
         if (observed.has(section)) return;
         observed.add(section);
@@ -153,29 +189,32 @@ export function HomePacingDirector() {
     mutationObserver.observe(mainContent, { childList: true, subtree: true });
 
     if (typeof ResizeObserver !== "undefined") {
-      layoutObserver = new ResizeObserver(scheduleMotionState);
+      layoutObserver = new ResizeObserver(onLayoutChange);
       layoutObserver.observe(root);
     }
 
     window.addEventListener("scroll", scheduleMotionState, { passive: true });
-    window.addEventListener("resize", scheduleMotionState, { passive: true });
+    window.addEventListener("resize", onLayoutChange, { passive: true });
     window.addEventListener("wheel", markPointerScrollIntent, { passive: true });
     window.addEventListener("touchmove", markPointerScrollIntent, { passive: true });
     window.addEventListener("keydown", markKeyboardScrollIntent);
-    reducedMotion.addEventListener("change", scheduleMotionState);
+    reducedMotion.addEventListener("change", onReadingChange);
+    const stopWatchingOwnership = watchHomeMotionOwnership(onReadingChange);
 
     return () => {
+      disposed = true;
+      stopWatchingOwnership();
       mutationObserver?.disconnect();
       sectionObserver?.disconnect();
       layoutObserver?.disconnect();
       window.cancelAnimationFrame(motionFrame);
       window.clearTimeout(settleTimer);
       window.removeEventListener("scroll", scheduleMotionState);
-      window.removeEventListener("resize", scheduleMotionState);
+      window.removeEventListener("resize", onLayoutChange);
       window.removeEventListener("wheel", markPointerScrollIntent);
       window.removeEventListener("touchmove", markPointerScrollIntent);
       window.removeEventListener("keydown", markKeyboardScrollIntent);
-      reducedMotion.removeEventListener("change", scheduleMotionState);
+      reducedMotion.removeEventListener("change", onReadingChange);
       observed.forEach((section) => {
         delete section.dataset.homeSceneObserved;
         delete section.dataset.homeSceneState;
@@ -183,7 +222,7 @@ export function HomePacingDirector() {
       observed.clear();
       clearMotionState();
     };
-  }, [paused]);
+  }, [hydrated, prefersReducedMotion]);
 
   return null;
 }
