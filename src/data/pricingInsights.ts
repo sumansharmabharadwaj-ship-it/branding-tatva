@@ -14,7 +14,7 @@ export const pricingInsightPosts: InsightPost[] = [
     "title": "How much does brand strategy cost in the UK, USA and Canada?",
     "seoTitle": "Brand Strategy Cost: UK, USA & Canada Prices",
     "excerpt": "Compare Branding Tatva’s starting prices in GBP, USD and CAD, see what changes the fee, and use a scope checklist before choosing a brand strategist.",
-    "directAnswer": "At Branding Tatva, Brand Beginning starts at £1,950 in the UK, US$2,800 in the USA and CA$3,200 in Canada. Brand Clarity starts at £4,500, US$6,500 and CA$7,500 respectively. These are this practice’s starting prices, not market averages or fixed quotes. The final fee depends on the research, offers, audiences and deliverables agreed in your proposal.",
+    "directAnswer": "At Branding Tatva, Foundation starts at £1,950 in the UK, US$2,800 in the USA and CA$3,200 in Canada. Full Brand System starts at £4,500, US$6,500 and CA$7,500 respectively. These are this practice’s starting prices, not market averages or fixed quotes. The final fee depends on the research, offers, audiences and deliverables agreed in your proposal.",
     "element": "earth",
     "topicSlug": "positioning",
     "primaryKeyword": "how much does brand strategy cost",
@@ -34,7 +34,7 @@ export const pricingInsightPosts: InsightPost[] = [
     "heroImageAlt": "A camera aperture ring beside a consulting worktable, the iris half open over a sheet of pricing notes",
     "keyTakeaways": [
       "Compare GBP, USD and CAD explicitly. A dollar sign alone does not establish the billing currency.",
-      "Brand Beginning and Brand Clarity have project starting prices; Brand Partnership has a monthly starting price.",
+      "Foundation and Full Brand System have project starting prices; Brand Partnership has a monthly starting price.",
       "Research depth, audiences, markets and implementation affect the fee. Compare the same scope across proposals.",
       "Ask who does the work, what your team receives and which revisions or additional tasks need a separate quote.",
       "A brand engagement can clarify the offer and its expression. It cannot guarantee rankings, enquiries or sales."
@@ -71,12 +71,12 @@ export const pricingInsightPosts: InsightPost[] = [
         "heading": "Branding Tatva’s starting prices by country",
         "paragraphs": [
           "The figures below are Branding Tatva’s published starting prices. They describe one practice’s offers and do not represent a survey of agencies or a market average. They are regional prices, not live currency conversions.",
-          "Brand Beginning and Brand Clarity are project engagements. Brand Partnership is ongoing work priced monthly. A consultation establishes which scope fits; the written proposal confirms the fee and inclusions."
+          "Foundation and Full Brand System are project engagements. Brand Partnership is ongoing work priced monthly. A consultation establishes which scope fits; the written proposal confirms the fee and inclusions."
         ],
         "bullets": [
-          "United Kingdom · GBP: Brand Beginning from £1,950; Brand Clarity from £4,500; Brand Partnership from £1,100 per month.",
-          "United States · USD: Brand Beginning from US$2,800; Brand Clarity from US$6,500; Brand Partnership from US$1,500 per month.",
-          "Canada · CAD: Brand Beginning from CA$3,200; Brand Clarity from CA$7,500; Brand Partnership from CA$1,900 per month."
+          "United Kingdom · GBP: Foundation from £1,950; Full Brand System from £4,500; Brand Partnership from £1,100 per month.",
+          "United States · USD: Foundation from US$2,800; Full Brand System from US$6,500; Brand Partnership from US$1,500 per month.",
+          "Canada · CAD: Foundation from CA$3,200; Full Brand System from CA$7,500; Brand Partnership from CA$1,900 per month."
         ],
         "callout": {
           "label": "Before comparing quotes",
@@ -153,15 +153,15 @@ export const pricingInsightPosts: InsightPost[] = [
     "faq": [
       {
         "question": "How much does brand strategy cost in the UK?",
-        "answer": "Branding Tatva’s UK starting prices are £1,950 for Brand Beginning, £4,500 for Brand Clarity and £1,100 per month for Brand Partnership. These are GBP prices for this practice, not UK market averages. The proposal confirms the final scope and fee."
+        "answer": "Branding Tatva’s UK starting prices are £1,950 for Foundation, £4,500 for Full Brand System and £1,100 per month for Brand Partnership. These are GBP prices for this practice, not UK market averages. The proposal confirms the final scope and fee."
       },
       {
         "question": "How much does brand strategy cost in the USA?",
-        "answer": "Branding Tatva’s US starting prices are US$2,800 for Brand Beginning, US$6,500 for Brand Clarity and US$1,500 per month for Brand Partnership. The currency is USD. Research, audiences and deliverables affect the final proposal."
+        "answer": "Branding Tatva’s US starting prices are US$2,800 for Foundation, US$6,500 for Full Brand System and US$1,500 per month for Brand Partnership. The currency is USD. Research, audiences and deliverables affect the final proposal."
       },
       {
         "question": "How much does brand strategy cost in Canada?",
-        "answer": "Branding Tatva’s Canadian starting prices are CA$3,200 for Brand Beginning, CA$7,500 for Brand Clarity and CA$1,900 per month for Brand Partnership. The currency is CAD. State any French-language or bilingual requirements when discussing the scope."
+        "answer": "Branding Tatva’s Canadian starting prices are CA$3,200 for Foundation, CA$7,500 for Full Brand System and CA$1,900 per month for Brand Partnership. The currency is CAD. State any French-language or bilingual requirements when discussing the scope."
       },
       {
         "question": "Does brand strategy include a logo and website?",

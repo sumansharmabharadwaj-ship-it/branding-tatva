@@ -87,7 +87,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
               <div>
                 <Logo light className="scale-90 origin-left" />
                 <p className="mt-3 text-sm text-ivory/80">
-                  A solo practice for UK service businesses, working remotely. Suman leads the thinking, writing, and direction. Also serving founders in India and the US.
+                  A solo practice for service businesses in the UK, USA, Canada and India, working remotely. Suman leads the thinking, writing, and direction.
                 </p>
               </div>
             </div>
