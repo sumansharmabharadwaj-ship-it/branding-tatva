@@ -1,184 +1,216 @@
 import type { InsightPost } from "@/data/pillarInsights";
 
-// What a brand identity package includes — the second content gap from the
-// organic leads keyword set, sitting one search before purchase. The
-// strategy vs identity guide argues the order of spend; this one opens the
-// box and names the contents, so a buyer can read any quote line by line.
-// Unsourced by design: checklist knowledge, argued rather than cited.
+// A practical commissioning checklist. Scope examples are illustrative;
+// copyright and contrast guidance cite the primary sources they describe.
+type SourcedBuyerGuide = InsightPost & {
+  sources: { title: string; publisher: string; url: string; note?: string }[];
+};
 
-export const identityPackageInsightPosts: InsightPost[] = [
+export const identityPackageInsightPosts: SourcedBuyerGuide[] = [
   {
-    slug: "what-a-brand-identity-package-includes",
-    title: "What a brand identity package includes, and what the cheap ones leave out",
-    seoTitle: "What's included in a brand identity package: the full contents",
-    excerpt:
-      "Every studio sells a brand identity package, and the phrase hides a tenfold difference in contents. The gap between a logo folder and a working identity system is exactly where most branding budgets quietly fail.",
-    directAnswer:
-      "A complete brand identity package has three layers. The decisions layer records the strategy the design must carry: positioning summary, message hierarchy, tone of voice. The system layer is the visible identity: the logo suite with its variations, colour with exact codes, licensed typography, image style, and the rules for each. The application layer proves the system on the surfaces buyers actually meet, from website and proposal templates to social formats, delivered as editable source files with full ownership transferred. A quote missing a layer is selling artefacts, and artefacts drift into inconsistency within a year.",
-    element: "fire",
-    topicSlug: "distinctive-brand",
-    primaryKeyword: "what is included in a brand identity package",
-    secondaryKeywords: [
+    "slug": "what-a-brand-identity-package-includes",
+    "title": "What should a brand identity package include? A buyer’s checklist",
+    "seoTitle": "Brand Identity Package: Deliverables and Handover Checklist",
+    "excerpt": "Compare brand identity proposals: logo files, colour, typography, templates, guidelines and usage rights, with a practical handover checklist for UK businesses.",
+    "directAnswer": "A brand identity proposal should name the visual assets, usage rules, applications and handover included in the fee. Check logo variations, colour specifications, typography, image direction and the templates your team needs. Establish whether strategy and messaging already exist or need separate work. Agree editable files, software access and usage rights before commissioning. A focused logo package can be suitable when the wider system is already in place.",
+    "element": "fire",
+    "topicSlug": "distinctive-brand",
+    "primaryKeyword": "what is included in a brand identity package",
+    "secondaryKeywords": [
       "brand identity package contents",
       "brand identity deliverables",
       "brand guidelines checklist",
       "logo package file formats",
-      "brand identity package cost",
+      "brand identity package cost"
     ],
-    searchIntent:
-      "Open the box before buying: the full contents of a serious brand identity package, layer by layer, with the omissions that mark a cheap one and the questions that expose a thin quote.",
-    publishedAt: "2026-09-22",
-    updatedAt: "2026-09-22",
-    readingTime: "8 min read",
-    heroImage: "/images/generated/insights-v2/page-foundation-folio.webp",
-    heroImageAlt:
-      "An open folio holding a curated set of material samples: pale stone, travertine, fluted glass, brass discs and bars, arranged across its pages in warm light",
-    keyTakeaways: [
-      "One phrase covers a tenfold range of contents. Compare packages by layer, never by price, because the missing layer is where the money leaks.",
-      "The decisions layer comes first: positioning, message hierarchy, and tone are what the design must carry. A package without them buys taste.",
-      "The system layer is rules as much as artefacts: a logo suite, colour codes, licensed type, and image style, each with instructions for use.",
-      "The application layer is where identity survives contact with reality: templates for the surfaces your buyers actually meet, in editable files you own.",
-      "Cheap packages omit quietly: guidelines, font licences, source files, and the message layer. Each omission returns later as an invoice.",
+    "searchIntent": "Compare brand identity deliverables, clarify exclusions and rights, and prepare a usable brief before commissioning a package.",
+    "publishedAt": "2026-09-22",
+    "updatedAt": "2026-09-22",
+    "readingTime": "9 min read",
+    "heroImage": "/images/generated/insights-v2/page-foundation-folio.webp",
+    "heroImageAlt": "An open folio holding a curated set of material samples: pale stone, travertine, fluted glass, brass discs and bars, arranged across its pages in warm light",
+    "keyTakeaways": [
+      "Compare the named deliverables and responsibilities alongside price. A smaller scope can be the right fit.",
+      "Existing strategy can supply the design brief; fresh research, positioning and messaging need explicit scope.",
+      "Specify how the identity works in the places buyers encounter it: proposals, websites, documents and other relevant materials.",
+      "Agree editable files, usable exports, software requirements and a practical handover exercise.",
+      "Clarify ownership and licences separately. Payment and file delivery do not, by themselves, settle copyright ownership in the UK."
     ],
-    framework: {
-      title: "The three layer checklist",
-      introduction:
-        "Read any identity quote against these five checkpoints, in order. A serious studio can point to every line of its proposal and say which layer it serves; a thin package goes silent after the second checkpoint.",
-      steps: [
+    "framework": {
+      "title": "Five questions for an identity proposal",
+      "introduction": "Use these questions to record what is included, what your team supplies and what needs another quote. The checklist is a commissioning aid, not a fixed package every business must buy.",
+      "steps": [
         {
-          title: "Decisions on paper",
-          description:
-            "A positioning summary, a message hierarchy, and a tone of voice definition, written before any visual work. These pages are what separates aimed design from tasteful guessing, and their absence is the single most reliable marker of a decorative package.",
+          "title": "What guides the design?",
+          "description": "Identify the audience, offer, positioning and existing evidence. Confirm whether the provider reviews supplied strategy or develops it within the project."
         },
         {
-          title: "The core system",
-          description:
-            "The logo suite: primary mark, secondary lockups, an icon or favicon version, clear space and minimum sizes, and behaviour on light, dark, and photographic grounds. Every variation exists because a real surface demands it.",
+          "title": "Which assets arrive?",
+          "description": "Name the logo variations, colour specifications, typography and image direction. Match each deliverable to a use your business actually has."
         },
         {
-          title: "The surrounding assets",
-          description:
-            "Colour with exact codes for print and screen, typography with the licences to use it, an image and illustration style, and the verbal register written down. Recognition research keeps finding that these carry more memory than the mark itself.",
+          "title": "Where will they work?",
+          "description": "List the website, proposal, social or print applications included. Separate a design mockup from an editable template or a working website."
         },
         {
-          title: "Application templates",
-          description:
-            "The system proven on your actual surfaces: website components or full design, proposal and deck templates, social formats, email signature, invoice, and whatever your category adds, from packaging to signage. Templates are where buyers meet the brand.",
+          "title": "Who can maintain them?",
+          "description": "Specify file formats, editing software, account access, instructions and a handover session. Ask a colleague to complete a typical task with the supplied material."
         },
         {
-          title: "Governance and handover",
-          description:
-            "Guidelines a stranger could follow, editable source files, organised exports in every needed format, and intellectual property assigned in writing on final payment. Handover quality decides whether the identity survives its second year.",
-        },
-      ],
+          "title": "What are the terms?",
+          "description": "Confirm price, currency, revisions, dates, approval responsibilities and additional costs. Record the agreed rights and any third party licences."
+        }
+      ]
     },
-    sections: [
+    "sections": [
       {
-        id: "the-quote-test",
-        heading: "One phrase, a tenfold range of contents",
-        paragraphs: [
-          "A brand identity package can mean a logo with a colour swatch, and it can mean a governed system that runs every surface a business owns for a decade. Both arrive under the same phrase, quoted anywhere from a few hundred to many tens of thousands, which makes the phrase itself useless for comparison.",
-          "The confusion serves the seller. A buyer who compares prices across incomparable contents will usually anchor on the middle quote and assume the contents converge. They diverge wildly, and the divergence is invisible until months later, when the first proposal needs writing and the package turns out to contain adjectives where the message hierarchy should be.",
-          "So compare contents, layer by layer, before comparing a single price. The three layers below are the whole anatomy; every legitimate line item in any identity quote belongs to one of them.",
+        "id": "the-quote-test",
+        "heading": "Compare the scope before comparing package names",
+        "paragraphs": [
+          "“Brand identity package” is a description to investigate. One proposal may cover a logo and basic usage notes; another may include research, messaging, templates and implementation. Either can fit a brief. The useful comparison is what your business needs against what each provider agrees to deliver.",
+          "The Design Business Association’s proposal guidance asks buyers to look for the approach, timetable, costs and deliverables. Use that as a starting point, then ask for clarification where a line such as “brand rollout” leaves the finished work unclear.",
+          "Branding Tatva provides brand strategy and identity services, so this guide reflects a provider’s perspective. The checklist and examples below are practical suggestions. They are not findings from a survey of agencies or claims that a particular price predicts quality."
         ],
-        callout: {
-          label: "The plain version",
-          text: "Compare packages by layer, never by price. The missing layer is the future invoice.",
-        },
+        "callout": {
+          "label": "Make quotes comparable",
+          "text": "Give each provider the same brief. Mark each requested item as included, supplied by your team, optional or excluded."
+        }
       },
       {
-        id: "layer-one-decisions",
-        heading: "Layer one: the decisions the design must carry",
-        paragraphs: [
-          "An identity exists to deposit a chosen association in buyer memory, which means someone has to choose the association. The decisions layer records that choice: a one page positioning summary, a message hierarchy ordering what gets said first, second, and rarely, and a tone of voice that keeps three different writers sounding like one author.",
-          "Studios skip this layer for an honest reason: it is thinking rather than drawing, and many design shops sell drawing. The result is design aimed at taste, and taste converges across the category until ten competitors share one aesthetic. The strategy vs identity guide in this library makes the full argument; the short version is that unmade decisions get made anyway, by the designer, by accident.",
-          "A package can legitimately import this layer rather than produce it, when a strategy document already exists. What a serious package can never do is proceed without it.",
-        ],
+        "id": "layer-one-decisions",
+        "heading": "Establish which decisions the design must carry",
+        "paragraphs": [
+          "Start with the priority buyer, the offer and the reason someone would choose it. Share your current positioning, customer questions and examples of how the business explains itself. The provider can then identify which decisions are settled and which need investigation.",
+          "An identity project can use an existing strategy. New positioning, naming, interviews, a message hierarchy and a full tone of voice guide are separate tasks to discuss. A visual identity fee does not establish that all of them are included.",
+          "Illustrative UK consultancy brief: the founder already has an agreed audience and service proposition, but proposals and website pages look unrelated. The initial need might be a coherent visual system and proposal template. If interviews instead reveal that buyers misunderstand the offer, the team can discuss a messaging scope before committing to design. This is an example, not a client result."
+        ]
       },
       {
-        id: "layer-two-the-system",
-        heading: "Layer two: the visible system and its rules",
-        paragraphs: [
-          "This is the layer everyone pictures: the logo suite with primary mark, secondary lockups, and an icon version, each with clear space, minimum sizes, and behaviour on light, dark, and photographic backgrounds. Colour specified in exact codes for screen and print. Typography chosen and licensed, with the licence documented, because an unlicensed font on a growing business is a legal letter waiting to be posted.",
-          "Around the mark sit the assets that do most of the remembering: the image style, the illustration or iconography language, and the written register. Distinctive asset research is consistent on this point: a brand is recognised by its colour and its way of speaking at distances where no logo resolves, so the surrounding system earns more recognition per rupee, pound, or dollar than another round of logo revisions.",
-          "The test of this layer is rules. A folder of beautiful files with no usage instructions decays into inconsistency within a year, one well meant improvisation at a time. Artefacts plus rules is a system; artefacts alone is decoration with a deadline.",
+        "id": "layer-two-the-system",
+        "heading": "Specify the visual assets and their usage rules",
+        "paragraphs": [
+          "Ask the designer to show how the proposed logo works at the sizes and on the backgrounds you use. A presentation mockup alone does not show whether the mark remains legible in a small website header or an email signature. Request the variations needed for those uses.",
+          "Colour and typography instructions should explain practical choices: text on a light background, a reversed mark on a dark surface, document headings and fallback fonts. Ask which combinations have been checked in the applications you are commissioning.",
+          "For digital text, WCAG 2.2’s AA contrast criterion generally requires 4.5:1, or 3:1 for qualifying large text. Text within a logo is exempt from that criterion; the exception does not cover ordinary branded page copy. Contrast is one accessibility check, not proof that a whole website meets WCAG. The W3C explanation below gives the conditions and exceptions."
         ],
-        bullets: [
-          "Logo suite: primary, secondary lockups, icon, clear space, minimum sizes, background behaviour",
-          "Colour: exact values for screen and print, with hierarchy and accessibility contrast noted",
-          "Typography: display and body families, licensed, with fallbacks for email and documents",
-          "Image and illustration style, defined with examples of yes and no",
-          "Verbal identity: tone, vocabulary, and the sentences the brand would never say",
-        ],
+        "bullets": [
+          "Logo: required variations, clear space, minimum sizes and examples on the intended backgrounds.",
+          "Colour: values for agreed screen and print uses, with text and background pairings identified.",
+          "Typography: families, weights, hierarchy, fallback choices and the licence details your team needs.",
+          "Images and illustration: examples of the intended style and clarity on whether production or sourcing is included.",
+          "Guidelines: instructions and worked examples for the people who will apply the identity."
+        ]
       },
       {
-        id: "layer-three-application",
-        heading: "Layer three: application, where identity meets a buyer",
-        paragraphs: [
-          "A buyer never meets a style guide. They meet a website, a proposal, a social post, an invoice, an email signature. The application layer proves the system on those exact surfaces and hands over templates, so the identity survives the moment the studio leaves and the Tuesday afternoon someone needs a deck by five.",
-          "Which applications belong in the package depends entirely on where your buyers actually encounter you, which is why a fixed application list in a quote deserves a question. A clinic needs signage and appointment materials; a consultancy needs proposals and a deck; a product business needs packaging. Paying for the seller's standard list instead of your buyer's actual surfaces is the most common form of quiet waste in this layer.",
-          "Handover completes the layer: editable source files, organised exports in every format a printer or developer will ask for, guidelines a new freelancer could follow unsupervised, and the intellectual property assigned to you in writing on final payment. Every one of those items has a market of businesses discovering, years later, that it was missing.",
+        "id": "layer-three-application",
+        "heading": "Name the templates, files and handover tasks",
+        "paragraphs": [
+          "Choose applications around your work. A consultancy might prioritise proposals and presentation slides; a clinic might need appointment information and signage. These are illustrative priorities. Record the number and purpose of the templates, the software used and who supplies the text.",
+          "Keep design, production and implementation distinct in the quote. A website visual does not include development unless agreed. An email signature design may still need setup. Printing, photography, copywriting and migration of existing material can each involve additional work.",
+          "Agree a handover task before final approval: a colleague opens a supplied template, replaces a heading and image, adds a page and exports a usable PDF. Check the result together. This gives you a practical way to identify missing instructions, software access or assets before the engagement closes."
         ],
+        "bullets": [
+          "Editable masters in the agreed application, with the required software and account access identified.",
+          "Appropriate exports, such as SVG for web use, PNG with transparency where needed and a PDF prepared to the printer’s specification.",
+          "A file index distinguishing approved versions, working files and any material excluded from handover.",
+          "Template instructions and a named contact for agreed support or later changes."
+        ]
       },
       {
-        id: "what-cheap-packages-omit",
-        heading: "What the cheap packages leave out",
-        paragraphs: [
-          "A low quote is rarely dishonest; it simply omits, and the omissions follow a pattern. Knowing the pattern turns any quote into a readable document: whatever is absent from the list below is what the price bought its way out of.",
+        "id": "what-cheap-packages-omit",
+        "heading": "Check exclusions at every price",
+        "paragraphs": [
+          "A lower fee can reflect a narrower brief, supplied assets or less implementation. A higher fee does not establish that every item below is included. Ask each provider the same questions and decide which exclusions matter to your team.",
+          "Phasing can be useful. You might agree the core identity and a proposal template first, then add social templates when the team has a content plan. Record what later work depends on and how it will be quoted."
         ],
-        bullets: [
-          "The decisions layer entirely, so the design aims at taste and the messaging stays unwritten",
-          "Usage rules and guidelines, so consistency depends on memory and goodwill",
-          "Font licences, leaving the business using type it has no right to",
-          "Editable source files, making every future change a fresh invoice to the original studio",
-          "The application templates, so the beautiful system meets reality unassisted",
-          "Written transfer of intellectual property, leaving ownership ambiguous exactly when the business becomes worth arguing over",
-        ],
+        "bullets": [
+          "Research and strategy: what is reviewed, what is created and what the client supplies?",
+          "Revisions: how many review stages are included, who approves them and what counts as a change of brief?",
+          "Applications: which finished templates or implemented materials will you receive?",
+          "Purchases: who pays for fonts, stock assets, subscriptions, printing or specialist production?",
+          "Support: what is included after handover, for how long and how are later changes priced?"
+        ]
       },
       {
-        id: "reading-a-quote",
-        heading: "Reading a quote before signing it",
-        paragraphs: [
-          "Put any proposal through three questions. Which layer does each line item serve, and is any layer empty? What exactly arrives at handover, named as files and formats rather than outcomes? And what happens when something needs changing in month eight, at whose cost, in whose files?",
-          "Sellers comfortable with those questions tend to run complete packages; the selection guide in this library covers the wider vetting. Sellers who answer with adjectives are quoting decoration, and decoration is only cheap until the day it has to work.",
-        ],
-        callout: {
-          label: "The working test",
-          text: "Every line item names its layer, every deliverable names its file format, and every future change names its owner. Anything vaguer is priced to disappoint.",
-        },
+        "id": "ownership-and-licences",
+        "heading": "Clarify copyright and licences before commissioning",
+        "paragraphs": [
+          "For UK commissioned work, the Intellectual Property Office explains that the creator generally owns copyright initially unless otherwise agreed in writing. Commissioning a design, paying an invoice or receiving its files does not by itself establish that you own its copyright.",
+          "A licence gives permission to use work on agreed terms; an assignment transfers copyright ownership. GOV.UK explains that a copyright transfer requires a written agreement signed by the owner. Ask the provider to identify the arrangement for original work and the rights available for any third party material.",
+          "For fonts, photographs and other licensed assets, request the applicable terms and ask who needs to hold the licence for your intended use. Do not assume that every font file can be passed to another supplier. A qualified adviser can review uncertain contract terms, particularly where the parties work in different countries."
+        ]
       },
+      {
+        "id": "reading-a-quote",
+        "heading": "Turn the checklist into a UK buying brief",
+        "paragraphs": [
+          "Write a short brief describing the business, priority audience, materials that need changing and what your team already has. Add your desired launch date and the person responsible for approvals. Ask for a response that separates essential work from optional additions.",
+          "For a UK purchase, request the fee in GBP and ask the provider to state applicable taxes, payment stages, licence costs and any expenses. For remote work, agree meeting times, feedback deadlines and where the current files will live. These are points to clarify, not a universal contract template.",
+          "Bring the same checklist to Branding Tatva when comparing our engagement formats. A 30 minute conversation can establish which questions need resolving; the written scope confirms the work and fee. Choose based on the proposal, relevant project evidence and the responsibilities your team can take on."
+        ],
+        "callout": {
+          "label": "Before approval",
+          "text": "Can your team explain what arrives, what remains outside scope, who can use and edit it, and what happens if the brief changes? Resolve unclear answers before agreeing the work."
+        }
+      }
     ],
-    faq: [
+    "faq": [
       {
-        question: "How much does a brand identity package cost?",
-        answer:
-          "The honest range runs from a few hundred for a logo folder to well past fifty thousand at large agencies, and the layers explain the spread. A complete three layer package from an independent studio or strategist typically starts in the low thousands: published starting figures at this practice sit at £1,950 in the UK, $2,800 in the US, and CA$3,200 in Canada. The pricing guide in this library breaks the tiers down; the rule here is simpler, which is to price contents rather than the phrase.",
+        "question": "How much does a brand identity package cost?",
+        "answer": "The fee depends on the agreed research, design and applications. At Branding Tatva, Foundation starts at £1,950 in the UK, US$2,800 in the USA and CA$3,200 in Canada. These are this practice’s regional starting prices, not market averages or fixed quotes for every checklist item. Compare the service scope and request a written proposal."
       },
       {
-        question: "Does a small business really need brand guidelines?",
-        answer:
-          "Smaller businesses need them more, because the applying hands change more often: the founder today, a freelancer next quarter, an agency next year. Guidelines are how the identity survives that turnover. They can be short, ten well chosen pages beat a hundred ceremonial ones, but the rules for logo, colour, type, and voice belong in writing from day one.",
+        "question": "Does a small business need brand guidelines?",
+        "answer": "A short guide can help when several people prepare materials. Include the rules and examples they actually use, then check whether a colleague can complete a task with them. Choose the contents around the work rather than a promised page count."
       },
       {
-        question: "What file formats should the handover include?",
-        answer:
-          "Vector originals of every mark in editable form, plus organised exports: SVG and PDF for print and web, PNG at usable sizes with transparent backgrounds, and favicon formats. Colour values for screen and print, the licensed font files or the licence references, and the source files for every template. The single most expensive omission is editable sources, because it ties every future change to the original studio's calendar and rates.",
+        "question": "What file formats should the handover include?",
+        "answer": "Agree editable source formats your team can use, plus exports for the intended applications. These may include SVG, transparent PNG and a print PDF that meets the printer’s requirements. Confirm template software, access and licence details. A file extension alone does not establish editability or usage rights."
       },
       {
-        question: "Can I buy the logo now and the rest of the package later?",
-        answer:
-          "Sequence matters more than scope. Buying the decisions layer first and the design later works well, and staging the application templates by need is ordinary practice. The staging that fails is a logo bought before any decisions exist, because the mark then hardens guesses about positioning into artwork, and the later layers inherit the guesswork at full price.",
+        "question": "Can I commission a logo now and other materials later?",
+        "answer": "Yes, a phased scope can work when the business decisions and dependencies are clear. Identify the immediate uses, what later templates will require and whether the existing identity or strategy can be reused. Ask how later work will be quoted."
       },
       {
-        question: "What questions expose a thin package before I pay?",
-        answer:
-          "Ask which strategy inputs the design will follow and where they come from. Ask for the deliverables list as named files and formats. Ask what the usage guidelines cover and how long they are. Ask who owns the work and when ownership transfers. Ask what a change in month eight costs. Five answers, and the quote has told you which layers exist and which were priced away.",
+        "question": "What should I ask before approving a package?",
+        "answer": "Ask which inputs guide the design, which assets and applications arrive, how feedback is handled and what remains excluded. Request a handover example and clarify software, support and usage terms. Compare those answers with the same brief across providers."
       },
+      {
+        "question": "Will I own the copyright once I have paid?",
+        "answer": "Do not assume so. UK commissioning guidance distinguishes paying for work from acquiring copyright. Establish whether your agreement grants a licence or transfers ownership, and clarify any third party assets separately. Get advice if the proposed rights do not clearly cover your intended use."
+      }
     ],
-    relatedSlugs: [
+    "relatedSlugs": [
       "brand-strategy-vs-brand-identity",
       "how-to-choose-a-branding-agency",
-      "distinctive-brand-assets-audit",
+      "distinctive-brand-assets-audit"
     ],
-  },
+    "useEditorialArtwork": false,
+    "sources": [
+      {
+        "title": "How to buy design: asking for a proposal document",
+        "publisher": "Design Business Association",
+        "url": "https://www.dba.org.uk/resources/review-links-how-to-buy-design-08-asking-for-a-proposal-document/",
+        "note": "Commissioning guidance on proposal contents and clarification. The checklist and consultancy example here are Branding Tatva’s practical suggestions."
+      },
+      {
+        "title": "Ownership of copyright works",
+        "publisher": "Intellectual Property Office, GOV.UK",
+        "url": "https://www.gov.uk/guidance/ownership-of-copyright-works",
+        "note": "UK guidance on initial copyright ownership, including commissioned work."
+      },
+      {
+        "title": "Using somebody else’s intellectual property: copyright",
+        "publisher": "GOV.UK",
+        "url": "https://www.gov.uk/using-somebody-elses-intellectual-property/copyright",
+        "note": "Distinguishes licensing from ownership transfer and explains the written agreement required for a transfer."
+      },
+      {
+        "title": "Understanding WCAG 2.2: Contrast (Minimum)",
+        "publisher": "World Wide Web Consortium (W3C)",
+        "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+        "note": "Explains text contrast thresholds and exceptions, including the limited exception for text within logos."
+      }
+    ]
+  }
 ];

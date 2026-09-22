@@ -115,6 +115,11 @@ export const insightPathways: Record<string, InsightPathway> = {
 // Keep the topic's proof and conversation paths, while making the service
 // destination specific to the article a visitor has just read.
 const articleServiceLinks: Record<string, InsightPathLink> = {
+  "what-a-brand-identity-package-includes": {
+    href: "/services#desire",
+    label: "Compare Branding Tatva’s identity scope and starting prices",
+    description: "Review the engagement formats and regional prices, then bring your deliverables checklist to a conversation with Suman.",
+  },
   "how-much-does-brand-strategy-cost": {
     href: "/services#desire",
     label: "Compare brand strategy scopes and starting prices",
