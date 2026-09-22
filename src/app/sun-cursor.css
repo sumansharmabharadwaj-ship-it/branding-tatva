@@ -59,7 +59,26 @@
   backdrop-filter: blur(10px);
 }
 
-@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+/* Touch uses the same sun just above the fingertip. It never intercepts
+   events, replaces native gestures, or adds a floating text label. */
+.sun-cursor[data-pointer="touch"] {
+  width: 26px;
+  height: 26px;
+  border-color: rgba(178, 132, 57, 0.88);
+  box-shadow: 0 0 10px rgba(255, 244, 220, 0.95), 0 0 24px rgba(199, 165, 107, 0.65);
+  transition: opacity 180ms ease-out;
+}
+
+.sun-cursor[data-pointer="touch"]::before {
+  inset: -8px;
+  opacity: 0.9;
+}
+
+.sun-cursor[data-pointer="touch"] + .spark-cursor-label {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
   .sun-cursor,
   .sun-cursor + .spark-cursor-label {
     display: none;

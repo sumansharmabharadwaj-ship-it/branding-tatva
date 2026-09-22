@@ -19,7 +19,8 @@
     "check:contact:hosted": "node scripts/run_contact_hosted_gate.mjs",
     "check:homepage": "node scripts/homepage_conversion_sequence_gate.cjs",
     "check:homepage:built": "node scripts/homepage_rendered_quality_gate.cjs",
-    "check:type": "node scripts/type_floor_gate.cjs"
+    "check:type": "node scripts/type_floor_gate.cjs",
+    "check:cursor": "node scripts/sun_cursor_input_gate.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
