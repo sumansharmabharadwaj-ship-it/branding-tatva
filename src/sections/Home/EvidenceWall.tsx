@@ -311,6 +311,7 @@ export function EvidenceWall() {
         videoMobile="/videos/pexels-fog-sunrise-mobile.mp4"
         videoWebm="/videos/pexels-fog-sunrise.webm"
         poster="/images/pexels-fog-sunrise-poster.jpg"
+        responsivePoster
       />
       <div className="evidence-cinematic__veil" aria-hidden="true" />
       <motion.div

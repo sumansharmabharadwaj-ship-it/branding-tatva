@@ -32,7 +32,7 @@
   pointer-events: none;
 }
 
-.tatva-observatory__film video,
+.tatva-observatory__film :is(video, img),
 .tatva-observatory__film > span {
   position: absolute;
   inset: 0;
@@ -40,7 +40,7 @@
   height: 100%;
 }
 
-.tatva-observatory__film video {
+.tatva-observatory__film :is(video, img) {
   object-fit: cover;
   object-position: 58% 48%;
   opacity: 0.52;
@@ -388,7 +388,7 @@ html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tatva-observatory__film video {
+  .tatva-observatory__film :is(video, img) {
     transform: none;
   }
 }
@@ -419,7 +419,7 @@ html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
     width: 100%;
   }
 
-  .tatva-observatory__film video {
+  .tatva-observatory__film :is(video, img) {
     transform: scale(calc(1.06 + var(--tatva-scroll-progress) * 0.065));
     transform-origin: 58% 48%;
     transition: transform 160ms linear;
@@ -446,7 +446,7 @@ html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
   }
 
   .tatva-observatory__frame,
-  .tatva-observatory__film video {
+  .tatva-observatory__film :is(video, img) {
     transform: none;
     transition: none;
   }
@@ -467,7 +467,7 @@ html[data-motion="reduced"] .tatva-observatory__stage {
   transition: none;
 }
 html[data-motion="reduced"] .tatva-observatory__frame,
-html[data-motion="reduced"] .tatva-observatory__film video {
+html[data-motion="reduced"] .tatva-observatory__film :is(video, img) {
   transform: none;
   transition: none;
 }

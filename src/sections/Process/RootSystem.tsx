@@ -238,7 +238,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                     exit={{ opacity: 0 }}
                     transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
                   >
-                    <BackgroundVideo video={stage.video} videoMobile={stage.videoMobile} poster={stage.poster} loop={false} />
+                    <BackgroundVideo video={stage.video} videoMobile={stage.videoMobile} poster={stage.poster} loop={false} responsivePoster posterSizes="(min-width: 768px) 50vw, 100vw" />
                   </motion.div>
                 </AnimatePresence>
               ) : (

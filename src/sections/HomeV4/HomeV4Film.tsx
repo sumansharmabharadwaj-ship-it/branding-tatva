@@ -12,11 +12,13 @@ export function HomeV4Film({
   mobile,
   poster,
   priority = false,
+  playbackRate = 1,
 }: {
   desktop: string;
   mobile: string;
   poster: string;
   priority?: boolean;
+  playbackRate?: number;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
@@ -56,7 +58,15 @@ export function HomeV4Film({
 
   return (
     <>
-      <Image src={poster} alt="" fill sizes="100vw" priority={priority} className={styles.poster} />
+      <Image
+        src={poster}
+        alt=""
+        fill
+        sizes="100vw"
+        priority={priority}
+        className={styles.poster}
+        style={{ visibility: hasFrame && !prefersReducedMotion ? "hidden" : "visible" }}
+      />
       <video
         ref={videoRef}
         src={source}
@@ -66,7 +76,7 @@ export function HomeV4Film({
         playsInline
         preload="none"
         aria-hidden="true"
-        data-home-playback-rate="1"
+        data-home-playback-rate={playbackRate}
         data-home-film-allowed={permitted ? "true" : "false"}
         onLoadedData={() => setHasFrame(true)}
         style={{ visibility: hasFrame && !prefersReducedMotion ? "visible" : "hidden" }}

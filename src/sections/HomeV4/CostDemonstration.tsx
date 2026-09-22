@@ -106,11 +106,12 @@ function MemoryDiagram({ resolved, still }: DiagramProps) {
       <path d="M60 83 H300" className={styles.scrollLine} pathLength="1" />
       {["First visit", "Next visit", "Later on"].map((label, index) => (
         <g key={label} transform={`translate(${60 + index * 120} 83)`}>
-          <motion.circle
-            r="35" fill="#1b2219" stroke={resolved ? "#c6a97a" : "#55594a"}
-            initial={false} animate={{ r: resolved ? 38 : 35 }}
+          <motion.g
+            initial={false} animate={{ scale: resolved ? 38 / 35 : 1 }}
             transition={{ duration: still ? 0 : .55, delay: still ? 0 : index * .1, ease: EASE }}
-          />
+          >
+            <circle r="35" fill="#1b2219" stroke={resolved ? "#c6a97a" : "#55594a"} vectorEffect="non-scaling-stroke" />
+          </motion.g>
           <motion.g
             initial={false} animate={{ opacity: resolved ? 0 : 1, scale: resolved ? .65 : 1, rotate: resolved ? -20 : 0 }}
             transition={{ duration: still ? 0 : .35, ease: EASE }}
