@@ -138,7 +138,7 @@
   transform-origin: top;
 }
 .answer:focus-within .answerRail i { transform: none !important; }
-.answer:focus-within > p { transform: none !important; }
+.answer:focus-within > .answerContent { transform: none !important; }
 .answer[aria-hidden="true"] { visibility: hidden; }
 /* Focus can arrive before the opening animation finishes. Measure and reveal
    the full answer immediately so its reading stays above the fixed controls. */
@@ -152,9 +152,31 @@
 }
 :global(.home-v4) .questions .answer:focus-visible { outline-offset: -3px; }
 .answer p {
-  margin: 0; padding: 0 2.2rem 1.5rem 2.8rem; color: #514b40;
+  margin: 0; color: #514b40;
   font-size: 1rem; line-height: 1.7; text-wrap: pretty;
 }
+.answerContent { padding: 0 2.2rem 1.5rem 2.8rem; }
+.answerAction {
+  position: relative; margin-top: .65rem; padding: .6rem .85rem;
+  border: 1px solid rgb(112 72 47 / 26%); border-radius: 1rem;
+  text-decoration: none; background: rgb(255 249 237 / 35%);
+  transition: background 220ms ease, border-color 220ms ease;
+}
+.answerAction:is(:hover, :focus-visible) { background: #eee3d2; border-color: #98623f; }
+.answerAction:focus-visible svg { transform: none; }
+/* Keep keyboard reading outside the decorative scroll reveal. A focused
+   answer and its action remain fully visible at either viewport edge. */
+.questionItem:focus-within, .questionItem[data-still="true"] {
+  animation: none; opacity: 1; transform: none;
+}
+.questionItem[data-still="true"] :is(.questionIcon, .questionButton, .questionButton > span, .textLink, .textLink svg) {
+  transition: none; translate: none;
+}
+.questionItem[data-still="true"] .textLink svg { transform: none; }
+.questionItem[data-still="true"] .questionRule { transform: scaleX(0) !important; }
+.questionItem[data-still="true"][data-open="true"] .questionRule { transform: none !important; }
+.questionItem[data-still="true"] .answer { height: 0 !important; }
+.questionItem[data-still="true"] .answer[aria-hidden="false"] { height: auto !important; }
 .auditNote {
   display: flex; flex-wrap: wrap; align-items: baseline;
   justify-content: space-between; gap: .3rem 1rem; padding-top: 1.4rem;
@@ -280,7 +302,7 @@
   .questionButton {
     grid-template-columns: 1.05rem minmax(0,1fr) 1.2rem; gap: .5rem; padding-block: 1rem;
   }
-  .answer p { padding: 0 .25rem 1rem 1.55rem; }
+  .answerContent { padding: 0 .25rem 1rem 1.55rem; }
   .answerRail { left: .5rem; bottom: 1rem; }
   .auditNote { display: block; }
   .invitationCopy h2 { max-width: 15ch; font-size: clamp(2.8rem, 10.7vw, 3.8rem); }
@@ -338,16 +360,17 @@
 @media (prefers-reduced-motion: reduce) {
   .answerRail i { transform: none !important; }
   .conversationTrack i { transform: none !important; }
-  .questionItem, .questionItem::before, .questionNumber, .questionIcon, .questionButton, .textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber { transition: none; }
+  .questionItem, .questionItem::before, .questionNumber, .questionIcon, .questionButton, .textLink, .textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber { transition: none; }
 }
 
 :global(html[data-motion="reduced"]) .questionItem::before { transition: none; }
 :global(html[data-motion="reduced"]) .answerRail i { transform: none !important; }
 :global(html[data-motion="reduced"]) .conversationTrack i { transform: none !important; }
 
-:global(html[data-motion="reduced"]) .questions :is(.questionNumber, .questionIcon, .questionButton, .textLink svg) {
+:global(html[data-motion="reduced"]) .questions :is(.questionNumber, .questionIcon, .questionButton, .textLink, .textLink svg) {
   transition: none;
 }
+:global(html[data-motion="reduced"]) .questionItem { animation: none; opacity: 1; transform: none; }
 
 :global(html[data-motion="reduced"]) .invitation :is(.textLink svg, .bookButton, .bookButton svg, .conversation h3, .conversation .stepNumber) {
   transition: none;

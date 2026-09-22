@@ -96,6 +96,7 @@ export function HomeV4Experience() {
 
       <section
         id="process"
+        tabIndex={-1}
         data-home-v4-chapter="process"
         data-home-chapter="process"
         data-home-section="process"

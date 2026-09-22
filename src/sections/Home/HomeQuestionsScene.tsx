@@ -20,9 +20,19 @@ const QUESTION_ORDER = [
   "Can we work remotely?",
 ] as const satisfies readonly (typeof faqs)[number]["question"][];
 
+const QUESTION_ACTIONS = {
+  "Can you help a brand new business?": { label: "Explore brand strategy", href: "/services#offerings" },
+  "Can you help an existing brand that already has an identity?": { label: "Check where the brand needs work", href: "/services#audit" },
+  "Can you actually implement, or just strategise?": { label: "See strategy in the work", href: "#evidence" },
+  "What does the work cost?": { label: "Compare scopes and starting prices", href: "/services#offerings" },
+  "How long does a project take?": { label: "Follow the project stages", href: "#process" },
+  "Can we work remotely?": { label: "Choose a time to talk", href: "/contact#call" },
+} as const satisfies Record<(typeof QUESTION_ORDER)[number], { label: string; href: string }>;
+
 // Keep the answers and the homepage's FAQ structured data in agreement.
 const QUESTIONS = QUESTION_ORDER.flatMap((question) =>
-  faqs.filter((item) => item.question === question),
+  faqs.filter((item) => item.question === question)
+    .map((item) => ({ ...item, action: QUESTION_ACTIONS[question] })),
 );
 
 function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, onKeyDown }: {
@@ -35,6 +45,8 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
   onKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => void;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
+  const [keyboardActivation, setKeyboardActivation] = useState(false);
+  const still = reducedMotion || keyboardActivation;
   const previousOpen = useRef(open);
   const copyControls = useAnimationControls();
   const { scrollYProgress } = useScroll({ target: rowRef, offset: ["start end", "end start"] });
@@ -57,25 +69,26 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
     // Focus may enter between the opening render and this effect. A reading
     // already owned by the keyboard must not restart its entrance motion.
     const answerHasFocus = rowRef.current?.querySelector('[role="region"]')?.contains(document.activeElement);
-    if (!opened || reducedMotion || answerHasFocus) return;
+    if (!opened || still || answerHasFocus) return;
     copyControls.set({ x: 6, y: 3 });
     void copyControls.start({ x: 0, y: 0, transition: { duration: .34, ease: [.22, 1, .36, 1] } });
     return () => copyControls.stop();
-  }, [open, reducedMotion, copyControls, settleCopy]);
+  }, [open, still, copyControls, settleCopy]);
 
   return (
     <motion.div
       ref={rowRef}
       className={styles.questionItem}
       data-open={open}
-      style={{ color: reducedMotion ? "#342f27" : readingInk }}
+      data-still={still}
+      style={{ color: still ? "#342f27" : readingInk }}
     >
       <motion.span
         aria-hidden="true"
         className={styles.questionRule}
         initial={false}
         animate={{ scaleX: open ? 1 : 0 }}
-        transition={{ duration: reducedMotion ? 0 : .38, ease: [.22, 1, .36, 1] }}
+        transition={{ duration: still ? 0 : .38, ease: [.22, 1, .36, 1] }}
       />
       <h3>
         <button
@@ -85,7 +98,10 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
           className={styles.questionButton}
           aria-expanded={open}
           aria-controls={answerId}
-          onClick={onToggle}
+          onClick={(event) => {
+            setKeyboardActivation(event.detail === 0);
+            onToggle();
+          }}
           onKeyDown={onKeyDown}
         >
           <span className={styles.questionNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
@@ -103,14 +119,25 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
         className={styles.answer}
         initial={false}
         animate={{ height: open ? "auto" : 0 }}
-        transition={{ duration: reducedMotion ? 0 : .34, ease: [.22, 1, .36, 1] }}
+        transition={{ duration: still ? 0 : .34, ease: [.22, 1, .36, 1] }}
         onFocusCapture={settleCopy}
         onPointerDown={settleCopy}
       >
         <span className={styles.answerRail} aria-hidden="true">
-          <motion.i style={{ scaleY: reducedMotion ? 1 : readingLine }} />
+          <motion.i style={{ scaleY: still ? 1 : readingLine }} />
         </span>
-        <motion.p initial={false} animate={copyControls}>{item.answer}</motion.p>
+        <motion.div className={styles.answerContent} initial={false} animate={copyControls}>
+          <p>{item.answer}</p>
+          {item.action.href.startsWith("#") ? (
+            <a href={item.action.href} className={`${styles.textLink} ${styles.answerAction}`}>
+              <span>{item.action.label}</span><ArrowRight size={17} aria-hidden="true" />
+            </a>
+          ) : (
+            <Link href={item.action.href} prefetch={false} className={`${styles.textLink} ${styles.answerAction}`}>
+              <span>{item.action.label}</span><ArrowRight size={17} aria-hidden="true" />
+            </Link>
+          )}
+        </motion.div>
       </motion.div>
     </motion.div>
   );
