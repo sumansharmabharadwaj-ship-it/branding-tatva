@@ -63,6 +63,23 @@ jobs:
               target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
             });
 
+      - name: Respect the Vercel deployment cooldown
+        id: cooldown
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { checkCooldown } = require('./scripts/vercel_preview_cooldown.cjs');
+            const result = await checkCooldown({ github, ...context.repo });
+            if (result.blocked) {
+              core.setOutput('blocked', 'true');
+              core.setOutput('retry_after', result.retryAfter);
+              core.summary.addHeading('Vercel cooldown: no deployment requested');
+              core.summary.addRaw(`Provider response: ${result.reason}\n\n`);
+              core.summary.addRaw(`Earliest permitted retry: ${result.retryAfter}. This is a conservative cooldown, not a guarantee of available quota.\n`);
+              await core.summary.write();
+              core.setFailed(`Vercel cooldown until ${result.retryAfter}; the preview branch remains disabled.`);
+            }
+
       - name: Set up pnpm for the delivery check
         uses: pnpm/action-setup@v4
         with:
@@ -94,6 +111,14 @@ jobs:
             echo "Release ${RELEASE} is stale because the branch now declares release ${current_release}." >&2
             exit 1
           fi
+
+          # Read the current branch's ledger after waiting for concurrency.
+          # Another request may have recorded a newer rejection in the meantime.
+          node <<'NODE'
+          const { readRecord, cooldownForStatus } = require('./scripts/vercel_preview_cooldown.cjs');
+          const cooldown = cooldownForStatus(readRecord()?.status);
+          if (cooldown?.blocked) throw new Error(`Vercel cooldown until ${cooldown.retryAfter}; deployment stays disabled.`);
+          NODE
 
           # Check the exact branch contents used by the trigger, including
           # any changes that arrived after the release request was queued.
@@ -212,6 +237,8 @@ jobs:
         id: cleanup
         if: always() && steps.enable.outputs.enable_sha != ''
         shell: bash
+        env:
+          ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
         run: |
           set -euo pipefail
 
@@ -230,10 +257,19 @@ jobs:
             config.git.deploymentEnabled ??= {};
             config.git.deploymentEnabled["august-8-isolated"] = false;
             fs.writeFileSync(file, `${JSON.stringify(config, null, 2)}\n`);
+            const statusFile = '/tmp/vercel-commit-status.json';
+            if (fs.existsSync(statusFile)) {
+              try {
+                const { recordRejection } = require('./scripts/vercel_preview_cooldown.cjs');
+                recordRejection(JSON.parse(fs.readFileSync(statusFile, 'utf8')), process.env.ENABLE_SHA);
+              } catch {
+                console.warn('Could not record a newer cooldown; preserve the existing ledger and disable the preview branch.');
+              }
+            }
           NODE
 
-            if ! git diff --quiet -- vercel.json; then
-              git add vercel.json
+            if ! git diff --quiet -- vercel.json vercel-preview-cooldown.json; then
+              git add vercel.json vercel-preview-cooldown.json
               git commit -m "Return august preview to controlled mode"
             fi
 
@@ -253,6 +289,8 @@ jobs:
           VERCEL_URL: ${{ steps.wait.outputs.target_url }}
           ENABLE_SHA: ${{ steps.enable.outputs.enable_sha }}
           CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
+          COOLDOWN_BLOCKED: ${{ steps.cooldown.outputs.blocked }}
+          RETRY_AFTER: ${{ steps.cooldown.outputs.retry_after }}
         with:
           script: |
             const observed = process.env.VERCEL_STATE;
@@ -261,7 +299,9 @@ jobs:
             const state = cleanupIncomplete
               ? 'error'
               : ['success', 'failure', 'error'].includes(observed) ? observed : 'error';
-            const description = cleanupIncomplete
+            const description = process.env.COOLDOWN_BLOCKED === 'true'
+              ? `Vercel cooldown until ${process.env.RETRY_AFTER}; no deployment requested.`
+              : cleanupIncomplete
               ? `Controlled-mode cleanup unconfirmed; Vercel ${observed || 'result unavailable'}.`
               : observed === 'success'
                 ? `Preview ready; deployment trigger ${trigger.slice(0, 8)}.`
