@@ -1,0 +1,40 @@
+name: Vercel deployment regression checks
+
+on:
+  push:
+    paths:
+      - vercel.json
+      - vercel-preview-cooldown.json
+      - scripts/vercel_preview_*.cjs
+      - .github/workflows/deploy-august-preview.yml
+      - .github/workflows/vercel-deployment-regression.yml
+  pull_request:
+    paths:
+      - vercel.json
+      - vercel-preview-cooldown.json
+      - scripts/vercel_preview_*.cjs
+      - .github/workflows/deploy-august-preview.yml
+      - .github/workflows/vercel-deployment-regression.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-deployment-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deployment-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check exact preview trigger and provider cooldown behavior
+        run: |
+          node scripts/vercel_preview_deploy_gate.cjs --self-test
+          node --test scripts/vercel_preview_status.test.cjs scripts/vercel_preview_cooldown.test.cjs

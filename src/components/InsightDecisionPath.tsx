@@ -1,14 +1,16 @@
-import Link from "next/link";
+import { TrackedLink } from "@/components/TrackedLink";
 import type { InsightPathway } from "@/data/insightPathways";
 
 export function InsightDecisionPath({
   pathway,
   className = "",
   id,
+  articleSlug,
 }: {
   pathway: InsightPathway;
   className?: string;
   id?: string;
+  articleSlug?: string;
 }) {
   const links = [pathway.service, pathway.proof, pathway.conversation];
 
@@ -34,8 +36,15 @@ export function InsightDecisionPath({
         <ol className="divide-y divide-soil/10 border-t border-soil/10">
           {links.map((link, index) => (
             <li key={link.href}>
-              <Link
+              <TrackedLink
                 href={link.href}
+                event="contextual_cta_clicked"
+                eventProps={{
+                  source: "insight_decision_path",
+                  article: articleSlug ?? "topic",
+                  route: ["service", "proof", "conversation"][index],
+                  destination: link.href,
+                }}
                 className="group grid gap-3 py-5 sm:grid-cols-[2.5rem_1fr_auto] sm:items-start sm:gap-4"
               >
                 <span className="font-display text-lg text-clay-ink">
@@ -55,7 +64,7 @@ export function InsightDecisionPath({
                 >
                   →
                 </span>
-              </Link>
+              </TrackedLink>
             </li>
           ))}
         </ol>

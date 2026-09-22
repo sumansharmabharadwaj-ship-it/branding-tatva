@@ -18,7 +18,7 @@ html[data-services-experience="active"] #situation[data-services-scene] {
   border-top: 1px solid #f2f0e829;
 }
 #authority [data-authority-signal-header] { display: block; }
-#authority [data-authority-signal-header] > p:first-child { color: #c4cbbb; font-size: 0.65rem; }
+#authority [data-authority-signal-header] > p:first-child { color: #c4cbbb; font-size: 0.75rem; }
 #authority [data-authority-signal-status] { margin-top: 0.75rem; text-align: left; }
 #authority [data-authority-signal-status] > span:first-child { display: none; }
 #authority [data-authority-signal-status] > span:last-child {
@@ -201,6 +201,63 @@ html[data-services-experience="active"] [data-services-journey-thread] {
 
 :root[data-motion="reduced"] [data-services-nav-expanded="true"] #services-desktop-chapters { animation: none; }
 
+/* The phone controls stay beside the explanation. The complete tab index
+   remains available on tablets; every panel keeps the same reserved height. */
+@media (max-width: 767px) {
+  #authority [data-authority-tablet-heading],
+  #authority [data-authority-mobile-deck] [role="tablist"],
+  #authority [data-authority-mobile-controls] { display: none; }
+  #authority [data-authority-deck-heading] {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  #authority [data-authority-mobile-panels] { margin-top: 1rem; }
+}
+
+/* Three related decisions join into one line. Only the selected panel draws
+   it, with transforms and opacity; reverse scrolling never resets the choice. */
+#authority [data-authority-connections] { gap: 0 !important; padding-top: 0.5rem; }
+#authority [data-authority-connections] li {
+  padding: 1rem 0.25rem 0.25rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+#authority [data-authority-connections] li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(50% - 3px);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--authority-layer-color, #556b4a);
+  animation: authority-node-settle 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+#authority [data-authority-connections] li::after {
+  top: 2px;
+  bottom: auto;
+  left: 50%;
+  background: #8fae83;
+  transform-origin: left;
+}
+#authority [data-authority-connections] li:last-child::after { display: none; }
+#authority [data-authority-connections] li:nth-child(2)::before { animation-delay: 120ms; }
+#authority [data-authority-connections] li:nth-child(3)::before { animation-delay: 240ms; }
+#authority [data-authority-layer-panel][aria-hidden="true"] [data-authority-connections] li::before { animation: none; }
+@keyframes authority-node-settle {
+  from { opacity: 0.3; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #authority [data-authority-connections] li::before { animation: none; }
+}
+:root[data-motion="reduced"] #authority [data-authority-connections] li::before { animation: none; }
+
 /* Stable choices and a quiet reading plane; the work illustration carries
    the motion. These solid surfaces avoid filtering the moving backdrop. */
 #offerings .services-discipline-rail,
@@ -327,4 +384,34 @@ html[data-services-experience="active"] [data-services-journey-thread] {
   justify-content: flex-start !important;
   padding-top: max(6.5rem, 11svh) !important;
   padding-bottom: 5rem !important;
+}
+
+/* Leave room for the fixed header when arriving at the first decision. */
+html[data-services-experience="active"] #situation[data-services-scene] {
+  justify-content: flex-start !important;
+  min-height: 100svh !important;
+  padding-top: max(6.5rem, 11svh) !important;
+  padding-bottom: 5rem !important;
+}
+
+/* On phones the native picker leaves the explanation close to the choice.
+   Desktop keeps the complete index. All copy remains available, untrimmed. */
+@media (max-width: 767px) {
+  html[data-services-experience="active"] #offerings {
+    padding-top: max(6.5rem, 11svh) !important;
+    padding-bottom: 4rem !important;
+  }
+  #offerings [data-services-chapter-copy="true"] { padding: 0; }
+  #offerings [data-services-chapter-copy="true"] > div > p:first-child { font-size: 0.75rem; }
+  #offerings [data-discipline-heading="true"] { font-size: clamp(2rem, 7.8vw, 2.7rem); line-height: 1.04; max-width: 21ch; }
+  #offerings [data-discipline-intro="true"] { display: block; overflow: visible; -webkit-line-clamp: unset; font-size: 0.875rem; line-height: 1.5; margin-top: 0.65rem; }
+  #offerings [data-discipline-layout="true"] { gap: 1rem; }
+  #offerings .services-discipline-rail-viewport { display: none; }
+  #offerings [data-service-discipline-panel-shell="true"] { padding: 1rem; margin-top: 0.75rem; }
+  #offerings [data-discipline-panel-meta="true"] > p { font-size: 0.7rem; letter-spacing: 0.12em; }
+  #offerings [data-discipline-panel-heading="true"] { font-size: 1.7rem; margin-top: 0.55rem; }
+  #offerings [data-discipline-panel-detail="true"] { font-size: 0.9375rem; line-height: 1.55; }
+  #offerings [data-discipline-panel-footer="true"] { gap: 0.25rem; margin-top: 1rem; padding-top: 1rem; }
+  #offerings [data-service-route-context="true"] { display: none; }
+  #offerings [data-discipline-panel-footer="true"] [data-discipline-next="true"] { display: none; }
 }

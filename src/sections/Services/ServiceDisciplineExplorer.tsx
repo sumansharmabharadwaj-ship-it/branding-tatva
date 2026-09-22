@@ -9,8 +9,10 @@ import { Reveal } from "@/components/Reveal";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { offerings } from "@/data/services";
 import { track } from "@/lib/analytics";
+import styles from "./ServiceDisciplineExplorer.module.css";
 import {
   SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   isServicesSituation,
   readCompletedHomeDiagnosis,
@@ -53,6 +55,7 @@ const ROUTE_PLANS: Record<
 // keyboard and pointer visitors the same predictable control.
 export function ServiceDisciplineExplorer() {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const situationRef = useRef<ServicesSituationId | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [situation, setSituation] = useState<ServicesSituationId | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -63,6 +66,9 @@ export function ServiceDisciplineExplorer() {
 
   useEffect(() => {
     function applySituation(nextSituation: ServicesSituationId | null) {
+      // Repeated route announcements should preserve the discipline being read.
+      if (situationRef.current === nextSituation) return;
+      situationRef.current = nextSituation;
       setSituation(nextSituation);
       setActiveIndex(
         nextSituation
@@ -84,16 +90,21 @@ export function ServiceDisciplineExplorer() {
 
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
-      applySituation(isServicesSituation(detail?.situation) ? detail.situation : null);
+      if (isServicesSituation(detail?.situation ?? null)) applySituation(detail.situation);
     }
 
-    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
-    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation as EventListener);
+    function onClear() { applySituation(null); }
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onClear);
+    return () => {
+      window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onClear);
+    };
   }, []);
 
   // Keep this choice stable as the visitor scrolls through its explanation.
 
-  function activate(index: number, source: "focus" | "click") {
+  function activate(index: number, source: "focus" | "click" | "select") {
     if (index === activeIndex) return;
     setActiveIndex(index);
     track("capability_selected", {
@@ -158,6 +169,17 @@ export function ServiceDisciplineExplorer() {
             </div>
 
             <div data-services-chapter-instrument="true" className="min-w-0">
+              <div className={styles.phonePicker}>
+                <label htmlFor="service-discipline-select">Explore the six disciplines</label>
+                <div>
+                  <select id="service-discipline-select" value={activeIndex}
+                    aria-controls="service-discipline-panel"
+                    onChange={event => activate(Number(event.target.value), "select")}>
+                    {disciplineOrder.map((index, position) => <option key={offerings[index].name} value={index}>{String(position + 1).padStart(2, "0")} · {index === 0 ? "Strategy and identity" : offerings[index].name}</option>)}
+                  </select>
+                  <span aria-hidden="true">⌄</span>
+                </div>
+              </div>
               <div
                 className="services-discipline-rail-viewport overflow-visible lg:overflow-hidden"
               >
@@ -242,7 +264,7 @@ export function ServiceDisciplineExplorer() {
                     id="service-discipline-panel"
                     role="tabpanel"
                     tabIndex={0}
-                    aria-labelledby={`service-discipline-tab-${activeIndex}`}
+                    aria-label={active.name}
                     className="relative flex min-h-[18rem] flex-col justify-between lg:min-h-[20rem]"
                   >
                     <div data-discipline-panel-copy="true">
@@ -264,6 +286,9 @@ export function ServiceDisciplineExplorer() {
                       </div>
                     </div>
 
+                    <a href="#desire" className={styles.phoneAction} data-discipline-mobile-next="true">
+                      See packages and prices <span aria-hidden="true">→</span>
+                    </a>
                     <DisciplineOutput index={activeIndex} />
 
                     <div data-discipline-panel-footer="true" className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ivory/12 pt-5">
@@ -274,7 +299,7 @@ export function ServiceDisciplineExplorer() {
                             <span key={plan?.label ?? "default"} data-service-route-state="true" data-active={isActive} aria-hidden={!isActive} inert={!isActive}>
                               {plan ? (
                                 <>
-                                  <span className="block font-medium uppercase tracking-[0.16em] text-sandstone/80" style={{ fontSize: "clamp(0.7rem, 1.1vw, 0.8rem)" }}>Your route: {plan.label}</span>
+                                  <span className="block font-medium uppercase tracking-[0.12em] text-sandstone/80" style={{ fontSize: "clamp(0.75rem, 1.1vw, 0.8rem)" }}>Your route: {plan.label}</span>
                                   <span className="mt-1 block">{plan.summary}</span>
                                 </>
                               ) : "Included when the engagement requires it. Nothing is added to fill a list."}
@@ -290,6 +315,10 @@ export function ServiceDisciplineExplorer() {
                         Compare the three engagements
                         <span aria-hidden="true">↓</span>
                       </a>
+                      <details key={situation ?? "default"} className={styles.phoneContext}>
+                        <summary>How this fits your choice <span aria-hidden="true">+</span></summary>
+                        <p>{routePlan ? routePlan.summary : "Included when the engagement requires it. Nothing is added to fill a list."}</p>
+                      </details>
                     </div>
                   </div>
 

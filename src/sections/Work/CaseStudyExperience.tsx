@@ -882,6 +882,23 @@ export function CaseStudyExperience({ project, presentation, tierLabel, evidence
                 <Link href={presentation.serviceHref} className="link-underline mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-medium" style={{ color: palette.secondary }}>
                   Relevant service path: {presentation.serviceLabel} <span aria-hidden="true">→</span>
                 </Link>
+                {presentation.relatedService ? (
+                  <aside className="mt-6 border-t border-white/15 pt-6" aria-label="Related service">
+                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/65">
+                      Considering similar work?
+                    </p>
+                    <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/80">
+                      {presentation.relatedService.context}
+                    </p>
+                    <Link
+                      href={presentation.relatedService.href}
+                      className="link-underline mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+                      style={{ color: palette.secondary, outlineColor: palette.secondary }}
+                    >
+                      {presentation.relatedService.label} <span aria-hidden="true">→</span>
+                    </Link>
+                  </aside>
+                ) : null}
               </div>
             </Reveal>
           </div>

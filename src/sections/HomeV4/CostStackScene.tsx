@@ -4,6 +4,7 @@ import { useEffect, useRef, type CSSProperties, type FocusEvent } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { ArrowDownRight } from "lucide-react";
 import { LivingGradient } from "@/components/LivingGradient";
+import { CostDemonstration } from "./CostDemonstration";
 import styles from "./CostStack.module.css";
 
 /* Moved here from the cream hidden-cost scene rather than rewritten.
@@ -14,16 +15,19 @@ import styles from "./CostStack.module.css";
 const BRAND_RESET_COSTS = [
   {
     number: "01",
+    demonstration: "messages",
     title: "More explaining.",
     body: "Each touchpoint makes a different promise. People need another explanation before they understand why they should choose you.",
   },
   {
     number: "02",
+    demonstration: "decisions",
     title: "Work repeated.",
     body: "Every brief reopens the language, look, and tone. The team remakes decisions that could have carried forward.",
   },
   {
     number: "03",
+    demonstration: "memory",
     title: "Recognition lost.",
     body: "A campaign earns attention. A different identity next time makes the connection harder for people to recognise.",
   },
@@ -46,7 +50,7 @@ export function V4CostStackScene() {
     const section = sectionRef.current;
     if (!section || !hydrated || prefersReducedMotion) return;
     const cards = Array.from(section.querySelectorAll<HTMLElement>("[data-cost-card]"));
-    const stacked = window.matchMedia("(min-width: 901px) and (min-height: 701px)");
+    const stacked = window.matchMedia("(min-width: 901px) and (min-height: 821px)");
     let frame = 0;
     let visible = true;
     let disposed = false;
@@ -167,7 +171,6 @@ export function V4CostStackScene() {
             <li
               data-cost-card
               id={`brand-reset-cost-${cost.number}`}
-              tabIndex={0}
               aria-labelledby={`brand-reset-cost-title-${cost.number}`}
               key={cost.number}
               className={styles.card}
@@ -180,8 +183,13 @@ export function V4CostStackScene() {
                 <span className={styles.number} aria-hidden="true">{cost.number}</span>
                 <span className={styles.meter} aria-hidden="true" />
               </div>
-              <h3 id={`brand-reset-cost-title-${cost.number}`}>{cost.title}</h3>
-              <p>{cost.body}</p>
+              <div className={styles.cardContent}>
+                <div className={styles.copy}>
+                  <h3 id={`brand-reset-cost-title-${cost.number}`}>{cost.title}</h3>
+                  <p>{cost.body}</p>
+                </div>
+                <CostDemonstration kind={cost.demonstration} reducedMotion={prefersReducedMotion} />
+              </div>
             </li>
           ))}
         </ol>

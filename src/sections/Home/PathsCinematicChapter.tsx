@@ -248,6 +248,7 @@ export function PathsCinematicChapter() {
     <section
       ref={sectionRef}
       id="paths"
+      tabIndex={-1}
       data-home-chapter="paths"
       data-home-section="paths"
       data-cursor-world="light"

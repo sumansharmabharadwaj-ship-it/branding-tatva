@@ -38,7 +38,7 @@ import "./insights-editorial-sections.css";
 export const metadata: Metadata = {
   title: "Insights on brand strategy, positioning, and messaging",
   description:
-    "Essays for founders deciding how their business should be positioned, explained, experienced, recognised, and remembered.",
+    "Brand strategy guides for service businesses in the UK, USA and Canada. Compare costs, choose a branding partner and plan positioning, messaging or a brand audit.",
   keywords: [
     "brand strategy insights",
     "brand positioning",
@@ -439,6 +439,35 @@ export default function InsightsPage() {
             </div>
           </Container>
         </PhotoHero>
+
+        <section className="bg-ivory py-12 sm:py-16" aria-labelledby="insights-buying-title">
+          <Container>
+            <p className="text-sm text-foreground-secondary">For founders in the UK, USA and Canada</p>
+            <h2 id="insights-buying-title" className="mt-3 font-display text-display-sm text-soil">
+              Before you commission brand work
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-foreground-secondary">
+              Compare the scope, understand the fee and choose a partner who fits the decision.
+              Start with these buying guides, then explore the services and project evidence.
+            </p>
+            <ul className="mt-6 grid gap-4 md:grid-cols-3">
+              {[
+                { slug: "how-much-does-brand-strategy-cost", label: "Brand strategy costs in GBP, USD and CAD" },
+                { slug: "how-to-choose-a-branding-agency", label: "How to choose a branding agency" },
+                { slug: "brand-strategist-vs-branding-agency", label: "Brand strategist or agency: which fits?" },
+              ].map((guide) => (
+                <li key={guide.slug}>
+                  <Link href={`/insights/${guide.slug}`} className="flex min-h-11 items-center rounded-xl border border-soil/15 p-5 text-base leading-6 text-soil underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-soil">
+                    {guide.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <Link href="/services" className="mt-5 inline-flex min-h-11 items-center text-base text-soil underline underline-offset-4">
+              Explore brand strategy services with Suman
+            </Link>
+          </Container>
+        </section>
 
         {/* A self-recognition mirror narrows a broad library to one credible
             first route before the visitor reaches the deeper atlas. */}

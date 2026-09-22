@@ -1,0 +1,9 @@
+.poster { object-fit: cover; }
+:global(.home-v4-opening__media) .poster {
+  object-position: 36% 44%;
+  filter: brightness(1.22) saturate(.86) sepia(.06) contrast(.94);
+}
+:global(.home-v4-recognition__media) .poster {
+  opacity: .28;
+  filter: grayscale(.35) saturate(.72) contrast(.88);
+}

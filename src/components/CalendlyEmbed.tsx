@@ -4,6 +4,7 @@ import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 // Calendly's own widget.js resizes this div's height to fit whatever
 // step of the booking flow is showing when data-resize="true" is set.
@@ -16,6 +17,7 @@ import { track } from "@/lib/analytics";
 // silent cream void.
 
 export function CalendlyEmbed({ url, onReady }: { url: string; onReady?: () => void }) {
+  const prefersReducedMotion = useHydratedReducedMotion();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [widgetReady, setWidgetReady] = useState(false);
   const [scriptFailed, setScriptFailed] = useState(false);
@@ -55,6 +57,7 @@ export function CalendlyEmbed({ url, onReady }: { url: string; onReady?: () => v
       if (!nextIframe || nextIframe === iframe) return;
       if (iframe) iframe.removeEventListener("load", markReady);
       iframe = nextIframe;
+      iframe.title = "Choose a date and time for your 30-minute brand diagnosis";
       iframe.addEventListener("load", markReady, { once: true });
     }
 
@@ -68,7 +71,13 @@ export function CalendlyEmbed({ url, onReady }: { url: string; onReady?: () => v
     };
   }, [onReady, url]);
 
-  const schedulingUrl = `${url}?hide_gdpr_banner=1&hide_landing_page_details=1&background_color=F6F2EA&text_color=27221E&primary_color=8A6B3D`;
+  const schedulingHref = new URL(url);
+  schedulingHref.searchParams.set("hide_gdpr_banner", "1");
+  schedulingHref.searchParams.set("hide_landing_page_details", "1");
+  schedulingHref.searchParams.set("background_color", "F6F2EA");
+  schedulingHref.searchParams.set("text_color", "27221E");
+  schedulingHref.searchParams.set("primary_color", "8A6B3D");
+  const schedulingUrl = schedulingHref.toString();
 
   return (
     // overflow-x-auto, not overflow-hidden. Calendly's own 320px
@@ -90,7 +99,7 @@ export function CalendlyEmbed({ url, onReady }: { url: string; onReady?: () => v
           <div className="max-w-sm">
             <span
               aria-hidden="true"
-              className="mx-auto block h-2 w-2 animate-pulse rounded-full"
+              className={`mx-auto block h-2 w-2 rounded-full${prefersReducedMotion ? "" : " animate-pulse"}`}
               style={{ backgroundColor: "#8A6B3D" }}
             />
             <p className="mt-5 text-xs font-medium uppercase tracking-[0.2em] text-[#8A6B3D]">
@@ -120,6 +129,19 @@ export function CalendlyEmbed({ url, onReady }: { url: string; onReady?: () => v
         data-resize="true"
         style={{ minWidth: "320px", minHeight: "min(560px, 72svh)" }}
       />
+      {widgetReady && (
+        <p className="px-4 py-3 text-center text-sm text-[#4A433D]">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-3 underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8A6B3D]"
+          >
+            Open calendar in a new tab
+            <ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0" />
+          </a>
+        </p>
+      )}
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"
         strategy="afterInteractive"

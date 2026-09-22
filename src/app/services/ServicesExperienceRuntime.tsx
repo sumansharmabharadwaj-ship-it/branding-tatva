@@ -179,7 +179,6 @@ export function ServicesExperienceRuntime() {
       }
       setStyle(scene, "--services-scene-progress", index === 0 ? "0" : "-1");
       setStyle(scene, "--services-scene-presence", index === 0 ? "1" : "0");
-      setStyle(scene, "--services-scene-axis", "0");
       setStyle(scene, "--services-content-x", "0px");
       setStyle(scene, "--services-content-y", "0px");
       setStyle(scene, "--services-content-rotate", "0deg");
@@ -187,11 +186,8 @@ export function ServicesExperienceRuntime() {
       setStyle(scene, "--services-camera-x", "0px");
       setStyle(scene, "--services-camera-y", "0px");
       setStyle(scene, "--services-camera-scale", "1.02");
-      setStyle(scene, "--services-anticipation", index === 0 ? "1" : "0");
-      setStyle(scene, "--services-activation", index === 0 ? "1" : "0");
       setStyle(scene, "--services-discovery", index === 0 ? "1" : "0");
       setStyle(scene, "--services-resolution", index === 0 ? "1" : "0");
-      setStyle(scene, "--services-departure", "0");
       setStyle(scene, "--services-copy-x", "0px");
       setStyle(scene, "--services-copy-y", "0px");
       setStyle(scene, "--services-copy-opacity", "1");
@@ -435,8 +431,8 @@ export function ServicesExperienceRuntime() {
       const viewportHeight = Math.max(1, window.innerHeight);
       const rootBounds = servicesRoot.getBoundingClientRect();
       const rootTravel = Math.max(1, servicesRoot.scrollHeight - viewportHeight);
-      const heroBounds = hero.getBoundingClientRect();
       const sceneBounds = scenes.map((scene) => scene.getBoundingClientRect());
+      const heroBounds = sceneBounds[0];
       const focalChapter = chapterAtFocalLine(viewportHeight, sceneBounds);
       const progressEvents: CustomEvent[] = [];
       const journeyProgress = clamp(-rootBounds.top / rootTravel);
@@ -490,14 +486,12 @@ export function ServicesExperienceRuntime() {
             ? Math.max(measuredProgress, DIRECT_ANCHOR_PROGRESS)
             : measuredProgress;
         const centred = clamp(1 - Math.abs(progress - 0.5) * 2);
-        const axis = clamp((progress - 0.5) * 2, -1, 1);
         const key = scene.dataset.servicesScrollScene || "";
         const motion = SCENE_MOTION[key];
         // A direct chapter link settles the section just below the fixed
         // navigation, which is roughly progress 0.45 for a one-screen scene.
         // Complete the visual entrance before that focal point so hash and
         // rail navigation never leave body copy translucent or clipped.
-        const anticipation = smoothRange(progress, 0.01, 0.1);
         const activation = smoothRange(progress, 0.05, 0.24);
         const discovery = smoothRange(progress, 0.13, 0.38);
         const resolution = smoothRange(progress, 0.26, 0.44);
@@ -508,16 +502,10 @@ export function ServicesExperienceRuntime() {
         const storyProgress = smoothRange(progress, 0.36, 0.82);
         const arrival = 1 - activation;
         const travelAxis = -arrival + departure;
-        const signedVelocity = smoothedVelocity * (scrollDirection === "down" ? 1 : -1);
         setStyle(scene, "--services-scene-progress", progress.toFixed(4));
         setStyle(scene, "--services-scene-presence", centred.toFixed(4));
-        setStyle(scene, "--services-scene-axis", axis.toFixed(4));
-        setStyle(scene, "--services-anticipation", anticipation.toFixed(4));
-        setStyle(scene, "--services-activation", activation.toFixed(4));
         setStyle(scene, "--services-discovery", discovery.toFixed(4));
         setStyle(scene, "--services-resolution", resolution.toFixed(4));
-        setStyle(scene, "--services-departure", departure.toFixed(4));
-        setStyle(scene, "--services-scroll-kick", signedVelocity.toFixed(4));
 
         const lateralSign = motion?.contentX && motion.contentX < 0 ? -1 : 1;
         if (isMotionReduced()) {
@@ -785,7 +773,6 @@ export function ServicesExperienceRuntime() {
         if (generatedIds.has(scene)) scene.removeAttribute("id");
         scene.style.removeProperty("--services-scene-progress");
         scene.style.removeProperty("--services-scene-presence");
-        scene.style.removeProperty("--services-scene-axis");
         scene.style.removeProperty("--services-content-x");
         scene.style.removeProperty("--services-content-y");
         scene.style.removeProperty("--services-content-rotate");
@@ -793,12 +780,8 @@ export function ServicesExperienceRuntime() {
         scene.style.removeProperty("--services-camera-x");
         scene.style.removeProperty("--services-camera-y");
         scene.style.removeProperty("--services-camera-scale");
-        scene.style.removeProperty("--services-anticipation");
-        scene.style.removeProperty("--services-activation");
         scene.style.removeProperty("--services-discovery");
         scene.style.removeProperty("--services-resolution");
-        scene.style.removeProperty("--services-departure");
-        scene.style.removeProperty("--services-scroll-kick");
         scene.style.removeProperty("--services-copy-x");
         scene.style.removeProperty("--services-copy-y");
         scene.style.removeProperty("--services-copy-opacity");

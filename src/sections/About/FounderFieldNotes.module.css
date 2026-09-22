@@ -245,11 +245,11 @@
 .mobilePortrait { position: relative; width: min(100%, 32rem); min-height: 32rem; margin: 0; overflow: hidden; border: 1px solid rgba(42, 42, 37, 0.14); border-radius: 45% 45% 1.35rem 1.35rem; background: #eceae6; }
 .mobilePortrait::after { position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, rgba(18, 27, 22, 0.86)); content: ""; }
 .mobilePortrait .portraitImage { object-position: 55% 50%; transform: scale(1.04); filter: grayscale(1) contrast(1.06) brightness(1); }
-.mobilePortrait figcaption { position: absolute; right: 1rem; bottom: 1rem; left: 1rem; z-index: 2; color: #f5efe6; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+.mobilePortrait figcaption { position: absolute; right: 1rem; bottom: 1rem; left: 1rem; z-index: 2; color: #f5efe6; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
 .staticExperience ol { display: grid; margin: 0; padding: 0; gap: 0.7rem; list-style: none; }
 .staticExperience li { display: grid; padding: 1rem; border: 1px solid rgba(42, 42, 37, 0.12); border-radius: 1rem; grid-template-columns: auto 1fr; gap: 0.85rem; background: rgba(247, 241, 231, 0.78); }
 .staticExperience li > span { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid rgba(150, 91, 67, 0.27); border-radius: 999px; color: #965b43; }
-.staticExperience small { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.staticExperience small { color: #965b43; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
 .staticExperience h3 { margin: 0.28rem 0 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 400; line-height: 1.04; }
 .staticExperience li p { margin: 0.45rem 0 0; color: rgba(42, 42, 37, 0.65); font-size: 0.7rem; line-height: 1.52; }
 .staticExperience li p + p { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px solid rgba(42, 42, 37, 0.1); color: rgba(42, 42, 37, 0.76); }
@@ -260,11 +260,11 @@
 .staticResolution strong { max-width: 34ch; font-family: var(--font-display), Georgia, serif; font-size: 1.3rem; font-weight: 400; line-height: 1.12; }
 .staticResolution p { margin: 0; color: rgba(42, 42, 37, 0.7); font-size: 0.7rem; line-height: 1.5; }
 .mobileHire { display: grid; padding: 1.15rem; border: 1px solid rgba(150, 91, 67, 0.22); border-radius: 1rem; gap: 1rem; background: rgba(247, 241, 231, 0.88); }
-.mobileHire > span { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.mobileHire > span { color: #965b43; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
 .mobileHire > p { max-width: 23ch; margin: 0; font-family: var(--font-display), Georgia, serif; font-size: 1.45rem; line-height: 1.05; }
 .mobileHire ul { display: grid; margin: 0; padding: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; list-style: none; }
 .mobileHire li { padding: 0.65rem; border-top: 1px solid rgba(150, 91, 67, 0.22); color: rgba(42, 42, 37, 0.72); font-family: var(--font-display), Georgia, serif; font-size: 0.94rem; font-style: italic; line-height: 1.12; }
-.mobileHire a { display: inline-flex; width: fit-content; min-height: 2.9rem; padding: 0.75rem 1rem; border-radius: 999px; align-items: center; gap: 0.5rem; background: #965b43; color: #f8f1e6; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.mobileHire a { display: inline-flex; width: fit-content; min-height: 2.9rem; padding: 0.75rem 1rem; border-radius: 999px; align-items: center; gap: 0.5rem; background: #965b43; color: #f8f1e6; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .mobileHire a:focus-visible { outline: 2px solid #965b43; outline-offset: 3px; }
 
 @media (min-width: 901px) and (prefers-reduced-motion: no-preference) {

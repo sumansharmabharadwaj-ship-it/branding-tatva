@@ -1,0 +1,40 @@
+.guide { position: fixed; z-index: 46; left: 50%; bottom: max(1.1rem, env(safe-area-inset-bottom)); translate: -50% 0; color: #342f27; font-family: var(--font-body), sans-serif; }
+.bar { display: flex; align-items: center; gap: .15rem; padding: .3rem; border: 1px solid rgb(255 249 236 / 65%); border-radius: 999px; background: rgb(244 239 230 / 96%); box-shadow: 0 8px 30px rgb(12 15 17 / 16%); backdrop-filter: blur(20px); }
+.guide button, .menu a { -webkit-tap-highlight-color: transparent; }
+.chapterButton, .iconButton { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border: 0; border-radius: 999px; background: transparent; color: inherit; cursor: pointer; font: inherit; transition: background-color .2s ease; }
+.chapterButton { gap: .65rem; padding: .5rem .8rem; }
+.count { font-size: .8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.count > span { color: #766c5e; }
+.chapterName { max-width: 13rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .875rem; }
+.chapterButton > svg { transition: rotate .3s cubic-bezier(.22,1,.36,1); flex-shrink: 0; }
+.chevronOpen { rotate: 180deg; }
+.divider { width: 1px; height: 1.15rem; margin-inline: .1rem; background: #d1c7b7; }
+.iconButton { flex-shrink: 0; width: 44px; }
+.iconButton:disabled { opacity: .3; cursor: default; }
+.playButton[aria-pressed="true"] { background: #514936; color: #fff9ed; }
+.guide :is(button, a):focus-visible { outline: 2px solid #805239 !important; outline-offset: 2px; }
+.menu { position: absolute; bottom: calc(100% + .65rem); left: 50%; translate: -50% 0; width: min(29rem, calc(100vw - 2rem)); max-height: min(68svh, 36rem); overflow-y: auto; overscroll-behavior: contain; padding: 1rem; border: 1px solid #ded5c6; border-radius: 1.25rem; background: #f4efe6; box-shadow: 0 16px 55px rgb(12 15 17 / 23%); animation: open .24s cubic-bezier(.22,1,.36,1); }
+.menu[hidden] { display: none; }
+.menu p { margin: .2rem .65rem .65rem; color: #805239; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+.menu a { display: flex; align-items: center; gap: .9rem; min-height: 44px; padding: .55rem .7rem; border-radius: .7rem; color: #514936; font-size: .875rem; line-height: 1.4; text-decoration: none; }
+.menu a > span { color: #857860; font-size: .75rem; font-variant-numeric: tabular-nums; }
+.menu a[aria-current] { background: #e6dfcf; color: #342f27; }
+.menu i { width: 5px; height: 5px; margin-left: auto; border-radius: 50%; background: #556b4a; }
+@keyframes open { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (hover: hover) and (pointer: fine) { .chapterButton:hover, .iconButton:not(:disabled):hover, .menu a:hover { background: #e6dfcf; color: #342f27; } }
+@media (max-width: 820px) {
+  .guide { left: auto; right: max(.8rem, env(safe-area-inset-right)); bottom: max(.8rem, env(safe-area-inset-bottom)); translate: none; }
+  .divider, .iconButton { display: none; }
+  .playButton { display: inline-flex; }
+  .chapterName { max-width: clamp(5rem, 22vw, 9rem); font-size: .75rem; }
+  .chapterButton { gap: .45rem; padding-inline: .65rem; }
+  .menu { left: auto; right: 0; translate: none; }
+  :global(html[data-consent-banner="visible"]) .guide { bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { .menu { animation: none; } .guide button, .chapterButton > svg { transition: none; } }
+:global(html[data-motion="reduced"]) .menu { animation: none; }
+:global(html[data-motion="reduced"]) .guide button, :global(html[data-motion="reduced"]) .chapterButton > svg { transition: none; }
+@media (forced-colors: active) { .bar, .menu { border: 1px solid ButtonText; } .menu a[aria-current] { outline: 1px solid Highlight; } }
+@media print { .guide { display: none; } }
+
+:global(html[data-site-menu="open"]) .guide { visibility: hidden; }

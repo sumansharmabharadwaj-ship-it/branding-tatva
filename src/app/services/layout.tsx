@@ -11,6 +11,7 @@ import "./services-reading-experience.css";
 import { ServicesExperienceRuntime } from "./ServicesExperienceRuntime";
 import { ServicesMediaDirector } from "./ServicesMediaDirector";
 import { ServicesJourneyThread } from "./ServicesJourneyThread";
+import { ServicesAmbientMotion } from "./ServicesAmbientMotion";
 
 export default function ServicesLayout({ children }: { children: ReactNode }) {
   return (
@@ -18,6 +19,7 @@ export default function ServicesLayout({ children }: { children: ReactNode }) {
       {children}
       <ServicesJourneyThread />
       <ServicesMediaDirector />
+      <ServicesAmbientMotion />
       <ServicesExperienceRuntime />
     </>
   );

@@ -59,15 +59,14 @@ function FoundationReading({ layer }: { layer: FoundationLayer }) {
   return <><h3>{layer.title}</h3><p className={styles.description}>{layer.description}</p></>;
 }
 
-/* A visual echo of the reading, not a second set of controls. The three
- * inputs converge on Position; the same activeIndex drives both views. */
-function FoundationMap({ activeIndex, reducedMotion }: { activeIndex: number; reducedMotion: boolean }) {
+/* Diagram and reading share one selection, including keyboard focus. */
+function FoundationMap({ activeIndex, reducedMotion, onChoose }: { activeIndex: number; reducedMotion: boolean; onChoose: (index: number) => void }) {
   const mapId = useId();
   return (
-    <div className={styles.map} aria-hidden="true" data-foundation-map>
+    <div className={styles.map} data-foundation-map data-foundation-controls role="group" aria-label="Explore the foundation diagram">
       <p className={styles.mapLabel}>How a position takes shape</p>
       <div className={styles.mapCanvas}>
-        <svg className={styles.mapLines} viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+        <svg className={styles.mapLines} viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false" aria-hidden="true">
           {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => {
             const connected = activeIndex === index || activeIndex === 3;
             const clipId = `${mapId}-${layer.id}`;
@@ -95,9 +94,15 @@ function FoundationMap({ activeIndex, reducedMotion }: { activeIndex: number; re
           })}
         </svg>
         {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => (
-          <div
+          <button
+            type="button"
             key={layer.id}
             className={styles.mapInput}
+            aria-label={`Explore ${layer.label.toLowerCase()}`}
+            aria-pressed={activeIndex === index}
+            aria-controls="foundation-layer-panel"
+            onClick={() => onChoose(index)}
+            data-cursor-label="explore"
             data-active={activeIndex === index}
             data-connected={activeIndex === index || activeIndex === 3}
             style={{ gridRow: index + 1 }}
@@ -105,16 +110,16 @@ function FoundationMap({ activeIndex, reducedMotion }: { activeIndex: number; re
             <span>{layer.number}</span>
             <strong>{layer.label}</strong>
             <small className={styles.mapHint}>{layer.mapHint}</small>
-          </div>
+          </button>
         ))}
-        <div className={styles.mapPosition} data-active={activeIndex === 3}>
+        <button type="button" className={styles.mapPosition} data-active={activeIndex === 3} aria-label="Explore position" aria-pressed={activeIndex === 3} aria-controls="foundation-layer-panel" onClick={() => onChoose(3)} data-cursor-label="connect">
           <span>04</span>
           <strong>Position</strong>
           <small className={styles.mapHint}>{FOUNDATION_LAYERS[3].mapHint}</small>
-        </div>
+        </button>
       </div>
       <p className={`${styles.mapCaption} ${styles.readingStack}`}>
-        <span className={styles.readingMeasure}>
+        <span className={styles.readingMeasure} aria-hidden="true" inert>
           {FOUNDATION_LAYERS.map((layer) => <span key={layer.id}>{layer.connectionCopy}</span>)}
         </span>
         <motion.span
@@ -398,7 +403,7 @@ export function BrandFoundationScene() {
               See the foundation scope <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
           </div>
-          <FoundationMap activeIndex={activeIndex} reducedMotion={prefersReducedMotion} />
+          <FoundationMap activeIndex={activeIndex} reducedMotion={prefersReducedMotion} onChoose={choose} />
         </div>
       </div>
     </section>
