@@ -15,7 +15,7 @@ const FOUNDATION_LAYERS = [
     number: "01",
     label: "Category",
     title: "Know the alternatives your buyer considers.",
-    description: "Buyers may compare you with another provider, an internal team, or doing nothing. We identify the alternatives your offer must answer.",
+    description: "Your buyer compares you with other providers, an internal team, or the current arrangement. Category choices begin with those alternatives.",
     produces: ["Buyer alternatives", "Category choice", "Market expectations"],
     mapHint: "Your alternatives",
     connectionCopy: "Start with the options your buyer already knows.",
@@ -25,7 +25,7 @@ const FOUNDATION_LAYERS = [
     number: "02",
     label: "Audience",
     title: "What makes your buyer ready to choose?",
-    description: "We identify the problem buyers need solved, what makes them hesitate, and the evidence they need before they commit.",
+    description: "An audience definition starts with a purchase decision: the problem to solve, the hesitation, and the evidence a buyer needs.",
     produces: ["Priority buyer", "Buying barriers", "Reasons to choose"],
     mapHint: "Who needs you",
     connectionCopy: "Speak to the decision your buyer needs to make.",
@@ -35,7 +35,7 @@ const FOUNDATION_LAYERS = [
     number: "03",
     label: "Belief",
     title: "Make a promise you can prove.",
-    description: "We match the promise to evidence your business can show, then decide how your words, design, and service should carry it.",
+    description: "A promise earns credibility through evidence. The words, design, and service need to support the same claim.",
     produces: ["Brand promise", "Supporting evidence", "Message priorities"],
     mapHint: "What you prove",
     connectionCopy: "Give people evidence for the promise you make.",
@@ -45,7 +45,7 @@ const FOUNDATION_LAYERS = [
     number: "04",
     label: "Position",
     title: "Give every touchpoint the same direction.",
-    description: "We bring the buyer, alternatives, and proof into one position your team can use across the website, sales pitch, and next campaign.",
+    description: "Your position joins the buyer, alternatives, and proof in one reason to choose. That decision guides the website, sales pitch, and next campaign.",
     produces: ["Positioning statement", "Reason to choose", "Brand decision rules"],
     mapHint: "Why choose you",
     connectionCopy: "One reason to choose you, carried through the brand.",
@@ -57,6 +57,46 @@ type FoundationLayer = (typeof FOUNDATION_LAYERS)[number];
 
 function FoundationReading({ layer }: { layer: FoundationLayer }) {
   return <><h3>{layer.title}</h3><p className={styles.description}>{layer.description}</p></>;
+}
+
+/* Compact screens use the same four tabs as diagram nodes. The connector
+   occupies its own grid row, so larger text never moves a line into a label. */
+function FoundationConnections({ activeIndex, still }: { activeIndex: number; still: boolean }) {
+  const id = useId();
+  return (
+    <svg
+      key={still ? "settled" : "animated"}
+      className={styles.compactConnections}
+      viewBox="0 0 300 36"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+      data-foundation-compact-connections
+    >
+      {FOUNDATION_LAYERS.slice(0, 3).map((layer, index) => {
+        const connected = activeIndex === index || activeIndex === 3;
+        const x = 50 + index * 100;
+        const path = `M ${x} 0 C ${x} 22, 150 12, 150 36`;
+        const clipId = `${id}-${layer.id}`;
+        return (
+          <g key={layer.id} data-connected={connected}>
+            <defs>
+              <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
+                <motion.rect
+                  x="0" y="0" width="300"
+                  initial={false}
+                  animate={{ height: connected ? 36 : 0 }}
+                  transition={{ duration: still ? 0 : .5, delay: !still && activeIndex === 3 ? index * .07 : 0, ease: EASE }}
+                />
+              </clipPath>
+            </defs>
+            <path d={path} vectorEffect="non-scaling-stroke" />
+            <path className={styles.compactSignal} d={path} vectorEffect="non-scaling-stroke" clipPath={`url(#${clipId})`} />
+          </g>
+        );
+      })}
+    </svg>
+  );
 }
 
 /* Diagram and reading share one selection, including keyboard focus. */
@@ -213,6 +253,8 @@ export function BrandFoundationScene() {
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const selectionId = useId();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const [keyboardReading, setKeyboardReading] = useState(false);
+  const readingStill = prefersReducedMotion || keyboardReading;
   // Match the CSS breakpoint, then measure the complete natural frame.
   // Larger text or a shorter viewport can release the hold without clipping.
   const hasScrollRunway = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
@@ -326,6 +368,12 @@ export function BrandFoundationScene() {
       data-foundation-state={activeIndex}
       data-foundation-motion={cinematicMotion ? "scroll" : "static"}
       data-foundation-layout={hasScrollLayout ? "sticky" : "flow"}
+      data-foundation-reading-still={readingStill}
+      onKeyDownCapture={() => setKeyboardReading(true)}
+      onPointerDownCapture={() => setKeyboardReading(false)}
+      onFocusCapture={(event) => {
+        if (event.target instanceof HTMLElement && event.target.matches(":focus-visible")) setKeyboardReading(true);
+      }}
     >
       <div ref={sceneRef} className={styles.scene}>
         <motion.div className={styles.landscape} data-foundation-landscape aria-hidden="true" style={{ scale: hasScrollLayout ? landscapeScale : 1, x: hasScrollLayout ? landscapeX : 0, y: hasScrollLayout ? landscapeY : 0 }}>
@@ -372,6 +420,7 @@ export function BrandFoundationScene() {
                   aria-controls="foundation-layer-panel"
                   tabIndex={index === activeIndex ? 0 : -1}
                   className={styles.tab}
+                  data-foundation-connected={index < 3 && (index === activeIndex || activeIndex === 3)}
                   onClick={() => choose(index)}
                   onPointerEnter={(event) => {
                     if (event.pointerType === "mouse" && cinematicMotion) visualizer.preview(index);
@@ -386,24 +435,26 @@ export function BrandFoundationScene() {
                   data-cursor-label="explore"
                 >
                   {index === activeIndex && <motion.span
+                    key={readingStill ? "settled" : "animated"}
                     className={styles.selection}
-                    layoutId={selectionId}
+                    layoutId={readingStill ? undefined : selectionId}
                     aria-hidden="true"
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: EASE }}
+                    transition={{ duration: readingStill ? 0 : 0.42, ease: EASE }}
                   />}
                   <span className={styles.tabNumber} aria-hidden="true">{layer.number}</span>
                   <span className={styles.tabLabel}>{layer.label}</span>
                 </button>
               ))}
+              <FoundationConnections activeIndex={activeIndex} still={readingStill} />
             </div>
 
-            <FoundationDecision layer={active} direction={direction} reducedMotion={prefersReducedMotion} />
+            <FoundationDecision layer={active} direction={direction} reducedMotion={readingStill} />
 
             <Link href="/services#package-brand-beginning" className={styles.link} data-cursor-label="foundation">
               See the foundation scope <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
           </div>
-          <FoundationMap activeIndex={activeIndex} reducedMotion={prefersReducedMotion} onChoose={choose} />
+          <FoundationMap activeIndex={activeIndex} reducedMotion={readingStill} onChoose={choose} />
         </div>
       </div>
     </section>

@@ -16,6 +16,7 @@
 .selection { position: absolute; inset: 0; z-index: 0; border-radius: inherit; background: #514936; pointer-events: none; }
 .tab[aria-selected="true"] { color: #fff9ed; }
 .tab:not([aria-selected="true"]):hover { background: rgb(94 76 51 / 9%); }
+.compactConnections { display: none; }
 .panel { display: grid; align-items: start; min-width: 0; min-height: 16rem; padding-top: .1rem; }
 .panelCopy { grid-area: 1 / 1; min-width: 0; }
 .readingStack, .readingMeasure { display: grid; min-width: 0; }
@@ -58,16 +59,6 @@
   .shell { min-height: 100svh; }
 }
 
-/* The diagram is built for the wide layout only: a fixed three column
-   grid at a set height, with the reading column beside it. Below 1181px
-   the reading takes the full width and the map would cram into leftover
-   space, so it stays hidden there. This block was dropped by accident in
-   a conflict resolution (confirmed with the session that resolved it)
-   and is restored deliberately. */
-@media (max-width: 1180px) {
-  .map { display: none; }
-}
-
 /* 853, raised from 830 after the connection animations grew the
    natural frame from 826px to a measured 854px. The frameFits guard
    (correctly) releases the cinematic hold whenever the frame outgrows
@@ -92,6 +83,23 @@
   .outputLabel { margin: .85rem 0 .45rem; }
 }
 
+/* Reuse the four tabs as a compact diagram instead of squeezing the wide
+   map beside the reading. The tablet card also takes the available width. */
+@media (max-width: 1180px) {
+  .shell { justify-content: center; }
+  .content { width: 100%; max-width: 42rem; }
+  .map { display: none; }
+  .tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto 1.65rem auto; gap: 0 .35rem; padding: 0; border: 0; border-radius: 0; background: transparent; }
+  .tab { grid-row: 1; flex-direction: column; gap: .15rem; min-height: 3.25rem; padding: .5rem .25rem; border: 1px solid rgb(94 76 51 / 24%); border-radius: .7rem; }
+  .tabLabel { max-width: 100%; overflow-wrap: anywhere; }
+  .tab:last-of-type { grid-column: 1 / -1; grid-row: 3; flex-direction: row; justify-self: center; width: 60%; min-height: 3rem; gap: .5rem; border-radius: 999px; }
+  .tab[data-foundation-connected="true"] { border-color: #a58e68; }
+  .tab[aria-selected="true"] { border-color: #514936; }
+  .compactConnections { display: block; grid-column: 1 / -1; grid-row: 2; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .compactConnections path { fill: none; stroke: #a58e68; stroke-width: 1.5; opacity: .28; }
+  .compactConnections .compactSignal { stroke: #805239; opacity: 1; }
+}
+
 @media (max-width: 820px) {
   .shell { min-height: 100svh; padding: clamp(4.5rem, 9svh, 6rem) 1.5rem 5.5rem; }
   .content { width: 100%; max-width: 38rem; gap: 1.35rem; }
@@ -109,8 +117,6 @@
   .content { padding: 1.2rem; gap: 1.15rem; }
   .content h2 { font-size: clamp(2.125rem, 9vw, 2.5rem); }
   .panel h3 { font-size: clamp(1.75rem, 7.6vw, 1.9rem); }
-  .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 1.4rem; }
-  .tab { min-height: 2.75rem; }
   .panel { min-height: 17.5rem; }
   .outputs { display: grid; gap: .65rem; }
   .link { justify-self: stretch; }
@@ -127,6 +133,7 @@
 }
 
 :global(html[data-motion="reduced"]) :is(.mapInput, .mapPosition) { transition: none; }
+.section[data-foundation-reading-still="true"] :is(.mapInput, .mapPosition) { transition: none; }
 
 /* The diagram is a direct way into the same four decisions. */
 .mapInput:focus-visible, .mapPosition:focus-visible { outline: 2px solid #f1eadc !important; outline-offset: 5px; }
