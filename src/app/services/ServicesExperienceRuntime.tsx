@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { bindServicesAnchorRecovery } from "./servicesAnchorRecovery";
 
 const SCENE_SELECTOR = "[data-services-scene], #authority, #book";
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
@@ -108,14 +109,15 @@ export function ServicesExperienceRuntime() {
     let pendingAnchorIndex: number | null = null;
     let frame = 0;
     let scrollSettleTimer = 0;
-    let anchorAlignTimer = 0;
-    let anchorAlignAttempts = 0;
-    let anchorAlignCancelled = false;
     let lastScrollY = window.scrollY;
     let lastFrameTime = performance.now();
     let smoothedVelocity = 0;
     let scrollDirection: "up" | "down" = "down";
     const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const anchorRecovery = bindServicesAnchorRecovery(() => {
+      pendingAnchorIndex = null;
+      if (!document.hidden) scheduleProgress();
+    });
 
     function isMotionReduced() {
       return reducedMotionQuery.matches || document.documentElement.dataset.motion === "reduced";
@@ -270,7 +272,10 @@ export function ServicesExperienceRuntime() {
 
     function publishAnchorChapter() {
       const index = chapterIndexForHash();
-      if (index < 0) return;
+      if (index < 0) {
+        anchorRecovery.cancel();
+        return;
+      }
 
       // Native anchor alignment can finish a frame or two after hydration.
       // Keep the requested destination authoritative until its content plane
@@ -278,53 +283,7 @@ export function ServicesExperienceRuntime() {
       pendingAnchorIndex = index;
       publishChapter(index);
       scheduleProgress();
-      settleAnchorChapter(index);
-    }
-
-    function cancelAnchorAlignment() {
-      anchorAlignCancelled = true;
-      pendingAnchorIndex = null;
-      window.clearTimeout(anchorAlignTimer);
-      anchorAlignTimer = 0;
-    }
-
-    function onManualAnchorKey(event: KeyboardEvent) {
-      if (
-        event.key === "PageDown" ||
-        event.key === "PageUp" ||
-        event.key === "Home" ||
-        event.key === "End" ||
-        event.key === " " ||
-        event.key === "ArrowDown" ||
-        event.key === "ArrowUp"
-      ) {
-        cancelAnchorAlignment();
-      }
-    }
-
-    function alignAnchorChapter(index: number) {
-      if (anchorAlignCancelled) return;
-      const chapter = scenes[index];
-      if (!chapter) return;
-
-      const marginTop = Number.parseFloat(window.getComputedStyle(chapter).scrollMarginTop) || 0;
-      if (Math.abs(chapter.getBoundingClientRect().top - marginTop) > 1) {
-        const lenis = window.__lenisInstance;
-        if (lenis) lenis.scrollTo(chapter, { immediate: true });
-        else chapter.scrollIntoView({ behavior: "auto", block: "start" });
-      }
-
-      anchorAlignAttempts += 1;
-      if (anchorAlignAttempts < 6 && !anchorAlignCancelled) {
-        anchorAlignTimer = window.setTimeout(() => alignAnchorChapter(index), 280);
-      }
-    }
-
-    function settleAnchorChapter(index: number) {
-      window.clearTimeout(anchorAlignTimer);
-      anchorAlignCancelled = false;
-      anchorAlignAttempts = 0;
-      anchorAlignTimer = window.setTimeout(() => alignAnchorChapter(index), 0);
+      anchorRecovery.start(scenes[index]);
     }
 
     function onAnchorSettle(event: Event) {
@@ -335,7 +294,7 @@ export function ServicesExperienceRuntime() {
       pendingAnchorIndex = index;
       publishChapter(index);
       scheduleProgress();
-      settleAnchorChapter(index);
+      anchorRecovery.start(scenes[index]);
     }
 
     // One geometric focal line owns chapter state. Intersection ratios can
@@ -694,7 +653,7 @@ export function ServicesExperienceRuntime() {
     if (initialAnchorIndex >= 0) {
       pendingAnchorIndex = initialAnchorIndex;
       publishChapter(initialAnchorIndex);
-      settleAnchorChapter(initialAnchorIndex);
+      anchorRecovery.start(scenes[initialAnchorIndex]);
     } else {
       publishChapter(0);
     }
@@ -708,23 +667,17 @@ export function ServicesExperienceRuntime() {
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("hashchange", publishAnchorChapter);
     window.addEventListener(ANCHOR_SETTLE_EVENT, onAnchorSettle as EventListener);
-    window.addEventListener("wheel", cancelAnchorAlignment, { passive: true });
-    window.addEventListener("touchmove", cancelAnchorAlignment, { passive: true });
-    window.addEventListener("keydown", onManualAnchorKey);
 
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(scrollSettleTimer);
-      window.clearTimeout(anchorAlignTimer);
+      anchorRecovery.dispose();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("hashchange", publishAnchorChapter);
       window.removeEventListener(ANCHOR_SETTLE_EVENT, onAnchorSettle as EventListener);
-      window.removeEventListener("wheel", cancelAnchorAlignment);
-      window.removeEventListener("touchmove", cancelAnchorAlignment);
-      window.removeEventListener("keydown", onManualAnchorKey);
       motionSettingObserver.disconnect();
       heroPartsObserver.disconnect();
       layoutObserver.disconnect();

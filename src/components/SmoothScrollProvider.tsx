@@ -48,9 +48,9 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
 
   useEffect(() => {
-    // Home owns hydration-only fragment recovery in HomeV4ScrollCamera.
-    // Replaying this fallback on pause fights its reading-position correction.
-    if (pathname === "/" || pathname === "/contact" || !hydrated || !prefersReducedMotion || !window.location.hash) return;
+    // Home and Services own fragment recovery in their page runtimes.
+    // A second recovery loop on motion changes would reclaim visitor scroll.
+    if (pathname === "/" || pathname === "/contact" || pathname === "/services" || !hydrated || !prefersReducedMotion || !window.location.hash) return;
 
     let cancelled = false;
     let attempts = 0;
