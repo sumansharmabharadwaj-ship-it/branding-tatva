@@ -3,7 +3,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { createRequire } = require('node:module');
 const { cooldownForStatus, checkCooldown, recordRejection, readRecord } = require('./vercel_preview_cooldown.cjs');
 
 const observed = Date.parse('2026-09-22T12:23:50Z');
@@ -84,11 +83,11 @@ test('cleanup preserves the newest rejection and ignores ordinary errors', () =>
 });
 
 test('working branches are disabled while main and deliberate preview remain possible', () => {
-  const minimatch = createRequire(require.resolve('eslint/package.json'))('minimatch');
   const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../vercel.json'), 'utf8'));
   const rules = config.git.deploymentEnabled;
   const enabled = (branch, settings = rules) => {
-    const matches = Object.entries(settings).filter(([pattern]) => minimatch(branch, pattern));
+    // These exact names and ** rules need no application dependency install.
+    const matches = Object.entries(settings).filter(([pattern]) => path.matchesGlob(branch, pattern));
     return matches.length === 0 || matches.some(([, value]) => value);
   };
   for (const branch of ['august-8-isolated', 'seo/example', 'improve/mobile', 'homepage-cinematic-recovery']) assert.equal(enabled(branch), false);
