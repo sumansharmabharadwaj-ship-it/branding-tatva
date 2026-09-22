@@ -7,6 +7,7 @@ import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { LinkButton } from "@/components/Button";
 import { brandStudies } from "@/data/brandStudies";
+import { getInsightTopic } from "@/data/insights";
 import { site } from "@/data/site";
 import { MOOD } from "@/lib/sectionWash";
 import { MediaSlot } from "@/components/MediaSlot";
@@ -38,7 +39,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: `/work/studies/${study.slug}` },
-    openGraph: { title: `${title} | ${site.name}`, description, type: "article" },
+    openGraph: {
+      title: `${title} | ${site.name}`,
+      description,
+      type: "article",
+      url: `${site.url}/work/studies/${study.slug}`,
+      images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${site.name}`,
+      description,
+      images: ["/opengraph-image"],
+    },
   };
 }
 
@@ -46,6 +59,7 @@ export default async function BrandStudyPage({ params }: Props) {
   const { slug } = await params;
   const study = brandStudies.find((s) => s.slug === slug);
   if (!study) notFound();
+  const topic = getInsightTopic(study.topicSlug);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -66,7 +80,8 @@ export default async function BrandStudyPage({ params }: Props) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Insights", item: `${site.url}/insights` },
-          { "@type": "ListItem", position: 2, name: study.brand, item: `${site.url}/work/studies/${study.slug}` },
+          ...(topic ? [{ "@type": "ListItem", position: 2, name: topic.name, item: `${site.url}/insights/topic/${topic.slug}` }] : []),
+          { "@type": "ListItem", position: topic ? 3 : 2, name: study.brand, item: `${site.url}/work/studies/${study.slug}` },
         ],
       },
     ],
@@ -86,8 +101,8 @@ export default async function BrandStudyPage({ params }: Props) {
           <MediaSlot fill={study.media?.masthead} scrim={0.8} posterPriority />
           <Container className="relative max-w-4xl">
             <Reveal>
-              <Link href="/insights" className="inline-flex min-h-11 items-center text-sm text-ivory/60 transition-colors hover:text-ivory">
-                ← All insights
+              <Link href={topic ? `/insights/topic/${topic.slug}` : "/insights"} className="inline-flex min-h-11 items-center text-sm text-ivory/80 transition-colors hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ivory">
+                ← {topic ? `${topic.name} insights` : "All insights"}
               </Link>
               <p className="mt-8 text-sm font-medium uppercase tracking-[0.18em] text-ivory/70">Brand study</p>
             </Reveal>

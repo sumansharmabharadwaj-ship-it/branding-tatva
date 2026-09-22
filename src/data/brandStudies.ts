@@ -33,6 +33,7 @@ export type BrandStudy = {
   brand: string;
   region: string;
   lens: string;
+  topicSlug: string;
   premise: string;
   observations: { title: string; text: string }[];
   lesson: string;
@@ -77,6 +78,7 @@ export const brandStudies: BrandStudy[] = [
     brand: "Coca Cola",
     region: "United States",
     lens: "Distinctive assets",
+    topicSlug: "distinctive-brand",
     premise:
       "A century of recognition rests on a handful of sensory codes owned so completely that a silhouette sells without a single word.",
     observations: [
@@ -106,6 +108,7 @@ export const brandStudies: BrandStudy[] = [
     brand: "Apple",
     region: "United States",
     lens: "Brand architecture",
+    topicSlug: "positioning",
     premise:
       "One master brand carries every category it enters, so each product borrows authority instead of building it from zero.",
     observations: [
@@ -135,6 +138,7 @@ export const brandStudies: BrandStudy[] = [
     brand: "Nike",
     region: "United States",
     lens: "Verbal identity",
+    topicSlug: "brand-messaging",
     premise:
       "Three words from 1988 still carry the entire positioning, proof that language can be a brand asset with the durability of a logo.",
     observations: [
@@ -164,6 +168,7 @@ export const brandStudies: BrandStudy[] = [
     brand: "Burberry",
     region: "United Kingdom",
     lens: "Brand codes under pressure",
+    topicSlug: "distinctive-brand",
     premise:
       "Heritage codes can be diluted by exposure the house never chose, and still be reclaimed, because the memory structure survives the misuse.",
     observations: [
@@ -193,6 +198,7 @@ export const brandStudies: BrandStudy[] = [
     brand: "Tim Hortons",
     region: "Canada",
     lens: "Ritual and cultural memory",
+    topicSlug: "brand-memory",
     premise:
       "A brand becomes culture when its language and rituals enter daily life even where the logo is absent.",
     observations: [

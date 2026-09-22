@@ -12,6 +12,7 @@ import { LinkButton } from "@/components/Button";
 import { Reveal } from "@/components/Reveal";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { elements } from "@/data/elements";
+import { brandStudies } from "@/data/brandStudies";
 import { getInsightApplication } from "@/data/insightApplications";
 import {
   getInsightTopic,
@@ -151,6 +152,7 @@ export default async function InsightTopicPage({ params }: Props) {
       new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
   );
   const pathway = getInsightPathway(topic.slug);
+  const studies = brandStudies.filter((study) => study.topicSlug === topic.slug);
   const relatedPosts = pathway.adjacentTopicSlugs
     .flatMap((adjacentTopicSlug) =>
       getInsightsByTopic(adjacentTopicSlug).filter((post) => post.featured)
@@ -312,6 +314,48 @@ export default async function InsightTopicPage({ params }: Props) {
 
         <section className="bg-background-alt pb-20 sm:pb-28">
           <Container>
+            <nav aria-label={`${topic.name} reading index`} className="mb-12 border-y border-soil/15 py-6 text-soil">
+              {/* Keep every guide in server HTML, including those beyond the
+                  interactive explorer's first folio. The native disclosure
+                  gives readers the same complete index without JavaScript. */}
+              <details>
+                <summary className="min-h-11 cursor-pointer py-3 text-base font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-soil">
+                  All {posts.length} guides on {topic.name.toLowerCase()}
+                </summary>
+                <ul className="mt-3 grid gap-x-8 sm:grid-cols-2">
+                  {posts.map((post) => (
+                    <li key={post.slug} className="border-t border-soil/10">
+                      <Link href={`/insights/${post.slug}`} className="flex min-h-11 items-center py-3 text-base leading-6 underline decoration-soil/25 underline-offset-4 hover:decoration-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-soil">
+                        {post.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+              {studies.length > 0 && (
+                <div className="mt-5 border-t border-soil/10 pt-5">
+                  <p className="font-semibold">Independent brand studies</p>
+                  <p className="mt-2 text-base leading-7 text-soil/75">
+                    Analysis of public brands. These brands have no client relationship or affiliation with Branding Tatva.
+                  </p>
+                  <ul className="mt-2">
+                    {studies.map((study) => (
+                      <li key={study.slug}>
+                        <Link href={`/work/studies/${study.slug}`} className="inline-flex min-h-11 items-center py-2 text-base underline decoration-soil/25 underline-offset-4 hover:decoration-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-soil">
+                          {study.brand}: {study.lens.toLowerCase()}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <p className="mt-4 text-base leading-7">
+                Need a definition?{" "}
+                <Link href="/glossary" className="inline-flex min-h-11 items-center underline decoration-soil/25 underline-offset-4 hover:decoration-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-soil">
+                  Browse the brand strategy glossary
+                </Link>
+              </p>
+            </nav>
             <Reveal>
               <InsightDecisionPath pathway={pathway} />
             </Reveal>

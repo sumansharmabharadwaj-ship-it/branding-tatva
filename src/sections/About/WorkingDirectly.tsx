@@ -263,7 +263,7 @@ export function WorkingDirectly() {
                       : `${String(sequence.activeIndex + 1).padStart(2, "0")} of 04 decisions retained`}
                   </span>
                 </p>
-                <Link href="/services#study">See what working together looks like <ArrowUpRight size={14} aria-hidden="true" /></Link>
+                <Link href="/services#offerings">See what working together looks like <ArrowUpRight size={14} aria-hidden="true" /></Link>
               </footer>
             </article>
           </motion.div>
@@ -286,7 +286,7 @@ export function WorkingDirectly() {
               <strong>You never brief the thinking twice.</strong>
               <p>One brief. One strategist. Every decision connected.</p>
             </aside>
-            <Link href="/services#study">See what working together looks like <ArrowUpRight size={14} aria-hidden="true" /></Link>
+            <Link href="/services#offerings">See what working together looks like <ArrowUpRight size={14} aria-hidden="true" /></Link>
           </div>
         </div>
       </Container>
