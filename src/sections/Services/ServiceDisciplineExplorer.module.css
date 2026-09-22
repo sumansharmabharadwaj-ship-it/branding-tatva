@@ -1,0 +1,37 @@
+.phonePicker, .phoneContext, .phoneAction { display: none; }
+
+@media (max-width: 767px) {
+  .phonePicker { display: block; }
+  .phonePicker label { display: block; margin-bottom: 0.5rem; color: #e8ebdf; font-size: 0.8125rem; }
+  .phonePicker > div { position: relative; }
+  .phonePicker select {
+    display: block;
+    appearance: none;
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.75rem 2.4rem 0.75rem 0.85rem;
+    border: 1px solid #bac2b0;
+    border-radius: 0.85rem;
+    background: #f4f1e8;
+    color: #25392e;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.4;
+    cursor: pointer;
+  }
+  .phonePicker select:focus-visible { outline: 2px solid #c6a97a; outline-offset: 3px; }
+  .phonePicker > div > span { position: absolute; right: 0.85rem; top: 50%; transform: translateY(-60%); color: #25392e; font-size: 1.3rem; pointer-events: none; }
+  .phoneContext { display: block; width: 100%; color: #4a5b43; }
+  .phoneContext summary { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; min-height: 2.75rem; font-size: 0.8125rem; cursor: pointer; list-style: none; }
+  .phoneContext summary::-webkit-details-marker { display: none; }
+  .phoneContext summary:focus-visible { outline: 2px solid #6f4e37; outline-offset: 2px; border-radius: 0.3rem; }
+  .phoneContext summary > span { font-size: 1.25rem; transition: transform 220ms ease; }
+  .phoneContext[open] summary > span { transform: rotate(45deg); }
+  .phoneContext p { margin: 0.25rem 0 0.5rem; font-size: 0.875rem; line-height: 1.6; }
+  .phoneAction { display: flex; align-items: center; justify-content: space-between; gap: 0.65rem; min-height: 3rem; margin-top: 1rem; padding: 0.7rem 1rem; border-radius: 999px; background: #29432f; color: #f4f1e8; font-size: 0.875rem; line-height: 1.4; }
+  .phoneAction:hover { background: #435b3c; }
+  .phoneAction:focus-visible { outline: 2px solid #6f4e37; outline-offset: 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .phoneContext summary > span { transition: none; } }
+:global(:root[data-motion="reduced"]) .phoneContext summary > span { transition: none; }

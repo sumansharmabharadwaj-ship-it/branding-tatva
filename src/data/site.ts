@@ -19,7 +19,7 @@ export const site = {
       "https://wa.me/918447725381?text=Hello%20Suman%2C%20I%27d%20like%20to%20discuss%20my%20brand.",
   },
   consultationMinutes: 30,
-  calendlyUrl: "https://calendly.com/suman-brandingtatva",
+  calendlyUrl: "https://calendly.com/suman-brandingtatva/30min",
   social: {
     linkedin: "https://linkedin.com/in/suman-sharma-b6a682232",
     instagram: "https://instagram.com/brandingtatva",

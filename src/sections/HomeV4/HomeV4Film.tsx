@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useHomeGuideMode } from "@/hooks/useHomeGuideMode";
+import styles from "./HomeV4Film.module.css";
 
 /** A readable first frame, then one appropriately sized film as its scene arrives. */
 export function HomeV4Film({
@@ -55,7 +56,7 @@ export function HomeV4Film({
 
   return (
     <>
-      <Image src={poster} alt="" fill sizes="100vw" priority={priority} style={{ objectFit: "cover" }} />
+      <Image src={poster} alt="" fill sizes="100vw" priority={priority} className={styles.poster} />
       <video
         ref={videoRef}
         src={source}
@@ -66,8 +67,9 @@ export function HomeV4Film({
         preload="none"
         aria-hidden="true"
         data-home-playback-rate="1"
+        data-home-film-allowed={permitted ? "true" : "false"}
         onLoadedData={() => setHasFrame(true)}
-        style={{ opacity: hasFrame && !prefersReducedMotion ? 1 : 0 }}
+        style={{ visibility: hasFrame && !prefersReducedMotion ? "visible" : "hidden" }}
       />
     </>
   );

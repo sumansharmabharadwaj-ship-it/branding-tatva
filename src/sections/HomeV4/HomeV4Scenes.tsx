@@ -292,7 +292,10 @@ export function V4RecognitionScene() {
     const changed = previousIndexRef.current !== activeIndex;
     previousIndexRef.current = activeIndex;
     settleReading();
-    if (!changed || prefersReducedMotion) return;
+    const focused = document.activeElement;
+    const keyboardReading = focused instanceof HTMLElement && focused.matches(":focus-visible")
+      && sectionRef.current?.contains(focused);
+    if (!changed || prefersReducedMotion || keyboardReading) return;
     const direction = selectionDirection === "forward" ? 1 : -1;
     readingControls.set({ x: direction * 8, y: 3 });
     exampleControls.set({ x: direction * -6, y: 2 });
@@ -447,7 +450,13 @@ export function V4RecognitionScene() {
                 ))}
               </div>
             </div>
-            <div className={recognitionStyles.answer}>
+            <a
+              href="#paths"
+              className={recognitionStyles.answer}
+              onClick={() => publishServicesSituation(active.situation, "home_recognition")}
+              aria-label={`${active.path}: explore this path`}
+              data-cursor-label="explore"
+            >
               <div className={recognitionStyles.readingStack}>
                 <div className={recognitionStyles.readingMeasure} aria-hidden="true" inert>
                   {RECOGNITION_STATES.map((state) => <div key={state.number}><RecognitionAnswer state={state} /></div>)}
@@ -456,7 +465,11 @@ export function V4RecognitionScene() {
                   <RecognitionAnswer state={active} />
                 </motion.div>
               </div>
-            </div>
+              <span className={recognitionStyles.answerArrow} aria-hidden="true">
+                <ArrowDownRight size={22} />
+              </span>
+              <span className={recognitionStyles.answerHint} aria-hidden="true">Explore this path</span>
+            </a>
 
             <a
               href="#cost"

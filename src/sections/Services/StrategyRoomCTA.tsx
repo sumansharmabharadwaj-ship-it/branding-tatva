@@ -603,7 +603,7 @@ export function StrategyRoomCTA() {
                       ))}
                     </div>
                   ) : null}
-                  <CalendlyEmbed url={`${site.calendlyUrl}/30min`} onReady={resetCalendarPosition} />
+                  <CalendlyEmbed url={site.calendlyUrl} onReady={resetCalendarPosition} />
                 </motion.div>
               </motion.div>
             ) : null}
