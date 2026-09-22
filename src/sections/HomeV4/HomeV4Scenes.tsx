@@ -10,6 +10,7 @@ import { publishServicesSituation, SITUATION_TO_PROOF_SLUG } from "@/lib/service
 import recognitionStyles from "./RecognitionChoices.module.css";
 import costStyles from "./HiddenCost.module.css";
 import openingStyles from "./OpeningScene.module.css";
+import { useOpeningEntrance } from "./useOpeningEntrance";
 import { LivingGradient } from "@/components/LivingGradient";
 import { HomeV4Film } from "./HomeV4Film";
 import filmStyles from "./HomeV4Film.module.css";
@@ -99,55 +100,15 @@ function RecognitionAnswer({ state }: { state: RecognitionState }) {
 export function V4OpeningScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
-  const entrancePlayed = useRef(false);
+  const [keyboardReading, setKeyboardReading] = useState(false);
+  const readingStill = prefersReducedMotion || keyboardReading;
+  const stopEntrance = useOpeningEntrance(sectionRef, hydrated, readingStill);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
   const landscapeScale = useTransform(scrollYProgress, [0, 0.65, 1], [1.02, 1.17, 1.2]);
   const landscapeY = useTransform(scrollYProgress, [0, 1], [0, 58]);
   const lightX = useTransform(scrollYProgress, [0, 1], ["-18%", "80%"]);
   const proofSweep = useTransform(scrollYProgress, [0, .62], ["-110%", "110%"]);
   const signatureDraw = useTransform(scrollYProgress, [0, .48], [.3, 1]);
-
-  // A finite entrance on the original text nodes, after the existing prelude.
-  // Reading, focus, pause and a restored scroll position always take priority.
-  useEffect(() => {
-    if (!hydrated || entrancePlayed.current) return;
-    if (prefersReducedMotion) { entrancePlayed.current = true; return; }
-    const section = sectionRef.current;
-    if (!section) return;
-    let animations: Animation[] = [];
-    const finish = () => animations.forEach((animation) => animation.cancel());
-    const start = () => {
-      if (entrancePlayed.current) return;
-      entrancePlayed.current = true;
-      if (window.scrollY > 80 || section.contains(document.activeElement) || document.hidden) return;
-      const compact = window.matchMedia("(max-width: 820px)").matches;
-      animations = Array.from(section.querySelectorAll<HTMLElement>("[data-opening-word]")).map((word, index) =>
-        word.animate([
-          { transform: `translate3d(0, ${compact ? 10 : 22}px, 0) rotate(${compact ? 0 : 2}deg)` },
-          { transform: "translate3d(0, 0, 0) rotate(0deg)" },
-        ], { duration: 850, delay: index * 45, easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards" }),
-      );
-    };
-    const onSelection = () => {
-      const selection = document.getSelection();
-      if (selection && !selection.isCollapsed && selection.anchorNode && section.contains(selection.anchorNode)) finish();
-    };
-    const onVisibility = () => { if (document.hidden) finish(); };
-    if (document.documentElement.dataset.homePreludeReady === "true") start();
-    window.addEventListener("bt:home-prelude-ready", start, { once: true });
-    window.addEventListener("scroll", finish, { passive: true, once: true });
-    section.addEventListener("focusin", finish);
-    document.addEventListener("selectionchange", onSelection);
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
-      finish();
-      window.removeEventListener("bt:home-prelude-ready", start);
-      window.removeEventListener("scroll", finish);
-      section.removeEventListener("focusin", finish);
-      document.removeEventListener("selectionchange", onSelection);
-      document.removeEventListener("visibilitychange", onVisibility);
-    };
-  }, [hydrated, prefersReducedMotion]);
 
   return (
     <section
@@ -157,6 +118,13 @@ export function V4OpeningScene() {
       data-home-chapter="opening"
       data-home-section="opening"
       data-cursor-world="dark"
+      data-opening-reading-still={readingStill}
+      onFocusCapture={(event) => {
+        stopEntrance();
+        if (event.target.matches(":focus-visible")) setKeyboardReading(true);
+      }}
+      onKeyDownCapture={() => { stopEntrance(); setKeyboardReading(true); }}
+      onPointerDownCapture={() => { stopEntrance(); setKeyboardReading(false); }}
       className={`home-v4-opening ${openingStyles.opening}`}
       aria-labelledby="home-v4-opening-title"
     >
@@ -164,14 +132,23 @@ export function V4OpeningScene() {
         <motion.div
           className={openingStyles.landscape}
           data-opening-landscape
-          style={{ scale: prefersReducedMotion ? 1 : landscapeScale, y: prefersReducedMotion ? 0 : landscapeY }}
+          style={{ scale: readingStill ? 1 : landscapeScale, y: readingStill ? 0 : landscapeY }}
         >
-          <HomeV4Film
+          {readingStill ? (
+            <Image
+              src="/images/hero-forest-sanctuary-poster.jpg"
+              alt=""
+              fill
+              sizes="100vw"
+              priority
+              className={filmStyles.poster}
+            />
+          ) : <HomeV4Film
             desktop="/videos/hero-forest-sanctuary.mp4"
             mobile="/videos/hero-forest-sanctuary-mobile.mp4"
             poster="/images/hero-forest-sanctuary-poster.jpg"
             priority
-          />
+          />}
         </motion.div>
         <span className="home-v4-opening__wash" />
       </div>
@@ -180,7 +157,7 @@ export function V4OpeningScene() {
         aria-hidden="true"
         className="home-v4-opening__light home-v4-opening__light--one"
         data-opening-light
-        style={{ x: prefersReducedMotion ? 0 : lightX, opacity: prefersReducedMotion ? 0 : 0.3 }}
+        style={{ x: readingStill ? 0 : lightX, opacity: readingStill ? 0 : 0.3 }}
       />
 
       <div className="home-v4-opening__shell">
@@ -200,7 +177,7 @@ export function V4OpeningScene() {
               ))}</span>
               <em><span className={openingStyles.word} data-opening-word>Did you</span>{" "}<span className={openingStyles.word} data-opening-word>design it?</span></em>
             </h1>
-            <motion.span className={openingStyles.signature} aria-hidden="true" style={{ "--signature-draw": prefersReducedMotion ? 1 : signatureDraw } as MotionStyle}>
+            <motion.span className={openingStyles.signature} aria-hidden="true" style={{ "--signature-draw": readingStill ? 1 : signatureDraw } as MotionStyle}>
               <svg viewBox="0 0 420 18" fill="none" preserveAspectRatio="none">
                 <path d="M2 13C96 2 217 1 418 7" pathLength={1} />
                 <path d="M74 17C182 9 275 10 350 12" pathLength={1} />
@@ -234,10 +211,10 @@ export function V4OpeningScene() {
 
         <motion.aside
           className="home-v4-opening__proof"
-          style={{ "--proof-sweep": prefersReducedMotion ? "0%" : proofSweep } as MotionStyle}
+          style={{ "--proof-sweep": readingStill ? "0%" : proofSweep } as MotionStyle}
         >
           <span>Dr. Haley Nutrition</span>
-          <p className={openingStyles.proofStory}>Fewer posts.<br />A clearer reason to pay attention.</p>
+          <p className={openingStyles.proofStory}>A clearer message.<br />A recorded change in response.</p>
           <p className={openingStyles.proofCaption}>LinkedIn engagement rate</p>
           <dl className={openingStyles.proofComparison}>
             {[
@@ -255,7 +232,7 @@ export function V4OpeningScene() {
               </div>
             ))}
           </dl>
-          <Link href="/work/dr-haley-nutrition" className={openingStyles.proofLink}>
+          <Link href="/work/dr-haley-nutrition" className={openingStyles.proofLink} prefetch={false}>
             Read the case study <ArrowUpRight size={15} aria-hidden="true" />
           </Link>
         </motion.aside>

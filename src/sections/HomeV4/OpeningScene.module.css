@@ -106,3 +106,23 @@
 }
 @media (prefers-reduced-motion: reduce) { .proofLink svg { transition: none; translate: none !important; } }
 :global(html[data-motion="reduced"]) .proofLink svg { transition: none; translate: none !important; }
+
+/* Keyboard reading settles the whole opening until fresh pointer input. */
+.opening[data-opening-reading-still="true"] .word { transform: none !important; }
+.opening[data-opening-reading-still="true"] .signature path { stroke-dashoffset: 0; }
+.opening[data-opening-reading-still="true"] .proofTrack > span::after,
+.opening[data-opening-reading-still="true"]::after,
+.opening[data-opening-reading-still="true"] :global(.home-v4-button)::before,
+.opening[data-opening-reading-still="true"] :global(.home-v4-opening__scroll) i::after { content: none; }
+.opening[data-opening-reading-still="true"] :is(:global([data-home-motion-layer]), :global(.home-v4-button), .proofLink svg) {
+  transform: none !important; translate: none !important; rotate: none !important; scale: 1 !important;
+  transition: none !important; opacity: 1 !important; filter: none !important;
+}
+.opening[data-opening-reading-still="true"] :global(.home-v4-button) svg { transform: none !important; transition: none; }
+.opening[data-opening-reading-still="true"] :is(:global([data-scroll-ink]), :global([data-scroll-reading])) {
+  -webkit-text-fill-color: currentColor !important;
+}
+.opening:global(.home-v4-opening)[data-opening-reading-still="true"] :is(:global(.home-v4-opening__proof), :global(.home-v4-opening__scroll)) {
+  transition: none !important; opacity: 1 !important; filter: none !important;
+  transform: none !important; pointer-events: auto !important;
+}
