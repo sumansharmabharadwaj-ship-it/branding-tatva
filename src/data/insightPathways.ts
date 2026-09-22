@@ -22,8 +22,8 @@ export const insightPathways: Record<string, InsightPathway> = {
   "positioning": {
     service: {
       href: "/brand-positioning",
-      label: "Brand positioning: scope and preparation",
-      description: "See how Suman reviews your buyer, competing offers and evidence, and what to bring to a positioning conversation.",
+      label: "Brand positioning for UK service businesses",
+      description: "Review the buyer, competing offers and evidence with Suman. See the research, decisions and deliverables a positioning engagement can cover.",
     },
     proof: {
       href: "/work/myshopineurope",
@@ -115,6 +115,26 @@ export const insightPathways: Record<string, InsightPathway> = {
 // Keep the topic's proof and conversation paths, while making the service
 // destination specific to the article a visitor has just read.
 const articleServiceLinks: Record<string, InsightPathLink> = {
+  "brand-positioning-statement-examples-why-generic": {
+    href: "/brand-positioning",
+    label: "Turn a positioning statement into a working direction",
+    description: "Define the buyer, alternatives and evidence behind the statement before carrying it into website and sales language.",
+  },
+  "reposition-established-service-business-without-losing-recognition": {
+    href: "/brand-positioning",
+    label: "Plan the positioning of your established business",
+    description: "Examine a changed offer or audience with Suman, including which recognisable parts of the brand should stay.",
+  },
+  "competitor-research-brand-strategy-without-copying-category": {
+    href: "/brand-positioning",
+    label: "Use competitor evidence in your positioning",
+    description: "See how a positioning engagement compares the alternatives buyers consider and tests a reason to choose your offer.",
+  },
+  "brand-refresh-vs-rebrand-how-much-change": {
+    href: "/brand-audit",
+    label: "Audit the brand before deciding how much to change",
+    description: "Review the existing position, language, identity and touchpoints to distinguish a focused correction from a wider rebrand.",
+  },
   "brand-positioning-strategy-service-businesses": {
     href: "/brand-positioning",
     label: "Brand positioning for UK service businesses",
