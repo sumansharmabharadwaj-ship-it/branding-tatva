@@ -10,6 +10,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import type { ProcessStage } from "@/data/process";
 import { consultation } from "@/data/site";
+import { DecisionTrail } from "./DecisionTrail";
 import styles from "./ProjectJourney.module.css";
 
 const STAGE_META = [
@@ -82,9 +83,10 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const selectionId = useId();
   const readingMotion = useAnimationControls();
   const noteMotion = useAnimationControls();
-  const captionMotion = useAnimationControls();
   const outputMotion = useAnimationControls();
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const [keyboardNavigation, setKeyboardNavigation] = useState(false);
+  const still = prefersReducedMotion || keyboardNavigation;
   const cinematicMotion = useMediaQuery(
     "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
   );
@@ -129,33 +131,31 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   }, []);
 
   const settleReading = useCallback(() => {
-    readingMotion.stop(); noteMotion.stop(); captionMotion.stop(); outputMotion.stop();
+    readingMotion.stop(); noteMotion.stop(); outputMotion.stop();
     readingMotion.set({ x: 0, y: 0 });
     noteMotion.set({ x: 0, y: 0 });
-    captionMotion.set({ x: 0 });
     outputMotion.set({ scaleX: 1 });
-  }, [readingMotion, noteMotion, captionMotion, outputMotion]);
+  }, [readingMotion, noteMotion, outputMotion]);
 
   useEffect(() => {
     const previous = animatedStageRef.current;
     animatedStageRef.current = active;
     settleReading();
-    if (prefersReducedMotion || previous === active) return;
+    if (still || previous === active) return;
     const direction = Math.sign(active - previous);
     // Reading moves within a measured space; the note surface, result and
     // controls retain their positions through every forward or reverse step.
     readingMotion.set({ x: direction * 8, y: 2 });
     noteMotion.set({ x: direction * -6, y: 2 });
-    captionMotion.set({ x: direction * 6 });
     outputMotion.set({ scaleX: .08 });
     void readingMotion.start({ x: 0, y: 0, transition: { duration: .38, ease: EASE } });
     void noteMotion.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
-    void captionMotion.start({ x: 0, transition: { duration: .38, ease: EASE } });
     void outputMotion.start({ scaleX: 1, transition: { duration: .62, ease: EASE } });
-    return () => { readingMotion.stop(); noteMotion.stop(); captionMotion.stop(); outputMotion.stop(); };
-  }, [active, prefersReducedMotion, settleReading, readingMotion, noteMotion, captionMotion, outputMotion]);
+    return () => { readingMotion.stop(); noteMotion.stop(); outputMotion.stop(); };
+  }, [active, still, settleReading, readingMotion, noteMotion, outputMotion]);
 
-  function choose(index: number) {
+  function choose(index: number, keyboard = false) {
+    setKeyboardNavigation(keyboard);
     visualizer.choose(index);
   }
 
@@ -166,7 +166,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
       : event.key === "End" ? stages.length - 1
       : event.key === "ArrowRight" ? (index + 1) % stages.length
       : (index - 1 + stages.length) % stages.length;
-    choose(next);
+    choose(next, true);
     const target = tabsRef.current[next];
     const bounds = target?.getBoundingClientRect();
     if (bounds && (bounds.top < 80 || bounds.bottom > window.innerHeight - 64)) {
@@ -203,11 +203,11 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               aria-controls="project-stage-panel"
               tabIndex={active === index ? 0 : -1}
               className={styles.tab}
-              onClick={() => choose(index)}
-              onFocus={() => choose(index)}
+              onClick={(event) => choose(index, event.detail === 0)}
+              onFocus={(event) => choose(index, event.currentTarget.matches(":focus-visible"))}
               onKeyDown={(event) => onTabKeyDown(event, index)}
             >
-              {active === index && <motion.span className={styles.selection} layoutId={`project-selection-${selectionId}`} transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }} aria-hidden="true" />}
+              {active === index && <motion.span className={styles.selection} layoutId={`project-selection-${selectionId}`} transition={{ duration: still ? 0 : 0.3, ease: EASE }} aria-hidden="true" />}
               <span className={styles.number} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
               <span className={styles.tabLabel}>{item.stage}</span>
             </button>
@@ -255,9 +255,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 <motion.p data-process-note-reading initial={false} animate={noteMotion}>{meta.decision}</motion.p>
               </div>
             </div>
-            <motion.p className={styles.imageCaption} initial={false} animate={captionMotion} aria-hidden="true">
-              <span>{String(active + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}</span>{stage.stage}
-            </motion.p>
+            <DecisionTrail stages={stages.map((item) => item.stage)} active={active} still={still} onChoose={choose} />
           </div>
 
           <div className={styles.reading} data-process-reading>

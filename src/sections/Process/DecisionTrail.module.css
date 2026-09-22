@@ -1,0 +1,31 @@
+.trail {
+  position: relative; z-index: 1; margin: 1.25rem 1.5rem 1.5rem;
+  padding: 1rem 1.1rem .65rem; border: 1px solid rgb(255 250 239 / 65%);
+  border-radius: 1rem; color: #342f27; background: rgb(250 245 233 / 94%);
+  box-shadow: 0 12px 40px rgb(52 47 39 / 12%); backdrop-filter: blur(16px);
+}
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: #805239; font-size: .75rem; line-height: 1.5; }
+.heading > :first-child { letter-spacing: .06em; text-transform: uppercase; }
+.heading > :last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.diagram { display: block; width: 100%; height: 48px; margin-block: .2rem; overflow: visible; }
+.copyStack, .measure { display: grid; min-width: 0; }
+.copyStack > *, .measure > * { grid-area: 1 / 1; min-width: 0; }
+.copyStack p { margin: 0; font-size: .875rem; line-height: 1.5; text-wrap: pretty; }
+.measure { visibility: hidden; pointer-events: none; user-select: none; }
+.controls { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin-top: .5rem; padding-top: .45rem; border-top: 1px solid rgb(94 76 51 / 20%); }
+.controls button { display: inline-flex; align-items: center; justify-content: center; gap: .7rem; min-height: 44px; border: 1px solid transparent; border-radius: 999px; background: transparent; color: #514936; font: inherit; font-size: .875rem; line-height: 1.4; cursor: pointer; transition: background 180ms ease, border-color 180ms ease; }
+.controls button:not([aria-disabled="true"]):is(:hover, :focus-visible) { background: #e5ddce; border-color: #b9a88f; }
+.controls svg { flex-shrink: 0; transition: transform 240ms cubic-bezier(.22,1,.36,1); }
+.previous { width: 44px; flex-shrink: 0; }
+.previous[aria-disabled="true"] { opacity: .35; cursor: default; }
+.next { padding: .55rem .7rem; text-align: left; }
+.next:hover svg { transform: translateX(3px); }
+.previous:not([aria-disabled="true"]):hover svg { transform: translateX(-3px); }
+.announcement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 680px) { .trail { margin: 1rem; padding-inline: .9rem; } }
+@media (prefers-reduced-motion: reduce) {
+  .controls button, .controls svg { transition: none; }
+  .controls button svg { transform: none; }
+}
+.trail[data-still="true"] .controls button, .trail[data-still="true"] .controls svg { transition: none; }
+.trail[data-still="true"] .controls button svg { transform: none; }
