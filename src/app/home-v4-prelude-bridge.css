@@ -2,12 +2,8 @@
 /* Homepage V4 prelude → opening handoff                                       */
 /* -------------------------------------------------------------------------- */
 
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > em,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__lede,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__actions,
+/* The heading, explanation and contact actions paint immediately. Only
+   decorative details wait for the prelude; reading never waits for JS. */
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__proof,
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__scroll,
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__signal {
@@ -16,16 +12,10 @@ html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .h
   pointer-events: none !important;
 }
 
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__topline,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__eyebrow,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > span,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__lede,
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__actions,
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__scroll {
   transform: translate3d(0, 18px, 0) !important;
 }
 
-html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening h1 > em,
 html[data-home-prelude-bridge="active"]:not([data-home-prelude-ready="true"]) .home-v4-opening__proof {
   transform: translate3d(22px, 0, 0) !important;
 }

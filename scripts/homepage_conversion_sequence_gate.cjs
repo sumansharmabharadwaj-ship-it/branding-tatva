@@ -5,6 +5,7 @@ const root = path.resolve(__dirname, "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const experience = read("src/sections/HomeV4/HomeV4Experience.tsx");
 const scenes = read("src/sections/HomeV4/HomeV4Scenes.tsx");
+const film = read("src/sections/HomeV4/HomeV4Film.tsx");
 const interfaceSource = read("src/sections/HomeV4/HomeV4Interface.tsx");
 const mediaDirector = read("src/sections/HomeV4/HomeV4MediaDirector.tsx");
 const evidenceWall = read("src/sections/Home/EvidenceWall.tsx");
@@ -104,10 +105,11 @@ for (const staleInstruction of [
 
 assert((scenes.match(/<h1\b/g) || []).length === 1, "Homepage opening must contain exactly one h1.");
 for (const mediaMarker of ["muted", "autoPlay", "loop", "playsInline"]) {
-  assert(scenes.includes(mediaMarker), `Homepage films are missing ${mediaMarker}.`);
+  assert(film.includes(mediaMarker), `Homepage films are missing ${mediaMarker}.`);
 }
+assert((scenes.match(/<HomeV4Film\b/g) || []).length === 2, "Opening and recognition must use viewport-admitted films.");
 assert(interfaceSource.includes("useHydratedReducedMotion"), "Homepage controls ignore reduced motion.");
-assert(interfaceSource.includes('aria-label="Guided homepage controls"'), "Guided journey has no accessible name.");
+assert(interfaceSource.includes('aria-label="Homepage journey controls"'), "Guided journey has no accessible name.");
 assert(interfaceSource.includes('aria-pressed={mode === "guided"}'), "Guided journey does not expose its state.");
 assert(mediaDirector.includes("IntersectionObserver"), "Homepage media no longer follows viewport admission.");
 assert(

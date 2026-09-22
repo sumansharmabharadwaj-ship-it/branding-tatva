@@ -10,6 +10,7 @@ import recognitionStyles from "./RecognitionChoices.module.css";
 import costStyles from "./HiddenCost.module.css";
 import openingStyles from "./OpeningScene.module.css";
 import { LivingGradient } from "@/components/LivingGradient";
+import { HomeV4Film } from "./HomeV4Film";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -158,25 +159,12 @@ export function V4OpeningScene() {
           data-opening-landscape
           style={{ scale: prefersReducedMotion ? 1 : landscapeScale, y: prefersReducedMotion ? 0 : landscapeY }}
         >
-          {/* The `src` attribute is deliberately gone. A <video> with src set
-              ignores its <source> children entirely, so the mobile
-              derivative could never win while src was present. Sources
-              only, narrowest first, since the browser takes the first
-              whose media and type both match.
-              The mobile file is the same framing at 768 wide rather than a
-              reframe, so the shot is unchanged: 2.03MB down to 0.25MB on
-              the hero, which is the first thing a phone downloads. */}
-          <video
+          <HomeV4Film
+            desktop="/videos/hero-forest-sanctuary.mp4"
+            mobile="/videos/hero-forest-sanctuary-mobile.mp4"
             poster="/images/hero-forest-sanctuary-poster.jpg"
-            muted
-            autoPlay={!prefersReducedMotion}
-            loop
-            playsInline
-            preload="auto"
-          >
-            <source src="/videos/hero-forest-sanctuary-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
-            <source src="/videos/hero-forest-sanctuary.mp4" type="video/mp4" />
-          </video>
+            priority
+          />
         </motion.div>
         <span className="home-v4-opening__wash" />
       </div>
@@ -373,22 +361,11 @@ export function V4RecognitionScene() {
     >
       <LivingGradient contours preset="meadow" shaft={false} />
       <div className="home-v4-recognition__media" aria-hidden="true">
-        <video
-          muted
-          autoPlay={!prefersReducedMotion}
-          loop
-          playsInline
-          preload="metadata"
+        <HomeV4Film
+          desktop="/videos/pexels-fog-sunrise.mp4"
+          mobile="/videos/pexels-fog-sunrise-mobile.mp4"
           poster="/images/pexels-fog-sunrise-poster.jpg"
-        >
-          {/* Narrow screens take the same 768 wide derivative the evidence
-              chapter already fetches, so the second mount of this footage
-              rides the HTTP cache instead of pulling the desktop webm. The
-              mobile source must stay first: browsers take the first match. */}
-          <source media="(max-width: 767px)" src="/videos/pexels-fog-sunrise-mobile.mp4" type="video/mp4" />
-          <source src="/videos/pexels-fog-sunrise.webm" type="video/webm" />
-          <source src="/videos/pexels-fog-sunrise.mp4" type="video/mp4" />
-        </video>
+        />
         <span />
       </div>
 
