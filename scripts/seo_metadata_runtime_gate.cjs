@@ -2,20 +2,21 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { chromium } = require("playwright");
 
 const BASE_URL = (
+  process.env.SEO_BASE_URL ||
   process.env.PREVIEW_URL ||
-  "https://branding-tatva-git-august-8-isolated-suman22.vercel.app"
+  "https://brandingtatva.com"
 ).replace(/\/$/, "");
 const OUTPUT_DIR = path.resolve(
   process.env.SEO_OUTPUT_DIR || "artifacts/seo-metadata-runtime-gate",
 );
-const PRODUCTION_HOST = "brandingtatva.com";
+const PRODUCTION_ORIGIN = "https://brandingtatva.com";
+const SERVICE_ROUTES = ["/brand-positioning", "/brand-audit", "/brand-messaging"];
 const PRIMARY_ROUTES = [
   "/",
   "/services",
-  "/work",
+  ...SERVICE_ROUTES,
   "/insights",
   "/about",
   "/contact",
@@ -40,7 +41,7 @@ async function discoverRepresentativeRoutes(page) {
     ),
   );
 
-  await page.goto(`${BASE_URL}/work`, {
+  await page.goto(`${BASE_URL}/services`, {
     waitUntil: "domcontentloaded",
     timeout: 45_000,
   });
@@ -56,7 +57,108 @@ async function discoverRepresentativeRoutes(page) {
     ),
   );
 
+  if (routes.some((route) => !route)) {
+    throw new Error("Could not discover both an Insight guide and a project record");
+  }
   return unique(routes);
+}
+
+function parseStructuredData(scripts) {
+  const schemaTypes = [];
+  const errors = [];
+  function visit(value) {
+    if (Array.isArray(value)) return value.forEach(visit);
+    if (!value || typeof value !== "object") return;
+    const types = value["@type"];
+    schemaTypes.push(...(Array.isArray(types) ? types : [types]).filter(Boolean));
+    if (value["@graph"]) visit(value["@graph"]);
+  }
+  scripts.forEach((source, index) => {
+    try {
+      visit(JSON.parse(source));
+    } catch {
+      errors.push(`invalid JSON-LD in script ${index + 1}`);
+    }
+  });
+  return { schemaTypes: unique(schemaTypes), structuredDataErrors: errors };
+}
+
+// Header directives can target individual crawlers. Preserve that scope across
+// comma-separated directives without confusing max-snippet etc. with a crawler.
+function googleHeaderDirectives(value) {
+  let agent = "";
+  const directives = [];
+  for (let part of value.toLowerCase().split(",")) {
+    part = part.trim();
+    const prefix = part.match(/^([\w*-]+):\s*(.*)$/);
+    if (prefix && !["max-snippet", "max-image-preview", "max-video-preview", "unavailable_after"].includes(prefix[1])) {
+      agent = prefix[1];
+      part = prefix[2];
+    }
+    if (!agent || agent === "*" || agent === "googlebot") directives.push(part);
+  }
+  return directives;
+}
+
+function validateMetadata({ route, status, finalUrl, headers = {}, metadata, baseUrl = BASE_URL }) {
+  const failures = [];
+  const schemaTypes = metadata.schemaTypes || [];
+  if (status !== 200) failures.push(`expected HTTP 200, received ${status}`);
+  const normalizedPath = (value) => value.replace(/\/$/, "") || "/";
+  if (finalUrl) {
+    const final = new URL(finalUrl);
+    if (final.origin !== new URL(baseUrl).origin || normalizedPath(final.pathname) !== normalizedPath(route)) {
+      failures.push("navigation redirected away from the expected page");
+    }
+  }
+  failures.push(...(metadata.structuredDataErrors || []));
+  if (!metadata.title || metadata.title.length < 8) failures.push("missing or weak title");
+  if (!metadata.description || metadata.description.length < 40) failures.push("missing or weak description");
+  if (!metadata.canonical) {
+    failures.push("missing canonical");
+  } else {
+    try {
+      const canonical = new URL(metadata.canonical);
+      if (canonical.origin !== PRODUCTION_ORIGIN || canonical.username || canonical.password) {
+        failures.push("canonical is not on the HTTPS production origin");
+      }
+      if (normalizedPath(canonical.pathname) !== normalizedPath(route) || canonical.search || canonical.hash) {
+        failures.push(`canonical does not match the clean path ${route}`);
+      }
+    } catch {
+      failures.push("invalid canonical URL");
+    }
+  }
+  if (!metadata.ogTitle || !metadata.ogDescription || !metadata.ogImage) failures.push("incomplete Open Graph metadata");
+  if (!metadata.twitterCard || !metadata.twitterTitle || !metadata.twitterDescription) failures.push("incomplete Twitter metadata");
+  if (metadata.h1Count !== 1) failures.push(`expected one H1, found ${metadata.h1Count}`);
+  if (/^\/insights\/[^/]+\/?$/.test(route) && !schemaTypes.some((type) => ["Article", "BlogPosting"].includes(type))) {
+    failures.push("Insight guide is missing Article or BlogPosting schema");
+  }
+  if (route.startsWith("/work/") && !schemaTypes.some((type) => ["Article", "CreativeWork", "CaseStudy", "WebPage"].includes(type))) {
+    failures.push("case study is missing applicable structured data");
+  }
+  if (SERVICE_ROUTES.includes(normalizedPath(route)) && !schemaTypes.includes("Service")) {
+    failures.push("service page is missing Service schema");
+  }
+  const robotHeaders = Object.entries(headers)
+    .filter(([key]) => key.toLowerCase() === "x-robots-tag")
+    .flatMap(([, value]) => Array.isArray(value) ? value : [value]);
+  const directives = [
+    ...(metadata.robots || "").toLowerCase().split(","),
+    ...(metadata.googlebot || "").toLowerCase().split(","),
+    ...robotHeaders.flatMap(googleHeaderDirectives),
+  ].map((value) => value.trim());
+  const noindex = directives.includes("noindex") || directives.includes("none");
+  const nofollow = directives.includes("nofollow") || directives.includes("none");
+  const origin = new URL(baseUrl);
+  if (origin.origin === PRODUCTION_ORIGIN) {
+    if (noindex) failures.push("production page blocks Google indexing");
+    if (nofollow) failures.push("production page blocks following links");
+  } else if (origin.hostname.endsWith(".vercel.app") && !noindex) {
+    failures.push("preview is not explicitly noindex");
+  }
+  return failures;
 }
 
 function duplicateValues(results, field) {
@@ -84,27 +186,15 @@ async function inspectRoute(page, route) {
   const metadata = await page.evaluate(() => {
     const attribute = (selector, name = "content") =>
       document.querySelector(selector)?.getAttribute(name) || "";
-    const structuredData = Array.from(
-      document.querySelectorAll('script[type="application/ld+json"]'),
-    ).flatMap((script) => {
-      try {
-        const parsed = JSON.parse(script.textContent || "null");
-        return Array.isArray(parsed) ? parsed : [parsed];
-      } catch {
-        return [];
-      }
-    });
-    const schemaTypes = structuredData.flatMap((entry) => {
-      if (!entry || typeof entry !== "object") return [];
-      const value = entry["@type"];
-      return Array.isArray(value) ? value : [value].filter(Boolean);
-    });
+    const allMeta = (name) => Array.from(document.querySelectorAll(`meta[name="${name}" i]`))
+      .map((element) => element.getAttribute("content") || "").join(",");
 
     return {
       title: document.title,
       description: attribute('meta[name="description"]'),
       canonical: attribute('link[rel="canonical"]', "href"),
-      robots: attribute('meta[name="robots"]'),
+      robots: allMeta("robots"),
+      googlebot: allMeta("googlebot"),
       ogTitle: attribute('meta[property="og:title"]'),
       ogDescription: attribute('meta[property="og:description"]'),
       ogImage: attribute('meta[property="og:image"]'),
@@ -113,75 +203,26 @@ async function inspectRoute(page, route) {
       twitterTitle: attribute('meta[name="twitter:title"]'),
       twitterDescription: attribute('meta[name="twitter:description"]'),
       h1Count: document.querySelectorAll("h1").length,
-      schemaTypes,
+      structuredData: Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
+        .map((script) => script.textContent || ""),
     };
   });
 
+  Object.assign(metadata, parseStructuredData(metadata.structuredData));
+  delete metadata.structuredData;
   const headers = response?.headers() || {};
-  const failures = [];
-  if (!metadata.title || metadata.title.length < 8) {
-    failures.push("missing or weak title");
-  }
-  if (!metadata.description || metadata.description.length < 40) {
-    failures.push("missing or weak description");
-  }
-  if (!metadata.canonical) {
-    failures.push("missing canonical");
-  } else if (!metadata.canonical.includes(PRODUCTION_HOST)) {
-    failures.push("canonical is not on the production domain");
-  } else {
-    const expectedPath = route === "/" ? "" : route.replace(/\/$/, "");
-    try {
-      const canonicalUrl = new URL(metadata.canonical);
-      if (canonicalUrl.pathname.replace(/\/$/, "") !== expectedPath) {
-        failures.push(
-          `canonical path ${canonicalUrl.pathname} does not match ${route}`,
-        );
-      }
-    } catch {
-      failures.push("invalid canonical URL");
-    }
-  }
-  if (!metadata.ogTitle || !metadata.ogDescription || !metadata.ogImage) {
-    failures.push("incomplete Open Graph metadata");
-  }
-  if (
-    !metadata.twitterCard ||
-    !metadata.twitterTitle ||
-    !metadata.twitterDescription
-  ) {
-    failures.push("incomplete Twitter metadata");
-  }
-  if (metadata.h1Count !== 1) {
-    failures.push(`expected one H1, found ${metadata.h1Count}`);
-  }
-  if (
-    route.startsWith("/insights/") &&
-    !metadata.schemaTypes.some(
-      (type) => type === "Article" || type === "BlogPosting",
-    )
-  ) {
-    failures.push("Insight guide is missing Article or BlogPosting schema");
-  }
-  if (
-    route.startsWith("/work/") &&
-    !metadata.schemaTypes.some((type) =>
-      ["Article", "CreativeWork", "CaseStudy", "WebPage"].includes(type),
-    )
-  ) {
-    failures.push("case study is missing applicable structured data");
-  }
-
-  const isPreview = new URL(BASE_URL).hostname.endsWith(".vercel.app");
-  const robotsDirectives = `${metadata.robots} ${headers["x-robots-tag"] || ""}`.toLowerCase();
-  if (isPreview && !robotsDirectives.includes("noindex")) {
-    failures.push("preview is not explicitly noindex");
-  }
+  // Scope starts again for each header field; a joined string can accidentally
+  // assign a generic noindex field to the previous field's named crawler.
+  headers["x-robots-tag"] = response
+    ? (await response.headersArray()).filter(({ name }) => name.toLowerCase() === "x-robots-tag").map(({ value }) => value)
+    : [];
+  const status = response?.status() ?? 0;
+  const failures = validateMetadata({ route, status, finalUrl: page.url(), headers, metadata });
 
   return {
     route,
-    status: response?.status() ?? 0,
-    xRobotsTag: headers["x-robots-tag"] || "",
+    status,
+    xRobotsTag: headers["x-robots-tag"],
     ...metadata,
     failures,
     passed: failures.length === 0,
@@ -189,6 +230,7 @@ async function inspectRoute(page, route) {
 }
 
 async function main() {
+  const { chromium } = require("playwright");
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -232,7 +274,11 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+module.exports = { PRIMARY_ROUTES, SERVICE_ROUTES, parseStructuredData, validateMetadata };
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

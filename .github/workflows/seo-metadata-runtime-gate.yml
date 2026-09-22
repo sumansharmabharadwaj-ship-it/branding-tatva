@@ -2,50 +2,64 @@ name: SEO metadata runtime gate
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows:
-      - Permanent preview source gate
-    types:
-      - completed
+    inputs:
+      target:
+        description: Site to inspect (read only)
+        type: choice
+        options: [production, preview]
+        default: production
+  pull_request:
+    paths:
+      - "scripts/seo_metadata_runtime_gate*.cjs"
+      - ".github/workflows/seo-metadata-runtime-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/seo_metadata_runtime_gate*.cjs"
+      - ".github/workflows/seo-metadata-runtime-gate.yml"
 
 permissions:
   contents: read
 
 concurrency:
-  group: seo-metadata-runtime-gate
+  group: seo-metadata-runtime-gate-${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
+  validator-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify indexing and metadata regression cases
+        run: node --test scripts/seo_metadata_runtime_gate.test.cjs
+
   seo-runtime:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'workflow_dispatch'
+    needs: validator-tests
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Check out canonical preview source
+      - name: Check out the selected workflow ref
         uses: actions/checkout@v4
-        with:
-          ref: homepage-cinematic-recovery
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Install the isolated browser audit dependency and Chromium
+        run: |
+          npm install --prefix "$RUNNER_TEMP/seo-runtime" --no-package-lock --ignore-scripts playwright@1.63.0
+          node "$RUNNER_TEMP/seo-runtime/node_modules/playwright/cli.js" install --with-deps chromium
 
       - name: Verify metadata, canonicals, schemas, social cards, and preview noindex
         env:
-          PREVIEW_URL: https://branding-tatva-git-homepage-cinematic-recovery-suman22.vercel.app
+          NODE_PATH: ${{ runner.temp }}/seo-runtime/node_modules
+          SEO_BASE_URL: ${{ inputs.target == 'preview' && 'https://branding-tatva-git-august-8-isolated-suman22.vercel.app' || 'https://brandingtatva.com' }}
           SEO_OUTPUT_DIR: artifacts/seo-metadata-runtime-gate
         run: node scripts/seo_metadata_runtime_gate.cjs
 
