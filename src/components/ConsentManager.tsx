@@ -127,7 +127,7 @@ export function ConsentManager() {
     }));
     const wasStopped = lenis?.isStopped;
     lenis?.stop();
-    const gutter = getComputedStyle(document.documentElement).scrollbarGutter;
+    const gutter = getComputedStyle(document.documentElement).getPropertyValue("scrollbar-gutter");
     rootStyle.setProperty("scrollbar-gutter", gutter.includes("stable") ? gutter : "stable");
     rootStyle.setProperty("overflow", "hidden");
     const background = Array.from(panel.parentElement?.children ?? [])

@@ -19,3 +19,11 @@ The shared preferences panel did not own scrolling: a native wheel gesture on it
 TypeScript, changed-component ESLint, homepage source checks, cursor input checks and the 106-route production build passed. No contact enquiry was submitted.
 
 Physical iPhone/Safari and native touch input remain outside the cloud browser's available input surface. The narrow iframe checks establish responsive layout and mouse/keyboard behavior only.
+
+## Deployed check
+
+The original release 509 preview was canceled as stale when concurrent homepage release 510 arrived. Its source `5fd22b95fadc255bf9a834348abfbaf189e101bb` includes the preferences changes unchanged and reached READY.
+
+On that deployed 320 × 720 frame, the panel has zero horizontal overflow, document overflow is hidden, background content is inert and the native-scroll exception is present. Repeating the 470px backdrop gesture leaves the document at scrollTop 5258. The panel is 281 × 647px with both vertical edges inside the frame.
+
+Release 511 uses the standard CSS property reader for scrollbar gutter state so a missing browser-specific property cannot interrupt modal setup. TypeScript, ESLint and the 106-route build passed again for this correction.
