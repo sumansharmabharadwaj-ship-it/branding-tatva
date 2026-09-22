@@ -78,6 +78,7 @@ export const servicePages: ServicePageContent[] = [
     reading: [
       { title: "How brand positioning works for service businesses", href: "/insights/brand-positioning-strategy-service-businesses" },
       { title: "How to position a consulting business", href: "/insights/how-to-position-a-consulting-business" },
+      { title: "Brand strategist or branding agency: which fits the work?", href: "/insights/brand-strategist-vs-branding-agency" },
     ],
   },
   {
@@ -139,6 +140,7 @@ export const servicePages: ServicePageContent[] = [
     reading: [
       { title: "The brand audit checklist to use before a rebrand", href: "/insights/brand-audit-checklist-before-rebrand" },
       { title: "Check consistency across your service business", href: "/insights/brand-consistency-checklist-service-businesses" },
+      { title: "Brand refresh or rebrand: how much change is needed?", href: "/insights/brand-refresh-vs-rebrand-how-much-change" },
     ],
   },
   {
@@ -191,6 +193,7 @@ export const servicePages: ServicePageContent[] = [
     reading: [
       { title: "Build voice guidelines a writer can actually use", href: "/insights/brand-voice-guidelines-writers-can-use" },
       { title: "Plan the messages a service page needs", href: "/insights/service-page-messaging-strategy" },
+      { title: "What affects the cost of brand strategy?", href: "/insights/how-much-does-brand-strategy-cost" },
     ],
   },
 ];
