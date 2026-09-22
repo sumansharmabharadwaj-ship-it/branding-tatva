@@ -37,11 +37,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     `${project.title} ${routeType.toLowerCase()}: ${project.hook ?? project.outcome ?? project.challenge}`,
   );
   const title = `${project.title} ${routeType}`;
-  const media = getCaseStudySearchMedia(
-    project,
-    taxonomy,
-    getCaseStudyPresentation(project.slug),
-  );
+  const shareImage = {
+    url: `${site.url}/work/${project.slug}/share-image.png`,
+    width: 1200,
+    height: 630,
+    alt: `${project.title}: ${taxonomy.evidenceLabel}. Editorial summary of the recorded strategy.`,
+  };
 
   return {
     title,
@@ -62,13 +63,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: `/work/${project.slug}`,
       type: "article",
-      images: [{ url: media.url, alt: media.alt }],
+      images: [{ ...shareImage, type: "image/png" }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${site.name}`,
       description,
-      images: [media.url],
+      images: [shareImage],
     },
   };
 }
