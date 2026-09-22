@@ -38,7 +38,7 @@
 .mapLines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .mapLines path { fill: none; stroke: #e1cea9; stroke-width: 1.5; opacity: .24; }
 .mapLines .mapSignal { opacity: 1; }
-.mapInput, .mapPosition { position: relative; display: grid; align-content: center; gap: .35rem; border: 1px solid rgb(225 206 169 / 30%); background: rgb(16 25 18 / 94%); transition: border-color 420ms ease, background-color 420ms ease, box-shadow 420ms ease; }
+.mapInput, .mapPosition { color: inherit; font: inherit; text-align: left; cursor: pointer; position: relative; display: grid; align-content: center; gap: .35rem; border: 1px solid rgb(225 206 169 / 30%); background: rgb(16 25 18 / 94%); transition: border-color 420ms ease, background-color 420ms ease, box-shadow 420ms ease; }
 .mapInput { grid-column: 1; min-height: 5.25rem; gap: .2rem; padding: .7rem .85rem; border-radius: .7rem; }
 .mapInput span, .mapPosition span { color: #ceb995; font-size: .75rem; line-height: 1.3; font-variant-numeric: tabular-nums; }
 .mapInput strong { font-size: 1rem; line-height: 1.4; font-weight: 400; }
@@ -127,3 +127,9 @@
 }
 
 :global(html[data-motion="reduced"]) :is(.mapInput, .mapPosition) { transition: none; }
+
+/* The diagram is a direct way into the same four decisions. */
+.mapInput:focus-visible, .mapPosition:focus-visible { outline: 2px solid #f1eadc !important; outline-offset: 5px; }
+@media (hover: hover) and (pointer: fine) {
+  .mapInput:hover, .mapPosition:hover { border-color: #f1eadc; background: #3c4734; box-shadow: 0 0 0 5px rgb(225 206 169 / 12%); }
+}

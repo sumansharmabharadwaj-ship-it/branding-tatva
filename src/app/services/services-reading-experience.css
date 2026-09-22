@@ -328,3 +328,11 @@ html[data-services-experience="active"] [data-services-journey-thread] {
   padding-top: max(6.5rem, 11svh) !important;
   padding-bottom: 5rem !important;
 }
+
+/* Leave room for the fixed header when arriving at the first decision. */
+html[data-services-experience="active"] #situation[data-services-scene] {
+  justify-content: flex-start !important;
+  min-height: 100svh !important;
+  padding-top: max(6.5rem, 11svh) !important;
+  padding-bottom: 5rem !important;
+}
