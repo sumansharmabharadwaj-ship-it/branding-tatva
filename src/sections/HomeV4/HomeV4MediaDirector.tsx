@@ -108,12 +108,14 @@ export function HomeV4MediaDirector() {
 
       applyPlaybackRate(video);
 
-      // Individual media components still own their own lifecycle. Whenever
-      // one of them tries to resume, the director reapplies the faster pace
-      // and immediately arbitrates the shared decoding budget again.
+      // VideoWarden is the final playback arbiter. Re-running syncAll from a
+      // play event can repeatedly restart a neighbour the warden just paused
+      // (this director admits two films on desktop; the warden admits one).
+      // Geometry changes still choose candidates, while media events only
+      // maintain their rate and honour the page's explicit pause state.
       const refreshMediaState = () => {
         applyPlaybackRate(video);
-        queueMicrotask(syncAll);
+        if (globallyPaused() && !video.paused) video.pause();
       };
       video.addEventListener("loadedmetadata", refreshMediaState);
       video.addEventListener("play", refreshMediaState);
