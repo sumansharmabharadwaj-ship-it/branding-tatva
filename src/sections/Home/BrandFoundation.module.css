@@ -1,7 +1,7 @@
 .section { position: relative; margin: 0; color: #f1eadc; background: #121713; }
 .scene { position: relative; overflow: hidden; isolation: isolate; }
 .landscape { position: absolute; inset: -1rem; transform-origin: 72% 50%; }
-.landscape video { width: 100%; height: 100%; object-fit: cover; object-position: center 52%; }
+.landscape :is(video, img) { width: 100%; height: 100%; object-fit: cover; object-position: center 52%; }
 .scrim { position: absolute; inset: 0; background: linear-gradient(100deg, rgb(8 13 10 / 25%), transparent 65%), linear-gradient(180deg, rgb(8 13 10 / 8%) 70%, rgb(8 13 10 / 40%)); }
 .sunlight { position: absolute; top: 0; left: 0; bottom: 0; width: 32%; pointer-events: none; background: linear-gradient(100deg, transparent, rgb(233 225 193 / 25%), transparent); filter: blur(22px); mix-blend-mode: screen; }
 .shell { position: relative; z-index: 1; display: flex; align-items: center; gap: clamp(2rem, 4vw, 4rem); width: min(100%, 90rem); min-height: 100svh; margin-inline: auto; padding: clamp(5.5rem, 9svh, 7rem) clamp(1.5rem, 5vw, 5rem) clamp(2.5rem, 5svh, 4rem); }
@@ -31,7 +31,13 @@
 .link { display: inline-flex; align-items: center; justify-content: center; justify-self: start; gap: 1.2rem; min-height: 3rem; padding: .75rem 1.2rem; border: 1px solid #514936; border-radius: 999px; background: #514936; color: #fff9ed; font-size: .9rem; line-height: 1.4; }
 .link svg { flex-shrink: 0; }
 .link:hover { border-color: #d1ba8f; background: #1d271f; }
-.section :is(.tab, .panel, .link):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 4px; }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem 1rem; }
+.nextDecision { display: inline-flex; align-items: center; justify-content: space-between; gap: .8rem; min-height: 3rem; max-width: 100%; padding: .65rem .25rem; border: 0; color: #514936; background: transparent; font: inherit; font-size: .9rem; line-height: 1.4; text-align: left; cursor: pointer; }
+.nextDecision svg { flex-shrink: 0; transition: transform .36s cubic-bezier(.22, 1, .36, 1); }
+.nextDecision:hover { color: #805239; }
+.section[data-foundation-motion-active="true"] .nextDecision:hover svg { transform: translateX(3px); }
+.announcement { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.section :is(.tab, .panel, .link, .nextDecision):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 4px; }
 
 .map { flex: 1; min-width: 0; padding-block: 2rem; color: #f1eadc; }
 .mapLabel { margin: 0; font-size: .875rem; line-height: 1.5; letter-spacing: .06em; text-shadow: 0 2px 12px #080d0a; }
@@ -52,7 +58,7 @@
 .mapCaption { max-width: 29ch; margin: 0; color: #f1eadc; font-size: 1rem; line-height: 1.6; text-shadow: 0 2px 12px #080d0a; }
 
 /* The breakpoint admits desktop motion; the measured frame decides whether
-   the full reading and action fit. A static frame always uses document flow. */
+   the full reading and action fit. Pausing retains an admitted scroll hold. */
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
   .section[data-foundation-layout="sticky"] { height: 220svh; min-height: 220svh; overflow: clip; }
   .section[data-foundation-layout="sticky"] .scene { position: sticky; top: 0; min-height: 100svh; }
@@ -119,7 +125,8 @@
   .panel h3 { font-size: clamp(1.75rem, 7.6vw, 1.9rem); }
   .panel { min-height: 17.5rem; }
   .outputs { display: grid; gap: .65rem; }
-  .link { justify-self: stretch; }
+  .actions { align-items: stretch; flex-direction: column; }
+  .nextDecision { align-self: flex-start; }
 }
 
 /* Extra wrapping on very narrow screens needs room, without forcing every
@@ -129,11 +136,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mapInput, .mapPosition { transition: none; }
+  .mapInput, .mapPosition, .nextDecision svg { transition: none; }
 }
 
-:global(html[data-motion="reduced"]) :is(.mapInput, .mapPosition) { transition: none; }
-.section[data-foundation-reading-still="true"] :is(.mapInput, .mapPosition) { transition: none; }
+:global(html[data-motion="reduced"]) :is(.mapInput, .mapPosition, .nextDecision svg) { transition: none; }
+.section[data-foundation-motion-active="false"] :is(.mapInput, .mapPosition, .nextDecision svg) { transition: none; }
 
 /* The diagram is a direct way into the same four decisions. */
 .mapInput:focus-visible, .mapPosition:focus-visible { outline: 2px solid #f1eadc !important; outline-offset: 5px; }

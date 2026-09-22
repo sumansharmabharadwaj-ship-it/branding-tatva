@@ -1,12 +1,13 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { animate, motion, useAnimationControls, useInView, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import styles from "./BrandFoundation.module.css";
 
 const FOUNDATION_LAYERS = [
@@ -100,8 +101,23 @@ function FoundationConnections({ activeIndex, still }: { activeIndex: number; st
 }
 
 /* Diagram and reading share one selection, including keyboard focus. */
-function FoundationMap({ activeIndex, reducedMotion, onChoose }: { activeIndex: number; reducedMotion: boolean; onChoose: (index: number) => void }) {
+function FoundationMap({ activeIndex, reducedMotion, onChoose }: { activeIndex: number; reducedMotion: boolean; onChoose: (index: number, keyboard: boolean) => void }) {
   const mapId = useId();
+  const captionControls = useAnimationControls();
+  const previousIndex = useRef(activeIndex);
+  const settleCaption = useCallback(() => {
+    captionControls.stop();
+    captionControls.set({ y: 0 });
+  }, [captionControls]);
+  useEffect(() => {
+    const changed = previousIndex.current !== activeIndex;
+    previousIndex.current = activeIndex;
+    settleCaption();
+    if (reducedMotion || !changed) return;
+    captionControls.set({ y: 6 });
+    void captionControls.start({ y: 0, transition: { duration: .36, ease: EASE } });
+    return () => captionControls.stop();
+  }, [activeIndex, captionControls, reducedMotion, settleCaption]);
   return (
     <div className={styles.map} data-foundation-map data-foundation-controls role="group" aria-label="Explore the foundation diagram">
       <p className={styles.mapLabel}>How a position takes shape</p>
@@ -141,7 +157,7 @@ function FoundationMap({ activeIndex, reducedMotion, onChoose }: { activeIndex: 
             aria-label={`Explore ${layer.label.toLowerCase()}`}
             aria-pressed={activeIndex === index}
             aria-controls="foundation-layer-panel"
-            onClick={() => onChoose(index)}
+            onClick={(event) => onChoose(index, event.detail === 0)}
             data-cursor-label="explore"
             data-active={activeIndex === index}
             data-connected={activeIndex === index || activeIndex === 3}
@@ -152,21 +168,19 @@ function FoundationMap({ activeIndex, reducedMotion, onChoose }: { activeIndex: 
             <small className={styles.mapHint}>{layer.mapHint}</small>
           </button>
         ))}
-        <button type="button" className={styles.mapPosition} data-active={activeIndex === 3} aria-label="Explore position" aria-pressed={activeIndex === 3} aria-controls="foundation-layer-panel" onClick={() => onChoose(3)} data-cursor-label="connect">
+        <button type="button" className={styles.mapPosition} data-active={activeIndex === 3} aria-label="Explore position" aria-pressed={activeIndex === 3} aria-controls="foundation-layer-panel" onClick={(event) => onChoose(3, event.detail === 0)} data-cursor-label="connect">
           <span>04</span>
           <strong>Position</strong>
           <small className={styles.mapHint}>{FOUNDATION_LAYERS[3].mapHint}</small>
         </button>
       </div>
-      <p className={`${styles.mapCaption} ${styles.readingStack}`}>
+      <p className={`${styles.mapCaption} ${styles.readingStack}`} onPointerDown={settleCaption}>
         <span className={styles.readingMeasure} aria-hidden="true" inert>
           {FOUNDATION_LAYERS.map((layer) => <span key={layer.id}>{layer.connectionCopy}</span>)}
         </span>
         <motion.span
-          key={`${activeIndex}-${reducedMotion}`}
-          initial={reducedMotion ? false : { y: 6 }}
-          animate={{ y: 0 }}
-          transition={{ duration: reducedMotion ? 0 : .36, ease: EASE }}
+          initial={false}
+          animate={captionControls}
           data-foundation-map-reading
         >
           {FOUNDATION_LAYERS[activeIndex].connectionCopy}
@@ -252,16 +266,18 @@ export function BrandFoundationScene() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const selectionId = useId();
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const [keyboardReading, setKeyboardReading] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
   const readingStill = prefersReducedMotion || keyboardReading;
   // Match the CSS breakpoint, then measure the complete natural frame.
   // Larger text or a shorter viewport can release the hold without clipping.
   const hasScrollRunway = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
   const [frameFits, setFrameFits] = useState(false);
   const [hasScrollLayout, setHasScrollLayout] = useState(false);
-  const cinematicMotion = hasScrollLayout && !prefersReducedMotion;
+  const cinematicMotion = hydrated && hasScrollLayout && !readingStill;
   const sceneInView = useInView(wrapperRef, { amount: 0.08 });
+  const motionActive = hydrated && sceneInView && !readingStill;
   const previousIndexRef = useRef(0);
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
@@ -270,11 +286,12 @@ export function BrandFoundationScene() {
     count: FOUNDATION_LAYERS.length,
     target: wrapperRef,
     enabled: sceneInView && cinematicMotion,
-    reducedMotion: prefersReducedMotion,
+    reducedMotion: readingStill,
   });
   const activeIndex = visualizer.activeIndex;
   const direction = activeIndex >= previousIndexRef.current ? 1 : -1;
   const active = FOUNDATION_LAYERS[activeIndex];
+  const nextIndex = (activeIndex + 1) % FOUNDATION_LAYERS.length;
   const scrollYProgress = visualizer.scrollYProgress;
   // Keep a separate painted camera value. A paused scene must retain its
   // framing even if the document scrolls; resume catches up once, gently.
@@ -304,16 +321,21 @@ export function BrandFoundationScene() {
     // Once a desktop story has started, pause its animation without removing
     // its runway. A visit that begins with reduced motion still uses normal
     // document flow, and a smaller viewport always releases the sticky frame.
-    if (!hasScrollRunway || !frameFits) setHasScrollLayout(false);
-    else if (!prefersReducedMotion) setHasScrollLayout(true);
-  }, [hasScrollRunway, frameFits, prefersReducedMotion]);
+    if (!hydrated || !hasScrollRunway || !frameFits) setHasScrollLayout(false);
+    else if (!readingStill) setHasScrollLayout(true);
+  }, [hasScrollRunway, frameFits, hydrated, readingStill]);
 
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
-    const measure = () => setFrameFits(scene.offsetHeight <= window.innerHeight + 1);
+    // Measure the reading shell, excluding the camera's deliberate overscan.
+    // Transformed absolute media can enlarge the scene's scrollHeight.
+    const shell = scene.querySelector<HTMLElement>("[data-foundation-shell]");
+    const measure = () => setFrameFits(Math.max(scene.offsetHeight, shell?.scrollHeight ?? 0) <= window.innerHeight + 1);
     const observer = new ResizeObserver(measure);
     observer.observe(scene);
+    if (shell) observer.observe(shell);
+    scene.querySelectorAll("[data-foundation-controls]").forEach((node) => observer.observe(node));
     window.addEventListener("resize", measure);
     measure();
     return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
@@ -324,7 +346,7 @@ export function BrandFoundationScene() {
     function syncPlayback() {
       const video = videoRef.current;
       if (!video) return;
-      if (prefersReducedMotion || !sceneInView || document.hidden) {
+      if (!motionActive || document.hidden) {
         video.pause();
         return;
       }
@@ -336,10 +358,18 @@ export function BrandFoundationScene() {
       document.removeEventListener("visibilitychange", syncPlayback);
       videoAtEffectStart?.pause();
     };
-  }, [prefersReducedMotion, sceneInView]);
+  }, [motionActive]);
 
   function choose(index: number) {
+    setAnnouncement("");
     visualizer.choose(index);
+  }
+
+  function chooseAndAnnounce(index: number, keyboard: boolean) {
+    if (keyboard) setKeyboardReading(true);
+    visualizer.choose(index);
+    const layer = FOUNDATION_LAYERS[index];
+    setAnnouncement(`${layer.label}. ${layer.title}`);
   }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -369,6 +399,7 @@ export function BrandFoundationScene() {
       data-foundation-motion={cinematicMotion ? "scroll" : "static"}
       data-foundation-layout={hasScrollLayout ? "sticky" : "flow"}
       data-foundation-reading-still={readingStill}
+      data-foundation-motion-active={motionActive}
       onKeyDownCapture={() => setKeyboardReading(true)}
       onPointerDownCapture={() => setKeyboardReading(false)}
       onFocusCapture={(event) => {
@@ -377,11 +408,11 @@ export function BrandFoundationScene() {
     >
       <div ref={sceneRef} className={styles.scene}>
         <motion.div className={styles.landscape} data-foundation-landscape aria-hidden="true" style={{ scale: hasScrollLayout ? landscapeScale : 1, x: hasScrollLayout ? landscapeX : 0, y: hasScrollLayout ? landscapeY : 0 }}>
-          <video
+          {readingStill ? <Image src="/images/pexels-root-network-poster.jpg" alt="" fill sizes="100vw" /> : <video
             ref={videoRef}
             muted
             loop
-            autoPlay={Boolean(sceneInView && !prefersReducedMotion)}
+            autoPlay={motionActive}
             playsInline
             preload={sceneInView ? "metadata" : "none"}
             poster="/images/pexels-root-network-poster.jpg"
@@ -395,12 +426,12 @@ export function BrandFoundationScene() {
             <source src="/videos/pexels-root-network-mobile.mp4" media="(max-width: 767px)" type="video/mp4" />
             <source src="/videos/pexels-root-network.webm" type="video/webm" />
             <source src="/videos/pexels-root-network.mp4" type="video/mp4" />
-          </video>
+          </video>}
         </motion.div>
         <div className={styles.scrim} aria-hidden="true" />
         <motion.div className={styles.sunlight} data-foundation-sunlight aria-hidden="true" style={{ x: hasScrollLayout ? sunlightX : 0, opacity: hasScrollLayout ? 0.3 : 0 }} />
 
-        <div className={styles.shell}>
+        <div className={styles.shell} data-foundation-shell>
           <div className={styles.content} data-foundation-controls>
             <header>
               <p className={styles.eyebrow}>04 · The foundation</p>
@@ -423,7 +454,10 @@ export function BrandFoundationScene() {
                   data-foundation-connected={index < 3 && (index === activeIndex || activeIndex === 3)}
                   onClick={() => choose(index)}
                   onPointerEnter={(event) => {
-                    if (event.pointerType === "mouse" && cinematicMotion) visualizer.preview(index);
+                    if (event.pointerType === "mouse" && cinematicMotion) {
+                      setAnnouncement("");
+                      visualizer.preview(index);
+                    }
                   }}
                   onPointerLeave={(event) => {
                     if (event.pointerType === "mouse" && cinematicMotion && document.activeElement !== event.currentTarget) {
@@ -435,26 +469,38 @@ export function BrandFoundationScene() {
                   data-cursor-label="explore"
                 >
                   {index === activeIndex && <motion.span
-                    key={readingStill ? "settled" : "animated"}
+                    key={motionActive ? "animated" : "settled"}
                     className={styles.selection}
-                    layoutId={readingStill ? undefined : selectionId}
+                    layoutId={motionActive ? selectionId : undefined}
                     aria-hidden="true"
-                    transition={{ duration: readingStill ? 0 : 0.42, ease: EASE }}
+                    transition={{ duration: motionActive ? 0.42 : 0, ease: EASE }}
                   />}
                   <span className={styles.tabNumber} aria-hidden="true">{layer.number}</span>
                   <span className={styles.tabLabel}>{layer.label}</span>
                 </button>
               ))}
-              <FoundationConnections activeIndex={activeIndex} still={readingStill} />
+              <FoundationConnections activeIndex={activeIndex} still={!motionActive} />
             </div>
 
-            <FoundationDecision layer={active} direction={direction} reducedMotion={readingStill} />
+            <FoundationDecision layer={active} direction={direction} reducedMotion={!motionActive} />
 
-            <Link href="/services#package-brand-beginning" className={styles.link} data-cursor-label="foundation">
-              See the foundation scope <ArrowUpRight size={18} aria-hidden="true" />
-            </Link>
+            <div className={styles.actions}>
+              <button type="button" className={styles.nextDecision} aria-controls="foundation-layer-panel" onClick={(event) => chooseAndAnnounce(nextIndex, event.detail === 0)}>
+                <span className={styles.readingStack}>
+                  <span className={styles.readingMeasure} aria-hidden="true" inert>
+                    {FOUNDATION_LAYERS.map((layer, index) => <span key={layer.id}>{index === 0 ? "Return to Category" : `Next: ${layer.label}`}</span>)}
+                  </span>
+                  <span>{nextIndex === 0 ? "Return to Category" : `Next: ${FOUNDATION_LAYERS[nextIndex].label}`}</span>
+                </span>
+                <ArrowRight size={18} aria-hidden="true" />
+              </button>
+              <Link href="/services#package-brand-beginning" className={styles.link} data-cursor-label="foundation" prefetch={false}>
+                See the foundation scope <ArrowUpRight size={18} aria-hidden="true" />
+              </Link>
+            </div>
+            <span className={styles.announcement} role="status" aria-live="polite" aria-atomic="true">{announcement}</span>
           </div>
-          <FoundationMap activeIndex={activeIndex} reducedMotion={readingStill} onChoose={choose} />
+          <FoundationMap activeIndex={activeIndex} reducedMotion={!motionActive} onChoose={chooseAndAnnounce} />
         </div>
       </div>
     </section>
