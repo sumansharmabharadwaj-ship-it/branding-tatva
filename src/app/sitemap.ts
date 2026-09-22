@@ -88,7 +88,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const studyRoutes: MetadataRoute.Sitemap = brandStudies.map((study) => ({
     url: `${site.url}/work/studies/${study.slug}`,
-    lastModified: new Date("2026-08-02"),
+    lastModified: new Date(`${study.updatedAt}T00:00:00Z`),
     changeFrequency: "monthly",
     priority: 0.7,
   }));
