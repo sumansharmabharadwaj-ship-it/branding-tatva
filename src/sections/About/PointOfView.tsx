@@ -10,6 +10,7 @@ import { AnimatePresence, motion, useInView, useSpring, useTransform } from "fra
 import { ArrowUpRight, Eye, Quote, Repeat2 } from "lucide-react";
 import { Container } from "@/components/Container";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import styles from "./PointOfView.module.css";
 
@@ -77,6 +78,7 @@ export function PointOfView() {
   const storyRef = useRef<HTMLDivElement>(null);
   const previousIndexRef = useRef(0);
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const usesReadingRail = useMediaQuery("(max-width: 980px)");
   const inView = useInView(storyRef, { amount: 0.16, margin: "8% 0px -12% 0px" });
   const sequence = useScrollDrivenVisualizer({
     count: STAGES.length,
@@ -388,10 +390,16 @@ export function PointOfView() {
 
           <div className={styles.staticExperience}>
             <div className={styles.staticLedgerHead}>
-              <small>How I make a brand easier to choose</small>
+              <small id="philosophy-reading-label">How I make a brand easier to choose</small>
               <strong>Place the brand. Name the value. Protect what returns.</strong>
             </div>
-            <div className={styles.staticLedger}>
+            <div
+              className={styles.staticLedger}
+              role="region"
+              aria-labelledby="philosophy-reading-label"
+              tabIndex={usesReadingRail ? 0 : undefined}
+              data-lenis-prevent
+            >
               {STAGES.map((stage) => {
                 const Icon = stage.icon;
                 return (

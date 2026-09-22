@@ -24,3 +24,18 @@ Only four lower About CSS modules changed. The opening scene and cursor implemen
 - The existing cursor check simulates touch, pen, hybrid mouse, gesture cancellation and motion preferences. It is not a physical-device test.
 - The controlled-preview statuses for releases 512 and 513 report Vercel's build-rate limit. These CSS changes are saved for review without requesting another deployment. Post-change browser checks, physical iPhone/Safari and native-touch acceptance remain pending.
 - The browser measurements above describe the deployed baseline, not a visual verification of the new CSS. The permanent review alias is still not verified against this change.
+
+## Follow-up: reading rail and founder headline
+
+The same deployed baseline exposed two additional issues at 320px with the site's reduced-motion setting:
+
+- The point-of-view reading area was 257px wide, but its three-column ledger stayed 896px wide, making each card 298px wide. A complete card could not fit in the available reading area.
+- The founder section's closing headline, “You never brief the thinking twice,” computed to 13px because a broad mobile `strong` selector overrode its display typography.
+
+The phone reading rail now sizes each card to its own scroll viewport. Horizontal scrolling belongs to the cards, keeping the section introduction in place. The rail is focusable at its mobile breakpoint, names itself from its visible introduction, exposes a visible focus outline, and retains native scrolling through the smooth-scroll provider. Body text and supporting labels stay readable in landscape and tablet widths too.
+
+The founder rule now targets list labels specifically, restoring the closing headline's display scale. The founder and principles sections also have larger supporting labels and 14px links with at least 44px height. The About opening remains unchanged.
+
+TypeScript, targeted component ESLint, the 106-route build, cursor input checks and whitespace checks passed for this follow-up. The pre-existing About journey gate limitation above remains unchanged.
+
+Post-change browser and physical-device verification are still pending. The latest controlled-preview request (release 513) continues to report the build-rate limit; a READY deployment on another branch was created before that failure and does not verify this change.

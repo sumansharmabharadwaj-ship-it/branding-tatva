@@ -378,4 +378,6 @@
   :global(html) .root .header > p, :global(html) .root .staticExperience > p, :global(html) .root .staticExperience li p { font-size: 1rem; line-height: 1.65; }
   :global(html) .root .staticExperience li > strong { font-size: .9375rem; line-height: 1.6; }
   :global(html) .root .staticExperience li small { font-size: .75rem; letter-spacing: .05em; }
+  :global(html) .root .eyebrow { font-size: .75rem; line-height: 1.5; letter-spacing: .06em; }
+  :global(html) .root .staticExperience > a { min-height: 2.75rem; font-size: .875rem; line-height: 1.5; letter-spacing: .02em; }
 }
