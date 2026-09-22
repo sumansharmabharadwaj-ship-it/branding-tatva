@@ -54,6 +54,9 @@ export type InsightPost = {
   heroImage: string;
   heroVideo?: string;
   heroImageAlt: string;
+  // Retire artwork that captures superseded copy; use the current hero and
+  // live framework until a revised worksheet and sharing card are reviewed.
+  useEditorialArtwork?: boolean;
   keyTakeaways: string[];
   framework: InsightFramework;
   sections: InsightSection[];

@@ -22,221 +22,181 @@ type SourcedInsightPost = InsightPost & {
 
 export const aiEraInsightPosts: SourcedInsightPost[] = [
   {
-    slug: "how-ai-assistants-choose-brands-to-recommend",
-    title: "How AI assistants decide which brands to recommend",
-    seoTitle: "How to get ChatGPT to recommend your business",
-    excerpt:
-      "Buyers now ask assistants for shortlists, and the assistants answer from memory. This guide explains the retrieval mechanics, and why the fix is brand work rather than a technical trick.",
-    directAnswer:
-      "AI assistants recommend brands the way human memory does. They retrieve entities that are described the same way across many independent sources, that belong to a clear category, and that are attached to specific buying situations. A business becomes recommendable by holding one consistent description everywhere, earning third party corroboration, and publishing direct answers to the questions buyers actually ask. Those are the same conditions that build mental availability in people.",
-    element: "space",
-    topicSlug: "brand-memory",
-    primaryKeyword: "how to get chatgpt to recommend your business",
-    secondaryKeywords: [
+    "slug": "how-ai-assistants-choose-brands-to-recommend",
+    "title": "Can AI assistants find and recommend your business?",
+    "seoTitle": "Can ChatGPT recommend your business? What to check",
+    "excerpt": "A practical review of access, business facts, cited evidence and enquiry tracking, with clear limits on what can be inferred from an assistant's answer.",
+    "directAnswer": "An assistant's recommendation depends on the product, question and context; there is no published universal formula that a business can follow to secure a place. For ChatGPT search, OpenAI documents crawler access and says placement is not guaranteed. Review whether your pages are accessible, accurately explain the service and support their claims. Then record actual appearances and enquiries rather than assuming that consistent branding controls the answer.",
+    "element": "space",
+    "topicSlug": "brand-memory",
+    "primaryKeyword": "how to get chatgpt to recommend your business",
+    "secondaryKeywords": [
       "ai search brand strategy",
       "answer engine optimisation",
       "generative engine optimisation",
       "brand mentions in ai answers",
-      "why ai assistants ignore my brand",
+      "why ai assistants ignore my brand"
     ],
-    searchIntent:
-      "Understand why AI assistants omit a business from recommendations and what durable work changes that.",
-    publishedAt: "2026-09-13",
-    updatedAt: "2026-09-13",
-    readingTime: "12 min read",
-    heroImage: "/images/generated/insights-v2/awareness-recall-archive.webp",
-    heroVideo: "/videos/generated/insights-v2/awareness-recall-archive.mp4",
-    heroImageAlt:
-      "A wall of near identical embossed cards beside an archive drawer, with one card retrieved and held apart from the rest",
-    keyTakeaways: [
-      "Assistants answer from memory, so the rules of memory decide which brands get named.",
-      "A brand described five different ways across the web reads as five weak entities rather than one strong one.",
-      "Recommendations attach to situations. The brand recorded as the answer to a specific question gets retrieved for it.",
-      "Third party corroboration outweighs anything a brand says about itself.",
-      "Answer engine tactics decay. The underlying brand conditions compound, and they also work on human buyers.",
+    "searchIntent": "Understand why AI assistants omit a business from recommendations and what durable work changes that.",
+    "publishedAt": "2026-09-13",
+    "updatedAt": "2026-09-22",
+    "readingTime": "7 min read",
+    "heroImage": "/images/generated/insights-v2/awareness-recall-archive.webp",
+    "heroVideo": "/videos/generated/insights-v2/awareness-recall-archive.mp4",
+    "heroImageAlt": "A wall of near identical embossed cards beside an archive drawer, with one card retrieved and held apart from the rest",
+    "keyTakeaways": [
+      "AI retrieval and human brand memory are different subjects; one does not prove the other's mechanism.",
+      "Search eligibility and permission for potential model training are separate choices in OpenAI's crawler controls.",
+      "A citation can support an explanation without endorsing the business that published it.",
+      "Different descriptions can refer to the same business; factual contradictions deserve attention.",
+      "One missing recommendation is an observation to investigate, not a diagnosis of weak branding."
     ],
-    framework: {
-      title: "The retrieval audit",
-      introduction:
-        "Five conditions decide whether an assistant can find, trust, and repeat your brand. Audit them in order, because each one depends on the one before it.",
-      steps: [
+    "framework": {
+      "title": "A publisher's visibility review",
+      "introduction": "Five questions for the business to investigate. These are not five hidden checks performed by an assistant.",
+      "steps": [
         {
-          title: "Entity",
-          description:
-            "One name, one description, one category claim, repeated identically across the website, directories, profiles, and press.",
+          "title": "Access",
+          "description": "Can the intended search system fetch the public page?"
         },
         {
-          title: "Category",
-          description:
-            "A category the model already understands, or a clearly explained relationship to one. Invented labels retrieve nothing.",
+          "title": "Identity",
+          "description": "Do the business name, services and contact details agree?"
         },
         {
-          title: "Situations",
-          description:
-            "The specific buying questions the brand should answer, written down and answered directly on pages the crawlers can read.",
+          "title": "Relevance",
+          "description": "Does the page address the buyer's actual question and market?"
         },
         {
-          title: "Evidence",
-          description:
-            "Independent sources repeating the same claim: reviews, press, directories, client records. Corroboration is what the model trusts.",
+          "title": "Evidence",
+          "description": "Can the reader verify the claims and their limits?"
         },
         {
-          title: "Answerability",
-          description:
-            "Pages structured so a machine can quote them: direct answers first, structured data, plain language, stable URLs.",
-        },
-      ],
+          "title": "Outcome",
+          "description": "What appeared, what was linked and what happened after a visit?"
+        }
+      ]
     },
-    sections: [
+    "sections": [
       {
-        id: "the-question-founders-now-ask",
-        heading: "The question founders now ask",
-        paragraphs: [
-          "A new complaint appears in founder forums every week: ask ChatGPT for the best firms in a category and a competitor gets named while your business stays absent. The question behind the complaint is genuinely new. For twenty years the contest was a ranked list of links. Now an assistant reads the web, forms something like an opinion, and answers with a shortlist of two or three names.",
-          "The shift matters because shortlists behave differently from search results. A page ranked seventh still gets found by somebody. A brand outside the assistant's shortlist may as well be absent from the category, because the buyer never sees a page at all. They see an answer.",
-          "Marketers have named the response to this AEO and GEO, answer engine optimisation and generative engine optimisation. The names are new. The work underneath them is old, and that is the useful discovery.",
-        ],
-        callout: {
-          label: "The shift",
-          text:
-            "Search ranked pages. Assistants recommend entities. That moves the contest from webpages into memory.",
-        },
+        "id": "the-question-founders-now-ask",
+        "heading": "A missing recommendation needs investigation",
+        "paragraphs": [
+          "Suppose an illustrative UK founder asks an assistant for help repositioning a consultancy and sees other firms named. The absence of their preferred supplier is one result under one set of conditions. It does not establish why the supplier was absent.",
+          "Record the question before changing the website. Was a location, budget or service mentioned? Did the response cite a directory, a guide or a provider's own page? Those details create a more useful starting point than assuming the business needs a new brand."
+        ]
       },
       {
-        id: "assistants-answer-from-memory",
-        heading: "Assistants answer from memory, so memory rules apply",
-        paragraphs: [
-          "A language model builds its picture of the world from millions of documents, then answers from that accumulated impression, sometimes refreshed by a live search. When it recommends a brand, it is retrieving an entity from that impression, together with the category and situations the entity got attached to during training.",
-          "This is close to a description of how human buyers work. People retrieve a brand from memory when a situation triggers it, and the brands retrieved most easily win before any comparison begins. Brand strategy has a name for this: mental availability, the probability of coming to mind in a buying situation.",
-          "An assistant is, in this one sense, the most literal buyer a brand has ever faced. It holds no goodwill, remembers no meeting, and clicks no ad. It knows exactly what the written record says, weighted by how many independent voices say it the same way.",
-        ],
+        "id": "assistants-answer-from-memory",
+        "heading": "Separate web search from a memory analogy",
+        "paragraphs": [
+          "OpenAI explains that ChatGPT can search the web and use relevant context, including location. Its search results use multiple factors, and placement is not guaranteed. A response should therefore be assessed with its question, context and sources intact.",
+          "Human mental availability concerns people recalling brands in buying situations. That can help frame a brand research question. It does not establish how an assistant retrieves a page, evaluates relevance or generates a recommendation.",
+          "Treat claims about hidden ranking weights as claims requiring evidence. A convincing analogy, a repeated industry phrase or a confident explanation is not access to a platform's internal system."
+        ]
       },
       {
-        id: "seo-discovered-branding",
-        heading: "The search industry just discovered branding",
-        paragraphs: [
-          "Through 2025 the search trade press converged on a striking conclusion: the strongest signal for appearing in AI answers is being a recognised, consistently described brand. One industry panel put it plainly, brand is the new backlink. Analysts writing about AI search now describe models assessing brands as distinct, trusted entities.",
-          "Read that with a strategist's eyes and it describes distinctive assets and mental availability, renamed by an industry that used to sell links. The recommendation surface changed. The mechanism that wins on it stayed the same: be a clearly defined thing, associated with a clear situation, corroborated by others.",
-          "This should be reassuring. The work that earns AI recommendations is durable brand work, and every hour of it also compounds with human buyers. A prompt trick expires with the next model release. A position held consistently for years survives every release, because each new model relearns it from the record.",
-        ],
-        callout: {
-          label: "Useful reframe",
-          text:
-            "GEO is mental availability measured by a machine. The machine is easier to audit than a human mind, and far more honest.",
-        },
+        "id": "seo-discovered-branding",
+        "heading": "Separate search access from model training",
+        "paragraphs": [
+          "OpenAI documents separate crawlers for search and for content that may be used in model training. The controls are independent: a publisher can allow search access while opting out of potential training.",
+          "Ask whoever manages the site to check the applicable crawler rules and hosting access. A browser returning a page does not by itself prove that a particular crawler can fetch it. Follow published verification guidance when investigating requests, rather than trusting an arbitrary user agent string.",
+          "This access review answers an eligibility question. It does not prove that a page will be selected, cited or recommended."
+        ]
       },
       {
-        id: "why-a-fuzzy-brand-is-invisible",
-        heading: "Why a fuzzy brand is invisible to a language model",
-        paragraphs: [
-          "Retrieval fails in predictable ways, and each failure maps to a familiar branding fault. The first is entity dilution. A studio that calls itself a branding agency on its site, a design partner on LinkedIn, a marketing consultancy in a directory, and a creative studio in the press has split its identity across four weak entities. A human eventually reconciles those. A model may never connect them, so each description carries a fraction of the evidence.",
-          "The second is category confusion. Models retrieve through categories, and a business that avoids naming its category, or invents a private label for it, gives the model nothing to file it under. Being filed under nothing means being retrieved for nothing.",
-          "The third is situation blindness. Buyers ask assistants questions rooted in a specific situation: who can reposition a firm before a funding round, who audits a brand before a rebrand. A brand that never wrote anything addressing those situations was never recorded as an answer to them, and absence from the record is absence from the shortlist.",
-        ],
-        bullets: [
-          "Does every public profile describe the business in the same sentence?",
-          "Would a stranger name your category correctly after one reading?",
-          "Which five buying questions should retrieve you, and where are they answered?",
-          "Who besides you says any of this in public?",
-        ],
+        "id": "why-a-fuzzy-brand-is-invisible",
+        "heading": "Correct contradictions, without forcing identical wording",
+        "paragraphs": [
+          "Compare the website with profiles you control. Look for old service names, a retired offer, an incorrect location or a broken contact route. A remote studio can accurately serve UK clients while being based elsewhere; describe that relationship plainly.",
+          "Different formats can use different wording. A profile summary and a detailed proposal may both be accurate. There is no basis here for claiming that four descriptions automatically create four weak entities inside a model.",
+          "Give a buyer enough detail to distinguish the service: the starting problem, the work included, the evidence available and the next step. Review that explanation with someone who has actually considered buying the service."
+        ]
       },
       {
-        id: "situations-are-the-retrieval-key",
-        heading: "Situations are the retrieval key",
-        paragraphs: [
-          "Category entry points, the situations that trigger a category, have long been the practical unit of mental availability. They turn out to be the practical unit of assistant answers too, because buyers phrase prompts as situations. Nobody asks an assistant to list brands. They describe a moment: launching a second product line, entering a new market, a website that undersells the work.",
-          "The brands retrieved for a situation are the ones the written record has attached to it. This is why a library of direct, situation shaped writing has become the strongest asset in AI search: each guide records the brand as the answer to one more moment.",
-          "The site you are reading applies this deliberately. Each guide here answers one question a founder actually asks in a real situation, states the answer in the opening block, and holds the same vocabulary the rest of the site uses. That is availability work wearing an editorial coat.",
-        ],
+        "id": "situations-are-the-retrieval-key",
+        "heading": "Turn a buying question into a useful page",
+        "paragraphs": [
+          "For an illustrative consultancy, a question about entering the UK market could lead to a page explaining what the engagement needs from the client: intended buyers, known alternatives, current evidence and research questions that remain open.",
+          "Keep the distinction between an example and a result visible. A hypothetical brief demonstrates the decision process. A client record describes work that happened. A page can offer both, provided the reader can tell which is which.",
+          "Use actual buying conversations to choose what needs explaining. Writing every variation of a prompt is not a substitute for understanding the service question."
+        ]
       },
       {
-        id: "corroboration-does-the-convincing",
-        heading: "Corroboration does the convincing",
-        paragraphs: [
-          "Models weight agreement between independent sources. A claim that appears only on a brand's own website is an assertion. The same claim echoed by client write ups, press coverage, reviews, directories, and podcasts becomes something closer to a fact, and facts get repeated in answers.",
-          "This restores weight to activities performance marketing had demoted: real client stories published under real names, contributions to industry publications, reviews gathered where crawlers read them, a consistent presence in the places a category gets discussed.",
-          "The consistency requirement is stricter than most teams expect. Corroboration only accumulates when everyone repeats the same core sentence. Ten mentions carrying ten different descriptions rebuild the dilution problem in public.",
-        ],
-        callout: {
-          label: "Evidence rule",
-          text:
-            "What others repeat about you is the claim. What you say about yourself is only the proposal.",
-        },
+        "id": "corroboration-does-the-convincing",
+        "heading": "Check what the cited source supports",
+        "paragraphs": [
+          "Open a citation and compare it with the claim in the answer. A source may support a general explanation without supporting a particular supplier recommendation. Record a mismatch instead of counting every linked mention as an endorsement.",
+          "Seek permission for client evidence and preserve the original scope. A public review about communication supports a claim about that experience. It cannot establish a return on investment that the engagement never measured.",
+          "Independent sources can disagree or use different language. A useful public record lets a reader assess that evidence instead of demanding an identical sentence from every source."
+        ]
       },
       {
-        id: "what-changes-on-the-website",
-        heading: "What changes on the website",
-        paragraphs: [
-          "The website's job in an answer economy is to be quotable. That starts with direct answers: pages that state their conclusion in the first paragraph rather than after eight hundred words of warm up. Assistants excerpt; pages built for excerpting get excerpted.",
-          "Structured data does the same job for machines that headings do for people. Marking up the organisation, the person behind it, articles, definitions, and questions tells the model exactly which entity this record belongs to. Plain language matters just as much: jargon reads as noise, and noise never gets quoted.",
-          "A glossary of the terms the practice uses, each on its own stable URL, quietly does double work. It teaches human readers, and it gives the model a dictionary of the brand's vocabulary connected to the brand's entity.",
-        ],
+        "id": "what-changes-on-the-website",
+        "heading": "Keep an observation log and a separate enquiry record",
+        "paragraphs": [
+          "For each check, save the date, product, question, relevant settings, business mentions and cited URLs. Note whether the business name was included in the question. Repeat the sample before concluding that a change persists.",
+          "OpenAI's publisher FAQ describes a chatgpt.com referral parameter that can help identify visits. Use the attribution information your analytics actually retains, and leave unknown sources marked unknown.",
+          "A visit is still separate from a suitable enquiry. Record the requested service, market and agreed next step. Do not infer that assistant referrals convert better than search referrals without enough comparable evidence."
+        ]
       },
       {
-        id: "what-stays-the-same",
-        heading: "What stays the same",
-        paragraphs: [
-          "Every platform shift produces a rush of tactics, and most of them decay. Answer engines will change their weighting, close loopholes, and merge into whatever comes next. Chasing each adjustment is a losing race for a small team.",
-          "The conditions underneath are stable because they are the conditions of memory itself: one clear entity, a recognised category, attachment to real buying situations, evidence from independent voices, and language worth quoting. Brands built this way were being recommended by humans long before machines joined in.",
-          "So the honest answer to the founder's question is slower than the tactical guides promise, and more valuable. The assistant skips your brand because the written record is thin, scattered, or vague. Thicken it, gather it, and sharpen it, and every kind of buyer, silicon or human, becomes more likely to say your name.",
-        ],
-      },
+        "id": "what-stays-the-same",
+        "heading": "Bring the review back to the service",
+        "paragraphs": [
+          "Choose the next change from what the review found. A blocked page, an inaccurate service description and a missing proof point need different work. Keep a dated record of the change so later observations can be interpreted.",
+          "Branding Tatva can help examine the positioning, messaging and evidence a buyer encounters. That work should be judged on its agreed deliverables. This guide does not establish a guaranteed path into an assistant's shortlist or a measured result for this website."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        question: "Can a business pay to be recommended by ChatGPT?",
-        answer:
-          "As of 2026 the major assistants sell no recommendation placement. Answers draw on the public record: how consistently the brand is described, what independent sources say, and how clearly its pages answer real questions. That record is the only lever available, which favours brands willing to do durable work.",
+        "question": "Can a consultant guarantee that ChatGPT recommends my business?",
+        "answer": "OpenAI says search placement is not guaranteed. Ask a supplier to define deliverables, observation conditions and limits. A contract for useful editorial or technical work is different from a promise that a platform will recommend you."
       },
       {
-        question: "Is answer engine optimisation different from SEO?",
-        answer:
-          "The overlap is large. Technical health, crawlable pages, and structured data serve both. The difference is the unit of competition: search ranks pages, assistants recommend entities. AEO therefore rewards entity consistency, third party corroboration, and situation shaped writing more heavily than link volume.",
+        "question": "Does allowing search access also require allowing model training?",
+        "answer": "OpenAI documents search access and potential training as independent controls. Review the current crawler guidance and the intended setting with whoever manages the site. Search access alone does not guarantee inclusion."
       },
       {
-        question: "How long does it take to appear in AI recommendations?",
-        answer:
-          "Expect months rather than weeks. Models refresh their picture of the web on their own schedules, and corroboration accumulates at the speed other people publish. Direct answers and entity cleanup can show effects sooner in assistants that browse live, while the deeper memory effects compound over quarters.",
+        "question": "How long does a recommendation take to appear?",
+        "answer": "There is no reliable universal deadline for a specific company to appear. Record the work completed and check the defined sample over time. A missing result does not, on its own, identify the cause."
       },
       {
-        question: "Do AI assistants actually send customers?",
-        answer:
-          "Assistant referred visitors arrive late in their decision, carrying a recommendation rather than a query, so they tend to convert at higher rates than search visitors even while volumes remain smaller. The shortlist effect also shapes buyers who never click at all: the names in the answer define the comparison.",
+        "question": "Do AI assistants send customers?",
+        "answer": "A referral can lead to an enquiry, but the useful evidence is your own attributable visits and suitable enquiries. A named mention with no recorded visit is a different observation. Keep uncertain attribution visible."
       },
       {
-        question: "What should a small business do first?",
-        answer:
-          "Fix the entity before anything clever. Write the one sentence that names the business, its category, and who it serves, then install it verbatim on the website, LinkedIn, directories, and everywhere else the business appears. Every later effort compounds on that consistency, and without it everything else leaks.",
-      },
+        "question": "What should a small business check first?",
+        "answer": "Start with the observed problem: access, inaccurate facts, unclear scope or unsupported claims. Save a baseline, fix a specific issue and review the result. Do not assume that repeating one sentence across profiles will control recommendations."
+      }
     ],
-    relatedSlugs: [
+    "relatedSlugs": [
       "brand-awareness-vs-brand-recall",
       "distinctive-brand-assets-audit",
-      "measure-brand-recall-limited-budget",
+      "measure-brand-recall-limited-budget"
     ],
-    sources: [
+    "sources": [
       {
-        title: "SEO panel agrees: brand is the new backlink for AI SEO",
-        publisher: "Search Engine Journal",
-        url: "https://www.searchenginejournal.com/seo-panel-agrees-brand-is-the-new-backlink-for-ai-seo/578567/",
-        note:
-          "Industry panel coverage in which search practitioners converge on brand recognition as the strongest signal for inclusion in AI generated answers.",
+        "title": "Searching the web with ChatGPT",
+        "publisher": "OpenAI",
+        "url": "https://help.openai.com/en/articles/9237897-chatgpt-search",
+        "note": "Search behaviour, context and eligibility; placement is not guaranteed."
       },
       {
-        title: "How AI is reshaping SEO: challenges, opportunities, and brand strategies for 2025",
-        publisher: "Search Engine Land",
-        url: "https://searchengineland.com/how-ai-is-reshaping-seo-challenges-opportunities-and-brand-strategies-for-2025-456926",
-        note:
-          "Analysis of how large language models assess brands as distinct, trusted entities when assembling answers, and what that changes for marketing teams.",
+        "title": "Overview of OpenAI crawlers",
+        "publisher": "OpenAI",
+        "url": "https://developers.openai.com/api/docs/bots",
+        "note": "Separate controls for search access and potential model training."
       },
       {
-        title: "How Brands Grow: What Marketers Don't Know",
-        publisher: "Byron Sharp, Oxford University Press",
-        url: "https://marketingscience.info/learn-with-us/books",
-        note:
-          "The evidence base for mental availability and category entry points, the memory mechanics this guide applies to machine retrieval.",
-      },
+        "title": "Publishers and developers FAQ",
+        "publisher": "OpenAI",
+        "url": "https://help.openai.com/en/articles/12627856-publishers-and-developers-faq",
+        "note": "Publisher access guidance and referral tracking."
+      }
     ],
+    "useEditorialArtwork": false
   },
   {
     slug: "why-ai-content-makes-brands-average",
