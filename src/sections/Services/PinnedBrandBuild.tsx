@@ -319,7 +319,12 @@ export function PinnedBrandBuild() {
                 <span aria-hidden="true">→</span>
               </Link>
             </div>
-            <MobileAuthorityDeck layers={LAYERS} wavePath={WAVE_PATH} />
+            <MobileAuthorityDeck
+              layers={LAYERS}
+              wavePath={WAVE_PATH}
+              activeIndex={inspectedLayer ?? 0}
+              onSelect={setInspectedLayer}
+            />
             <div data-authority-diagram="true" data-services-chapter-instrument="true" className="relative hidden lg:block">
               {/* The output signal — a wave whose oscillation widens as
                   the layers beneath it assemble. Decorative twin of the
