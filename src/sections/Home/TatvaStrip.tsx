@@ -1,9 +1,10 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { motion, useInView, useMotionValueEvent, useScroll, useTransform, type MotionStyle } from "framer-motion";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, type CSSProperties, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/Container";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
@@ -80,7 +81,12 @@ function TatvaReading({ tatva }: { tatva: Tatva }) {
 }
 
 export function TatvaStrip() {
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const [keyboardReading, setKeyboardReading] = useState(false);
+  const [frameFits, setFrameFits] = useState(false);
+  const [hasScrollLayout, setHasScrollLayout] = useState(false);
+  const [announcement, setAnnouncement] = useState<{ index: number; text: string } | null>(null);
+  const readingStill = prefersReducedMotion || keyboardReading;
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const choicesRef = useRef<HTMLDivElement>(null);
@@ -88,31 +94,61 @@ export function TatvaStrip() {
   const readingAnimations = useRef<Animation[]>([]);
   const forceRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const previousIndex = useRef(0);
-  const inView = useInView(sectionRef, { amount: 0.18 });
-  const desktopStory = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
+  const inView = useInView(sectionRef, { amount: .08 });
+  const cinematicViewport = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
+  const motionActive = hydrated && inView && !readingStill;
+  const desktopStory = hasScrollLayout && motionActive;
   const { activeIndex, choose, preview, releasePreview, scrollYProgress } = useScrollDrivenVisualizer({
     count: TATVAS.length,
     target: sectionRef,
-    enabled: desktopStory && inView,
-    reducedMotion: prefersReducedMotion,
+    enabled: desktopStory,
+    reducedMotion: readingStill,
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
-    focusScopeSelector: ".tatva-observatory__focus, .tatva-observatory__force",
+    focusScopeSelector: ".tatva-observatory",
   });
   const active = TATVAS[activeIndex] ?? TATVAS[0];
+  const nextIndex = (activeIndex + 1) % TATVAS.length;
   const { scrollYProgress: choicesProgress } = useScroll({ target: choicesRef, offset: ["start end", "end start"] });
   const choicesArrival = useTransform(choicesProgress, [0, .55], [0, 1]);
 
   const writeProgress = useCallback((progress: number) => {
-    if (!desktopStory || prefersReducedMotion) return;
+    if (!desktopStory) return;
     frameRef.current?.style.setProperty("--tatva-scroll-progress", Math.max(0, Math.min(1, progress)).toFixed(4));
-  }, [desktopStory, prefersReducedMotion]);
+  }, [desktopStory]);
   useMotionValueEvent(scrollYProgress, "change", writeProgress);
   useEffect(() => {
-    const frame = frameRef.current;
-    writeProgress(scrollYProgress.get());
-    return () => { frame?.style.removeProperty("--tatva-scroll-progress"); };
-  }, [scrollYProgress, writeProgress]);
+    if (!hasScrollLayout) frameRef.current?.style.removeProperty("--tatva-scroll-progress");
+    else writeProgress(scrollYProgress.get());
+  }, [hasScrollLayout, scrollYProgress, writeProgress]);
+
+  useEffect(() => {
+    if (!hydrated || !cinematicViewport || !frameFits) setHasScrollLayout(false);
+    else if (!readingStill) setHasScrollLayout(true);
+  }, [cinematicViewport, frameFits, hydrated, readingStill]);
+
+  useEffect(() => {
+    const stage = frameRef.current;
+    const content = stage?.querySelector<HTMLElement>(".tatva-observatory__frame");
+    if (!stage || !content) return;
+    const measure = () => {
+      const style = window.getComputedStyle(stage);
+      const padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+      // Measure the reading frame, excluding the absolute film's overscan.
+      setFrameFits(Math.max(content.offsetHeight, content.scrollHeight) + padding <= window.innerHeight + 1);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    observer.observe(content);
+    content.querySelectorAll(".tatva-observatory__copy, .tatva-observatory__choices, .tatva-observatory__focus").forEach((node) => observer.observe(node));
+    window.addEventListener("resize", measure);
+    measure();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+      stage.style.removeProperty("--tatva-scroll-progress");
+    };
+  }, []);
 
   const settleReading = useCallback(() => {
     readingAnimations.current.forEach((animation) => animation.cancel());
@@ -122,9 +158,10 @@ export function TatvaStrip() {
     const previous = previousIndex.current;
     previousIndex.current = activeIndex;
     settleReading();
-    if (prefersReducedMotion || previous === activeIndex) return;
+    if (!motionActive || previous === activeIndex) return;
     const reading = readingRef.current;
-    if (!reading || reading.closest("#tatva-focus-reading")?.matches(":focus-within")) return;
+    const region = reading?.closest("#tatva-focus-reading");
+    if (!reading || region === document.activeElement || region?.querySelector(":focus-visible")) return;
     const direction = activeIndex > previous ? 1 : -1;
     // Animate the three original paragraphs separately. Native animations can
     // restart on every choice without replacing text nodes or the focus region.
@@ -133,14 +170,26 @@ export function TatvaStrip() {
       { transform: "translate3d(0, 0, 0)", opacity: 1 },
     ], { duration: 460, delay: index * 45, fill: "backwards", easing: "cubic-bezier(0.22, 1, 0.36, 1)" }));
     return settleReading;
-  }, [activeIndex, desktopStory, prefersReducedMotion, settleReading]);
+  }, [activeIndex, desktopStory, motionActive, settleReading]);
+
+  useEffect(() => {
+    setAnnouncement((current) => current && current.index !== activeIndex ? null : current);
+  }, [activeIndex]);
+
+  function chooseForce(index: number, keyboardChoice: boolean) {
+    if (keyboardChoice) { setKeyboardReading(true); settleReading(); }
+    choose(index);
+    setAnnouncement({ index, text: `${TATVAS[index].choice}. ${TATVAS[index].question}` });
+  }
 
   function revealFocusedReading(target: HTMLElement) {
     if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
+    setKeyboardReading(true);
+    settleReading();
     const bounds = target.getBoundingClientRect();
     if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
       target.scrollIntoView({
-        block: bounds.height > window.innerHeight - 160 ? "start" : "center",
+        block: bounds.height > window.innerHeight - 160 ? "start" : "nearest",
         inline: "nearest",
         behavior: "instant",
       });
@@ -148,11 +197,12 @@ export function TatvaStrip() {
   }
 
   function onForceKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.nativeEvent.isComposing) return;
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
     const next = event.key === "Home" ? 0 : event.key === "End" ? TATVAS.length - 1
       : (index + (event.key === "ArrowRight" ? 1 : TATVAS.length - 1)) % TATVAS.length;
-    choose(next);
+    chooseForce(next, true);
     const nextButton = forceRefs.current[next];
     if (!nextButton) return;
     // Repeating Home or End on an offscreen focused choice fires no new focus
@@ -161,27 +211,29 @@ export function TatvaStrip() {
     else nextButton.focus({ preventScroll: true });
   }
 
-  const motionActive = inView && !prefersReducedMotion;
-
   return (
     <section
       ref={sectionRef}
       className="tatva-observatory relative isolate"
+      data-tatva-layout={hasScrollLayout ? "sticky" : "flow"}
+      data-tatva-reading-still={!motionActive}
       style={{ backgroundColor: "#0D1514" }}
       aria-labelledby="tatva-framework-title"
       onFocusCapture={(event) => revealFocusedReading(event.target)}
+      onKeyDownCapture={() => { setKeyboardReading(true); settleReading(); }}
+      onPointerDownCapture={() => setKeyboardReading(false)}
     >
       <div
         ref={frameRef}
         className="tatva-observatory__stage relative isolate overflow-hidden py-20 sm:py-28"
       >
         <div className="tatva-observatory__film" aria-hidden="true">
-          <HomeV4Film
+          {readingStill ? <Image src="/images/bt-home-tatva-mirror-lake-poster.jpg" alt="" fill sizes="100vw" /> : <HomeV4Film
             desktop="/videos/bt-home-tatva-mirror-lake.mp4"
             mobile="/videos/bt-home-tatva-mirror-lake-mobile.mp4"
             poster="/images/bt-home-tatva-mirror-lake-poster.jpg"
             playbackRate={1.2}
-          />
+          />}
           <span />
         </div>
 
@@ -190,14 +242,14 @@ export function TatvaStrip() {
           className="pointer-events-none absolute -left-28 top-[18%] z-[2] h-80 w-80 rounded-full blur-3xl"
           style={{ background: "radial-gradient(circle, rgba(199,119,82,0.22), transparent 68%)" }}
           animate={{ x: motionActive ? activeIndex * 8 : 0 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: motionActive ? .65 : 0, ease: [0.22, 1, 0.36, 1] }}
         />
         <motion.div
           aria-hidden="true"
           className="pointer-events-none absolute -right-28 bottom-[8%] z-[2] h-96 w-96 rounded-full blur-3xl"
           style={{ background: "radial-gradient(circle, rgba(82,117,111,0.24), transparent 68%)" }}
           animate={{ x: motionActive ? activeIndex * -8 : 0 }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: motionActive ? .65 : 0, ease: [0.22, 1, 0.36, 1] }}
         />
 
         <Container className="tatva-observatory__frame relative z-[3] max-w-[100rem]">
@@ -220,7 +272,7 @@ export function TatvaStrip() {
           <motion.div
             ref={choicesRef}
             className="tatva-observatory__choices"
-            style={{ "--tatva-arrival": prefersReducedMotion ? 1 : choicesArrival } as MotionStyle}
+            style={{ "--tatva-arrival": motionActive ? choicesArrival : 1 } as MotionStyle}
           >
             <ol aria-label="Choose a Tatva" className="tatva-observatory__orbit grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:flex lg:items-start lg:justify-between lg:gap-2">
               {TATVAS.map((tatva, index) => {
@@ -239,25 +291,28 @@ export function TatvaStrip() {
                       aria-pressed={isActive}
                       aria-controls="tatva-focus-reading"
                       aria-label={`Focus ${tatva.name}: ${tatva.role}, ${tatva.choice}`}
-                      onClick={() => choose(index)}
-                      onPointerEnter={(event) => { if (event.pointerType === "mouse") preview(index); }}
-                      onPointerLeave={releasePreview}
+                      onClick={(event) => chooseForce(index, event.detail === 0)}
+                      onPointerEnter={(event) => {
+                        if (event.pointerType === "mouse" && motionActive) { setAnnouncement(null); preview(index); }
+                      }}
+                      onPointerLeave={() => { if (motionActive) releasePreview(); }}
                       onKeyDown={(event) => onForceKey(event, index)}
                       className="tatva-observatory__force group flex min-w-0 w-full flex-col items-center rounded-2xl text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
                     >
                       <motion.span
+                        key={motionActive ? "moving" : "still"}
                         className="tatva-observatory__portrait-frame relative block h-24 w-24 lg:h-28 lg:w-28"
                         initial={false}
-                        animate={{ scale: prefersReducedMotion ? 1 : isActive ? 1.04 : 0.96 }}
-                        transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+                        animate={{ scale: !motionActive ? 1 : isActive ? 1.04 : 0.96 }}
+                        transition={{ duration: motionActive ? .45 : 0, ease: [0.22, 1, 0.36, 1] }}
                       >
                         <motion.span
                           aria-hidden="true"
                           className="tatva-observatory__halo absolute -inset-3 rounded-full border"
                           style={{ borderColor: `${ELEMENT_HEX[tatva.slug]}77` }}
                           initial={false}
-                          animate={{ opacity: isActive ? 1 : 0, scale: prefersReducedMotion ? 1 : isActive ? 1 : 0.94 }}
-                          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+                          animate={{ opacity: isActive ? 1 : 0, scale: !motionActive ? 1 : isActive ? 1 : 0.94 }}
+                          transition={{ duration: motionActive ? .45 : 0, ease: [0.22, 1, 0.36, 1] }}
                         />
 
                         <span
@@ -271,8 +326,8 @@ export function TatvaStrip() {
                             <motion.span
                               className="absolute inset-0"
                               initial={false}
-                              animate={{ scale: prefersReducedMotion ? 1 : isActive ? 1.1 : 1.02 }}
-                              transition={{ duration: prefersReducedMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }}
+                              animate={{ scale: !motionActive ? 1 : isActive ? 1.1 : 1.02 }}
+                              transition={{ duration: motionActive ? .65 : 0, ease: [0.22, 1, 0.36, 1] }}
                             >
                               <Image src={element.image} alt="" fill sizes="112px" className="object-cover" />
                             </motion.span>
@@ -296,10 +351,11 @@ export function TatvaStrip() {
                       <span aria-hidden="true" className="tatva-observatory__connector relative mt-14 hidden h-px flex-1 lg:block">
                         <span className="absolute inset-0 border-t border-dashed" style={{ borderColor: "rgba(244,239,230,0.18)" }} />
                         <motion.span
+                          key={motionActive ? "moving" : "still"}
                           className="absolute inset-0 origin-left bg-sandstone"
                           initial={false}
                           animate={{ scaleX: isActive ? 1 : 0 }}
-                          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+                          transition={{ duration: motionActive ? .45 : 0, ease: [0.22, 1, 0.36, 1] }}
                         />
                       </span>
                     )}
@@ -309,9 +365,10 @@ export function TatvaStrip() {
             </ol>
             <div className="tatva-observatory__selection-track" aria-hidden="true">
               <motion.span
+                key={motionActive ? "moving" : "still"}
                 initial={false}
                 animate={{ x: `${activeIndex * 100}%` }}
-                transition={{ duration: prefersReducedMotion ? 0 : .45, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: motionActive ? .45 : 0, ease: [0.22, 1, 0.36, 1] }}
               />
             </div>
           </motion.div>
@@ -345,7 +402,24 @@ export function TatvaStrip() {
                   <TatvaReading tatva={active} />
                 </div>
               </div>
+              <button
+                type="button"
+                className="tatva-observatory__next"
+                aria-controls="tatva-focus-reading"
+                onClick={(event) => chooseForce(nextIndex, event.detail === 0)}
+              >
+                <span className="tatva-observatory__next-label">
+                  <span className="tatva-observatory__next-measure" aria-hidden="true" inert>
+                    {TATVAS.map((tatva, index) => <span key={tatva.slug}>{index === 0 ? "Return to" : "Explore"} {tatva.choice}</span>)}
+                  </span>
+                  <span>{nextIndex === 0 ? "Return to" : "Explore"} {TATVAS[nextIndex].choice}</span>
+                </span>
+                <ArrowRight size={17} aria-hidden="true" />
+              </button>
             </div>
+            <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+              {announcement?.index === activeIndex ? announcement.text : ""}
+            </p>
         </div>
         </Container>
       </div>

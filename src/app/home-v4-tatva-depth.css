@@ -387,17 +387,12 @@ html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tatva-observatory__film :is(video, img) {
-    transform: none;
-  }
-}
-
 /* Parker-inspired chapter pacing: the visitor's scroll holds one composed
-   frame while each Tatva comes into focus. Short screens, touch devices and
-   reduced-motion users keep the original document flow. */
+   frame while each Tatva comes into focus. The measured reading frame admits
+   the hold; pausing keeps an admitted frame's geometry. Initial reduced motion,
+   short screens, touch devices and enlarged content retain document flow. */
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
-  .tatva-observatory {
+  .tatva-observatory[data-tatva-layout="sticky"] {
     height: 300svh;
     min-height: 300svh;
     overflow: clip;
@@ -405,14 +400,17 @@ html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
 
   .tatva-observatory__stage {
     --tatva-scroll-progress: 0;
-    position: sticky;
-    top: 0;
     display: flex;
-    height: 100svh;
     min-height: 100svh;
     box-sizing: border-box;
     align-items: center;
-    padding-block: clamp(5.4rem, 8svh, 6.8rem) clamp(2.1rem, 4svh, 3.4rem);
+    padding-block: clamp(5.4rem, 8svh, 6.8rem) 5rem;
+  }
+
+  .tatva-observatory[data-tatva-layout="sticky"] .tatva-observatory__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
   }
 
   .tatva-observatory__frame {
@@ -431,46 +429,42 @@ html[data-motion="reduced"] .tatva-observatory__portrait { translate: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tatva-observatory {
-    height: auto;
-    min-height: auto;
-  }
-
-  .tatva-observatory__stage {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 100svh;
-    transform: none;
-    transition: none;
-  }
-
-  .tatva-observatory__frame,
   .tatva-observatory__film :is(video, img) {
-    transform: none;
     transition: none;
   }
 }
 
-/* The page control gets the same compact reading as the device preference.
-   Keep one full frame while removing the inactive scroll-selection runway. */
-html[data-motion="reduced"] .tatva-observatory {
-  height: auto;
-  min-height: auto;
-}
-html[data-motion="reduced"] .tatva-observatory__stage {
-  position: relative;
-  top: auto;
-  height: auto;
-  min-height: 100svh;
-  transform: none;
-  transition: none;
-}
-html[data-motion="reduced"] .tatva-observatory__frame,
 html[data-motion="reduced"] .tatva-observatory__film :is(video, img) {
-  transform: none;
   transition: none;
 }
+
+.tatva-observatory__next {
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  width: 100%; min-height: 2.75rem; margin-top: 1.1rem; padding: .65rem .75rem;
+  border: 1px solid rgb(112 83 62 / 28%); border-radius: .55rem;
+  color: #70533e; background: rgb(255 249 237 / 55%);
+  font-size: .875rem; line-height: 1.45; text-align: left; cursor: pointer;
+  scroll-margin-block: 80px; transition: border-color 220ms ease, background-color 220ms ease;
+}
+.tatva-observatory__next:hover { border-color: #805239; background: #fff9ed; }
+.tatva-observatory__next:focus-visible { outline: 2px solid #805239 !important; outline-offset: 3px; }
+.tatva-observatory__next svg { flex-shrink: 0; transition: transform 360ms cubic-bezier(.22, 1, .36, 1); }
+.tatva-observatory__next-label, .tatva-observatory__next-measure { display: grid; min-width: 0; overflow-wrap: anywhere; }
+.tatva-observatory__next-label > *, .tatva-observatory__next-measure > * { grid-area: 1 / 1; }
+.tatva-observatory__next-measure { visibility: hidden; pointer-events: none; user-select: none; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .tatva-observatory__next:hover svg { transform: translateX(3px); }
+}
+.tatva-observatory[data-tatva-reading-still="true"] :is(.tatva-observatory__force, .tatva-observatory__portrait, .tatva-observatory__next, .tatva-observatory__next svg) { transition: none; }
+.tatva-observatory[data-tatva-reading-still="true"] .tatva-observatory__portrait { translate: none; scale: 1; transform: none; }
+.tatva-observatory[data-tatva-reading-still="true"] .tatva-observatory__next svg { transform: none; }
+.tatva-observatory[data-tatva-reading-still="true"] .tatva-observatory__film :is(video, img) { transition: none; }
+.tatva-observatory[data-tatva-reading-still="true"] [data-home-motion-layer] {
+  translate: none !important; rotate: none !important; scale: none !important;
+  transform: none !important; opacity: 1 !important; filter: none !important;
+}
+.tatva-observatory[data-tatva-reading-still="true"] :is([data-scroll-ink], [data-scroll-reading]) { background: none !important; -webkit-text-fill-color: currentColor !important; }
+.tatva-observatory[data-tatva-reading-still="true"] [data-scroll-ink]::after { transform: none !important; }
 
 /* Keep the explanation and next action readable after each deliberate choice. */
 .tatva-pressure-lab__force span span:last-child { color: #c3c1b8; }
