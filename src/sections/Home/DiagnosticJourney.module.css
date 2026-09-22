@@ -10,6 +10,13 @@
 .trail span { flex-shrink: 0; font-size: .75rem; line-height: 1.4; font-variant-numeric: tabular-nums; }
 .trail strong { min-width: 0; font-size: .875rem; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
 
+/* Every implication shares one measured footprint so choosing an answer
+   does not move the next action. Only the current sentence is exposed. */
+.cueCopy { display: grid; flex: 1; min-width: 0; }
+.cueCopy > b, .cueMeasure { grid-area: 1 / 1; }
+.cueMeasure { display: grid; visibility: hidden; pointer-events: none; }
+.cueMeasure > span { grid-area: 1 / 1; }
+
 @media (hover: hover) and (pointer: fine) {
   .trail button:not(:disabled):hover { background: #f8efdc; border-color: #8f672d; }
 }
@@ -24,7 +31,25 @@
 .scene[data-diagnostic-still="true"] *,
 .scene[data-diagnostic-still="true"] *::after { transition-duration: 0s !important; }
 .scene[data-diagnostic-still="true"] :global(.brand-orbit__result-trace) button { translate: 0 0; }
-.scene[data-diagnostic-still="true"] :global(.brand-orbit__landscape) { transform: scale(1.035); }
+.scene[data-diagnostic-still="true"] :global(.brand-orbit__landscape) {
+  transform: scale(1.035);
+  animation: none;
+  translate: 0 0;
+  will-change: auto;
+}
+.scene[data-diagnostic-still="true"] :global(.brand-orbit__result-primary),
+.scene[data-diagnostic-still="true"] :global(.brand-orbit__continue) span {
+  transform: none;
+  translate: 0 0;
+}
+.scene[data-diagnostic-still="true"] [data-home-motion-layer] {
+  transform: none !important;
+  translate: none !important;
+  rotate: none !important;
+  scale: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
 .scene[data-diagnostic-still="true"] :global(.brand-orbit__plate),
 .scene[data-diagnostic-still="true"] :global(.brand-orbit__petal) { animation-play-state: paused !important; }
 

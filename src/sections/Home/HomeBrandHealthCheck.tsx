@@ -1,6 +1,6 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import {
   clearServicesSituation,
   publishCompletedHomeDiagnosis,
@@ -15,7 +15,7 @@ import {
   type HomeDiagnosis,
 } from "@/lib/homeDiagnosticState";
 import { track, trackRuntimeIssue } from "@/lib/analytics";
-import { motion, useAnimationControls } from "framer-motion";
+import { motion, useAnimationControls, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useReducer, useRef, useState, type FocusEvent, type KeyboardEvent, type PointerEvent } from "react";
@@ -158,6 +158,8 @@ const RESULTS: Record<
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const QUESTION_NAMES = ["Cost", "Approvals", "Change"] as const;
+const EMPTY_CHOICE_CUE = "The statement closest to your business.";
+const CHOICE_CUES = [EMPTY_CHOICE_CUE, ...QUESTIONS.flatMap((question) => question.choices.map((choice) => choice.centre))];
 
 const DIAGNOSTIC_SCENE_VARIANTS = {
   enter: (direction: DiagnosticDirection) => ({
@@ -180,22 +182,23 @@ function revealDiagnosticReading(target: HTMLElement) {
 }
 
 export function HomeBrandHealthCheck() {
-  const reducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const [keyboardReading, setKeyboardReading] = useState(false);
-  const still = reducedMotion || keyboardReading;
+  const still = prefersReducedMotion || keyboardReading;
   const panelControls = useAnimationControls();
+  const cueControls = useAnimationControls();
   const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { amount: .06 });
+  const motionActive = hydrated && inView && !still;
   const headingRef = useRef<HTMLHeadingElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
-  const questionPanelRef = useRef<HTMLDivElement>(null);
   const focusRequestedRef = useRef(false);
   const diagnosticDirectionRef = useRef<DiagnosticDirection>("forward");
-  const orbitPointerBoundsRef = useRef<DOMRect | null>(null);
   const orbitPointerFrameRef = useRef<number | null>(null);
   const orbitPointerMotionRef = useRef<{
     target: HTMLElement;
-    x: number;
-    y: number;
+    clientX: number;
+    clientY: number;
   } | null>(null);
   const [state, dispatch] = useReducer(homeDiagnosticReducer, initialHomeDiagnosticState);
   const { step, answers, selections, resultVisible, result: resolvedResult, preview } = state;
@@ -207,18 +210,33 @@ export function HomeBrandHealthCheck() {
   const allAnswered = resolveCompletedHomeDiagnosis(answers) !== null;
   const panelIdentity = done ? "result" : `question-${step}`;
   const previousPanel = useRef(panelIdentity);
+  const previousChoice = useRef({ panelIdentity, selected });
 
   useEffect(() => {
     const changed = previousPanel.current !== panelIdentity;
     previousPanel.current = panelIdentity;
     panelControls.stop();
     panelControls.set("center");
-    if (changed && !still) {
+    if (changed && motionActive) {
       panelControls.set(DIAGNOSTIC_SCENE_VARIANTS.enter(diagnosticDirectionRef.current));
       void panelControls.start("center", { duration: .4, ease: EASE });
     }
     return () => panelControls.stop();
-  }, [panelControls, panelIdentity, still]);
+  }, [motionActive, panelControls, panelIdentity]);
+
+  useEffect(() => {
+    const changed = previousChoice.current.panelIdentity === panelIdentity && previousChoice.current.selected !== selected;
+    previousChoice.current = { panelIdentity, selected };
+    cueControls.stop();
+    cueControls.set({ y: 0 });
+    // Only a fresh answer moves its implication. Pausing or returning to the
+    // chapter settles the current words without replaying a past selection.
+    if (changed && selected !== null && !done && motionActive) {
+      cueControls.set({ y: 4 });
+      void cueControls.start({ y: 0 }, { duration: .36, ease: EASE });
+    }
+    return () => cueControls.stop();
+  }, [cueControls, done, motionActive, panelIdentity, selected]);
 
   useLayoutEffect(() => {
     if (!focusRequestedRef.current) return;
@@ -240,8 +258,7 @@ export function HomeBrandHealthCheck() {
   }, []);
 
   useEffect(() => {
-    if (!still) return;
-    orbitPointerBoundsRef.current = null;
+    if (motionActive) return;
     orbitPointerMotionRef.current = null;
     if (orbitPointerFrameRef.current !== null) {
       window.cancelAnimationFrame(orbitPointerFrameRef.current);
@@ -249,34 +266,27 @@ export function HomeBrandHealthCheck() {
     }
     sectionRef.current?.style.removeProperty("--orbit-pointer-x");
     sectionRef.current?.style.removeProperty("--orbit-pointer-y");
-  }, [still]);
-
-  function prepareScene(event: PointerEvent<HTMLElement>) {
-    if (still || event.pointerType !== "mouse") return;
-    orbitPointerBoundsRef.current = event.currentTarget.getBoundingClientRect();
-  }
+  }, [motionActive]);
 
   function moveScene(event: PointerEvent<HTMLElement>) {
-    if (still || event.pointerType !== "mouse") return;
-    const target = event.currentTarget;
-    const bounds = orbitPointerBoundsRef.current ?? target.getBoundingClientRect();
-    orbitPointerBoundsRef.current = bounds;
-    if (!bounds.width || !bounds.height) return;
-    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-    orbitPointerMotionRef.current = { target, x, y };
+    if (!motionActive || event.pointerType !== "mouse") return;
+    orbitPointerMotionRef.current = { target: event.currentTarget, clientX: event.clientX, clientY: event.clientY };
     if (orbitPointerFrameRef.current !== null) return;
     orbitPointerFrameRef.current = window.requestAnimationFrame(() => {
       orbitPointerFrameRef.current = null;
       const motion = orbitPointerMotionRef.current;
       if (!motion) return;
-      motion.target.style.setProperty("--orbit-pointer-x", motion.x.toFixed(3));
-      motion.target.style.setProperty("--orbit-pointer-y", motion.y.toFixed(3));
+      // Read once per frame, after any intervening scroll or content resize.
+      const bounds = motion.target.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return;
+      const x = Math.max(-1, Math.min(1, ((motion.clientX - bounds.left) / bounds.width - .5) * 2));
+      const y = Math.max(-1, Math.min(1, ((motion.clientY - bounds.top) / bounds.height - .5) * 2));
+      motion.target.style.setProperty("--orbit-pointer-x", x.toFixed(3));
+      motion.target.style.setProperty("--orbit-pointer-y", y.toFixed(3));
     });
   }
 
   function resetScene(event: PointerEvent<HTMLElement>) {
-    orbitPointerBoundsRef.current = null;
     orbitPointerMotionRef.current = null;
     if (orbitPointerFrameRef.current !== null) {
       window.cancelAnimationFrame(orbitPointerFrameRef.current);
@@ -295,19 +305,20 @@ export function HomeBrandHealthCheck() {
   }
 
   function previewChoice(event: PointerEvent<HTMLButtonElement>, index: number | null) {
-    if (event.pointerType !== "mouse") return;
+    if (!motionActive || event.pointerType !== "mouse") return;
     dispatch({ type: "preview", selection: index });
   }
 
   function moveChoiceFocus(
     event: KeyboardEvent<HTMLButtonElement>,
-    index: number,
-    direction: 1 | -1,
+    nextIndex: number,
   ) {
-    const nextIndex = (index + direction + active.choices.length) % active.choices.length;
     const group = event.currentTarget.closest('[role="radiogroup"]');
     const options = group?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
-    options?.[nextIndex]?.focus({ preventScroll: true });
+    const option = options?.[nextIndex];
+    if (!option) return;
+    option.focus({ preventScroll: true });
+    revealDiagnosticReading(option);
     choose(active.choices[nextIndex], nextIndex);
   }
 
@@ -362,6 +373,8 @@ export function HomeBrandHealthCheck() {
     setKeyboardReading(true);
     panelControls.stop();
     panelControls.set("center");
+    cueControls.stop();
+    cueControls.set({ y: 0 });
     revealDiagnosticReading(target);
   }
 
@@ -369,18 +382,17 @@ export function HomeBrandHealthCheck() {
     event: KeyboardEvent<HTMLButtonElement>,
     index: number,
   ) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.nativeEvent.isComposing) return;
+    let nextIndex: number;
     if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-      event.preventDefault();
-      moveChoiceFocus(event, index, 1);
+      nextIndex = (index + 1) % active.choices.length;
     } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-      event.preventDefault();
-      moveChoiceFocus(event, index, -1);
-    } else if (event.key === "Tab" && !event.shiftKey && selected !== null) {
-      event.preventDefault();
-      questionPanelRef.current
-        ?.querySelector<HTMLButtonElement>(".brand-orbit__continue")
-        ?.focus({ preventScroll: true });
-    }
+      nextIndex = (index + active.choices.length - 1) % active.choices.length;
+    } else if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = active.choices.length - 1;
+    else return;
+    event.preventDefault();
+    moveChoiceFocus(event, nextIndex);
   }
 
   return (
@@ -388,7 +400,7 @@ export function HomeBrandHealthCheck() {
       ref={sectionRef}
       id="brand-diagnostic"
       className={`brand-orbit ${journeyStyles.scene}`}
-      data-diagnostic-still={still}
+      data-diagnostic-still={!motionActive}
       data-home-v4-chapter="diagnostic"
       data-home-chapter="diagnostic"
       data-home-section="diagnostic"
@@ -400,7 +412,7 @@ export function HomeBrandHealthCheck() {
       onFocusCapture={revealReading}
       onKeyDownCapture={() => setKeyboardReading(true)}
       onPointerDownCapture={() => setKeyboardReading(false)}
-      onPointerEnter={prepareScene}
+      onClickCapture={(event) => { if (event.detail === 0) setKeyboardReading(true); }}
       onPointerMove={moveScene}
       onPointerLeave={resetScene}
       onPointerCancel={resetScene}
@@ -546,6 +558,7 @@ export function HomeBrandHealthCheck() {
                 <strong>{result.signal}</strong>
                 <Link
                   href="#evidence"
+                  prefetch={false}
                   className="brand-orbit__result-primary"
                   data-section-jump-yield="true"
                 >
@@ -553,6 +566,7 @@ export function HomeBrandHealthCheck() {
                 </Link>
                 <Link
                   href={servicesContactHrefForSituation(result.situation, "call")}
+                  prefetch={false}
                   className="brand-orbit__result-secondary"
                 >
                   Discuss this diagnosis <i aria-hidden="true">→</i>
@@ -562,7 +576,6 @@ export function HomeBrandHealthCheck() {
             </motion.div>
           ) : (
             <motion.div
-              ref={questionPanelRef}
               id="brand-orbit-question-panel"
               key={`question-${step}`}
               className="brand-orbit__question"
@@ -613,11 +626,14 @@ export function HomeBrandHealthCheck() {
                 <div className="brand-orbit__choice-cue" id={`brand-orbit-cue-${step}`}>
                   <p aria-live="polite" aria-atomic="true">
                     <span>{selected === null ? "Choose one" : "This points toward"}</span>
-                    <b>
-                      {selected === null
-                        ? "The statement closest to your business."
-                        : active.choices[selected].centre}
-                    </b>
+                    <span className={journeyStyles.cueCopy}>
+                      <motion.b initial={false} animate={cueControls}>
+                        {selected === null ? EMPTY_CHOICE_CUE : active.choices[selected].centre}
+                      </motion.b>
+                      <span className={journeyStyles.cueMeasure} aria-hidden="true" inert>
+                        {CHOICE_CUES.map((cue) => <span key={cue}>{cue}</span>)}
+                      </span>
+                    </span>
                   </p>
                   <button
                     type="button"
