@@ -1,11 +1,11 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { ArrowDown, ArrowUp, ChevronDown, Pause, Play, RotateCcw } from "lucide-react";
 import guideStyles from "./HomeJourney.module.css";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
-import { useLenis } from "@/components/SmoothScrollProvider";
 import { focusHomeReading, isAvailableHomeTabStop } from "./homeReadingFocus";
+import { travelToHomeChapter } from "./homeChapterTravel";
 import {
   publishHomeGuideMode,
   type HomeGuideMode,
@@ -26,18 +26,19 @@ type GuideMode = HomeGuideMode;
 type HandoffMotif = "mist" | "river" | "root" | "aperture" | "paper" | "constellation" | "light";
 
 export function GuidedView() {
-  const lenis = useLenis();
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const [mode, setMode] = useState<GuideMode>("manual");
   const [activeIndex, setActiveIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [travelIndex, setTravelIndex] = useState<number | null>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLElement>(null);
   const menuLinksRef = useRef<Array<HTMLAnchorElement | null>>([]);
   const menuFocusRef = useRef<number | null>(null);
   const guideRef = useRef<HTMLDivElement>(null);
   const chaptersRef = useRef<HTMLElement[]>([]);
-  const guidedScrollRef = useRef(false);
+  const stopTravelRef = useRef<(() => void) | null>(null);
+  const travelIndexRef = useRef<number | null>(null);
   const modeRef = useRef<GuideMode>("manual");
   const advanceTimerRef = useRef(0);
 
@@ -51,13 +52,11 @@ export function GuidedView() {
 
   const stopGuidedMotion = useCallback(() => {
     window.clearTimeout(advanceTimerRef.current);
-
-    if (guidedScrollRef.current) {
-      if (lenis) lenis.scrollTo(window.scrollY, { immediate: true });
-      else window.scrollTo({ top: window.scrollY, left: window.scrollX, behavior: "instant" });
-      guidedScrollRef.current = false;
-    }
-  }, [lenis]);
+    stopTravelRef.current?.();
+    stopTravelRef.current = null;
+    travelIndexRef.current = null;
+    setTravelIndex(null);
+  }, []);
 
   const changeMode = useCallback((next: GuideMode) => {
     modeRef.current = next;
@@ -66,28 +65,23 @@ export function GuidedView() {
   }, [stopGuidedMotion]);
 
   const scrollToChapter = useCallback(
-    (index: number) => {
+    (index: number, keyboardChoice = false) => {
       const chapters = resolveChapters();
       const target = chapters[index];
       if (!target) return;
 
-      guidedScrollRef.current = true;
-      window.clearTimeout(advanceTimerRef.current);
-
-      if (lenis && !prefersReducedMotion) {
-        lenis.scrollTo(target, {
-          duration: 0.82,
-          easing: (value: number) => 1 - Math.pow(1 - value, 4),
-          onComplete: () => { guidedScrollRef.current = false; },
-        });
-      } else {
-        target.scrollIntoView({
-          behavior: prefersReducedMotion ? "instant" : "smooth",
-          block: "start",
-        });
-      }
+      stopGuidedMotion();
+      travelIndexRef.current = index;
+      setTravelIndex(index);
+      stopTravelRef.current = travelToHomeChapter(target, hydrated && !prefersReducedMotion && !keyboardChoice, (arrived) => {
+        stopTravelRef.current = null;
+        travelIndexRef.current = null;
+        setTravelIndex(null);
+        if (arrived) setActiveIndex(index);
+        else if (modeRef.current === "guided") changeMode("paused");
+      });
     },
-    [lenis, prefersReducedMotion, resolveChapters],
+    [changeMode, hydrated, prefersReducedMotion, resolveChapters, stopGuidedMotion],
   );
 
   useEffect(() => {
@@ -95,8 +89,10 @@ export function GuidedView() {
     if (!chapters.length) return;
 
     let frame = 0;
+    let disposed = false;
     function update() {
       frame = 0;
+      if (disposed || document.hidden) return;
       const readingLine = window.innerHeight * .42;
       let next = 0;
       chapters.forEach((chapter, index) => {
@@ -108,18 +104,26 @@ export function GuidedView() {
       setActiveIndex((current) => current === next ? current : next);
     }
     function schedule() {
-      if (!frame) frame = window.requestAnimationFrame(update);
+      if (!disposed && !document.hidden && !frame) frame = window.requestAnimationFrame(update);
+    }
+    function onVisibilityChange() {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
+      schedule();
     }
     update();
     const resize = new ResizeObserver(schedule);
     chapters.forEach((chapter) => resize.observe(chapter));
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     return () => {
+      disposed = true;
       window.cancelAnimationFrame(frame);
       resize.disconnect();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [resolveChapters]);
 
@@ -135,8 +139,8 @@ export function GuidedView() {
   );
 
   useEffect(() => {
-    if (prefersReducedMotion) changeMode("manual");
-  }, [changeMode, prefersReducedMotion]);
+    if (!hydrated || prefersReducedMotion) changeMode("manual");
+  }, [changeMode, hydrated, prefersReducedMotion]);
 
   useEffect(() => {
     const compact = window.matchMedia("(max-width: 820px)");
@@ -154,7 +158,7 @@ export function GuidedView() {
   }, [changeMode]);
 
   useEffect(() => {
-    if (prefersReducedMotion || mode !== "guided") {
+    if (!hydrated || prefersReducedMotion || mode !== "guided" || travelIndex !== null) {
       return;
     }
 
@@ -168,18 +172,22 @@ export function GuidedView() {
     const duration = DWELL_MS[Math.min(activeIndex, DWELL_MS.length - 1)] ?? 4700;
     advanceTimerRef.current = window.setTimeout(() => {
       if (document.hidden || modeRef.current !== "guided") return;
+      if (document.querySelector("dialog[open]") || document.documentElement.dataset.siteMenu === "open") {
+        changeMode("paused");
+        return;
+      }
       scrollToChapter(nextIndex);
     }, duration);
 
     return () => {
       window.clearTimeout(advanceTimerRef.current);
     };
-  }, [activeIndex, changeMode, mode, prefersReducedMotion, resolveChapters, scrollToChapter]);
+  }, [activeIndex, changeMode, hydrated, mode, prefersReducedMotion, resolveChapters, scrollToChapter, travelIndex]);
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
-
+    let disposed = false;
     function takeControl(event: Event) {
+      if (disposed) return;
       const target = event.target;
       const navigationKey = event instanceof KeyboardEvent &&
         ["Escape", "ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End"].includes(event.key);
@@ -189,34 +197,44 @@ export function GuidedView() {
       changeMode("manual");
     }
 
-    function onVisibilityChange() {
-      if (document.hidden && modeRef.current === "guided") changeMode("paused");
+    function onReadingOverlay() {
+      if (disposed) return;
+      if (!document.hidden && !document.querySelector("dialog[open]") && document.documentElement.dataset.siteMenu !== "open") return;
+      if (modeRef.current === "guided") changeMode("paused");
+      else stopGuidedMotion();
     }
 
-    function onScrollEnd() {
-      guidedScrollRef.current = false;
+    function onSelectionChange() {
+      if (disposed) return;
+      const selection = window.getSelection();
+      const root = document.querySelector("[data-home-v4]");
+      if (root && selection && !selection.isCollapsed && selection.rangeCount && selection.getRangeAt(0).intersectsNode(root)) changeMode("manual");
     }
 
+    const overlays = new MutationObserver(onReadingOverlay);
+    overlays.observe(document.documentElement, { attributes: true, attributeFilter: ["open", "data-site-menu"], subtree: true });
     const options: AddEventListenerOptions = { passive: true };
     window.addEventListener("wheel", takeControl, options);
     window.addEventListener("touchstart", takeControl, options);
     window.addEventListener("pointerdown", takeControl, options);
     window.addEventListener("keydown", takeControl);
     window.addEventListener("focusin", takeControl);
-    window.addEventListener("scrollend", onScrollEnd);
-    document.addEventListener("visibilitychange", onVisibilityChange);
+    document.addEventListener("visibilitychange", onReadingOverlay);
+    document.addEventListener("selectionchange", onSelectionChange);
 
     return () => {
+      disposed = true;
       window.removeEventListener("wheel", takeControl);
       window.removeEventListener("touchstart", takeControl);
       window.removeEventListener("pointerdown", takeControl);
       window.removeEventListener("keydown", takeControl);
       window.removeEventListener("focusin", takeControl);
-      window.removeEventListener("scrollend", onScrollEnd);
-      document.removeEventListener("visibilitychange", onVisibilityChange);
+      document.removeEventListener("visibilitychange", onReadingOverlay);
+      document.removeEventListener("selectionchange", onSelectionChange);
+      overlays.disconnect();
       stopGuidedMotion();
-      };
-  }, [changeMode, prefersReducedMotion, stopGuidedMotion]);
+    };
+  }, [changeMode, stopGuidedMotion]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -225,9 +243,10 @@ export function GuidedView() {
     if (!guide || !menu) return;
     const header = document.querySelector<HTMLElement>("[data-site-header]");
     let frame = 0;
+    let disposed = false;
     function fitMenu() {
       frame = 0;
-      if (!guide || !menu) return;
+      if (disposed || !guide || !menu) return;
       // Reserve the header's full resting height even while it slides away.
       // The gap is shared with CSS so the entrance transform cannot alter it.
       const headerBottom = header ? header.offsetTop + header.offsetHeight : 0;
@@ -241,7 +260,7 @@ export function GuidedView() {
       else if (current) revealMenuLink(current);
     }
     function scheduleFit() {
-      if (!frame) frame = window.requestAnimationFrame(fitMenu);
+      if (!disposed && !frame) frame = window.requestAnimationFrame(fitMenu);
     }
     fitMenu();
     const resize = new ResizeObserver(scheduleFit);
@@ -268,7 +287,7 @@ export function GuidedView() {
       if (event.target instanceof Node && !guideRef.current?.contains(event.target)) setMenuOpen(false);
     }
     function escape(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
+      if (event.defaultPrevented || event.isComposing || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.key !== "Escape") return;
       event.preventDefault();
       setMenuOpen(false);
       menuButtonRef.current?.focus({ preventScroll: true });
@@ -276,6 +295,7 @@ export function GuidedView() {
     document.addEventListener("pointerdown", dismiss);
     document.addEventListener("keydown", escape);
     return () => {
+      disposed = true;
       window.cancelAnimationFrame(frame);
       resize.disconnect();
       notice.disconnect();
@@ -305,7 +325,7 @@ export function GuidedView() {
   }
 
   function navigateMenu(event: ReactKeyboardEvent<HTMLAnchorElement>, index: number) {
-    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (event.defaultPrevented || event.nativeEvent.isComposing || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     let next = index;
     if (event.key === "ArrowDown") next = (index + 1) % CHAPTER_IDS.length;
     else if (event.key === "ArrowUp") next = (index + CHAPTER_IDS.length - 1) % CHAPTER_IDS.length;
@@ -331,7 +351,7 @@ export function GuidedView() {
   }
 
   function continueReading(event: ReactKeyboardEvent<HTMLDivElement>) {
-    if (event.key !== "Tab" || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.defaultPrevented || event.nativeEvent.isComposing || event.key !== "Tab" || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
 
     const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(TAB_STOP_SELECTOR))
       .filter(isAvailableHomeTabStop);
@@ -342,11 +362,17 @@ export function GuidedView() {
   }
 
   const count = Math.max(1, chaptersRef.current.length || CHAPTER_LABELS.length);
-  const atFinalChapter = activeIndex >= count - 1;
-  function jump(index: number) {
+  const navigationIndex = travelIndex ?? activeIndex;
+  const atFinalChapter = navigationIndex >= count - 1;
+  function jump(index: number, keyboardChoice = false) {
     changeMode("manual");
     setMenuOpen(false);
-    scrollToChapter(index);
+    scrollToChapter(index, keyboardChoice);
+  }
+
+  function stepChapter(direction: number, keyboardChoice: boolean) {
+    const next = (travelIndexRef.current ?? activeIndex) + direction;
+    if (next >= 0 && next < count) jump(next, keyboardChoice);
   }
 
   return (
@@ -377,7 +403,7 @@ export function GuidedView() {
             else openMenu(event.detail === 0);
           }}
           onKeyDown={(event) => {
-            if ((event.key === "ArrowDown" || event.key === "ArrowUp") && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+            if ((event.key === "ArrowDown" || event.key === "ArrowUp") && !event.defaultPrevented && !event.nativeEvent.isComposing && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
               event.preventDefault();
               if (!menuOpen) openMenu(true);
               else {
@@ -392,26 +418,26 @@ export function GuidedView() {
           <ChevronDown size={15} aria-hidden="true" className={menuOpen ? guideStyles.chevronOpen : undefined} />
         </button>
         <span className={guideStyles.divider} aria-hidden="true" />
-        <button type="button" data-journey-transport className={guideStyles.iconButton} aria-disabled={activeIndex === 0} onClick={() => { if (activeIndex > 0) jump(activeIndex - 1); }} aria-label="Previous section" title="Previous section"><ArrowUp size={16} aria-hidden="true" /></button>
+        <button type="button" data-journey-transport className={guideStyles.iconButton} aria-disabled={navigationIndex === 0} onClick={(event) => stepChapter(-1, event.detail === 0)} aria-label="Previous section" title="Previous section"><ArrowUp size={16} aria-hidden="true" /></button>
         <button
           type="button"
           data-journey-transport
           className={`${guideStyles.iconButton} ${guideStyles.playButton}`}
-          onClick={() => {
-            if (prefersReducedMotion) return;
+          onClick={(event) => {
+            if (!hydrated || prefersReducedMotion) return;
             setMenuOpen(false);
             if (mode === "guided") changeMode("paused");
-            else if (atFinalChapter) jump(0);
+            else if (atFinalChapter) jump(0, event.detail === 0);
             else changeMode("guided");
           }}
           aria-label={prefersReducedMotion ? "Guided journey paused for reduced motion" : mode === "guided" ? "Pause guided journey" : atFinalChapter ? "Return to beginning" : "Play guided journey"}
-          aria-disabled={prefersReducedMotion}
+          aria-disabled={!hydrated || prefersReducedMotion}
           aria-pressed={mode === "guided"}
           title={prefersReducedMotion ? "Guided journey paused for reduced motion" : mode === "guided" ? "Pause guided journey" : atFinalChapter ? "Return to beginning" : "Play guided journey"}
         >
           {mode === "guided" ? <Pause size={14} aria-hidden="true" /> : atFinalChapter ? <RotateCcw size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
         </button>
-        <button type="button" data-journey-transport className={guideStyles.iconButton} aria-disabled={atFinalChapter} onClick={() => { if (!atFinalChapter) jump(activeIndex + 1); }} aria-label="Next section" title="Next section"><ArrowDown size={16} aria-hidden="true" /></button>
+        <button type="button" data-journey-transport className={guideStyles.iconButton} aria-disabled={atFinalChapter} onClick={(event) => stepChapter(1, event.detail === 0)} aria-label="Next section" title="Next section"><ArrowDown size={16} aria-hidden="true" /></button>
       </div>
       <nav ref={menuRef} id="homepage-chapters" className={guideStyles.menu} hidden={!menuOpen} aria-label="Homepage sections">
         <p>Explore the thinking</p>
