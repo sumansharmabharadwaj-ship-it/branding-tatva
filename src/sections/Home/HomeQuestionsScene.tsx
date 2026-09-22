@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion, useAnimationControls, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
+import { motion, useAnimationControls, useInView, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, Plus } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { faqs } from "@/data/faqs";
 import styles from "./HomeConversation.module.css";
@@ -35,18 +36,16 @@ const QUESTIONS = QUESTION_ORDER.flatMap((question) =>
     .map((item) => ({ ...item, action: QUESTION_ACTIONS[question] })),
 );
 
-function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, onKeyDown }: {
+function QuestionRow({ item, index, open, still, buttonRef, onToggle, onKeyDown }: {
   item: (typeof QUESTIONS)[number];
   index: number;
   open: boolean;
-  reducedMotion: boolean;
+  still: boolean;
   buttonRef: (element: HTMLButtonElement | null) => void;
-  onToggle: () => void;
+  onToggle: (keyboard: boolean) => void;
   onKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => void;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
-  const [keyboardActivation, setKeyboardActivation] = useState(false);
-  const still = reducedMotion || keyboardActivation;
   const previousOpen = useRef(open);
   const copyControls = useAnimationControls();
   const { scrollYProgress } = useScroll({ target: rowRef, offset: ["start end", "end start"] });
@@ -98,10 +97,7 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
           className={styles.questionButton}
           aria-expanded={open}
           aria-controls={answerId}
-          onClick={(event) => {
-            setKeyboardActivation(event.detail === 0);
-            onToggle();
-          }}
+          onClick={(event) => onToggle(event.detail === 0)}
           onKeyDown={onKeyDown}
         >
           <span className={styles.questionNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
@@ -122,6 +118,12 @@ function QuestionRow({ item, index, open, reducedMotion, buttonRef, onToggle, on
         transition={{ duration: still ? 0 : .34, ease: [.22, 1, .36, 1] }}
         onFocusCapture={settleCopy}
         onPointerDown={settleCopy}
+        onKeyDown={(event) => {
+          if (!open || event.defaultPrevented || event.nativeEvent.isComposing || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.key !== "Escape") return;
+          event.preventDefault();
+          event.stopPropagation();
+          onToggle(true);
+        }}
       >
         <span className={styles.answerRail} aria-hidden="true">
           <motion.i style={{ scaleY: still ? 1 : readingLine }} />
@@ -147,7 +149,11 @@ export function HomeQuestionsScene() {
   const rootRef = useRef<HTMLElement>(null);
   const questionRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [openQuestions, setOpenQuestions] = useState(() => new Set([0]));
-  const reducedMotion = useHydratedReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const [keyboardReading, setKeyboardReading] = useState(false);
+  const still = prefersReducedMotion || keyboardReading;
+  const inView = useInView(rootRef, { amount: .06 });
+  const motionActive = hydrated && inView && !still;
   const cinematicMotion = useMediaQuery(
     "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
   );
@@ -170,6 +176,7 @@ export function HomeQuestionsScene() {
   }
 
   function onQuestionKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (event.defaultPrevented || event.nativeEvent.isComposing || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
     const next = event.key === "Home" ? 0
@@ -182,7 +189,8 @@ export function HomeQuestionsScene() {
     else target?.focus({ preventScroll: true });
   }
 
-  function toggleQuestion(index: number) {
+  function toggleQuestion(index: number, keyboard: boolean) {
+    if (keyboard) setKeyboardReading(true);
     // Move focus before making its current reading surface inert. Pointer
     // activation does not focus buttons in every browser.
     const button = questionRefs.current[index];
@@ -203,27 +211,34 @@ export function HomeQuestionsScene() {
 
   return (
     <section ref={rootRef} className={styles.questions} data-cursor-world="light" aria-labelledby="home-questions-title"
-      onFocusCapture={(event) => revealFocusedQuestion(event.target)}>
+      data-questions-reading-still={still}
+      data-questions-motion-active={motionActive}
+      onKeyDownCapture={() => setKeyboardReading(true)}
+      onPointerDownCapture={() => setKeyboardReading(false)}
+      onFocusCapture={(event) => {
+        if (event.target.matches(":focus-visible")) setKeyboardReading(true);
+        revealFocusedQuestion(event.target);
+      }}>
       <LivingGradient contours preset="meadow" plain opacity={0.42} shaft={false} />
       <motion.div
         className={styles.questionMedia}
-        style={{ scale: cinematicMotion && !reducedMotion ? mediaScale : 1 }}
+        style={{ scale: cinematicMotion && motionActive ? mediaScale : 1 }}
         aria-hidden="true"
       >
-        <BackgroundVideo
+        {still ? <Image src="/images/pexels-golden-fog-sea-poster.jpg" alt="" fill sizes="100vw" style={{ objectFit: "cover" }} /> : <BackgroundVideo
           video="/videos/pexels-golden-fog-sea.mp4"
           videoMobile="/videos/pexels-golden-fog-sea-mobile.mp4"
           videoWebm="/videos/pexels-golden-fog-sea.webm"
           poster="/images/pexels-golden-fog-sea-poster.jpg"
           responsivePoster
-        />
+        />}
       </motion.div>
       <div className={styles.questionFrame}>
         <header className={styles.questionIntro}>
           <p className={styles.eyebrow}>Before we work together</p>
           <h2 id="home-questions-title">Know what you’re <em>saying yes to.</em></h2>
           <p className={styles.lede}>
-            Straight answers on scope, timing, and what working directly with Suman looks like.
+            Scope, timing, and working directly with Suman.
           </p>
           {/* Native fragment navigation carries keyboard focus into the next scene. */}
           <a href="#invitation" className={styles.textLink}>
@@ -238,15 +253,15 @@ export function HomeQuestionsScene() {
               item={item}
               index={index}
               open={openQuestions.has(index)}
-              reducedMotion={reducedMotion}
+              still={!motionActive}
               buttonRef={(element) => { questionRefs.current[index] = element; }}
-              onToggle={() => toggleQuestion(index)}
+              onToggle={(keyboard) => toggleQuestion(index, keyboard)}
               onKeyDown={(event) => onQuestionKeyDown(event, index)}
             />
           ))}
           <div className={styles.auditNote}>
             <p>Prefer to look at your brand first?</p>
-            <Link href="/services#audit" className={styles.textLink}>
+            <Link href="/services#audit" prefetch={false} className={styles.textLink}>
               Try the recognition audit <ArrowRight size={17} aria-hidden="true" />
             </Link>
           </div>
