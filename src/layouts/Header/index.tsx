@@ -91,6 +91,7 @@ export function Header({ transparent = false }: HeaderProps) {
   }, [pathname, prefersReducedMotion]);
 
   useEffect(() => {
+    if (pathname === "/") setBarHidden(false);
     function handleScroll(current: number) {
       setScrolled(current > SCROLLED_THRESHOLD);
       // Share the header's scroll subscription; motion never reflows the link.
@@ -98,6 +99,13 @@ export function Header({ transparent = false }: HeaderProps) {
         ? Math.max(0, Math.min(1, current / HIDE_REVEAL_MIN_SCROLL))
         : 0;
       brandRef.current?.style.setProperty("--brand-scroll", progress.toFixed(3));
+
+      // The homepage director owns its complete hide/reveal motion. Keep this
+      // subscription for the compact brand mark and header surface only.
+      if (pathname === "/") {
+        lastScrollRef.current = current;
+        return;
+      }
 
       // The closing Contact invitation deliberately keeps the selected pill
       // navigation visible, including a direct #thanks arrival.
@@ -250,7 +258,7 @@ export function Header({ transparent = false }: HeaderProps) {
           if (!event.currentTarget.contains(event.relatedTarget)) setFocusWithin(false);
         }}
         variants={barVariants}
-        animate={isBarHidden ? "hidden" : "visible"}
+        animate={pathname === "/" ? "visible" : isBarHidden ? "hidden" : "visible"}
         transition={prefersReducedMotion ? { duration: 0 } : BAR_TRANSITION}
         className="site-header fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-4 sm:pt-5"
       >
