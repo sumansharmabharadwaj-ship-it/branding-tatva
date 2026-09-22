@@ -24,8 +24,8 @@
 .modeChoices button { min-width: 0; min-height: 2.75rem; padding: .55rem .85rem; border: 0; border-radius: 999px; color: #595246; background: transparent; font: inherit; font-size: .875rem; line-height: 1.4; cursor: pointer; transition: color 220ms ease; }
 .modeChoices button[aria-pressed="true"] { color: #fff9ed; }
 .modeChoices button:not([aria-pressed="true"]):hover { color: #805239; }
-.section :is(.modeChoices button, .messageExample):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 5px; }
-.modeChoices button, .messageExample { scroll-margin-block: 80px; }
+.section :is(.modeChoices button, .messageExample, .nextLink):focus-visible { outline: 2px solid #805239; outline-color: #805239 !important; outline-offset: 5px; }
+.modeChoices button, .messageExample, .nextLink { scroll-margin-block: 80px; }
 .messageExample { border-radius: .4rem; }
 .touchpoints { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; }
 .touchpoints > div {
@@ -86,7 +86,7 @@
 .comparison[data-message-mode="shared"] .countReel { transform: translateY(-50%); transition-delay: 750ms; }
 .memoryReading { min-width: 0; }
 .memoryLabel { margin: 0 0 .25rem; font-size: .8125rem; line-height: 1.4; letter-spacing: .07em; text-transform: uppercase; }
-.meaningStack { display: grid; }
+.meaningStack { display: grid; min-width: 0; }
 .comparison[data-message-mode="shared"] .memoryCount { color: #faf6ec; background: #556b4a; border-color: #556b4a; transition-delay: 750ms; }
 .takeaway { margin: .8rem 0 0; color: #526046; text-align: center; font-size: .9375rem; line-height: 1.5; visibility: hidden; opacity: 0; transform: translateY(5px); transition: opacity 450ms ease, transform 450ms ease; }
 .comparison[data-message-mode="shared"] .takeaway { visibility: visible; opacity: 1; transform: none; transition-delay: 1100ms; }
@@ -100,6 +100,13 @@
 .comparison[data-message-mode="shared"] .comparisonMeaning { color: #344630; border-color: rgb(85 107 74 / 35%); background: #e3e7d9; }
 .rule { height: 1px; overflow: hidden; background: rgb(128 82 57 / 18%); }
 .rule span { display: block; height: 100%; background: #805239; transform-origin: left; }
+.nextChapter { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1.25rem; }
+.nextLink { display: inline-flex; align-items: center; gap: .7rem; min-width: 0; min-height: 2.75rem; color: #70533e; font-size: .875rem; line-height: 1.45; text-decoration: underline; text-underline-offset: .3em; text-decoration-color: rgb(128 82 57 / 35%); }
+.nextLink svg { flex-shrink: 0; transition: transform 360ms cubic-bezier(.22, 1, .36, 1); }
+.nextLink:hover { color: #805239; text-decoration-color: currentColor; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .nextLink:hover svg { transform: translate(2px, 2px); }
+}
 
 .messageText { --message-tilt: -5deg; --message-rise: 3px; transform-origin: left center; }
 .messageText[data-message-transition="forward"], .meaningText[data-message-transition="forward"] {
@@ -153,6 +160,8 @@
   .comparisonMeaning { position: relative; margin-top: 1.25rem; padding: .85rem 1rem; gap: .75rem; }
   .memoryCount { width: 2.75rem; height: 2.75rem; font-size: 1.7rem; }
   .memoryLabel { font-size: .8125rem; letter-spacing: .035em; }
+  .nextChapter { grid-template-columns: minmax(0, 1fr); gap: .5rem; }
+  .nextLink { justify-self: start; }
 
 }
 @media (max-width: 820px), (pointer: coarse) {
@@ -195,3 +204,27 @@
 }
 
 .comparison:focus-within .touchpoints > div { animation: none; }
+
+/* Reading owns the whole chapter, including shared heading and ambient
+   layers. Selected connector/count states remain visible without motion. */
+.section[data-cost-reading-still="true"] .comparison *,
+.section[data-cost-reading-still="true"] .comparison *::before,
+.section[data-cost-reading-still="true"] .comparison *::after { animation: none !important; transition: none !important; }
+.section[data-cost-reading-still="true"] .touchpoints > div::after { transform: none; }
+.section[data-cost-reading-still="true"] .nextLink svg { transform: none; transition: none; }
+.section[data-cost-reading-still="true"] :global([data-home-motion-layer]) {
+  transform: none !important; translate: none !important; rotate: none !important;
+  scale: none !important; opacity: 1 !important; filter: none !important;
+}
+.section[data-cost-reading-still="true"] :is(:global([data-scroll-ink]), :global([data-scroll-reading])) {
+  background: none !important; -webkit-text-fill-color: currentColor !important;
+}
+.section[data-cost-reading-still="true"] :global([data-scroll-ink])::after { transform: none !important; }
+.section[data-cost-reading-still="true"] :global([data-gradient-layer]) { animation-play-state: paused !important; }
+.section[data-cost-reading-still="true"] :is(:global([data-gradient-layer]), :global(.home-v4-current), :global(.home-v4-current-light)) {
+  translate: none !important; rotate: none !important; scale: 1 !important; will-change: auto;
+}
+.section[data-cost-reading-still="true"] :global(.home-v4-current) path { stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .nextLink svg { transform: none; transition: none; }
+}

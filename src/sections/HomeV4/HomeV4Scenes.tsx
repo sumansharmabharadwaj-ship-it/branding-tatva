@@ -513,41 +513,79 @@ export function V4HiddenCostScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const comparisonRef = useRef<HTMLDivElement>(null);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const [keyboardReading, setKeyboardReading] = useState(false);
+  const inView = useInView(sectionRef, { amount: .06 });
+  const motionActive = hydrated && inView && !prefersReducedMotion && !keyboardReading;
   const [comparison, setComparison] = useState<{ mode: MessageMode; direction: number }>({ mode: "separate", direction: 0 });
   const manuallyChosen = useRef(false);
   const touchActive = useRef(false);
   const demonstrated = useRef(false);
   const [arrived, setArrived] = useState(false);
   const [entranceFinished, setEntranceFinished] = useState(false);
+  const restartDemonstration = useRef<() => void>(() => {});
+
+  const settleComparison = useCallback(() => {
+    setComparison((current) => current.direction === 0 ? current : { ...current, direction: 0 });
+  }, []);
+
+  function claimReading() {
+    manuallyChosen.current = true;
+    restartDemonstration.current();
+    setEntranceFinished(true);
+    settleComparison();
+  }
 
   // One finite demonstration per visit. Reading, manual choices, hidden tabs
   // and the global motion preference take priority over automatic progression.
   useEffect(() => {
     const element = comparisonRef.current;
-    if (!element || !hydrated || prefersReducedMotion || demonstrated.current || manuallyChosen.current) return;
+    if (!element || !motionActive || demonstrated.current || manuallyChosen.current) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let visible = false;
+    let disposed = false;
     const clear = () => { clearTimeout(timer); timer = undefined; };
+    const selectionOwnsReading = () => {
+      const selection = document.getSelection();
+      return Boolean(selection && !selection.isCollapsed && selection.rangeCount &&
+        selection.getRangeAt(0).intersectsNode(sectionRef.current ?? element));
+    };
+    const protectSelection = () => {
+      if (disposed || !selectionOwnsReading()) return;
+      manuallyChosen.current = true;
+      clear();
+      settleComparison();
+      setEntranceFinished(true);
+    };
     const schedule = () => {
       clear();
-      if (!visible || document.hidden || manuallyChosen.current || demonstrated.current) return;
+      if (disposed || !visible || document.hidden || touchActive.current || manuallyChosen.current || demonstrated.current) return;
+      if (selectionOwnsReading()) { protectSelection(); return; }
       timer = setTimeout(() => {
-        if (!visible || document.hidden || touchActive.current || manuallyChosen.current || demonstrated.current || element.contains(document.activeElement)) return;
-        const selection = document.getSelection();
-        if (selection && !selection.isCollapsed && selection.anchorNode && element.contains(selection.anchorNode)) return;
+        if (disposed || !visible || document.hidden || touchActive.current || manuallyChosen.current || demonstrated.current || element.contains(document.activeElement)) return;
+        if (selectionOwnsReading()) { protectSelection(); return; }
         demonstrated.current = true;
         setComparison({ mode: "shared", direction: 1 });
       }, 4800);
     };
+    restartDemonstration.current = schedule;
     const observer = new IntersectionObserver(([entry]) => {
+      if (disposed) return;
       visible = entry.isIntersecting && entry.intersectionRatio >= .65;
       if (visible) setArrived(true);
       schedule();
     }, { threshold: [0, .65] });
     observer.observe(element);
     document.addEventListener("visibilitychange", schedule);
-    return () => { clear(); observer.disconnect(); document.removeEventListener("visibilitychange", schedule); };
-  }, [hydrated, prefersReducedMotion]);
+    document.addEventListener("selectionchange", protectSelection);
+    return () => {
+      disposed = true;
+      clear();
+      restartDemonstration.current = () => {};
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", schedule);
+      document.removeEventListener("selectionchange", protectSelection);
+    };
+  }, [motionActive, settleComparison]);
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const { scrollYProgress: comparisonProgress } = useScroll({ target: comparisonRef, offset: ["start end", "end start"] });
@@ -555,36 +593,35 @@ export function V4HiddenCostScene() {
   const comparisonArrival = useTransform(comparisonProgress, [0, 0.62], [0, 1]);
   const messageTransition = comparison.direction === 0 ? "idle" : comparison.direction > 0 ? "forward" : "reverse";
 
-  const settleComparison = useCallback(() => {
-    setComparison((current) => current.direction === 0 ? current : { ...current, direction: 0 });
-  }, []);
-
   useEffect(() => {
-    if (prefersReducedMotion) {
+    if (!motionActive) {
       settleComparison();
-      setEntranceFinished(true);
+      // An interrupted entrance is consumed. Initial offscreen rendering
+      // leaves the first arrival available once the chapter enters view.
+      if (arrived || prefersReducedMotion || keyboardReading) setEntranceFinished(true);
     }
-  }, [prefersReducedMotion, settleComparison]);
+  }, [arrived, keyboardReading, motionActive, prefersReducedMotion, settleComparison]);
 
   function chooseMessageMode(mode: MessageMode, keyboardChoice: boolean) {
-    manuallyChosen.current = true;
+    claimReading();
+    if (keyboardChoice) setKeyboardReading(true);
     // Keyboard and assistive activation update the reading in place. Pointer
     // choices retain the directional text motion and connected diagram.
-    const direction = prefersReducedMotion || keyboardChoice ? 0 : mode === "shared" ? 1 : -1;
+    const direction = !motionActive || keyboardChoice ? 0 : mode === "shared" ? 1 : -1;
     setComparison((current) => current.mode === mode
       ? current.direction === 0 ? current : { ...current, direction: 0 }
       : { mode, direction });
   }
 
-  function revealFocusedComparison(event: React.FocusEvent<HTMLDivElement>) {
-    manuallyChosen.current = true;
-    settleComparison();
+  function revealFocusedComparison(event: React.FocusEvent<HTMLElement>) {
+    claimReading();
     const target = event.target;
     if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
+    setKeyboardReading(true);
     const bounds = target.getBoundingClientRect();
     if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
       target.scrollIntoView({
-        block: bounds.height > window.innerHeight - 160 ? "start" : "center",
+        block: bounds.height > window.innerHeight - 160 ? "start" : "nearest",
         inline: "nearest",
         behavior: "instant",
       });
@@ -600,8 +637,23 @@ export function V4HiddenCostScene() {
       data-home-chapter="cost"
       data-home-section="cost"
       data-cursor-world="light"
+      data-cost-reading-still={!motionActive}
       className={costStyles.section}
       aria-labelledby="home-v4-cost-title"
+      onFocusCapture={revealFocusedComparison}
+      onKeyDownCapture={() => { claimReading(); setKeyboardReading(true); }}
+      onPointerDownCapture={(event) => {
+        setKeyboardReading(false);
+        // Touch scrolling pauses the timer; a click confirms intent, while
+        // pointercancel permits a fresh reading interval after scrolling.
+        if (event.pointerType === "touch" || event.pointerType === "pen") {
+          touchActive.current = true;
+          restartDemonstration.current();
+        } else claimReading();
+      }}
+      onPointerUp={() => { touchActive.current = false; restartDemonstration.current(); }}
+      onPointerCancel={() => { touchActive.current = false; restartDemonstration.current(); }}
+      onClickCapture={(event) => { claimReading(); if (event.detail === 0) setKeyboardReading(true); }}
     >
       <LivingGradient contours preset="wanderlust" />
       <div className={costStyles.shell}>
@@ -619,18 +671,8 @@ export function V4HiddenCostScene() {
           data-home-cost-comparison
           className={costStyles.comparison}
           data-message-mode={comparison.mode}
-          data-story-arrived={arrived && !entranceFinished && !prefersReducedMotion}
-          style={{ "--comparison-arrival": prefersReducedMotion ? 1 : comparisonArrival } as MotionStyle}
-          onFocusCapture={revealFocusedComparison}
-          onPointerDown={(event) => {
-            // Touch scrolling begins with pointerdown too. A native click
-            // confirms a tap; a scrolling gesture instead sends pointercancel.
-            if (event.pointerType === "touch" || event.pointerType === "pen") touchActive.current = true;
-            else manuallyChosen.current = true;
-          }}
-          onPointerUp={() => { touchActive.current = false; }}
-          onPointerCancel={() => { touchActive.current = false; }}
-          onClickCapture={() => { manuallyChosen.current = true; }}
+          data-story-arrived={arrived && !entranceFinished && motionActive}
+          style={{ "--comparison-arrival": motionActive ? comparisonArrival : 1 } as MotionStyle}
         >
           <div className={costStyles.comparisonHeader}>
             <p className={costStyles.exampleLabel}>Illustrative example · A brand consultancy</p>
@@ -650,8 +692,7 @@ export function V4HiddenCostScene() {
             role="region"
             aria-label="Message comparison"
             tabIndex={0}
-            onFocusCapture={settleComparison}
-            onPointerDown={settleComparison}
+            onPointerDown={() => { settleComparison(); setEntranceFinished(true); }}
           >
             <dl className={costStyles.touchpoints}>
               {MESSAGE_TOUCHPOINTS.map((touchpoint, index) => (
@@ -685,7 +726,12 @@ export function V4HiddenCostScene() {
                   </dd>
                   <dd className={costStyles.buyerMeaning}>
                     <span className={costStyles.meaningDot} aria-hidden="true" />
-                    <span>{comparison.mode === "shared" ? "A clear reason to choose" : touchpoint.meaning}</span>
+                    <span className={costStyles.meaningStack}>
+                      <span className={costStyles.messageMeasure} aria-hidden="true" inert>
+                        <span>{touchpoint.meaning}</span><span>A clear reason to choose</span>
+                      </span>
+                      <span className={costStyles.meaningText}>{comparison.mode === "shared" ? "A clear reason to choose" : touchpoint.meaning}</span>
+                    </span>
                   </dd>
                 </div>
               ))}
@@ -727,8 +773,13 @@ export function V4HiddenCostScene() {
           </div>
         </motion.div>
 
-        <div className={costStyles.rule} aria-hidden="true">
-          <motion.span style={{ scaleX: prefersReducedMotion ? 1 : lineProgress }} />
+        <div className={costStyles.nextChapter}>
+          <div className={costStyles.rule} aria-hidden="true">
+            <motion.span style={{ scaleX: motionActive ? lineProgress : 1 }} />
+          </div>
+          <a href="#cost-stack" className={costStyles.nextLink}>
+            See what inconsistency costs <ArrowDownRight size={18} aria-hidden="true" />
+          </a>
         </div>
 
         {/* The three costs and the closing link moved to
