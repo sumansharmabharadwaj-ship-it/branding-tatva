@@ -49,6 +49,13 @@ class Element {
 const root = new Element(), thread = new Element(); root.scrollHeight = 3000;
 const scenes = [new Element('services-opening'), new Element('situation', 1), new Element('desire', 2)];
 scenes[1].dataset.servicesScene = 'situation'; scenes[2].dataset.servicesScene = 'desire';
+const fade = new Element('fade', 1);
+fade.dataset = { servicesDissolve: 'departure', servicesDissolveEnd: '0.46', servicesDissolveRest: '0.28' };
+fade.style.opacity = '0.28';
+let fadeReads = 0;
+const measureFade = fade.getBoundingClientRect.bind(fade);
+fade.getBoundingClientRect = () => { fadeReads++; return measureFade(); };
+scenes[1].querySelectorAll = selector => selector === '[data-services-dissolve]' ? [fade] : [];
 const packageChoice = new Element('package-brand-clarity');
 packageChoice.closest = selector => selector === '[data-services-scroll-scene="desire"]' ? scenes[2] : null;
 const fields = new Set([new Element('near'), new Element('far')]);
@@ -95,11 +102,13 @@ function load(relative, require = () => { throw new Error('Unexpected dependency
   return exports;
 }
 const recovery = load('src/app/services/servicesAnchorRecovery.ts');
+const dissolves = load('src/app/services/servicesSceneDissolves.ts');
 function mount(file, name) {
   let cleanup;
   const component = load(file, id => {
     if (id === 'react') return { useEffect: effect => { cleanup = effect(); } };
     if (id === './servicesAnchorRecovery') return recovery;
+    if (id === './servicesSceneDissolves') return dissolves;
     if (id === '@/hooks/useHydratedReducedMotion') return { useHydratedReducedMotion: () => query.matches };
     throw new Error(`Unexpected dependency: ${id}`);
   });
@@ -125,6 +134,7 @@ intersect();
 assert.equal(near.dataset.servicesGradientMotion, 'running');
 assert.equal(far.dataset.servicesGradientMotion, 'paused');
 assert.equal(scenes[0].dataset.servicesAmbient, 'running');
+assert(fadeReads > 0, 'The shared page pass measures a nearby chapter fade');
 document.documentElement.dataset.servicesFormInteraction = 'true';
 mutate(document.documentElement, 'data-services-form-interaction');
 assert.equal(near.dataset.servicesGradientMotion, 'paused', 'Fields pause before the next paint when booking opens');
@@ -156,11 +166,15 @@ assert(restored.every(event => event.detail.velocity === 0), 'Restored position 
 window.scrollY = 1500; window.emit('scroll'); paint();
 assert.equal(progressEvents().at(-1).detail.direction, 'up', 'Reverse scrolling resumes immediately');
 
+const readsBeforeReducedMotion = fadeReads;
 query.matches = true; query.emit('change'); ambient.refresh(); intersect(); paint();
+assert.equal(fadeReads, readsBeforeReducedMotion, 'Reduced motion skips boundary geometry in the real runtime');
+assert.equal(fade.style.opacity, '0.28', 'Changing motion preference settles the chapter fade');
 assert.equal(near.dataset.servicesGradientMotion, 'paused');
 assert(scenes.every(scene => scene.dataset.servicesAmbient === 'paused'));
 assert.equal(scenes[1].style.values.get('--services-content-y'), '0px');
 query.matches = false; query.emit('change'); ambient.refresh(); intersect(); paint();
+assert(fadeReads > readsBeforeReducedMotion, 'Full motion resumes the shared boundary pass');
 assert.equal(near.dataset.servicesGradientMotion, 'running');
 assert.equal(scenes[1].dataset.servicesAmbient, 'running');
 
@@ -184,6 +198,7 @@ fields.delete(far); mutate(root);
 assert.equal(far.dataset.servicesGradientMotion, undefined);
 assert(intersections.every(observer => !observer.targets.has(far)), 'Detached gradients release their observers');
 runtime.dispose(); ambient.dispose();
+assert.equal(fade.style.opacity, '0.28', 'Runtime cleanup restores the server-rendered fade');
 assert.equal(frames.size + timers.size + window.count + document.count + query.count, 0);
 assert(mutations.every(observer => observer.disconnected));
 assert(resizes.every(observer => observer.disconnected));

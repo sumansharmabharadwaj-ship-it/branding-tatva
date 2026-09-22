@@ -1,9 +1,3 @@
-"use client";
-
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-
 // The departure half of the scene dissolve system. SceneVeil (the
 // arrival half) makes every chapter open wearing the previous
 // chapter's color and release it as the visitor travels in; this makes
@@ -26,18 +20,17 @@ export function SceneHandoff({
   endOpacity?: number;
   reducedOpacity?: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.98", "end 0.5"] });
-  const opacity = useTransform(scrollYProgress, [0, 1], [0, endOpacity]);
-
   return (
-    <motion.div
-      ref={ref}
+    <div
       aria-hidden="true"
+      data-services-dissolve="departure"
+      data-services-dissolve-end={endOpacity}
+      data-services-dissolve-rest={reducedOpacity}
       className={`pointer-events-none absolute inset-x-0 bottom-0 z-10 ${heightClass}`}
       style={{
-        opacity: prefersReducedMotion ? reducedOpacity : opacity,
+        // The runtime owns the scroll animation. The server-rendered layer
+        // also works as a quiet static transition before JavaScript arrives.
+        opacity: reducedOpacity,
         background: `linear-gradient(0deg, ${color} 0%, transparent 100%)`,
       }}
     />

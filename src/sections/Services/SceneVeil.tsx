@@ -1,9 +1,3 @@
-"use client";
-
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-
 // Scene dissolve, second generation. The first version was a static
 // gradient of the previous chapter's mood color at the top of each
 // section — spatial continuity only. This one is scroll-linked: the
@@ -22,18 +16,15 @@ export function SceneVeil({
   heightClass?: string;
   endOpacity?: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = useHydratedReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.95", "start 0.2"] });
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, endOpacity]);
-
   return (
-    <motion.div
-      ref={ref}
+    <div
       aria-hidden="true"
+      data-services-dissolve="arrival"
+      data-services-dissolve-end={endOpacity}
+      data-services-dissolve-rest={1}
       className={`pointer-events-none absolute inset-x-0 top-0 ${heightClass}`}
       style={{
-        opacity: prefersReducedMotion ? undefined : opacity,
+        opacity: 1,
         background: `linear-gradient(180deg, ${color} 0%, transparent 100%)`,
       }}
     />

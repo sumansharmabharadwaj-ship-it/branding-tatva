@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { bindServicesAnchorRecovery } from "./servicesAnchorRecovery";
+import { createServicesSceneDissolves } from "./servicesSceneDissolves";
 
 const SCENE_SELECTOR = "[data-services-scene], #authority, #book";
 const SCENE_PROGRESS_EVENT = "bt:services-scene-progress";
@@ -79,6 +80,7 @@ export function ServicesExperienceRuntime() {
     const firstScene = scenes[0];
     if (!firstScene) return;
     const hero = firstScene;
+    const sceneDissolves = createServicesSceneDissolves(scenes);
     // The journey thread is the only reader of --services-journey-fraction,
     // so the value is written on it rather than restyling the whole page.
     let journeyTarget: HTMLElement =
@@ -397,6 +399,7 @@ export function ServicesExperienceRuntime() {
       const rootBounds = servicesRoot.getBoundingClientRect();
       const rootTravel = Math.max(1, servicesRoot.scrollHeight - viewportHeight);
       const sceneBounds = scenes.map((scene) => scene.getBoundingClientRect());
+      const dissolveMeasurements = sceneDissolves.measure(viewportHeight, sceneBounds, isMotionReduced());
       const heroBounds = sceneBounds[0];
       const focalChapter = chapterAtFocalLine(viewportHeight, sceneBounds);
       const progressEvents: CustomEvent[] = [];
@@ -409,6 +412,8 @@ export function ServicesExperienceRuntime() {
       if (Math.abs(scrollDelta) > 0.4) scrollDirection = scrollDelta > 0 ? "down" : "up";
       lastScrollY = window.scrollY;
       lastFrameTime = now;
+
+      sceneDissolves.paint(dissolveMeasurements);
 
       // Scroll velocity and direction used to be written to <html> here on
       // every frame. Nothing reads them, and any custom property set on the
@@ -695,6 +700,7 @@ export function ServicesExperienceRuntime() {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(scrollSettleTimer);
       anchorRecovery.dispose();
+      sceneDissolves.dispose();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", scheduleProgress);
       window.removeEventListener("pageshow", scheduleProgress);
