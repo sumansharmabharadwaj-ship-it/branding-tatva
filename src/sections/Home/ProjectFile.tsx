@@ -1,9 +1,9 @@
 "use client";
 
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useId, useRef, type CSSProperties } from "react";
+import { useCallback, useEffect, useId, useRef, type CSSProperties } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import type { Project } from "@/sections/HomeV4/homeSnapshotProjects";
 import { useLenis } from "@/components/SmoothScrollProvider";
 import styles from "./ProjectFile.module.css";
@@ -17,7 +17,13 @@ import styles from "./ProjectFile.module.css";
 // action away. A native modal keeps focus inside the file and lifts it
 // above the chapter's transforms. Closing restores the reader's place.
 // The shared media director gives the opened file the film budget.
-export function ProjectFile({ project, onClose }: { project: Project | null; onClose: () => void }) {
+export function ProjectFile({ project, projectIndex, projectCount, onNavigate, onClose }: {
+  project: Project | null;
+  projectIndex: number;
+  projectCount: number;
+  onNavigate: (direction: -1 | 1) => void;
+  onClose: () => void;
+}) {
   const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
   const titleId = useId();
@@ -26,12 +32,17 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
   const backRef = useRef<HTMLButtonElement>(null);
   const readingRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
+  const animations = useRef<Animation[]>([]);
+  const previousSlug = useRef<string | undefined>(undefined);
+  const navigation = useRef({ direction: 1, animate: false });
   const projectSlug = project?.slug;
+  const isOpen = Boolean(projectSlug);
 
   useEffect(() => {
     const dialog = dialogRef.current;
-    if (!projectSlug || !dialog) return;
+    if (!isOpen || !dialog) return;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const rootStyle = document.documentElement.style;
     const previousOverflow = rootStyle.getPropertyValue("overflow");
@@ -56,7 +67,35 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
       if (!wasStopped) lenis?.start();
       if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
-  }, [projectSlug, lenis]);
+  }, [isOpen, lenis]);
+
+  const settleReading = useCallback(() => {
+    animations.current.forEach((animation) => animation.cancel());
+    animations.current = [];
+  }, []);
+
+  useEffect(() => {
+    const changed = previousSlug.current !== projectSlug;
+    previousSlug.current = projectSlug;
+    settleReading();
+    // Only the inner reading scrolls. The dialog, its controls, the page lock,
+    // and the original opener keep their identity throughout the archive.
+    if (changed) readingRef.current?.scrollTo({ top: 0, behavior: "instant" });
+    if (!projectSlug) navigation.current.animate = false;
+    if (!projectSlug || !changed || prefersReducedMotion || !navigation.current.animate) return;
+    const direction = navigation.current.direction;
+    const paper = contentRef.current;
+    const media = mediaRef.current;
+    if (paper) animations.current.push(paper.animate([
+      { transform: `translate3d(${direction * 8}px, 3px, 0)` },
+      { transform: "translate3d(0, 0, 0)" },
+    ], { duration: 420, easing: "cubic-bezier(.22, 1, .36, 1)" }));
+    if (media) animations.current.push(media.animate([
+      { transform: `translate3d(${-direction * 6}px, 0, 0) scale(1.025)` },
+      { transform: "translate3d(0, 0, 0) scale(1)" },
+    ], { duration: 620, easing: "cubic-bezier(.22, 1, .36, 1)" }));
+    return settleReading;
+  }, [projectSlug, prefersReducedMotion, settleReading]);
 
   useEffect(() => {
     const reading = readingRef.current;
@@ -104,6 +143,9 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
         onClose();
       }}
       onKeyDown={(event) => {
+        // Any keyboard interaction settles a pointer-triggered transition.
+        navigation.current.animate = false;
+        settleReading();
         if (event.key !== "Tab") return;
         if (event.shiftKey && document.activeElement === closeRef.current) {
           event.preventDefault();
@@ -119,9 +161,10 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
       {project && (
         <>
           {/* The film stays bright; the reading surface supplies contrast. */}
-          <div className={styles.media} aria-hidden="true">
+          <div ref={mediaRef} className={styles.media} aria-hidden="true">
             {video && !prefersReducedMotion ? (
               <video
+                key={project.slug}
                 data-home-media-priority="10"
                 src={video}
                 poster={poster}
@@ -149,10 +192,31 @@ export function ProjectFile({ project, onClose }: { project: Project | null; onC
             >
               <span>Close</span><X size={18} aria-hidden="true" />
             </button>
+            <nav className={styles.navigator} aria-label="Browse project files">
+              <button type="button" aria-label="Previous project file" onClick={(event) => {
+                navigation.current = { direction: -1, animate: event.detail > 0 };
+                onNavigate(-1);
+              }}>
+                <ArrowLeft size={17} aria-hidden="true" /><span>Previous</span>
+              </button>
+              <span className={styles.counter} aria-hidden="true">
+                {String(projectIndex + 1).padStart(2, "0")} / {String(projectCount).padStart(2, "0")}
+              </span>
+              <button type="button" aria-label="Next project file" onClick={(event) => {
+                navigation.current = { direction: 1, animate: event.detail > 0 };
+                onNavigate(1);
+              }}>
+                <span>Next</span><ArrowRight size={17} aria-hidden="true" />
+              </button>
+            </nav>
             <span className={styles.progress} aria-hidden="true"><span ref={progressRef} /></span>
           </div>
+          <p className={styles.announcement} role="status" aria-live="polite" aria-atomic="true">
+            Project {projectIndex + 1} of {projectCount}: {project.title}.
+          </p>
 
-          <div ref={readingRef} className={styles.reading} data-lenis-prevent="" role="region" aria-label="Project reading" tabIndex={0}>
+          <div ref={readingRef} className={styles.reading} data-lenis-prevent="" role="region" aria-label="Project reading" tabIndex={0}
+            onFocusCapture={settleReading} onPointerDown={settleReading}>
             <article
               ref={contentRef}
               key={project.slug}

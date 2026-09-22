@@ -153,7 +153,7 @@ export function EvidenceWall() {
     focusScopeSelector: '[role="tabpanel"], [role="tablist"]',
     count: projects.length,
     target: sectionRef,
-    enabled: inView && desktopStory,
+    enabled: inView && desktopStory && openSlug === null,
     reducedMotion: prefersReducedMotion,
   });
   const { activeIndex, choose: chooseVisualState, preview, releasePreview } = visualizer;
@@ -226,6 +226,22 @@ export function EvidenceWall() {
     }
   }
 
+  function navigateProjectFile(direction: -1 | 1) {
+    const current = projects.findIndex((project) => project.slug === openSlug);
+    if (current < 0) return;
+    const next = (current + direction + projects.length) % projects.length;
+    chooseProject(next);
+    setOpenSlug(projects[next].slug);
+  }
+
+  function closeProjectFile() {
+    // Scrolling inside the file can release the visualizer's manual choice.
+    // Reclaim the selected record before the page timeline resumes.
+    const current = projects.findIndex((project) => project.slug === openSlug);
+    if (current >= 0) chooseProject(current);
+    setOpenSlug(null);
+  }
+
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -254,7 +270,7 @@ export function EvidenceWall() {
       const video = activeVideoRef.current;
       if (!video) return;
       video.playbackRate = 1.2;
-      if (inView && !document.hidden) void video.play().catch(() => {});
+      if (inView && !document.hidden && !openSlug) void video.play().catch(() => {});
       else video.pause();
     }
 
@@ -264,7 +280,7 @@ export function EvidenceWall() {
       document.removeEventListener("visibilitychange", syncPlayback);
       videoAtEffectStart?.pause();
     };
-  }, [activeIndex, inView, prefersReducedMotion]);
+  }, [activeIndex, inView, openSlug, prefersReducedMotion]);
 
   const settleReading = useCallback(() => {
     copyMotion.stop();
@@ -279,7 +295,7 @@ export function EvidenceWall() {
     const previous = previousIndexRef.current;
     previousIndexRef.current = activeIndex;
     settleReading();
-    if (prefersReducedMotion || previous === activeIndex) return;
+    if (prefersReducedMotion || openSlug || previous === activeIndex) return;
     const direction = activeIndex > previous ? 1 : -1;
     // The photograph opens the file; opaque text settles inside measured rows.
     // Glass surfaces and actions keep their positions throughout the transition.
@@ -293,7 +309,7 @@ export function EvidenceWall() {
     void trailMotion.start((row: number) => ({ x: 0, y: 0, transition: { duration: .42, delay: delayFor(row), ease: EASE } }));
     void traceMotion.start((row: number) => ({ scaleX: 1, transition: { duration: .58, delay: delayFor(row), ease: EASE } }));
     return () => { copyMotion.stop(); trailMotion.stop(); traceMotion.stop(); };
-  }, [activeIndex, copyMotion, prefersReducedMotion, settleReading, trailMotion, traceMotion]);
+  }, [activeIndex, copyMotion, openSlug, prefersReducedMotion, settleReading, trailMotion, traceMotion]);
 
   return (
     <section
@@ -580,7 +596,10 @@ export function EvidenceWall() {
       {ProjectFile && (
         <ProjectFile
           project={projects.find((project) => project.slug === openSlug) ?? null}
-          onClose={() => setOpenSlug(null)}
+          projectIndex={projects.findIndex((project) => project.slug === openSlug)}
+          projectCount={projects.length}
+          onNavigate={navigateProjectFile}
+          onClose={closeProjectFile}
         />
       )}
     </section>

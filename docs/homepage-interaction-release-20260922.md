@@ -19,6 +19,8 @@ The links have hover feedback and a minimum 44px target height. Closed answers r
 
 The closing consultation agenda now has three native disclosure buttons. Each reveals a practical preparation question in the same row; selecting another step closes the previous question. A second activation restores the original description. The row reserves room for both readings so switching does not change its natural height. Pointer activation uses a small vertical transition and arrow rotation; keyboard activation and motion pause settle the reading and highlight immediately. Visible keyboard focus scrolls into the reading viewport when necessary. Explicit selections receive a polite screen-reader announcement. Scrolling resumes the decorative progress highlight without replacing the visitor's chosen question. The booking and project-proof links retain their destinations.
 
+The full-screen project viewer now includes previous and next controls, a project counter, and an announced project title. Visitors can browse all five cases without closing the dialog. The dialog lifecycle depends on whether a file is open rather than its slug, preserving the page lock, original opener, and mounted navigation controls during a switch. Each new case starts at the top of the inner reading area. Pointer choices animate the paper and background in opposite directions; keyboard input or reduced motion cancels those transitions. The archive timeline and its own film pause while the viewer is open. Closing reselects the viewed project before returning focus to the archive opener. The phone toolbar places navigation on a separate row.
+
 ## Verification completed
 
 - TypeScript and changed-component ESLint passed.
@@ -28,10 +30,14 @@ The closing consultation agenda now has three native disclosure buttons. Each re
 - The earlier decision-trail preview, source 5fd22b95, was browser-checked at desktop and 320px phone widths. All six stage advances updated the reading, and the desktop frame stayed 936px high. Keyboard previous retained focus at stage zero. End selected the last tab, and revisit returned to the first. Motion pause settled the trail and copy. The narrow frame had no horizontal overflow, with controls measuring 44px and approximately 59px high.
 - The consultation update passed TypeScript, changed-component ESLint, and the 105-route production build with main source af9406ac merged into the saved homepage branch.
 - Generated HTML contains three uniquely identified native buttons, each linked to a hidden, named question region. Sizing copies are aria-hidden and inert. The announcement starts empty, the default booking destination remains /contact#call, and all six FAQ action links remain present.
+- The project viewer update passed TypeScript, changed-component ESLint, and the 105-route production build with main source a19811c3 merged into the homepage branch.
+- Server-rendered component checks covered all five project files in full and reduced motion modes. Each contains one named modal, both navigation buttons, the correct project announcement, the unchanged recorded outcome, and its matching full-case URL. Full motion contains one film; reduced motion contains none. A closed viewer contains neither controls nor film. These checks mock the external motion and scroll providers and do not exercise browser focus, scrolling, or playback.
 
 ## Remaining acceptance
 
 The newly added FAQ actions and consultation choices have build and rendered-markup checks, not a hosted interaction pass. The final combined preview must still check the FAQ links, keyboard expansion and collapse, focus after fragment navigation, narrow and short viewports, reverse scrolling, and pause/resume. For the consultation, check opening, switching, and closing all three questions with pointer and keyboard; compare row and frame heights before and after each switch; confirm focus remains clear of the fixed dock; and pause an active transition. It must also retest the project trail with the newer media-controller fix from main. Physical iPhone/Safari checks remain outstanding.
+
+For the new project viewer, browse all five cases forward and backward, including wraparound. Verify the selected navigation button retains focus, the inner reading resets while the homepage scroll position stays fixed, and Tab/Shift Tab remain inside the native modal. Confirm Escape, Close, and Back return to the last viewed case and its opener. Check rapid clicks, motion pause during a transition, one active film, and the toolbar at 320px width and a short landscape viewport. This hosted acceptance remains pending.
 
 ## Publishing blocker
 
