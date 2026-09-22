@@ -238,7 +238,7 @@
 .insights-atlas__eyebrow,
 .insights-atlas__panel-head,
 .insights-atlas__label {
-  font-size: 0.68rem;
+  font-size: clamp(0.7rem, 1.1vw, 0.8rem);
   font-weight: 650;
   letter-spacing: 0.22em;
   line-height: 1.2;
