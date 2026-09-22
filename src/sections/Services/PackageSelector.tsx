@@ -14,6 +14,7 @@ import { RegionSelector } from "@/components/RegionSelector";
 import { formatPrice, type PackageSlug } from "@/data/pricing";
 import {
   SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   PACKAGE_TO_SITUATION,
   SITUATION_TO_PACKAGE,
@@ -37,7 +38,8 @@ const CHOICES = [
 type SelectionSource = "situation" | "manual" | null;
 export function PackageSelector() {
   // Start with a complete recommendation and keep it in view until chosen.
-  const [active, setActive] = useState<PackageSlug | null>(CHOICES[0].slug);
+  const [active, setActive] = useState<PackageSlug>(CHOICES[0].slug);
+  const activeRef = useRef<PackageSlug>(CHOICES[0].slug);
   const [selectionSource, setSelectionSource] = useState<SelectionSource>(null);
   const [compare, setCompare] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -51,7 +53,15 @@ export function PackageSelector() {
 
   useEffect(() => {
     function applySituation(situation: ServicesSituationId) {
-      setActive(SITUATION_TO_PACKAGE[situation]);
+      const next = SITUATION_TO_PACKAGE[situation];
+      // Other chapters can announce the same route again. Preserve the open
+      // scope and comparison so that announcement cannot move the reader.
+      if (activeRef.current === next) {
+        setSelectionSource((source) => source ?? "situation");
+        return;
+      }
+      activeRef.current = next;
+      setActive(next);
       setSelectionSource("situation");
       setCompare(false);
       setExpanded(false);
@@ -66,6 +76,7 @@ export function PackageSelector() {
       if (!linkedChoice) return false;
 
       const linkedSituation = PACKAGE_TO_SITUATION[linkedChoice.slug];
+      activeRef.current = linkedChoice.slug;
       setActive(linkedChoice.slug);
       setSelectionSource("manual");
       setCompare(false);
@@ -101,19 +112,31 @@ export function PackageSelector() {
       applyLinkedPackage();
     }
 
+    function onClear() {
+      activeRef.current = CHOICES[0].slug;
+      setActive(CHOICES[0].slug);
+      setSelectionSource(null);
+      setCompare(false);
+      setExpanded(false);
+    }
+
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onClear);
     window.addEventListener("hashchange", onHashChange);
     return () => {
       window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onClear);
       window.removeEventListener("hashchange", onHashChange);
     };
   }, []);
 
   function choosePackage(slug: PackageSlug) {
     const situation = PACKAGE_TO_SITUATION[slug];
+    const changed = activeRef.current !== slug;
+    activeRef.current = slug;
     setActive(slug);
     setSelectionSource("manual");
-    setExpanded(false);
+    if (changed) setExpanded(false);
     setCompare(false);
     publishServicesSituation(situation, "services_package");
     track("package_viewed", { package: slug, situation, source: "manual" });
@@ -154,6 +177,7 @@ export function PackageSelector() {
             key={choice.slug}
             id={`package-${choice.slug}`}
             type="button"
+            aria-label={`${choice.shortLabel}: ${choice.label}`}
             aria-pressed={routeReady && active === choice.slug}
             aria-controls="package-recommendation"
             onClick={() => choosePackage(choice.slug)}
@@ -176,7 +200,6 @@ export function PackageSelector() {
           onClick={() => {
             if (!compare) track("packages_compared");
             setCompare(!compare);
-            setExpanded(false);
           }}
         >
           {compare ? "Return to selection" : "Compare all three"}
@@ -184,11 +207,11 @@ export function PackageSelector() {
         </button>
       </div>
 
-      <p className={styles.selection} role="status">
+      <p className={styles.selection} role="status" aria-atomic="true">
         {selectionSource === "manual"
-          ? "Your choice carries into the examples and booking brief."
+          ? `${activePackage?.name} selected. Your choice carries into the booking brief.`
           : selectionSource === "situation"
-            ? "Your earlier choice is selected. Every engagement is here to compare."
+            ? `${activePackage?.name} matches your earlier choice. Compare every engagement below.`
             : "Select the condition closest to your business."}
       </p>
 
@@ -240,7 +263,7 @@ export function PackageSelector() {
                     <details
                       open={isActive && expanded}
                       onToggle={(event) => {
-                        if (isActive) setExpanded(event.currentTarget.open);
+                        if (activeRef.current === pkg.slug) setExpanded(event.currentTarget.open);
                       }}
                       className={styles.more}
                     >

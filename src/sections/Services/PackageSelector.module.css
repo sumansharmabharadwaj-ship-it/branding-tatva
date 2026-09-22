@@ -66,6 +66,8 @@
 .comparison :global([class*="bg-ivory"]):not(a) { background: #b5bdad; }
 .comparison a { background: #29432f !important; color: #f7f3e9 !important; }
 .root[data-animate="true"] .card[data-active="true"] > .scope > .inclusions > li { animation: scopeArrive 550ms calc(var(--scope-index) * 90ms) cubic-bezier(0.22,1,0.36,1) both; }
+.root[data-animate="true"] .card[data-active="true"] > .summary { animation: summaryArrive 360ms cubic-bezier(0.22,1,0.36,1) both; }
+@keyframes summaryArrive { from { opacity: 0.8; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @keyframes scopeArrive { from { opacity: 0.72; transform: translateX(5px); } to { opacity: 1; transform: none; } }
 @media (max-width: 639px) {
   .heading { padding: 0.85rem 1rem; }
@@ -91,10 +93,12 @@
   .comparison :global([data-package-comparison-card]) > div:first-child > span { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .root[data-animate="true"] .card[data-active="true"] > .scope > .inclusions > li { animation: none; }
+  .root[data-animate="true"] .card[data-active="true"] > .scope > .inclusions > li,
+  .root[data-animate="true"] .card[data-active="true"] > .summary { animation: none; }
   .root :is(button, a, summary > span) { transition: none; }
 }
-:global(:root[data-motion="reduced"]) .root .card > .scope > .inclusions > li { animation: none; }
+:global(:root[data-motion="reduced"]) .root .card > .scope > .inclusions > li,
+:global(:root[data-motion="reduced"]) .root .card > .summary { animation: none; }
 :global(:root[data-motion="reduced"]) .root :is(button, a, summary > span) { transition: none; }
 
 
@@ -105,6 +109,7 @@
   .inclusions li { font-size: .9375rem; line-height: 1.6; }
   .choice strong, .controls > button, .proof, .start { font-size: .875rem; }
   .quotation, .selection, .disclaimer p { font-size: .8125rem; line-height: 1.6; }
+  .selection { min-height: calc(4.8em + .8rem); }
   :global(#desire) .more summary, :global(#desire) .disclaimer summary { font-size: .875rem; }
   :global(#desire) .controls :global([data-region-selector-label]) { font-size: .875rem; }
   :global(#desire) .controls :global([data-region-selector]) { flex-wrap: wrap; gap: .5rem; }
