@@ -24,8 +24,10 @@
 @media (hover: hover) and (pointer: fine) { .chapterButton:hover, .iconButton:not(:disabled):hover, .menu a:hover { background: #e6dfcf; color: #342f27; } }
 @media (max-width: 820px) {
   .guide { left: auto; right: max(.8rem, env(safe-area-inset-right)); bottom: max(.8rem, env(safe-area-inset-bottom)); translate: none; }
-  .chapterName, .playButton, .divider, .iconButton { display: none; }
-  .chapterButton { gap: .6rem; padding-inline: .8rem; }
+  .divider, .iconButton { display: none; }
+  .playButton { display: inline-flex; }
+  .chapterName { max-width: clamp(5rem, 22vw, 9rem); font-size: .75rem; }
+  .chapterButton { gap: .45rem; padding-inline: .65rem; }
   .menu { left: auto; right: 0; translate: none; }
   :global(html[data-consent-banner="visible"]) .guide { bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
 }

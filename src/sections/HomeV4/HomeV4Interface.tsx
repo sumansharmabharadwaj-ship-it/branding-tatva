@@ -284,7 +284,12 @@ export function GuidedView() {
             key={CHAPTER_IDS[index]}
             href={`#${CHAPTER_IDS[index]}`}
             aria-current={index === activeIndex ? "location" : undefined}
-            onClick={() => { changeMode("manual"); setMenuOpen(false); }}
+            onClick={() => {
+              changeMode("manual");
+              setMenuOpen(false);
+              // Keep keyboard focus on a visible control after hiding the menu.
+              menuButtonRef.current?.focus({ preventScroll: true });
+            }}
           >
             <span>{String(index + 1).padStart(2, "0")}</span>{chapter}
             {index === activeIndex && <i aria-hidden="true" />}
