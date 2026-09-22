@@ -27,3 +27,13 @@ The original release 509 preview was canceled as stale when concurrent homepage 
 On that deployed 320 × 720 frame, the panel has zero horizontal overflow, document overflow is hidden, background content is inert and the native-scroll exception is present. Repeating the 470px backdrop gesture leaves the document at scrollTop 5258. The panel is 281 × 647px with both vertical edges inside the frame.
 
 Release 511 uses the standard CSS property reader for scrollbar gutter state so a missing browser-specific property cannot interrupt modal setup. TypeScript, ESLint and the 106-route build passed again for this correction.
+
+## Final browser results and release limit
+
+- The 320px panel keeps the page fixed during the backdrop gesture. Tab from the final action wraps to Close preferences. Escape returns focus to the footer opener and clears background inertness.
+- At 844 × 320, primary navigation occupies y 56–289 with no horizontal overflow; its final link loops back to the brand link.
+- The landscape preferences panel occupies y 12–308. Its 294px inner viewport scrolls over 421px of content. Keyboard navigation reaches Save choices at y 239–283 while the document stays at scrollTop 4213.
+- Saving Essential only closes the dialog, returns focus to the opener, and restores page interaction. No enquiry was submitted and analytics was not enabled.
+- These browser checks used READY deployment `dpl_4nHDrrihibw3vyM2hjSD8qJFNMrb`, commit `5fd22b95fadc255bf9a834348abfbaf189e101bb`. Git ancestry and an empty three-file comparison confirm the release 509 implementation is present unchanged. The deployment release endpoint redirected to authentication during the final check, so that endpoint was not used as proof.
+- Compatibility source `42f22f00a8bb2fdd7ead3de89e0fb8cdb64a6215` and trigger `ac6c2894` could not deploy: the controlled-preview status reports a Vercel build-rate-limit failure. The branch returned to controlled mode at `1f5294f5`. The compatibility correction is saved but is not part of the visually verified build.
+- The permanent review alias still serves production and is not a link to these preview changes. Physical iPhone/Safari acceptance remains outstanding.
