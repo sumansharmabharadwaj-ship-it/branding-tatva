@@ -18,7 +18,8 @@
 .controls svg { flex-shrink: 0; transition: transform 240ms cubic-bezier(.22,1,.36,1); }
 .previous { width: 44px; flex-shrink: 0; }
 .previous[aria-disabled="true"] { opacity: .35; cursor: default; }
-.next { padding: .55rem .7rem; text-align: left; }
+.next { min-width: 0; padding: .55rem .7rem; text-align: left; }
+.next > span { overflow-wrap: anywhere; }
 .next:hover svg { transform: translateX(3px); }
 .previous:not([aria-disabled="true"]):hover svg { transform: translateX(-3px); }
 .announcement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

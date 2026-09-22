@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useAnimationControls, useInView, useTransform } from "framer-motion";
+import { AnimatePresence, animate, motion, useAnimationControls, useInView, useMotionValue, useMotionValueEvent, useTransform } from "framer-motion";
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import type { ProcessStage } from "@/data/process";
@@ -84,23 +84,25 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const readingMotion = useAnimationControls();
   const noteMotion = useAnimationControls();
   const outputMotion = useAnimationControls();
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const [keyboardNavigation, setKeyboardNavigation] = useState(false);
   const still = prefersReducedMotion || keyboardNavigation;
-  const cinematicMotion = useMediaQuery(
-    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+  const cinematicViewport = useMediaQuery(
+    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
   );
   const [frameFits, setFrameFits] = useState(false);
-  const desktopStory = cinematicMotion && !prefersReducedMotion && frameFits;
+  const [hasScrollLayout, setHasScrollLayout] = useState(false);
+  const desktopStory = cinematicViewport && frameFits && hasScrollLayout;
   const sceneInView = useInView(sectionRef, { amount: 0.06 });
+  const motionActive = hydrated && sceneInView && !still;
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
-    focusScopeSelector: '[role="tabpanel"], [role="tablist"]',
+    focusScopeSelector: '[data-project-journey]',
     count: stages.length,
     target: sectionRef,
-    enabled: desktopStory && sceneInView,
-    reducedMotion: prefersReducedMotion,
+    enabled: desktopStory && motionActive,
+    reducedMotion: still,
   });
   // One selection survives switching between the scroll story, compact layout,
   // and reduced motion. The visualizer also accepts direct choices when idle.
@@ -110,18 +112,38 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   );
   // The photograph follows the same reversible timeline as the six decisions.
   // A close inspection opens out again; compact layouts retain a quiet still.
-  const imageY = useTransform(visualizer.scrollYProgress, [0, .2, .4, .6, .8, 1], [14, -8, 5, -12, -4, 10]);
-  const imageX = useTransform(visualizer.scrollYProgress, [0, .2, .4, .6, .8, 1], ["-1%", "1%", "-.7%", "1.2%", ".2%", "-.8%"]);
-  const imageScale = useTransform(visualizer.scrollYProgress, [0, .2, .4, .6, .8, 1], [1.05, 1.1, 1.07, 1.13, 1.09, 1.04]);
+  const cameraProgress = useMotionValue(0);
+  const scrollProgress = visualizer.scrollYProgress;
+  useMotionValueEvent(scrollProgress, "change", (progress) => {
+    if (!desktopStory || !motionActive || document.hidden) return;
+    cameraProgress.stop();
+    cameraProgress.set(progress);
+  });
+  useEffect(() => {
+    if (!desktopStory || !motionActive) return;
+    const playback = animate(cameraProgress, scrollProgress.get(), { duration: .45, ease: EASE });
+    return () => playback.stop();
+  }, [cameraProgress, desktopStory, motionActive, scrollProgress]);
+  const imageY = useTransform(cameraProgress, [0, .2, .4, .6, .8, 1], [14, -8, 5, -12, -4, 10]);
+  const imageX = useTransform(cameraProgress, [0, .2, .4, .6, .8, 1], ["-1%", "1%", "-.7%", "1.2%", ".2%", "-.8%"]);
+  const imageScale = useTransform(cameraProgress, [0, .2, .4, .6, .8, 1], [1.05, 1.1, 1.07, 1.13, 1.09, 1.04]);
+
+  // Retain an admitted hold when reading pauses, so the following chapters
+  // keep their document positions. An initial reduced visit stays in flow.
+  useEffect(() => {
+    if (!hydrated || !cinematicViewport || !frameFits) setHasScrollLayout(false);
+    else if (!still) setHasScrollLayout(true);
+  }, [cinematicViewport, frameFits, hydrated, still]);
 
   // Measure the natural frame, including the footer, before enabling a hold.
   // Sticky never imposes a height that could hide the last decision or action.
   useEffect(() => {
     const frame = frameRef.current;
     if (!frame) return;
-    const measure = () => setFrameFits(frame.offsetHeight <= window.innerHeight + 1);
+    const measure = () => setFrameFits(Math.max(frame.offsetHeight, frame.scrollHeight) <= window.innerHeight + 1);
     const observer = new ResizeObserver(measure);
     observer.observe(frame);
+    frame.querySelectorAll("header, [data-process-note], [data-process-trail], [data-process-reading], footer").forEach((node) => observer.observe(node));
     window.addEventListener("resize", measure);
     measure();
     return () => {
@@ -141,7 +163,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     const previous = animatedStageRef.current;
     animatedStageRef.current = active;
     settleReading();
-    if (still || previous === active) return;
+    if (!motionActive || previous === active) return;
     const direction = Math.sign(active - previous);
     // Reading moves within a measured space; the note surface, result and
     // controls retain their positions through every forward or reverse step.
@@ -152,10 +174,10 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
     void noteMotion.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
     void outputMotion.start({ scaleX: 1, transition: { duration: .62, ease: EASE } });
     return () => { readingMotion.stop(); noteMotion.stop(); outputMotion.stop(); };
-  }, [active, still, settleReading, readingMotion, noteMotion, outputMotion]);
+  }, [active, motionActive, settleReading, readingMotion, noteMotion, outputMotion]);
 
   function choose(index: number, keyboard = false) {
-    setKeyboardNavigation(keyboard);
+    if (keyboard) setKeyboardNavigation(true);
     visualizer.choose(index);
   }
 
@@ -181,7 +203,22 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
   const stage = stages[active];
   const meta = readings[active];
   return (
-    <section ref={sectionRef} data-project-journey="true" data-scroll-story="process" data-process-state={active} data-process-layout={desktopStory ? "held" : "flow"} className={`project-journey ${styles.journey}`} aria-labelledby="project-journey-title">
+    <section
+      ref={sectionRef}
+      data-project-journey="true"
+      data-scroll-story="process"
+      data-process-state={active}
+      data-process-layout={desktopStory ? "held" : "flow"}
+      data-process-reading-still={still}
+      data-process-motion-active={motionActive}
+      className={`project-journey ${styles.journey}`}
+      aria-labelledby="project-journey-title"
+      onKeyDownCapture={() => setKeyboardNavigation(true)}
+      onPointerDownCapture={() => setKeyboardNavigation(false)}
+      onFocusCapture={(event) => {
+        if (event.target instanceof HTMLElement && event.target.matches(":focus-visible")) setKeyboardNavigation(true);
+      }}
+    >
       <div ref={frameRef} className={styles.shell}>
         <header className={styles.header}>
           <div>
@@ -207,7 +244,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
               onFocus={(event) => choose(index, event.currentTarget.matches(":focus-visible"))}
               onKeyDown={(event) => onTabKeyDown(event, index)}
             >
-              {active === index && <motion.span className={styles.selection} layoutId={`project-selection-${selectionId}`} transition={{ duration: still ? 0 : 0.3, ease: EASE }} aria-hidden="true" />}
+              {active === index && <motion.span key={motionActive ? "moving" : "settled"} className={styles.selection} layoutId={motionActive ? `project-selection-${selectionId}` : undefined} transition={{ duration: motionActive ? 0.3 : 0, ease: EASE }} aria-hidden="true" />}
               <span className={styles.number} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
               <span className={styles.tabLabel}>{item.stage}</span>
             </button>
@@ -216,17 +253,12 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
 
         <article id="project-stage-panel" role="tabpanel" aria-labelledby={`project-stage-tab-${active}`} tabIndex={0} className={styles.panel} onFocusCapture={settleReading} onPointerDownCapture={settleReading}>
           <div className={styles.media}>
-            <motion.div className={styles.imagePlane} data-process-camera style={{ x: desktopStory ? imageX : 0, y: desktopStory ? imageY : 0, scale: desktopStory ? imageScale : 1 }}>
-              {/* Wave 3.5 of the footage re-foundation: the six approved
-                  pollination films finally render. They were wired into the
-                  stage data in wave two, but the renderers that read
-                  stage.video were unmounted legacy (production-verified by
-                  the design overhaul session), so the films sat invisible.
-                  The keyed crossfade is the studio chapter's proven pattern;
-                  the surrounding shade, desk note and caption already carry
-                  readability, so the parchment reading column is untouched.
-                  Stages without a film keep the original desk photograph. */}
-              {stage.video && stage.poster ? (
+            <motion.div className={styles.imagePlane} data-process-camera aria-hidden="true" style={{ x: desktopStory ? imageX : 0, y: desktopStory ? imageY : 0, scale: desktopStory ? imageScale : 1 }}>
+              {/* Unmount the film and any exiting crossfade during a reading
+                  pause; shared media directors cannot restart a poster. */}
+              {still && stage.poster ? (
+                <Image src={stage.poster} alt="" fill sizes="(max-width: 900px) 100vw, 46vw" className={styles.image} />
+              ) : stage.video && stage.poster ? (
                 <AnimatePresence mode="sync" initial={false}>
                   <motion.div
                     key={stage.video}
@@ -236,7 +268,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: EASE }}
+                    transition={{ duration: motionActive ? 0.5 : 0, ease: EASE }}
                   >
                     <BackgroundVideo video={stage.video} videoMobile={stage.videoMobile} poster={stage.poster} loop={false} responsivePoster posterSizes="(min-width: 768px) 50vw, 100vw" />
                   </motion.div>
@@ -255,7 +287,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
                 <motion.p data-process-note-reading initial={false} animate={noteMotion}>{meta.decision}</motion.p>
               </div>
             </div>
-            <DecisionTrail stages={stages.map((item) => item.stage)} active={active} still={still} onChoose={choose} />
+            <DecisionTrail stages={stages.map((item) => item.stage)} active={active} still={!motionActive} onChoose={choose} />
           </div>
 
           <div className={styles.reading} data-process-reading>
@@ -287,7 +319,7 @@ export function RootSystem({ stages }: { stages: ProcessStage[] }) {
         <footer className={styles.footer}>
           <p>Bring the unfinished notes and the questions you keep coming back to.</p>
           <div>
-            <Link href="/contact">Bring me the messy version <span aria-hidden="true">↗</span></Link>
+            <Link href="/contact#call" prefetch={false}>Bring me the messy version <span aria-hidden="true">↗</span></Link>
             <span>{consultation.minutes} minutes · No deck required</span>
           </div>
         </footer>

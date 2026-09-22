@@ -99,7 +99,8 @@
 }
 :global(html[data-motion="reduced"]) .footer a span { transition: none; }
 :global(html[data-motion="reduced"]) .footer a:is(:hover, :focus-visible) span { transform: none; }
-@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+/* The measured hold owns geometry; motion preferences only own playback. */
+@media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
   .journey[data-process-layout="held"] {
     height: 280svh;
     min-height: 280svh;
@@ -112,18 +113,6 @@
     overflow: visible;
   }
 }
-:global(html[data-motion="reduced"]) .journey {
-  height: auto;
-  min-height: 100svh;
-  overflow: hidden;
-}
-:global(html[data-motion="reduced"]) .shell {
-  position: relative;
-  top: auto;
-  height: auto;
-  min-height: 100svh;
-  overflow: visible;
-}
 
 .notes > div { position: relative; }
 .outputTrace {
@@ -134,3 +123,13 @@
   .outputTrace { transform: none !important; }
 }
 :global(html[data-motion="reduced"]) .outputTrace { transform: none !important; }
+
+.journey[data-process-reading-still="true"] .footer a span { transform: none !important; transition: none; }
+.journey[data-process-reading-still="true"] :global([data-home-motion-layer]) {
+  translate: none !important; rotate: none !important; scale: none !important;
+  transform: none !important; opacity: 1 !important; filter: none !important;
+}
+.journey[data-process-reading-still="true"] :is(:global([data-scroll-ink]), :global([data-scroll-reading])) {
+  background: none !important; -webkit-text-fill-color: currentColor !important;
+}
+.journey[data-process-reading-still="true"] :global([data-scroll-ink])::after { transform: none !important; }
