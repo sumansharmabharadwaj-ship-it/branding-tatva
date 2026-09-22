@@ -249,7 +249,9 @@
    cannot hold cleanly — it just clips. Measured rule from this
    project, so the stack degrades to ordinary flow rather than pinning
    something the reader cannot finish reading. */
-@media (max-width: 900px), (max-height: 700px) {
+/* The diagrams add reading height. Reserve the bottom 80px for the journey
+   controls; a short laptop keeps every button in ordinary document flow. */
+@media (max-width: 900px), (max-height: 820px) {
   .stack { row-gap: 1.1rem; }
   .card {
     --title-travel: 4px;

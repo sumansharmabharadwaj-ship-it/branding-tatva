@@ -36,8 +36,8 @@ function MessageDiagram({ resolved, still }: DiagramProps) {
         return (
           <g key={label}>
             <motion.path
-              d={`M120 ${y} C172 ${y} 185 ${destinationY} 236 ${destinationY}`}
-              animate={{ d: `M120 ${y} C172 ${y} 185 ${destinationY} 236 ${destinationY}` }}
+              d={`M120 ${y} C168 ${y} 176 ${destinationY} 224 ${destinationY}`}
+              animate={{ d: `M120 ${y} C168 ${y} 176 ${destinationY} 224 ${destinationY}` }}
               initial={false}
               stroke={resolved ? "#c6a97a" : "#817d6f"}
               strokeWidth="1.5"
@@ -50,8 +50,8 @@ function MessageDiagram({ resolved, still }: DiagramProps) {
               animate={{ y: destinationY - y, opacity: resolved && index !== 1 ? 0 : 1 }}
               transition={{ duration: still ? 0 : .65, ease: EASE }}
             >
-              <rect x="236" y={y - 19} width="116" height="38" rx="10" className={resolved ? styles.sharedPlate : styles.sourcePlate} />
-              <text x="294" y={y + 5} textAnchor="middle" className={styles.diagramText}>
+              <rect x="224" y={y - 19} width="128" height="38" rx="10" className={resolved ? styles.sharedPlate : styles.sourcePlate} />
+              <text x="288" y={y + 5} textAnchor="middle" className={styles.diagramText}>
                 {resolved && index === 1 ? "One promise" : ["Design", "Content", "Speed"][index]}
               </text>
             </motion.g>

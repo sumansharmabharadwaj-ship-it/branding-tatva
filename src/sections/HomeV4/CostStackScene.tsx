@@ -50,7 +50,7 @@ export function V4CostStackScene() {
     const section = sectionRef.current;
     if (!section || !hydrated || prefersReducedMotion) return;
     const cards = Array.from(section.querySelectorAll<HTMLElement>("[data-cost-card]"));
-    const stacked = window.matchMedia("(min-width: 901px) and (min-height: 701px)");
+    const stacked = window.matchMedia("(min-width: 901px) and (min-height: 821px)");
     let frame = 0;
     let visible = true;
     let disposed = false;

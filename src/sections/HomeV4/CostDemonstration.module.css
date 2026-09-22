@@ -33,7 +33,7 @@
   .sourcePlate, .sharedPlate, .toggle, .toggleIcon svg { transition: none; }
   .scrollLine { stroke-dashoffset: 0; }
 }
-@media (max-width: 360px) { .diagramText { font-size: 20px; } }
+@media (max-width: 360px) { .diagramText { font-size: 21px; } }
 .demo[data-still="true"] :is(.diagram, .toggleIcon svg) { translate: none !important; }
 .demo[data-still="true"] :is(.sourcePlate, .sharedPlate, .toggle, .toggleIcon svg) { transition: none; }
 .demo[data-still="true"] .scrollLine { stroke-dashoffset: 0; }
