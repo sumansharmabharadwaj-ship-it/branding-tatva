@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useRef, useState, type KeyboardEvent } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { AnimatePresence, motion, useIsPresent, type HTMLMotionProps } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, CircleDot, LockKeyhole } from "lucide-react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
@@ -33,6 +33,16 @@ function numberLabel(index: number) {
   return String(index + 1).padStart(2, "0");
 }
 
+function QuestionPanel(props: HTMLMotionProps<"div">) {
+  const present = useIsPresent();
+  return <motion.div {...props} inert={!present} aria-hidden={!present || undefined} />;
+}
+
+function UnlockForm(props: HTMLMotionProps<"form">) {
+  const present = useIsPresent();
+  return <motion.form {...props} inert={!present} aria-hidden={!present || undefined} onSubmit={present ? props.onSubmit : undefined} />;
+}
+
 export function RecognitionAudit() {
   const [status, setStatus] = useState<Status>("idle");
   const [view, setView] = useState<AuditView>("question");
@@ -48,8 +58,32 @@ export function RecognitionAudit() {
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
   const focusQuestionRef = useRef(false);
   const formHeadingRef = useRef<HTMLHeadingElement>(null);
+  const focusFormRef = useRef(false);
+  const focusFrameRef = useRef(0);
+  const viewRef = useRef<AuditView>("question");
+  const requestRef = useRef<AbortController | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
   const unlocked = status === "done";
+
+  const cancelScheduledFocus = useCallback(() => {
+    cancelAnimationFrame(focusFrameRef.current);
+    focusFrameRef.current = 0;
+  }, []);
+
+  const scheduleFocus = useCallback((getTarget: () => HTMLElement | null) => {
+    cancelScheduledFocus();
+    focusFrameRef.current = requestAnimationFrame(() => {
+      focusFrameRef.current = 0;
+      const target = getTarget();
+      if (target?.isConnected && !target.closest("[inert]")) target.focus({ preventScroll: true });
+    });
+  }, [cancelScheduledFocus]);
+
+  useEffect(() => () => {
+    cancelScheduledFocus();
+    requestRef.current?.abort();
+    requestRef.current = null;
+  }, [cancelScheduledFocus]);
 
   const setQuestionHeadingRef = useCallback((node: HTMLHeadingElement | null) => {
     questionHeadingRef.current = node;
@@ -62,11 +96,12 @@ export function RecognitionAudit() {
   const setFormHeadingRef = useCallback(
     (node: HTMLHeadingElement | null) => {
       formHeadingRef.current = node;
-      if (node && view === "handoff") {
-        requestAnimationFrame(() => node.focus({ preventScroll: true }));
+      if (node && focusFormRef.current) {
+        focusFormRef.current = false;
+        scheduleFocus(() => viewRef.current === "handoff" ? formHeadingRef.current : null);
       }
     },
-    [view],
+    [scheduleFocus],
   );
 
   const scoreTotal = unlocked ? CHECKS.length : PRIVATE_CHECK_COUNT;
@@ -91,21 +126,29 @@ export function RecognitionAudit() {
     publishServicesRecognitionAudit(score, total);
   }
 
-  function goToQuestion(nextIndex: number, focusTab = false) {
-    const upperBound = unlocked ? CHECKS.length - 1 : PRIVATE_CHECK_COUNT - 1;
-    const safeIndex = Math.min(Math.max(nextIndex, 0), upperBound);
+  function showQuestion(safeIndex: number, focusTab = false) {
+    cancelScheduledFocus();
+    focusFormRef.current = false;
     focusQuestionRef.current = !focusTab;
+    viewRef.current = "question";
     setCurrentIndex(safeIndex);
     setView("question");
     setNotice(null);
-    requestAnimationFrame(() => {
+    scheduleFocus(() => {
+      if (viewRef.current !== "question") return null;
       if (focusTab) {
-        tabRefs.current[safeIndex % PRIVATE_CHECK_COUNT]?.focus({ preventScroll: true });
-      } else if (focusQuestionRef.current && questionHeadingRef.current) {
+        return tabRefs.current[safeIndex % PRIVATE_CHECK_COUNT] ?? null;
+      } else if (focusQuestionRef.current && questionHeadingRef.current && !questionHeadingRef.current.closest("[inert]")) {
         focusQuestionRef.current = false;
-        questionHeadingRef.current.focus({ preventScroll: true });
+        return questionHeadingRef.current;
       }
+      return null;
     });
+  }
+
+  function goToQuestion(nextIndex: number, focusTab = false) {
+    const upperBound = unlocked ? CHECKS.length - 1 : PRIVATE_CHECK_COUNT - 1;
+    showQuestion(Math.min(Math.max(nextIndex, 0), upperBound), focusTab);
   }
 
   function answerCurrent(holds: boolean) {
@@ -156,23 +199,31 @@ export function RecognitionAudit() {
   }
 
   function openUnlock() {
+    if (viewRef.current === "handoff") return;
     if (!privateComplete) {
       finishAnswers();
       return;
     }
+    cancelScheduledFocus();
+    focusQuestionRef.current = false;
+    focusFormRef.current = true;
+    viewRef.current = "handoff";
     setError(null);
     setView("handoff");
   }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (!consent || status === "submitting") return;
+    if (!consent || requestRef.current || status === "submitting") return;
+    const controller = new AbortController();
+    requestRef.current = controller;
     setStatus("submitting");
     setError(null);
 
     try {
       const response = await fetch("/api/newsletter", {
         method: "POST",
+        signal: controller.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
@@ -183,6 +234,7 @@ export function RecognitionAudit() {
         }),
       });
       const data = await response.json().catch(() => ({}));
+      if (controller.signal.aborted) return;
       if (!response.ok) {
         setError(data.error ?? "The audit request never reached the mailing list. Please send it once more.");
         setStatus("error");
@@ -191,12 +243,17 @@ export function RecognitionAudit() {
 
       track("lead_magnet_requested");
       setStatus("done");
-      setView("question");
-      focusQuestionRef.current = true;
-      setCurrentIndex(PRIVATE_CHECK_COUNT);
+      // A visitor can return to their private answers while the request is
+      // pending. Unlock the rest without taking over their current question.
+      // This request began before `unlocked` changed. The response grants
+      // access to question six without using that earlier navigation bound.
+      if (viewRef.current === "handoff") showQuestion(PRIVATE_CHECK_COUNT);
     } catch {
+      if (controller.signal.aborted) return;
       setError("The audit form cannot reach the server. Check the connection, then send again.");
       setStatus("error");
+    } finally {
+      if (requestRef.current === controller) requestRef.current = null;
     }
   }
 
@@ -247,9 +304,12 @@ export function RecognitionAudit() {
         >
           <AnimatePresence mode="wait" initial={false}>
             {view === "handoff" && !unlocked ? (
-              <motion.form
+              <UnlockForm
                 key="handoff"
                 className={styles.unlockForm}
+                data-recognition-audit-form="true"
+                aria-busy={status === "submitting"}
+                aria-describedby={error ? "recognition-audit-error" : undefined}
                 onSubmit={submit}
                 initial={prefersReducedMotion ? undefined : { opacity: 0, x: 14 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -276,6 +336,7 @@ export function RecognitionAudit() {
                     <span>First name</span>
                     <input
                       type="text"
+                      name="firstName"
                       required
                       value={firstName}
                       onChange={(event) => setFirstName(event.target.value)}
@@ -286,16 +347,20 @@ export function RecognitionAudit() {
                     <span>Email</span>
                     <input
                       type="email"
+                      name="email"
                       required
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
                       autoComplete="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
                     />
                   </label>
                   <label className={styles.businessField}>
                     <span>Business name, optional</span>
                     <input
                       type="text"
+                      name="business"
                       value={business}
                       onChange={(event) => setBusiness(event.target.value)}
                       autoComplete="organization"
@@ -314,7 +379,7 @@ export function RecognitionAudit() {
                 </label>
 
                 {error && (
-                  <p className={styles.formError} role="status" aria-live="polite">
+                  <p id="recognition-audit-error" className={styles.formError} role="alert">
                     {error}
                   </p>
                 )}
@@ -323,9 +388,9 @@ export function RecognitionAudit() {
                   {status === "submitting" ? "Opening your field note" : "Open the complete check"}
                   <ArrowRight aria-hidden="true" />
                 </button>
-              </motion.form>
+              </UnlockForm>
             ) : (
-              <motion.div
+              <QuestionPanel
                 key="question"
                 className={styles.questionView}
                 data-copy-density={CHECKS[currentIndex].length > 78 ? "compact" : "standard"}
@@ -411,7 +476,7 @@ export function RecognitionAudit() {
                     </button>
                   )}
                 </nav>
-              </motion.div>
+              </QuestionPanel>
             )}
           </AnimatePresence>
         </div>

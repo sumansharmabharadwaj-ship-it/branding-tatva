@@ -557,14 +557,14 @@
 
 .fields input {
   width: 100%;
-  min-height: 2.45rem;
+  min-height: 2.75rem;
   border: 0;
   border-bottom: 1px solid rgba(23, 38, 30, 0.4);
   border-radius: 0;
   padding: 0.2rem 0;
   color: #14241a;
   background: transparent;
-  font-size: clamp(0.75rem, 0.9cqw, 0.92rem);
+  font-size: 1rem;
   letter-spacing: normal;
   outline: none;
   text-transform: none;
@@ -915,7 +915,8 @@
 
   .formIntro > p:last-child {
     margin-top: 0.45rem;
-    font-size: 0.68rem;
+    font-size: 1rem;
+    line-height: 1.6;
   }
 
   .fields {
@@ -927,7 +928,8 @@
   .consentField {
     /* Form labels and the consent line. Consent text especially has to be
        legible to be meaningful, and 0.55rem (8.8px) on a phone is not. */
-    font-size: var(--text-reading-min);
+    font-size: 0.875rem;
+    line-height: 1.55;
   }
 
   .fields label {
@@ -935,8 +937,8 @@
   }
 
   .fields input {
-    min-height: 2.4rem;
-    font-size: 0.9rem;
+    min-height: 2.75rem;
+    font-size: 1rem;
   }
 
   .consentField {
@@ -946,7 +948,8 @@
 
   .formError {
     margin-top: 0.55rem;
-    font-size: 0.62rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
   }
 
   .submitButton {
@@ -1047,7 +1050,7 @@
   .stage { --text-reading-min: .875rem; }
   .signalCopy p, .formIntro > p:last-child { font-size: 1rem; line-height: 1.6; }
   .fields label, .consentField, .answerStatus, .paperEyebrow button { font-size: .875rem; line-height: 1.55; }
-  .paperEyebrow, .railAction small, .railAction > p, .formError { font-size: .75rem; line-height: 1.5; }
+  .paperEyebrow, .railAction small, .railAction > p { font-size: .75rem; line-height: 1.5; }
   .questionActions { flex-wrap: wrap; }
   .holdsButton, .attentionButton { min-height: 3rem; }
 }
