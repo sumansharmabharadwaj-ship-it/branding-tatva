@@ -71,6 +71,9 @@ export function VideoWarden() {
       // which film belongs to the reader's current view.
       const projectFile = document.querySelector<HTMLDialogElement>("dialog[data-project-file][open]");
       const candidates = governed
+        // A deferred homepage film may retain its current frame while paused.
+        // Its scene's explicit motion choice takes priority over geometry.
+        .filter((video) => video.dataset.homeFilmAllowed !== "false")
         .filter((video) => !projectFile || projectFile.contains(video))
         // Cached from the latest intersection entry: no layout read here.
         .map((video) => ({ video, ...(geometry.get(video) ?? offScreen) }))
