@@ -267,7 +267,12 @@ export function ServicesExperienceRuntime() {
         return -1;
       }
 
-      return scenes.findIndex((scene) => scene.id === id);
+      // Package links carry the choice across reloads and new tabs. Align
+      // their chapter using the same recovery as the section rail so the
+      // fixed header and late layout changes cannot obscure the selector.
+      const packageChoice = id.startsWith("package-") ? document.getElementById(id) : null;
+      const packageChapter = packageChoice?.closest('[data-services-scroll-scene="desire"]');
+      return scenes.findIndex((scene) => scene.id === id || scene === packageChapter);
     }
 
     function publishAnchorChapter() {

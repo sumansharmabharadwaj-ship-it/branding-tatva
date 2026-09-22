@@ -47,8 +47,10 @@ class Element {
   remove() {}
 }
 const root = new Element(), thread = new Element(); root.scrollHeight = 3000;
-const scenes = [new Element('services-opening'), new Element('situation', 1), new Element('offerings', 2)];
-scenes[1].dataset.servicesScene = 'situation'; scenes[2].dataset.servicesScene = 'offerings';
+const scenes = [new Element('services-opening'), new Element('situation', 1), new Element('desire', 2)];
+scenes[1].dataset.servicesScene = 'situation'; scenes[2].dataset.servicesScene = 'desire';
+const packageChoice = new Element('package-brand-clarity');
+packageChoice.closest = selector => selector === '[data-services-scroll-scene="desire"]' ? scenes[2] : null;
 const fields = new Set([new Element('near'), new Element('far')]);
 const [near, far] = fields;
 root.querySelector = () => scenes[0];
@@ -56,7 +58,10 @@ root.querySelectorAll = selector => selector === '[data-living-gradient]' ? [...
 root.contains = element => fields.has(element);
 document.documentElement = new Element();
 document.hidden = false;
-document.getElementById = () => root;
+document.getElementById = id => id === 'main-content' ? root : id === packageChoice.id ? packageChoice : scenes.find(scene => scene.id === id) ?? null;
+document.scrollingElement = root;
+window.getComputedStyle = () => ({ scrollMarginTop: '24px', scrollPaddingTop: '56px' });
+window.scrollTo = ({ top }) => { window.scrollY = top; };
 document.querySelector = () => thread;
 document.createElement = () => new Element();
 class MutationObserver {
@@ -159,6 +164,22 @@ query.matches = false; query.emit('change'); ambient.refresh(); intersect(); pai
 assert.equal(near.dataset.servicesGradientMotion, 'running');
 assert.equal(scenes[1].dataset.servicesAmbient, 'running');
 
+// The selected package is a real deep link; the scene coordinator must find
+// its enclosing chapter on direct entry as well as browser hash navigation.
+window.location.hash = '#package-brand-clarity';
+runtime.refresh();
+assert.equal(document.documentElement.dataset.servicesActiveChapterId, 'desire');
+const pendingTimers = [...timers.values()]; timers.clear(); pendingTimers.forEach(callback => callback()); paint();
+assert.equal(window.scrollY, 1920, 'Package entry uses the chapter header clearance');
+window.emit('wheel'); paint();
+assert.equal(timers.size, 0, 'Manual scroll immediately releases package recovery');
+window.location.hash = '#situation'; window.emit('hashchange');
+assert.equal(document.documentElement.dataset.servicesActiveChapterId, 'situation');
+window.location.hash = '#package-brand-clarity'; window.emit('hashchange');
+assert.equal(document.documentElement.dataset.servicesActiveChapterId, 'desire', 'Back or forward to a package restores its chapter');
+window.location.hash = '#package-missing'; window.emit('hashchange'); paint();
+assert.equal(timers.size, 0, 'Unknown package fragments cannot leave recovery running');
+
 fields.delete(far); mutate(root);
 assert.equal(far.dataset.servicesGradientMotion, undefined);
 assert(intersections.every(observer => !observer.targets.has(far)), 'Detached gradients release their observers');
@@ -167,4 +188,4 @@ assert.equal(frames.size + timers.size + window.count + document.count + query.c
 assert(mutations.every(observer => observer.disconnected));
 assert(resizes.every(observer => observer.disconnected));
 assert.equal(near.dataset.servicesGradientMotion, undefined);
-console.log('Services ambient motion: interaction pauses, hidden work, neutral resume, reverse scroll, reduced motion, and cleanup passed.');
+console.log('Services ambient motion: interaction pauses, hidden work, neutral resume, reverse scroll, reduced motion, package deep links, and cleanup passed.');

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -20,6 +20,7 @@ import {
 } from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
 import styles from "./SituationPath.module.css";
+import { followServicesPackageLink } from "./servicesPackageNavigation";
 
 const OPTIONS: ReadonlyArray<{
   id: ServicesSituationId;
@@ -68,12 +69,6 @@ function SituationSketch({ situation }: { situation: ServicesSituationId }) {
     {["Website", "Content", "Campaigns"].map((label, index) => <div key={label} style={{ "--sketch-index": index } as CSSProperties}><span>{label}</span><i aria-hidden="true"><b /><b /><b /></i></div>)}
     <p>One recognisable point of view.</p>
   </div>;
-}
-
-function settlePackageChapter(event: MouseEvent<HTMLAnchorElement>) {
-  event.preventDefault();
-  if (window.location.hash !== "#desire") window.history.pushState(window.history.state, "", "#desire");
-  window.dispatchEvent(new CustomEvent("bt:services-anchor-settle", { detail: { id: "desire" } }));
 }
 
 export function SituationPath() {
@@ -180,12 +175,11 @@ export function SituationPath() {
               </details>
               <div className={styles.next}>
                 <p><span>Matching engagement</span><strong>{pkg.name}</strong></p>
-                <Link href="#desire" onClick={event => {
+                <Link href={`#package-${pkg.slug}`} onClick={event => followServicesPackageLink(event, SITUATION_TO_PACKAGE[option.id], () => {
                   // Following the default preview also commits that route so
                   // packages, proof and the booking brief agree on the choice.
                   if (selected !== option.id) pick(option.id);
-                  settlePackageChapter(event);
-                }}>See scope and price <span aria-hidden="true">→</span></Link>
+                })}>See scope and price <span aria-hidden="true">→</span></Link>
               </div>
             </section>;
           })}
