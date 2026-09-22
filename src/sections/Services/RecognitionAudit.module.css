@@ -661,7 +661,7 @@
     border-radius: 1.1rem 1.1rem 0.35rem 0.35rem;
     padding: 0.8rem 1rem;
     background-color: #b99668;
-    font-size: 0.6rem;
+    font-size: clamp(0.7rem, 1.1vw, 0.75rem);
   }
 
   .intro {
@@ -857,7 +857,7 @@
 
   .dialReadout span {
     bottom: 10%;
-    font-size: 0.5rem;
+    font-size: clamp(0.7rem, 1.1vw, 0.75rem);
   }
 
   .signalCopy {
