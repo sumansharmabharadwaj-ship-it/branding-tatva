@@ -14,7 +14,11 @@ export type ServicePageContent = {
   engagement: { title: string; body: string };
   example: { title: string; context: string; decisions: { label: string; detail: string }[] };
   evidence: { title: string; href: string; body: string };
-  questions: { question: string; answer: string }[];
+  questions: {
+    question: string;
+    answer: string;
+    links?: { title: string; href: string }[];
+  }[];
   reading: { title: string; href: string }[];
 };
 
@@ -70,10 +74,22 @@ export const servicePages: ServicePageContent[] = [
       body: "This recorded B2B marketplace project connects a defined buyer with a brand foundation and content plan. The case documents the delivered strategy; it does not report a measured sales increase or establish a UK client result.",
     },
     questions: [
+      {
+        question: "Should I start with positioning, a brand audit or messaging?",
+        answer: "Start with positioning when the buyer, alternatives or reason to choose your offer is unresolved. An audit helps when you need to examine existing materials and locate the problem. Messaging focuses on the explanation once the underlying position is clear. The first conversation can establish which decision needs attention; the proposal can combine related work where useful.",
+        links: [
+          { title: "Review the brand audit scope", href: "/brand-audit" },
+          { title: "Review the brand messaging scope", href: "/brand-messaging" },
+        ],
+      },
       { question: "Can you work with a team in the USA or Canada?", answer: "Yes. Branding Tatva works remotely with teams in the UK, USA and Canada. Share your target buyers, market, time zone and required outputs. Meeting times, research, language requirements and review responsibilities are agreed in the proposal. Ask for the quote in GBP, USD or CAD as appropriate. French-language work or local production needs a separate scope and confirmed delivery arrangements." },
       { question: "How is positioning different from a new logo?", answer: "Positioning settles who should choose the business, what they compare it with and why the offer matters. A logo expresses part of that decision visually. If buyers struggle to understand the offer, changing the logo alone leaves the buying question open." },
       { question: "Can an established business keep its name and identity?", answer: "Yes. The review can retain recognisable elements that still support the business. A changed audience or offer may require clearer language without requiring a new name or visual identity. The evidence determines the extent of the change." },
-      { question: "How much does a positioning engagement cost?", answer: "The proposal sets a fee for the agreed research, decisions and deliverables. Bring the number of offers, buyer groups and markets involved so Suman can define the scope. Customer research and identity or website execution need explicit inclusion; a short positioning brief and a broader rebrand involve different work." },
+      {
+        question: "How much does a positioning engagement cost?",
+        answer: "The proposal sets a fee for the agreed research, decisions and deliverables. Bring the number of offers, buyer groups and markets involved so Suman can define the scope. Customer research and identity or website execution need explicit inclusion; a short positioning brief and a broader rebrand involve different work. Published starting prices cover the broader engagement formats; the proposal confirms the fee for this scope.",
+        links: [{ title: "See engagement prices and what affects the cost", href: "/insights/how-much-does-brand-strategy-cost" }],
+      },
       { question: "Can you work remotely with a UK team?", answer: "Yes. Branding Tatva offers remote work with service businesses in the UK, USA and Canada. Meeting times, decision makers, feedback rounds and handover materials are agreed before the project. Share any launch deadline during the first conversation so the proposal can address it." },
     ],
     reading: [
@@ -134,10 +150,22 @@ export const servicePages: ServicePageContent[] = [
     },
     questions: [
       { question: "Can you work with a team in the USA or Canada?", answer: "Yes. Branding Tatva works remotely with teams in the UK, USA and Canada. Share your target buyers, market, time zone and required outputs. Meeting times, research, language requirements and review responsibilities are agreed in the proposal. Ask for the quote in GBP, USD or CAD as appropriate. French-language work or local production needs a separate scope and confirmed delivery arrangements." },
+      {
+        question: "Do I need an audit before positioning or messaging work?",
+        answer: "An audit is useful when you need to understand what is working, where materials disagree and which problem deserves attention first. If the decision is already clear, discuss it directly: an unsettled buyer or offer points towards positioning, while an agreed position that is difficult to explain points towards messaging. The proposal can include the review needed for that decision without treating every service as a compulsory stage.",
+        links: [
+          { title: "See what positioning work covers", href: "/brand-positioning" },
+          { title: "See what messaging work covers", href: "/brand-messaging" },
+        ],
+      },
       { question: "Is the 30 minute diagnosis the full brand audit?", answer: "No. The conversation identifies the question, available material and suitable scope. The full audit is a separate agreed engagement with defined touchpoints, findings and recommendations." },
       { question: "Does a brand audit include a technical SEO audit?", answer: "Technical SEO testing falls outside this brand review. The audit examines the offer, messaging, identity and buyer experience. Search indexing, crawl errors and site performance require a separately defined technical review." },
       { question: "Will the audit tell me to replace the whole brand?", answer: "The findings distinguish what to retain, correct and investigate. A repeated misunderstanding may need a clearer explanation. A changed buyer or offer may need repositioning. The recommendation follows the evidence rather than assuming a full rebrand." },
-      { question: "What affects the audit fee and schedule?", answer: "The number of offers, markets and touchpoints, the available customer evidence and the depth of competitor review all affect scope. Suman agrees the fee, materials needed and review dates in the proposal before work begins." },
+      {
+        question: "What affects the audit fee and schedule?",
+        answer: "The number of offers, markets and touchpoints, the available customer evidence and the depth of competitor review all affect scope. Suman agrees the fee, materials needed and review dates in the proposal before work begins. Published starting prices cover the broader engagement formats; the proposal confirms the fee for this scope.",
+        links: [{ title: "Compare broader engagement prices and scope", href: "/insights/how-much-does-brand-strategy-cost" }],
+      },
     ],
     reading: [
       { title: "The brand audit checklist to use before a rebrand", href: "/insights/brand-audit-checklist-before-rebrand" },
@@ -188,10 +216,22 @@ export const servicePages: ServicePageContent[] = [
     },
     questions: [
       { question: "Can you work with a team in the USA or Canada?", answer: "Yes. Branding Tatva works remotely with teams in the UK, USA and Canada. Share your target buyers, market, time zone and required outputs. Meeting times, research, language requirements and review responsibilities are agreed in the proposal. Ask for the quote in GBP, USD or CAD as appropriate. French-language work or local production needs a separate scope and confirmed delivery arrangements." },
+      {
+        question: "Can messaging improve the website without a full rebrand?",
+        answer: "When the audience, offer and identity still fit the business, the scope can focus on clearer explanations, evidence and writing guidance. A change in who you serve or why buyers choose you may need positioning work first. If the source of confusion is unclear, a brand audit can examine the existing materials before you decide what to commission.",
+        links: [
+          { title: "Review the positioning decision", href: "/brand-positioning" },
+          { title: "Check whether a brand audit fits the problem", href: "/brand-audit" },
+        ],
+      },
       { question: "What is the difference between positioning and messaging?", answer: "Positioning settles the buyer, the alternatives and the reason to choose the offer. Messaging expresses those decisions through a main promise, supporting points and evidence. If the buyer or offer is still changing, begin by agreeing the position." },
       { question: "Is tone of voice the same as brand messaging?", answer: "Messaging decides what the business needs to communicate. Tone of voice shapes how that meaning sounds in a particular situation. A service explanation and a payment reminder can share a voice while using different levels of warmth, detail and urgency." },
       { question: "Will you write the whole website?", answer: "A messaging engagement can define the hierarchy and agreed writing examples. A complete website rewrite requires a separate page list and scope. The proposal specifies which copy is delivered and which material your team will produce using the guidelines." },
-      { question: "How are the fee and delivery dates agreed?", answer: "Scope depends on the number of audiences, offers and touchpoints, the available research and the amount of finished copy required. Share your materials and deadline in the first conversation. Suman confirms the fee, feedback rounds and dates before work starts." },
+      {
+        question: "How are the fee and delivery dates agreed?",
+        answer: "Scope depends on the number of audiences, offers and touchpoints, the available research and the amount of finished copy required. Share your materials and deadline in the first conversation. Suman confirms the fee, feedback rounds and dates before work starts. Published starting prices cover the broader engagement formats; the proposal confirms the fee for this scope.",
+        links: [{ title: "See how scope changes the engagement price", href: "/insights/how-much-does-brand-strategy-cost" }],
+      },
     ],
     reading: [
       { title: "Build voice guidelines a writer can actually use", href: "/insights/brand-voice-guidelines-writers-can-use" },
