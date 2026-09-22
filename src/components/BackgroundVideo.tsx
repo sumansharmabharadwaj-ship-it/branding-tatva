@@ -47,6 +47,8 @@ export function BackgroundVideo({
   playbackRate = 1,
   posterPriority = false,
   managedByHomepage = false,
+  responsivePoster = managedByHomepage,
+  posterSizes = "100vw",
   pauseMargin = 0.25,
   mediaMode = "auto",
 }: {
@@ -89,6 +91,10 @@ export function BackgroundVideo({
   // keeps fade/source cleanup ownership while the page director owns play,
   // pause, preload admission, and visibility arbitration.
   managedByHomepage?: boolean;
+  // Homepage scenes use a lazy responsive image underneath the film instead
+  // of a native poster, which eagerly downloads the full-size original.
+  responsivePoster?: boolean;
+  posterSizes?: string;
   // Fraction of a viewport a film keeps playing past the screen edge before
   // pausing. Full viewport scene films (Contact) pass a wider band so their
   // freeze frame never lands inside a visible chapter handoff.
@@ -151,38 +157,50 @@ export function BackgroundVideo({
         alt=""
         fill
         priority={posterPriority}
-        sizes="100vw"
+        sizes={posterSizes}
         style={{ objectFit: "cover", objectPosition: imagePosition }}
       />
     );
   }
 
   const videoElement = (
-    <video
-      ref={videoRef}
-      className={`absolute inset-0 h-full w-full object-cover${push ? " bg-slow-push" : ""}`}
-      style={{ objectPosition: imagePosition }}
-      poster={poster}
-      // Playback is intentionally owned by useVideoFadeIn. Leaving the
-      // native autoplay flag here made every offscreen background start
-      // once before the observer could pause it, which was the source of
-      // the long-page bandwidth spike.
-      muted
-      loop={loop}
-      playsInline
-      aria-hidden="true"
-      data-home-playback-rate={safePlaybackRate}
-      // The viewport observer calls play() 25% before an offscreen scene
-      // arrives. Lower chapters and homepage-directed scenes avoid even
-      // metadata requests; explicit first-frame heroes keep metadata warm.
-      preload={managedByHomepage ? "none" : posterPriority ? "metadata" : "none"}
-    >
-      {videoMobile && (
-        <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />
+    <>
+      {responsivePoster && (
+        <Image
+          src={poster}
+          alt=""
+          fill
+          sizes={posterSizes}
+          priority={posterPriority}
+          style={{ objectFit: "cover", objectPosition: imagePosition }}
+        />
       )}
-      {videoWebm && <source src={videoWebm} type="video/webm" />}
-      <source src={video} type="video/mp4" />
-    </video>
+      <video
+        ref={videoRef}
+        className={`absolute inset-0 h-full w-full object-cover${push ? " bg-slow-push" : ""}${responsivePoster ? " opacity-0" : ""}`}
+        style={{ objectPosition: imagePosition }}
+        poster={responsivePoster ? undefined : poster}
+        // Playback is intentionally owned by useVideoFadeIn. Leaving the
+        // native autoplay flag here made every offscreen background start
+        // once before the observer could pause it, which was the source of
+        // the long-page bandwidth spike.
+        muted
+        loop={loop}
+        playsInline
+        aria-hidden="true"
+        data-home-playback-rate={safePlaybackRate}
+        // The viewport observer calls play() 25% before an offscreen scene
+        // arrives. Lower chapters and homepage-directed scenes avoid even
+        // metadata requests; explicit first-frame heroes keep metadata warm.
+        preload={managedByHomepage ? "none" : posterPriority ? "metadata" : "none"}
+      >
+        {videoMobile && (
+          <source src={videoMobile} media="(max-width: 767px)" type="video/mp4" />
+        )}
+        {videoWebm && <source src={videoWebm} type="video/webm" />}
+        <source src={video} type="video/mp4" />
+      </video>
+    </>
   );
 
   if (parallax) return <ParallaxLayer>{videoElement}</ParallaxLayer>;

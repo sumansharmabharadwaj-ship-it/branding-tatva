@@ -188,6 +188,7 @@ export function HomeQuestionsScene() {
           videoMobile="/videos/pexels-golden-fog-sea-mobile.mp4"
           videoWebm="/videos/pexels-golden-fog-sea.webm"
           poster="/images/pexels-golden-fog-sea-poster.jpg"
+          responsivePoster
         />
       </motion.div>
       <div className={styles.questionFrame}>

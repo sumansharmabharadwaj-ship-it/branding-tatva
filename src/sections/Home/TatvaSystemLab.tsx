@@ -322,16 +322,18 @@ export function TatvaSystemLab() {
                       reducedMotion={prefersReducedMotion} progress={scrollYProgress} />
                   ))}
 
-                  <motion.circle
-                    cx="250"
-                    cy="222"
-                    r="56"
-                    fill="rgba(10,20,18,0.94)"
-                    stroke={omitted?.color ?? "#8FA283"}
-                    strokeWidth="1.5"
-                    animate={{ r: omitted ? 48 : 56 }}
+                  <motion.g
+                    initial={false}
+                    animate={{ scale: omitted ? 48 / 56 : 1 }}
                     transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
-                  />
+                  >
+                    <circle
+                      cx="250" cy="222" r="56"
+                      fill="rgba(10,20,18,0.94)"
+                      stroke={omitted?.color ?? "#8FA283"}
+                      strokeWidth="1.5" vectorEffect="non-scaling-stroke"
+                    />
+                  </motion.g>
                 </svg>
 
                 <div className="tatva-pressure-lab__core-copy absolute left-1/2 top-[52.8%] w-28 -translate-x-1/2 -translate-y-1/2 text-center">
