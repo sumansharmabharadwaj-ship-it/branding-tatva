@@ -6,6 +6,7 @@ import { healthcareInsightPosts } from "@/data/healthcareInsights";
 import { professionalPracticeInsightPosts } from "@/data/professionalPracticeInsights";
 import { tradesInsightPosts } from "@/data/tradesInsights";
 import { identityPackageInsightPosts } from "@/data/identityPackageInsights";
+import { rebrandTimelineInsightPosts } from "@/data/rebrandTimelineInsights";
 import { aiEraInsightPosts } from "@/data/aiEraInsights";
 import { answerEngineInsightPosts } from "@/data/answerEngineInsights";
 import { pricingInsightPosts } from "@/data/pricingInsights";
@@ -89,6 +90,7 @@ const combinedPosts = [
   ...professionalPracticeInsightPosts,
   ...tradesInsightPosts,
   ...identityPackageInsightPosts,
+  ...rebrandTimelineInsightPosts,
 ];
 
 const uniquePosts = combinedPosts.filter(
@@ -148,6 +150,7 @@ const relatedRegistrations = [
   { supportingSlug: "brand-strategy-when-ai-agents-buy", pillarSlugs: ["how-ai-assistants-choose-brands-to-recommend", "distinctive-brand-assets-audit", "brand-awareness-vs-brand-recall"] },
   { supportingSlug: "how-to-name-a-brand-when-good-names-are-taken", pillarSlugs: ["service-line-naming-strategy", "why-ai-content-makes-brands-average", "brand-voice-guidelines-writers-can-use", "distinctive-brand-assets-audit"] },
   { supportingSlug: "brand-strategy-vs-brand-identity", pillarSlugs: ["brand-positioning-strategy-service-businesses", "value-proposition-vs-positioning-vs-tagline", "why-beautiful-brand-identity-can-be-forgettable", "how-much-does-brand-strategy-cost"] },
+  { supportingSlug: "how-long-does-a-rebrand-take", pillarSlugs: ["brand-refresh-vs-rebrand-how-much-change", "what-a-brand-identity-package-includes", "brand-audit-checklist-before-rebrand"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
