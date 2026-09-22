@@ -13,6 +13,7 @@ export function servicePageMetadata(page: ServicePageContent): Metadata {
   return {
     title: page.title,
     description: page.description,
+    authors: [{ name: site.founder, url: `${site.url}/about` }],
     alternates: { canonical: `/${page.slug}` },
     openGraph: {
       title: `${page.title} | ${site.name}`,
@@ -66,6 +67,7 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             <h1>{page.title}</h1>
             <p className={styles.headline}>{page.headline}</p>
             <p className={styles.lede}>{page.introduction}</p>
+            <p className={styles.byline}>By <Link href="/about">Suman Sharma</Link> · Updated <time dateTime={page.updatedAt}>{new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${page.updatedAt}T00:00:00Z`))}</time></p>
             <div className={styles.actions}>
               <Link href="/contact" className={styles.button}>Book a 30 minute diagnosis <span aria-hidden="true">↗</span></Link>
               <Link href="#scope" className={styles.textLink}>See what the work covers</Link>
@@ -94,6 +96,22 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
               <Link href="/services#desire" className={styles.textLink}>Compare the engagement formats</Link>
             </aside>
           </div>
+          <section className={styles.example} aria-labelledby={`${page.slug}-example`}>
+            <p className={styles.eyebrow}>A worked example</p>
+            <h2 id={`${page.slug}-example`}>{page.example.title}</h2>
+            <p className={styles.context}>{page.example.context}</p>
+            <dl className={styles.decisions}>
+              {page.example.decisions.map((decision) => (
+                <div key={decision.label}><dt>{decision.label}</dt><dd>{decision.detail}</dd></div>
+              ))}
+            </dl>
+          </section>
+          <section className={styles.evidence} aria-labelledby={`${page.slug}-evidence`}>
+            <p className={styles.eyebrow}>Recorded project evidence</p>
+            <h2 id={`${page.slug}-evidence`}>{page.evidence.title}</h2>
+            <p>{page.evidence.body}</p>
+            <Link href={page.evidence.href} className={styles.textLink}>Read the project record <span aria-hidden="true">↗</span></Link>
+          </section>
           <section className={styles.preparation}>
             <div><h2>Bring what already exists.</h2><p>{page.preparation}</p></div>
             <div><h2>Agree the scope before work begins.</h2><p>{page.boundary}</p></div>
@@ -107,6 +125,16 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
             <p className={styles.eyebrow}>Before we speak</p>
             <h2 id={`${page.slug}-reading`}>Read the thinking behind the work.</h2>
             <ul>{page.reading.map((item) => <li key={item.href}><Link href={item.href}>{item.title}<span aria-hidden="true">↗</span></Link></li>)}</ul>
+          </section>
+          <section className={styles.questions} aria-labelledby={`${page.slug}-questions`}>
+            <p className={styles.eyebrow}>Before you commission the work</p>
+            <h2 id={`${page.slug}-questions`}>Questions about {page.name.toLowerCase()}</h2>
+            {page.questions.map((item) => (
+              <details key={item.question}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
           </section>
           <section className={styles.close}>
             <p className={styles.eyebrow}>One strategist, from question to direction</p>
