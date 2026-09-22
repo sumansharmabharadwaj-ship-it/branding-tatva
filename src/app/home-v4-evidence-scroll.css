@@ -246,6 +246,12 @@ html body .home-v4 #evidence [data-evidence-reading-still="true"] :is(
   .evidence-cinematic__pager button > span
 ) { transition: none; translate: none; }
 html body .home-v4 #evidence [data-evidence-reading-still="true"] .evidence-cinematic__index button::after { transition: none; }
+html body .home-v4 #evidence [data-evidence-reading-still="true"] [data-home-motion-layer] {
+  translate: none !important; rotate: none !important; scale: none !important;
+  transform: none !important; opacity: 1 !important; filter: none !important;
+}
+html body .home-v4 #evidence [data-evidence-reading-still="true"] :is([data-scroll-ink], [data-scroll-reading]) { background: none !important; -webkit-text-fill-color: currentColor !important; }
+html body .home-v4 #evidence [data-evidence-reading-still="true"] [data-scroll-ink]::after { transform: none !important; }
 
 /* Fixed rem spacing prevents the measured shell growing with the viewport.
    Its real content height decides whether the scene can hold, including
@@ -253,7 +259,7 @@ html body .home-v4 #evidence [data-evidence-reading-still="true"] .evidence-cine
 @media (min-width: 1181px) and (min-height: 761px) and (pointer: fine) {
   html body .home-v4 #evidence .evidence-cinematic__shell {
     gap: clamp(0.4rem, 1svh, 0.7rem);
-    padding-block: 1.4rem 1rem !important;
+    padding-block: 5.4rem 5rem !important;
   }
 
   html body .home-v4 #evidence .evidence-cinematic__index button {
@@ -270,10 +276,6 @@ html body .home-v4 #evidence [data-evidence-reading-still="true"] .evidence-cine
 
   html body .home-v4 #evidence .evidence-cinematic__index-copy em {
     margin-top: 0.25rem;
-  }
-
-  html body .home-v4 #evidence .evidence-cinematic__shell {
-    padding-bottom: 0.85rem !important;
   }
 
   html body .home-v4 #evidence .evidence-cinematic__header h2 {

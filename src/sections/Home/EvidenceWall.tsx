@@ -134,6 +134,7 @@ export function EvidenceWall() {
   const activeVideoRef = useRef<HTMLVideoElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const previousIndexRef = useRef(0);
+  const navigationRef = useRef<{ index: number; direction: -1 | 1 } | null>(null);
   const copyMotion = useAnimationControls();
   const trailMotion = useAnimationControls();
   const traceMotion = useAnimationControls();
@@ -143,29 +144,32 @@ export function EvidenceWall() {
   const [fileError, setFileError] = useState(false);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [keyboardReading, setKeyboardReading] = useState(false);
-  const [projectAnnouncement, setProjectAnnouncement] = useState("");
+  const [projectAnnouncement, setProjectAnnouncement] = useState<{ index: number; text: string } | null>(null);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const readingStill = prefersReducedMotion || keyboardReading;
+  const fileOwnsReading = openingSlug !== null || openSlug !== null;
   const desktopMotion = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
   const [frameFits, setFrameFits] = useState(false);
   const [hasScrollLayout, setHasScrollLayout] = useState(false);
   const heldLayout = desktopMotion && frameFits && hasScrollLayout;
-  const desktopStory = heldLayout && !prefersReducedMotion;
-  const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
+  const inView = useInView(sectionRef, { amount: .06 });
+  const motionActive = hydrated && inView && !readingStill && !fileOwnsReading;
+  const desktopStory = heldLayout && motionActive;
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
-    focusScopeSelector: '[role="tabpanel"], [role="tablist"]',
+    focusScopeSelector: ".evidence-cinematic",
     count: projects.length,
     target: sectionRef,
-    enabled: inView && desktopStory && openSlug === null,
-    reducedMotion: prefersReducedMotion,
+    enabled: desktopStory,
+    reducedMotion: readingStill || fileOwnsReading,
   });
   const { activeIndex, choose: chooseVisualState, preview, releasePreview } = visualizer;
-  const selectionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
+  const selectionDirection = navigationRef.current?.index === activeIndex ? navigationRef.current.direction
+    : activeIndex >= previousIndexRef.current ? 1 : -1;
   const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = trailFor(activeProject);
-  const mediaDuration = readingStill ? 0 : desktopMotion ? 0.7 : 0.35;
+  const mediaDuration = !motionActive ? 0 : desktopMotion ? 0.7 : 0.35;
 
   useEffect(() => () => { fileRequestRef.current += 1; }, []);
 
@@ -173,15 +177,16 @@ export function EvidenceWall() {
     // Playback can stop without removing the established scroll runway.
     // Initial reduced motion and content that cannot fit stay in normal flow.
     if (!hydrated || !desktopMotion || !frameFits) setHasScrollLayout(false);
-    else if (!prefersReducedMotion) setHasScrollLayout(true);
-  }, [desktopMotion, frameFits, hydrated, prefersReducedMotion]);
+    else if (!readingStill && !fileOwnsReading) setHasScrollLayout(true);
+  }, [desktopMotion, fileOwnsReading, frameFits, hydrated, readingStill]);
 
   useEffect(() => {
     const frame = sectionRef.current?.querySelector<HTMLElement>(".evidence-cinematic__shell");
     if (!frame) return;
-    const measure = () => setFrameFits(frame.offsetHeight <= window.innerHeight + 1);
+    const measure = () => setFrameFits(Math.max(frame.offsetHeight, frame.scrollHeight) <= window.innerHeight + 1);
     const observer = new ResizeObserver(measure);
     observer.observe(frame);
+    frame.querySelectorAll(".evidence-cinematic__header, .evidence-cinematic__index, .evidence-cinematic__stage").forEach((node) => observer.observe(node));
     window.addEventListener("resize", measure);
     measure();
     return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
@@ -192,20 +197,24 @@ export function EvidenceWall() {
     setOpeningSlug(null);
   }
 
-  function chooseProject(index: number) {
+  useEffect(() => {
+    setProjectAnnouncement((current) => current && current.index !== activeIndex ? null : current);
+  }, [activeIndex]);
+
+  function chooseProject(index: number, keyboardChoice = false, direction?: -1 | 1) {
+    if (keyboardChoice) { setKeyboardReading(true); settleReading(); }
     cancelOpening();
     setFileError(false);
+    if (index !== activeIndex) navigationRef.current = direction ? { index, direction } : null;
     chooseVisualState(index);
     // Announce an explicit choice, without narrating scroll or hover previews.
-    setProjectAnnouncement(`Project ${index + 1} of ${projects.length}: ${projects[index].title}.`);
+    setProjectAnnouncement({ index, text: `Project ${index + 1} of ${projects.length}: ${projects[index].title}.` });
   }
 
-  function stepProject(direction: -1 | 1) {
-    const next = (activeIndex + direction + projects.length) % projects.length;
-    chooseProject(next);
+  function revealTab(index: number, instant: boolean) {
     // Keep the controls and reading in place. Only the horizontal tab strip
     // moves to show the new selection; page scroll and keyboard focus stay put.
-    const tab = tabsRef.current[next];
+    const tab = tabsRef.current[index];
     const strip = tab?.parentElement;
     if (!tab || !strip) return;
     const tabRect = tab.getBoundingClientRect();
@@ -213,12 +222,31 @@ export function EvidenceWall() {
     if (tabRect.left < stripRect.left || tabRect.right > stripRect.right) {
       strip.scrollBy({
         left: tabRect.left - stripRect.left - (strip.clientWidth - tabRect.width) / 2,
-        behavior: readingStill ? "instant" : "smooth",
+        behavior: instant ? "instant" : "smooth",
       });
     }
   }
 
-  async function openProjectFile(slug: string, opener: HTMLButtonElement) {
+  function stepProject(direction: -1 | 1, keyboardChoice: boolean) {
+    const next = (activeIndex + direction + projects.length) % projects.length;
+    chooseProject(next, keyboardChoice, direction);
+    revealTab(next, keyboardChoice || !motionActive);
+  }
+
+  function revealFocusedReading(target: HTMLElement) {
+    if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
+    setKeyboardReading(true);
+    settleReading();
+    // The native project dialog owns its own scrolling and focus clearance.
+    if (target.closest("[data-project-file]")) return;
+    const bounds = target.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      target.scrollIntoView({ block: bounds.height > window.innerHeight - 160 ? "start" : "nearest", inline: "nearest", behavior: "instant" });
+    }
+  }
+
+  async function openProjectFile(slug: string, opener: HTMLButtonElement, keyboardChoice: boolean) {
+    if (keyboardChoice) { setKeyboardReading(true); settleReading(); }
     if (openingSlug === slug) {
       cancelOpening();
       return;
@@ -244,7 +272,7 @@ export function EvidenceWall() {
     const current = projects.findIndex((project) => project.slug === openSlug);
     if (current < 0) return;
     const next = (current + direction + projects.length) % projects.length;
-    chooseProject(next);
+    chooseProject(next, false, direction);
     setOpenSlug(projects[next].slug);
   }
 
@@ -257,34 +285,30 @@ export function EvidenceWall() {
   }
 
   function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.nativeEvent.isComposing) return;
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
     const next = event.key === "Home" ? 0
       : event.key === "End" ? projects.length - 1
       : event.key === "ArrowRight" ? (index + 1) % projects.length
       : (index - 1 + projects.length) % projects.length;
-    chooseProject(next);
+    chooseProject(next, true);
+    revealTab(next, true);
     const target = tabsRef.current[next];
-    const bounds = target?.getBoundingClientRect();
-    if (bounds) {
-      const needsVerticalSpace = bounds.top < 80 || bounds.bottom > window.innerHeight - 64;
-      const needsHorizontalSpace = bounds.left < 24 || bounds.right > window.innerWidth - 24;
-      if (needsVerticalSpace || needsHorizontalSpace) {
-        target?.scrollIntoView({ block: needsVerticalSpace ? "center" : "nearest", inline: "nearest", behavior: "instant" });
-      }
-    }
-    target?.focus({ preventScroll: true });
+    if (!target) return;
+    if (target === document.activeElement) revealFocusedReading(target);
+    else target.focus({ preventScroll: true });
   }
 
   useEffect(() => {
-    if (readingStill) return;
+    if (!motionActive) return;
     const videoAtEffectStart = activeVideoRef.current;
 
     function syncPlayback() {
       const video = activeVideoRef.current;
       if (!video) return;
       video.playbackRate = 1.2;
-      if (inView && !document.hidden && !openSlug) void video.play().catch(() => {});
+      if (!document.hidden) void video.play().catch(() => {});
       else video.pause();
     }
 
@@ -294,7 +318,7 @@ export function EvidenceWall() {
       document.removeEventListener("visibilitychange", syncPlayback);
       videoAtEffectStart?.pause();
     };
-  }, [activeIndex, inView, openSlug, readingStill]);
+  }, [activeIndex, motionActive]);
 
   const settleReading = useCallback(() => {
     copyMotion.stop();
@@ -308,9 +332,12 @@ export function EvidenceWall() {
   useEffect(() => {
     const previous = previousIndexRef.current;
     previousIndexRef.current = activeIndex;
+    const direction = navigationRef.current?.index === activeIndex ? navigationRef.current.direction
+      : activeIndex > previous ? 1 : -1;
+    navigationRef.current = null;
     settleReading();
-    if (readingStill || openSlug || !inView || previous === activeIndex) return;
-    const direction = activeIndex > previous ? 1 : -1;
+    const panel = sectionRef.current?.querySelector('[role="tabpanel"]');
+    if (!motionActive || previous === activeIndex || panel === document.activeElement || panel?.querySelector(":focus-visible")) return;
     // The photograph opens the file; opaque text settles inside measured rows.
     // Glass surfaces and actions keep their positions throughout the transition.
     copyMotion.set({ x: -direction * 8, y: 2 });
@@ -323,7 +350,7 @@ export function EvidenceWall() {
     void trailMotion.start((row: number) => ({ x: 0, y: 0, transition: { duration: .42, delay: delayFor(row), ease: EASE } }));
     void traceMotion.start((row: number) => ({ scaleX: 1, transition: { duration: .58, delay: delayFor(row), ease: EASE } }));
     return () => { copyMotion.stop(); trailMotion.stop(); traceMotion.stop(); };
-  }, [activeIndex, copyMotion, inView, openSlug, readingStill, settleReading, trailMotion, traceMotion]);
+  }, [activeIndex, copyMotion, motionActive, settleReading, trailMotion, traceMotion]);
 
   return (
     <section
@@ -334,45 +361,47 @@ export function EvidenceWall() {
       data-evidence-index={activeIndex}
       data-evidence-layout={heldLayout ? "held" : "flow"}
       data-evidence-scroll-active={desktopStory}
-      data-evidence-reading-still={readingStill}
+      data-evidence-reading-still={!motionActive}
       data-scroll-story="evidence"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
       onFocusCapture={(event) => {
         settleReading();
-        if (event.target instanceof HTMLElement && event.target.matches(":focus-visible")) setKeyboardReading(true);
+        revealFocusedReading(event.target);
       }}
-      onKeyDownCapture={() => setKeyboardReading(true)}
+      onKeyDownCapture={() => { setKeyboardReading(true); settleReading(); }}
       onPointerDownCapture={() => setKeyboardReading(false)}
     >
-      <BackgroundVideo
+      {!motionActive ? <div data-background-video-stage="true" className="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <Image src="/images/pexels-fog-sunrise-poster.jpg" alt="" fill sizes="100vw" style={{ objectFit: "cover" }} />
+      </div> : <BackgroundVideo
         video="/videos/pexels-fog-sunrise.mp4"
         videoMobile="/videos/pexels-fog-sunrise-mobile.mp4"
         videoWebm="/videos/pexels-fog-sunrise.webm"
         poster="/images/pexels-fog-sunrise-poster.jpg"
         responsivePoster
-      />
+      />}
       <div className="evidence-cinematic__veil" aria-hidden="true" />
       <motion.div
         aria-hidden="true"
         className="evidence-cinematic__light evidence-cinematic__light--one"
         initial={false}
         animate={
-          readingStill
+          !motionActive
             ? { x: 0, y: 0 }
             : { x: activeIndex * 20, y: activeIndex * -6 }
         }
-        transition={{ duration: readingStill ? 0 : 0.7, ease: EASE }}
+        transition={{ duration: motionActive ? .7 : 0, ease: EASE }}
       />
       <motion.div
         aria-hidden="true"
         className="evidence-cinematic__light evidence-cinematic__light--two"
         initial={false}
         animate={
-          readingStill
+          !motionActive
             ? { x: 0, y: 0 }
             : { x: activeIndex * -16, y: activeIndex * 6 }
         }
-        transition={{ duration: readingStill ? 0 : 0.7, ease: EASE }}
+        transition={{ duration: motionActive ? .7 : 0, ease: EASE }}
       />
 
       <Container className="evidence-cinematic__shell max-w-[100rem]">
@@ -407,12 +436,16 @@ export function EvidenceWall() {
                 tabIndex={selected ? 0 : -1}
                 className={selected ? "is-active" : undefined}
                 style={{ "--project-accent": project.accent } as CSSProperties}
-                onClick={() => chooseProject(index)}
+                onClick={(event) => chooseProject(index, event.detail === 0)}
                 onPointerEnter={(event) => {
-                  if (event.pointerType === "mouse" && desktopMotion && !prefersReducedMotion) preview(index);
+                  if (event.pointerType === "mouse" && desktopMotion && motionActive) {
+                    navigationRef.current = null;
+                    setProjectAnnouncement(null);
+                    preview(index);
+                  }
                 }}
-                onPointerLeave={releasePreview}
-                onFocus={() => chooseProject(index)}
+                onPointerLeave={() => { if (motionActive) releasePreview(); }}
+                onFocus={(event) => { chooseProject(index, event.currentTarget.matches(":focus-visible")); revealTab(index, true); }}
                 onBlur={releasePreview}
                 onKeyDown={(event) => onTabKeyDown(event, index)}
               >
@@ -449,12 +482,12 @@ export function EvidenceWall() {
         >
           <article className="evidence-cinematic__media">
             {/* Only the scenery overlaps. Copy and actions retain one owner. */}
-            <AnimatePresence key={readingStill ? "settled" : "animated"} mode="sync" initial={false}>
+            <AnimatePresence key={motionActive ? "animated" : "settled"} mode="sync" initial={false}>
             <EvidenceMediaLayer
               key={`media-${activeProject.slug}`}
               className="evidence-cinematic__media-layer"
               data-evidence-camera
-              initial={readingStill ? false : {
+              initial={!motionActive ? false : {
                 opacity: desktopMotion ? 1 : 0,
                 clipPath: desktopMotion
                   ? selectionDirection > 0 ? "inset(0% 0% 0% 100%)" : "inset(0% 100% 0% 0%)"
@@ -483,7 +516,7 @@ export function EvidenceWall() {
                 />
               )}
 
-              {!readingStill && activeProject.cardVideo && (
+              {motionActive && activeProject.cardVideo && (
                 <motion.video
                   ref={(video) => {
                     if (video) activeVideoRef.current = video;
@@ -501,7 +534,7 @@ export function EvidenceWall() {
                   // In view only: autoplay overrides preload="none", so a
                   // mount-time autoplay fetched this film on first load. The
                   // effect below still starts it once the wall is in view.
-                  autoPlay={inView && !openSlug}
+                  autoPlay={motionActive}
                   playsInline
                   preload={inView ? "metadata" : "none"}
                   data-home-playback-rate="1.2"
@@ -542,12 +575,12 @@ export function EvidenceWall() {
                 onPointerEnter={prepareProjectFile}
                 onFocus={prepareProjectFile}
                 onBlur={cancelOpening}
-                onClick={(event) => void openProjectFile(activeProject.slug, event.currentTarget)}
+                onClick={(event) => void openProjectFile(activeProject.slug, event.currentTarget, event.detail === 0)}
               >
                 {openingSlug === activeProject.slug ? "Cancel opening" : fileError ? "Retry project file" : "Inspect the project file"}
                 <span aria-hidden="true">↗</span>
               </button>
-              <Link href={`/work/${activeProject.slug}`}>
+              <Link href={`/work/${activeProject.slug}`} prefetch={false}>
                 <span className="evidence-cinematic__reading-stack">
                   <span className="evidence-cinematic__measure" aria-hidden="true" inert>
                     {projects.map((project) => <span key={project.slug}>{ACTION[project.slug] ?? "View the case"}</span>)}
@@ -590,22 +623,22 @@ export function EvidenceWall() {
             ))}
 
             <div className="evidence-cinematic__pager" role="group" aria-label="Browse project records">
-              <button type="button" aria-label="Previous project" onClick={() => stepProject(-1)}>
+              <button type="button" aria-label="Previous project" onClick={(event) => stepProject(-1, event.detail === 0)}>
                 <span aria-hidden="true">←</span> Back
               </button>
               <span className="evidence-cinematic__pager-count" aria-hidden="true">
                 {String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
               </span>
-              <button type="button" aria-label="Next project" onClick={() => stepProject(1)}>
+              <button type="button" aria-label="Next project" onClick={(event) => stepProject(1, event.detail === 0)}>
                 Next <span aria-hidden="true">→</span>
               </button>
               <p className="sr-only" role="status" aria-atomic="true">
-                {projectAnnouncement}
+                {projectAnnouncement?.index === activeIndex ? projectAnnouncement.text : ""}
               </p>
             </div>
 
             <div className="evidence-cinematic__dossier-footer">
-              <Link href="/work">Open the full archive <span aria-hidden="true">→</span></Link>
+              <Link href="/work" prefetch={false}>Open the full archive <span aria-hidden="true">→</span></Link>
             </div>
           </aside>
         </div>
