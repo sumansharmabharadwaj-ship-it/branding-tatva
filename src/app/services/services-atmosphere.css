@@ -586,3 +586,13 @@
 [data-services-ambient="running"] :is([data-services-atmosphere], [data-work-ambient]) > span {
   will-change: transform;
 }
+
+/* Living fields also appear outside registered chapters. Their own viewport
+   observer pauses the existing timeline instead of restarting it on return. */
+[data-services-gradient-motion="paused"] > [data-gradient-layer] {
+  animation-play-state: paused !important;
+  will-change: auto;
+}
+[data-services-gradient-motion="running"] > [data-gradient-layer] {
+  animation-play-state: running;
+}
