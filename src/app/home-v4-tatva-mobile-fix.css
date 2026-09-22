@@ -204,6 +204,28 @@ html[data-motion="reduced"] .tatva-observatory__portrait { transition: none; tra
 .home-v4 .tatva-pressure-lab[data-system-reading-still="true"] :is(button, button span, .tatva-pressure-lab__audit span) { transition: none; }
 .home-v4 .tatva-pressure-lab[data-system-reading-still="true"] .tatva-pressure-lab__audit:hover span { transform: none; }
 .home-v4 .tatva-pressure-lab[data-system-reading-still="true"] .tatva-pressure-lab__force:hover > span > span:first-child { scale: 1; }
+.home-v4 .tatva-pressure-lab__next {
+  display: flex; align-items: center; justify-content: space-between; gap: .65rem;
+  width: 100%; min-height: 2.75rem; margin-top: 1rem; padding: .65rem .75rem;
+  border: 1px solid rgb(112 83 62 / 28%); border-radius: .55rem;
+  color: #70533e; background: rgb(255 249 237 / 65%);
+  font-size: .875rem; line-height: 1.45; text-align: left; cursor: pointer;
+  scroll-margin-block: 80px; transition: border-color 220ms ease, background-color 220ms ease;
+}
+.home-v4 .tatva-pressure-lab__next-label { min-width: 0; }
+.home-v4 .tatva-pressure-lab__next:hover { border-color: #805239; background: #fff9ed; }
+.home-v4 .tatva-pressure-lab__next svg { flex-shrink: 0; transition: transform 360ms cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .home-v4 .tatva-pressure-lab__next:hover svg { transform: translateX(3px); }
+}
+.home-v4 .tatva-pressure-lab[data-system-reading-still="true"] .tatva-pressure-lab__next svg { transform: none; transition: none; }
+.home-v4 .tatva-pressure-lab[data-system-reading-still="true"] .tatva-pressure-lab__next-step::before { transform: none; }
+.home-v4 .tatva-pressure-lab[data-system-reading-still="true"] [data-home-motion-layer] {
+  translate: none !important; rotate: none !important; scale: none !important;
+  transform: none !important; opacity: 1 !important; filter: none !important;
+}
+.home-v4 .tatva-pressure-lab[data-system-reading-still="true"] :is([data-scroll-ink], [data-scroll-reading]) { background: none !important; -webkit-text-fill-color: currentColor !important; }
+.home-v4 .tatva-pressure-lab[data-system-reading-still="true"] [data-scroll-ink]::after { transform: none !important; }
 .home-v4-chapter--tatva + .home-v4-handoff--river { background: linear-gradient(180deg, #eae1d2, #ece7dc); }
 
 @media (max-width: 1023px) {

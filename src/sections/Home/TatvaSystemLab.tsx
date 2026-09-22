@@ -1,11 +1,12 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { motion, useAnimationControls, useInView, useScroll, useTransform, type MotionStyle, type MotionValue } from "framer-motion";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Container } from "@/components/Container";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const FORCES = [
   {
@@ -105,6 +106,24 @@ function SystemConnection({ index, missing, motionActive, progress }: {
   const range = [.12 + index * .035, .64 + index * .035];
   const signalX = useTransform(progress, range, [node.x, 250]);
   const signalY = useTransform(progress, range, [node.y, 222]);
+  const changeMotion = useAnimationControls();
+  const previousMissing = useRef(missing);
+  useEffect(() => {
+    const previous = previousMissing.current;
+    previousMissing.current = missing;
+    const settle = () => { changeMotion.stop(); changeMotion.set({ opacity: 0 }); };
+    settle();
+    if (!motionActive || previous === missing) return;
+    // Withdrawal travels out toward the missing function; reconnection
+    // carries its signal back to the shared centre once per fresh choice.
+    changeMotion.set({ cx: missing ? 250 : node.x, cy: missing ? 222 : node.y, opacity: .9 });
+    void changeMotion.start({
+      cx: missing ? node.x : 250, cy: missing ? node.y : 222,
+      opacity: [.9, .9, 0],
+      transition: { duration: .65, ease: [0.22, 1, 0.36, 1] },
+    });
+    return settle;
+  }, [changeMotion, missing, motionActive, node.x, node.y]);
   return (
     <g>
       <motion.line
@@ -116,6 +135,11 @@ function SystemConnection({ index, missing, motionActive, progress }: {
         initial={false}
         animate={{ opacity: missing ? .18 : .86, pathLength: missing ? .35 : 1 }}
         transition={{ duration: motionActive ? .45 : 0, ease: [0.22, 1, 0.36, 1] }}
+      />
+      <motion.circle
+        cx={node.x} cy={node.y} r="5" fill={force.color}
+        initial={{ opacity: 0 }} animate={changeMotion}
+        aria-hidden="true" data-system-connection-change
       />
       {motionActive && (
         <motion.circle
@@ -144,16 +168,18 @@ export function TatvaSystemLab() {
   const { scrollYProgress } = useScroll({ target: diagramRef, offset: ["start end", "end start"] });
   const { scrollYProgress: readingProgress } = useScroll({ target: readingRef, offset: ["start end", "end start"] });
   const readingArrival = useTransform(readingProgress, [.1, .65], [0, 1]);
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const compact = useMediaQuery("(max-width: 767px)");
-  const inView = useInView(sectionRef, { amount: 0.28 });
+  const inView = useInView(sectionRef, { amount: .06 });
   const [omittedIndex, setOmittedIndex] = useState<number | null>(null);
   const [keyboardReading, setKeyboardReading] = useState(false);
   const omitted = omittedIndex === null ? null : FORCES[omittedIndex];
   const readingStill = prefersReducedMotion || keyboardReading;
-  const motionActive = inView && !readingStill;
-  function choose(index: number | null) {
-    setOmittedIndex((current) => (index !== null && current === index ? null : index));
+  const motionActive = hydrated && inView && !readingStill;
+  const nextIndex = omittedIndex === null ? 0 : omittedIndex === FORCES.length - 1 ? null : omittedIndex + 1;
+  function choose(index: number | null, keyboardChoice: boolean, toggle = true) {
+    if (keyboardChoice) { setKeyboardReading(true); settleReading(); }
+    setOmittedIndex((current) => (toggle && index !== null && current === index ? null : index));
   }
 
   const settleReading = useCallback(() => {
@@ -166,7 +192,8 @@ export function TatvaSystemLab() {
     const previous = previousIndex.current;
     previousIndex.current = omittedIndex;
     settleReading();
-    if (!motionActive || previous === omittedIndex || readingRef.current?.matches(":focus-within")) return;
+    const region = readingRef.current;
+    if (!motionActive || previous === omittedIndex || region === document.activeElement || region?.querySelector(":focus-visible")) return;
     if (previous !== null && omittedIndex === null) {
       // A single completion cue follows an explicit restore. Entering the
       // viewport or resuming motion cannot replay an old completion.
@@ -187,10 +214,12 @@ export function TatvaSystemLab() {
 
   function revealFocusedReading(target: HTMLElement) {
     if (!(target instanceof HTMLElement) || !target.matches(":focus-visible")) return;
+    setKeyboardReading(true);
+    settleReading();
     const bounds = target.getBoundingClientRect();
     if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
       target.scrollIntoView({
-        block: bounds.height > window.innerHeight - 160 ? "start" : "center",
+        block: bounds.height > window.innerHeight - 160 ? "start" : "nearest",
         inline: "nearest",
         behavior: "instant",
       });
@@ -198,11 +227,12 @@ export function TatvaSystemLab() {
   }
 
   function onForceKey(event: KeyboardEvent<HTMLButtonElement>, index: number, buttons: (HTMLButtonElement | null)[]) {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || event.nativeEvent.isComposing) return;
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
     const next = event.key === "Home" ? 0 : event.key === "End" ? FORCES.length - 1
       : (index + (event.key === "ArrowRight" ? 1 : FORCES.length - 1)) % FORCES.length;
-    setOmittedIndex(next);
+    choose(next, true, false);
     const button = buttons[next];
     if (!button) return;
     // A repeated Home or End can target the already focused button after a
@@ -218,14 +248,13 @@ export function TatvaSystemLab() {
       style={{ backgroundColor: "#eae1d2", borderColor: "rgb(94 76 51 / 18%)" }}
       aria-labelledby="tatva-system-lab-title"
       data-cursor-world="light"
-      data-system-reading-still={readingStill}
+      data-system-reading-still={!motionActive}
       data-system-missing={omitted?.role.toLowerCase() ?? "none"}
       onFocusCapture={(event) => {
         settleReading();
-        if (event.target instanceof HTMLElement && event.target.matches(":focus-visible")) setKeyboardReading(true);
         revealFocusedReading(event.target);
       }}
-      onKeyDownCapture={() => setKeyboardReading(true)}
+      onKeyDownCapture={() => { setKeyboardReading(true); settleReading(); }}
       onPointerDownCapture={() => setKeyboardReading(false)}
     >
       <motion.div
@@ -272,7 +301,7 @@ export function TatvaSystemLab() {
                     aria-label={`Explore the brand without ${force.role.toLowerCase()}`}
                     aria-pressed={missing}
                     aria-controls="tatva-system-reading"
-                    onClick={() => choose(index)}
+                    onClick={(event) => choose(index, event.detail === 0)}
                     onKeyDown={(event) => onForceKey(event, index, forceRefs.current)}
                     className="tatva-pressure-lab__force group flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-left transition-[border-color,background-color,box-shadow] duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                     style={{
@@ -340,7 +369,7 @@ export function TatvaSystemLab() {
                   ))}
 
                   <motion.circle
-                    key={readingStill ? "settled" : "animated"}
+                    key={motionActive ? "animated" : "settled"}
                     cx="250" cy="222"
                     initial={false}
                     animate={{ r: omitted ? 48 : 56 }}
@@ -363,7 +392,7 @@ export function TatvaSystemLab() {
                   aria-label="Restore all five brand connections"
                   aria-controls="tatva-system-reading"
                   aria-disabled={omittedIndex === null}
-                  onClick={() => { if (omittedIndex !== null) choose(null); }}
+                  onClick={(event) => { if (omittedIndex !== null) choose(null, event.detail === 0); }}
                 >
                   <span>{omitted ? "4 of 5" : "5 of 5"}</span>
                   <span>connected</span>
@@ -380,7 +409,7 @@ export function TatvaSystemLab() {
                       aria-label={`Explore the brand without ${force.role.toLowerCase()}`}
                       aria-pressed={missing}
                       aria-controls="tatva-system-reading"
-                      onClick={() => choose(index)}
+                      onClick={(event) => choose(index, event.detail === 0)}
                       onKeyDown={(event) => onForceKey(event, index, nodeRefs.current)}
                       className="tatva-pressure-lab__node absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center rounded-xl px-2 py-2 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                       style={{ left: `${(node.x / 500) * 100}%`, top: `${(node.y / 420) * 100}%` }}
@@ -401,7 +430,7 @@ export function TatvaSystemLab() {
               </div>
 
               <motion.div ref={readingRef} id="tatva-system-reading" className="tatva-pressure-lab__reading-region min-w-0" data-home-reading-anchor
-                style={{ "--pressure-reading": readingStill ? 1 : readingArrival, "--pressure-accent": omitted?.color ?? "#65724C" } as MotionStyle}
+                style={{ "--pressure-reading": motionActive ? readingArrival : 1, "--pressure-accent": omitted?.color ?? "#65724C" } as MotionStyle}
                 role="region" aria-label="Brand system reading" tabIndex={0}
                 onFocusCapture={settleReading} onPointerDown={settleReading}>
                 <div
@@ -414,7 +443,7 @@ export function TatvaSystemLab() {
                     {FORCES.map((force, index) => (
                       <span key={force.name}>
                         <motion.span
-                          key={readingStill ? "settled" : "animated"}
+                          key={motionActive ? "animated" : "settled"}
                           initial={false}
                           style={{ backgroundColor: force.color, transformOrigin: "left" }}
                           animate={{ scaleX: omittedIndex === index ? .18 : 1, opacity: omittedIndex === index ? .4 : 1 }}
@@ -434,7 +463,22 @@ export function TatvaSystemLab() {
                       <SystemReading force={omitted} />
                     </div>
                   </div>
-                  <Link href="/services#audit" className="tatva-pressure-lab__audit">
+                  <button
+                    type="button"
+                    className="tatva-pressure-lab__next"
+                    aria-controls="tatva-system-reading"
+                    onClick={(event) => choose(nextIndex, event.detail === 0, false)}
+                  >
+                    <span className="tatva-pressure-lab__next-label tatva-pressure-lab__stack">
+                      <span className="tatva-pressure-lab__measure tatva-pressure-lab__stack" aria-hidden="true" inert>
+                        {FORCES.map((force) => <span key={force.name}>Test {force.role}</span>)}
+                        <span>Restore all connections</span>
+                      </span>
+                      <span>{nextIndex === null ? "Restore all connections" : `Test ${FORCES[nextIndex].role}`}</span>
+                    </span>
+                    <ArrowRight size={17} aria-hidden="true" />
+                  </button>
+                  <Link href="/services#audit" prefetch={false} className="tatva-pressure-lab__audit">
                     Open the brand audit <span aria-hidden="true">→</span>
                   </Link>
                 </div>
@@ -444,7 +488,7 @@ export function TatvaSystemLab() {
               type="button"
               aria-controls="tatva-system-reading"
               aria-disabled={omittedIndex === null}
-              onClick={() => { if (omittedIndex !== null) choose(null); }}
+              onClick={(event) => { if (omittedIndex !== null) choose(null, event.detail === 0); }}
               className="tatva-pressure-lab__restore mt-4 inline-flex min-h-11 items-center text-xs font-medium uppercase tracking-[0.12em] underline underline-offset-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone"
             >
               Restore all connections
