@@ -56,6 +56,7 @@ const ROUTE_PLANS: Record<
 export function ServiceDisciplineExplorer() {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const situationRef = useRef<ServicesSituationId | null>(null);
+  const activeIndexRef = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [situation, setSituation] = useState<ServicesSituationId | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -70,11 +71,11 @@ export function ServiceDisciplineExplorer() {
       if (situationRef.current === nextSituation) return;
       situationRef.current = nextSituation;
       setSituation(nextSituation);
-      setActiveIndex(
-        nextSituation
+      const nextIndex = nextSituation
           ? (ROUTE_PLANS[nextSituation].order[0] ?? DEFAULT_DISCIPLINE_ORDER[0])
-          : DEFAULT_DISCIPLINE_ORDER[0],
-      );
+          : DEFAULT_DISCIPLINE_ORDER[0];
+      activeIndexRef.current = nextIndex;
+      setActiveIndex(nextIndex);
     }
 
     try {
@@ -105,7 +106,10 @@ export function ServiceDisciplineExplorer() {
   // Keep this choice stable as the visitor scrolls through its explanation.
 
   function activate(index: number, source: "focus" | "click" | "select") {
-    if (index === activeIndex) return;
+    if (!Number.isInteger(index) || !offerings[index] || index === activeIndexRef.current) return;
+    // Keyboard navigation also fires focus before React's next render.
+    // Commit the choice here so that second event stays a no-op.
+    activeIndexRef.current = index;
     setActiveIndex(index);
     track("capability_selected", {
       capability: offerings[index].name,
@@ -185,6 +189,7 @@ export function ServiceDisciplineExplorer() {
               >
                 <div
                   role="tablist"
+                  aria-orientation="horizontal"
                   aria-label={
                     routePlan
                       ? `Branding Tatva service disciplines ordered for ${routePlan.label}`

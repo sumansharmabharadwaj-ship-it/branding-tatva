@@ -25,37 +25,44 @@ export function DisciplineOutput({ index }: { index: number }) {
   const inView = useInView(ref, { amount: 0.25, once: true });
   const reducedMotion = useHydratedReducedMotion();
   const [replay, setReplay] = useState(0);
-  const output = OUTPUTS[index] ?? OUTPUTS[0];
+  const activeIndex = Number.isInteger(index) && OUTPUTS[index] ? index : 0;
+  const output = OUTPUTS[activeIndex];
 
   return (
     <div ref={ref} className={styles.output} data-discipline-example={output.name}>
       <div className={styles.heading}>
         <span>Illustrative work</span>
-        {!reducedMotion && <button type="button" onClick={() => setReplay(value => value + 1)} aria-label={`Replay ${output.name} illustration`}><RotateCcw size={13} aria-hidden="true" />Replay</button>}
+        <button
+          type="button"
+          aria-disabled={reducedMotion}
+          title={reducedMotion ? "Replay is available with full motion." : undefined}
+          onClick={() => { if (!reducedMotion) setReplay(value => value + 1); }}
+          aria-label={`Replay ${output.name} illustration`}
+        ><RotateCcw size={13} aria-hidden="true" />Replay</button>
       </div>
       <div className={styles.titles}>
-        {OUTPUTS.map((item, position) => <p key={item.name} className={styles.title} data-active={position === index} aria-hidden={position !== index}>{item.title}</p>)}
+        {OUTPUTS.map((item, position) => <p key={item.name} className={styles.title} data-active={position === activeIndex} aria-hidden={position !== activeIndex}>{item.title}</p>)}
       </div>
-      <div key={`${index}-${replay}`} className={styles.scene} data-animate={inView && !reducedMotion} role="img" aria-label={output.description}>
+      <div key={`${activeIndex}-${replay}`} className={styles.scene} data-animate={inView && !reducedMotion} role="img" aria-label={output.description}>
         <div className={styles.art} aria-hidden="true">
-          {index === 0 ? (
+          {activeIndex === 0 ? (
             <div className={styles.split}>
               <div className={`${styles.paper} ${styles.first}`}><small>The position</small><strong>One reason<br />to choose.</strong><span className={styles.inkLine} /><span className={styles.inkLine} /></div>
               <div className={`${styles.paper} ${styles.identity} ${styles.last}`}><span className={styles.wordmark}>B<span>Brand</span></span><span className={styles.swatches}><i /><i /><i /></span><small>Colour · Type · Voice</small></div>
             </div>
-          ) : index === 1 ? (
+          ) : activeIndex === 1 ? (
             <div className={styles.split}>
               <div className={`${styles.paper} ${styles.first}`}><small>Point of view</small><strong>What the<br />brand believes.</strong><span className={styles.inkLine} /></div>
               <div className={`${styles.paper} ${styles.editorial}`}><small>Editorial plan</small>{["Explain", "Demonstrate", "Answer"].map((label, step) => <div key={label} className={styles.planRow}><span>0{step + 1}</span>{label}</div>)}</div>
             </div>
-          ) : index === 2 ? (
+          ) : activeIndex === 2 ? (
             <div className={styles.posts}>{["Teach", "Show", "Discuss"].map(label => <div key={label} className={styles.post}><div><b>B</b><small>Your brand</small></div><LeafMark /><span>{label}</span></div>)}</div>
-          ) : index === 3 ? (
+          ) : activeIndex === 3 ? (
             <div className={`${styles.website} ${styles.first}`}>
               <div className={styles.browserBar}><i /><i /><i /><small>Website structure</small></div>
               <div className={styles.websiteBody}><div><small>The offer</small><strong>A reason<br />to choose.</strong><span className={styles.inkLine} /><span className={styles.inkLine} /></div><div className={styles.last}><div className={styles.evidence}><small>Evidence</small><span>Why believe it</span></div><span className={styles.enquiry}>Enquire <span>→</span></span></div></div>
             </div>
-          ) : index === 4 ? (
+          ) : activeIndex === 4 ? (
             <div className={styles.split}>
               <div className={`${styles.paper} ${styles.first}`}><small>Verbal rules</small><ul className={styles.rules}><li>Clear</li><li>Specific</li><li>Consistent</li></ul></div>
               <div className={`${styles.paper} ${styles.composition} ${styles.last}`}><small>Copy + design</small><strong>The same voice,<br />in use.</strong><span>Aa</span></div>
