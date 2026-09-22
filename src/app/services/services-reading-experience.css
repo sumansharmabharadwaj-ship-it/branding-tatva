@@ -356,5 +356,5 @@ html[data-services-experience="active"] #situation[data-services-scene] {
   #offerings [data-discipline-panel-detail="true"] { font-size: 0.9375rem; line-height: 1.55; }
   #offerings [data-discipline-panel-footer="true"] { gap: 0.25rem; margin-top: 1rem; padding-top: 1rem; }
   #offerings [data-service-route-context="true"] { display: none; }
-  #offerings [data-discipline-next="true"] { justify-content: space-between; min-height: 3rem; padding: 0.7rem 1rem; font-size: 0.875rem; }
+  #offerings [data-discipline-panel-footer="true"] [data-discipline-next="true"] { display: none; }
 }

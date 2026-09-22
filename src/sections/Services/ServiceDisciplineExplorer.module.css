@@ -1,4 +1,4 @@
-.phonePicker, .phoneContext { display: none; }
+.phonePicker, .phoneContext, .phoneAction { display: none; }
 
 @media (max-width: 767px) {
   .phonePicker { display: block; }
@@ -28,6 +28,9 @@
   .phoneContext summary > span { font-size: 1.25rem; transition: transform 220ms ease; }
   .phoneContext[open] summary > span { transform: rotate(45deg); }
   .phoneContext p { margin: 0.25rem 0 0.5rem; font-size: 0.875rem; line-height: 1.6; }
+  .phoneAction { display: flex; align-items: center; justify-content: space-between; gap: 0.65rem; min-height: 3rem; margin-top: 1rem; padding: 0.7rem 1rem; border-radius: 999px; background: #29432f; color: #f4f1e8; font-size: 0.875rem; line-height: 1.4; }
+  .phoneAction:hover { background: #435b3c; }
+  .phoneAction:focus-visible { outline: 2px solid #6f4e37; outline-offset: 3px; }
 }
 
 @media (prefers-reduced-motion: reduce) { .phoneContext summary > span { transition: none; } }

@@ -175,7 +175,7 @@ export function ServiceDisciplineExplorer() {
                   <select id="service-discipline-select" value={activeIndex}
                     aria-controls="service-discipline-panel"
                     onChange={event => activate(Number(event.target.value), "select")}>
-                    {disciplineOrder.map((index, position) => <option key={offerings[index].name} value={index}>{String(position + 1).padStart(2, "0")} · {offerings[index].name}</option>)}
+                    {disciplineOrder.map((index, position) => <option key={offerings[index].name} value={index}>{String(position + 1).padStart(2, "0")} · {index === 0 ? "Strategy and identity" : offerings[index].name}</option>)}
                   </select>
                   <span aria-hidden="true">⌄</span>
                 </div>
@@ -286,6 +286,9 @@ export function ServiceDisciplineExplorer() {
                       </div>
                     </div>
 
+                    <a href="#desire" className={styles.phoneAction} data-discipline-mobile-next="true">
+                      See packages and prices <span aria-hidden="true">→</span>
+                    </a>
                     <DisciplineOutput index={activeIndex} />
 
                     <div data-discipline-panel-footer="true" className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ivory/12 pt-5">
