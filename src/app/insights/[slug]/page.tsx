@@ -110,7 +110,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     creator: site.founder,
     publisher: site.name,
     category: getInsightTopic(post.topicSlug)?.name,
-    alternates: { canonical: `/insights/${post.slug}` },
+    alternates: {
+      canonical: `/insights/${post.slug}`,
+      // Page alternates replace the layout object, including feed discovery.
+      types: { "application/rss+xml": `${site.url}/insights/feed.xml` },
+    },
     robots: searchRobotsMetadata(),
     openGraph: {
       title: post.seoTitle,

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { site } from "@/data/site";
 
 export const metadata: Metadata = {
   alternates: {
     types: {
-      "application/rss+xml": "/insights/rss.xml",
+      "application/rss+xml": `${site.url}/insights/feed.xml`,
     },
   },
 };

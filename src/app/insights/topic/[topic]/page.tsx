@@ -129,6 +129,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ],
     alternates: {
       canonical: `/insights/topic/${topic.slug}`,
+      types: { "application/rss+xml": `${site.url}/insights/feed.xml` },
     },
     openGraph: {
       title: `${topic.name} insights | Branding Tatva`,
