@@ -1,7 +1,7 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useCallback, useEffect, useId, useRef, type CSSProperties } from "react";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import type { Project } from "@/sections/HomeV4/homeSnapshotProjects";
@@ -24,12 +24,13 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
   onNavigate: (direction: -1 | 1) => void;
   onClose: () => void;
 }) {
-  const prefersReducedMotion = useHydratedReducedMotion();
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const [keyboardReading, setKeyboardReading] = useState(false);
   const lenis = useLenis();
   const titleId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const backRef = useRef<HTMLButtonElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const readingRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
@@ -39,6 +40,9 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
   const navigation = useRef({ direction: 1, animate: false });
   const projectSlug = project?.slug;
   const isOpen = Boolean(projectSlug);
+  const readingStill = !hydrated || prefersReducedMotion || keyboardReading || !isOpen;
+
+  useEffect(() => { if (!isOpen) setKeyboardReading(false); }, [isOpen]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -69,10 +73,39 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
     };
   }, [isOpen, lenis]);
 
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    const toolbar = toolbarRef.current;
+    if (!isOpen || !dialog || !toolbar) return;
+    // The toolbar owns its natural height. Only the reading inset consumes
+    // this measurement, so larger text cannot create a resize feedback loop.
+    const measure = () => {
+      dialog.style.setProperty("--file-toolbar-height", `${Math.ceil(toolbar.getBoundingClientRect().height)}px`);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(toolbar);
+    measure();
+    return () => {
+      observer.disconnect();
+      dialog.style.removeProperty("--file-toolbar-height");
+    };
+  }, [isOpen]);
+
   const settleReading = useCallback(() => {
     animations.current.forEach((animation) => animation.cancel());
     animations.current = [];
   }, []);
+
+  function settleForReading() {
+    navigation.current.animate = false;
+    settleReading();
+  }
+
+  function navigateProject(direction: -1 | 1, keyboardChoice: boolean) {
+    if (keyboardChoice) { setKeyboardReading(true); settleForReading(); }
+    navigation.current = { direction, animate: !keyboardChoice };
+    onNavigate(direction);
+  }
 
   useEffect(() => {
     const changed = previousSlug.current !== projectSlug;
@@ -81,28 +114,33 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
     // Only the inner reading scrolls. The dialog, its controls, the page lock,
     // and the original opener keep their identity throughout the archive.
     if (changed) readingRef.current?.scrollTo({ top: 0, behavior: "instant" });
-    if (!projectSlug) navigation.current.animate = false;
-    if (!projectSlug || !changed || prefersReducedMotion || !navigation.current.animate) return;
+    const requested = navigation.current.animate;
+    navigation.current.animate = false;
+    if (!projectSlug || !changed || readingStill || !requested) return;
+    const reading = readingRef.current;
+    if (reading === document.activeElement || reading?.querySelector(":focus-visible")) return;
     const direction = navigation.current.direction;
     const paper = contentRef.current;
     const media = mediaRef.current;
-    if (paper) animations.current.push(paper.animate([
-      { transform: `translate3d(${direction * 8}px, 3px, 0)` },
-      { transform: "translate3d(0, 0, 0)" },
-    ], { duration: 420, easing: "cubic-bezier(.22, 1, .36, 1)" }));
+    paper?.querySelectorAll<HTMLElement>("[data-project-file-reading]").forEach((block, index) => {
+      animations.current.push(block.animate([
+        { transform: `translate3d(${direction * 6}px, 2px, 0)`, opacity: 1 },
+        { transform: "translate3d(0, 0, 0)", opacity: 1 },
+      ], { duration: 400, delay: Math.min(index * 45, 180), fill: "backwards", easing: "cubic-bezier(.22, 1, .36, 1)" }));
+    });
     if (media) animations.current.push(media.animate([
       { transform: `translate3d(${-direction * 6}px, 0, 0) scale(1.025)` },
       { transform: "translate3d(0, 0, 0) scale(1)" },
     ], { duration: 620, easing: "cubic-bezier(.22, 1, .36, 1)" }));
     return settleReading;
-  }, [projectSlug, prefersReducedMotion, settleReading]);
+  }, [projectSlug, readingStill, settleReading]);
 
   useEffect(() => {
     const reading = readingRef.current;
     const content = contentRef.current;
     const progress = progressRef.current;
     if (!projectSlug || !reading || !content || !progress) return;
-    if (prefersReducedMotion) {
+    if (readingStill) {
       progress.style.transform = "scaleX(1)";
       return;
     }
@@ -126,7 +164,7 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
       observer.disconnect();
       reading.removeEventListener("scroll", schedule);
     };
-  }, [projectSlug, prefersReducedMotion]);
+  }, [projectSlug, readingStill]);
 
   const video = project?.heroVideo ?? project?.cardVideo;
   const poster = project?.heroPoster ?? project?.cardImage;
@@ -135,26 +173,21 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
     <dialog
       ref={dialogRef}
       data-project-file=""
-      data-motion={prefersReducedMotion ? "reduced" : "full"}
+      data-motion={readingStill ? "reduced" : "full"}
       aria-labelledby={titleId}
       aria-modal="true"
       onCancel={(event) => {
         event.preventDefault();
         onClose();
       }}
-      onKeyDown={(event) => {
-        // Any keyboard interaction settles a pointer-triggered transition.
-        navigation.current.animate = false;
-        settleReading();
-        if (event.key !== "Tab") return;
-        if (event.shiftKey && document.activeElement === closeRef.current) {
-          event.preventDefault();
-          backRef.current?.focus();
-        } else if (!event.shiftKey && document.activeElement === backRef.current) {
-          event.preventDefault();
-          closeRef.current?.focus({ preventScroll: true });
+      onFocusCapture={(event) => {
+        if (event.target instanceof HTMLElement && event.target.matches(":focus-visible")) {
+          setKeyboardReading(true);
+          settleForReading();
         }
       }}
+      onKeyDownCapture={() => { setKeyboardReading(true); settleForReading(); }}
+      onPointerDownCapture={() => setKeyboardReading(false)}
       className={styles.dialog}
       style={{ "--file-accent": project?.accent ?? "#5C6B4A" } as CSSProperties}
     >
@@ -162,7 +195,7 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
         <>
           {/* The film stays bright; the reading surface supplies contrast. */}
           <div ref={mediaRef} className={styles.media} aria-hidden="true">
-            {video && !prefersReducedMotion ? (
+            {video && !readingStill ? (
               <video
                 key={project.slug}
                 data-home-media-priority="10"
@@ -181,7 +214,7 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
             )}
           </div>
 
-          <div className={styles.toolbar}>
+          <div ref={toolbarRef} className={styles.toolbar}>
             <span className={styles.toolbarLabel}>The evidence archive</span>
             <button
               ref={closeRef}
@@ -193,19 +226,13 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
               <span>Close</span><X size={18} aria-hidden="true" />
             </button>
             <nav className={styles.navigator} aria-label="Browse project files">
-              <button type="button" aria-label="Previous project file" onClick={(event) => {
-                navigation.current = { direction: -1, animate: event.detail > 0 };
-                onNavigate(-1);
-              }}>
+              <button type="button" aria-label="Previous project file" onClick={(event) => navigateProject(-1, event.detail === 0)}>
                 <ArrowLeft size={17} aria-hidden="true" /><span>Previous</span>
               </button>
               <span className={styles.counter} aria-hidden="true">
                 {String(projectIndex + 1).padStart(2, "0")} / {String(projectCount).padStart(2, "0")}
               </span>
-              <button type="button" aria-label="Next project file" onClick={(event) => {
-                navigation.current = { direction: 1, animate: event.detail > 0 };
-                onNavigate(1);
-              }}>
+              <button type="button" aria-label="Next project file" onClick={(event) => navigateProject(1, event.detail === 0)}>
                 <span>Next</span><ArrowRight size={17} aria-hidden="true" />
               </button>
             </nav>
@@ -216,41 +243,42 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
           </p>
 
           <div ref={readingRef} className={styles.reading} data-lenis-prevent="" role="region" aria-label="Project reading" tabIndex={0}
-            onFocusCapture={settleReading} onPointerDown={settleReading}>
+            onFocusCapture={settleForReading} onPointerDown={settleForReading}>
             <article
               ref={contentRef}
-              key={project.slug}
               className={styles.paper}
             >
-              <p className={styles.eyebrow}>
-                Project file · {project.industry}
-              </p>
-              <h2 id={titleId} className={styles.title}>
-                {project.title}
-              </h2>
-              {project.hook && (
-                <p className={styles.hook}>{project.hook}</p>
-              )}
+              <div data-project-file-reading>
+                <p className={styles.eyebrow}>
+                  Project file · {project.industry}
+                </p>
+                <h2 id={titleId} className={styles.title}>
+                  {project.title}
+                </h2>
+                {project.hook && (
+                  <p className={styles.hook}>{project.hook}</p>
+                )}
+              </div>
 
               <div className={styles.trail}>
-                <div>
+                <div data-project-file-reading>
                   <h3><span aria-hidden="true">01</span>The challenge</h3>
                   <p>{project.challenge}</p>
                 </div>
                 {project.insight && (
-                  <div>
+                  <div data-project-file-reading>
                     <h3><span aria-hidden="true">02</span>The insight</h3>
                     <p>{project.insight}</p>
                   </div>
                 )}
-                <div>
+                <div data-project-file-reading>
                   <h3><span aria-hidden="true">{project.insight ? "03" : "02"}</span>The verified outcome</h3>
                   <p>{project.outcome}</p>
                 </div>
               </div>
 
               {project.stats && project.stats.length > 0 && (
-                <ul className={styles.stats} aria-label="Recorded project results">
+                <ul className={styles.stats} aria-label="Recorded project results" data-project-file-reading>
                   {project.stats.map((s) => (
                     <li
                       key={s.label}
@@ -267,12 +295,12 @@ export function ProjectFile({ project, projectIndex, projectCount, onNavigate, o
               <div className={styles.actions}>
                 <Link
                   href={`/work/${project.slug}`}
+                  prefetch={false}
                   className={styles.caseLink}
                 >
                   Open the full case study <span aria-hidden="true">→</span>
                 </Link>
                 <button
-                  ref={backRef}
                   type="button"
                   onClick={onClose}
                   className={styles.back}
