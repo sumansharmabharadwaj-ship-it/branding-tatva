@@ -9,6 +9,7 @@ import { projects } from "@/data/projects";
 import { packages } from "@/data/services";
 import {
   SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
   SITUATION_TO_PROOF_SLUG,
@@ -55,6 +56,20 @@ const PROOF_ROUTES = {
 }>;
 
 const TABS = ["Context", "Decision", "Record"];
+const MONTHLY_RECORD = [
+  { month: "December 2025", posts: 23, followers: 111 },
+  { month: "January 2026", posts: 12, followers: 126 },
+] as const;
+const MEASURES = [
+  { key: "posts", label: "Posts" },
+  { key: "followers", label: "New followers" },
+] as const;
+// Each measure shares one scale across months. Posts and followers have
+// different units, so neither is presented as a percentage of the other.
+const MEASURE_MAXIMUM = {
+  posts: Math.max(...MONTHLY_RECORD.map(month => month.posts)),
+  followers: Math.max(...MONTHLY_RECORD.map(month => month.followers)),
+};
 
 export function VerifiedOutcome() {
   const [activeBeat, setActiveBeat] = useState(0);
@@ -78,10 +93,15 @@ export function VerifiedOutcome() {
     }
     function onSituation(event: Event) {
       const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
-      setSituation(isServicesSituation(detail?.situation) ? detail.situation : null);
+      if (isServicesSituation(detail?.situation)) setSituation(detail.situation);
     }
+    function onClear() { setSituation(null); }
     window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
-    return () => window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onClear);
+    return () => {
+      window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onClear);
+    };
   }, []);
 
   // A single finite entrance. Reading state never follows scroll progress,
@@ -138,13 +158,21 @@ export function VerifiedOutcome() {
             <strong>{proofRoute.value}</strong><span>{proofRoute.label}</span>
           </div>
           {route === "ongoing" ? (
-            <div className={styles.months} aria-label="Instagram posting and follower record">
-              {[{ month: "December 2025", posts: 23, followers: 111 }, { month: "January 2026", posts: 12, followers: 126 }].map((month, index) => (
-                <div key={month.month} className={styles.month} style={{ "--evidence-index": index } as CSSProperties}>
-                  <p>{month.month}</p>
-                  <div className={styles.barTrack} aria-hidden="true"><span style={{ width: `${month.posts / 23 * 100}%` }} /></div>
-                  <p><strong>{month.posts}</strong> posts</p>
-                  <p><strong>{month.followers}</strong> new followers</p>
+            <div className={styles.months} role="group" aria-label="Instagram posting and follower record">
+              {MONTHLY_RECORD.map((month, index) => (
+                <div key={month.month} className={styles.month} role="group" aria-labelledby={`evidence-month-${index}`}>
+                  <p id={`evidence-month-${index}`}>{month.month}</p>
+                  {MEASURES.map((measure, measureIndex) => (
+                    <div key={measure.key} className={styles.measure} data-evidence-measure={measure.key}>
+                      <p><span>{measure.label}</span><strong>{month[measure.key]}</strong></p>
+                      <div className={styles.barTrack} aria-hidden="true">
+                        <span style={{
+                          width: `${month[measure.key] / MEASURE_MAXIMUM[measure.key] * 100}%`,
+                          "--evidence-index": index * MEASURES.length + measureIndex,
+                        } as CSSProperties} />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
@@ -160,7 +188,7 @@ export function VerifiedOutcome() {
         </div>
         <div className={styles.story}>
           <p className={styles.eyebrow}>Read the case</p>
-          <div className={styles.tabs} role="tablist" aria-label={`${proof.title} case study`}>
+          <div className={styles.tabs} role="tablist" aria-orientation="horizontal" aria-label={`${proof.title} case study`}>
             {TABS.map((label, index) => (
               <button key={label} ref={(element) => { tabsRef.current[index] = element; }}
                 type="button" role="tab" id={`evidence-tab-${index}`} aria-controls={`evidence-panel-${index}`}
