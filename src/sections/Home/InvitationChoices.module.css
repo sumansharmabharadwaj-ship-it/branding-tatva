@@ -1,0 +1,35 @@
+.stepChoice {
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  width: 100%; min-height: 44px; margin-block: -.4rem; padding: .4rem 0;
+  border: 0; background: transparent; color: inherit; font: inherit;
+  text-align: left; cursor: pointer; scroll-margin-block: 6rem 5rem;
+}
+.stepChoice > span { min-width: 0; }
+.stepChoice svg {
+  flex-shrink: 0; color: #855035; opacity: .65;
+  transition: transform 300ms cubic-bezier(.22,1,.36,1), opacity 220ms ease;
+}
+.stepChoice:hover svg { opacity: 1; transform: translateX(3px); }
+.stepChoice[aria-expanded="true"] svg { opacity: 1; transform: rotate(90deg); }
+.stepChoice:hover { color: #70482f; }
+:global(.home-v4) .stepChoice:focus-visible {
+  outline: 2px solid #855035; outline-color: #855035 !important;
+  outline-offset: 4px; border-radius: 4px;
+}
+.reading, .measure { display: grid; min-width: 0; }
+.reading > *, .measure > * { grid-area: 1 / 1; min-width: 0; }
+.reading p { margin: 0; }
+.reading [hidden] { display: none; }
+.exampleLabel { display: block; margin-bottom: .25rem; font-size: .75rem; letter-spacing: .05em; text-transform: uppercase; color: #855035; }
+.measure { visibility: hidden; pointer-events: none; user-select: none; }
+.announcement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.choices[data-still="true"] :is(.stepChoice svg, h3, li > span) { transition: none; }
+.choices[data-still="true"] .stepChoice:not([aria-expanded="true"]) svg { transform: none; }
+.choices[data-still="true"] [data-invitation-highlight] { opacity: 0 !important; }
+.choices[data-still="true"] li[data-current="true"] [data-invitation-highlight] { opacity: 1 !important; }
+.reading[data-still="true"] .activeReading { transform: none !important; opacity: 1 !important; }
+@media (prefers-reduced-motion: reduce) {
+  .stepChoice svg { transition: none; }
+  .stepChoice:not([aria-expanded="true"]) svg { transform: none; }
+  .activeReading { transform: none !important; opacity: 1 !important; }
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useMotionValue, useScroll, useTransform } from "framer-motion";
+import { motion, useAnimationControls, useMotionValue, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Clock3 } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
@@ -22,6 +22,7 @@ import {
 import styles from "./HomeConversation.module.css";
 import { invitationStep } from "./invitationScroll";
 import { LivingGradient } from "@/components/LivingGradient";
+import choiceStyles from "./InvitationChoices.module.css";
 
 type Situation = ServicesSituationId | "default";
 
@@ -57,6 +58,41 @@ const INVITATIONS = {
 } as const;
 
 const STEP_LABELS = ["Bring the context", "Test the question", "Choose what comes next"] as const;
+const PREPARATION_QUESTIONS = [
+  "What has changed in the business that the brand still fails to show?",
+  "Where do customers need an explanation before they understand the offer?",
+  "Which decision would make the next piece of work easier to judge?",
+] as const;
+
+function ConversationReading({ index, step, expanded, still }: { index: number; step: string; expanded: boolean; still: boolean }) {
+  const reading = useAnimationControls();
+  const previous = useRef(expanded);
+  useEffect(() => {
+    const changed = expanded !== previous.current;
+    previous.current = expanded;
+    reading.stop();
+    reading.set({ y: 0, opacity: 1 });
+    if (still || !changed) return;
+    reading.set({ y: expanded ? 3 : -3, opacity: .88 });
+    void reading.start({ y: 0, opacity: 1, transition: { duration: .32, ease: [.22, 1, .36, 1] } });
+    return () => reading.stop();
+  }, [expanded, still, reading]);
+
+  return (
+    <div className={choiceStyles.reading} data-still={still}>
+      <div className={choiceStyles.measure} aria-hidden="true" inert>
+        <p>{step}</p>
+        <p><span className={choiceStyles.exampleLabel}>A question to bring</span>{PREPARATION_QUESTIONS[index]}</p>
+      </div>
+      <motion.div className={choiceStyles.activeReading} initial={false} animate={reading}>
+        <p hidden={expanded}>{step}</p>
+        <p hidden={!expanded} id={`invitation-question-${index}`} aria-labelledby={`invitation-choice-${index}`} role="region">
+          <span className={choiceStyles.exampleLabel}>A question to bring</span>{PREPARATION_QUESTIONS[index]}
+        </p>
+      </motion.div>
+    </div>
+  );
+}
 
 function legacySituation(value: string | null | undefined): ServicesSituationId | null {
   if (value !== "idea" && value !== "inconsistent" && value !== "outgrown") return null;
@@ -83,8 +119,12 @@ export function FinalInvitation() {
   const preserveStep = useRef(false);
   const [situation, setSituation] = useState<Situation>("default");
   const [activeStep, setActiveStep] = useState(0);
+  const [expandedStep, setExpandedStep] = useState<number | null>(null);
+  const [keyboardChoice, setKeyboardChoice] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
   const [frameFits, setFrameFits] = useState(false);
   const reducedMotion = useHydratedReducedMotion();
+  const still = reducedMotion || keyboardChoice;
   const cinematicMotion = useMediaQuery(
     "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
   );
@@ -153,7 +193,10 @@ export function FinalInvitation() {
     function schedule() {
       if (!frame) frame = window.requestAnimationFrame(render);
     }
-    function release() { preserveStep.current = false; }
+    function release() {
+      preserveStep.current = false;
+      setAnnouncement("");
+    }
     function onKey(event: KeyboardEvent) {
       if (event.defaultPrevented || !["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) return;
       if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"], [role="tablist"]')) return;
@@ -224,6 +267,24 @@ export function FinalInvitation() {
   const invitation = INVITATIONS[situation];
   const contactHref = servicesContactHrefForSituation(situation === "default" ? null : situation, "call");
 
+  function chooseStep(index: number, keyboard: boolean) {
+    const opening = expandedStep !== index;
+    preserveStep.current = true;
+    setKeyboardChoice(keyboard);
+    setActiveStep(index);
+    setExpandedStep(opening ? index : null);
+    conversationProgress.set((index + .5) / STEP_LABELS.length);
+    setAnnouncement(`${STEP_LABELS[index]}. ${opening ? PREPARATION_QUESTIONS[index] : consultation.fullSteps[index]}`);
+  }
+
+  function revealChoice(button: HTMLButtonElement) {
+    if (!button.matches(":focus-visible")) return;
+    const bounds = button.getBoundingClientRect();
+    if (bounds.top < 80 || bounds.bottom > window.innerHeight - 80) {
+      button.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" });
+    }
+  }
+
   return (
     <div
       ref={rootRef}
@@ -272,7 +333,7 @@ export function FinalInvitation() {
           </Link>
         </div>
 
-        <aside className={styles.conversation} aria-label="What happens in the first conversation">
+        <aside className={`${styles.conversation} ${choiceStyles.choices}`} data-still={still} aria-label="What happens in the first conversation">
           <div className={styles.conversationTopline}>
             <span>What we’ll talk through</span>
             <span><Clock3 size={15} aria-hidden="true" /> {consultation.minutes} minutes</span>
@@ -281,26 +342,41 @@ export function FinalInvitation() {
             <div className={styles.conversationTrack} aria-hidden="true">
               <motion.i style={{ scaleY: reducedMotion ? 1 : conversationProgress }} />
             </div>
-            <ol ref={agendaRef}>
+            <ol ref={agendaRef} aria-label="Choose a conversation step">
               {consultation.fullSteps.map((step, index) => (
                 <li key={step} data-current={activeStep === index}>
                   <motion.span
                     className={styles.conversationRule}
+                    data-invitation-highlight
                     initial={false}
                     animate={{ opacity: activeStep === index ? 1 : 0 }}
-                    transition={{ duration: reducedMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: still ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
                     aria-hidden="true"
                   />
                   <span className={styles.stepNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                   <div>
-                    <h3>{STEP_LABELS[index]}</h3>
-                    <p>{step}</p>
+                    <h3>
+                      <button
+                        type="button"
+                        id={`invitation-choice-${index}`}
+                        className={choiceStyles.stepChoice}
+                        aria-expanded={expandedStep === index}
+                        aria-controls={`invitation-question-${index}`}
+                        onClick={(event) => chooseStep(index, event.detail === 0)}
+                        onFocus={(event) => revealChoice(event.currentTarget)}
+                      >
+                        <span>{STEP_LABELS[index]}</span>
+                        <ArrowRight size={17} aria-hidden="true" />
+                      </button>
+                    </h3>
+                    <ConversationReading index={index} step={step} expanded={expandedStep === index} still={still} />
                   </div>
                 </li>
               ))}
             </ol>
           </div>
           <p className={styles.conversationFooter}>Direct with Suman · Your timezone</p>
+          <span className={choiceStyles.announcement} role="status" aria-live="polite" aria-atomic="true">{announcement}</span>
         </aside>
         <motion.p
           className={styles.signoff}
