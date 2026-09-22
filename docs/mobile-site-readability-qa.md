@@ -41,4 +41,16 @@ The browser recovered for DOM, click and screenshot checks. A 320px screenshot o
 - Stack service landing-page actions and increase their text and breadcrumb tap areas.
 - Temporarily hide the floating consent notice while a phone/tablet field has focus; retain the footer preference link and restore the notice on blur.
 
-Follow-up code checks: TypeScript, ESLint on the changed components, production build (106 routes), typography gate, and whitespace check passed. The exact deployed follow-up still needs its post-publication browser checks; physical iPhone/Safari testing remains outstanding.
+Follow-up code checks: TypeScript, ESLint on the changed components, production build (106 routes), typography gate, and whitespace check passed.
+
+### Release 503 browser results
+
+Source commit `3f52c2b80893e9b2e191825c7a47a9780a0f66aa`; Vercel trigger `eb09b9c3156c1cdfe8bba91b284dbf06e3895200`; deployment `dpl_FtEwLqanUbwUqp4XDPF1k9y3tZyu` is READY and the controlled-preview check succeeded. Browser checks used this deployment's unique origin, not the permanent alias.
+
+- At 320px, the positioning article now renders a readable horizontal decision strip instead of letter-by-letter columns.
+- Home and End select the first and last tabs. Arrow navigation also works after selecting the site's reduced-motion setting.
+- Clicking Next and then pressing Enter again changes decisions while the same navigation button remains focused. The snapshot contains one labelled tab panel.
+- At 390px, the positioning service page's full-width booking action and secondary link fit, with a visible keyboard focus outline.
+- Saved a screenshot of the narrow article panel with its readable, stacked decision controls.
+
+Vercel protection blocked the cross-page iframe booking-path check. A direct Contact frame retry later timed out, so post-change field-focus/consent verification is still outstanding. The API release URL returned an authentication redirect through the connector and a browser client block; the exact deployment identity above comes from Vercel metadata. Physical iPhone/Safari, short-landscape and full site regression acceptance remain outstanding. Production was not changed by this pass.
