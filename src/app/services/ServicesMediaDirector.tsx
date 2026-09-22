@@ -39,7 +39,8 @@ export function ServicesMediaDirector() {
     let fieldInteraction = false;
     let modalInteraction = false;
     const activeModalInteractions = new Set<string>();
-    let syncing = false;
+    let disposed = false;
+    let focusTimer: number | undefined;
 
     function mediaBudget() {
       return compactViewport.matches || constrained ? 1 : 2;
@@ -51,8 +52,7 @@ export function ServicesMediaDirector() {
     }
 
     function syncVideos() {
-      if (syncing) return;
-      syncing = true;
+      if (disposed) return;
 
       const allowed = new Set(
         [...ratios.entries()]
@@ -65,21 +65,24 @@ export function ServicesMediaDirector() {
           .map(([video]) => video),
       );
 
+      // Publish the entire eligibility set before any play request. The shared
+      // warden can then choose one film without reviving a paused Services scene.
       videos.forEach((video) => {
         const shouldPlay =
           !prefersReducedMotion && !document.hidden && !formInteraction && allowed.has(video);
-        if (shouldPlay && video.paused) void video.play().catch(() => undefined);
-        if (!shouldPlay && !video.paused) video.pause();
+        video.dataset.servicesMediaAllowed = shouldPlay ? "true" : "false";
       });
-
-      queueMicrotask(() => {
-        syncing = false;
+      videos.forEach((video) => {
+        if (video.dataset.servicesMediaAllowed === "true") {
+          if (video.paused) void video.play().catch(() => undefined);
+        } else if (!video.paused) video.pause();
       });
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          if (!videos.has(entry.target as HTMLVideoElement)) return;
           ratios.set(
             entry.target as HTMLVideoElement,
             entry.isIntersecting ? entry.intersectionRatio : 0,
@@ -97,17 +100,23 @@ export function ServicesMediaDirector() {
       if (videos.has(video)) return;
       videos.add(video);
       video.dataset.servicesMediaManaged = "true";
+      video.dataset.servicesMediaAllowed = "false";
 
-      const resync = () => queueMicrotask(syncVideos);
-      video.addEventListener("play", resync);
-      video.addEventListener("loadedmetadata", resync);
+      // Media events enforce this film's pause state only. Re-ranking every
+      // film from `play` restarts neighbours that VideoWarden has just paused.
+      const enforcePause = () => {
+        if (video.dataset.servicesMediaAllowed !== "true" && !video.paused) video.pause();
+      };
+      video.addEventListener("play", enforcePause);
+      video.addEventListener("loadedmetadata", enforcePause);
       observer.observe(video);
 
       cleanups.set(video, () => {
-        video.removeEventListener("play", resync);
-        video.removeEventListener("loadedmetadata", resync);
+        video.removeEventListener("play", enforcePause);
+        video.removeEventListener("loadedmetadata", enforcePause);
         observer.unobserve(video);
         delete video.dataset.servicesMediaManaged;
+        delete video.dataset.servicesMediaAllowed;
         ratios.delete(video);
       });
     }
@@ -115,14 +124,28 @@ export function ServicesMediaDirector() {
     servicesRoot.querySelectorAll<HTMLVideoElement>("video").forEach(registerVideo);
 
     const mutationObserver = new MutationObserver((records) => {
+      let mediaChanged = false;
+      videos.forEach((video) => {
+        if (servicesRoot.contains(video)) return;
+        cleanups.get(video)?.();
+        cleanups.delete(video);
+        videos.delete(video);
+        video.pause();
+        mediaChanged = true;
+      });
+      function registerAddedVideo(video: HTMLVideoElement) {
+        if (videos.has(video) || !servicesRoot.contains(video)) return;
+        registerVideo(video);
+        mediaChanged = true;
+      }
       records.forEach((record) => {
         record.addedNodes.forEach((node) => {
           if (!(node instanceof Element)) return;
-          if (node instanceof HTMLVideoElement) registerVideo(node);
-          node.querySelectorAll<HTMLVideoElement>("video").forEach(registerVideo);
+          if (node instanceof HTMLVideoElement) registerAddedVideo(node);
+          node.querySelectorAll<HTMLVideoElement>("video").forEach(registerAddedVideo);
         });
       });
-      syncVideos();
+      if (mediaChanged) syncVideos();
     });
     mutationObserver.observe(servicesRoot, { childList: true, subtree: true });
 
@@ -135,7 +158,10 @@ export function ServicesMediaDirector() {
     }
 
     function onFocusOut() {
-      window.setTimeout(() => {
+      window.clearTimeout(focusTimer);
+      focusTimer = window.setTimeout(() => {
+        focusTimer = undefined;
+        if (disposed) return;
         const active = document.activeElement;
         fieldInteraction = Boolean(
           active instanceof Element &&
@@ -157,6 +183,8 @@ export function ServicesMediaDirector() {
       syncVideos();
     }
 
+    const active = document.activeElement;
+    fieldInteraction = Boolean(active instanceof Element && servicesRoot.contains(active) && active.matches(FORM_CONTROL_SELECTOR));
     publishFormInteraction();
     document.addEventListener("visibilitychange", syncVideos);
     compactViewport.addEventListener("change", syncVideos);
@@ -166,6 +194,8 @@ export function ServicesMediaDirector() {
     syncVideos();
 
     return () => {
+      disposed = true;
+      window.clearTimeout(focusTimer);
       mutationObserver.disconnect();
       observer.disconnect();
       document.removeEventListener("visibilitychange", syncVideos);
