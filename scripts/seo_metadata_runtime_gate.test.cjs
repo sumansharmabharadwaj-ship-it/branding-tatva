@@ -3,7 +3,7 @@ const test = require("node:test");
 const { PRIMARY_ROUTES, SERVICE_ROUTES, parseStructuredData, validateMetadata } = require("./seo_metadata_runtime_gate.cjs");
 
 const production = "https://brandingtatva.com";
-const preview = "https://branding-tatva-example.vercel.app";
+const preview = "https://branding-tatva-git-august-8-isolated-suman22.vercel.app";
 function page(overrides = {}) {
   const route = overrides.route || "/brand-positioning";
   return {
