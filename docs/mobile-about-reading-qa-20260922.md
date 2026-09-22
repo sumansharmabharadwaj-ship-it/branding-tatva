@@ -39,3 +39,15 @@ The founder rule now targets list labels specifically, restoring the closing hea
 TypeScript, targeted component ESLint, the 106-route build, cursor input checks and whitespace checks passed for this follow-up. The pre-existing About journey gate limitation above remains unchanged.
 
 Post-change browser and physical-device verification are still pending. The latest controlled-preview request (release 513) continues to report the build-rate limit; a READY deployment on another branch was created before that failure and does not verify this change.
+
+## Pending validation repair
+
+The About source gate now passes. Its hash check runs the actual scroll-provider effects against controlled font, layout and input fixtures instead of matching an obsolete source string. Its media checks follow the current observer-based playback budget and run the existing media coordination behavior checks. The type-floor reader also recognises an explicit rem minimum inside `clamp()`.
+
+The behavior check exposed a real recovery race: font readiness could enqueue a second timer while the first layout retry was still pending. The failing check observed two timers. Recovery now clears the earlier timer before recalculating, leaving one pending retry and allowing manual input or unmount to clear it completely. The check also covers settled header offsets, late fonts, touch and scrolling keys, bounded retries, invalid fragments, and routes that own their own recovery.
+
+The full About gate, cursor gate, TypeScript, targeted ESLint and the 106-route build pass. A newer unrelated preview reached READY at 12:01 UTC. While this repair was being prepared, a concurrent controlled retry requested release 514 at `b76d4e7d964d5c34116b0037628d7a00542c743c`, including the accumulated mobile layout changes. That request again failed with Vercel's build-rate limit and the branch returned to controlled mode at `ef98f6e6`.
+
+No duplicate preview was requested. The new recovery fix is saved for the next available deployment. Exact post-change browser acceptance, the permanent review alias, and physical iPhone/Safari touch verification remain pending.
+
+The authenticated hosting dashboard also shows Hobby with exceeded free resources: deployment storage is 553.18 GB against a displayed 10 GB allowance. This is a separate account warning from the release's build-rate rejection. No plan was purchased and no hosted deployment was deleted; the dashboard did not establish a reset time.

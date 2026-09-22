@@ -22,7 +22,6 @@ const aboutPage = read("src/app/about/page.tsx");
 const globalStyles = read("src/app/globals.css");
 const anchorContract = read("src/app/about/about-anchor-contract.css");
 const visualizer = read("src/hooks/useScrollDrivenVisualizer.ts");
-const smoothScroll = read("src/components/SmoothScrollProvider.tsx");
 const runtimeStyles = read("src/components/AboutCinematicRuntime.module.css");
 const consent = read("src/components/ConsentManager.tsx");
 const origin = read("src/sections/About/FounderFieldNotes.tsx");
@@ -49,7 +48,8 @@ function assert(condition, message) {
 
 function fontSizeRem(source, selector) {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const declaration = source.match(new RegExp(`${escaped}\\s*\\{[^}]*font-size:\\s*([0-9.]+)rem`));
+  // A fluid size with an explicit rem minimum preserves the same floor.
+  const declaration = source.match(new RegExp(`${escaped}\\s*\\{[^}]*font-size:\\s*(?:clamp\\(\\s*)?([0-9.]+)rem`));
   assert(declaration, `Missing rem font size for: ${selector}`);
   return Number(declaration[1]);
 }
@@ -97,14 +97,7 @@ assert(
     anchorContract.includes("Each full-frame chapter already keeps its content below the fixed header"),
   "About chapter hashes can expose the previous cinematic scene instead of landing on a clean frame.",
 );
-assert(
-  // Contact owns its native hash recovery; About still uses this fallback.
-  smoothScroll.includes('if (pathname === "/contact" || !hydrated || !prefersReducedMotion || !window.location.hash) return;') &&
-    smoothScroll.includes('target.scrollIntoView({ behavior: "auto", block: "start" })') &&
-    smoothScroll.includes("document.fonts?.ready?.then(alignHashWithoutMotion)") &&
-    smoothScroll.includes('window.addEventListener("wheel", cancelHashRecovery, { passive: true })'),
-  "Reduced-motion About deep links no longer recover their fixed-header-safe position after hydration.",
-);
+execFileSync(process.execPath, [path.join(__dirname, "reduced_motion_hash_gate.cjs")], { stdio: "inherit" });
 
 assert(
   runtime.includes('data-state={index < activeChapter ? "passed" : index === activeChapter ? "active" : "waiting"}'),
@@ -189,9 +182,12 @@ assert(
     videoWarden.includes('document.removeEventListener("play", enforcePlaybackBudget, true)') &&
     videoWarden.includes("cancelAnimationFrame(frame)") &&
     videoWarden.includes("arbitrate();") &&
-    /window\.addEventListener\("scroll", schedule, \{ passive: true \}\);\s*\/\/ Autoplay[\s\S]*?enforcePlaybackBudget\(\);/.test(videoWarden),
+    /remeasureAll\(\);\s*enforcePlaybackBudget\(\);/.test(videoWarden),
   "Adjacent About films can briefly decode together instead of handing playback over atomically.",
 );
+// The shared warden now consumes observer geometry instead of reading layout
+// on every scroll. Exercise its actual handoffs in addition to the contract.
+execFileSync(process.execPath, [path.join(__dirname, "services_media_coordination_gate.cjs")], { stdio: "inherit" });
 assert(
   (splitHero.match(/data-video-warden-group=\{ABOUT_HERO_VIDEO_GROUP\}/g) || []).length === 2 &&
     (splitHero.match(/useVideoFadeIn\([^;]+, true\);/g) || []).length === 2 &&
@@ -206,7 +202,8 @@ assert(
   "The About portrait film can require a complete or oversized download before playback begins.",
 );
 assert(
-  videoWarden.includes(".map(measureVideo)") &&
+  videoWarden.includes("new IntersectionObserver(") &&
+    videoWarden.includes("geometry.get(video) ?? offScreen") &&
     videoWarden.includes("const all = [...watched];") &&
     videoWarden.includes("if (document.hidden)") &&
     videoWarden.includes("video.dataset[FLAG] = \"1\";") &&

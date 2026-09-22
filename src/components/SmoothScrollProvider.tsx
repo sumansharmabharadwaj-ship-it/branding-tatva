@@ -79,6 +79,12 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     }
 
     function alignHashWithoutMotion() {
+      // Font readiness can arrive while a layout retry is already queued.
+      // Keep one timer so cancellation and unmount clear the entire recovery.
+      if (timer !== null) {
+        window.clearTimeout(timer);
+        timer = null;
+      }
       if (cancelled || attempts >= 6) return;
 
       let target: HTMLElement | null = null;
