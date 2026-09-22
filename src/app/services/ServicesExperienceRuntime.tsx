@@ -381,6 +381,7 @@ export function ServicesExperienceRuntime() {
 
     function updateSceneProgress() {
       frame = 0;
+      if (document.hidden) return;
       // Measure everything first, then write. Every style write below
       // invalidates layout, so a getBoundingClientRect() after one forces a
       // synchronous style and layout pass. Interleaving reads and writes cost
@@ -426,7 +427,8 @@ export function ServicesExperienceRuntime() {
 
       scenes.forEach((scene, index) => {
         const bounds = sceneBounds[index];
-        const ambientState = !document.hidden && !isMotionReduced() &&
+        const ambientState = !isMotionReduced() &&
+          document.documentElement.dataset.servicesFormInteraction !== "true" &&
           bounds.bottom >= -viewportHeight * 0.15 && bounds.top <= viewportHeight * 1.15
           ? "running" : "paused";
         if (scene.dataset.servicesAmbient !== ambientState) scene.dataset.servicesAmbient = ambientState;
@@ -614,7 +616,7 @@ export function ServicesExperienceRuntime() {
     }
 
     function scheduleProgress() {
-      if (frame) return;
+      if (frame || document.hidden) return;
       frame = window.requestAnimationFrame(updateSceneProgress);
     }
 
@@ -624,6 +626,7 @@ export function ServicesExperienceRuntime() {
     }
 
     function onScroll() {
+      if (document.hidden) return;
       scheduleProgress();
       // Smooth anchor travel can finish between the browser's last scroll
       // event and its final painted position. Re-read that settled geometry so
@@ -631,23 +634,38 @@ export function ServicesExperienceRuntime() {
       scheduleSettledProgress();
     }
 
-    function onMotionPreferenceChange() {
+    function onMotionStateChange() {
+      if (isMotionReduced() || document.documentElement.dataset.servicesFormInteraction === "true") {
+        scenes.forEach(scene => { scene.dataset.servicesAmbient = "paused"; });
+      }
       scheduleProgress();
     }
 
     function onVisibilityChange() {
       // rAF can stop in a background tab. Pause immediately there, then use
       // fresh geometry on return so reverse scrolling resumes the same scene.
-      if (document.hidden) scenes.forEach(scene => { scene.dataset.servicesAmbient = "paused"; });
-      else scheduleProgress();
+      if (document.hidden) {
+        window.cancelAnimationFrame(frame);
+        window.clearTimeout(scrollSettleTimer);
+        frame = 0;
+        scrollSettleTimer = 0;
+        scenes.forEach(scene => { scene.dataset.servicesAmbient = "paused"; });
+      } else {
+        // A restored tab can have a new viewport/scroll position. Start its
+        // velocity clock here so that change never reads as a fast gesture.
+        lastScrollY = window.scrollY;
+        lastFrameTime = performance.now();
+        smoothedVelocity = 0;
+        scheduleProgress();
+      }
     }
 
-    const motionSettingObserver = new MutationObserver(onMotionPreferenceChange);
+    const motionSettingObserver = new MutationObserver(onMotionStateChange);
     motionSettingObserver.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-motion"],
+      attributeFilter: ["data-motion", "data-services-form-interaction"],
     });
-    reducedMotionQuery.addEventListener("change", onMotionPreferenceChange);
+    reducedMotionQuery.addEventListener("change", onMotionStateChange);
 
     const initialAnchorIndex = chapterIndexForHash();
     if (initialAnchorIndex >= 0) {
@@ -681,7 +699,7 @@ export function ServicesExperienceRuntime() {
       motionSettingObserver.disconnect();
       heroPartsObserver.disconnect();
       layoutObserver.disconnect();
-      reducedMotionQuery.removeEventListener("change", onMotionPreferenceChange);
+      reducedMotionQuery.removeEventListener("change", onMotionStateChange);
       delete document.documentElement.dataset.servicesExperience;
       delete document.documentElement.dataset.servicesScrollDirection;
       delete document.documentElement.dataset.servicesActiveChapter;

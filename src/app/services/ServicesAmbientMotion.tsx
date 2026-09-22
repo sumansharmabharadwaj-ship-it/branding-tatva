@@ -14,7 +14,8 @@ export function ServicesAmbientMotion() {
     const fields = new Map<HTMLElement, boolean>();
 
     function syncField(field: HTMLElement, nearby: boolean) {
-      const state = nearby && !document.hidden && !reducedMotion ? "running" : "paused";
+      const interacting = document.documentElement.dataset.servicesFormInteraction === "true";
+      const state = nearby && !document.hidden && !reducedMotion && !interacting ? "running" : "paused";
       if (field.dataset.servicesGradientMotion !== state) {
         field.dataset.servicesGradientMotion = state;
       }
@@ -53,10 +54,16 @@ export function ServicesAmbientMotion() {
     registerFields();
     const contentObserver = new MutationObserver(registerFields);
     contentObserver.observe(root, { childList: true, subtree: true });
+    const interactionObserver = new MutationObserver(syncVisibility);
+    interactionObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-services-form-interaction"],
+    });
     document.addEventListener("visibilitychange", syncVisibility);
 
     return () => {
       contentObserver.disconnect();
+      interactionObserver.disconnect();
       visibilityObserver.disconnect();
       document.removeEventListener("visibilitychange", syncVisibility);
       fields.forEach((_, field) => { delete field.dataset.servicesGradientMotion; });

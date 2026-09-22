@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 const FORM_CONTROL_SELECTOR =
@@ -19,6 +19,9 @@ function distanceFromViewportCentre(video: HTMLVideoElement) {
 
 export function ServicesMediaDirector() {
   const prefersReducedMotion = useHydratedReducedMotion();
+  // Preference changes rebuild media observers while an open brief/calendar
+  // keeps its own lifetime. Preserve those sources until their close events.
+  const activeModalInteractionsRef = useRef(new Set<string>());
 
   useEffect(() => {
     const root = document.getElementById("main-content");
@@ -37,8 +40,8 @@ export function ServicesMediaDirector() {
       (typeof hints.deviceMemory === "number" && hints.deviceMemory <= 4);
     let formInteraction = false;
     let fieldInteraction = false;
-    let modalInteraction = false;
-    const activeModalInteractions = new Set<string>();
+    const activeModalInteractions = activeModalInteractionsRef.current;
+    let modalInteraction = activeModalInteractions.size > 0;
     let disposed = false;
     let focusTimer: number | undefined;
 
@@ -48,7 +51,10 @@ export function ServicesMediaDirector() {
 
     function publishFormInteraction() {
       formInteraction = fieldInteraction || modalInteraction;
-      document.documentElement.dataset.servicesFormInteraction = formInteraction ? "true" : "false";
+      const state = formInteraction ? "true" : "false";
+      if (document.documentElement.dataset.servicesFormInteraction !== state) {
+        document.documentElement.dataset.servicesFormInteraction = state;
+      }
     }
 
     function syncVideos() {
@@ -208,7 +214,6 @@ export function ServicesMediaDirector() {
       cleanups.clear();
       ratios.clear();
       videos.clear();
-      activeModalInteractions.clear();
       delete document.documentElement.dataset.servicesFormInteraction;
     };
   }, [prefersReducedMotion]);

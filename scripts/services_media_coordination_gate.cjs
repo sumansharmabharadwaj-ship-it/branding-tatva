@@ -12,6 +12,7 @@ function fixture({ reduced = false, compact = false, servicesFirst = false } = {
   const observers = [];
   const mutations = [];
   const cleanups = [];
+  const renders = [];
   let taskId = 0;
   const enqueue = (callback) => { tasks.set(++taskId, callback); return taskId; };
   const cancel = (id) => tasks.delete(id);
@@ -91,7 +92,7 @@ function fixture({ reduced = false, compact = false, servicesFirst = false } = {
     constructor(callback) { this.callback = callback; observers.push(this); }
     observe(target) { this.targets.add(target); }
     unobserve(target) { this.targets.delete(target); }
-    disconnect() { this.targets.clear(); }
+    disconnect() { this.targets.clear(); this.disconnected = true; }
   }
   class MutationObserver {
     constructor(callback) { this.callback = callback; mutations.push(this); }
@@ -104,18 +105,32 @@ function fixture({ reduced = false, compact = false, servicesFirst = false } = {
       compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
     }).outputText;
     const exports = {};
+    const refs = [], effects = [];
+    let refIndex = 0, effectIndex = 0;
     vm.runInNewContext(compiled, {
       exports, document, window, navigator: {}, Element, HTMLVideoElement: Video,
       IntersectionObserver, MutationObserver,
       queueMicrotask: (callback) => microtasks.push(callback),
       requestAnimationFrame: enqueue, cancelAnimationFrame: cancel,
       require: (id) => {
-        if (id === "react") return { useEffect: (effect) => cleanups.push(effect()) };
+        if (id === "react") return {
+          useRef(initial) { return refs[refIndex++] ??= { current: initial }; },
+          useEffect(effect, deps) {
+            const index = effectIndex++;
+            const previous = effects[index];
+            if (previous && deps.length === previous.deps.length && deps.every((value, i) => Object.is(value, previous.deps[i]))) return;
+            previous?.cleanup?.();
+            effects[index] = { deps, cleanup: effect() };
+          },
+        };
         if (id === "@/hooks/useHydratedReducedMotion") return { useHydratedReducedMotion: () => reduced };
         throw new Error(`Unexpected import: ${id}`);
       },
     });
-    exports[exported]();
+    const render = () => { refIndex = 0; effectIndex = 0; exports[exported](); };
+    renders.push(render);
+    cleanups.push(() => effects.forEach(effect => effect.cleanup?.()));
+    render();
   }
   const components = [
     ["src/components/VideoWarden.tsx", "VideoWarden"],
@@ -136,7 +151,9 @@ function fixture({ reduced = false, compact = false, servicesFirst = false } = {
   }
   function cleanup() { for (const dispose of cleanups.toReversed()) dispose?.(); }
   return { first, second, root, document, window, children, observers, Element,
-    intersect, mutate, flush, cleanup };
+    intersect, mutate, flush, cleanup,
+    setReduced(value) { reduced = value; renders.forEach(render => render()); flush(); },
+  };
 }
 
 for (const profile of [
@@ -194,6 +211,20 @@ for (const profile of [
   modal(false, "preferences");
   f.flush();
   assert.equal(f.first.paused, false);
+  modal(true, "brief");
+  modal(true, "calendar");
+  f.setReduced(true);
+  f.intersect([1, 0]);
+  f.setReduced(false);
+  f.intersect([1, 0]);
+  assert.equal(f.first.paused, true, "Returning to full motion must preserve the open calendar pause");
+  assert.equal(f.document.documentElement.dataset.servicesFormInteraction, "true");
+  modal(false, "brief");
+  f.flush();
+  assert.equal(f.first.paused, true, "The calendar still owns its pause after the brief closes");
+  modal(false, "calendar");
+  f.flush();
+  assert.equal(f.first.paused, false, "Playback resumes only after the final interaction closes");
   f.document.hidden = true;
   f.document.emit("visibilitychange");
   f.flush();
@@ -211,7 +242,7 @@ for (const profile of [
   f.children.add(f.second);
   f.second.isConnected = true;
   f.mutate([f.second]);
-  assert.ok(f.observers.every((observer) => observer.targets.has(f.second)), "Returning films must register again");
+  assert.ok(f.observers.filter(observer => !observer.disconnected).every((observer) => observer.targets.has(f.second)), "Returning films must register again");
   f.intersect([1, 0]);
   assert.equal(f.first.paused, false);
   f.root.emit("focusout");
