@@ -118,7 +118,7 @@ assert(diagnostic.includes('diagnosticDirectionRef.current = "forward"') && diag
 assert(!diagnostic.includes("<AnimatePresence"), "Diagnostic can retain overlapping interactive question panels during a handoff.");
 assert(diagnostic.includes('key={`question-${step}`}') && diagnostic.includes('data-diagnostic-active-panel="true"'), "Diagnostic active question panels are not uniquely keyed and inspectable.");
 assert(diagnostic.includes("opacity: 1") && diagnostic.includes("variants={DIAGNOSTIC_SCENE_VARIANTS}") && diagnostic.includes("custom={diagnosticDirectionRef.current}"), "Diagnostic questions and result no longer share one visible directional arrival.");
-assert(diagnostic.includes('section.scrollIntoView({ behavior: "auto", block: "start", inline: "nearest" })'), "Diagnostic transitions can leave the next question outside the stable section frame.");
+assert(diagnostic.includes("revealDiagnosticReading(focusTarget)") && diagnostic.includes('behavior: "instant", block: fits ? "nearest" : "start"'), "Diagnostic transitions must reveal offscreen reading without rewinding visible questions.");
 assert(diagnostic.includes("focusTarget.focus({ preventScroll: true })"), "Diagnostic transition focus can undo the stable section frame.");
 assert(diagnostic.includes('data-home-selection-direction={diagnosticDirectionRef.current}'), "Diagnostic reading planes no longer expose the visitor's chosen direction.");
 assert(diagnosticStyles.includes(".brand-orbit__result:focus-visible"), "Focused diagnostic result has no visible treatment.");

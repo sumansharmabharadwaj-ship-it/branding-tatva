@@ -1,0 +1,33 @@
+.trail { flex: 0 0 auto; width: min(22rem, 42%); }
+.trail ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem; margin: 0; padding: 0; list-style: none; }
+.trail li { min-width: 0; }
+.trail button { position: relative; display: flex; align-items: center; justify-content: center; gap: .5rem; width: 100%; min-height: 3rem; padding: .55rem .4rem; border: 1px solid rgb(32 50 40 / 24%); border-radius: .65rem; color: #203228; background: rgb(248 240 224 / 70%); font: inherit; cursor: pointer; }
+.trail button::after { content: ""; position: absolute; inset: auto .65rem 0; height: 2px; background: #8f672d; transform: scaleX(0); transform-origin: left; transition: transform 420ms cubic-bezier(.22, 1, .36, 1); }
+.trail button[data-answered="true"]::after { transform: scaleX(1); }
+.trail button[aria-current="step"] { border-color: #8f672d; background: #f8efdc; box-shadow: 0 0 0 2px rgb(143 103 45 / 12%); }
+.trail button:disabled { color: #626858; background: rgb(248 240 224 / 50%); cursor: default; }
+.trail button:focus-visible { outline: 2px solid #70482f; outline-offset: 3px; }
+.trail span { flex-shrink: 0; font-size: .75rem; line-height: 1.4; font-variant-numeric: tabular-nums; }
+.trail strong { min-width: 0; font-size: .875rem; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
+
+@media (hover: hover) and (pointer: fine) {
+  .trail button:not(:disabled):hover { background: #f8efdc; border-color: #8f672d; }
+}
+
+@media (max-width: 820px) {
+  .scene .header { flex-wrap: wrap; gap: .8rem; }
+  .trail { width: 100%; }
+}
+
+/* Keyboard reading and the shared pause control settle every local cue,
+   including hover transforms and a pointer frame queued before the pause. */
+.scene[data-diagnostic-still="true"] *,
+.scene[data-diagnostic-still="true"] *::after { transition-duration: 0s !important; }
+.scene[data-diagnostic-still="true"] :global(.brand-orbit__result-trace) button { translate: 0 0; }
+.scene[data-diagnostic-still="true"] :global(.brand-orbit__landscape) { transform: scale(1.035); }
+.scene[data-diagnostic-still="true"] :global(.brand-orbit__plate),
+.scene[data-diagnostic-still="true"] :global(.brand-orbit__petal) { animation-play-state: paused !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .trail button::after { transition: none; }
+}

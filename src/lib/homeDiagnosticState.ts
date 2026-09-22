@@ -30,6 +30,12 @@ export const initialHomeDiagnosticState: HomeDiagnosticState = {
   preview: null,
 };
 
+/** A visitor can revisit answers or resume the first unanswered question. */
+export function canReviewHomeDiagnosticStep(state: HomeDiagnosticState, step: number) {
+  return Number.isInteger(step) && step >= 0 && step < HOME_DIAGNOSTIC_QUESTION_COUNT &&
+    state.selections.slice(0, step).every((selection) => selection !== null);
+}
+
 export function resolveCompletedHomeDiagnosis(
   answers: Array<HomeDiagnosis | null>,
 ): CompletedHomeDiagnosis | null {
@@ -105,6 +111,7 @@ export function homeDiagnosticReducer(
       action.step === undefined
         ? HOME_DIAGNOSTIC_QUESTION_COUNT - 1
         : Math.min(Math.max(0, action.step), HOME_DIAGNOSTIC_QUESTION_COUNT - 1);
+    if (!canReviewHomeDiagnosticStep(state, target)) return state;
     return {
       ...state,
       step: target,
