@@ -126,6 +126,86 @@ html[data-motion="reduced"] .tatva-observatory__portrait { transition: none; tra
 .tatva-pressure-lab__connection-meter > span { background: rgb(112 83 62 / 14%); }
 .tatva-pressure-lab__connection-meter > span > span { display: block; height: 100%; }
 
+/* The connection exercise reads as a warm field diagram. Names explain
+   each business function; colour reinforces the visible missing state. */
+.home-v4 .tatva-pressure-lab {
+  color: #342f27;
+  background:
+    radial-gradient(ellipse at 12% 18%, rgb(199 119 82 / 12%), transparent 65%),
+    radial-gradient(ellipse at 88% 74%, rgb(82 117 111 / 13%), transparent 65%),
+    linear-gradient(145deg, #f2eadc, #eae1d2) !important;
+}
+.home-v4 .tatva-pressure-lab::before {
+  opacity: .45;
+  background-image:
+    linear-gradient(rgb(94 76 51 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(94 76 51 / 6%) 1px, transparent 1px);
+}
+.home-v4 .tatva-pressure-lab :is(.tatva-pressure-lab__copy h2, .tatva-pressure-lab__board .font-display, .tatva-pressure-lab__force .font-display) {
+  color: #342f27;
+  text-shadow: none;
+}
+.home-v4 .tatva-pressure-lab__intro > p:first-child { color: #805239; }
+.home-v4 .tatva-pressure-lab__intro > p:last-child { color: #514936; }
+.home-v4 .tatva-pressure-lab__force { min-width: 0; min-height: 4rem; color: #342f27; backdrop-filter: none; }
+.home-v4 .tatva-pressure-lab__force > span { width: 100%; min-width: 0; }
+.home-v4 .tatva-pressure-lab__force > span > span:first-child { flex: 0 0 auto; }
+.home-v4 .tatva-pressure-lab__force-label { flex: 1; min-width: 0; }
+.home-v4 .tatva-pressure-lab__force-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .15rem .5rem; margin-top: .35rem; }
+.home-v4 .tatva-pressure-lab__force :is(.tatva-pressure-lab__force-name, .tatva-pressure-lab__force-state) {
+  color: #665b4b;
+  font-size: .75rem;
+  line-height: 1.4;
+  letter-spacing: .02em;
+}
+.home-v4 .tatva-pressure-lab__force[aria-pressed="true"] .tatva-pressure-lab__force-state { color: #805239; }
+.home-v4 .tatva-pressure-lab__board {
+  border-color: rgb(94 76 51 / 22%);
+  background: linear-gradient(145deg, rgb(255 249 237 / 88%), rgb(242 234 220 / 92%));
+  box-shadow: 0 24px 65px rgb(76 62 41 / 9%), inset 0 1px 0 #fff9ed;
+  backdrop-filter: none;
+}
+.home-v4 .tatva-pressure-lab__board-top { border-color: rgb(94 76 51 / 20%); }
+.home-v4 .tatva-pressure-lab__board-top :is(p, span) { color: #70533e; }
+.home-v4 .tatva-pressure-lab__status { border-color: rgb(94 76 51 / 22%); background: rgb(255 249 237 / 75%); }
+.home-v4 .tatva-pressure-lab__diagram { filter: none; }
+.home-v4 .tatva-pressure-lab__node,
+.home-v4 .tatva-pressure-lab__node > span:last-child { color: #342f27; }
+.home-v4 .tatva-pressure-lab__node { min-height: 3rem; width: min(6rem, 29%); }
+.home-v4 .tatva-pressure-lab__core-copy {
+  display: grid;
+  place-content: center;
+  gap: .2rem;
+  width: min(5.5rem, 36%);
+  min-height: 4.5rem;
+  padding: .35rem;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: #342f27;
+  cursor: pointer;
+  transition: background-color 220ms ease, border-color 220ms ease;
+}
+.home-v4 .tatva-pressure-lab__core-copy > span:first-child {
+  color: #342f27;
+  font: 400 1.25rem/1.15 var(--font-display), Georgia, serif;
+  font-variant-numeric: tabular-nums;
+}
+.home-v4 .tatva-pressure-lab__core-copy > span:last-child { color: #514936; font-size: .75rem; line-height: 1.3; }
+.home-v4 .tatva-pressure-lab__core-copy[aria-disabled="false"]:hover { background: rgb(255 249 237 / 75%); border-color: #65724c80; }
+.home-v4 .tatva-pressure-lab__restore { color: #70533e; text-decoration-color: #80523966; }
+.home-v4 .tatva-pressure-lab__restore:is(:hover, :focus-visible) { color: #342f27; }
+.home-v4 .tatva-pressure-lab :is(.tatva-pressure-lab__core-copy, .tatva-pressure-lab__restore)[aria-disabled="true"] { cursor: default; }
+.home-v4 .tatva-pressure-lab__core-copy { scroll-margin-block: 80px; }
+.home-v4 .tatva-pressure-lab :is(button, a, [role="region"]):focus-visible {
+  outline: 2px solid #805239 !important;
+  outline-offset: 4px;
+}
+.home-v4 .tatva-pressure-lab[data-system-reading-still="true"] :is(button, button span, .tatva-pressure-lab__audit span) { transition: none; }
+.home-v4 .tatva-pressure-lab[data-system-reading-still="true"] .tatva-pressure-lab__audit:hover span { transform: none; }
+.home-v4 .tatva-pressure-lab[data-system-reading-still="true"] .tatva-pressure-lab__force:hover > span > span:first-child { scale: 1; }
+.home-v4-chapter--tatva + .home-v4-handoff--river { background: linear-gradient(180deg, #eae1d2, #ece7dc); }
+
 @media (max-width: 1023px) {
   .home-v4 .tatva-pressure-lab { padding-block: 3.5rem; }
   .home-v4 .tatva-pressure-lab__layout { gap: 1.5rem; }
@@ -138,7 +218,7 @@ html[data-motion="reduced"] .tatva-observatory__portrait { transition: none; tra
   .home-v4 .tatva-pressure-lab__board-top > div { align-items: center; gap: .75rem; }
   .home-v4 .tatva-pressure-lab__status { padding: .45rem .6rem; font-size: .75rem; letter-spacing: .08em; }
   .home-v4 .tatva-pressure-lab__response { gap: 1rem; padding-top: 1rem; }
-  .home-v4 .tatva-pressure-lab__node { width: 5.5rem; }
+  .home-v4 .tatva-pressure-lab__node { width: min(5.5rem, 29%); }
   .home-v4 .tatva-pressure-lab__node > .tatva-pressure-lab__node-label { font-size: .75rem; line-height: 1.25; }
   .home-v4 .tatva-pressure-lab__restore { margin-top: .75rem; }
 }
