@@ -247,6 +247,7 @@ export function FinalInvitation() {
             video="/videos/bt-home-invitation-ocean-dawn.mp4"
             videoMobile="/videos/bt-home-invitation-ocean-dawn-mobile.mp4"
             poster="/images/bt-home-invitation-ocean-dawn-poster.jpg"
+            responsivePoster
             imagePosition="50% 18%"
             loop={false}
           />

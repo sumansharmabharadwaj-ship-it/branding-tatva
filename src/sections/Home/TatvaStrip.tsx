@@ -9,6 +9,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { elements } from "@/data/elements";
 import { ELEMENT_HEX } from "@/lib/sectionWash";
+import { HomeV4Film } from "@/sections/HomeV4/HomeV4Film";
 
 type Tatva = {
   slug: keyof typeof ELEMENT_HEX;
@@ -175,24 +176,12 @@ export function TatvaStrip() {
         className="tatva-observatory__stage relative isolate overflow-hidden py-20 sm:py-28"
       >
         <div className="tatva-observatory__film" aria-hidden="true">
-          {/* No src attribute: a src attribute makes every <source> child
-              silently ignored, and the narrow screen source must be first
-              because browsers take the first matching source. */}
-          <video
+          <HomeV4Film
+            desktop="/videos/bt-home-tatva-mirror-lake.mp4"
+            mobile="/videos/bt-home-tatva-mirror-lake-mobile.mp4"
             poster="/images/bt-home-tatva-mirror-lake-poster.jpg"
-            muted
-            // autoplay overrides preload="none": with it set from mount, phones
-            // downloaded this whole 3MB film on first load, ten screens above
-            // where it plays. It now arms only once the chapter is in view.
-            autoPlay={!prefersReducedMotion && inView}
-            loop
-            playsInline
-            preload={inView ? "metadata" : "none"}
-            data-home-playback-rate="1.2"
-          >
-            <source media="(max-width: 767px)" src="/videos/bt-home-tatva-mirror-lake-mobile.mp4" type="video/mp4" />
-            <source src="/videos/bt-home-tatva-mirror-lake.mp4" type="video/mp4" />
-          </video>
+            playbackRate={1.2}
+          />
           <span />
         </div>
 
