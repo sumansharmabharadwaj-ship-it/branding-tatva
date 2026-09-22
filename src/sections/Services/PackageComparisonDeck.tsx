@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type UIEvent } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { LinkButton } from "@/components/Button";
 import { packages } from "@/data/services";
@@ -9,6 +9,7 @@ import { servicesContactHref } from "@/lib/servicesJourney";
 import { blendHex } from "@/lib/sectionWash";
 import { track } from "@/lib/analytics";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { bindPackageComparisonScroll } from "./packageComparisonScroll";
 
 // Desktop earns a true three-column comparison. A phone used to receive
 // those same three cards as a vertical tower, paying three card-heights
@@ -22,55 +23,39 @@ export function PackageComparisonDeck({ region, initialPackage }: { region: Regi
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  const scrollController = useRef<ReturnType<typeof bindPackageComparisonScroll> | null>(null);
   const prefersReducedMotion = useHydratedReducedMotion();
 
   // Open at the visitor's selected engagement. The positioned track makes
   // card offsets local to the scroll container, including inside a grid.
   useLayoutEffect(() => {
     const trackNode = trackRef.current;
-    const cardNode = cardRefs.current[initialIndex];
-    if (trackNode && cardNode && trackNode.scrollWidth > trackNode.clientWidth) {
-      trackNode.scrollLeft = Math.max(0, cardNode.offsetLeft - (trackNode.clientWidth - cardNode.clientWidth) / 2);
-    }
+    const cards = cardRefs.current.filter((card): card is HTMLElement => card !== null);
+    if (!trackNode || cards.length !== packages.length) return;
+    const controller = bindPackageComparisonScroll(trackNode, cards, {
+      initialIndex,
+      reducedMotion: false,
+      onActive: setActiveIndex,
+    });
+    scrollController.current = controller;
+    return () => {
+      controller.dispose();
+      scrollController.current = null;
+    };
   }, [initialIndex]);
+
+  useLayoutEffect(() => {
+    scrollController.current?.setReducedMotion(prefersReducedMotion);
+  }, [initialIndex, prefersReducedMotion]);
 
   function goTo(index: number, source: "previous" | "next" | "dot") {
     const nextIndex = Math.max(0, Math.min(packages.length - 1, index));
-    const trackNode = trackRef.current;
-    const cardNode = cardRefs.current[nextIndex];
-    setActiveIndex(nextIndex);
-
-    if (trackNode && cardNode) {
-      const left = cardNode.offsetLeft - (trackNode.clientWidth - cardNode.clientWidth) / 2;
-      trackNode.scrollTo({
-        left: Math.max(0, left),
-        behavior: prefersReducedMotion ? "auto" : "smooth",
-      });
-    }
+    scrollController.current?.goTo(nextIndex);
 
     track("package_viewed", {
       package: packages[nextIndex].slug,
       source: `comparison_${source}`,
     });
-  }
-
-  function handleScroll(event: UIEvent<HTMLDivElement>) {
-    const trackNode = event.currentTarget;
-    const trackCenter = trackNode.scrollLeft + trackNode.clientWidth / 2;
-    let closestIndex = activeIndex;
-    let closestDistance = Number.POSITIVE_INFINITY;
-
-    cardRefs.current.forEach((cardNode, index) => {
-      if (!cardNode) return;
-      const cardCenter = cardNode.offsetLeft + cardNode.clientWidth / 2;
-      const distance = Math.abs(cardCenter - trackCenter);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestIndex = index;
-      }
-    });
-
-    if (closestIndex !== activeIndex) setActiveIndex(closestIndex);
   }
 
   return (
@@ -112,8 +97,8 @@ export function PackageComparisonDeck({ region, initialPackage }: { region: Regi
         ref={trackRef}
         role="list"
         aria-label="All three package comparisons"
-        onScroll={handleScroll}
-        className="relative flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-3 pr-[12%] lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0 lg:pr-0"
+        tabIndex={0}
+        className="relative flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain rounded-2xl pb-3 pr-[12%] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sandstone lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0 lg:pr-0"
         style={{ scrollbarWidth: "none" }}
       >
         {packages.map((pkg, index) => (
@@ -126,7 +111,6 @@ export function PackageComparisonDeck({ region, initialPackage }: { region: Regi
             aria-label={`${index + 1} of ${packages.length}: ${pkg.name}`}
             data-package-comparison-card="true"
             data-package-slug={pkg.slug}
-            onFocusCapture={() => setActiveIndex(index)}
             className="flex min-h-[28rem] min-w-[86%] snap-center flex-col rounded-2xl border-t-2 p-5 backdrop-blur-md sm:min-w-[72%] sm:p-6 lg:min-w-0"
             style={{ borderColor: pkg.color, backgroundColor: blendHex(pkg.color, "#0F151C", 12) }}
           >
