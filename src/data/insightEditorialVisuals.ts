@@ -131,12 +131,6 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "worksheet",
     aspectRatio: 990 / 355,
   },
-  "brand-refresh-vs-rebrand-how-much-change": {
-    src: "/images/generated/insights-editorial/brand-refresh-vs-rebrand-how-much-change.png",
-    alt: "The change depth ladder, drawn as an annotated worksheet with its steps and the decision it settles",
-    depthKind: "worksheet",
-    aspectRatio: 990 / 393,
-  },
   "turn-client-proof-into-positioning-advantage": {
     src: "/images/generated/insights-editorial/turn-client-proof-into-positioning-advantage.png",
     alt: "The proof architecture, drawn as an annotated worksheet with its steps and the decision it settles",
