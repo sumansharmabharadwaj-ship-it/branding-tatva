@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 
 /**
  * A pointer following light pool for a Services chapter: the visitor's
@@ -23,47 +24,58 @@ import { useEffect, useRef } from "react";
  */
 export function ServicesPointerLight({ tone = "sun" }: { tone?: "sun" | "ember" }) {
   const poolRef = useRef<HTMLSpanElement>(null);
+  const reducedMotion = useHydratedReducedMotion();
 
   useEffect(() => {
     const pool = poolRef.current;
     const layer = pool?.parentElement;
     const section = layer?.parentElement;
-    if (!pool || !layer || !section) return;
+    if (!pool || !layer || !section || reducedMotion) return;
 
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!finePointer.matches) return;
-
     let frame = 0;
+    let clientX = 0;
+    let clientY = 0;
 
-    const reduced = () =>
-      reducedQuery.matches || document.documentElement.dataset.motion === "reduced";
+    const updateLight = () => {
+      frame = 0;
+      if (document.hidden || !finePointer.matches) return;
+      const rect = section.getBoundingClientRect();
+      pool.style.translate = `${clientX - rect.left}px ${clientY - rect.top}px`;
+      if (layer.dataset.pointerLightAwake !== "true") layer.dataset.pointerLightAwake = "true";
+    };
 
     const onMove = (event: PointerEvent) => {
-      if (reduced()) return;
-      const rect = section.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        pool.style.translate = `${x}px ${y}px`;
-        layer.dataset.pointerLightAwake = "true";
-      });
+      if (document.hidden || !finePointer.matches || event.pointerType === "touch") return;
+      clientX = event.clientX;
+      clientY = event.clientY;
+      // High frequency pointers can dispatch several events between paints.
+      // Read the latest geometry once, beside the single visual update.
+      if (!frame) frame = requestAnimationFrame(updateLight);
     };
 
     const onLeave = () => {
       cancelAnimationFrame(frame);
+      frame = 0;
       delete layer.dataset.pointerLightAwake;
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden) onLeave();
     };
 
     section.addEventListener("pointermove", onMove, { passive: true });
     section.addEventListener("pointerleave", onLeave);
+    finePointer.addEventListener("change", onLeave);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     return () => {
-      cancelAnimationFrame(frame);
+      onLeave();
       section.removeEventListener("pointermove", onMove);
       section.removeEventListener("pointerleave", onLeave);
+      finePointer.removeEventListener("change", onLeave);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, []);
+  }, [reducedMotion]);
 
   return (
     <div aria-hidden="true" data-services-pointer-light={tone}>

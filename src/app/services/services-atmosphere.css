@@ -342,8 +342,12 @@
   width: 52vmin;
   height: 52vmin;
   margin: -26vmin 0 0 -26vmin;
-  will-change: translate;
+  will-change: auto;
   transition: translate 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-services-pointer-light][data-pointer-light-awake="true"] > span {
+  will-change: translate;
 }
 
 [data-services-pointer-light="sun"] > span {
