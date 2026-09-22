@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useIsPresent, type HTMLMotionProps } from "framer-motion";
 import { ArrowLeft, ArrowUpRight, Check, Copy, X } from "lucide-react";
 import { Container } from "@/components/Container";
 import { CalendlyEmbed } from "@/components/CalendlyEmbed";
@@ -88,6 +88,11 @@ const CARRIED_CONTEXT_CLASS =
   "rounded-2xl border border-sandstone/25 bg-sandstone/[0.07] px-4 py-3 text-left";
 
 type Step = 0 | 1 | 2;
+
+function StrategyPanel(props: HTMLMotionProps<"div">) {
+  const present = useIsPresent();
+  return <motion.div {...props} inert={!present} aria-hidden={!present || undefined} />;
+}
 
 type StrategyDecisionNoteProps = {
   priority: Priority;
@@ -185,6 +190,7 @@ function StrategyDecisionNote({
 export function StrategyRoomCTA() {
   const [briefStarted, setBriefStarted] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [calendarMounted, setCalendarMounted] = useState(false);
   const [step, setStep] = useState<Step>(0);
   const [priority, setPriority] = useState<Priority | null>(null);
   const [focus, setFocus] = useState<FocusArea | null>(null);
@@ -195,6 +201,12 @@ export function StrategyRoomCTA() {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
+  const availabilityButtonRef = useRef<HTMLButtonElement>(null);
+  const calendarOpenRef = useRef(false);
+  const mountedRef = useRef(false);
+  const returnFocusFrameRef = useRef(0);
+  const briefFocusFrameRef = useRef(0);
+  const cancelCompletedRevealRef = useRef<(() => void) | null>(null);
   const briefHeadingRef = useRef<HTMLParagraphElement>(null);
   const briefStartButtonRef = useRef<HTMLButtonElement>(null);
   const completedActionsRef = useRef<HTMLDivElement>(null);
@@ -202,6 +214,26 @@ export function StrategyRoomCTA() {
   const shouldRestoreBriefStartFocusRef = useRef(false);
   const prefersReducedMotion = useHydratedReducedMotion();
   const lenis = useLenis();
+  const restoreCalendarFocus = useCallback(() => {
+    returnFocusFrameRef.current = 0;
+    if (!mountedRef.current || calendarOpenRef.current) return;
+    const original = returnFocusRef.current;
+    // Skipping the brief removes its launch button during the modal entrance.
+    // Resolve the current availability button only when the modal has exited.
+    const target = original?.isConnected && !original.closest("[inert]")
+      ? original : availabilityButtonRef.current;
+    if (target?.isConnected && !target.closest("[inert]")) target.focus({ preventScroll: true });
+  }, []);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      window.cancelAnimationFrame(returnFocusFrameRef.current);
+      window.cancelAnimationFrame(briefFocusFrameRef.current);
+      cancelCompletedRevealRef.current?.();
+    };
+  }, []);
 
   useEffect(() => {
     function applySituation(situation: ServicesSituationId | null) {
@@ -262,9 +294,8 @@ export function StrategyRoomCTA() {
   }, []);
 
   useEffect(() => {
-    if (!calendarOpen) return;
+    if (!calendarMounted) return;
 
-    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     window.dispatchEvent(
@@ -272,8 +303,12 @@ export function StrategyRoomCTA() {
     );
 
     function closeOnEscape(event: KeyboardEvent) {
+      if (!calendarOpenRef.current) {
+        if (event.key === "Tab") event.preventDefault();
+        return;
+      }
       if (event.key === "Escape") {
-        setCalendarOpen(false);
+        closeCalendar();
         return;
       }
       if (event.key !== "Tab") return;
@@ -287,7 +322,7 @@ export function StrategyRoomCTA() {
       ).filter((element) => element.getClientRects().length > 0);
       if (focusable.length === 0) {
         event.preventDefault();
-        closeButtonRef.current?.focus();
+        closeButtonRef.current?.focus({ preventScroll: true });
         return;
       }
 
@@ -295,15 +330,15 @@ export function StrategyRoomCTA() {
       const last = focusable[focusable.length - 1];
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
-        last.focus();
+        last.focus({ preventScroll: true });
       } else if (!event.shiftKey && document.activeElement === last) {
         event.preventDefault();
-        first.focus();
+        first.focus({ preventScroll: true });
       }
     }
 
     window.addEventListener("keydown", closeOnEscape);
-    dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    dialogRef.current?.scrollTo({ top: 0, behavior: "instant" });
     const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus({ preventScroll: true }));
 
     return () => {
@@ -313,9 +348,10 @@ export function StrategyRoomCTA() {
       window.dispatchEvent(
         new CustomEvent(MODAL_INTERACTION_EVENT, { detail: { active: false, source: "calendar" } }),
       );
-      window.requestAnimationFrame(() => returnFocusRef.current?.focus());
+      if (!mountedRef.current) return;
+      returnFocusFrameRef.current = window.requestAnimationFrame(restoreCalendarFocus);
     };
-  }, [calendarOpen]);
+  }, [calendarMounted, restoreCalendarFocus]);
 
   useEffect(() => {
     if (!briefStarted) return;
@@ -331,21 +367,28 @@ export function StrategyRoomCTA() {
   }, [briefStarted]);
 
   function focusBriefHeading() {
-    window.requestAnimationFrame(() => briefHeadingRef.current?.focus());
+    window.cancelAnimationFrame(briefFocusFrameRef.current);
+    briefFocusFrameRef.current = window.requestAnimationFrame(() => {
+      briefFocusFrameRef.current = 0;
+      const heading = briefHeadingRef.current;
+      if (mountedRef.current && !calendarOpenRef.current && heading?.isConnected && !heading.closest("[inert]")) {
+        heading.focus({ preventScroll: true });
+      }
+    });
   }
 
   function registerBriefHeading(node: HTMLParagraphElement | null) {
     briefHeadingRef.current = node;
     if (!node || !shouldFocusBriefHeadingRef.current) return;
     shouldFocusBriefHeadingRef.current = false;
-    node.focus();
+    if (!calendarOpenRef.current) node.focus({ preventScroll: true });
   }
 
   function registerBriefStartButton(node: HTMLButtonElement | null) {
     briefStartButtonRef.current = node;
     if (!node || !shouldRestoreBriefStartFocusRef.current) return;
     shouldRestoreBriefStartFocusRef.current = false;
-    node.focus();
+    if (!calendarOpenRef.current) node.focus({ preventScroll: true });
   }
 
   const registerCompletedActions = useCallback((node: HTMLDivElement | null) => {
@@ -353,7 +396,7 @@ export function StrategyRoomCTA() {
     if (!node) return;
 
     const reveal = () => {
-      if (completedActionsRef.current !== node) return;
+      if (completedActionsRef.current !== node || !node.isConnected || calendarOpenRef.current || node.closest("[inert]")) return;
 
       const actionRect = node.getBoundingClientRect();
       const notice = document.querySelector<HTMLElement>(".consent-notice");
@@ -375,24 +418,26 @@ export function StrategyRoomCTA() {
     // reading position immediately; no later timer may pull the visitor back.
     const timer = window.setTimeout(reveal, prefersReducedMotion ? 0 : 450);
     const cancelReveal = () => window.clearTimeout(timer);
+    cancelCompletedRevealRef.current = cancelReveal;
     const cancelOnScrollKey = (event: KeyboardEvent) => {
-      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) cancelReveal();
+      if (["Tab", "Enter", "Escape", "ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) cancelReveal();
     };
-    window.addEventListener("wheel", cancelReveal, { passive: true });
-    window.addEventListener("touchstart", cancelReveal, { passive: true });
-    window.addEventListener("keydown", cancelOnScrollKey);
+    const inputOptions = { passive: true, capture: true };
+    window.addEventListener("wheel", cancelReveal, inputOptions);
+    window.addEventListener("pointerdown", cancelReveal, inputOptions);
+    window.addEventListener("touchstart", cancelReveal, inputOptions);
+    window.addEventListener("touchmove", cancelReveal, inputOptions);
+    window.addEventListener("keydown", cancelOnScrollKey, true);
     return () => {
       cancelReveal();
-      window.removeEventListener("wheel", cancelReveal);
-      window.removeEventListener("touchstart", cancelReveal);
-      window.removeEventListener("keydown", cancelOnScrollKey);
+      if (cancelCompletedRevealRef.current === cancelReveal) cancelCompletedRevealRef.current = null;
+      window.removeEventListener("wheel", cancelReveal, true);
+      window.removeEventListener("pointerdown", cancelReveal, true);
+      window.removeEventListener("touchstart", cancelReveal, true);
+      window.removeEventListener("touchmove", cancelReveal, true);
+      window.removeEventListener("keydown", cancelOnScrollKey, true);
     };
   }, [lenis, prefersReducedMotion]);
-
-  const resetCalendarPosition = useCallback(() => {
-    dialogRef.current?.scrollTo({ top: 0, behavior: "auto" });
-    closeButtonRef.current?.focus({ preventScroll: true });
-  }, []);
 
   function startBrief() {
     shouldFocusBriefHeadingRef.current = true;
@@ -400,18 +445,34 @@ export function StrategyRoomCTA() {
   }
 
   function closeBrief() {
+    window.cancelAnimationFrame(briefFocusFrameRef.current);
+    shouldFocusBriefHeadingRef.current = false;
     shouldRestoreBriefStartFocusRef.current = true;
-    restart();
+    resetAnswers();
     setBriefStarted(false);
   }
 
-  function openCalendar() {
+  function openCalendar(event: MouseEvent<HTMLButtonElement>) {
+    window.cancelAnimationFrame(returnFocusFrameRef.current);
+    window.cancelAnimationFrame(briefFocusFrameRef.current);
+    cancelCompletedRevealRef.current?.();
+    // Touch activation does not always focus the button first.
+    returnFocusRef.current = event.currentTarget;
+    calendarOpenRef.current = true;
+    shouldFocusBriefHeadingRef.current = false;
+    shouldRestoreBriefStartFocusRef.current = false;
     track("calendar_opened", {
       source: "services-strategy-room",
       brief: step === QUESTION_COUNT ? "completed" : "skipped",
       route: carriedSituation ?? "unselected",
     });
     setCalendarOpen(true);
+    setCalendarMounted(true);
+  }
+
+  function closeCalendar() {
+    calendarOpenRef.current = false;
+    setCalendarOpen(false);
   }
 
   function pickPriority(value: Priority) {
@@ -444,15 +505,20 @@ export function StrategyRoomCTA() {
     }
   }
 
-  function restart() {
+  function resetAnswers() {
     setDecisionCopyStatus("idle");
     setPriority(null);
     setFocus(null);
     setStep(0);
   }
 
-  function skipBriefAndOpenCalendar() {
-    openCalendar();
+  function restart() {
+    resetAnswers();
+    focusBriefHeading();
+  }
+
+  function skipBriefAndOpenCalendar(event: MouseEvent<HTMLButtonElement>) {
+    openCalendar(event);
     setBriefStarted(false);
   }
 
@@ -517,9 +583,11 @@ export function StrategyRoomCTA() {
   const calendarDialog =
     typeof document !== "undefined"
       ? createPortal(
-          <AnimatePresence>
+          <AnimatePresence onExitComplete={() => {
+            if (!calendarOpenRef.current) setCalendarMounted(false);
+          }}>
             {calendarOpen ? (
-              <motion.div
+              <StrategyPanel
                 key="strategy-calendar-dialog"
                 className="fixed inset-0 z-[1200] flex items-center justify-center bg-black/75 p-3 backdrop-blur-md sm:p-6"
                 initial={prefersReducedMotion ? undefined : { opacity: 0 }}
@@ -527,7 +595,7 @@ export function StrategyRoomCTA() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: prefersReducedMotion ? 0 : 0.24 }}
                 onMouseDown={(event) => {
-                  if (event.target === event.currentTarget) setCalendarOpen(false);
+                  if (event.target === event.currentTarget) closeCalendar();
                 }}
               >
                 <motion.div
@@ -555,7 +623,7 @@ export function StrategyRoomCTA() {
                     <button
                       ref={closeButtonRef}
                       type="button"
-                      onClick={() => setCalendarOpen(false)}
+                      onClick={closeCalendar}
                       className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ivory/20 text-xl text-ivory/75 transition-colors hover:border-sandstone/55 hover:text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone"
                       aria-label="Close scheduling calendar"
                     >
@@ -603,9 +671,9 @@ export function StrategyRoomCTA() {
                       ))}
                     </div>
                   ) : null}
-                  <CalendlyEmbed url={site.calendlyUrl} onReady={resetCalendarPosition} />
+                  <CalendlyEmbed url={site.calendlyUrl} />
                 </motion.div>
-              </motion.div>
+              </StrategyPanel>
             ) : null}
           </AnimatePresence>,
           document.body,
@@ -659,7 +727,7 @@ export function StrategyRoomCTA() {
           <div data-services-chapter-resolution="true" className="relative min-h-[18rem]" aria-live="off">
           <AnimatePresence mode="wait" initial={false}>
             {!briefStarted ? (
-              <motion.div
+              <StrategyPanel
                 key="booking-choice"
                 data-strategy-room-shell="true"
                 data-strategy-room-choice="true"
@@ -709,6 +777,7 @@ export function StrategyRoomCTA() {
                     type="button"
                     data-strategy-control="true"
                     data-strategy-calendar-trigger="true"
+                    ref={availabilityButtonRef}
                     onClick={openCalendar}
                     className="inline-flex min-h-12 items-center justify-center rounded-full bg-sandstone px-6 py-3 text-sm font-medium text-soil transition-[transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-sandstone"
                   >
@@ -723,9 +792,9 @@ export function StrategyRoomCTA() {
                     <ArrowUpRight aria-hidden="true" className="ml-2 h-4 w-4" strokeWidth={1.5} />
                   </button>
                 </div>
-              </motion.div>
+              </StrategyPanel>
             ) : (
-              <motion.div
+              <StrategyPanel
                 key="conversation-brief"
                 data-strategy-room-shell="true"
                 initial={prefersReducedMotion ? undefined : { opacity: 0, y: 10 }}
@@ -751,7 +820,7 @@ export function StrategyRoomCTA() {
 
                 <AnimatePresence mode="wait" initial={false}>
                   {step === 0 && (
-                    <motion.div key="priority" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
+                    <StrategyPanel key="priority" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
                       <p className="mt-6 text-sm font-medium uppercase tracking-wide text-ivory/78">What matters most right now?</p>
                       <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
                         {priorityOptions.map((option) => (
@@ -769,11 +838,11 @@ export function StrategyRoomCTA() {
                           </motion.button>
                         ))}
                       </div>
-                    </motion.div>
+                    </StrategyPanel>
                   )}
 
                   {step === 1 && (
-                    <motion.div key="focus" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
+                    <StrategyPanel key="focus" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
                       <p className="mt-6 text-sm font-medium uppercase tracking-wide text-ivory/78">Where should the conversation focus?</p>
                       <div className="mx-auto mt-5 flex max-w-lg flex-wrap justify-center gap-2.5">
                         {focusOptions.map((option) => (
@@ -795,11 +864,11 @@ export function StrategyRoomCTA() {
                         <ArrowLeft aria-hidden="true" className="h-4 w-4" strokeWidth={1.5} />
                         <span className="ml-2">Previous question</span>
                       </button>
-                    </motion.div>
+                    </StrategyPanel>
                   )}
 
                   {step === 2 && (
-                    <motion.div key="ready" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
+                    <StrategyPanel key="ready" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={transition}>
                       <p className="mt-6 font-display text-2xl font-normal text-ivory">Your decision note is ready.</p>
                       {priority && focus ? (
                         <StrategyDecisionNote
@@ -830,7 +899,7 @@ export function StrategyRoomCTA() {
                           Change answers
                         </button>
                       </div>
-                    </motion.div>
+                    </StrategyPanel>
                   )}
                 </AnimatePresence>
 
@@ -851,7 +920,7 @@ export function StrategyRoomCTA() {
                     </button>
                   </div>
                 ) : null}
-              </motion.div>
+              </StrategyPanel>
             )}
           </AnimatePresence>
           </div>
