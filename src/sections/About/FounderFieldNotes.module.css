@@ -29,7 +29,7 @@
 .eyebrow {
   margin: 0;
   color: #965b43;
-  font-size: 0.62rem;
+  font-size: clamp(0.7rem, 1.2vw, 0.75rem);
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -57,7 +57,7 @@
   justify-content: space-between;
   border-top: 1px solid rgba(42, 42, 37, 0.16);
   color: #8d533e;
-  font-size: 0.56rem;
+  font-size: clamp(0.7rem, 1.1vw, 0.75rem);
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -100,9 +100,9 @@
 .fieldRail button:focus-visible { outline: 2px solid #965b43; outline-offset: 3px; }
 .fieldRail button > span { display: grid; width: 2rem; height: 2rem; grid-row: 1 / 4; place-items: center; border: 1px solid rgba(150, 91, 67, 0.25); border-radius: 999px; color: #965b43; transition: background-color 300ms ease, color 300ms ease; }
 .fieldRail button[data-gathered="true"] > span { background: #965b43; color: #f7f1e7; }
-.fieldRail button small { color: #965b43; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.fieldRail button small { color: #965b43; font-size: clamp(0.7rem, 1.1vw, 0.8rem); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .fieldRail button strong { font-family: var(--font-display), Georgia, serif; font-size: 1.02rem; font-weight: 400; line-height: 1; }
-.fieldRail button em { color: rgba(42, 42, 37, 0.58); font-size: 0.58rem; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
+.fieldRail button em { color: rgba(42, 42, 37, 0.58); font-size: clamp(0.7rem, 1.1vw, 0.78rem); font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
 .fieldRail button i { position: absolute; right: 0; bottom: -1px; left: 0; height: 1px; overflow: hidden; background: rgba(42, 42, 37, 0.08); }
 .fieldRail button b { display: block; width: 100%; height: 100%; background: #965b43; transform: scaleX(0); transform-origin: left; transition: transform 560ms cubic-bezier(0.22, 1, 0.36, 1); }
 .fieldRail button[data-gathered="true"] b { transform: scaleX(1); }
@@ -168,7 +168,7 @@
 .threadField span[data-active="true"] { opacity: 0.58; transform: rotate(var(--thread-angle)) scaleX(1); }
 
 .synthesisSeal { position: absolute; right: -0.65rem; bottom: 1.1rem; z-index: 7; display: grid; width: 9rem; min-height: 5.2rem; padding: 0.75rem; border: 1px solid rgba(101, 113, 92, 0.38); align-content: space-between; background: rgba(101, 113, 92, 0.94); box-shadow: 0 16px 40px rgba(63, 50, 38, 0.18); color: #f6f0e6; transform-origin: 80% 100%; }
-.synthesisSeal span { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.synthesisSeal span { font-size: clamp(0.7rem, 1.1vw, 0.8rem); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
 .synthesisSeal strong { font-family: var(--font-display), Georgia, serif; font-size: 0.95rem; font-weight: 400; line-height: 1.08; }
 
 .liveMargin {
@@ -186,7 +186,7 @@
   pointer-events: none;
   transform-origin: 100% 0;
 }
-.liveMargin span { color: #965b43; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.liveMargin span { color: #965b43; font-size: clamp(0.7rem, 1.2vw, 0.8rem); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
 .liveMargin strong { margin-top: 0.42rem; font-family: var(--font-display), Georgia, serif; font-size: 1.15rem; font-style: italic; font-weight: 400; line-height: 1; }
 .liveMargin p { margin: 0.55rem 0 0; padding-top: 0.5rem; border-top: 1px solid rgba(42, 42, 37, 0.11); color: rgba(42, 42, 37, 0.64); font-size: 0.65rem; line-height: 1.42; }
 

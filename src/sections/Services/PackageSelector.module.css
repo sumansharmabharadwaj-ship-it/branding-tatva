@@ -4,11 +4,24 @@
 .heading h2 { margin-top: 0.3rem; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 400; line-height: 1.02; }
 .intro { margin-top: 0.55rem; font-size: 0.85rem; line-height: 1.5; }
 .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; padding: 0.45rem; margin-top: 1rem; border: 1px solid #c8cbbd; border-radius: 1.15rem; background: #f2f0e8; }
-.choice { position: relative; min-width: 0; display: grid; grid-template-columns: auto 1fr; align-content: center; align-items: baseline; gap: 0.25rem 0.55rem; padding: 0.7rem 0.9rem; border-radius: 0.8rem; color: #344d36; text-align: left; cursor: pointer; transition: background-color 200ms ease, color 200ms ease; }
-.choice > span { font-family: var(--font-display), Georgia, serif; font-size: 0.85rem; }
+.choice { position: relative; min-width: 0; display: grid; grid-template-columns: auto 1fr; align-content: center; align-items: baseline; gap: 0.25rem 0.55rem; padding: 0.7rem 0.9rem; border-radius: 0.8rem; color: #344d36; text-align: left; cursor: pointer; transition: background-color 200ms ease, color 200ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1); }
+.choice > span { font-family: var(--font-display), Georgia, serif; font-size: 0.85rem; transition: color 250ms ease; }
 .choice strong { font-size: 0.94rem; font-weight: 600; }
 .choice small { grid-column: 2; font-size: 0.74rem; line-height: 1.45; }
 .choice:hover { background: #dde2d4; }
+/* The numeral ignites, same grammar as the hero act rows: a quiet
+   signal that these three rows are the decision, not a label.
+   :focus-visible pairs with :hover unconditionally (focus works on
+   every input device) so a keyboard visitor tabbing through gets the
+   same signal, not just the generic outline ring below. */
+.choice:focus-visible { transform: translateY(-2px); }
+.choice:focus-visible > span { color: #c6a97a; }
+.choice[aria-pressed="true"]:focus-visible > span { color: #d4b99a; }
+@media (hover: hover) and (pointer: fine) {
+  .choice:hover { transform: translateY(-2px); }
+  .choice:hover > span { color: #c6a97a; }
+  .choice[aria-pressed="true"]:hover > span { color: #d4b99a; }
+}
 .choice[aria-pressed="true"] { background: #29432f; color: #f7f3e9; }
 .root :is(button, a, summary):focus-visible { outline: 2px solid #6f4e37; outline-offset: 3px; }
 .controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.85rem; padding: 0.35rem 0.75rem; border-radius: 1rem; background: #f2f0e8f5; }
