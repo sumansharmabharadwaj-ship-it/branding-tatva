@@ -1,0 +1,39 @@
+.demo { min-width: 0; padding-left: clamp(1.25rem, 3vw, 2.5rem); border-left: 1px solid rgb(242 240 232 / 14%); }
+.figure { margin: 0; }
+.diagram { translate: 0 calc((1 - var(--stack-arrival, 1)) * 8px); }
+.diagram svg { display: block; width: 100%; height: auto; overflow: visible; }
+.sourcePlate { fill: #20251d; stroke: #626252; transition: fill 350ms ease, stroke 350ms ease; }
+.sharedPlate { fill: #343a2b; stroke: #c6a97a; transition: fill 350ms ease, stroke 350ms ease; }
+.diagramText { fill: #eee7db; font: 400 18px var(--font-body), sans-serif; }
+.scrollLine { stroke: #817859; stroke-width: 1.5px; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--stack-arrival, 1)); opacity: .6; }
+.caption { display: grid; gap: .35rem; margin-top: .3rem; color: #e0dacd; font-size: .875rem; line-height: 1.5; }
+.exampleLabel { color: #b9ad97; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+.readingStack, .measure { display: grid; min-width: 0; }
+.readingStack > *, .measure > * { grid-area: 1 / 1; }
+.measure { visibility: hidden; pointer-events: none; user-select: none; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: .75rem; width: 100%; min-height: 2.9rem; margin-top: .9rem; padding: .6rem .8rem; border: 1px solid #817457; border-radius: .65rem; background: rgb(198 169 122 / 5%); color: #e5d1af; font-size: .85rem; line-height: 1.35; text-align: left; cursor: pointer; scroll-margin-block: 80px; transition: border-color 240ms ease, background-color 240ms ease, color 240ms ease; }
+.toggle:hover, .toggle:focus-visible { border-color: #d4b99a; background: rgb(198 169 122 / 15%); color: #fff7e8; }
+.toggle[aria-pressed="true"] { border-color: #b8bb98; background: rgb(157 169 124 / 15%); color: #e4e9d0; }
+.toggle:focus-visible { outline: 2px solid #d4b99a !important; outline-offset: 5px; }
+.toggleIcon { display: grid; flex-shrink: 0; place-items: center; width: 1.5rem; height: 1.5rem; }
+.toggleIcon svg { transition: translate 250ms cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .toggle[aria-pressed="false"]:hover .toggleIcon svg { translate: 3px 0; }
+}
+.demo:focus-within .diagram { translate: none; }
+.demo:focus-within .scrollLine { stroke-dashoffset: 0; }
+@media (max-width: 650px) {
+  .demo { padding: .8rem 0 0; border-left: 0; border-top: 1px solid rgb(242 240 232 / 14%); }
+  .diagram { max-width: 23rem; margin-inline: auto; }
+  .caption { font-size: .9rem; }
+  .toggle { font-size: .875rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .diagram, .toggleIcon svg { translate: none !important; }
+  .sourcePlate, .sharedPlate, .toggle, .toggleIcon svg { transition: none; }
+  .scrollLine { stroke-dashoffset: 0; }
+}
+@media (max-width: 360px) { .diagramText { font-size: 20px; } }
+.demo[data-still="true"] :is(.diagram, .toggleIcon svg) { translate: none !important; }
+.demo[data-still="true"] :is(.sourcePlate, .sharedPlate, .toggle, .toggleIcon svg) { transition: none; }
+.demo[data-still="true"] .scrollLine { stroke-dashoffset: 0; }

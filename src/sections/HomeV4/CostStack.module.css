@@ -121,6 +121,9 @@
   margin-bottom: .9rem;
 }
 
+.cardContent { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: clamp(1.25rem, 3vw, 2.5rem); }
+.copy { min-width: 0; }
+
 .number {
   color: #c6a97a;
   font-size: .78rem;
@@ -168,7 +171,7 @@
   .card:hover .meter { background: rgb(242 240 232 / 26%); }
 }
 
-.card h3 {
+.copy h3 {
   margin: 0;
   font: 400 clamp(1.85rem, 3.3vw, 2.9rem)/1.08 var(--font-display), Georgia, serif;
   letter-spacing: -.02em;
@@ -176,7 +179,7 @@
   translate: 0 calc((1 - var(--stack-title, 1)) * var(--title-travel));
 }
 
-.card p {
+.copy p {
   max-width: 52ch;
   margin: .85rem 0 0;
   color: rgb(242 240 232 / 74%);
@@ -187,13 +190,14 @@
 
 /* A covered reading rises above the pile when reached with Tab, including
    reverse Tab. Its content stays still without changing document geometry. */
-.card:focus-within {
+.card:has(:focus-visible) {
   z-index: 4;
   scale: 1;
 }
 
-.card:focus-within :is(h3, p) { translate: none; }
-.card:focus-within .meter::after { transform: none; }
+.card:has(:focus-visible) :is(h3, p) { translate: none; }
+.card:has(:focus-visible) .meter::after { transform: none; }
+.card:has(:focus-visible) { translate: none; }
 
 .scene :is(.card, .link):focus-visible {
   outline: 2px solid #d4b99a !important;
@@ -262,17 +266,21 @@
   .link { width: 100%; }
 }
 
+@media (max-width: 650px) {
+  .cardContent { grid-template-columns: minmax(0, 1fr); gap: 1.3rem; }
+}
+
 /* Pause only decorative motion. Native sticky positioning and spacing keep
    exactly the same geometry, so toggling cannot move a reading to its old
    flow position. Compact screens keep their ordinary-flow list in both modes. */
 @media (prefers-reduced-motion: reduce) {
-  .card { scale: 1; }
+  .card { scale: 1; translate: none; transition: none; }
   .card :is(h3, p) { translate: none; }
   .link { transition: none; }
   .meter::after { transform: none; }
 }
 
-:global(html[data-motion="reduced"]) .card { scale: 1; }
+:global(html[data-motion="reduced"]) .card { scale: 1; translate: none; transition: none; }
 :global(html[data-motion="reduced"]) .card :is(h3, p) { translate: none; }
 :global(html[data-motion="reduced"]) .link { transition: none; }
 :global(html[data-motion="reduced"]) .meter::after { transform: none; }
