@@ -1,16 +1,19 @@
 "use client";
 
 import { useHydratedMotionPreference, useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import Image from "next/image";
 import Link from "next/link";
-import { motion, useAnimationControls, useScroll, useTransform, type MotionStyle } from "framer-motion";
+import { motion, useAnimationControls, useInView, useScroll, useTransform, type MotionStyle } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight, Mail, MessageSquare, Monitor } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { publishServicesSituation } from "@/lib/servicesJourney";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { publishServicesSituation, SITUATION_TO_PROOF_SLUG } from "@/lib/servicesJourney";
 import recognitionStyles from "./RecognitionChoices.module.css";
 import costStyles from "./HiddenCost.module.css";
 import openingStyles from "./OpeningScene.module.css";
 import { LivingGradient } from "@/components/LivingGradient";
 import { HomeV4Film } from "./HomeV4Film";
+import filmStyles from "./HomeV4Film.module.css";
+import { projects } from "./homeSnapshotProjects";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -61,6 +64,10 @@ const RECOGNITION_STATES = [
     accent: "#C6A97A",
   },
 ] as const;
+
+const RECOGNITION_PROOFS = RECOGNITION_STATES.map((state) =>
+  projects.find((project) => project.slug === SITUATION_TO_PROOF_SLUG[state.situation])!,
+);
 
 const MESSAGE_TOUCHPOINTS = [
   { channel: "Website", icon: Monitor, meaning: "A different look", separate: "A new look for your business.", shared: "Give buyers a reason to choose you." },
@@ -269,7 +276,13 @@ export function V4RecognitionScene() {
   const prefersReducedMotion = Boolean(useHydratedReducedMotion());
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectionDirection, setSelectionDirection] = useState<"forward" | "backward">("forward");
+  const [keyboardReading, setKeyboardReading] = useState(false);
+  const readingStill = prefersReducedMotion || keyboardReading;
+  const inView = useInView(sectionRef, { amount: .08 });
+  const motionActive = inView && !readingStill;
+  const selectionId = useId();
   const active = RECOGNITION_STATES[activeIndex];
+  const proof = RECOGNITION_PROOFS[activeIndex];
   const previousIndexRef = useRef(activeIndex);
   const readingControls = useAnimationControls();
   const exampleControls = useAnimationControls();
@@ -292,10 +305,7 @@ export function V4RecognitionScene() {
     const changed = previousIndexRef.current !== activeIndex;
     previousIndexRef.current = activeIndex;
     settleReading();
-    const focused = document.activeElement;
-    const keyboardReading = focused instanceof HTMLElement && focused.matches(":focus-visible")
-      && sectionRef.current?.contains(focused);
-    if (!changed || prefersReducedMotion || keyboardReading) return;
+    if (!changed || !motionActive) return;
     const direction = selectionDirection === "forward" ? 1 : -1;
     readingControls.set({ x: direction * 8, y: 3 });
     exampleControls.set({ x: direction * -6, y: 2 });
@@ -304,7 +314,7 @@ export function V4RecognitionScene() {
     void exampleControls.start({ x: 0, y: 0, transition: { duration: .42, ease: EASE } });
     void answerControls.start({ x: 0, transition: { duration: .44, ease: EASE } });
     return () => { readingControls.stop(); exampleControls.stop(); answerControls.stop(); };
-  }, [activeIndex, selectionDirection, prefersReducedMotion, readingControls, exampleControls, answerControls, settleReading]);
+  }, [activeIndex, selectionDirection, motionActive, readingControls, exampleControls, answerControls, settleReading]);
 
   function choose(index: number) {
     publishServicesSituation(RECOGNITION_STATES[index].situation, "home_recognition");
@@ -352,30 +362,39 @@ export function V4RecognitionScene() {
       data-home-chapter="recognition"
       data-home-section="recognition"
       data-recognition-state={active.number}
+      data-recognition-reading-still={readingStill}
       data-cursor-world="light"
       className={`home-v4-recognition ${recognitionStyles.section}`}
       aria-labelledby="home-v4-recognition-title"
       style={{ "--recognition-accent": active.accent } as React.CSSProperties}
       onFocusCapture={(event) => {
+        settleReading();
         if (event.target !== event.currentTarget && event.target.matches(":focus-visible")) {
+          setKeyboardReading(true);
           revealControl(event.target);
         }
       }}
+      onKeyDownCapture={() => { settleReading(); setKeyboardReading(true); }}
+      onPointerDownCapture={() => setKeyboardReading(false)}
     >
       <LivingGradient contours preset="meadow" shaft={false} />
       <div className="home-v4-recognition__media" aria-hidden="true">
-        <HomeV4Film
-          desktop="/videos/pexels-fog-sunrise.mp4"
-          mobile="/videos/pexels-fog-sunrise-mobile.mp4"
-          poster="/images/pexels-fog-sunrise-poster.jpg"
-        />
+        {readingStill ? (
+          <Image src="/images/pexels-fog-sunrise-poster.jpg" alt="" fill sizes="100vw" className={filmStyles.poster} />
+        ) : (
+          <HomeV4Film
+            desktop="/videos/pexels-fog-sunrise.mp4"
+            mobile="/videos/pexels-fog-sunrise-mobile.mp4"
+            poster="/images/pexels-fog-sunrise-poster.jpg"
+          />
+        )}
         <span />
       </div>
 
       <motion.div
         className="home-v4-recognition__reflection"
         aria-hidden="true"
-        style={{ x: prefersReducedMotion ? 0 : reflectionX, opacity: 0.3 }}
+        style={{ x: readingStill ? 0 : reflectionX, opacity: 0.3 }}
       />
 
       <div className="home-v4-recognition__shell">
@@ -406,6 +425,15 @@ export function V4RecognitionScene() {
                 className={recognitionStyles.choice}
                 data-cursor-label="choose"
               >
+                {index === activeIndex && (
+                  <motion.span
+                    key={motionActive ? "animated" : "settled"}
+                    className={recognitionStyles.choiceIndicator}
+                    layoutId={motionActive ? `recognition-selection-${selectionId}` : undefined}
+                    transition={{ duration: motionActive ? .38 : 0, ease: EASE }}
+                    aria-hidden="true"
+                  />
+                )}
                 <span className={recognitionStyles.number} aria-hidden="true">{state.number}</span>
                 <span className={recognitionStyles.choiceLabel}>{state.label}</span>
                 <ArrowDownRight className={recognitionStyles.choiceArrow} size={20} aria-hidden="true" />
@@ -433,7 +461,7 @@ export function V4RecognitionScene() {
               </motion.div>
             </div>
             <div className={recognitionStyles.example}>
-              <motion.i className={recognitionStyles.exampleSignal} aria-hidden="true" style={{ scaleX: prefersReducedMotion ? 1 : exampleSignal }} />
+              <motion.i className={recognitionStyles.exampleSignal} aria-hidden="true" style={{ scaleX: readingStill ? 1 : exampleSignal }} />
               <p className={recognitionStyles.exampleLabel}>Illustrative example</p>
               <div className={recognitionStyles.examplePair}>
                 {active.example.map((item, index) => (
@@ -471,14 +499,32 @@ export function V4RecognitionScene() {
               <span className={recognitionStyles.answerHint} aria-hidden="true">Explore this path</span>
             </a>
 
-            <a
-              href="#cost"
-              onClick={() => publishServicesSituation(active.situation, "home_recognition")}
-              className={recognitionStyles.link}
-              data-cursor-label="follow"
-            >
-              See what this is quietly costing you <ArrowDownRight size={18} aria-hidden="true" />
-            </a>
+            <div className={recognitionStyles.readingLinks}>
+              <Link
+                href={`/work/${proof.slug}`}
+                prefetch={false}
+                onClick={() => publishServicesSituation(active.situation, "home_recognition")}
+                className={recognitionStyles.link}
+                aria-label={`Read the ${proof.title} case study`}
+                data-cursor-label="read"
+              >
+                <span className={recognitionStyles.readingStack}>
+                  <span className={recognitionStyles.readingMeasure} aria-hidden="true" inert>
+                    {RECOGNITION_PROOFS.map((project) => <span key={project.slug}>Case study: {project.title}</span>)}
+                  </span>
+                  <span>Case study: {proof.title}</span>
+                </span>
+                <ArrowUpRight size={18} aria-hidden="true" />
+              </Link>
+              <a
+                href="#cost"
+                onClick={() => publishServicesSituation(active.situation, "home_recognition")}
+                className={recognitionStyles.link}
+                data-cursor-label="follow"
+              >
+                Follow the cost of inconsistency <ArrowDownRight size={18} aria-hidden="true" />
+              </a>
+            </div>
           </div>
         </div>
       </div>

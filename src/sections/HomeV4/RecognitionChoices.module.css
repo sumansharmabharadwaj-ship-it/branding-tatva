@@ -18,6 +18,7 @@
 
 .choices { display: grid; gap: .5rem; min-width: 0; }
 .choice {
+  position: relative;
   display: grid;
   grid-template-columns: 1.5rem minmax(0, 1fr) 1.25rem;
   align-items: center;
@@ -43,33 +44,14 @@
 .number { color: #805239; font-size: .75rem; font-variant-numeric: tabular-nums; }
 .choice[aria-selected="true"] .number { color: #e4c7a6; }
 
-/* The pointer reward the other chapters now speak. Choices arrive in a
-   scroll driven cascade (CSS view timeline: an unfired observer can
-   never strand them, and browsers without scroll timelines render the
-   settled state). Hover slides the row toward the reading panel it
-   controls, ignites the numeral, and previews the arrow that selection
-   completes. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .choice {
-      animation: recognitionArrive both cubic-bezier(.22, 1, .36, 1);
-      animation-timeline: view();
-      animation-range: entry 8% entry 55%;
-    }
-  }
-}
-@keyframes recognitionArrive {
-  from { opacity: .1; transform: translateX(-26px); }
-  to { opacity: 1; transform: translateX(0); }
-}
+/* The selection marker travels; every reading and hit area keeps its place. */
+.choiceIndicator { position: absolute; inset: 22% auto 22% .35rem; width: 2px; border-radius: 999px; background: #e4c7a6; pointer-events: none; }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .choice {
-    translate: 0 0;
     transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease,
-      translate 380ms cubic-bezier(.22, 1, .36, 1), box-shadow 380ms cubic-bezier(.22, 1, .36, 1);
+      box-shadow 380ms cubic-bezier(.22, 1, .36, 1);
   }
   .choice:not([aria-selected="true"]):hover {
-    translate: 5px 0;
     box-shadow: 0 14px 34px rgb(52 47 39 / 10%);
   }
   .choice:not([aria-selected="true"]):hover .number { color: #5e3d28; }
@@ -117,7 +99,8 @@
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .answer:hover .answerArrow svg { transform: translate(2px, 2px); }
 }
-.link { display: inline-flex; align-items: center; gap: .7rem; min-height: 2.75rem; margin-top: .7rem; color: #514936; font-size: .875rem; line-height: 1.45; text-decoration: underline; text-decoration-color: rgb(94 76 51 / 40%); text-underline-offset: .3em; }
+.readingLinks { display: grid; gap: .15rem; margin-top: .7rem; }
+.link { display: inline-flex; align-items: center; justify-self: start; gap: .7rem; min-height: 2.75rem; color: #514936; font-size: .875rem; line-height: 1.45; text-decoration: underline; text-decoration-color: rgb(94 76 51 / 40%); text-underline-offset: .3em; }
 .link svg { flex-shrink: 0; }
 .link:hover { color: #805239; text-decoration-color: currentColor; }
 .section :is(.choice, .panel, .link, .answer) { scroll-margin-block: 80px; }
@@ -157,3 +140,9 @@
 :global(html[data-motion="reduced"]) :is(.choice, .choiceArrow, .answer, .answerArrow, .answerArrow svg) { transition: none; }
 :global(html[data-motion="reduced"]) :is(.choice, .choiceArrow) { animation: none; translate: none; }
 :global(html[data-motion="reduced"]) .answerArrow svg { transform: none; }
+
+.section[data-recognition-reading-still="true"] :is(.choice, .choiceArrow, .answer, .answerArrow, .answerArrow svg) { transition: none; }
+.section[data-recognition-reading-still="true"] .choiceArrow { translate: none; }
+.section[data-recognition-reading-still="true"] .answerArrow svg { transform: none; }
+.section[data-recognition-reading-still="true"] :global(.home-v4-recognition__media),
+.section[data-recognition-reading-still="true"] :global(.home-v4-recognition__shell) { animation: none; }
