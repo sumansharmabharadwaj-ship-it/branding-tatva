@@ -21,7 +21,7 @@ for (const [progress, previous, expected] of [
 const component = fs.readFileSync("src/sections/Home/StudioCinematicChapter.tsx", "utf8");
 assert.ok(component.includes('focused.matches(":focus-visible")'), "Keyboard focus must own the panel");
 assert.ok(component.includes('section.removeEventListener("focusout", schedule)'), "Clean up focus listener");
-assert.ok(component.includes('prefersReducedMotion || !desktopMotion'), "Compact portrait must remain still");
+assert.ok(component.includes('readingStill || !desktopMotion'), "Compact, reduced motion and keyboard portraits must remain still");
 const css = fs.readFileSync("src/app/home-v4-studio-scroll.css", "utf8");
 assert.ok(css.includes('html[data-motion="reduced"]'), "Respect the site preference");
 assert.ok(css.includes('@media (prefers-reduced-motion: reduce)'), "Respect the OS preference");

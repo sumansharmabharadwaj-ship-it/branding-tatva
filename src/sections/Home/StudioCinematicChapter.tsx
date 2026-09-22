@@ -1,19 +1,19 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { studioProgress, studioStep } from "./studioScroll";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, useAnimationControls, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls, useInView, useScroll, useTransform } from "framer-motion";
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 const DISCIPLINES = [
   {
     number: "01",
     label: "Psychology",
-    eyebrow: "M.A. Clinical Psychology",
+    eyebrow: "Applied psychology",
     title: "Read the tension",
     line:
       "Understand what buyers hesitate over, what they value, and how they judge the options. Use those findings to choose the position.",
@@ -30,8 +30,8 @@ const DISCIPLINES = [
   {
     number: "02",
     label: "Literature",
-    eyebrow: "B.A. English Literature",
-    title: "Give it language",
+    eyebrow: "Applied literature",
+    title: "Give the position a voice",
     line:
       "Turn the position into a voice, a message, and a story the team can use consistently.",
     result: "Verbal identity and narrative",
@@ -48,16 +48,16 @@ const DISCIPLINES = [
     number: "03",
     label: "Strategy",
     eyebrow: "Strategy led directly by Suman",
-    title: "Make it usable",
+    title: "Turn decisions into practice",
     line:
       "Connect positioning, identity, website, content, and campaigns so each part supports the same commercial direction.",
-    result: "A brand system that can keep moving",
+    result: "Shared rules for every brand decision",
     video: "/videos/bt-home-studio-strategy.mp4",
     videoMobile: "/videos/bt-home-studio-strategy-mobile.mp4",
     poster: "/images/bt-home-studio-strategy-poster.jpg",
     proofLabel: "Applied in Dr. Haley Nutrition",
     proofLine:
-      "Engagement rose from 0.71% to 2.81% with fewer posts.",
+      "Instagram earned 104% more followers per post as the schedule fell from 23 posts to 12.",
     proofHref: "/work/dr-haley-nutrition",
     accent: "#D3A24F",
   },
@@ -108,10 +108,15 @@ export function StudioCinematicChapter() {
   const panelRef = useRef<HTMLElement>(null);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const selectionId = useId();
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
   const cinematicViewport = useMediaQuery(DESKTOP_STORY);
   const [frameFits, setFrameFits] = useState(false);
-  const desktopMotion = cinematicViewport && !prefersReducedMotion && frameFits;
+  const [hasScrollLayout, setHasScrollLayout] = useState(false);
+  const [keyboardReading, setKeyboardReading] = useState(false);
+  const readingStill = prefersReducedMotion || keyboardReading;
+  const heldLayout = cinematicViewport && frameFits && hasScrollLayout;
+  const desktopMotion = heldLayout && !prefersReducedMotion;
+  const inView = useInView(sectionRef, { amount: 0.08 });
   const decisionControls = useAnimationControls();
   const resultControls = useAnimationControls();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
@@ -133,8 +138,15 @@ export function StudioCinematicChapter() {
     setActiveIndex(index);
   }, []);
 
-  // Collapsing the desktop hold changes its progress. Preserve the current
-  // discipline through pause/resume until the visitor scrolls again.
+  // Pause playback without removing a measured frame already in use.
+  // Initial reduced motion and content that grows beyond the viewport flow.
+  useEffect(() => {
+    if (!hydrated || !cinematicViewport || !frameFits) setHasScrollLayout(false);
+    else if (!prefersReducedMotion) setHasScrollLayout(true);
+  }, [cinematicViewport, frameFits, hydrated, prefersReducedMotion]);
+
+  // Preserve the current discipline through pause/resume until the visitor
+  // scrolls again. Preference changes are never a new reading decision.
   useEffect(() => {
     if (prefersReducedMotion) manualChoiceRef.current = true;
   }, [prefersReducedMotion]);
@@ -168,7 +180,7 @@ export function StudioCinematicChapter() {
     const changed = animatedIndexRef.current !== activeIndex;
     animatedIndexRef.current = activeIndex;
     settleReading();
-    if (!prefersReducedMotion && changed) {
+    if (!readingStill && inView && changed) {
       const direction = selectionRef.current.direction;
       decisionControls.set({ x: direction * 8, y: 3 });
       resultControls.set({ x: direction * 10 });
@@ -185,7 +197,7 @@ export function StudioCinematicChapter() {
       decisionControls.stop();
       resultControls.stop();
     };
-  }, [activeIndex, prefersReducedMotion, decisionControls, resultControls, settleReading]);
+  }, [activeIndex, readingStill, inView, decisionControls, resultControls, settleReading]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -288,10 +300,19 @@ export function StudioCinematicChapter() {
       data-home-chapter="studio"
       data-home-section="studio"
       data-studio-state={active.number}
-      data-studio-story={desktopMotion ? "held" : "flow"}
+      data-studio-story={heldLayout ? "held" : "flow"}
+      data-studio-scroll-active={desktopMotion}
+      data-studio-reading-still={readingStill}
+      data-studio-motion-active={inView && !readingStill}
       className="studio-cinematic home-scene"
       aria-labelledby="studio-cinematic-title"
-      onFocusCapture={(event) => revealFocusedReading(event.target)}
+      onFocusCapture={(event) => {
+        settleReading();
+        if (event.target instanceof HTMLElement && event.target.matches(":focus-visible")) setKeyboardReading(true);
+        revealFocusedReading(event.target);
+      }}
+      onKeyDownCapture={() => setKeyboardReading(true)}
+      onPointerDownCapture={() => setKeyboardReading(false)}
       style={{ "--studio-accent": active.accent } as CSSProperties}
     >
       <div className="studio-cinematic__aurora studio-cinematic__aurora--clay" aria-hidden="true" />
@@ -299,18 +320,22 @@ export function StudioCinematicChapter() {
 
       <div ref={gridRef} className="studio-cinematic__grid">
         <div className="studio-cinematic__media" aria-hidden="true">
-          <AnimatePresence mode="sync" initial={false} custom={selectionRef.current.direction}>
+          <AnimatePresence key={readingStill ? "settled" : "animated"} mode="sync" initial={false} custom={selectionRef.current.direction}>
             <motion.div
               className="studio-cinematic__media-layer"
               key={active.video}
               custom={selectionRef.current.direction}
               variants={MEDIA_TRANSITION}
-              initial={prefersReducedMotion ? false : "enter"}
-              animate={prefersReducedMotion ? { opacity: 1, y: 0, scale: 1 } : "visible"}
-              exit={prefersReducedMotion ? undefined : "exit"}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.55, ease: EASE }}
+              initial={readingStill ? false : "enter"}
+              animate={readingStill ? { opacity: 1, y: 0, scale: 1 } : "visible"}
+              exit={readingStill ? undefined : "exit"}
+              transition={{ duration: readingStill ? 0 : 0.55, ease: EASE }}
             >
-              <BackgroundVideo video={active.video} videoMobile={active.videoMobile} poster={active.poster} managedByHomepage loop={false} />
+              {readingStill ? (
+                <Image src={active.poster} alt="" fill sizes="100vw" style={{ objectFit: "cover" }} />
+              ) : (
+                <BackgroundVideo video={active.video} videoMobile={active.videoMobile} poster={active.poster} managedByHomepage loop={false} />
+              )}
             </motion.div>
           </AnimatePresence>
           <div className="studio-cinematic__media-wash" />
@@ -352,9 +377,10 @@ export function StudioCinematicChapter() {
                 >
                   {selected && (
                     <motion.span
+                      key={readingStill ? "settled" : "animated"}
                       className="studio-cinematic__selection"
-                      layoutId={`studio-selection-${selectionId}`}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.35, ease: EASE }}
+                      layoutId={readingStill ? undefined : `studio-selection-${selectionId}`}
+                      transition={{ duration: readingStill ? 0 : 0.35, ease: EASE }}
                       aria-hidden="true"
                     />
                   )}
@@ -389,7 +415,7 @@ export function StudioCinematicChapter() {
                   <motion.i
                     className="studio-cinematic__result-signal"
                     aria-hidden="true"
-                    style={{ scaleY: prefersReducedMotion ? 1 : resultSignal }}
+                    style={{ scaleY: readingStill ? 1 : resultSignal }}
                   />
                   <DisciplineResult discipline={active} />
                 </motion.div>
@@ -410,7 +436,7 @@ export function StudioCinematicChapter() {
 
           <div className="studio-cinematic__footer">
             <Link href="/about">Meet the strategist <span aria-hidden="true">→</span></Link>
-            <p>You work directly with Suman, from the first conversation to delivery.</p>
+            <Link href="/contact#call">Plan a 30 minute call <span aria-hidden="true">→</span></Link>
           </div>
         </div>
 
@@ -418,7 +444,7 @@ export function StudioCinematicChapter() {
           <motion.div
             className="studio-cinematic__portrait-image"
             data-studio-portrait-camera
-            style={{ y: prefersReducedMotion || !desktopMotion ? 0 : portraitY, x: prefersReducedMotion || !desktopMotion ? 0 : portraitX, rotate: prefersReducedMotion || !desktopMotion ? 0 : portraitTurn, scale: prefersReducedMotion || !desktopMotion ? 1 : portraitScale }}
+            style={{ y: readingStill || !desktopMotion ? 0 : portraitY, x: readingStill || !desktopMotion ? 0 : portraitX, rotate: readingStill || !desktopMotion ? 0 : portraitTurn, scale: readingStill || !desktopMotion ? 1 : portraitScale }}
           >
             <Image
               src="/images/own-portrait.jpg"

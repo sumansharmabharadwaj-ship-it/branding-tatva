@@ -32,7 +32,9 @@
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
+  gap: .5rem;
 }
+.home-v4 #studio .studio-cinematic__footer { flex-wrap: wrap; gap: .5rem 1.5rem; }
 
 .home-v4 #studio[data-studio-story="flow"] .studio-cinematic__media-topline::after {
   display: none;
@@ -135,17 +137,8 @@
   outline-offset: -4px;
 }
 
-/* Both the site preference and the OS preference release the held frame. */
-html[data-motion="reduced"] body .home-v4 #studio {
-  height: auto !important;
-  min-height: auto !important;
-}
-html[data-motion="reduced"] body .home-v4 #studio .studio-cinematic__grid {
-  position: relative;
-  top: auto;
-  height: auto;
-  min-height: 100svh;
-}
+/* Playback preferences settle the scene without changing its measured
+   geometry. Initial reduced motion uses the default flow layout. */
 html[data-motion="reduced"] body .home-v4 #studio .studio-cinematic__media-topline::after {
   display: none;
 }
@@ -155,16 +148,17 @@ html[data-motion="reduced"] body .home-v4 #studio :is(a, button) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html body .home-v4 #studio { height: auto !important; min-height: auto !important; }
-  html body .home-v4 #studio .studio-cinematic__grid {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 100svh;
-  }
   .home-v4 #studio .studio-cinematic__media-topline::after { display: none; }
   .home-v4 #studio :is(a, button) { transition: none; transform: none; }
 }
+
+.home-v4 #studio[data-studio-motion-active="false"] .studio-cinematic__aurora { animation-play-state: paused; }
+.home-v4 #studio[data-studio-reading-still="true"] :is(a, button, .studio-cinematic__proof > i, .studio-cinematic__footer a span[aria-hidden]) {
+  transition: none;
+  translate: none;
+  transform: none;
+}
+.home-v4 #studio[data-studio-reading-still="true"] .studio-cinematic__media-topline::after { display: none; }
 
 /* The desktop gate above starts at 761px of viewport on purpose, yet the
    grid's own padding (5.5rem top, 5rem bottom) and type scale push the
