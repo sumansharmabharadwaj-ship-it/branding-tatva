@@ -16,19 +16,32 @@ import { site } from "@/data/site";
 // linkable, answer-first page of its own. Static server rendering
 // throughout: reading content, zero interaction islands.
 
+const title = "Brand Strategy Terms for Founders";
+const description = "Plain language definitions for the brand strategy terms founders meet when choosing a position, message, identity, or offer structure.";
+
 export const metadata: Metadata = {
-  title: "Brand Strategy Terms for Founders",
-  description:
-    "Plain language definitions for the brand strategy terms founders meet when choosing a position, message, identity, or offer structure.",
+  title,
+  description,
   alternates: { canonical: "/glossary" },
+  openGraph: {
+    title: `${title} | ${site.name}`,
+    description,
+    type: "website",
+    url: `${site.url}/glossary`,
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${title} | ${site.name}`,
+    description,
+    images: ["/opengraph-image"],
+  },
 };
 
 // Every /glossary/[term] page publishes a DefinedTerm naming this route as
 // its inDefinedTermSet, but the set itself was never published anywhere, so
-// ten pages each claimed membership of a parent node that did not exist.
-// This declares it, with all ten terms and their real definitions inline,
-// which is also the form an answer engine can quote one definition out of
-// without crawling ten further routes.
+// the term pages claimed membership of a parent node that did not exist.
+// This declares the set with the same definitions that readers see below.
 //
 // The pillars carry a `questions` array too, and the obvious move would be a
 // FAQPage built from it. Those questions have no stored answers: the answer
