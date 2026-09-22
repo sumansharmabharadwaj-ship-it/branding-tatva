@@ -153,14 +153,13 @@ export default function RootLayout({
           <SmoothScrollProvider>
             {children}
             <SparkCursor />
+            {/* Shares scroll ownership with the page while preferences are open. */}
+            <ConsentManager />
           </SmoothScrollProvider>
         </MotionPreferenceProvider>
 
         <AmbientAudio />
         <VideoWarden />
-        {/* Measurement lives behind consent now. It used to mount here
-            directly, which counted every visitor before anyone was asked. */}
-        <ConsentManager />
 
         <script
           type="application/ld+json"

@@ -235,6 +235,22 @@ html[data-site-menu="open"] [data-auto-journey-control] {
 @media (max-width: 959px) {
   .page-enter { animation: none; }
 
+  .site-header {
+    padding-right: max(.75rem, env(safe-area-inset-right, 0px));
+    padding-left: max(.75rem, env(safe-area-inset-left, 0px));
+  }
+
+  .consent-panel {
+    right: max(.75rem, env(safe-area-inset-right, 0px));
+    bottom: max(.75rem, env(safe-area-inset-bottom, 0px));
+    left: max(.75rem, env(safe-area-inset-left, 0px));
+    max-height: calc(100dvh - max(.75rem, env(safe-area-inset-top, 0px)) - max(.75rem, env(safe-area-inset-bottom, 0px)));
+    scroll-padding-block: 1.25rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .consent-panel label span { font-size: .875rem; line-height: 1.5; }
+
   .site-header__menu-shell {
     top: max(5.25rem, calc(4.5rem + env(safe-area-inset-top, 0px)));
     padding-inline: max(.75rem, env(safe-area-inset-left, 0px)) max(.75rem, env(safe-area-inset-right, 0px));
@@ -277,6 +293,7 @@ html[data-site-menu="open"] [data-auto-journey-control] {
   /* Let long labels wrap instead of widening their card or hiding an action. */
   main :is(button, summary, [role="tab"], input, select, textarea) { overflow-wrap: anywhere; }
   .site-footer-meta > div { flex-wrap: wrap; justify-content: center; }
+  .consent-panel__actions { display: grid; grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 959px) {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { ShieldCheck, X } from "lucide-react";
+import { useLenis } from "@/components/SmoothScrollProvider";
 import {
   CONSENT_CHANGED_EVENT,
   CONSENT_OPEN_EVENT,
@@ -39,6 +40,7 @@ const NOTICE_EXPAND_Y = 32;
 
 export function ConsentManager() {
   const pathname = usePathname();
+  const lenis = useLenis();
   // Server and first client render agree on "undecided, nothing granted", so
   // there is no hydration mismatch and nothing loads before the check.
   const [consent, setConsent] = useState<ConsentState>(NO_CONSENT);
@@ -48,6 +50,7 @@ export function ConsentManager() {
   const [draft, setDraft] = useState<Draft>({ analytics: false, marketing: false });
   const panelRef = useRef<HTMLDivElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const restoreFocusFrameRef = useRef<number | null>(null);
 
   const openPanel = useCallback(() => {
     const current = readConsent();
@@ -58,12 +61,27 @@ export function ConsentManager() {
 
   const closePanel = useCallback(() => {
     setPanelOpen(false);
-    window.requestAnimationFrame(() => {
+    if (restoreFocusFrameRef.current !== null) window.cancelAnimationFrame(restoreFocusFrameRef.current);
+    restoreFocusFrameRef.current = window.requestAnimationFrame(() => {
+      restoreFocusFrameRef.current = null;
       if (previousFocusRef.current?.isConnected) {
-        previousFocusRef.current.focus();
+        previousFocusRef.current.focus({ preventScroll: true });
         return;
       }
-      document.querySelector<HTMLElement>('[aria-label="Review measurement choices"]')?.focus();
+      const notice = document.querySelector<HTMLElement>('[aria-label="Review measurement choices"]');
+      if (notice) {
+        notice.focus({ preventScroll: true });
+        return;
+      }
+      // Saving removes an undecided notice. Return to the reading surface
+      // without jumping to a distant footer or leaving focus on the body.
+      const main = document.querySelector<HTMLElement>("#main-content, main");
+      if (!main) return;
+      if (!main.hasAttribute("tabindex")) {
+        main.setAttribute("tabindex", "-1");
+        main.addEventListener("blur", () => main.removeAttribute("tabindex"), { once: true });
+      }
+      main.focus({ preventScroll: true });
     });
   }, []);
 
@@ -85,13 +103,14 @@ export function ConsentManager() {
     return () => {
       window.removeEventListener(CONSENT_CHANGED_EVENT, onChanged);
       window.removeEventListener(CONSENT_OPEN_EVENT, onOpen);
+      if (restoreFocusFrameRef.current !== null) window.cancelAnimationFrame(restoreFocusFrameRef.current);
     };
   }, [openPanel]);
 
   const decide = useCallback((choice: Draft) => {
     setConsent(writeConsent(choice));
-    setPanelOpen(false);
-  }, []);
+    closePanel();
+  }, [closePanel]);
 
   // Escape closes the panel, focus lands inside it when it opens, and Tab
   // stays within the modal until the visitor saves, declines, or closes it.
@@ -99,9 +118,26 @@ export function ConsentManager() {
     if (!panelOpen) return;
     const panel = panelRef.current;
     if (!panel) return;
+    const rootStyle = document.documentElement.style;
+    const properties = ["overflow", "scrollbar-gutter"] as const;
+    const previousStyles = properties.map((property) => ({
+      property,
+      value: rootStyle.getPropertyValue(property),
+      priority: rootStyle.getPropertyPriority(property),
+    }));
+    const wasStopped = lenis?.isStopped;
+    lenis?.stop();
+    const gutter = getComputedStyle(document.documentElement).scrollbarGutter;
+    rootStyle.setProperty("scrollbar-gutter", gutter.includes("stable") ? gutter : "stable");
+    rootStyle.setProperty("overflow", "hidden");
+    const background = Array.from(panel.parentElement?.children ?? [])
+      .filter((node): node is HTMLElement => node instanceof HTMLElement && node !== panel &&
+        !node.matches("[data-consent-backdrop], script, style, link"));
+    const previousInert = background.map((node) => node.inert);
+    background.forEach((node) => { node.inert = true; });
     const focusableSelector =
       'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
-    panel.querySelector<HTMLElement>(focusableSelector)?.focus();
+    panel.querySelector<HTMLElement>(focusableSelector)?.focus({ preventScroll: true });
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -124,14 +160,22 @@ export function ConsentManager() {
       if (event.shiftKey && (document.activeElement === first || !panel.contains(document.activeElement))) {
         event.preventDefault();
         last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
+      } else if (!event.shiftKey && (document.activeElement === last || !panel.contains(document.activeElement))) {
         event.preventDefault();
         first.focus();
       }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [closePanel, panelOpen]);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      background.forEach((node, index) => { node.inert = previousInert[index]; });
+      previousStyles.forEach(({ property, value, priority }) => {
+        if (value) rootStyle.setProperty(property, value, priority);
+        else rootStyle.removeProperty(property);
+      });
+      if (!wasStopped) lenis?.start();
+    };
+  }, [closePanel, lenis, panelOpen]);
 
   const decided = hasDecided(consent);
   const showBanner = ready && !decided && !panelOpen;
@@ -267,6 +311,7 @@ export function ConsentManager() {
         <>
           <button
             type="button"
+            data-consent-backdrop
             tabIndex={-1}
             aria-hidden="true"
             onClick={closePanel}
@@ -274,10 +319,11 @@ export function ConsentManager() {
           />
           <div
             ref={panelRef}
+            data-lenis-prevent
             role="dialog"
             aria-modal="true"
             aria-label="Measurement preferences"
-            className="fixed inset-x-3 bottom-3 z-[101] mx-auto max-h-[calc(100dvh-1.5rem)] max-w-3xl overflow-y-auto rounded-2xl border p-5 shadow-2xl backdrop-blur-md sm:inset-x-6 sm:bottom-6 sm:p-6"
+            className="consent-panel fixed inset-x-3 bottom-3 z-[101] mx-auto max-h-[calc(100dvh-1.5rem)] max-w-3xl overflow-y-auto overscroll-contain rounded-2xl border p-5 shadow-2xl backdrop-blur-md sm:inset-x-6 sm:bottom-6 sm:p-6"
             style={{ borderColor: "rgba(198,169,122,0.35)", backgroundColor: "rgba(27,27,27,0.97)" }}
           >
             <div className="flex items-center justify-between gap-4">
@@ -313,7 +359,7 @@ export function ConsentManager() {
               />
             </ul>
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="consent-panel__actions mt-5 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => decide(draft)}
