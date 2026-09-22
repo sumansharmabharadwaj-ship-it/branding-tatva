@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useIsPresent, type HTMLMotionProps } from "framer-motion";
 import { ArrowDownRight, List, X } from "lucide-react";
 import {
   useEffect,
@@ -56,6 +56,18 @@ type SectionJumpNavProps = {
 
 const SERVICES_CHAPTERS_READY_EVENT = "bt:services-chapters-ready";
 const SERVICES_ACTIVE_CHAPTER_EVENT = "bt:services-active-chapter";
+
+function isCurrentTabActivation(event: ReactMouseEvent<HTMLAnchorElement>) {
+  const link = event.currentTarget;
+  return !event.defaultPrevented && event.button === 0 &&
+    !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
+    (!link.target || link.target.toLowerCase() === "_self") && !link.hasAttribute("download");
+}
+
+function MobileChapterMenu(props: HTMLMotionProps<"div">) {
+  const present = useIsPresent();
+  return <motion.div {...props} aria-hidden={!present || undefined} inert={!present || undefined} />;
+}
 
 function validChapterItems(chapters: ServicesChapterEventDetail["chapters"]): JumpItem[] {
   if (!Array.isArray(chapters)) return [];
@@ -288,15 +300,13 @@ export function SectionJumpNav({
     function syncYielding() {
       const yielding = intersecting.size > 0;
 
-      if (yielding && mobileNavRef.current?.contains(document.activeElement)) {
-        intersecting.values().next().value?.focus({ preventScroll: true });
-      }
-
-      if (yielding && isServicesRoute && desktopNavRef.current?.contains(document.activeElement)) {
+      if (yielding && (
+        mobileNavRef.current?.contains(document.activeElement) ||
+        (isServicesRoute && desktopNavRef.current?.contains(document.activeElement))
+      )) {
         const action = intersecting.values().next().value;
         const target = action?.hasAttribute("tabindex") ? action : action?.querySelector<HTMLElement>("h2, h3") ?? action;
-        if (target && !target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
-        target?.focus({ preventScroll: true });
+        if (target) focusMobileDestination(target);
       }
 
       setMobileYielding((current) => (current === yielding ? current : yielding));
@@ -356,7 +366,7 @@ export function SectionJumpNav({
 
     const frame = window.requestAnimationFrame(() => {
       const activeLink = mobileItemRefs.current[activeIndex];
-      activeLink?.scrollIntoView({ behavior: "auto", block: "nearest", inline: "nearest" });
+      activeLink?.scrollIntoView({ behavior: "instant", block: "nearest", inline: "nearest" });
 
       if (mobileTriggerRef.current?.matches(":focus-visible")) {
         activeLink?.focus({ preventScroll: true });
@@ -372,7 +382,7 @@ export function SectionJumpNav({
     function dismissFromKeyboard(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
       setMobileOpen(false);
-      mobileTriggerRef.current?.focus();
+      mobileTriggerRef.current?.focus({ preventScroll: true });
     }
 
     function dismissFromOutside(event: PointerEvent) {
@@ -406,7 +416,8 @@ export function SectionJumpNav({
     };
   }, [desktopOpen]);
 
-  function choose(href: string) {
+  function choose(href: string, event?: ReactMouseEvent<HTMLAnchorElement>) {
+    if (event && !isCurrentTabActivation(event)) return;
     setDesktopOpen(false);
     setActiveHref(href);
     setMobileOpen(false);
@@ -427,9 +438,10 @@ export function SectionJumpNav({
   }
 
   function chooseMobile(event: ReactMouseEvent<HTMLAnchorElement>, item: JumpItem) {
-    // Keyboard and assistive-technology activation keep the browser's native
-    // destination focus while pointer taps get a short, interruptible native
-    // transition and a visible destination confirmation.
+    // Preserve new-tab, download and modified-click gestures without changing
+    // this page's selection, history, scroll or focus.
+    if (!isCurrentTabActivation(event)) return;
+
     if (!guidedMobile) {
       choose(item.href);
       return;
@@ -442,15 +454,17 @@ export function SectionJumpNav({
     }
 
     event.preventDefault();
+    if (window.location.hash !== item.href) {
+      window.history.pushState(window.history.state, "", item.href);
+    }
+    // Move focus before the outgoing menu becomes inert. The next Tab then
+    // continues at the destination for mouse, touch and keyboard visitors.
+    focusMobileDestination(target);
 
     if (event.detail === 0) {
       choose(item.href);
       setMobileStatus(`${item.label} ready`);
-      if (window.location.hash !== item.href) {
-        window.history.pushState(null, "", item.href);
-      }
-      target.scrollIntoView({ behavior: "auto", block: "start" });
-      focusMobileDestination(target);
+      target.scrollIntoView({ behavior: "instant", block: "start" });
       return;
     }
 
@@ -458,11 +472,8 @@ export function SectionJumpNav({
     setMobileStatus(`Moving to ${item.label}`);
     setMobileOpen(false);
 
-    if (window.location.hash !== item.href) {
-      window.history.pushState(null, "", item.href);
-    }
     target.scrollIntoView({
-      behavior: prefersReducedMotion ? "auto" : "smooth",
+      behavior: prefersReducedMotion ? "instant" : "smooth",
       block: "start",
     });
   }
@@ -489,7 +500,7 @@ export function SectionJumpNav({
     if (nextIndex === index) return;
     mobileItemRefs.current[nextIndex]?.focus({ preventScroll: true });
     mobileItemRefs.current[nextIndex]?.scrollIntoView({
-      behavior: "auto",
+      behavior: "instant",
       block: "nearest",
       inline: "nearest",
     });
@@ -657,7 +668,7 @@ export function SectionJumpNav({
 
         <AnimatePresence initial={false}>
           {mobileOpen && (
-            <motion.div
+            <MobileChapterMenu
               id="section-jump-mobile-menu"
               key="section-jump-mobile-menu"
               data-section-jump-mobile-menu="true"
@@ -762,7 +773,7 @@ export function SectionJumpNav({
                   </a>
                 );
               })}
-            </motion.div>
+            </MobileChapterMenu>
           )}
         </AnimatePresence>
       </nav>
@@ -845,7 +856,7 @@ export function SectionJumpNav({
                         href={item.href}
                         aria-current={active ? "location" : undefined}
                         aria-label={`Chapter ${index + 1}: ${item.label}`}
-                        onClick={() => choose(item.href)}
+                        onClick={(event) => choose(item.href, event)}
                         onKeyDown={(event) => focusDesktopChapter(event, index)}
                         className={`group relative flex h-7 w-7 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${lightTone ? "focus-visible:outline-terracotta" : "focus-visible:outline-sandstone"}`}
                       >
@@ -900,7 +911,7 @@ export function SectionJumpNav({
                   key={item.href}
                   href={item.href}
                   aria-current={active ? "location" : undefined}
-                  onClick={() => choose(item.href)}
+                  onClick={(event) => choose(item.href, event)}
                   className={`whitespace-nowrap text-[0.65rem] uppercase tracking-[0.2em] transition-colors duration-300 ${
                     active
                       ? "text-terracotta"
