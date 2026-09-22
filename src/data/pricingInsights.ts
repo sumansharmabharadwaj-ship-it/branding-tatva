@@ -87,6 +87,20 @@ export const pricingInsightPosts: BuyerGuidePost[] = [
         }
       },
       {
+        "id": "what-the-starting-engagements-cover",
+        "heading": "What do these starting prices cover?",
+        "paragraphs": [
+          "Foundation combines a brand discovery and positioning workshop with audience and purpose definition, a core visual identity covering logo, colour and type, a starter guidelines document and launch messaging direction. The published engagement therefore includes strategy and identity work. Ask how those outputs apply to your existing brand before commissioning the package.",
+          "Full Brand System includes the Foundation scope plus a brand audit and repositioning, voice and messaging rules across channels, campaign concept and visual direction, website content structure and three months of asynchronous support. Website content structure describes how the pages and messages fit together. Confirm finished page copy, website development and launch responsibilities separately in the proposal.",
+          "Brand Partnership covers ongoing content management, a monthly brand review, performance review and adjustment, priority access and a quarterly strategy review. Agree the recurring workload, review arrangements and responsibilities before starting. The monthly starting price does not describe a fixed number of posts, pages or meetings.",
+          "These descriptions follow Branding Tatva’s service listing. Bring any differences between your brief and that published scope to the first conversation. The written proposal should state the final outputs, fee, exclusions and responsibilities."
+        ],
+        "callout": {
+          "label": "Compare the complete assignment",
+          "text": "Ask whether you need the whole engagement or a separately scoped piece of work. An existing identity, internal writer or development team may change the brief."
+        }
+      },
+      {
         "id": "what-you-are-actually-buying",
         "heading": "What should a brand strategy fee include?",
         "paragraphs": [
@@ -115,7 +129,7 @@ export const pricingInsightPosts: BuyerGuidePost[] = [
         "id": "compare-uk-us-canada-quotes",
         "heading": "Comparing quotes in the UK, USA and Canada",
         "paragraphs": [
-          "For a UK brief, record the fee in GBP and identify whether the work concerns UK buyers or an international expansion. A domestic service proposition and a new-market positioning study should not be treated as the same research task.",
+          "For a UK brief, record the fee in GBP and identify whether the work concerns UK buyers or an international expansion. A domestic service proposition and a positioning study for a new market should not be treated as the same research task.",
           "For a US brief, record USD explicitly and specify the relevant customer segment and market. A country label alone cannot tell a strategist which buyers, competitors or purchase decisions to investigate.",
           "For a Canadian brief, confirm CAD rather than assuming a dollar quote is Canadian. Say whether the work needs English, French or both. Translation, local language research and adaptation need named responsibilities and an explicit scope; an English-language engagement does not include them by default.",
           "For any remote engagement, agree time zones, shared review hours and the person who consolidates feedback. Compare these working arrangements alongside the fee. Being in the same country does not by itself establish experience with your buyers."
@@ -164,11 +178,11 @@ export const pricingInsightPosts: BuyerGuidePost[] = [
       },
       {
         "question": "How much does brand strategy cost in Canada?",
-        "answer": "Branding Tatva’s Canadian starting prices are CA$3,200 for Foundation, CA$7,500 for Full Brand System and CA$1,900 per month for Brand Partnership. The currency is CAD. State any French-language or bilingual requirements when discussing the scope."
+        "answer": "Branding Tatva’s Canadian starting prices are CA$3,200 for Foundation, CA$7,500 for Full Brand System and CA$1,900 per month for Brand Partnership. The currency is CAD. State any requirements for French or bilingual content when discussing the scope."
       },
       {
         "question": "Does brand strategy include a logo and website?",
-        "answer": "Only when the proposal explicitly includes them. Strategy, visual identity, website copy and website development are distinct outputs. Ask for a list of the finished work and the review rounds included in the fee."
+        "answer": "A strategy engagement includes design or development when those outputs are agreed in the proposal. Branding Tatva’s published Foundation scope includes a core visual identity. Full Brand System also includes website content structure; finished page copy and website development need explicit confirmation. Ask for the completed outputs and review rounds in writing."
       },
       {
         "question": "Can I compare a remote strategist with a local agency?",
@@ -183,6 +197,20 @@ export const pricingInsightPosts: BuyerGuidePost[] = [
       "how-to-choose-a-branding-agency",
       "brand-strategist-vs-branding-agency",
       "brand-audit-checklist-before-rebrand"
+    ],
+    "sources": [
+      {
+        "title": "Services, engagement scopes and regional starting prices",
+        "publisher": "Branding Tatva",
+        "url": "https://brandingtatva.com/services#desire",
+        "note": "This practice’s own published offer is the source for package inclusions and starting prices. Choose the relevant region to compare the price; these figures are not independent market benchmarks."
+      },
+      {
+        "title": "How to buy design: Asking for a proposal document",
+        "publisher": "Design Business Association",
+        "url": "https://www.dba.org.uk/resources/review-links-how-to-buy-design-08-asking-for-a-proposal-document/",
+        "note": "Supports checking process, timing, people, deliverables, costs and changes to the brief in a proposal. The comparison scenarios and checklist in this guide are practical suggestions; this source does not establish Branding Tatva’s prices."
+      }
     ]
   },
   {
