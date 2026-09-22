@@ -148,7 +148,7 @@ export function SituationPath() {
         data-animate={entered && !prefersReducedMotion ? "true" : "false"}>
         <div className={styles.choicesColumn}>
           <p className={styles.eyebrow}>Your situation</p>
-          <h2 className={styles.heading}>Which sentence sounds like your business?</h2>
+          <h2 className={styles.heading}>Where does the brand stand?</h2>
           <p className={styles.intro}>Choose the closest fit. Your choice carries into the scope, price, and client evidence.</p>
           <div className={styles.choices} role="radiogroup" aria-label="Choose your brand situation">
             {OPTIONS.map((option, index) => <button key={option.id} type="button" role="radio"
@@ -170,11 +170,14 @@ export function SituationPath() {
             if (!pkg) return null;
             return <section key={option.id} id={`situation-panel-${option.id}`} role="region" aria-labelledby={`situation-title-${option.id}`}
               className={styles.panel} data-active={active ? "true" : "false"} aria-hidden={!active} inert={!active}>
-              <p className={styles.mobileStatement}>{option.label}</p>
               <p className={styles.eyebrow}>The first decision</p>
               <h3 id={`situation-title-${option.id}`}>{option.decision}</h3>
               <p className={styles.reason}>{option.reason}</p>
               <SituationSketch situation={option.id} />
+              <details key={displayed} className={styles.explanation}>
+                <summary>Why start here <span aria-hidden="true">+</span></summary>
+                <p>{option.label}</p><p>{option.reason}</p>
+              </details>
               <div className={styles.next}>
                 <p><span>Matching engagement</span><strong>{pkg.name}</strong></p>
                 <Link href="#desire" onClick={event => {
