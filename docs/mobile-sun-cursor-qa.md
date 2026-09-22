@@ -16,4 +16,12 @@
 - TypeScript and targeted ESLint passed.
 - Production build passed again with the latest incoming homepage performance changes (106 routes).
 
-The cloud browser can operate a mouse but does not expose native touch input. These input-handler checks are distinct from physical iPhone/Safari acceptance, which remains outstanding. The latest attempt to inspect the old Contact phone frame also timed out. No touch screenshot or full physical-device pass is claimed.
+The cloud browser can operate a mouse but does not expose native touch input. These input-handler checks are distinct from physical iPhone/Safari acceptance, which remains outstanding. Inspecting the old Contact phone frame timed out, and a fresh-tab recovery also timed out before navigation. No touch screenshot or full physical-device pass is claimed.
+
+## Preview release 507
+
+- Source commit: `0a6b6914a9f11561cad44ab67239b04a307e7d85`.
+- Deployment trigger: `e6d5186ea25ed64cc40ac3936eb0ea2e65d60ad4`.
+- Vercel deployment `dpl_CBgdzPjaCiHHSTu1pg8nDzgwF7Ta` is READY; the controlled-preview check succeeded.
+- The deployment's `/api/release` returned HTTP 200 and the exact trigger commit, branch `august-8-isolated`, environment `preview` at 10:56 UTC.
+- The permanent review alias still returned production commit `a29577f4cd2497d7e76524c73ec49b5222a8caac` at the same time. It is not evidence for this change. Alias reassignment remains unavailable through the connected deployment tools; the workflow has no configured Vercel API credential for that step.
