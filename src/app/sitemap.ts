@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { brandStudies } from "@/data/brandStudies";
-import { allTerms } from "@/data/glossary";
+import { allTerms, glossaryUpdatedAt } from "@/data/glossary";
 import { insightPosts, insightTopics } from "@/data/insightLibrary";
 import { projects } from "@/data/projects";
 import { getCaseStudyPresentation } from "@/data/caseStudyPresentation";
@@ -44,6 +44,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${site.url}/glossary`,
+      lastModified: new Date(`${glossaryUpdatedAt}T00:00:00Z`),
       changeFrequency: "monthly",
       priority: 0.6,
     },
@@ -88,7 +89,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const studyRoutes: MetadataRoute.Sitemap = brandStudies.map((study) => ({
     url: `${site.url}/work/studies/${study.slug}`,
-    lastModified: new Date("2026-08-02"),
+    lastModified: new Date(`${study.updatedAt}T00:00:00Z`),
     changeFrequency: "monthly",
     priority: 0.7,
   }));
@@ -113,7 +114,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const glossaryRoutes: MetadataRoute.Sitemap = allTerms.map((term) => ({
     url: `${site.url}/glossary/${term.slug}`,
-    lastModified: new Date("2026-08-03"),
+    ...(term.updatedAt ? { lastModified: new Date(`${term.updatedAt}T00:00:00Z`) } : {}),
     changeFrequency: "monthly",
     priority: 0.5,
   }));

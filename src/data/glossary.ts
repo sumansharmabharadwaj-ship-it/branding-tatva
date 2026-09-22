@@ -13,11 +13,17 @@ export type GlossaryTerm = {
   slug: string;
   expanded: string;
   practice: string;
+  serviceLink?: { href: string; label: string };
+  updatedAt?: string;
+  sources?: { label: string; publisher: string; url: string }[];
   // The essays where this idea does real work, newest thinking first.
   // Rendered on the term page and exposed as subjectOf in its schema,
   // so the vocabulary and the library cite each other.
   essaySlugs?: string[];
 };
+
+// Actual substantive revision date for the four sourced entries below.
+export const glossaryUpdatedAt = "2026-09-22";
 
 export type Pillar = {
   id: string;
@@ -41,6 +47,7 @@ export const pillars: Pillar[] = [
       {
         term: "Positioning",
         slug: "positioning",
+        serviceLink: { href: "/brand-positioning", label: "Review the brand positioning scope" },
         essaySlugs: ["brand-positioning-strategy-service-businesses", "brand-positioning-statement-examples-why-generic", "how-to-position-a-consulting-business"],
         definition:
           "The decision about which single idea a brand should own in a buyer's head, made before any design work begins.",
@@ -52,6 +59,7 @@ export const pillars: Pillar[] = [
       {
         term: "Category design",
         slug: "category-design",
+        serviceLink: { href: "/brand-positioning", label: "Compare buyer alternatives in a positioning engagement" },
         essaySlugs: ["find-real-differentiator-crowded-service-market", "competitor-research-brand-strategy-without-copying-category"],
         definition:
           "Choosing, and sometimes creating, the market frame a brand competes in before competing in it.",
@@ -75,6 +83,7 @@ export const pillars: Pillar[] = [
       {
         term: "Distinctive assets",
         slug: "distinctive-assets",
+        serviceLink: { href: "/brand-audit", label: "Review existing brand assets in a brand audit" },
         essaySlugs: ["distinctive-brand-assets-audit", "what-rebrand-backlashes-teach-about-brand-memory", "why-ai-content-makes-brands-average"],
         definition:
           "The colors, shapes, sounds, and phrases a brand owns so thoroughly that people recognize it with the logo covered.",
@@ -107,6 +116,7 @@ export const pillars: Pillar[] = [
       {
         term: "Recognition",
         slug: "recognition",
+        serviceLink: { href: "/services#audit", label: "Try the brand recognition diagnostic" },
         essaySlugs: ["why-beautiful-brand-identity-can-be-forgettable", "reposition-established-service-business-without-losing-recognition", "brand-consistency-checklist-service-businesses"],
         definition: "The compound return of consistency: being known again without reintroduction.",
         expanded:
@@ -117,35 +127,48 @@ export const pillars: Pillar[] = [
       {
         term: "Category entry points",
         slug: "category-entry-points",
+        serviceLink: { href: "/brand-positioning", label: "Examine buying triggers in a positioning engagement" },
+        updatedAt: glossaryUpdatedAt,
         essaySlugs: ["how-ai-assistants-choose-brands-to-recommend", "aeo-vs-seo-vs-geo", "brand-awareness-vs-brand-recall"],
         definition:
-          "The situations that trigger a category in a buyer's mind: the moments, needs, and occasions through which brands get retrieved from memory.",
+          "The needs, occasions and circumstances that prompt buyers to think about a product or service category and recall possible brands.",
         expanded:
-          "Nobody buys a category in the abstract. A trigger fires first: the funding round approaches, the website undersells the work, a rival suddenly looks sharper. Each trigger is an entry point, and the brand linked to more of them gets retrieved more often. The same mechanics now govern AI assistants, because buyers phrase prompts as situations and the assistant retrieves whichever brand the written record has attached to that situation.",
+          "The Ehrenberg Bass Institute studies category entry points as cues associated with buying situations and brand memory. For a service business, a new funding round or an approaching contract renewal could be a useful starting hypothesis. Interviews can reveal the situations buyers actually describe; broader research can then test their relevance. Human memory research alone cannot establish how an AI assistant selects a source or recommends a supplier.",
         practice:
-          "Every guide in this library answers one entry point deliberately: one buying situation, one direct answer, so the practice gets recorded against the moments that matter.",
+          "Start with recent buying conversations. Record what changed, why the buyer sought help and which alternatives came to mind. Use that evidence to choose useful guide topics, then measure reader response separately from brand recall.",
+        sources: [{ label: "Identifying and prioritising category entry points", publisher: "Ehrenberg Bass Institute", url: "https://marketingscience.info/learn-with-us/commercial-research/identifying-and-prioritising-category-entry-points" }],
       },
       {
         term: "Answer engine optimisation",
         slug: "answer-engine-optimisation",
+        updatedAt: glossaryUpdatedAt,
         essaySlugs: ["aeo-vs-seo-vs-geo", "how-ai-assistants-choose-brands-to-recommend"],
         definition:
-          "The practice of earning the quoted answer itself, the snippet, the voice reply, the answer box, rather than a ranked position on a results page.",
+          "Work intended to help useful content appear in direct answers, such as featured snippets or AI responses. Selection remains with the search system.",
         expanded:
-          "AEO shifts the unit of competition from the page to the passage. A page can rank fourth and still own the answer, because answer surfaces look for the clearest quotable paragraph, stated plainly and marked up so a machine knows which question it resolves. Pages that open with their conclusion get excerpted; pages that warm up for eight hundred words get skipped.",
+          "AEO is an industry label with overlapping uses. Google chooses featured snippets through its own systems; publishers cannot mark a passage for guaranteed selection. Its guidance for generative AI search also keeps established SEO principles central. A clear explanation helps a reader, while headings, evidence and accessible text make the page easier to use. An opening answer, a particular word count or special markup cannot promise a citation.",
         practice:
-          "Every guide and glossary page on this site opens with a direct answer block for exactly this reason: the format teaches human readers and machine readers in the same breath.",
+          "Answer the reader's question early, explain the limits and show the supporting evidence. Keep important text accessible and links crawlable. Assess actual search appearances and useful enquiries before deciding whether the work helped.",
+        sources: [
+          { label: "Featured snippets and your website", publisher: "Google Search Central", url: "https://developers.google.com/search/docs/appearance/featured-snippets" },
+          { label: "Optimising for generative AI search", publisher: "Google Search Central", url: "https://developers.google.com/search/docs/fundamentals/ai-optimization-guide" },
+        ],
       },
       {
         term: "Generative engine optimisation",
         slug: "generative-engine-optimisation",
+        updatedAt: glossaryUpdatedAt,
         essaySlugs: ["generative-engine-optimisation-guide", "aeo-vs-seo-vs-geo", "how-ai-assistants-choose-brands-to-recommend"],
         definition:
-          "The practice of making a brand retrievable and quotable by AI assistants such as ChatGPT, Gemini, and Perplexity, which recommend entities rather than ranking pages.",
+          "Work intended to improve a source's visibility in answers produced by generative search systems, with results measured for a defined system and query set.",
         expanded:
-          "GEO is mental availability measured by a machine. An assistant retrieves brands from its trained impression of the world, weighted by how consistently independent sources describe them, then quotes whichever pages state answers plainly enough to lift. The controlled research found quotations, statistics, and cited sources raise inclusion in generated answers far more than any polish. In marketing use the abbreviation is distinct from geographic targeting, which older material also shortens to geo.",
+          "The GEO research paper evaluated changes to source content using a benchmark and found that results varied across domains. Those findings concern the tested conditions and measures, rather than a promise of current rankings, recommendations or traffic. Google's own guidance describes its AI search features as grounded in established Search systems and relevant retrieved pages. Treat each platform's guidance and observed results separately. In this context, GEO refers to generative search rather than geographic targeting.",
         practice:
-          "The entity sentence, direct answer blocks, and sourced guides across this site are GEO applied to the practice itself: one consistent record, written to be quoted.",
+          "Publish accurate business details and useful, sourced explanations. Record the system, date, question and linked source when assessing an answer. Repeat observations before drawing a conclusion, and track visits and enquiries separately from mentions.",
+        sources: [
+          { label: "GEO research paper", publisher: "Aggarwal and colleagues", url: "https://arxiv.org/abs/2311.09735" },
+          { label: "Optimising for generative AI search", publisher: "Google Search Central", url: "https://developers.google.com/search/docs/fundamentals/ai-optimization-guide" },
+        ],
       },
     ],
   },
@@ -162,6 +185,7 @@ export const pillars: Pillar[] = [
       {
         term: "Verbal identity",
         slug: "verbal-identity",
+        serviceLink: { href: "/brand-messaging", label: "See the brand messaging and voice scope" },
         essaySlugs: ["brand-voice-guidelines-writers-can-use", "why-ai-content-makes-brands-average", "homepage-messaging-service-businesses", "how-to-name-a-brand-when-good-names-are-taken"],
         definition: "The words a brand owns: its vocabulary, its rhythm, the sentences only it would say.",
         expanded:
@@ -172,6 +196,7 @@ export const pillars: Pillar[] = [
       {
         term: "Tone of voice",
         slug: "tone-of-voice",
+        serviceLink: { href: "/brand-messaging", label: "See how a messaging engagement defines voice guidelines" },
         essaySlugs: ["brand-voice-guidelines-writers-can-use", "brand-messaging-framework"],
         definition:
           "The consistent personality in how a brand speaks, kept steady across every channel and every writer.",
@@ -183,13 +208,15 @@ export const pillars: Pillar[] = [
       {
         term: "Sound symbolism",
         slug: "sound-symbolism",
+        updatedAt: glossaryUpdatedAt,
         essaySlugs: ["how-to-name-a-brand-when-good-names-are-taken", "brand-voice-guidelines-writers-can-use"],
         definition:
-          "The meaning a word carries in its sound alone: vowels and consonants signalling size, speed, weight, and warmth before the dictionary arrives.",
+          "Associations between speech sounds and perceived qualities, such as a rounded or pointed shape. These patterns can inform questions when testing a name.",
         expanded:
-          "People across languages match the invented word kiki to a spiky shape and bouba to a rounded one, agreement running near total, which shows the ear assigns meaning without any definition to lean on. Brand name research made the effect commercial: front vowels read small, quick, and precise, back vowels read large, heavy, and warm, plosive consonants snap while fricatives glide. A name whose sound argues with its positioning fights that argument in every exposure, so sound is a screening criterion rather than a garnish.",
+          "A study by Ćwiek and colleagues tested the bouba and kiki association across speakers of 25 languages and reported strong overall evidence for the effect. This supports a relationship between speech sounds and shape judgements in that task. It leaves the effectiveness of an individual brand name to be assessed in its own context. Familiar words, pronunciation and the audience's language can all be questions in that assessment.",
         practice:
-          "The naming audition this practice runs scores every candidate aloud before any trademark search, keeping only the names whose sound agrees with the strategy.",
+          "Ask intended buyers to say a candidate name, explain the associations it brings to mind and recall it later. Compare those observations with the naming brief. Keep this audience exercise separate from the professional checks needed before adopting a name.",
+        sources: [{ label: "The bouba and kiki study", publisher: "Ćwiek and colleagues", url: "https://doi.org/10.1098/rstb.2020.0390" }],
       },
     ],
   },
@@ -225,6 +252,7 @@ export const pillars: Pillar[] = [
       {
         term: "Semiotics",
         slug: "semiotics",
+        serviceLink: { href: "/brand-audit", label: "Review identity and language in a brand audit" },
         essaySlugs: ["why-beautiful-brand-identity-can-be-forgettable", "what-rebrand-backlashes-teach-about-brand-memory"],
         definition:
           "The study of what signs and symbols mean to a culture, applied so a brand's codes say what it intends.",

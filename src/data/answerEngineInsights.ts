@@ -1,12 +1,7 @@
 import type { InsightPost } from "@/data/pillarInsights";
 
-// The answer engine set — the two searches founders now run before they
-// spend anything on content: what separates SEO, AEO, and GEO, and how
-// generative engine optimisation actually works for a service business.
-// Researched September 2026; every named study carries a source in its
-// post's research record. Written to the sitewide copy standard, and
-// each hero uses a spare original still from the insights v2 shoot so
-// the library keeps one photographic language.
+// Search visibility guides. Platform guidance, research and practical
+// suggestions are distinguished; primary references checked 22 September 2026.
 
 type InsightResearchSource = {
   title: string;
@@ -21,406 +16,333 @@ type SourcedInsightPost = InsightPost & {
 
 export const answerEngineInsightPosts: SourcedInsightPost[] = [
   {
-    slug: "aeo-vs-seo-vs-geo",
-    title: "AEO vs SEO vs GEO: three acronyms, one contest",
-    seoTitle: "AEO vs SEO vs GEO: the difference, explained plainly",
-    excerpt:
-      "Three acronyms now compete for the same budget. This guide separates what each one names, shows the single record underneath all three, and settles where a small team should spend first.",
-    directAnswer:
-      "SEO earns a ranked position on a results page for a typed query. AEO, answer engine optimisation, earns the quoted answer itself: the snippet, the voice reply, the answer box. GEO, generative engine optimisation, earns a place inside the responses that assistants like ChatGPT, Gemini, and Perplexity generate. The unit of competition shifts from page to passage to entity, yet all three read the same public record. A business that keeps one consistent entity, publishes direct answers, and earns third party corroboration is doing all three at once.",
-    element: "space",
-    topicSlug: "brand-memory",
-    primaryKeyword: "aeo vs seo vs geo",
-    secondaryKeywords: [
+    "slug": "aeo-vs-seo-vs-geo",
+    "title": "SEO, AEO and GEO: where a small team should start",
+    "seoTitle": "AEO vs SEO vs GEO: differences and practical priorities",
+    "excerpt": "Compare the aims of SEO, AEO and GEO, separate platform guidance from sales claims, and choose a useful first task for a service business.",
+    "directAnswer": "SEO concerns visibility in search. AEO is commonly used for work aimed at direct answers, while GEO concerns visibility in generated responses. The labels overlap and do not describe three universal ranking systems. For a small service business, start with the actual problem: inaccessible pages, an unclear offer, weak evidence or poor enquiries. Choose work that addresses that problem and measure each channel separately.",
+    "element": "space",
+    "topicSlug": "brand-memory",
+    "primaryKeyword": "aeo vs seo vs geo",
+    "secondaryKeywords": [
       "difference between seo and aeo",
       "what is answer engine optimisation",
       "what is generative engine optimization",
       "geo vs seo",
       "ai search optimisation",
-      "llm seo",
+      "llm seo"
     ],
-    searchIntent:
-      "Understand what separates SEO, AEO, and GEO, and decide where a service business should place its effort.",
-    publishedAt: "2026-09-18",
-    updatedAt: "2026-09-18",
-    readingTime: "11 min read",
-    heroImage: "/images/generated/insights-v2/page-knowledge-atlas.webp",
-    heroVideo: "/videos/generated/insights-v2/page-knowledge-atlas.mp4",
-    heroImageAlt:
-      "An open atlas of connected reference cards on a worktable, three routes traced across one shared map",
-    keyTakeaways: [
-      "SEO ranks pages, AEO wins the quoted answer, GEO earns a place inside generated responses. Three surfaces, one written record.",
-      "The unit of competition moved: from page, to passage, to entity. Entities are brand work, which is why strategists suddenly matter in search.",
-      "Every tactic that genuinely works on the new surfaces also worked on the old one: direct answers, structured data, corroboration, consistency.",
-      "Chasing three acronyms as three projects triples the cost of one discipline. Build the record once and let each surface read it.",
-      "For a service business the order is fixed: entity first, situated answers second, third party echo third.",
+    "searchIntent": "Understand what separates SEO, AEO, and GEO, and decide where a service business should place its effort.",
+    "publishedAt": "2026-09-18",
+    "updatedAt": "2026-09-22",
+    "readingTime": "6 min read",
+    "heroImage": "/images/generated/insights-v2/page-knowledge-atlas.webp",
+    "heroVideo": "/videos/generated/insights-v2/page-knowledge-atlas.mp4",
+    "heroImageAlt": "An open atlas of connected reference cards on a worktable, three routes traced across one shared map",
+    "keyTakeaways": [
+      "The acronym names an intended outcome; a proposal still needs to name the platform, page and work.",
+      "Search position, a linked citation, an unlinked mention and a qualified enquiry are different observations.",
+      "Google chooses featured snippets. A direct opening answer cannot guarantee selection.",
+      "Repeated wording across profiles does not establish how an assistant ranks a business.",
+      "Start with a useful baseline and a specific buyer question before commissioning more content."
     ],
-    framework: {
-      title: "The one record method",
-      introduction:
-        "Every surface, human or machine, reads the same public record of your business. Build that record once, in this order, and SEO, AEO, and GEO are served by the same work.",
-      steps: [
+    "framework": {
+      "title": "Choose the work before the acronym",
+      "introduction": "A planning exercise for a service business, rather than a model of any platform's ranking system.",
+      "steps": [
         {
-          title: "Name the entity",
-          description:
-            "One sentence holding the name, the category, and who the work is for. Installed verbatim on the site, LinkedIn, directories, and every profile.",
+          "title": "Define the buyer",
+          "description": "Write the service, market and decision you want the page to support."
         },
         {
-          title: "Choose the questions",
-          description:
-            "The five to fifteen situated questions a buyer actually asks before hiring you. Each one becomes a page with a stable URL.",
+          "title": "Check the route",
+          "description": "Can someone find the page, understand the scope and reach the next step?"
         },
         {
-          title: "Answer first, explain after",
-          description:
-            "Every page states its conclusion in the opening block, then earns it. Machines excerpt openings; people skim them.",
+          "title": "Examine the evidence",
+          "description": "Separate work you can document from statements you still need to test."
         },
         {
-          title: "Mark it up",
-          description:
-            "Organisation, person, article, FAQ, and definition schema tell every crawler exactly which entity each answer belongs to.",
+          "title": "Choose one change",
+          "description": "Select a page or question where a concrete improvement is possible."
         },
         {
-          title: "Earn the echo",
-          description:
-            "Reviews, press, directories, and forum discussion repeating your sentence. Agreement between independent sources is what machines treat as truth.",
-        },
-      ],
+          "title": "Measure the outcome",
+          "description": "Record the change, observation period, visits and relevant enquiries."
+        }
+      ]
     },
-    sections: [
+    "sections": [
       {
-        id: "three-acronyms-one-anxiety",
-        heading: "Three acronyms, one anxiety",
-        paragraphs: [
-          "Somewhere in 2025 the question changed shape. Founders stopped asking how to rank on Google and started asking why ChatGPT recommends a competitor, why Perplexity cites a rival's guide, why the answer box quotes somebody else. The industry answered with acronyms: SEO for the rankings, AEO for the answers, GEO for the generated responses.",
-          "The acronyms are useful as names for surfaces. They are misleading as names for disciplines, because they suggest three separate projects with three separate budgets. Agencies have already begun selling them that way.",
-          "The claim this guide will defend: there is one discipline underneath, and it is closer to brand strategy than to technical search work. The surfaces differ in how they read. The record they read is shared.",
-        ],
-        callout: {
-          label: "The short version",
-          text: "SEO ranks pages. AEO wins the quoted answer. GEO earns the recommendation inside a generated response. All three read one record.",
-        },
+        "id": "three-acronyms-one-anxiety",
+        "heading": "Start with the decision behind the brief",
+        "paragraphs": [
+          "A founder can receive three proposals describing the same pages under different labels. Comparing the acronym will reveal less than comparing the deliverables. Ask which problem the supplier observed, which pages they would change and what evidence would show the work helped.",
+          "For an illustrative UK consultancy, the immediate problem might be an offer that sounds like general business advice. Before commissioning an AI visibility programme, the founder could clarify the type of client, the decision being addressed and the evidence available to support the service. This is a proposed exercise, not a reported client outcome."
+        ]
       },
       {
-        id: "what-each-name-means",
-        heading: "What each name actually means",
-        paragraphs: [
-          "Search engine optimisation is the oldest contest: earn a position on a results page for a typed query. The buyer sees a ranked list, clicks a link, and arrives on a page. The page is the unit of competition, and the click is the prize.",
-          "Answer engine optimisation targets the surfaces that answer instead of listing: featured snippets, answer boxes, voice assistants, and the direct answers at the top of AI enhanced results. The prize is being the passage that gets quoted. A page can rank fourth and still own the answer, which makes AEO a contest of passages rather than pages.",
-          "Generative engine optimisation targets assistants that compose responses: ChatGPT, Gemini, Claude, Perplexity, and the AI modes inside the search engines themselves. These systems answer from a blend of trained memory and live retrieval, and they name a small set of brands rather than listing ten links. The unit of competition is the entity: the brand as a thing the model knows, filed under a category, attached to situations.",
-        ],
-        bullets: [
-          "SEO: the page competes, measured in rankings and clicks.",
-          "AEO: the passage competes, measured in answers owned.",
-          "GEO: the entity competes, measured in mentions and citations inside generated responses.",
-        ],
+        "id": "what-each-name-means",
+        "heading": "What each term covers",
+        "paragraphs": [
+          "SEO is the broad practice of improving a site's discoverability and usefulness in search. AEO often describes efforts to appear in direct answers. GEO is used for efforts aimed at generated answers. Different suppliers use the latter two terms differently, so spell out their meaning in the brief.",
+          "Google's current AI search guidance places its generative features within SEO and its established Search systems. That describes Google; it does not establish a common mechanism across every assistant.",
+          "An answer may cite a page without recommending the company that published it. A company may be mentioned without receiving a link. Decide which of those events is relevant before describing all of them as visibility."
+        ]
       },
       {
-        id: "the-real-difference",
-        heading: "The real difference is the unit of competition",
-        paragraphs: [
-          "Moving from page to passage to entity sounds like jargon until you see what it does to the work. A page can be built in an afternoon. A passage that deserves quoting requires an actual answer, stated plainly enough for a machine to lift. An entity requires years of consistency: the same name, the same category claim, the same description, repeated across every place the business appears until independent sources repeat it too.",
-          "That progression quietly moves the contest away from technicians and toward strategists. Rankings could be engineered with links and keywords. Entity strength is built the way reputations are built, and there has never been a shortcut for reputation.",
-          "It also explains why the same business can rank well and still be absent from assistant answers. The pages are healthy; the entity is fuzzy. Five descriptions of the business across the web read, to a model, as five weak entities rather than one strong one. The guide on how assistants choose brands covers that failure in detail.",
-        ],
-        callout: {
-          label: "Worth sitting with",
-          text: "Rankings could be engineered. Entity strength is reputation, and reputation has no shortcut. That is good news for anyone doing real work.",
-        },
+        "id": "the-real-difference",
+        "heading": "Compare outcomes you can observe",
+        "paragraphs": [
+          "Use separate columns for the query, the displayed result, the destination and the buyer's next action. An informational guide being cited answers a different commercial question from a service page attracting a suitable enquiry.",
+          "A useful comparison records the conditions. Note the country, date, device or product and whether the query names the business. A branded lookup and an unprompted supplier recommendation are different tests; merging them makes a small brand appear more visible than the sample establishes."
+        ]
       },
       {
-        id: "the-shared-foundation",
-        heading: "The shared foundation the acronyms hide",
-        paragraphs: [
-          "Strip the labels and the practical checklist for all three surfaces is nearly identical. Crawlable pages with stable URLs. A conclusion stated in the first paragraph rather than after eight hundred words of warm up. Structured data naming the organisation, the author, the article, and the questions answered. Plain language a machine can quote without editing. Dates that show the record is maintained.",
-          "Then the off page half, which the acronym industry keeps rediscovering: corroboration. Reviews where crawlers read them. Press and podcast appearances that repeat the same core sentence. Directory entries that agree with the website. Forum threads where real people describe the business the way the business describes itself.",
-          "A team that builds this once has done SEO, AEO, and GEO in the same motion. A team that buys them as three services pays three times for one record, and usually ends up with three slightly different descriptions of itself, which is the one outcome that damages all three surfaces at once.",
-        ],
+        "id": "the-shared-foundation",
+        "heading": "Keep the offer and evidence understandable",
+        "paragraphs": [
+          "Read the service page beside a recent proposal. Can a buyer tell which work is included, which decisions they need to make, and which results are documented? Correct contradictions before adding another page.",
+          "Keep business facts accurate across the profiles you control. Wording can suit the audience and format. A short directory description and a detailed service page do not need identical sentences to describe the same practice.",
+          "Google's featured snippet documentation says selection belongs to its systems. Write a clear opening answer because it helps the reader; avoid presenting its position or length as a way to force a snippet."
+        ]
       },
       {
-        id: "how-buying-behaviour-splits",
-        heading: "How buying behaviour splits across the three surfaces",
-        paragraphs: [
-          "The surfaces deliver different buyers. Search still delivers the largest volume, arriving mid decision with a query in hand. Answer surfaces deliver fewer clicks, because the answer often satisfies the question on the spot; what they deliver instead is authority, since being the quoted source is a public credential.",
-          "Assistant surfaces deliver the fewest visitors and the warmest ones. A buyer who arrives from a recommendation has already been told you are the answer, so the conversation starts later in the decision. Early studies of assistant referred traffic keep finding the same shape: small volume, high intent.",
-          "For a service business selling few, large engagements, that shape is close to ideal. Ten visitors carrying a recommendation are worth more than a thousand browsing a list. Which is why the smallest firms, the ones that could never win volume contests, have the most to gain from the entity contest.",
-        ],
+        "id": "how-buying-behaviour-splits",
+        "heading": "Measure visits and enquiries separately",
+        "paragraphs": [
+          "Do not assume visitors from an assistant are more likely to buy. Compare the enquiries your business actually receives: the work requested, market, scope fit and next agreed step. A handful of visits is too small a basis for a confident conversion claim.",
+          "Keep the denominator visible. Two relevant enquiries from twenty visits and two from two thousand visits describe different observations, but neither small sample establishes a lasting channel advantage. These numbers illustrate how to report a comparison; they are not Branding Tatva results."
+        ]
       },
       {
-        id: "where-a-small-team-spends-first",
-        heading: "Where a small team should spend first",
-        paragraphs: [
-          "The order is fixed by dependency, and it is the order in the framework above. Entity consistency comes first because every other signal attaches to it; corroboration of a fuzzy entity corroborates noise. Situated answers come second because they are the retrieval keys: buyers phrase prompts as situations, and the brand recorded as the answer to a situation gets retrieved for it.",
-          "Corroboration comes third, and it is the slowest, because other people control it. It accumulates at the speed others publish: a client writes up the project, a journalist quotes the founder, a forum thread names the firm. The work is earning those repetitions, then making the repeated sentence easy to say.",
-          "What should come last is the thing most teams do first: tooling. Rank trackers, mention monitors, and GEO dashboards measure the record; they never build it. Measurement before substance is how a small budget disappears.",
-        ],
-        bullets: [
-          "Week one: write the entity sentence and install it everywhere, verbatim.",
-          "Month one: publish direct answers to the five questions buyers actually ask.",
-          "Quarter one: gather three independent sources repeating the entity sentence in public.",
-          "Ongoing: refresh dates, add answers, and keep every new mention on the same sentence.",
-        ],
+        "id": "where-a-small-team-spends-first",
+        "heading": "Choose a bounded first project",
+        "paragraphs": [
+          "List the questions that recur in buying conversations. Group questions that belong to one decision instead of creating a separate page for every phrasing. Select a useful existing page to improve, and write down what is missing.",
+          "Agree the scope before discussing the acronym: access fixes, a clearer service explanation, a documented example or a measurement review. A supplier should be able to explain why that work matters to your business without promising a particular search position.",
+          "Review the page after publication and record what changed. Keep an observation window suited to the amount of data available. A review date is a point to assess evidence, not a deadline by which a recommendation must appear."
+        ]
       },
       {
-        id: "what-this-library-practises",
-        heading: "What this library practises",
-        paragraphs: [
-          "The site you are reading runs on this method deliberately. Each guide answers one situated question a founder asks, states its answer in the opening block, carries question and answer markup, and uses the same vocabulary as every other page. The glossary gives each term of that vocabulary a stable URL of its own.",
-          "That is availability work wearing an editorial coat: every guide records the practice as the answer to one more buying situation, for human readers and machine readers alike. The acronyms will keep changing. The record compounds regardless of what the surfaces are called this year.",
-        ],
-      },
+        "id": "what-this-library-practises",
+        "heading": "Use this comparison in a supplier conversation",
+        "paragraphs": [
+          "Bring one service page, one buyer question and one piece of project evidence. Ask the supplier to connect the proposed change to all three. That makes the brief concrete enough to review.",
+          "Branding Tatva's contribution here is a way to examine positioning, language and evidence. Platform eligibility and search performance still need their own checks. The planning exercise above is not evidence that this site has earned AI recommendations or a leading UK search position."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        question: "Is AEO just SEO with a new name?",
-        answer:
-          "The overlap is large and the difference is real. Both need crawlable pages, structured data, and technical health. SEO competes for a ranked position; AEO competes to be the quoted answer itself, which rewards direct answers, question markup, and passages written plainly enough to lift. A page can rank well and still lose every answer box on the query.",
+        "question": "Is AEO just SEO with a new name?",
+        "answer": "The activities overlap, but the label alone says little about the work. Ask whether the brief concerns a particular answer feature, a defined set of questions or ordinary site improvements. Google decides which pages become featured snippets."
       },
       {
-        question: "Does GEO replace SEO?",
-        answer:
-          "Search volume remains far larger than assistant volume in 2026, so abandoning search would be premature. The sensible reading is that GEO extends the same record to a new surface. Work that serves GEO, entity consistency, direct answers, corroboration, also strengthens rankings, so the budget question is about sequence rather than replacement.",
+        "question": "Does GEO replace SEO?",
+        "answer": "Google treats its generative search experiences as part of Search. For other platforms, inspect their current guidance and your own results. Reallocate effort around an observed problem, rather than an assumption that one acronym replaces another."
       },
       {
-        question: "What does GEO stand for in marketing?",
-        answer:
-          "In this context GEO means generative engine optimisation: the practice of making a brand retrievable and quotable by AI assistants such as ChatGPT, Gemini, and Perplexity. It is unrelated to geographic targeting, which older marketing material also abbreviates as geo. The collision of the two abbreviations causes real confusion in briefs, so spell the discipline out once in any document that uses it.",
+        "question": "What does GEO stand for in marketing?",
+        "answer": "Here it means generative engine optimisation, concerning visibility in generated answers. Geographic targeting is a separate issue. Spell out the term in a proposal so both parties know which work is being discussed."
       },
       {
-        question: "Which matters most for a service business?",
-        answer:
-          "Entity strength, because service purchases run on trust and shortlists. A service buyer asks an assistant for two or three names, then verifies them. Appearing in that shortlist depends on being one clearly described entity attached to the buyer's situation, which is brand work. Volume tactics matter more for businesses selling many small transactions.",
+        "question": "Which should a service business prioritise?",
+        "answer": "Prioritise the problem supported by evidence. An inaccessible page needs a technical review; an unclear offer needs clearer positioning and messaging; an unsubstantiated claim needs better evidence. Several of those needs may exist together."
       },
       {
-        question: "How do you measure AEO and GEO?",
-        answer:
-          "Directly: run the twenty prompts your buyers would run, across the major assistants, monthly, and record which brands get named and which sources get cited. Add referral traffic from assistant domains and the answers owned on your core queries. The sample is small and the signal is honest, and it costs nothing beyond an hour of attention.",
-      },
+        "question": "How can a small team measure progress?",
+        "answer": "Keep a dated query sample and record the platform, settings, mentions, citations and destination URLs. Track visits and suitable enquiries separately. Label the sample's limits and record missing data rather than treating it as zero."
+      }
     ],
-    relatedSlugs: [
+    "relatedSlugs": [
       "how-ai-assistants-choose-brands-to-recommend",
       "generative-engine-optimisation-guide",
-      "brand-awareness-vs-brand-recall",
+      "brand-awareness-vs-brand-recall"
     ],
-    sources: [
+    "sources": [
       {
-        title: "GEO: Generative Engine Optimization",
-        publisher: "Aggarwal et al., KDD 2024",
-        url: "https://arxiv.org/abs/2311.09735",
-        note: "The Princeton led study that introduced the term GEO and measured which source attributes raise inclusion in generated answers.",
+        "title": "Optimising for generative AI features on Google Search",
+        "publisher": "Google Search Central",
+        "url": "https://developers.google.com/search/docs/fundamentals/ai-optimization-guide",
+        "note": "Google-specific guidance on AI search; it does not describe every assistant."
       },
       {
-        title: "What is generative engine optimization (GEO)?",
-        publisher: "Search Engine Land",
-        url: "https://searchengineland.com/what-is-generative-engine-optimization-geo-444418",
-        note: "Industry definition of GEO and its relationship to classical search optimisation.",
-      },
-      {
-        title: "SEO panel agrees: brand is the new backlink for AI SEO",
-        publisher: "Search Engine Journal",
-        url: "https://www.searchenginejournal.com/seo-panel-agrees-brand-is-the-new-backlink-for-ai-seo/578567/",
-        note: "Practitioner consensus that brand recognition has become the strongest signal for inclusion in AI generated answers.",
-      },
+        "title": "Featured snippets and your website",
+        "publisher": "Google Search Central",
+        "url": "https://developers.google.com/search/docs/appearance/featured-snippets",
+        "note": "Google determines snippet selection; publishers cannot mark a passage for guaranteed inclusion."
+      }
     ],
+    "useEditorialArtwork": false
   },
   {
-    slug: "generative-engine-optimisation-guide",
-    title: "Generative engine optimisation, without the tricks",
-    seoTitle: "Generative Engine Optimization (GEO): a founder's guide",
-    excerpt:
-      "GEO decides whether AI assistants name your business or a competitor's. This guide explains what the research measured, which parts you control, and a ninety day sequence that holds.",
-    directAnswer:
-      "Generative engine optimisation, GEO, is the practice of making a business retrievable and quotable by AI assistants such as ChatGPT, Gemini, and Perplexity. The controlled research on it found that sources adding quotations, statistics, and citations raised their presence in generated answers by around forty percent, while surface polish alone did little. In practice GEO means five moves: one consistent entity description everywhere, direct answers to real buying questions, structured data naming the entity, vocabulary published on stable URLs, and third party corroboration. Tricks decay with every model release; the record compounds.",
-    element: "space",
-    topicSlug: "brand-memory",
-    primaryKeyword: "generative engine optimisation",
-    secondaryKeywords: [
+    "slug": "generative-engine-optimisation-guide",
+    "title": "Generative engine optimisation: evidence before tactics",
+    "seoTitle": "Generative Engine Optimisation: a practical GEO guide",
+    "excerpt": "What GEO research measured, what a service business can test, and how to review progress without promising citations or changing dates for appearance.",
+    "directAnswer": "Generative engine optimisation describes work intended to improve visibility in generated answers. A useful programme defines the platform, questions and evidence first. The GEO research benchmark reported improvements under particular test conditions; it does not forecast a business's current recommendations or revenue. Treat proposed changes as tests, preserve accurate content dates and judge the result against the observations you actually collect.",
+    "element": "space",
+    "topicSlug": "brand-memory",
+    "primaryKeyword": "generative engine optimisation",
+    "secondaryKeywords": [
       "generative engine optimization",
       "geo marketing",
       "how to appear in chatgpt answers",
       "ai search for small business",
       "geo strategy for service businesses",
-      "llm optimization",
+      "llm optimization"
     ],
-    searchIntent:
-      "Understand how generative engine optimisation works, what evidence supports it, and how a small service business should sequence it.",
-    publishedAt: "2026-09-18",
-    updatedAt: "2026-09-18",
-    readingTime: "12 min read",
-    heroImage: "/images/generated/insights-v2/page-evidence-audit.webp",
-    heroVideo: "/videos/generated/insights-v2/page-evidence-audit.mp4",
-    heroImageAlt:
-      "An evidence audit laid out on a desk: source cards, a magnifier, and one claim traced through several independent records",
-    keyTakeaways: [
-      "Generative engines answer from trained memory plus live retrieval, so GEO works on both: the long record and the quotable page.",
-      "The controlled study behind the term found quotations, statistics, and citations raised inclusion in answers by roughly forty percent; polish alone moved little.",
-      "You control the entity, the answers, and the markup. Other people control the corroboration, which is why it convinces machines.",
-      "Forum presence matters because assistants read the places categories get discussed: Reddit threads and Quora answers are part of the record now.",
-      "Every trick aimed at the current model dies with the next release. Conditions aimed at memory survive every release.",
+    "searchIntent": "Understand how generative engine optimisation works, what evidence supports it, and how a small service business should sequence it.",
+    "publishedAt": "2026-09-18",
+    "updatedAt": "2026-09-22",
+    "readingTime": "6 min read",
+    "heroImage": "/images/generated/insights-v2/page-evidence-audit.webp",
+    "heroVideo": "/videos/generated/insights-v2/page-evidence-audit.mp4",
+    "heroImageAlt": "An evidence audit laid out on a desk: source cards, a magnifier, and one claim traced through several independent records",
+    "keyTakeaways": [
+      "A benchmark visibility measure is not a forecast of traffic, customers or current rankings.",
+      "An accurate explanation and a documented example give a reader something useful to assess.",
+      "Editorial revision dates should reflect substantive changes.",
+      "A ninety day plan can organise work; it cannot set an assistant's publication or recommendation schedule.",
+      "Keep mentions, citations, visits and suitable enquiries as separate measures."
     ],
-    framework: {
-      title: "The quotable record",
-      introduction:
-        "GEO reduces to making one entity easy to retrieve and its pages easy to quote. Five moves, in dependency order.",
-      steps: [
+    "framework": {
+      "title": "A bounded visibility review",
+      "introduction": "Use this as an editorial planning method. Its steps do not represent an assistant's hidden selection process.",
+      "steps": [
         {
-          title: "Fix the entity",
-          description:
-            "One sentence with name, category, and audience, installed verbatim across the site, profiles, and directories before anything else.",
+          "title": "Set the question",
+          "description": "Choose a real buying decision and the platform on which you will observe it."
         },
         {
-          title: "State answers first",
-          description:
-            "Each page opens with its conclusion in two or three quotable sentences. Assistants excerpt openings, so bury the answer and the page goes unquoted.",
+          "title": "Record the baseline",
+          "description": "Save the exact question, date, context, response and cited URLs."
         },
         {
-          title: "Add the evidence layer",
-          description:
-            "Quotations, numbers, and named sources inside the writing. The controlled research found this is what raises inclusion, more than any polish.",
+          "title": "Review the page",
+          "description": "Check whether the page explains the decision and supports its claims."
         },
         {
-          title: "Mark up the record",
-          description:
-            "Organisation, person, article, FAQ, and definition schema, so every answer is filed under the right entity.",
+          "title": "Make a useful revision",
+          "description": "Add a documented example, correct a fact or clarify a scope boundary."
         },
         {
-          title: "Earn the echo",
-          description:
-            "Reviews, press, directories, and forum threads repeating the entity sentence. Corroboration is the signal a model trusts most.",
-        },
-      ],
+          "title": "Compare cautiously",
+          "description": "Repeat the observation and assess visits and enquiries separately."
+        }
+      ]
     },
-    sections: [
+    "sections": [
       {
-        id: "what-geo-is",
-        heading: "What generative engine optimisation is",
-        paragraphs: [
-          "Generative engine optimisation is the practice of making a business retrievable, trustable, and quotable by systems that compose answers: ChatGPT, Gemini, Claude, Perplexity, and the AI modes inside search engines. Where classical search returns ten links, a generative engine returns one response, and it names a small number of brands and sources inside it.",
-          "The term entered the literature through a 2024 study by researchers at Princeton and collaborators, who tested which attributes of a source raise its presence in generated answers. The name stuck because it describes a genuinely new surface: a response that is assembled rather than ranked, drawing on the engine's trained memory and whatever it retrieves live.",
-          "That dual mechanism is the key to the whole discipline. Trained memory rewards the long record: years of consistent description and third party mention. Live retrieval rewards the quotable page: a direct answer a system can lift today. GEO that works addresses both; GEO that chases one usually decays.",
-        ],
-        callout: {
-          label: "Definition",
-          text: "GEO makes a business easy for AI assistants to retrieve from memory and easy to quote from the page. Both halves are required.",
-        },
+        "id": "what-geo-is",
+        "heading": "What the GEO label can and cannot tell you",
+        "paragraphs": [
+          "A GEO brief should name its intended result. A source cited in an explanation, a brand included in a shortlist and a visit to a service page are different outcomes. Before commissioning work, agree which one you will observe and why it matters.",
+          "The label does not tell you which systems a supplier has tested, what access they have or how they will measure change. Ask for those details in ordinary language. A useful proposal identifies the pages, the work and the limits."
+        ]
       },
       {
-        id: "how-engines-assemble-answers",
-        heading: "How a generative engine assembles an answer",
-        paragraphs: [
-          "When a buyer asks an assistant who should reposition their firm before a funding round, the system does something recognisable. It retrieves candidate entities from its trained impression of the world, optionally runs a live search to refresh and verify, then composes a response that names a few brands and cites a few sources.",
-          "Each stage has its own gate. Retrieval requires the brand to exist as a clear entity attached to the category and situation in question. Verification requires the live record to agree with the trained impression. Composition requires passages plain enough to quote and safe enough to repeat: hedged, vague, or salesy text gets paraphrased away or dropped.",
-          "A business can fail at any gate invisibly. The most common failure is the first one: the brand was never recorded as an answer to the situation being asked about, so retrieval has nothing to find. Writing that records the brand against real buying situations is therefore the core GEO activity, which is also a fair description of a positioning content programme.",
-        ],
+        "id": "how-engines-assemble-answers",
+        "heading": "Keep the test conditions visible",
+        "paragraphs": [
+          "Use a record another person could review: exact question, platform, date, market, relevant settings and linked sources. Save the full response, including cases where the company is absent. Record a branded question separately from a request that does not name the business.",
+          "Repeat a manageable sample under comparable conditions. Describe it as an observation of that sample. Avoid presenting a few favourable screenshots as a share of all possible answers, or as an explanation of the platform's internal weighting."
+        ]
       },
       {
-        id: "what-the-research-found",
-        heading: "What the research actually measured",
-        paragraphs: [
-          "The KDD study tested nine interventions on thousands of queries and measured how each changed a source's share of the generated answer. The findings are refreshingly specific. Adding quotations, adding statistics, and adding citations to credible sources each raised inclusion substantially, with gains up to around forty percent on the study's metrics. Keyword stuffing did little. Fluency edits alone did little.",
-          "Read plainly: generative engines reward pages that look like evidence and ignore pages that look like advertising. A page carrying named sources, real numbers, and quotable sentences reads as a record worth repeating. A page of adjectives reads as noise, however well it once ranked.",
-          "The study also found effects varied by domain, with smaller and lower ranked sites gaining the most from the evidence interventions. That is worth underlining for any small firm: this surface is the first one in decades where the incumbents' link advantage counts for less than the quality of the record.",
-        ],
-        callout: {
-          label: "The evidence rule",
-          text: "Engines quote what looks like evidence: numbers, sources, quotations. They drop what looks like advertising.",
-        },
+        "id": "what-the-research-found",
+        "heading": "Read the research within its scope",
+        "paragraphs": [
+          "Aggarwal and colleagues introduced a benchmark and evaluated methods for changing source visibility in generated responses. The paper reports gains of up to 40% on its tested visibility measures and says effectiveness varied across domains.",
+          "That figure is neither an average uplift promised to every site nor a 40% increase in enquiries. It concerns the benchmark and systems in the study. The abstract alone also cannot support a universal claim that writing polish is ineffective or that smaller sites always benefit most.",
+          "For your own review, turn a proposed technique into an editorial question: does this addition help a buyer check the answer? A relevant project detail may do that. A statistic added solely to make the page look authoritative may not."
+        ]
       },
       {
-        id: "the-parts-you-control",
-        heading: "The parts a service business controls",
-        paragraphs: [
-          "Four assets are fully in your hands. The entity sentence: name, category, audience, in one line, repeated verbatim everywhere the business appears. The answer library: one page per real buying question, each opening with its conclusion. The markup: organisation, person, article, FAQ, and definition schema connecting every page to the entity. The vocabulary: a glossary giving each term the practice uses its own stable URL.",
-          "Two habits multiply all four. Dates that move: engines and their retrieval layers favour records that show maintenance, so update pages and say when. And internal agreement: every page using the same terms for the same ideas, because a site that argues with itself reads as an unreliable witness.",
-          "None of this requires new tooling. It requires editorial discipline, which is cheaper and rarer.",
-        ],
-        bullets: [
-          "One entity sentence, installed verbatim across site, profiles, and directories.",
-          "One page per buying question, answer stated in the first block.",
-          "Schema for organisation, person, articles, FAQs, and definitions.",
-          "A glossary URL for every term the practice uses.",
-          "Visible update dates and consistent vocabulary sitewide.",
-        ],
+        "id": "the-parts-you-control",
+        "heading": "Improve the decision a reader can make",
+        "paragraphs": [
+          "Consider an illustrative remote service provider serving UK clients. A page that lists strategy, content and design leaves the buyer with a broad menu. The provider could explain the first decision, the materials required and which outputs belong to the proposed engagement.",
+          "Add a documented example with a clear boundary: what was delivered, which outcome was measured and which was not. Keep an illustrative scenario visibly labelled. This creates useful material for a buying conversation even if no assistant cites the page.",
+          "Google's helpful-content guidance cautions against changing dates without substantive changes. Record an editorial update when the work warrants it; a new calendar date alone is not new evidence."
+        ]
       },
       {
-        id: "the-parts-others-control",
-        heading: "The parts other people control",
-        paragraphs: [
-          "Corroboration is the half of GEO you can only earn. Models weight agreement between independent sources far above anything a brand says about itself: reviews, press mentions, directory listings, podcast appearances, and client write ups that repeat the same description of the business.",
-          "Forums deserve specific attention. The places categories get discussed, Reddit threads, Quora answers, industry communities, are heavily represented in what assistants read and cite. A founder answering real questions there, under a real name, with the patience to be useful before being findable, is writing the training data of the next model release. The same behaviour done as disguised advertising gets downvoted by humans first and filtered by machines second.",
-          "The practical craft is making the echo easy: an entity sentence short enough for a journalist to quote whole, project stories a client can republish, and answers so clear that a stranger citing you gets the description right by accident.",
-        ],
+        "id": "the-parts-others-control",
+        "heading": "Treat independent evidence as independent",
+        "paragraphs": [
+          "Request permission before publishing client material. Keep the client's wording and the context of any measured result. A testimonial about working together cannot establish an unmeasured commercial outcome.",
+          "When a third party describes the practice, check factual errors and let that source retain its own voice. Requiring everyone to repeat one exact sentence would obscure the difference between independent comment and coordinated promotion.",
+          "Choose communities because you can contribute something useful to their readers. A post does not establish whether a future system will train on it, cite it or recommend its author."
+        ]
       },
       {
-        id: "tactics-that-decay",
-        heading: "Tactics that decay, conditions that compound",
-        paragraphs: [
-          "Every new surface breeds tricks, and this one already has a full menu: text written for models and hidden from people, fake statistics inserted to trigger the evidence preference, prompt injection buried in pages, review astroturfing at scale. Each works briefly, on one model, until the next release closes the gap, and detection now carries reputational cost in the record itself.",
-          "The decay argument is structural rather than moral. A trick targets the current model's weighting; the weighting is the one thing guaranteed to change. Conditions target memory itself, one clear entity, real answers, independent corroboration, and memory mechanics survive every release because each new model relearns the world from the same record.",
-          "This is the old distinction between campaign and brand, replayed on a new surface. Campaigns spike and vanish. The brands that keep getting named are the ones that spent years being one consistent, corroborated thing.",
-        ],
+        "id": "tactics-that-decay",
+        "heading": "Ask what a proposed tactic proves",
+        "paragraphs": [
+          "Before accepting a promise, ask to see its comparison: what changed, what stayed the same, how often the result was observed and whether the evidence concerns your market. A demonstration should survive questions about unfavourable runs and missing data.",
+          "Avoid invented numbers, fabricated reviews and hidden instructions intended to steer an answer. These make the record less trustworthy for a buyer. Their existence does not establish that they are effective techniques.",
+          "Google says its generative Search features need no special schema or AI text file. Read a platform's own guidance before paying for a claimed technical requirement, and keep that guidance scoped to the platform that issued it."
+        ]
       },
       {
-        id: "a-ninety-day-sequence",
-        heading: "A ninety day sequence that holds",
-        paragraphs: [
-          "Days one to fifteen: write the entity sentence, install it everywhere, and run the baseline. Twenty buyer prompts across the major assistants, recorded in a spreadsheet: which brands get named, which sources get cited, where you appear and where you are absent.",
-          "Days fifteen to sixty: publish the answer library. One page per buying question from the baseline, each opening with a direct answer, carrying question markup, real numbers, and named sources. Fix the schema and the glossary in the same pass.",
-          "Days sixty to ninety: start the echo. Two or three client write ups published under real names, directory entries corrected to the entity sentence, and honest participation in the two forums where your category actually gets discussed. Then rerun the baseline and compare. Expect movement in live retrieval assistants first; trained memory follows over quarters, and it follows the record you have now started keeping.",
-        ],
-      },
+        "id": "a-ninety-day-sequence",
+        "heading": "Use ninety days to organise the work",
+        "paragraphs": [
+          "Days one to fifteen: choose a narrow question set, establish the baseline and identify the most useful page to improve. Include a technical access check when the page cannot be fetched or indexed.",
+          "Days sixteen to sixty: improve that page with verified evidence and a clearer explanation. Keep a change log. Decide whether another question belongs on the same page before expanding the library.",
+          "Days sixty one to ninety: repeat the observations, review any visits and suitable enquiries, and decide what the evidence supports doing next. These are suggested work windows, not a forecast of when an assistant will cite the business."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        question: "Does GEO work for a small business with a small site?",
-        answer:
-          "The research suggests small sites gain the most. The controlled study found lower ranked sources benefited disproportionately from adding quotations, statistics, and citations, because generative engines weight the quality of the record above the volume of links. A twenty page site with one clear entity and direct answers can outperform a large site that describes itself five different ways.",
+        "question": "Does GEO work for a small business?",
+        "answer": "A small business can test useful improvements, but site size alone does not establish the outcome. Define a buyer question, improve the relevant page and measure the result. Benchmark findings are not a guarantee for an individual business."
       },
       {
-        question: "Is schema markup required for GEO?",
-        answer:
-          "Required is too strong; strongly favoured is accurate. Structured data resolves the entity question, telling every crawler which organisation and person a page belongs to, and question markup hands assistants ready made answer pairs. Sites appear in generated answers without it, but a small business fighting for retrieval should take every disambiguation it can get.",
+        "question": "Is special schema required for GEO?",
+        "answer": "Google says no special schema is required for its generative search features. Use structured data appropriately for the content it describes, and check other platforms separately. Markup does not establish a recommendation."
       },
       {
-        question: "Do Reddit and Quora actually influence AI answers?",
-        answer:
-          "Yes, visibly. Forum content is heavily represented in training data and in the live sources assistants cite, because it reads as independent discussion rather than marketing. Genuine answers under a real name, in threads where your category gets discussed, become part of the record models learn from. Disguised advertising fails twice: humans downvote it and platforms remove it before machines ever weigh it.",
+        "question": "Do forum posts guarantee AI visibility?",
+        "answer": "No. A published answer is evidence of your contribution to that discussion. It does not establish later model training, citation or recommendation. Judge participation by relevance and usefulness to the community."
       },
       {
-        question: "How long before GEO shows results?",
-        answer:
-          "Assistants that browse live can reflect a new direct answer within weeks of it being crawled. The deeper effect, being retrieved from trained memory, moves on model release cycles and corroboration speed, so quarters rather than weeks. Run the same twenty prompt baseline monthly and judge the trend, since single answers vary run to run.",
+        "question": "How long does GEO take?",
+        "answer": "There is no supported universal timetable for a particular business to be recommended. Separate your delivery schedule from the platform's behaviour, and assess observations over a period suited to the amount of evidence available."
       },
       {
-        question: "Should GEO replace the SEO budget?",
-        answer:
-          "Redirecting is wiser than replacing. Search still carries most commercial volume in 2026, and nearly everything GEO rewards also strengthens search: direct answers, structured data, entity consistency, real evidence. The spend to cut is the part aimed purely at rankings volume, thin keyword pages and link buying, which the generative surfaces actively ignore.",
-      },
+        "question": "Should GEO replace the SEO budget?",
+        "answer": "Compare the proposed work with the problem it addresses and the results already observed. Fund a defined improvement or experiment. Avoid moving the whole budget because a supplier treats a new label as proof of a new opportunity."
+      }
     ],
-    relatedSlugs: [
+    "relatedSlugs": [
       "aeo-vs-seo-vs-geo",
       "how-ai-assistants-choose-brands-to-recommend",
-      "why-ai-content-makes-brands-average",
+      "why-ai-content-makes-brands-average"
     ],
-    sources: [
+    "sources": [
       {
-        title: "GEO: Generative Engine Optimization",
-        publisher: "Aggarwal et al., KDD 2024",
-        url: "https://arxiv.org/abs/2311.09735",
-        note: "The controlled study behind the discipline: nine interventions tested across thousands of queries, with quotations, statistics, and citations raising answer inclusion by up to around forty percent.",
+        "title": "GEO: Generative Engine Optimization",
+        "publisher": "Aggarwal and colleagues, KDD 2024",
+        "url": "https://arxiv.org/abs/2311.09735",
+        "note": "Benchmark results concern the tested systems and visibility measures, with effects varying by domain."
       },
       {
-        title: "What is generative engine optimization (GEO)?",
-        publisher: "Search Engine Land",
-        url: "https://searchengineland.com/what-is-generative-engine-optimization-geo-444418",
-        note: "Industry framing of GEO, its overlap with classical search work, and the surfaces it covers.",
+        "title": "Creating helpful, reliable content",
+        "publisher": "Google Search Central",
+        "url": "https://developers.google.com/search/docs/fundamentals/creating-helpful-content",
+        "note": "Editorial guidance, including avoiding unsupported freshness changes."
       },
       {
-        title: "How Brands Grow: What Marketers Don't Know",
-        publisher: "Byron Sharp, Oxford University Press",
-        url: "https://marketingscience.info/learn-with-us/books",
-        note: "The evidence base for mental availability and category entry points, the memory mechanics this guide applies to machine retrieval.",
-      },
+        "title": "Optimising for generative AI features on Google Search",
+        "publisher": "Google Search Central",
+        "url": "https://developers.google.com/search/docs/fundamentals/ai-optimization-guide",
+        "note": "Google-specific guidance on AI search; it does not describe every assistant."
+      }
     ],
+    "useEditorialArtwork": false
   },
 ];

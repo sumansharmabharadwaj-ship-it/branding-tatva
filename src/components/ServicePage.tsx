@@ -133,6 +133,15 @@ export function ServicePage({ page }: { page: ServicePageContent }) {
               <details key={item.question}>
                 <summary>{item.question}</summary>
                 <p>{item.answer}</p>
+                {item.links?.length ? (
+                  <ul className={styles.questionLinks}>
+                    {item.links.map((link) => (
+                      <li key={link.href}>
+                        <Link href={link.href} className={styles.textLink}>{link.title}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </details>
             ))}
           </section>

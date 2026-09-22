@@ -13,6 +13,7 @@ type InsightVisualPost = {
   excerpt: string;
   heroImage: string;
   heroImageAlt: string;
+  useEditorialArtwork?: boolean;
 };
 
 const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
@@ -130,12 +131,6 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "worksheet",
     aspectRatio: 990 / 355,
   },
-  "brand-refresh-vs-rebrand-how-much-change": {
-    src: "/images/generated/insights-editorial/brand-refresh-vs-rebrand-how-much-change.png",
-    alt: "The change depth ladder, drawn as an annotated worksheet with its steps and the decision it settles",
-    depthKind: "worksheet",
-    aspectRatio: 990 / 393,
-  },
   "turn-client-proof-into-positioning-advantage": {
     src: "/images/generated/insights-editorial/turn-client-proof-into-positioning-advantage.png",
     alt: "The proof architecture, drawn as an annotated worksheet with its steps and the decision it settles",
@@ -202,27 +197,9 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "worksheet",
     aspectRatio: 990 / 340,
   },
-  "aeo-vs-seo-vs-geo": {
-    src: "/images/generated/insights-editorial/aeo-vs-seo-vs-geo.png",
-    alt: "The one record method, drawn as an annotated worksheet with its steps and the decision it settles",
-    depthKind: "worksheet",
-    aspectRatio: 990 / 432,
-  },
-  "generative-engine-optimisation-guide": {
-    src: "/images/generated/insights-editorial/generative-engine-optimisation-guide.png",
-    alt: "The quotable record, drawn as an annotated worksheet with its steps and the decision it settles",
-    depthKind: "worksheet",
-    aspectRatio: 990 / 432,
-  },
   "brand-strategy-when-ai-agents-buy": {
     src: "/images/generated/insights-editorial/brand-strategy-when-ai-agents-buy.png",
     alt: "The instruction test, drawn as an annotated worksheet with its steps and the decision it settles",
-    depthKind: "worksheet",
-    aspectRatio: 990 / 374,
-  },
-  "brand-strategy-vs-brand-identity": {
-    src: "/images/generated/insights-editorial/brand-strategy-vs-brand-identity.png",
-    alt: "The spend order, drawn as an annotated worksheet: diagnosis, decisions, translation, system, and repetition, with the decision it settles",
     depthKind: "worksheet",
     aspectRatio: 990 / 374,
   },
@@ -231,14 +208,6 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     alt: "The naming audition, drawn as an annotated worksheet: job, sound, distance, rights, and deposit, with the decision it settles",
     depthKind: "worksheet",
     aspectRatio: 990 / 377,
-  },
-  "how-ai-assistants-choose-brands-to-recommend": {
-    src: "/images/generated/insights-editorial/ai-retrieval-path.png",
-    alt: "A buyer's prompt above the four memory checks an AI assistant runs: entity, category, situations, and evidence",
-    shortTitle: "The assistant answers from memory",
-    description: "Four checks decide whether your brand gets named.",
-    depthKind: "worksheet",
-    aspectRatio: 990 / 362,
   },
   "why-ai-content-makes-brands-average": {
     src: "/images/generated/insights-editorial/ai-modal-trap.png",
@@ -280,7 +249,7 @@ export function buildInsightEditorialVisuals(
   return new Map(
     posts.map((post) => [
       post.slug,
-      FEATURED_VISUALS[post.slug] ?? {
+      (post.useEditorialArtwork === false ? undefined : FEATURED_VISUALS[post.slug]) ?? {
         src: post.heroImage,
         alt: post.heroImageAlt,
         shortTitle: post.title,

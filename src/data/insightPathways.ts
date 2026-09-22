@@ -99,8 +99,8 @@ export const insightPathways: Record<string, InsightPathway> = {
     },
     proof: {
       href: "/work/dr-haley-nutrition",
-      label: "See measured recognition signals in Dr. Haley Nutrition",
-      description: "A recorded two month engagement comparing content volume with followers and engagement earned per post.",
+      label: "See the Dr. Haley Nutrition content results",
+      description: "A recorded two month engagement comparing content volume with followers and engagement earned per post. Brand recall was outside the measurement scope.",
     },
     conversation: {
       href: "/contact",
@@ -115,6 +115,16 @@ export const insightPathways: Record<string, InsightPathway> = {
 // Keep the topic's proof and conversation paths, while making the service
 // destination specific to the article a visitor has just read.
 const articleServiceLinks: Record<string, InsightPathLink> = {
+  "brand-strategy-vs-brand-identity": {
+    href: "/brand-audit",
+    label: "Review your brand before choosing strategy or identity work",
+    description: "Bring your existing position, messages and materials to a brand audit, then decide what to retain and what needs attention.",
+  },
+  "what-a-brand-identity-package-includes": {
+    href: "/services#desire",
+    label: "Compare Branding Tatva’s identity scope and starting prices",
+    description: "Review the engagement formats and regional prices, then bring your deliverables checklist to a conversation with Suman.",
+  },
   "how-much-does-brand-strategy-cost": {
     href: "/services#desire",
     label: "Compare brand strategy scopes and starting prices",

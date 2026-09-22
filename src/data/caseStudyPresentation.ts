@@ -87,7 +87,7 @@ const PRESENTATIONS: Record<string, CaseStudyPresentation> = {
     serviceLabel: "Full Brand System",
     relatedService: {
       href: "/brand-positioning",
-      label: "Explore brand positioning",
+      label: "Review the brand positioning scope",
       context: "Start with the buyer, the alternatives they consider and the evidence behind your offer. See the scope and preparation for a positioning engagement.",
     },
     palette: {
@@ -120,7 +120,7 @@ const PRESENTATIONS: Record<string, CaseStudyPresentation> = {
     serviceLabel: "Content strategy and Brand Partnership",
     relatedService: {
       href: "/brand-audit",
-      label: "Explore the brand audit scope",
+      label: "Review the brand audit scope",
       context: "Before planning more content, review what your website, proposals and channels currently promise. See which materials and decisions a brand audit covers.",
     },
     palette: {
@@ -181,7 +181,7 @@ const PRESENTATIONS: Record<string, CaseStudyPresentation> = {
     serviceLabel: "Content authority and Brand Partnership",
     relatedService: {
       href: "/brand-messaging",
-      label: "Explore brand messaging and voice",
+      label: "Review the brand messaging and voice scope",
       context: "Agree what your business needs to communicate, how to support each claim and which voice guidelines your writers can use. See what a messaging engagement covers.",
     },
     palette: {

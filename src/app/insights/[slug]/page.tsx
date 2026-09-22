@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // link preview teaches the piece the way the library does. A post
   // published before its card exists falls back to its hero still.
   const shareCard = `/images/generated/insights-og/${post.slug}.png`;
-  const shareImage = existsSync(path.join(process.cwd(), "public", shareCard))
+  const shareImage = post.useEditorialArtwork !== false && existsSync(path.join(process.cwd(), "public", shareCard))
     ? { url: shareCard, width: 1200, height: 630, alt: post.seoTitle }
     : { url: post.heroImage, alt: post.heroImageAlt };
 
@@ -110,7 +110,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     creator: site.founder,
     publisher: site.name,
     category: getInsightTopic(post.topicSlug)?.name,
-    alternates: { canonical: `/insights/${post.slug}` },
+    alternates: {
+      canonical: `/insights/${post.slug}`,
+      // Page alternates replace the layout object, including feed discovery.
+      types: { "application/rss+xml": `${site.url}/insights/feed.xml` },
+    },
     robots: searchRobotsMetadata(),
     openGraph: {
       title: post.seoTitle,
@@ -152,7 +156,9 @@ export default async function InsightArticlePage({ params }: Props) {
   );
   const related = selectRelatedInsights(post, insightPosts);
   // The same drawn sheet the library fronts this essay with.
-  const articleWorksheet = buildInsightEditorialVisuals([post]).get(post.slug);
+  const articleWorksheet = post.useEditorialArtwork === false
+    ? undefined
+    : buildInsightEditorialVisuals([post]).get(post.slug);
   const editorialVisuals = buildInsightEditorialVisuals(
     [...insightPosts].sort(
       (a, b) =>
@@ -208,9 +214,7 @@ export default async function InsightArticlePage({ params }: Props) {
         url: `${site.url}/insights/${post.slug}`,
         headline: post.title,
         description: post.excerpt,
-        // The direct answer is the page's opening block for readers; the
-        // abstract carries the same sentence for answer engines, which
-        // quote abstracts far more readily than reconstructed excerpts.
+        // The abstract repeats the opening answer visible to readers.
         abstract: post.directAnswer,
         image: {
           "@type": "ImageObject",
@@ -629,10 +633,9 @@ export default async function InsightArticlePage({ params }: Props) {
                           What this guide draws from.
                         </h2>
                         <p className="mt-5 max-w-2xl text-base leading-8 text-foreground-secondary">
-                          These sources establish the research principles used
-                          in this guide. Branding Tatva&apos;s framework is the
-                          practical application of that evidence to service
-                          businesses and founders leading their own brands.
+                          Each source note describes what the reference supports.
+                          Platform guidance, research findings and Branding
+                          Tatva&apos;s practical suggestions have different scopes.
                         </p>
                         <ol className="mt-8 grid gap-4">
                           {sources.map((source, index) => (

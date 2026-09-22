@@ -26,10 +26,25 @@ export async function generateMetadata({ params }: { params: Promise<{ term: str
   const { term } = await params;
   const entry = findTerm(term);
   if (!entry) return {};
+  const title = `${entry.term} | Branding Glossary`;
   return {
-    title: `${entry.term} | Branding Glossary`,
+    title,
     description: entry.definition,
+    authors: [{ name: site.founder, url: `${site.url}/about` }],
     alternates: { canonical: `/glossary/${entry.slug}` },
+    openGraph: {
+      title: `${title} | ${site.name}`,
+      description: entry.definition,
+      type: "website",
+      url: `${site.url}/glossary/${entry.slug}`,
+      images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${site.name}`,
+      description: entry.definition,
+      images: ["/opengraph-image"],
+    },
   };
 }
 
@@ -37,6 +52,14 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
   const { term } = await params;
   const entry = findTerm(term);
   if (!entry) notFound();
+  const pageUrl = `${site.url}/glossary/${entry.slug}`;
+  const serviceLink = entry.serviceLink ?? {
+    href: "/services#offerings",
+    label: "Compare brand strategy services",
+  };
+  const updatedLabel = entry.updatedAt ? new Intl.DateTimeFormat("en-GB", {
+    day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
+  }).format(new Date(`${entry.updatedAt}T00:00:00Z`)) : undefined;
 
   const siblings = entry.pillar.terms.filter((t) => t.slug !== entry.slug);
   // The essays where this idea does real work. Every slug resolves
@@ -55,7 +78,22 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "WebPage",
+        "@id": pageUrl,
+        name: `${entry.term} | Branding Glossary`,
+        description: entry.definition,
+        url: pageUrl,
+        inLanguage: "en-GB",
+        author: { "@type": "Person", "@id": `${site.url}/#person`, name: site.founder, url: `${site.url}/about` },
+        mainEntity: { "@id": `${pageUrl}#term` },
+        ...(entry.updatedAt ? { dateModified: entry.updatedAt } : {}),
+        ...(entry.sources ? { citation: entry.sources.map((source) => ({
+          "@type": "CreativeWork", name: source.label, url: source.url,
+        })) } : {}),
+      },
+      {
         "@type": "DefinedTerm",
+        "@id": `${pageUrl}#term`,
         name: entry.term,
         description: entry.definition,
         url: `${site.url}/glossary/${entry.slug}`,
@@ -126,6 +164,11 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
               <p className="mt-6 font-display text-xl italic leading-relaxed text-ivory sm:text-2xl">
                 {entry.definition}
               </p>
+              <p className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm leading-relaxed text-ivory/80">
+                <Link href="/about" className="inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ivory">By {site.founder}</Link>
+                {updatedLabel && <span>Updated <time dateTime={entry.updatedAt}>{updatedLabel}</time></span>}
+                <Link href="/editorial-policy" className="inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ivory">Editorial policy</Link>
+              </p>
             </Reveal>
           </Container>
         </section>
@@ -135,6 +178,23 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
             <Reveal>
               <p className="text-base leading-relaxed text-foreground-secondary">{entry.expanded}</p>
             </Reveal>
+
+            {entry.sources && (
+              <Reveal>
+                <div className="mt-6 border-t border-border pt-5">
+                  <h2 className="font-display text-xl text-soil">Sources and further reading</h2>
+                  <ul className="mt-2 space-y-2">
+                    {entry.sources.map((source) => (
+                      <li key={source.url}>
+                        <a href={source.url} className="inline-flex min-h-11 items-center text-sm leading-relaxed text-clay-ink underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-clay-ink">
+                          {source.publisher}: {source.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            )}
 
             <Reveal>
               <div className="mt-10 border-l-2 border-clay/60 pl-5">
@@ -163,8 +223,8 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                       Read Suman&apos;s guide: {article.title} <span aria-hidden="true">→</span>
                     </Link>
                   )}
-                  <Link href="/services#offerings" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
-                    See how Suman handles this decision <span aria-hidden="true">→</span>
+                  <Link href={serviceLink.href} className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
+                    {serviceLink.label} <span aria-hidden="true">→</span>
                   </Link>
                   <Link href="/services#proof" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
                     Read the project evidence <span aria-hidden="true">→</span>

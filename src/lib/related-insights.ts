@@ -1,5 +1,39 @@
 import type { InsightPost } from "@/data/insights";
 
+// Keep buying decisions connected before broadening into other topics.
+const BUYER_READING_PATHS: Record<string, readonly string[]> = {
+  "how-much-does-brand-strategy-cost": [
+    "how-to-choose-a-branding-agency",
+    "brand-strategist-vs-branding-agency",
+    "what-a-brand-identity-package-includes",
+  ],
+  "how-to-choose-a-branding-agency": [
+    "brand-strategist-vs-branding-agency",
+    "how-much-does-brand-strategy-cost",
+    "what-a-brand-identity-package-includes",
+  ],
+  "brand-strategist-vs-branding-agency": [
+    "brand-strategy-vs-brand-identity",
+    "how-to-choose-a-branding-agency",
+    "how-much-does-brand-strategy-cost",
+  ],
+  "what-a-brand-identity-package-includes": [
+    "brand-strategy-vs-brand-identity",
+    "how-much-does-brand-strategy-cost",
+    "how-to-choose-a-branding-agency",
+  ],
+  "brand-strategy-vs-brand-identity": [
+    "what-a-brand-identity-package-includes",
+    "brand-refresh-vs-rebrand-how-much-change",
+    "how-much-does-brand-strategy-cost",
+  ],
+  "brand-refresh-vs-rebrand-how-much-change": [
+    "brand-audit-checklist-before-rebrand",
+    "brand-strategy-vs-brand-identity",
+    "how-much-does-brand-strategy-cost",
+  ],
+};
+
 const RELATED_TOPIC_BRIDGES: Record<string, string[]> = {
   positioning: ["brand-messaging", "customer-experience"],
   "customer-experience": ["brand-messaging", "brand-memory"],
@@ -84,6 +118,10 @@ export function selectRelatedInsights(
     selected.push(candidate);
     selectedSlugs.add(candidate.slug);
   };
+
+  for (const slug of BUYER_READING_PATHS[source.slug] ?? []) {
+    add(candidates.find((candidate) => candidate.slug === slug));
+  }
 
   add(explicit[0]);
 

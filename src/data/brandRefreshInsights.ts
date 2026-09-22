@@ -13,303 +13,262 @@ type SourcedInsightPost = InsightPost & {
 
 export const brandRefreshInsightPosts: SourcedInsightPost[] = [
   {
-    slug: "brand-refresh-vs-rebrand-how-much-change",
-    title: "Brand refresh vs rebrand: how much change does your business need?",
-    seoTitle: "Brand refresh vs rebrand: choose the right depth of change",
-    excerpt:
-      "A practical change depth diagnostic for service businesses deciding between repair, refresh, evolution, repositioning, and a full rebrand.",
-    directAnswer:
-      "Choose a brand refresh when the business strategy, best fit customer, category, offer logic, and core reputation still work, but the visual or verbal expression has aged, drifted, or become inconsistent. Choose a rebrand when the market meaning itself must change: the business serves a different customer, competes in a different category, has a new offer architecture, carries a limiting name, or needs to leave an unhelpful reputation behind. Most businesses sit between those poles and need a defined level of change rather than an all or nothing makeover.",
-    element: "space",
-    topicSlug: "brand-memory",
-    primaryKeyword: "brand refresh vs rebrand",
-    secondaryKeywords: [
+    "slug": "brand-refresh-vs-rebrand-how-much-change",
+    "title": "Brand refresh vs rebrand: how much change does your business need?",
+    "seoTitle": "Brand refresh vs rebrand: choose the right depth of change",
+    "excerpt": "Compare a brand refresh, repositioning and full rebrand with UK service business examples, research limits and a practical checklist for agreeing the scope.",
+    "directAnswer": "A brand refresh usually updates an existing identity or message while much of the business direction stays in place. A rebrand can involve a broader change to the name, position, offers or identity. Providers use these labels differently, so compare the proposed work. Start with the problem, the evidence about customers, the assets worth keeping and the resources available. A changed audience, merger or tired design is a reason to investigate the scope, rather than an automatic instruction to replace the whole brand.",
+    "element": "space",
+    "topicSlug": "brand-memory",
+    "primaryKeyword": "brand refresh vs rebrand",
+    "secondaryKeywords": [
       "rebrand vs brand refresh",
       "when to rebrand a business",
       "brand refresh checklist",
       "brand evolution vs rebrand",
       "full rebrand vs refresh",
-      "service business rebranding",
+      "service business rebranding"
     ],
-    searchIntent:
-      "Compare a brand refresh with a rebrand and diagnose the minimum depth of change the business actually needs.",
-    publishedAt: "2026-08-07",
-    updatedAt: "2026-08-07",
-    readingTime: "15 min read",
-    heroImage: "/images/generated/insights-v3/brand-change-depth-ladder.webp",
-    heroVideo: "/videos/generated/insights-v3/brand-change-depth-ladder.mp4",
-    heroImageAlt:
-      "One familiar brand cue moving through five levels of change from contained repair to complete strategic rebuild",
-    keyTakeaways: [
-      "A refresh updates expression; a rebrand changes market meaning and the system required to support it.",
-      "The correct scope is the smallest level of change that resolves the diagnosed business problem.",
-      "Customer recognition and useful associations are assets to measure before replacing familiar cues.",
-      "A new logo cannot repair an outdated position, a confused offer architecture, or an inconsistent service experience.",
-      "Test understanding, recognition, operational readiness, and rollout complexity before approving the final scope.",
+    "searchIntent": "Compare a brand refresh with a rebrand and diagnose the minimum depth of change the business actually needs.",
+    "publishedAt": "2026-08-07",
+    "updatedAt": "2026-09-22",
+    "readingTime": "10 min read",
+    "heroImage": "/images/generated/insights-v3/brand-change-depth-ladder.webp",
+    "heroVideo": "/videos/generated/insights-v3/brand-change-depth-ladder.mp4",
+    "heroImageAlt": "One familiar brand cue moving through five levels of change from contained repair to complete strategic rebuild",
+    "keyTakeaways": [
+      "Refresh and rebrand describe overlapping kinds of work. Ask what will change and what will stay in the proposal.",
+      "Repair, refresh, evolution, repositioning and rebuild are this guide’s planning vocabulary, not a validated diagnostic score.",
+      "Check whether customers recognise and correctly attribute familiar assets before deciding what to replace.",
+      "Budget, timing and delivery capacity belong in the scope discussion from the beginning.",
+      "Test understanding and recognition separately from preference. A new identity does not guarantee better enquiries or sales."
     ],
-    framework: {
-      title: "The change depth ladder",
-      introduction:
-        "Five levels separate a contained repair from a complete strategic reset. Begin at the lowest level and move upward only when the evidence demands it.",
-      steps: [
+    "framework": {
+      "title": "Five ways to describe the change",
+      "introduction": "Use these options to discuss the brief. They can overlap, and a business does not have to pass through them in order. Each option needs evidence and an agreed deliverable.",
+      "steps": [
         {
-          title: "Repair",
-          description:
-            "Correct inconsistent files, inaccessible colours, broken templates, weak digital behaviour, and undocumented usage without changing the core identity.",
+          "title": "Repair",
+          "description": "Correct a specific execution problem, such as conflicting files or an unusable template, while retaining the existing direction."
         },
         {
-          title: "Refresh",
-          description:
-            "Modernise and strengthen visual or verbal expression while preserving the current customer, position, name, and most recognisable assets.",
+          "title": "Refresh",
+          "description": "Adjust visual or verbal expression where the current business direction remains useful. Identify which familiar cues deserve continuity."
         },
         {
-          title: "Evolve",
-          description:
-            "Update message hierarchy, offer presentation, identity range, and brand architecture while keeping the strategic centre recognisably continuous.",
+          "title": "Evolve",
+          "description": "Extend the system to organise additional services or applications. Check whether the existing name and position still fit."
         },
         {
-          title: "Reposition",
-          description:
-            "Change the customer situation, category frame, comparative value, or leading offer, then align expression and experience around the new meaning.",
+          "title": "Reposition",
+          "description": "Reconsider the buyer, alternatives or reason to choose the business. Determine which changes to the offer and its expression follow."
         },
         {
-          title: "Rebuild",
-          description:
-            "Replace a limiting name, architecture, position, identity, and rollout system when continuity would preserve the problem rather than the equity.",
-        },
-      ],
+          "title": "Rebuild",
+          "description": "Coordinate a broader change where several parts of the brand need replacement. Plan customer communication, implementation and responsibilities."
+        }
+      ]
     },
-    sections: [
+    "sections": [
       {
-        id: "difference-between-refresh-and-rebrand",
-        heading: "The difference between a brand refresh and a rebrand",
-        paragraphs: [
-          "A brand refresh improves how an existing strategy is expressed. The business still serves substantially the same customer, competes in the same frame, and wants to preserve the meaning already attached to its name. The work may refine the logo, colour system, typography, imagery, voice, website, or templates.",
-          "A rebrand changes the strategic foundation or the market interpretation built on top of it. The business may need to be understood by a different customer, in a different category, for a different problem, or at a different level of value. The offer, proof, customer experience, name, architecture, and identity may all need to move.",
-          "The visible amount of design change is an unreliable guide to which project occurred. A subtle identity can accompany a deep repositioning, while a dramatic visual system can still be a refresh if the business meaning remains stable.",
+        "id": "difference-between-refresh-and-rebrand",
+        "heading": "The difference between a brand refresh and a rebrand",
+        "paragraphs": [
+          "A refresh often changes how a business presents itself: its logo treatment, typography, imagery, voice, website or templates. A rebrand may also revisit the name, position, audience or offer. These are working descriptions. A proposal’s actual outputs matter more than the label on its cover.",
+          "A substantial visual change can accompany the same business direction. A subtle visual change can accompany a different audience or offer. Ask the provider to explain the decisions behind the work and the evidence that supports them.",
+          "Branding Tatva offers brand strategy and identity services. This guide’s examples and five change options are practical suggestions from that perspective. The cited studies inform specific questions; they do not validate the whole framework or establish that a particular package is necessary."
         ],
-        callout: {
-          label: "Useful distinction",
-          text:
-            "Refresh means the story is still right but the telling has weakened. Rebrand means the story itself no longer explains the business you are building.",
-        },
+        "callout": {
+          "label": "Start with the brief",
+          "text": "Describe the problem, the people affected and the decisions required before choosing a package name."
+        }
       },
       {
-        id: "why-binary-choice-fails",
-        heading: "Why the binary choice fails most service businesses",
-        paragraphs: [
-          "Many service businesses have outgrown only part of the old brand. They may have a recognised name and trusted delivery history, yet an outdated message hierarchy, an offer menu built through accumulation, and an identity that cannot support current digital use.",
-          "Calling that situation a refresh can hide strategic work inside a design brief. Calling it a full rebrand can encourage unnecessary replacement. Both mistakes increase cost: the first preserves confusion, while the second discards useful memory.",
-          "A better diagnosis separates the layers. Strategy, positioning, offer architecture, identity, messaging, experience, proof, and implementation can require different levels of intervention. The project scope should be assembled from those findings rather than selected from two pre labelled packages.",
-        ],
+        "id": "why-binary-choice-fails",
+        "heading": "When a mixed scope makes more sense",
+        "paragraphs": [
+          "A service business may have a useful name, a confusing service menu and inconsistent proposal templates at the same time. Those observations concern different parts of the brand. They do not necessarily call for the same depth of change.",
+          "List each proposed intervention separately. A revised service structure could accompany retained colours and a repaired website. Ask why each change belongs in the brief, what depends on it and what can remain useful.",
+          "Keeping everything can preserve a problem; replacing everything can create avoidable work. Compare concrete options against the brief, including the work your own team will need to complete."
+        ]
       },
       {
-        id: "diagnose-five-layers",
-        heading: "Diagnose five layers before choosing the scope",
-        paragraphs: [
-          "Begin with the business, never the logo. Ask what has materially changed in the organisation, market, customer, offer, and reputation. Aesthetic dissatisfaction is evidence of discomfort, and it stops short of proving the correct solution.",
-          "Score each layer as sound, strained, or broken. A cluster of expression problems points toward repair or refresh. A cluster of strategic and operational problems points toward repositioning or rebuilding.",
+        "id": "diagnose-five-layers",
+        "heading": "Five questions before choosing the scope",
+        "paragraphs": [
+          "Collect examples from customer conversations, enquiries, proposals, service delivery and existing materials. A team’s dislike of a logo is a view worth discussing, but it does not establish how customers understand the business.",
+          "Use the questions below as discussion prompts. Record evidence and uncertainty beside each answer. Counting negative answers does not produce a reliable refresh or rebrand recommendation."
         ],
-        bullets: [
-          "Business direction: are growth priorities, capabilities, ownership, or economics materially different?",
-          "Market meaning: should customers compare the business with a different set of alternatives?",
-          "Offer architecture: does the current service menu make the desired position easy or difficult to believe?",
-          "Recognition system: which names, assets, phrases, and behaviours are already remembered and correctly attributed?",
-          "Delivery experience: does the way the service is sold and delivered support the promise the brand wants to make?",
-        ],
+        "bullets": [
+          "Business direction: what has changed in the organisation’s capabilities, priorities or ownership?",
+          "Buyer and alternatives: whom does the business need to serve, and what do those buyers compare?",
+          "Offer structure: can people understand which service addresses their situation?",
+          "Recognition: which names, images or phrases do relevant buyers correctly connect with the business?",
+          "Delivery: can the team provide the experience and results its message describes?"
+        ]
       },
       {
-        id: "level-one-repair",
-        heading: "Level one: repair the operating system",
-        paragraphs: [
-          "Choose repair when the underlying identity still fits but execution has fragmented. Different logo files circulate, colours fail accessibility requirements, templates disagree, social crops break, motion feels unrelated, or teams improvise because the guidelines fail to solve real use cases.",
-          "Repair lacks glamour, which is precisely why businesses skip it. Yet a well built operating system can make the same identity feel more deliberate without asking customers to relearn anything.",
-          "A repair project should leave the strategic meaning intact and produce practical files, responsive rules, content templates, asset governance, and ownership for future decisions.",
-        ],
+        "id": "level-one-repair",
+        "heading": "Repair: correct a specific execution problem",
+        "paragraphs": [
+          "Consider a repair when the brief concerns conflicting files, unreadable type, inaccessible text combinations, broken layouts or templates that staff cannot use. Check representative materials before assuming that the wider identity must change.",
+          "Illustrative UK example: an accountancy practice finds three logo versions across its proposals, invoices and website. If the position and service explanation still work, a controlled set of files and templates may be a suitable starting scope. This example describes a possible brief, not a measured client outcome.",
+          "Agree the deliverables, the person responsible for maintaining them and the checks needed for real documents and screens. A repair still needs appropriate design and usability judgement."
+        ]
       },
       {
-        id: "level-two-refresh",
-        heading: "Level two: refresh the expression",
-        paragraphs: [
-          "Choose a refresh when the current position remains relevant and credible, but the expression has lost clarity, flexibility, distinction, or contemporary usefulness. Becoming a different business is the wrong goal. The goal is to make the existing business easier to recognise and understand now.",
-          "A refresh may refine the mark, widen the colour palette, replace an impractical typeface, introduce a stronger imagery system, tighten the voice, and rebuild high value touchpoints. It should deliberately preserve useful cues rather than preserving every historical design decision.",
-          "Research into corporate visual identity change indicates that stakeholder responses vary by organisation and audience, and that communication about the change influences appreciation. The rollout story therefore belongs inside the refresh plan, even when the visual change appears modest.",
-        ],
-        callout: {
-          label: "Refresh test",
-          text:
-            "If the same best fit customer should choose the business for the same central reason after the project, the work may remain a refresh.",
-        },
+        "id": "level-two-refresh",
+        "heading": "Refresh: update expression with a clear purpose",
+        "paragraphs": [
+          "A refresh may be suitable when the business direction remains useful but its visual or verbal expression needs attention. Specify the problem: for example, small text cannot be read, imagery no longer represents the service, or the website and proposal explain the offer differently.",
+          "Identify what you intend to retain as well as what you intend to change. Familiarity alone does not make an asset valuable, and internal boredom does not show that customers want it replaced.",
+          "Bolhuis and colleagues examined visual identity changes in four organisations. Their results differed between employees and consumers and between organisations; communication about the change appeared relevant to appreciation. That supports asking how the change will be explained, but does not predict the response to a particular UK business’s refresh."
+        ]
       },
       {
-        id: "level-three-evolution",
-        heading: "Level three: evolve the brand system",
-        paragraphs: [
-          "Brand evolution sits between a refresh and a rebrand. The strategic centre still works, but the business has become more complex than the existing system can organise. New services, audiences, geographies, partners, or channels require clearer architecture and a larger expressive range.",
-          "The name and central recognition cues may remain, while the message hierarchy, service taxonomy, sub brand logic, proof system, tone range, and identity components are substantially rebuilt.",
-          "Evolution is often the right scope for an established service business that has grown through referrals. The reputation is valuable, but the market cannot yet see the full shape of the capability behind it.",
-        ],
+        "id": "level-three-evolution",
+        "heading": "Evolution: extend a system that still has useful parts",
+        "paragraphs": [
+          "Evolution is a useful description when an existing brand needs to accommodate more services, audiences or formats. Treat it as a scope discussion rather than a standard industry tier between refresh and rebrand.",
+          "Illustrative UK example: a consultancy has added training to an established advisory offer. It might keep its name and identity while clarifying the two services, their audiences and their evidence. If research instead shows that the existing position no longer fits, the brief may need wider work. The example does not establish which outcome another consultancy should choose."
+        ]
       },
       {
-        id: "level-four-reposition",
-        heading: "Level four: reposition the business",
-        paragraphs: [
-          "Choose repositioning when the current market association restricts future growth. The business may be known for an entry level service, one legacy sector, one geography, one founder, or one delivery model that is no longer central.",
-          "Repositioning changes the comparison. It clarifies the customer situation, alternative, distinctive choice, consequence, and proof that should now lead. The offer architecture and customer experience must change with the language, otherwise the new position remains an announcement rather than a fact.",
-          "The existing name and some recognition assets may survive. Repositioning is deep because the meaning changes, never because every familiar cue disappears.",
-        ],
+        "id": "level-four-reposition",
+        "heading": "Repositioning: reconsider the buyer and the offer",
+        "paragraphs": [
+          "Consider positioning work when the business needs to clarify whom it serves, the alternatives buyers consider or the reason to choose its offer. Check that the intended direction is supported by capabilities, customer evidence and the service being sold.",
+          "The consequences may include new messages, a changed service structure or a different way to present proof. An existing name or identity can sometimes support that direction. Ask which design changes follow from the evidence and which are simply preferences.",
+          "A new description does not by itself alter the service experience. Include the operational decisions and responsible people where they are necessary to deliver the proposed position."
+        ]
       },
       {
-        id: "level-five-rebuild",
-        heading: "Level five: rebuild the brand",
-        paragraphs: [
-          "Choose a full rebuild when the name, architecture, position, reputation, identity, and operating model collectively preserve the wrong business. Typical triggers include a merger, legal constraint, severe reputation problem, category exit, major audience shift, or a name that makes the desired expansion implausible.",
-          "A full rebrand carries a larger memory and implementation burden. Research on service brand name changes found that customer evaluation can decline after rebranding, while closer fit between the new name and the service can reduce that decline.",
-          "Rebuild only after documenting what must be left behind and what equity can still travel forward. Even a new name can inherit familiar people, proof, service rituals, visual cues, or a transition phrase that helps customers cross the gap.",
-        ],
-        callout: {
-          label: "Rebuild test",
-          text:
-            "A full rebrand is justified when continuity makes the future less believable than the cost of relearning makes it risky.",
-        },
+        "id": "level-five-rebuild",
+        "heading": "Rebuilding: coordinate a broader change",
+        "paragraphs": [
+          "A merger, a name constraint or a substantial change in the business may justify investigating a broader rebrand. None of these circumstances, on its own, establishes that every asset should be replaced. List what the current system can still support and where it creates a specific obstacle.",
+          "If poor service or unmet promises are damaging reputation, address those causes. A new name or logo cannot establish that the underlying problem has been resolved. Communications should accurately describe the business and the changes it has made.",
+          "A broader brief should identify customer communications, website and document changes, staff preparation, dependencies and the people responsible. Include how existing customers will recognise the connection and where they can ask questions. The cost and effort depend on the actual touchpoints affected."
+        ]
       },
       {
-        id: "recognition-equity",
-        heading: "Measure recognition equity before changing familiar assets",
-        paragraphs: [
-          "Internal familiarity is a poor proxy for customer fatigue. Teams see the brand every day and often become bored with cues that customers encounter only occasionally. Measure before concluding that the market has moved on.",
-          "Audit unaided name recall, aided recognition, visual attribution, repeated customer language, branded search, direct traffic, referral shorthand, and the associations attached to each asset. Separate known from liked, and known from useful.",
-          "Distinctive asset guidance from the Ehrenberg-Bass Institute emphasises fame and uniqueness. An asset worth preserving should be recognised and correctly linked to the brand, then assessed for compatibility with the desired future.",
+        "id": "recognition-equity",
+        "heading": "Check what customers recognise before replacing it",
+        "paragraphs": [
+          "Ehrenberg Bass guidance describes distinctive assets through fame and uniqueness: whether people connect an asset with the brand and how exclusively it points to that brand. This is a basis for examining familiar cues, rather than assuming that a well liked design is well recognised.",
+          "Ask suitable participants to identify assets and explain what they associate with them. Record who participated, how the task was presented and whether the brand name was visible. A few interviews can reveal misunderstandings, but cannot establish recognition levels across the whole market.",
+          "Keep recognition evidence separate from website analytics. Branded searches, direct visits, enquiries and referrals can provide business context, but each has other influences and does not directly measure whether a particular colour or logo is recognised."
         ],
-        bullets: [
-          "Known and useful: preserve or carefully evolve.",
-          "Known but limiting: bridge during transition, then reduce.",
-          "Unknown but strategically suitable: build through consistent use.",
-          "Unknown and unsuitable: retire without ceremony.",
-        ],
+        "bullets": [
+          "Record which cues are correctly attributed, including uncertainty and sample limits.",
+          "Consider whether a recognised cue remains suitable for the intended business direction.",
+          "Test proposed changes in realistic materials before assuming that continuity or replacement will work."
+        ]
       },
       {
-        id: "decision-matrix",
-        heading: "Use a change depth decision matrix",
-        paragraphs: [
-          "Map the severity of the problem against the level of customer recognition. A shallow problem with high recognition calls for restraint. A deep strategic problem with low recognition creates more freedom. The difficult quadrant is deep change with high recognition, where continuity planning becomes part of the strategy.",
-          "Add implementation complexity as a third dimension. A service business with a website, proposals, and a small team carries a different rollout burden from a multi location organisation with contracts, signage, product interfaces, directories, partner assets, and regulated documents.",
+        "id": "decision-matrix",
+        "heading": "Compare options against the evidence and the work required",
+        "paragraphs": [
+          "Prepare a short option note for each credible scope: the problem addressed, evidence reviewed, parts retained, parts changed, implementation work and unresolved questions. Include a limited intervention or a decision to gather more evidence where either is a realistic choice.",
+          "Recognition and implementation complexity can inform the comparison, but they do not produce a numerical answer. A business with several locations or partner materials may face dependencies that a small remote practice does not."
         ],
-        bullets: [
-          "Low problem depth + high recognition: repair or restrained refresh.",
-          "Medium problem depth + high recognition: evolution with protected anchors.",
-          "High problem depth + high recognition: reposition or rebuild with a formal bridge.",
-          "High problem depth + low recognition: broader change is possible, but still requires operational proof.",
-        ],
+        "bullets": [
+          "What would this option resolve, and what would remain unresolved?",
+          "Which customer relationships or familiar assets need particular care?",
+          "Who can deliver and maintain the proposed changes within the available resources?"
+        ]
       },
       {
-        id: "do-not-use-budget-as-diagnosis",
-        heading: "Never use budget or timeline as the diagnosis",
-        paragraphs: [
-          "Cost and time determine what can be implemented, but they reveal nothing about what is broken. A business that needs repositioning never turns into a refresh because the budget is smaller. It becomes an underfunded repositioning project with hidden compromises.",
-          "Separate the required strategic scope from the rollout sequence. The business may make the full set of decisions now and phase lower priority touchpoints later. Conversely, a large budget is no licence to change assets that are already working.",
-          "Ask for the minimum viable change that resolves the problem and the complete roadmap required to finish the transition. This turns budget pressure into sequencing rather than strategic denial.",
-        ],
+        "id": "do-not-use-budget-as-diagnosis",
+        "heading": "Use budget and timing to shape a workable scope",
+        "paragraphs": [
+          "Budget, timing and available people are real parts of the brief. Explain the business problem and the resources available together. A provider should help clarify which decisions and outputs can be delivered within those constraints.",
+          "Options may include a focused diagnostic, a smaller initial assignment, phased implementation or postponing a wider change. Record the trade offs and any problem left unresolved. A phased plan only helps when later work has a realistic owner and commitment.",
+          "The Design Business Association’s proposal guidance recommends reviewing the process, people, timing, deliverables and cost. Apply those questions to each option, and agree how changes to the brief will be handled. This is commissioning guidance, not evidence for a standard rebranding fee or duration."
+        ]
       },
       {
-        id: "test-before-approval",
-        heading: "Test the scope before approving the identity",
-        paragraphs: [
-          "Test concepts with employees, customers, prospects, partners, and people with lighter familiarity. Never begin by asking which design they prefer. Ask what business they believe they are seeing, who it appears to serve, what feels familiar, and what seems to have changed.",
-          "Logo change research has found that familiarity, attachment, congruence, and surprise influence responses. A concept can be visually preferred while creating more recognition loss or strategic confusion.",
-          "Prototype real touchpoints: the homepage, proposal, social profile, service overview, onboarding email, and one proof story. A brand system should be judged where customers make sense of it rather than only on a presentation slide.",
-        ],
+        "id": "test-before-approval",
+        "heading": "Test understanding and recognition before wider implementation",
+        "paragraphs": [
+          "Prototype useful touchpoints such as a service page, proposal cover and introductory email. Ask what the business appears to offer, whom it seems to serve and which details feel familiar. You can also ask about preference, but keep that answer separate from comprehension and correct attribution.",
+          "Grobert and colleagues studied reactions to a university logo change among 220 students and applicants. Their work examined familiarity, attachment and surprise; the authors explicitly noted that other brand settings needed testing. It does not establish how all customers respond to a commercial rebrand.",
+          "The Design Council describes design as an iterative process in which early tests can change the understanding of the problem. Allow the brief and prototypes to inform one another. Check important tasks with appropriate users and include accessibility requirements in the work rather than judging only a presentation slide."
+        ]
       },
       {
-        id: "thirty-day-diagnosis",
-        heading: "A diagnosis over thirty days before commissioning change",
-        paragraphs: [
-          "During week one, inventory the existing identity, messaging, service architecture, touchpoints, analytics, customer language, and recognition cues. During week two, interview customers, prospects, lost opportunities, partners, and the people responsible for delivery.",
-          "During week three, define the future business direction and score each brand layer as sound, strained, or broken. During week four, compare the five change levels, document the equity to preserve, and build a phased brief with evidence for every proposed change.",
-          "A moodboard is the wrong output. The output should be a decision: what must change, what must remain, what can wait, and how the market will understand the movement.",
-        ],
-      },
+        "id": "thirty-day-diagnosis",
+        "heading": "An illustrative planning sequence before commissioning change",
+        "paragraphs": [
+          "If four weeks is a useful planning window, one possible sequence is to gather existing materials first, speak with relevant people next, compare the findings, then agree a brief and implementation responsibilities. Customer access and the complexity of the organisation may require a different sequence or more time. Thirty days is not a standard delivery promise.",
+          "The useful output is a decision record: the problem, evidence and its limits, options considered, work to commission, elements to retain, budget, owners and questions still open. Revisit the plan when new information changes an assumption.",
+          "A brand audit can help organise those questions before a wider engagement. Bring the website, a recent proposal and examples of customer confusion to the conversation. Agree what the audit will examine and deliver; a refresh or rebrand remains a decision to justify, with no guaranteed effect on rankings, enquiries or sales."
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        question: "What is the main difference between a brand refresh and a rebrand?",
-        answer:
-          "A refresh improves visual or verbal expression while the central position, customer, name, and business meaning remain stable. A rebrand changes the strategic meaning, offer system, audience, category, reputation, or identity required to support a different future.",
+        "question": "What is the main difference between a brand refresh and a rebrand?",
+        "answer": "A refresh usually updates expression while much of the current direction stays in place. A rebrand may revisit the name, position, offers or identity more broadly. Providers use the terms differently, so ask for the decisions, deliverables and retained assets in the proposal."
       },
       {
-        question: "Can a brand refresh include a new logo?",
-        answer:
-          "Yes. The logo can be refined or substantially redesigned inside a refresh if the underlying strategy and market meaning remain stable. The depth of design change, by itself, settles nothing about the strategic category.",
+        "question": "Can a brand refresh include a new logo?",
+        "answer": "Yes, a provider may describe a logo change as part of a refresh. The label alone does not establish the scope. Ask why the logo needs changing, what else will change and how existing recognition and practical use will be assessed."
       },
       {
-        question: "When should a service business fully rebrand?",
-        answer:
-          "A full rebrand is appropriate when the existing name, position, architecture, reputation, and identity collectively make the desired business direction difficult to understand or believe, and a lighter intervention would preserve the constraint.",
+        "question": "When should a service business fully rebrand?",
+        "answer": "Consider a broader rebrand when evidence shows that several parts of the current brand constrain the intended business direction. Compare that option with more focused work, assess implementation demands and address any underlying service problems. A merger or changed audience is a reason to investigate, not an automatic requirement for a full rebrand."
       },
       {
-        question: "Is brand evolution different from a refresh?",
-        answer:
-          "Brand evolution is usually deeper than a refresh but more continuous than a full rebrand. It may rebuild message hierarchy, service architecture, identity range, and proof while preserving the name and central recognition assets.",
+        "question": "Is brand evolution different from a refresh?",
+        "answer": "Evolution can describe extending a useful brand system to accommodate new services or applications. The distinction is not standardised across providers. Use the label to begin a scope discussion and confirm exactly what will be retained, changed and delivered."
       },
       {
-        question: "How do you avoid losing brand recognition during change?",
-        answer:
-          "Measure existing recognition, preserve useful and distinctive cues, introduce new associations beside familiar anchors, explain the transition, phase the rollout, and track recognition separately from design preference.",
+        "question": "How do you avoid losing brand recognition during change?",
+        "answer": "You cannot guarantee that recognition will be preserved. Assess relevant assets, test proposed changes with suitable participants, explain the transition and monitor responses. Record the limits of your research and distinguish recognition from preference, traffic and sales."
       },
       {
-        question: "Should cost decide between a refresh and a rebrand?",
-        answer:
-          "No. Diagnose the required depth first, then phase implementation to fit the available budget. Choosing a shallower strategy solely because it is cheaper can leave the original problem untouched.",
-      },
+        "question": "Should cost decide between a refresh and a rebrand?",
+        "answer": "Cost should inform the scope alongside the business problem, evidence, timing and delivery capacity. Compare what each feasible option resolves and leaves open. A focused first stage or phased implementation may help, but future work needs a realistic budget and owner."
+      }
     ],
-    relatedSlugs: [
+    "relatedSlugs": [
       "brand-audit-checklist-before-rebrand",
       "reposition-established-service-business-without-losing-recognition",
-      "distinctive-brand-assets-audit",
+      "distinctive-brand-assets-audit"
     ],
-    sources: [
+    "sources": [
       {
-        title: "Corporate Rebranding: An Integrative Review of Major Enablers and Barriers to the Rebranding Process",
-        publisher: "International Journal of Management Reviews",
-        url: "https://doi.org/10.1111/ijmr.12020",
-        note:
-          "A review of 76 rebranding cases that identifies major enablers, barriers, leadership requirements, and cross functional coordination needs.",
+        "title": "Corporate rebranding: Effects of corporate visual identity changes on employees and consumers",
+        "publisher": "Journal of Marketing Communications / University of Twente",
+        "url": "https://research.utwente.nl/en/publications/corporate-rebranding-effects-of-corporate-visual-identity-changes/",
+        "note": "The authors’ university record summarises a study of four organisations. Responses differed by organisation and stakeholder; the findings do not predict every refresh outcome."
       },
       {
-        title: "Corporate rebranding: effects of corporate visual identity changes on employees and consumers",
-        publisher: "Journal of Marketing Communications",
-        url: "https://doi.org/10.1080/13527266.2015.1067244",
-        note:
-          "A study of four organisations showing that responses to visual identity change differ by stakeholder and organisation, with communication influencing appreciation.",
+        "title": "Surprise! We changed the logo",
+        "publisher": "Journal of Product & Brand Management / Emerald Publishing",
+        "url": "https://www.emerald.com/jpbm/article/25/3/239/451010/Surprise-We-changed-the-logo",
+        "note": "The publisher’s abstract describes 220 students and applicants in a university logo change. The authors call for testing in other settings; this is not a universal rebranding rule."
       },
       {
-        title: "Consumer reaction to service rebranding",
-        publisher: "Journal of Retailing and Consumer Services",
-        url: "https://doi.org/10.1016/j.jretconser.2014.07.003",
-        note:
-          "A study of 320 customers across eight service rebrands examining attitude change after brand name substitution.",
+        "title": "Brands of Distinction",
+        "publisher": "Ehrenberg Bass Institute for Marketing Science",
+        "url": "https://marketingscience.info/news-and-insights/brands-of-distinction",
+        "note": "Guidance on asset fame and uniqueness supports examining recognition. It does not validate this guide’s five planning options or guarantee that a change preserves recognition."
       },
       {
-        title: "Surprise! We changed the logo",
-        publisher: "Journal of Product & Brand Management",
-        url: "https://doi.org/10.1108/JPBM-06-2015-0895",
-        note:
-          "Research into how familiarity, attachment, surprise, and perceived congruence affect responses to a radical logo change.",
+        "title": "Framework for Innovation",
+        "publisher": "Design Council",
+        "url": "https://www.designcouncil.org.uk/resources/framework-for-innovation/",
+        "note": "Supports iterative discovery, prototyping and learning. It does not prescribe a rebranding process lasting thirty days."
       },
       {
-        title: "Brands of Distinction",
-        publisher: "Ehrenberg-Bass Institute for Marketing Science",
-        url: "https://marketingscience.info/news-and-insights/brands-of-distinction",
-        note:
-          "Practitioner guidance on measuring distinctive assets through fame and uniqueness before changing or building identity cues.",
-      },
-      {
-        title: "The Rebranding Process in Service Organizations: Influence Patterns of Core Service Characteristics",
-        publisher: "Administrative Sciences",
-        url: "https://doi.org/10.3390/admsci16060249",
-        note:
-          "A 2026 study arguing that service characteristics create rebranding constraints that differ from physical goods contexts.",
-      },
+        "title": "How to buy design: Asking for a proposal document",
+        "publisher": "Design Business Association",
+        "url": "https://www.dba.org.uk/resources/review-links-how-to-buy-design-08-asking-for-a-proposal-document/",
+        "note": "Supports clarifying scope, process, people, timing, cost and changes in a proposal. The UK scenarios and option checklist are original practical suggestions."
+      }
     ],
-  },
+    "useEditorialArtwork": false
+  }
 ];
