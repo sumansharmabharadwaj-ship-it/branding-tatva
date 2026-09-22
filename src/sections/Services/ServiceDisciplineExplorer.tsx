@@ -274,7 +274,7 @@ export function ServiceDisciplineExplorer() {
                             <span key={plan?.label ?? "default"} data-service-route-state="true" data-active={isActive} aria-hidden={!isActive} inert={!isActive}>
                               {plan ? (
                                 <>
-                                  <span className="block font-medium uppercase tracking-[0.16em] text-sandstone/80" style={{ fontSize: "clamp(0.7rem, 1.1vw, 0.8rem)" }}>Your route: {plan.label}</span>
+                                  <span className="block text-[0.58rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">Your route: {plan.label}</span>
                                   <span className="mt-1 block">{plan.summary}</span>
                                 </>
                               ) : "Included when the engagement requires it. Nothing is added to fill a list."}

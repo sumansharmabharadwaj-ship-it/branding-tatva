@@ -150,7 +150,7 @@ export const distinctiveAssetInsightPosts: InsightPost[] = [
         id: "build-an-asset-system",
         heading: "5. Build a system rather than one signature cue",
         paragraphs: [
-          "Recognition becomes more resilient when several assets work together. A colour may be weak alone and effective when paired with a shape, image direction, motion behaviour, and verbal rhythm.",
+          "Recognition becomes more resilient when several assets work together. A colour may be weak alone and powerful when paired with a shape, image direction, motion behaviour, and verbal rhythm.",
           "Assign roles. A primary asset should appear frequently and carry broad recognition. Supporting assets add flexibility across formats. Occasional assets can create emphasis without carrying the full identity.",
           "Define combinations as carefully as individual elements. The system should reveal how assets behave together on a homepage, social post, proposal, video, event screen, and small mobile surface.",
         ],
