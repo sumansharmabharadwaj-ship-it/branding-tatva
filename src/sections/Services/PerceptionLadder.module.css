@@ -1,5 +1,6 @@
 .container { max-width: 88rem; }
 .system { color: #24372c; }
+.picker, .mobileDecision { display: none; }
 .heading { display: grid; grid-template-columns: 1.4fr 0.6fr; align-items: end; gap: 3rem; }
 .eyebrow { font-size: 0.68rem; font-weight: 650; letter-spacing: 0.16em; text-transform: uppercase; color: #556b4a; }
 .heading h2 { max-width: 26ch; margin-top: 0.8rem; font-family: var(--font-display), serif; font-size: clamp(2.6rem, 3.8vw, 3.65rem); line-height: 1.02; font-weight: 400; letter-spacing: -0.035em; }
@@ -48,17 +49,31 @@
   .heading { gap: 1.2rem; }
   .heading h2 { font-size: clamp(2.5rem, 10vw, 3.6rem); }
   .intro { margin: 0; max-width: 38ch; }
-  .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 1.75rem; gap: 0.4rem; }
+  .tabs { display: none; }
+  .picker { display: block; margin-top: 1.5rem; }
+  .pickerHeading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.65rem; color: #344d36; font-size: 0.875rem; line-height: 1.4; }
+  .pickerHeading > span { color: #59634f; font-size: 0.8125rem; }
+  .pickerControls { display: grid; grid-template-columns: 3rem minmax(0, 1fr) 3rem; gap: 0.5rem; }
+  .pickerControls > :is(select, button) { min-width: 0; min-height: 3.25rem; border: 1px solid #8a967b; border-radius: 0.75rem; background: #faf8f2; color: #24372c; }
+  .pickerControls > select { width: 100%; padding: 0.65rem 0.5rem; font-size: 1rem; }
+  .pickerControls > button { display: grid; place-items: center; cursor: pointer; transition: background-color 200ms ease; }
+  .pickerControls > button:hover { background: #dde2dc; }
+  .pickerControls > :focus-visible { outline: 2px solid #6f4e37; outline-offset: 3px; }
   .tab { min-height: 3.5rem; border-radius: 0.6rem; gap: 0.7rem; font-size: 0.9rem; }
   .tabNumber { font-size: 1.25rem; }
   .tab svg { display: block; }
   .panel { margin-top: 0.75rem; border-radius: 1rem; }
   .visual { padding: 1.4rem; border-right: 0; border-bottom: 1px solid #c9cbbf; border-radius: 1rem 1rem 0 0; }
   .thought { max-width: 24ch; font-size: 1.8rem; }
+  .mobileDecision { display: block; margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid #72805d33; }
+  .decisionDeck { display: grid; margin-top: 0.45rem; }
+  .decisionDeck > p { grid-area: 1 / 1; visibility: hidden; color: #344333; font-size: 0.9375rem; line-height: 1.6; }
+  .decisionDeck > p[data-active="true"] { visibility: visible; animation: decisionArrive 360ms cubic-bezier(0.22, 1, 0.36, 1) both; }
   .systemResult { display: grid; grid-template-columns: 1fr; gap: 0.25rem; min-height: 4.3rem; padding-top: 0.9rem; }
   .systemResult strong { font-size: 1.35rem; line-height: 1.2; }
   .desktopCopy { display: none; }
   .mobileDetails { display: block; }
+  .mobileDetails .detailDecision { display: none; }
   .mobileDetails > summary { display: flex; min-height: 3.5rem; align-items: center; justify-content: space-between; padding: 0.9rem 1.4rem; list-style: none; color: #344d36; font-size: 0.9rem; cursor: pointer; }
   .mobileDetails > summary::-webkit-details-marker { display: none; }
   .mobileDetails > summary:focus-visible { outline: 2px solid #6f4e37; outline-offset: -4px; }
@@ -73,9 +88,13 @@
   .context { font-size: 0.9rem; }
   .auditLink { font-size: 1rem; }
 }
+@keyframes decisionArrive { from { opacity: 0.65; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .tab, .tab svg, .auditLink { transition: none; }
+  .tab, .tab svg, .auditLink, .pickerControls > button { transition: none; }
+  .decisionDeck > p[data-active="true"] { animation: none; }
 }
 :global(:root[data-motion="reduced"]) .tab,
 :global(:root[data-motion="reduced"]) .tab svg,
-:global(:root[data-motion="reduced"]) .auditLink { transition: none; }
+:global(:root[data-motion="reduced"]) .auditLink,
+:global(:root[data-motion="reduced"]) .pickerControls > button { transition: none; }
+:global(:root[data-motion="reduced"]) .decisionDeck > p[data-active="true"] { animation: none; }

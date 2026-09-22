@@ -2,7 +2,7 @@
 
 import type { KeyboardEvent } from "react";
 import { useEffect, useRef, useState } from "react";
-import { ArrowDown, ArrowRight, Plus } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, Plus } from "lucide-react";
 import styles from "./PerceptionLadder.module.css";
 import { BuyerMemoryScene } from "./BuyerMemoryScene";
 import { Container } from "@/components/Container";
@@ -107,12 +107,13 @@ export function PerceptionLadder() {
   }, []);
 
   // Tabs are deliberate choices. Scrolling never replaces the state being read.
-  function activate(index: number, source: "click" | "keyboard") {
-    if (index === activeIndex) return;
-    setActiveIndex(index);
+  function activate(index: number, source: "click" | "keyboard" | "picker" | "previous" | "next") {
+    const nextIndex = (index + RUNGS.length) % RUNGS.length;
+    if (nextIndex === activeIndex) return;
+    setActiveIndex(nextIndex);
     track("capability_selected", {
       page: "services",
-      capability: `Recognition ladder: ${RUNGS[index]?.label ?? "stage"}`,
+      capability: `Recognition ladder: ${RUNGS[nextIndex].label}`,
       source: `perception_${source}`,
     });
   }
@@ -135,7 +136,7 @@ export function PerceptionLadder() {
       <h3>{rung.signal}</h3>
       <p className={styles.explanation}>{rung.explanation}</p>
       <dl className={styles.decisions}>
-        <div><dt>What to decide next</dt><dd>{rung.decision}</dd></div>
+        <div className={styles.detailDecision}><dt>What to decide next</dt><dd>{rung.decision}</dd></div>
         <div><dt>Evidence to collect</dt><dd>{rung.evidence}</dd></div>
       </dl>
     </div>
@@ -153,6 +154,24 @@ export function PerceptionLadder() {
             Four states of buyer memory. Four different branding decisions.
           </p>
         </header>
+
+        <div className={styles.picker} data-section-jump-yield="true" tabIndex={-1}>
+          <div className={styles.pickerHeading}>
+            <label htmlFor="buyer-memory-stage">Explore buyer memory</label>
+            <span aria-hidden="true">{String(activeIndex + 1).padStart(2, "0")} / 04</span>
+          </div>
+          <div className={styles.pickerControls}>
+            <button type="button" aria-label="Previous memory stage" aria-controls="perception-stage-panel" onClick={() => activate(activeIndex - 1, "previous")}>
+              <ArrowLeft size={18} aria-hidden="true" />
+            </button>
+            <select id="buyer-memory-stage" value={activeIndex} aria-controls="perception-stage-panel" onChange={(event) => activate(Number(event.target.value), "picker")}>
+              {RUNGS.map((rung, index) => <option key={rung.label} value={index}>{rung.label}</option>)}
+            </select>
+            <button type="button" aria-label="Next memory stage" aria-controls="perception-stage-panel" onClick={() => activate(activeIndex + 1, "next")}>
+              <ArrowRight size={18} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
 
         <div className={styles.tabs} role="tablist" aria-label="Four states of brand recognition">
           {RUNGS.map((rung, index) => (
@@ -180,7 +199,7 @@ export function PerceptionLadder() {
           id="perception-stage-panel"
           role="tabpanel"
           tabIndex={0}
-          aria-labelledby={`perception-stage-tab-${activeIndex}`}
+          aria-label={activeRung.label}
           className={styles.panel}
           data-section-jump-yield="true"
         >
@@ -191,6 +210,14 @@ export function PerceptionLadder() {
                 {RUNGS.map((rung, index) => (
                   <p key={rung.label} className={styles.thought} data-active={index === activeIndex} aria-hidden={index !== activeIndex}>“{rung.thought}”</p>
                 ))}
+              </div>
+              <div className={styles.mobileDecision}>
+                <p className={styles.eyebrow}>What to decide next</p>
+                <div className={styles.decisionDeck}>
+                  {RUNGS.map((rung, index) => (
+                    <p key={rung.label} data-active={index === activeIndex} aria-hidden={index !== activeIndex}>{rung.decision}</p>
+                  ))}
+                </div>
               </div>
               <BuyerMemoryScene stage={activeIndex} reducedMotion={prefersReducedMotion} />
               <div className={styles.systemResult}>
@@ -203,7 +230,7 @@ export function PerceptionLadder() {
               {copyPanels}
             </div>
             <details className={styles.mobileDetails}>
-              <summary>Decision and evidence <Plus size={18} aria-hidden="true" /></summary>
+              <summary>Why this matters and evidence <Plus size={18} aria-hidden="true" /></summary>
               <div className={styles.copyDeck}>{copyPanels}</div>
             </details>
           </div>
