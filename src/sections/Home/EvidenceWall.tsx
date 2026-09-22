@@ -1,7 +1,7 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import Image from "next/image";
@@ -142,10 +142,15 @@ export function EvidenceWall() {
   const [openingSlug, setOpeningSlug] = useState<string | null>(null);
   const [fileError, setFileError] = useState(false);
   const [openSlug, setOpenSlug] = useState<string | null>(null);
-  const prefersReducedMotion = Boolean(useHydratedReducedMotion());
+  const [keyboardReading, setKeyboardReading] = useState(false);
+  const [projectAnnouncement, setProjectAnnouncement] = useState("");
+  const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
+  const readingStill = prefersReducedMotion || keyboardReading;
   const desktopMotion = useMediaQuery("(min-width: 1181px) and (min-height: 761px) and (pointer: fine)");
   const [frameFits, setFrameFits] = useState(false);
-  const desktopStory = desktopMotion && !prefersReducedMotion && frameFits;
+  const [hasScrollLayout, setHasScrollLayout] = useState(false);
+  const heldLayout = desktopMotion && frameFits && hasScrollLayout;
+  const desktopStory = heldLayout && !prefersReducedMotion;
   const inView = useInView(sectionRef, { amount: 0.22, margin: "8% 0px -12% 0px" });
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
@@ -160,9 +165,16 @@ export function EvidenceWall() {
   const selectionDirection = activeIndex >= previousIndexRef.current ? 1 : -1;
   const activeProject = projects[activeIndex] ?? projects[0];
   const activeTrail = trailFor(activeProject);
-  const mediaDuration = prefersReducedMotion ? 0 : desktopMotion ? 0.7 : 0.35;
+  const mediaDuration = readingStill ? 0 : desktopMotion ? 0.7 : 0.35;
 
   useEffect(() => () => { fileRequestRef.current += 1; }, []);
+
+  useEffect(() => {
+    // Playback can stop without removing the established scroll runway.
+    // Initial reduced motion and content that cannot fit stay in normal flow.
+    if (!hydrated || !desktopMotion || !frameFits) setHasScrollLayout(false);
+    else if (!prefersReducedMotion) setHasScrollLayout(true);
+  }, [desktopMotion, frameFits, hydrated, prefersReducedMotion]);
 
   useEffect(() => {
     const frame = sectionRef.current?.querySelector<HTMLElement>(".evidence-cinematic__shell");
@@ -184,6 +196,8 @@ export function EvidenceWall() {
     cancelOpening();
     setFileError(false);
     chooseVisualState(index);
+    // Announce an explicit choice, without narrating scroll or hover previews.
+    setProjectAnnouncement(`Project ${index + 1} of ${projects.length}: ${projects[index].title}.`);
   }
 
   function stepProject(direction: -1 | 1) {
@@ -199,7 +213,7 @@ export function EvidenceWall() {
     if (tabRect.left < stripRect.left || tabRect.right > stripRect.right) {
       strip.scrollBy({
         left: tabRect.left - stripRect.left - (strip.clientWidth - tabRect.width) / 2,
-        behavior: prefersReducedMotion ? "instant" : "smooth",
+        behavior: readingStill ? "instant" : "smooth",
       });
     }
   }
@@ -263,7 +277,7 @@ export function EvidenceWall() {
   }
 
   useEffect(() => {
-    if (prefersReducedMotion) return;
+    if (readingStill) return;
     const videoAtEffectStart = activeVideoRef.current;
 
     function syncPlayback() {
@@ -280,7 +294,7 @@ export function EvidenceWall() {
       document.removeEventListener("visibilitychange", syncPlayback);
       videoAtEffectStart?.pause();
     };
-  }, [activeIndex, inView, openSlug, prefersReducedMotion]);
+  }, [activeIndex, inView, openSlug, readingStill]);
 
   const settleReading = useCallback(() => {
     copyMotion.stop();
@@ -295,7 +309,7 @@ export function EvidenceWall() {
     const previous = previousIndexRef.current;
     previousIndexRef.current = activeIndex;
     settleReading();
-    if (prefersReducedMotion || openSlug || previous === activeIndex) return;
+    if (readingStill || openSlug || !inView || previous === activeIndex) return;
     const direction = activeIndex > previous ? 1 : -1;
     // The photograph opens the file; opaque text settles inside measured rows.
     // Glass surfaces and actions keep their positions throughout the transition.
@@ -309,7 +323,7 @@ export function EvidenceWall() {
     void trailMotion.start((row: number) => ({ x: 0, y: 0, transition: { duration: .42, delay: delayFor(row), ease: EASE } }));
     void traceMotion.start((row: number) => ({ scaleX: 1, transition: { duration: .58, delay: delayFor(row), ease: EASE } }));
     return () => { copyMotion.stop(); trailMotion.stop(); traceMotion.stop(); };
-  }, [activeIndex, copyMotion, openSlug, prefersReducedMotion, settleReading, trailMotion, traceMotion]);
+  }, [activeIndex, copyMotion, inView, openSlug, readingStill, settleReading, trailMotion, traceMotion]);
 
   return (
     <section
@@ -318,9 +332,17 @@ export function EvidenceWall() {
       aria-labelledby="evidence-wall-title"
       data-evidence-state={activeProject.slug}
       data-evidence-index={activeIndex}
-      data-evidence-layout={desktopStory ? "held" : "flow"}
+      data-evidence-layout={heldLayout ? "held" : "flow"}
+      data-evidence-scroll-active={desktopStory}
+      data-evidence-reading-still={readingStill}
       data-scroll-story="evidence"
       style={{ "--evidence-accent": activeProject.accent } as CSSProperties}
+      onFocusCapture={(event) => {
+        settleReading();
+        if (event.target instanceof HTMLElement && event.target.matches(":focus-visible")) setKeyboardReading(true);
+      }}
+      onKeyDownCapture={() => setKeyboardReading(true)}
+      onPointerDownCapture={() => setKeyboardReading(false)}
     >
       <BackgroundVideo
         video="/videos/pexels-fog-sunrise.mp4"
@@ -335,22 +357,22 @@ export function EvidenceWall() {
         className="evidence-cinematic__light evidence-cinematic__light--one"
         initial={false}
         animate={
-          prefersReducedMotion
+          readingStill
             ? { x: 0, y: 0 }
             : { x: activeIndex * 20, y: activeIndex * -6 }
         }
-        transition={{ duration: prefersReducedMotion ? 0 : 0.7, ease: EASE }}
+        transition={{ duration: readingStill ? 0 : 0.7, ease: EASE }}
       />
       <motion.div
         aria-hidden="true"
         className="evidence-cinematic__light evidence-cinematic__light--two"
         initial={false}
         animate={
-          prefersReducedMotion
+          readingStill
             ? { x: 0, y: 0 }
             : { x: activeIndex * -16, y: activeIndex * 6 }
         }
-        transition={{ duration: prefersReducedMotion ? 0 : 0.7, ease: EASE }}
+        transition={{ duration: readingStill ? 0 : 0.7, ease: EASE }}
       />
 
       <Container className="evidence-cinematic__shell max-w-[100rem]">
@@ -366,9 +388,7 @@ export function EvidenceWall() {
               Five real engagements. Each file begins with a signal that was misread,
               then records the decision that changed the direction.
             </p>
-            <span>{desktopStory
-              ? "Scroll through five project files, or choose one to explore."
-              : "Choose a project to follow the decision and its result."}</span>
+            <span>From the first signal to the work delivered.</span>
           </div>
         </header>
 
@@ -429,12 +449,12 @@ export function EvidenceWall() {
         >
           <article className="evidence-cinematic__media">
             {/* Only the scenery overlaps. Copy and actions retain one owner. */}
-            <AnimatePresence mode="sync" initial={false}>
+            <AnimatePresence key={readingStill ? "settled" : "animated"} mode="sync" initial={false}>
             <EvidenceMediaLayer
               key={`media-${activeProject.slug}`}
               className="evidence-cinematic__media-layer"
               data-evidence-camera
-              initial={prefersReducedMotion ? false : {
+              initial={readingStill ? false : {
                 opacity: desktopMotion ? 1 : 0,
                 clipPath: desktopMotion
                   ? selectionDirection > 0 ? "inset(0% 0% 0% 100%)" : "inset(0% 100% 0% 0%)"
@@ -463,7 +483,7 @@ export function EvidenceWall() {
                 />
               )}
 
-              {!prefersReducedMotion && activeProject.cardVideo && (
+              {!readingStill && activeProject.cardVideo && (
                 <motion.video
                   ref={(video) => {
                     if (video) activeVideoRef.current = video;
@@ -481,15 +501,15 @@ export function EvidenceWall() {
                   // In view only: autoplay overrides preload="none", so a
                   // mount-time autoplay fetched this film on first load. The
                   // effect below still starts it once the wall is in view.
-                  autoPlay={!prefersReducedMotion && inView}
+                  autoPlay={inView && !openSlug}
                   playsInline
                   preload={inView ? "metadata" : "none"}
                   data-home-playback-rate="1.2"
                   data-evidence-project={activeProject.slug}
                   aria-hidden="true"
-                  initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.035 }}
-                  animate={{ opacity: 1, scale: prefersReducedMotion ? 1 : inView ? 1.1 : 1.04 }}
-                  transition={{ opacity: { duration: prefersReducedMotion ? 0 : .72 }, scale: { duration: prefersReducedMotion ? 0 : 8, ease: "linear" } }}
+                  initial={{ opacity: 0, scale: 1.035 }}
+                  animate={{ opacity: 1, scale: inView ? 1.1 : 1.04 }}
+                  transition={{ opacity: { duration: .72 }, scale: { duration: 8, ease: "linear" } }}
                 />
               )}
             </EvidenceMediaLayer>
@@ -580,12 +600,11 @@ export function EvidenceWall() {
                 Next <span aria-hidden="true">→</span>
               </button>
               <p className="sr-only" role="status" aria-atomic="true">
-                Project {activeIndex + 1} of {projects.length}: {activeProject.title}.
+                {projectAnnouncement}
               </p>
             </div>
 
             <div className="evidence-cinematic__dossier-footer">
-              <p>One decision worth following is more useful than a wall of unexplained outcomes.</p>
               <Link href="/work">Open the full archive <span aria-hidden="true">→</span></Link>
             </div>
           </aside>
