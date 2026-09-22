@@ -272,6 +272,11 @@
   .cardContent { grid-template-columns: minmax(0, 1fr); gap: 1.3rem; }
 }
 
+/* A wide viewport can still contain tall cards after text enlargement or
+   font loading. Retain their padding while returning them to document flow. */
+.scene[data-cost-layout="flow"] .stack { row-gap: 1.1rem; }
+.scene[data-cost-layout="flow"] .card { position: static; scale: 1; }
+
 /* Pause only decorative motion. Native sticky positioning and spacing keep
    exactly the same geometry, so toggling cannot move a reading to its old
    flow position. Compact screens keep their ordinary-flow list in both modes. */

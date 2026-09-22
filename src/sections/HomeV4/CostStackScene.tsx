@@ -46,11 +46,46 @@ export function V4CostStackScene() {
   const sectionRef = useRef<HTMLElement>(null);
   const { hydrated, prefersReducedMotion } = useHydratedMotionPreference();
 
+  // Real content height owns sticky eligibility, including enlarged text.
+  // Motion preferences never change these measurements or the list spacing.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const cards = Array.from(section.querySelectorAll<HTMLElement>("[data-cost-card]"));
+    const viewport = window.matchMedia("(min-width: 901px) and (min-height: 821px)");
+    let frame = 0;
+    let disposed = false;
+    function measure() {
+      frame = 0;
+      if (disposed || !section) return;
+      const fits = viewport.matches && cards.every((card) => {
+        const top = parseFloat(getComputedStyle(card).top) || 0;
+        return top + Math.max(card.offsetHeight, card.scrollHeight) <= window.innerHeight - 80;
+      });
+      section.dataset.costLayout = fits ? "stacked" : "flow";
+    }
+    function schedule() {
+      if (!frame && !disposed) frame = requestAnimationFrame(measure);
+    }
+    const resize = new ResizeObserver(schedule);
+    cards.forEach((card) => resize.observe(card));
+    window.addEventListener("resize", schedule, { passive: true });
+    viewport.addEventListener("change", schedule);
+    measure();
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
+      resize.disconnect();
+      window.removeEventListener("resize", schedule);
+      viewport.removeEventListener("change", schedule);
+      delete section.dataset.costLayout;
+    };
+  }, []);
+
   useEffect(() => {
     const section = sectionRef.current;
     if (!section || !hydrated || prefersReducedMotion) return;
     const cards = Array.from(section.querySelectorAll<HTMLElement>("[data-cost-card]"));
-    const stacked = window.matchMedia("(min-width: 901px) and (min-height: 821px)");
     let frame = 0;
     let visible = true;
     let disposed = false;
@@ -60,6 +95,7 @@ export function V4CostStackScene() {
       frame = 0;
       if (disposed || !visible || document.hidden) return;
       const viewport = window.innerHeight;
+      const stacked = section?.dataset.costLayout === "stacked";
       const selection = document.getSelection();
       const readingRange = selection && !selection.isCollapsed && selection.rangeCount
         ? selection.getRangeAt(0) : null;
@@ -67,14 +103,14 @@ export function V4CostStackScene() {
       // rather than transformed height so depth never feeds back into progress.
       const measurements = cards.map((card) => ({
         card, top: card.getBoundingClientRect().top, height: card.offsetHeight,
-        pin: stacked.matches ? parseFloat(getComputedStyle(card).top) : 0,
+        pin: stacked ? parseFloat(getComputedStyle(card).top) : 0,
         selected: Boolean(readingRange?.intersectsNode(card)),
       }));
       measurements.forEach(({ card, top, height, pin, selected }, index) => {
         // Native text selection holds the paint while the document still scrolls.
         if (selected) return;
         const next = measurements[index + 1];
-        const cover = stacked.matches && next
+        const cover = stacked && next
           ? clamp((top + height - next.top) / Math.max(1, height - (next.pin - pin)))
           : 0;
         const arrival = clamp((viewport * .92 - top) / Math.max(1, viewport * .92 - pin));
@@ -102,7 +138,6 @@ export function V4CostStackScene() {
     window.addEventListener("resize", schedule, { passive: true });
     document.addEventListener("visibilitychange", schedule);
     document.addEventListener("selectionchange", schedule);
-    stacked.addEventListener("change", schedule);
     schedule();
     return () => {
       disposed = true;
@@ -113,7 +148,6 @@ export function V4CostStackScene() {
       window.removeEventListener("resize", schedule);
       document.removeEventListener("visibilitychange", schedule);
       document.removeEventListener("selectionchange", schedule);
-      stacked.removeEventListener("change", schedule);
       cards.forEach((card) => {
         card.style.removeProperty("--stack-cover");
         card.style.removeProperty("--stack-arrival");

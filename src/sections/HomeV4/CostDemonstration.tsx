@@ -1,24 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, Check } from "lucide-react";
+import { useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { ArrowRight, Undo2 } from "lucide-react";
 import styles from "./CostDemonstration.module.css";
 
 const EASE = [.22, 1, .36, 1] as const;
 const STUDIES = {
   messages: {
     action: "Connect the messages",
+    reverse: "Show the separate messages",
     reset: "Three channels leave three different impressions.",
     resolved: "Three channels carry one reason to choose you.",
   },
   decisions: {
     action: "Carry the decision forward",
+    reverse: "Show the repeated decisions",
     reset: "Each new brief reopens the same decision.",
     resolved: "The decision carries from the brief into the next campaign.",
   },
   memory: {
     action: "Repeat the same cue",
+    reverse: "Show the changing cues",
     reset: "Each encounter asks people to learn a different cue.",
     resolved: "A familiar cue connects one encounter to the next.",
   },
@@ -39,9 +42,22 @@ function MessageDiagram({ resolved, still }: DiagramProps) {
               d={`M120 ${y} C168 ${y} 176 ${destinationY} 224 ${destinationY}`}
               animate={{ d: `M120 ${y} C168 ${y} 176 ${destinationY} 224 ${destinationY}` }}
               initial={false}
-              stroke={resolved ? "#c6a97a" : "#817d6f"}
+              stroke="#817d6f"
               strokeWidth="1.5"
               transition={{ duration: still ? 0 : .65, ease: EASE }}
+            />
+            <motion.path
+              d={`M120 ${y} C168 ${y} 176 ${destinationY} 224 ${destinationY}`}
+              initial={false}
+              animate={{
+                d: `M120 ${y} C168 ${y} 176 ${destinationY} 224 ${destinationY}`,
+                pathLength: resolved ? 1 : 0,
+                opacity: resolved ? 1 : 0,
+              }}
+              stroke="#d4b99a"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              transition={{ duration: still ? 0 : .65, delay: still || !resolved ? 0 : index * .1, ease: EASE }}
             />
             <rect x="8" y={y - 19} width="112" height="38" rx="10" className={styles.sourcePlate} />
             <text x="64" y={y + 5} textAnchor="middle" className={styles.diagramText}>{label}</text>
@@ -134,12 +150,25 @@ function MemoryDiagram({ resolved, still }: DiagramProps) {
 }
 
 export function CostDemonstration({ kind, reducedMotion }: { kind: CostDemonstrationKind; reducedMotion: boolean }) {
+  const demoRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(demoRef, { amount: .12 });
   const [{ resolved, keyboard }, setChoice] = useState({ resolved: false, keyboard: false });
   const study = STUDIES[kind];
-  const still = reducedMotion || keyboard;
+  const still = reducedMotion || keyboard || !inView;
   const captionId = `cost-demonstration-${kind}-reading`;
   return (
-    <div className={styles.demo} data-cost-demo={kind} data-resolved={resolved} data-still={still}>
+    <div
+      ref={demoRef}
+      className={styles.demo}
+      data-cost-demo={kind}
+      data-resolved={resolved}
+      data-still={still}
+      onFocusCapture={(event) => {
+        if (event.target.matches(":focus-visible")) setChoice((current) => ({ ...current, keyboard: true }));
+      }}
+      onKeyDownCapture={() => setChoice((current) => ({ ...current, keyboard: true }))}
+      onPointerDownCapture={() => setChoice((current) => ({ ...current, keyboard: false }))}
+    >
       <figure className={styles.figure}>
         {/* Only the decorative SVG remounts when motion is stopped. This also
             cancels a delayed stroke midflight, while reading and focus stay. */}
@@ -149,7 +178,10 @@ export function CostDemonstration({ kind, reducedMotion }: { kind: CostDemonstra
             : <MemoryDiagram resolved={resolved} still={still} />}
         </div>
         <figcaption className={styles.caption}>
-          <span className={styles.exampleLabel}>Illustrative example</span>
+          <span className={styles.captionMeta}>
+            <span className={styles.exampleLabel}>Illustrative example</span>
+            <span className={styles.stateLabel} aria-hidden="true">{resolved ? "After" : "Before"}</span>
+          </span>
           <span className={styles.readingStack}>
             <span className={styles.measure} aria-hidden="true" inert>
               <span>{study.reset}</span><span>{study.resolved}</span>
@@ -163,13 +195,17 @@ export function CostDemonstration({ kind, reducedMotion }: { kind: CostDemonstra
       <button
         type="button"
         className={styles.toggle}
-        aria-pressed={resolved}
         aria-controls={captionId}
         onClick={(event) => setChoice((current) => ({ resolved: !current.resolved, keyboard: event.detail === 0 }))}
         data-cursor-label="try"
       >
-        <span>{study.action}</span>
-        <span className={styles.toggleIcon} aria-hidden="true">{resolved ? <Check size={17} /> : <ArrowRight size={17} />}</span>
+        <span className={styles.readingStack}>
+          <span className={styles.measure} aria-hidden="true" inert>
+            <span>{study.action}</span><span>{study.reverse}</span>
+          </span>
+          <span>{resolved ? study.reverse : study.action}</span>
+        </span>
+        <span className={styles.toggleIcon} aria-hidden="true">{resolved ? <Undo2 size={17} /> : <ArrowRight size={17} />}</span>
       </button>
     </div>
   );
