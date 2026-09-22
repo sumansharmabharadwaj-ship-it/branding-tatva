@@ -1,393 +1,191 @@
 "use client";
 
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
-import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type CSSProperties } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Check } from "lucide-react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from "react";
+import Link from "next/link";
 import { Container } from "@/components/Container";
-import { LinkButton } from "@/components/Button";
+import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { packages } from "@/data/services";
 import { SITUATION_KEY } from "@/sections/Home/VisitorRecognition";
 import {
   HOME_TO_SERVICES_SITUATION,
   SERVICES_SITUATION_EVENT,
+  SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
   SITUATION_TO_PACKAGE,
   isServicesSituation,
+  publishServicesSituation,
   readCompletedHomeDiagnosis,
   type ServicesSituationDetail,
   type ServicesSituationId,
 } from "@/lib/servicesJourney";
 import { track } from "@/lib/analytics";
+import styles from "./SituationPath.module.css";
 
-// Conversion architecture, Services chapter two: the visitor places
-// themselves before any package is pitched. If they already chose in the
-// Home page Clarity Lab, the same condition arrives preselected, so the
-// site remembers the diagnosis instead of asking the same question again.
 const OPTIONS: ReadonlyArray<{
   id: ServicesSituationId;
+  shortLabel: string;
   label: string;
+  decision: string;
   reason: string;
 }> = [
   {
     id: "idea",
+    shortLabel: "Idea",
     label: "I have a credible offer but no settled brand.",
-    reason: "The first work settles what the business should mean. Naming, identity, website, and launch all inherit that answer.",
+    decision: "Give buyers a reason to choose.",
+    reason: "Settle the buyer, category, and position first. Naming, language, identity, and the website can then express the same answer.",
   },
   {
     id: "reposition",
+    shortLabel: "Reposition",
     label: "The business has outgrown the brand people still see.",
-    reason: "The cues buyers already trust stay. The ones that misrepresent the business go. The stronger position takes their place.",
+    decision: "Keep the trust. Change the reading.",
+    reason: "Separate the cues buyers already trust from the ones that misrepresent the business. Rebuild the position, language, and identity around that distinction.",
   },
   {
     id: "ongoing",
+    shortLabel: "Ongoing",
     label: "The brand changes every time the channel changes.",
-    reason: "I set the verbal and visual rules, apply them to live work, and correct drift before it becomes another version of the brand.",
+    decision: "Make every channel sound like one brand.",
+    reason: "Set verbal and visual rules, apply them to live work, and review what buyers encounter. Repeated decisions should build recognition over time.",
   },
 ];
 
-const FIRST_OPTION = OPTIONS[0];
-const EASE = [0.22, 1, 0.36, 1] as const;
-const ANCHOR_SETTLE_EVENT = "bt:services-anchor-settle";
-const ROUTE_PANEL_VARIANTS = {
-  enter: (direction: number) => ({
-    opacity: 0.62,
-    y: direction * 14,
-    clipPath:
-      direction > 0
-        ? "inset(0 0 14% 0 round 1rem)"
-        : "inset(14% 0 0 0 round 1rem)",
-    filter: "blur(1.5px)",
-  }),
-  center: {
-    opacity: 1,
-    y: 0,
-    clipPath: "inset(0 0 0 0 round 0rem)",
-    filter: "blur(0px)",
-  },
-  exit: (direction: number) => ({
-    opacity: 0.28,
-    y: direction * -10,
-    clipPath:
-      direction > 0
-        ? "inset(14% 0 0 0 round 1rem)"
-        : "inset(0 0 14% 0 round 1rem)",
-    filter: "blur(1.5px)",
-  }),
-  reducedExit: { opacity: 0 },
-};
-
-function publishSituation(id: ServicesSituationId) {
-  try {
-    window.localStorage.setItem(SERVICES_SITUATION_STORAGE_KEY, id);
-  } catch {}
-
-  const detail: ServicesSituationDetail = {
-    situation: id,
-    packageSlug: SITUATION_TO_PACKAGE[id],
-    origin: "services",
-  };
-  window.dispatchEvent(new CustomEvent<ServicesSituationDetail>(SERVICES_SITUATION_EVENT, { detail }));
+function SituationSketch({ situation }: { situation: ServicesSituationId }) {
+  if (situation === "idea") {
+    return <div className={`${styles.sketch} ${styles.position}`} role="img" aria-label="Buyer, category, and reason to choose form one brand position">
+      <div className={styles.positionInputs}>{["Buyer", "Category", "Reason to choose"].map((label, index) => <span key={label} style={{ "--sketch-index": index } as CSSProperties}>{label}</span>)}</div>
+      <p>A position buyers can repeat.</p><span className={styles.positionLine} aria-hidden="true" />
+    </div>;
+  }
+  if (situation === "reposition") {
+    return <div className={`${styles.sketch} ${styles.reframe}`} role="img" aria-label="Keep the cues that earn trust and change the cues that misrepresent the business">
+      <div><span>Keep</span><strong>The trust<br />already earned.</strong><i aria-hidden="true" /></div>
+      <div><span>Change</span><strong>The cues that<br />hold you back.</strong><i aria-hidden="true" /></div>
+    </div>;
+  }
+  return <div className={`${styles.sketch} ${styles.channels}`} role="img" aria-label="Website, content, and campaigns follow the same verbal and visual rules">
+    {["Website", "Content", "Campaigns"].map((label, index) => <div key={label} style={{ "--sketch-index": index } as CSSProperties}><span>{label}</span><i aria-hidden="true"><b /><b /><b /></i></div>)}
+    <p>One recognisable point of view.</p>
+  </div>;
 }
 
 function settlePackageChapter(event: MouseEvent<HTMLAnchorElement>) {
-  // Next's hash-only Link navigation can restore the top of the route after
-  // our scroll runtime has already aligned the package chapter. Keep this
-  // journey within the current document, update the shareable fragment, and
-  // let the shared Services runtime perform the authoritative alignment.
   event.preventDefault();
-  if (window.location.hash !== "#desire") {
-    window.history.pushState(window.history.state, "", "#desire");
-  }
-  window.dispatchEvent(new CustomEvent(ANCHOR_SETTLE_EVENT, { detail: { id: "desire" } }));
+  if (window.location.hash !== "#desire") window.history.pushState(window.history.state, "", "#desire");
+  window.dispatchEvent(new CustomEvent("bt:services-anchor-settle", { detail: { id: "desire" } }));
 }
 
 export function SituationPath() {
   const [selected, setSelected] = useState<ServicesSituationId | null>(null);
-  const [preview, setPreview] = useState<ServicesSituationId>(FIRST_OPTION.id);
   const [carried, setCarried] = useState(false);
-  const previousDisplayedIndexRef = useRef(0);
-  const mobileTabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [entered, setEntered] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const choiceRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
+  const displayed = selected ?? OPTIONS[0].id;
 
   useEffect(() => {
     try {
-      const storedSituation = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
-      const savedServicesChoice = isServicesSituation(storedSituation)
-        ? storedSituation
-        : readCompletedHomeDiagnosis();
-      if (savedServicesChoice) {
-        setSelected(savedServicesChoice);
-        setPreview(savedServicesChoice);
+      const stored = window.localStorage.getItem(SERVICES_SITUATION_STORAGE_KEY);
+      const saved = isServicesSituation(stored) ? stored : readCompletedHomeDiagnosis();
+      const homeChoice = window.localStorage.getItem(SITUATION_KEY);
+      const initial = saved ?? (homeChoice ? HOME_TO_SERVICES_SITUATION[homeChoice] : undefined);
+      if (initial) {
+        setSelected(initial);
         setCarried(true);
-        publishSituation(savedServicesChoice);
-        return;
-      }
-
-      const savedHomeChoice = window.localStorage.getItem(SITUATION_KEY);
-      const mapped = savedHomeChoice ? HOME_TO_SERVICES_SITUATION[savedHomeChoice] : undefined;
-      if (mapped) {
-        setSelected(mapped);
-        setPreview(mapped);
-        setCarried(true);
-        publishSituation(mapped);
+        publishServicesSituation(initial);
       }
     } catch {}
+
+    // Package choices also update this earlier chapter when the visitor returns.
+    function onSituation(event: Event) {
+      const detail = (event as CustomEvent<ServicesSituationDetail>).detail;
+      if (!isServicesSituation(detail?.situation ?? null)) return;
+      setSelected(detail.situation);
+      if (detail.origin === "services_package") setCarried(false);
+    }
+    function onClear() { setSelected(null); setCarried(false); }
+    window.addEventListener(SERVICES_SITUATION_EVENT, onSituation);
+    window.addEventListener(SERVICES_SITUATION_CLEARED_EVENT, onClear);
+    return () => {
+      window.removeEventListener(SERVICES_SITUATION_EVENT, onSituation);
+      window.removeEventListener(SERVICES_SITUATION_CLEARED_EVENT, onClear);
+    };
   }, []);
 
-  // Keep this choice stable as the visitor scrolls through its explanation.
+  useEffect(() => {
+    if (!rootRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setEntered(true);
+      observer.disconnect();
+    }, { threshold: 0.15 });
+    observer.observe(rootRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   function pick(id: ServicesSituationId) {
-    setPreview(id);
-    setSelected((previous) => (previous === id ? previous : id));
-    publishSituation(id);
-    track("visitor_situation_selected", { situation: id, page: "services" });
+    setSelected(id);
     setCarried(false);
+    publishServicesSituation(id);
+    track("visitor_situation_selected", { situation: id, page: "services" });
   }
 
-  function moveMobileTab(event: KeyboardEvent<HTMLButtonElement>, currentIndex: number) {
-    let nextIndex = currentIndex;
-    if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % OPTIONS.length;
-    else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + OPTIONS.length) % OPTIONS.length;
-    else if (event.key === "Home") nextIndex = 0;
-    else if (event.key === "End") nextIndex = OPTIONS.length - 1;
-    else return;
-
+  function moveChoice(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    const next = event.key === "ArrowRight" || event.key === "ArrowDown" ? (index + 1) % OPTIONS.length
+      : event.key === "ArrowLeft" || event.key === "ArrowUp" ? (index + OPTIONS.length - 1) % OPTIONS.length
+      : event.key === "Home" ? 0 : event.key === "End" ? OPTIONS.length - 1 : null;
+    if (next === null) return;
     event.preventDefault();
-    const next = OPTIONS[nextIndex];
-    if (!next) return;
-    pick(next.id);
-    mobileTabRefs.current[nextIndex]?.focus();
+    pick(OPTIONS[next].id);
+    choiceRefs.current[next]?.focus({ preventScroll: true });
   }
-
-  const displayed = selected ?? preview;
-  const displayedOption = OPTIONS.find((option) => option.id === displayed) ?? FIRST_OPTION;
-  const displayedPackage = packages.find((entry) => entry.slug === SITUATION_TO_PACKAGE[displayed]);
-  const displayedIndex = Math.max(0, OPTIONS.findIndex((option) => option.id === displayed));
-  const routeDirection = displayedIndex >= previousDisplayedIndexRef.current ? 1 : -1;
-
-  useEffect(() => {
-    previousDisplayedIndexRef.current = displayedIndex;
-  }, [displayedIndex]);
 
   return (
     <Container className="max-w-6xl">
-      <div data-situation-grid="true" className="grid gap-10 lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-20">
-        <div data-services-chapter-copy="true" className="lg:sticky lg:top-28 lg:self-start">
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone">Your situation</p>
-          <h2 className="mt-2 text-display-sm font-display font-normal text-ivory">
-            Which sentence sounds like your business?
-          </h2>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
-            Choose the closest truth. Your answer changes what Suman decides first, the engagement that fits, and the evidence worth inspecting.
-          </p>
-          <AnimatePresence>
-            {carried && (
-              <motion.p
-                initial={prefersReducedMotion ? undefined : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                data-situation-carried="true"
-                className="mt-5 inline-flex items-center gap-2 rounded-full border border-sandstone/40 px-3.5 py-1.5 text-xs text-sandstone"
-              >
-                <span aria-hidden="true">↺</span> Your earlier diagnosis is already here.
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </div>
-
-        <div data-situation-mobile-deck="true" className="lg:hidden">
-          <div
-            role="tablist"
-            aria-label="Choose the situation closest to your brand"
-            className="grid grid-cols-3 gap-1.5 border border-ivory/14 p-1.5 backdrop-blur-xl"
-            style={{ borderRadius: "1.2rem", backgroundColor: "rgba(18,28,23,0.72)" }}
-          >
-            {OPTIONS.map((option, index) => {
-              const isActive = displayed === option.id;
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  role="tab"
-                  id={`situation-tab-${option.id}`}
-                  aria-selected={isActive}
-                  aria-controls="situation-mobile-panel"
-                  tabIndex={isActive ? 0 : -1}
-                  data-situation-tab="true"
-                  ref={(node) => {
-                    mobileTabRefs.current[index] = node;
-                  }}
-                  onClick={() => pick(option.id)}
-                  onKeyDown={(event) => moveMobileTab(event, index)}
-                  className={`min-h-12 border px-1.5 py-2 text-center transition-colors duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sandstone ${
-                    isActive
-                      ? "border-sandstone/45 text-ivory"
-                      : "border-transparent text-ivory/58"
-                  }`}
-                  style={{
-                    borderRadius: "0.9rem",
-                    backgroundColor: isActive ? "rgba(212,185,154,0.12)" : undefined,
-                  }}
-                >
-                  <span className="block text-[0.58rem] font-medium uppercase tracking-[0.12em] text-sandstone/80">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="mt-1 block font-display text-sm font-normal leading-none">
-                    {option.id === "idea" ? "Idea" : option.id === "reposition" ? "Reposition" : "Ongoing"}
-                  </span>
-                </button>
-              );
-            })}
+      <div ref={rootRef} className={styles.root} data-situation-card="true" data-situation-route={displayed}
+        data-animate={entered && !prefersReducedMotion ? "true" : "false"}>
+        <div className={styles.choicesColumn}>
+          <p className={styles.eyebrow}>Your situation</p>
+          <h2 className={styles.heading}>Which sentence sounds like your business?</h2>
+          <p className={styles.intro}>Choose the closest fit. Your choice carries into the scope, price, and client evidence.</p>
+          <div className={styles.choices} role="radiogroup" aria-label="Choose your brand situation">
+            {OPTIONS.map((option, index) => <button key={option.id} type="button" role="radio"
+              ref={(element) => { choiceRefs.current[index] = element; }} aria-checked={selected === option.id}
+              aria-controls={`situation-panel-${option.id}`} aria-label={`${option.shortLabel}: ${option.label}`}
+              tabIndex={displayed === option.id ? 0 : -1} data-preview={displayed === option.id ? "true" : "false"}
+              onClick={() => pick(option.id)} onKeyDown={(event) => moveChoice(event, index)}>
+              <span className={styles.number} aria-hidden="true">0{index + 1}</span>
+              <span className={styles.choiceCopy}><strong>{option.shortLabel}</strong><span>{option.label}</span></span>
+              <span className={styles.check} aria-hidden="true">{selected === option.id ? "✓" : "↗"}</span>
+            </button>)}
           </div>
-
-          {displayedPackage ? (
-            <motion.div
-              id="situation-mobile-panel"
-              role="tabpanel"
-              aria-labelledby={`situation-tab-${displayed}`}
-              layout="size"
-              animate={{ borderTopColor: displayedPackage.color }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
-              data-situation-detail="true"
-              className="mt-2.5 overflow-hidden border-t-2 p-4 backdrop-blur-xl"
-              style={{ borderRadius: "1.3rem", backgroundColor: "rgba(18,28,23,0.76)" }}
-            >
-              <AnimatePresence mode="popLayout" initial={false} custom={routeDirection}>
-                <motion.div
-                  key={displayed}
-                  custom={routeDirection}
-                  variants={ROUTE_PANEL_VARIANTS}
-                  initial={prefersReducedMotion ? false : "enter"}
-                  animate="center"
-                  exit={prefersReducedMotion ? "reducedExit" : "exit"}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.3, ease: EASE }}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p data-situation-package-name="true" className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
-                      <p data-situation-package-for="true" className="mt-1 text-xs leading-relaxed text-ivory/66">{displayedPackage.forWho}</p>
-                    </div>
-                    <span className="shrink-0 font-display text-sm text-sandstone" aria-hidden="true">
-                      {String(OPTIONS.findIndex((option) => option.id === displayed) + 1).padStart(2, "0")} / 03
-                    </span>
-                  </div>
-                  {!selected ? (
-                    <p data-situation-route-status="true" className="mt-3 text-[0.58rem] font-medium uppercase tracking-[0.15em] text-sandstone/78">
-                      Route currently in view
-                    </p>
-                  ) : null}
-                  <p data-situation-route-reason="true" className="mt-2.5 text-sm leading-relaxed text-ivory/88">{displayedOption.reason}</p>
-                  <div data-situation-route-action="true" className="mt-4">
-                    <LinkButton href="#desire" onClick={settlePackageChapter} className="min-h-11 w-full justify-center">
-                      See the {displayedPackage.name} path
-                    </LinkButton>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          ) : null}
+          <p className={styles.status} aria-live="polite">{carried ? "Your earlier choice is selected. You can change it here." : selected ? "Your choice is carried through the page." : "Explore a starting point, then see the scope."}</p>
         </div>
-
-        <div data-services-chapter-instrument="true" className="hidden lg:block">
-          {OPTIONS.map((option, index) => {
-            const isActive = displayed === option.id;
-            const isCommitted = selected === option.id;
-            return (
-              <div
-                key={option.id}
-                data-situation-option="true"
-                style={{ "--option-index": index } as CSSProperties}
-                className="relative"
-              >
-                <div data-situation-rule="true" className="h-px bg-ivory/12" aria-hidden="true" />
-                <motion.button
-                  type="button"
-                  aria-pressed={isCommitted}
-                  data-situation-preview={isActive && !isCommitted ? "true" : undefined}
-                  data-situation-state={isCommitted ? "committed" : isActive ? "preview" : "idle"}
-                  onClick={() => pick(option.id)}
-                  className="group relative grid w-full grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 overflow-hidden py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-sandstone sm:gap-5 sm:py-7"
-                >
-                  {isActive ? (
-                    <motion.span
-                      layoutId="active-situation-route"
-                      aria-hidden="true"
-                      className="absolute inset-x-0 inset-y-1 rounded-2xl border"
-                      style={{
-                        borderColor: "rgba(212, 185, 154, 0.15)",
-                        background: "linear-gradient(90deg, rgba(212, 185, 154, 0.08), rgba(212, 185, 154, 0.025), transparent)",
-                      }}
-                      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.44, ease: EASE }}
-                    />
-                  ) : null}
-                  <span
-                    className={`relative z-10 font-display text-base transition-colors duration-300 ${isActive ? "text-sandstone" : "text-ivory/35"}`}
-                    aria-hidden="true"
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span
-                    className={`relative z-10 font-display text-xl font-normal leading-snug transition-all duration-500 ease-out group-hover:translate-x-1 sm:text-2xl ${
-                      isActive ? "text-ivory" : "text-ivory/80 group-hover:text-ivory"
-                    }`}
-                  >
-                    {option.label}
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className={`relative z-10 pt-1 transition-all duration-300 ${
-                      isActive ? "translate-x-0 text-sandstone" : "-translate-x-1 text-ivory/45 group-hover:translate-x-0 group-hover:text-ivory"
-                    }`}
-                  >
-                    {isCommitted ? <Check size={18} strokeWidth={1.6} /> : <ArrowRight size={18} strokeWidth={1.5} />}
-                  </span>
-                </motion.button>
+        <div className={styles.panels}>
+          {OPTIONS.map(option => {
+            const active = displayed === option.id;
+            const pkg = packages.find(entry => entry.slug === SITUATION_TO_PACKAGE[option.id]);
+            if (!pkg) return null;
+            return <section key={option.id} id={`situation-panel-${option.id}`} role="region" aria-labelledby={`situation-title-${option.id}`}
+              className={styles.panel} data-active={active ? "true" : "false"} aria-hidden={!active} inert={!active}>
+              <p className={styles.mobileStatement}>{option.label}</p>
+              <p className={styles.eyebrow}>The first decision</p>
+              <h3 id={`situation-title-${option.id}`}>{option.decision}</h3>
+              <p className={styles.reason}>{option.reason}</p>
+              <SituationSketch situation={option.id} />
+              <div className={styles.next}>
+                <p><span>Matching engagement</span><strong>{pkg.name}</strong></p>
+                <Link href="#desire" onClick={event => {
+                  // Following the default preview also commits that route so
+                  // packages, proof and the booking brief agree on the choice.
+                  if (selected !== option.id) pick(option.id);
+                  settlePackageChapter(event);
+                }}>See scope and price <span aria-hidden="true">→</span></Link>
               </div>
-            );
+            </section>;
           })}
-          <div
-            data-situation-rule="true"
-            style={{ "--option-index": OPTIONS.length } as CSSProperties}
-            className="h-px bg-ivory/12"
-            aria-hidden="true"
-          />
-          {displayedPackage ? (
-            <motion.div
-              layout="size"
-              animate={{ borderTopColor: displayedPackage.color }}
-              transition={{ duration: prefersReducedMotion ? 0 : 0.34, ease: EASE }}
-              data-situation-detail="true"
-              className="mt-5 overflow-hidden rounded-2xl border-t-2 p-6 backdrop-blur-md sm:p-7"
-              style={{ backgroundColor: "rgba(244,239,230,0.05)" }}
-            >
-              <AnimatePresence mode="popLayout" initial={false} custom={routeDirection}>
-                <motion.div
-                  key={displayed}
-                  custom={routeDirection}
-                  variants={ROUTE_PANEL_VARIANTS}
-                  initial={prefersReducedMotion ? false : "enter"}
-                  animate="center"
-                  exit={prefersReducedMotion ? "reducedExit" : "exit"}
-                  transition={{ duration: prefersReducedMotion ? 0 : 0.32, ease: EASE }}
-                >
-                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                    <p className="font-display text-xl font-normal text-ivory">{displayedPackage.name}</p>
-                    <p className="text-sm text-ivory/70">{displayedPackage.forWho}</p>
-                  </div>
-                  {!selected ? (
-                    <p className="mt-3 text-[0.62rem] font-medium uppercase tracking-[0.16em] text-sandstone/80">
-                      Route currently in view
-                    </p>
-                  ) : null}
-                  <p className="mt-3 max-w-2xl text-base leading-relaxed text-ivory/90">{displayedOption.reason}</p>
-                  <div className="mt-5 flex flex-wrap gap-3">
-                    <LinkButton href="#desire" onClick={settlePackageChapter}>See the matching engagement</LinkButton>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          ) : null}
         </div>
       </div>
     </Container>
