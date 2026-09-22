@@ -44,8 +44,8 @@ export function ContactNoteProgress({
         aria-valuetext={completionLabel}
         className="flex items-center justify-between gap-3 px-1"
       >
-        <p className="text-[0.6rem] font-medium uppercase tracking-[0.16em] text-soil/55">Your note</p>
-        <p className="text-[0.65rem] text-soil/65">{completionLabel}</p>
+        <p data-contact-note-caption className="text-[0.6rem] font-medium uppercase tracking-[0.16em] text-soil/55">Your note</p>
+        <p data-contact-note-caption className="text-[0.65rem] text-soil/65">{completionLabel}</p>
       </div>
       <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {completionLabel}
@@ -101,7 +101,7 @@ export function ContactNoteProgress({
                   />
                 </svg>
               </span>
-              <span className="relative text-[0.68rem] font-medium tracking-[0.03em]">{label}</span>
+              <span data-contact-note-label className="relative text-xs font-medium tracking-[0.03em]">{label}</span>
               <motion.span
                 aria-hidden="true"
                 data-contact-note-ink

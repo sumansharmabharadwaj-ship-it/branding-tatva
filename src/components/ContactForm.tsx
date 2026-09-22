@@ -1066,6 +1066,7 @@ export function ContactForm() {
             tabIndex={-1}
             role="alert"
             data-contact-form-resolution
+            data-contact-form-validation
             initial={prefersReducedMotion ? undefined : { opacity: 0.65, scaleX: 0.97, clipPath: "inset(0 8% 0 0 round 1rem)" }}
             animate={{ opacity: 1, scaleX: 1, clipPath: "inset(0 0% 0 0 round 1rem)" }}
             exit={prefersReducedMotion ? undefined : { opacity: 0, scaleX: 0.985, clipPath: "inset(0 0 0 14% round 1rem)" }}
@@ -1290,12 +1291,12 @@ function Field({
         <span data-contact-field-ink aria-hidden="true" />
       </span>
       {hint ? (
-        <span id={hintId} className="mt-1.5 block text-xs font-normal normal-case leading-relaxed tracking-normal text-soil/52">
+        <span id={hintId} data-contact-field-hint className="mt-1.5 block text-xs font-normal normal-case leading-relaxed tracking-normal text-soil/52">
           {hint}
         </span>
       ) : null}
       {error && (
-        <span id={errorId} className="mt-1 block text-xs font-normal text-state-error">
+        <span id={errorId} data-contact-field-error className="mt-1 block text-xs font-normal text-state-error">
           {error}
         </span>
       )}

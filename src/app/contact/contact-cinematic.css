@@ -2567,4 +2567,52 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-scene-seam] {
   [data-contact-film] [data-contact-form-card] { padding: clamp(1rem, 4.5vw, 1.5rem); }
   [data-contact-film] [data-contact-booking-options] { flex-wrap: wrap; gap: .75rem; }
   [data-contact-film] [data-contact-booking-options] a { min-height: 2.75rem; }
+
+  /* Form guidance stays legible within the paper panel on a 320px phone.
+     The error action gets its own row instead of squeezing its sentence. */
+  [data-contact-film] [data-contact-form-intro] > p:first-child,
+  [data-contact-film] [data-contact-note-caption],
+  [data-contact-film] [data-contact-note-label],
+  [data-contact-film] [data-contact-draft-status] {
+    font-size: .75rem;
+    line-height: 1.5;
+  }
+  [data-contact-film] [data-contact-form-intro] > p:first-child { letter-spacing: .12em; }
+  [data-contact-film] [data-contact-form-progress] > [role="progressbar"] {
+    flex-wrap: wrap;
+    gap: .25rem .75rem;
+  }
+  [data-contact-film] [data-contact-field] {
+    font-size: .875rem;
+    line-height: 1.5;
+    letter-spacing: .025em;
+  }
+  [data-contact-film] :is([data-contact-field-hint], [data-contact-field-error]) {
+    font-size: .875rem;
+    line-height: 1.6;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  [data-contact-film] [data-contact-form-validation] {
+    display: grid;
+    grid-template-columns: 1rem minmax(0, 1fr);
+    align-items: start;
+    gap: .5rem .75rem;
+  }
+  [data-contact-film] [data-contact-form-validation] > svg { margin-top: .2rem; }
+  [data-contact-film] [data-contact-form-validation] > button {
+    grid-column: 2;
+    min-width: 0;
+    justify-content: flex-start;
+    padding-inline: 0;
+    text-align: left;
+  }
+  [data-contact-film] [data-contact-form-resolution] :is(button, a),
+  [data-contact-film] [data-contact-submit-row] button[type="button"] {
+    min-height: 2.75rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
