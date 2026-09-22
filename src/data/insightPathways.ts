@@ -21,9 +21,9 @@ export type InsightPathway = {
 export const insightPathways: Record<string, InsightPathway> = {
   "positioning": {
     service: {
-      href: "/services#offerings",
-      label: "See positioning and identity scopes",
-      description: "See how positioning, category, verbal identity, and visual direction are handled in one engagement.",
+      href: "/brand-positioning",
+      label: "Brand positioning: scope and preparation",
+      description: "See how Suman reviews your buyer, competing offers and evidence, and what to bring to a positioning conversation.",
     },
     proof: {
       href: "/work/myshopineurope",
