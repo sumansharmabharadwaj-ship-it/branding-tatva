@@ -709,6 +709,7 @@ export default async function InsightArticlePage({ params }: Props) {
 
                   <Reveal>
                     <InsightDecisionPath
+                      articleSlug={post.slug}
                       pathway={pathway}
                       id="reading-next-step"
                       className="insight-reading-chapter insight-article-next-step mt-16 scroll-mt-32"

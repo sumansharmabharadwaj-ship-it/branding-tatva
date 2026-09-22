@@ -22,7 +22,7 @@ export const insightPathways: Record<string, InsightPathway> = {
   "positioning": {
     service: {
       href: "/brand-positioning",
-      label: "Brand positioning for UK service businesses",
+      label: "Brand positioning for service businesses",
       description: "Review the buyer, competing offers and evidence with Suman. See the research, decisions and deliverables a positioning engagement can cover.",
     },
     proof: {
@@ -76,7 +76,7 @@ export const insightPathways: Record<string, InsightPathway> = {
   "brand-messaging": {
     service: {
       href: "/brand-messaging",
-      label: "Brand messaging and voice for UK service businesses",
+      label: "Brand messaging and voice for service businesses",
       description: "Work with Suman on your core message, supporting evidence and voice guidelines. See what a messaging engagement covers.",
     },
     proof: {
@@ -115,6 +115,21 @@ export const insightPathways: Record<string, InsightPathway> = {
 // Keep the topic's proof and conversation paths, while making the service
 // destination specific to the article a visitor has just read.
 const articleServiceLinks: Record<string, InsightPathLink> = {
+  "how-much-does-brand-strategy-cost": {
+    href: "/services#desire",
+    label: "Compare brand strategy scopes and starting prices",
+    description: "See what each engagement covers, choose your region and discuss the scope before requesting a final quote.",
+  },
+  "how-to-choose-a-branding-agency": {
+    href: "/services",
+    label: "Assess whether Branding Tatva fits your brief",
+    description: "Review the services, working process and project evidence before arranging a conversation with Suman.",
+  },
+  "brand-strategist-vs-branding-agency": {
+    href: "/services",
+    label: "See how working directly with Suman is structured",
+    description: "Compare the engagement formats and responsibilities against the strategy and execution your business needs.",
+  },
   "brand-positioning-statement-examples-why-generic": {
     href: "/brand-positioning",
     label: "Turn a positioning statement into a working direction",
@@ -137,13 +152,13 @@ const articleServiceLinks: Record<string, InsightPathLink> = {
   },
   "brand-positioning-strategy-service-businesses": {
     href: "/brand-positioning",
-    label: "Brand positioning for UK service businesses",
+    label: "Brand positioning for service businesses",
     description: "Work with Suman to define the buyer, compare alternatives and carry an agreed position into your messaging.",
   },
   "how-to-position-a-consulting-business": {
     href: "/brand-positioning",
     label: "Positioning support for your consultancy",
-    description: "Review your audience, competing offers and evidence with Suman. See the scope for a remote UK engagement.",
+    description: "Review your audience, competing offers and evidence with Suman. See the scope for a remote engagement in the UK, USA or Canada.",
   },
   "brand-audit-checklist-before-rebrand": {
     href: "/brand-audit",
