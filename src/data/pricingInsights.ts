@@ -4,11 +4,14 @@ import type { InsightPost } from "@/data/pillarInsights";
 // types before choosing a strategist: what this work costs. Figures
 // quoted for the practice come from the approved region aware price
 // book in src/data/pricing.ts and nowhere else; market context stays
-// structural rather than invented numbers, per the commercial honesty
-// standard. Hero uses a spare original still from the insights v2
-// shoot so the library keeps one photographic language.
+// limited to what the cited commissioning guidance supports. Practical
+// comparison scenarios are illustrative, not measured client outcomes.
 
-export const pricingInsightPosts: InsightPost[] = [
+type BuyerGuidePost = InsightPost & {
+  sources?: { title: string; publisher: string; url: string; note?: string }[];
+};
+
+export const pricingInsightPosts: BuyerGuidePost[] = [
   {
     "slug": "how-much-does-brand-strategy-cost",
     "title": "How much does brand strategy cost in the UK, USA and Canada?",
@@ -183,170 +186,177 @@ export const pricingInsightPosts: InsightPost[] = [
     ]
   },
   {
-    slug: "brand-strategist-vs-branding-agency",
-    title: "Brand strategist or branding agency: who should you hire?",
-    seoTitle: "Brand strategist vs branding agency: which to hire in 2026",
-    excerpt:
-      "The choice between an independent strategist and an agency decides who actually thinks about your brand. This guide gives the fit test, the risks of each, and the questions that expose both.",
-    directAnswer:
-      "Hire an independent brand strategist when the work is thinking: positioning, message, voice, and the decisions underneath identity. The person you evaluate does the work, attention stays senior, and fees fund substance. Hire a branding agency when the work is coordination: many markets, many teams, heavy production alongside strategy, or a board that requires institutional cover. The common failure is buying agency structure for a thinking problem, paying for account layers while the strategy gets written by the most junior person in the building.",
-    element: "earth",
-    topicSlug: "positioning",
-    primaryKeyword: "brand strategist vs branding agency",
-    secondaryKeywords: [
+    "slug": "brand-strategist-vs-branding-agency",
+    "title": "Brand strategist or branding agency: who should you hire?",
+    "seoTitle": "Brand Strategist vs Branding Agency: How to Choose",
+    "excerpt": "Compare an independent strategist and a branding agency through the work, people and delivery capacity your brief needs. Includes UK scope and fee questions.",
+    "directAnswer": "Consider an independent brand strategist when their experience and delivery capacity fit the decisions you need to make. Consider a branding agency when its proposed team can cover the strategy and execution your brief requires. Either model can provide strong or weak work. Compare the actual people, evidence, responsibilities and total scope before choosing; team size alone does not establish quality, speed or value.",
+    "element": "earth",
+    "topicSlug": "positioning",
+    "primaryKeyword": "brand strategist vs branding agency",
+    "secondaryKeywords": [
       "should i hire a brand strategist or an agency",
       "independent brand consultant vs agency",
       "hire a brand strategist",
       "branding agency alternative",
-      "solo brand strategist for startups",
+      "solo brand strategist for startups"
     ],
-    searchIntent:
-      "Decide between hiring an independent brand strategist and a branding agency, with criteria and risks for each.",
-    publishedAt: "2026-09-21",
-    updatedAt: "2026-09-21",
-    readingTime: "10 min read",
-    heroImage: "/images/generated/insights-v2/case-study-decision-record.webp",
-    heroVideo: "/videos/generated/insights-v2/case-study-decision-record.mp4",
-    heroImageAlt:
-      "A decision record laid open on a desk, two candidate folders weighed side by side under a reading lamp",
-    keyTakeaways: [
-      "The real question is who does the thinking. Agencies sell a building; independents sell a brain. Both can be right, for different problems.",
-      "Agency fees fund coordination: account layers, specialist departments, process. Valuable for twelve markets, wasted on a founder led business with one.",
-      "The senior partner who wins the pitch is rarely the person who writes the strategy. With an independent, those are the same person by construction.",
-      "The independent's honest risks are capacity and coverage: one brain, finite hours, and design production usually contracted out rather than in house.",
-      "Five questions expose either kind of provider before a contract: author, decisions, evidence, artefacts, aftermath.",
+    "searchIntent": "Decide between hiring an independent brand strategist and a branding agency, with criteria and risks for each.",
+    "publishedAt": "2026-09-21",
+    "updatedAt": "2026-09-22",
+    "readingTime": "7 min read",
+    "heroImage": "/images/generated/insights-v2/case-study-decision-record.webp",
+    "heroVideo": "/videos/generated/insights-v2/case-study-decision-record.mp4",
+    "heroImageAlt": "A decision record laid open on a desk, two candidate folders weighed side by side under a reading lamp",
+    "keyTakeaways": [
+      "A strategist is a role; an agency is an organisation that may employ strategists and other specialists.",
+      "Compare the proposed team and outputs, rather than assuming a solo practice is senior or an agency is slow.",
+      "Check capacity, continuity and responsibility for outside specialists in either model.",
+      "Use a common brief to compare fees. A smaller team does not automatically mean a lower total cost.",
+      "Branding Tatva is an independent practice. Its own scope and evidence should face the same questions as any alternative."
     ],
-    framework: {
-      title: "The fit test",
-      introduction:
-        "Five contrasts that decide the choice for your stage. Read each pair and mark which side describes your situation; the majority answers the question.",
-      steps: [
+    "framework": {
+      "title": "Match the team to the brief",
+      "introduction": "Use these prompts to discuss the work with either type of provider. There is no majority score that can settle the choice without examining the candidates.",
+      "steps": [
         {
-          title: "Problem shape",
-          description:
-            "Thinking problem, position, message, difference, favours the independent. Coordination problem, many markets, teams, and channels moving at once, favours the agency.",
+          "title": "Decisions",
+          "description": "Which audience, offer or message needs to be agreed before execution can proceed?"
         },
         {
-          title: "Who you need thinking",
-          description:
-            "If the work lives or dies on senior judgement, buy a person whose name is on it. If it lives on throughput, buy a team with process.",
+          "title": "Outputs",
+          "description": "Which finished materials are required, and which will your existing team produce?"
         },
         {
-          title: "Production weight",
-          description:
-            "Strategy plus a focused identity suits an independent with a trusted design partner. Packaging systems, film, and campaign production at volume suit an agency's bench.",
+          "title": "People",
+          "description": "Who will do the work, review specialist contributions and answer your questions?"
         },
         {
-          title: "Decision culture",
-          description:
-            "A founder who decides fast gets full value from an independent's pace. A committee that needs workshops, decks, and cover often needs the agency's apparatus to move at all.",
+          "title": "Capacity",
+          "description": "What work must happen at the same time, and what happens if a key person becomes unavailable?"
         },
         {
-          title: "Budget honesty",
-          description:
-            "Fund substance first. If the budget covers an agency only by squeezing scope until juniors do the thinking, the same money buys an independent's full attention.",
-        },
-      ],
+          "title": "Commitment",
+          "description": "Which costs and responsibilities belong to the provider, to you and to any additional suppliers?"
+        }
+      ]
     },
-    sections: [
+    "sections": [
       {
-        id: "the-question-behind-the-question",
-        heading: "The question behind the question",
-        paragraphs: [
-          "Founders comparing a strategist against an agency usually frame it as small versus large, or cheap versus expensive. The truer frame: you are choosing who does the thinking, and how many layers sit between that person and you.",
-          "A branding agency is a structure for coordinating many hands: strategists, designers, writers, producers, account managers. An independent strategist is one senior brain with a network. Neither is superior in the abstract. Each is built for a different shape of problem, and most bad engagements trace back to a shape mismatch rather than a talent gap.",
-          "The market rarely helps you see this, because agencies pitch structure as if it were substance, and independents pitch intimacy as if it were capacity. This guide takes the buyer's side of that table.",
+        "id": "the-question-behind-the-question",
+        "heading": "Separate a professional role from a business model",
+        "paragraphs": [
+          "A brand strategist may work independently, inside an agency or within a client organisation. A branding agency may combine strategy with design, writing and production, or specialise in only part of that work. The labels overlap, so start with what each candidate actually proposes.",
+          "The Design Business Association describes a range of design specialisms and recommends beginning with the challenge that needs attention. That is a useful starting point here: a naming question and a website rollout may need different capabilities even when both appear under branding.",
+          "This comparison is written by Branding Tatva, an independent practice. The examples are suggested buying scenarios, not research showing that one business model produces better results."
         ],
-        callout: {
-          label: "The frame",
-          text: "You are hiring a brain or a building. Decide which one your problem needs before anyone shows you a deck.",
-        },
+        "callout": {
+          "label": "Start with the assignment",
+          "text": "Write down the decisions and finished outputs you need. Then ask who will be responsible for each one."
+        }
       },
       {
-        id: "what-an-agency-is-built-for",
-        heading: "What an agency is actually built for",
-        paragraphs: [
-          "Agencies earn their premium on coordination. A rebrand across twelve markets, four product lines, a packaging system, a campaign launch, and a legal review in three jurisdictions is a logistics problem wearing a creative coat, and an agency's process, bench, and account structure exist precisely for it.",
-          "The bench matters when production is heavy: motion designers, packaging specialists, retail environment people, each excellent at a narrow thing. And institutional cover is real: when a board or an investor needs the reassurance of a known firm behind a risky change, the agency's name is part of the product.",
-          "The cost of that machine is where founder led businesses get hurt. The senior partner who won the pitch hands the work down, the strategy gets drafted by whoever is available, and the account layer, the part you interact with most, produces meetings rather than decisions. Founders who have bought both tiers describe the same pattern with striking consistency.",
-        ],
+        "id": "what-an-agency-is-built-for",
+        "heading": "When an agency team may fit the assignment",
+        "paragraphs": [
+          "An agency is worth considering when its proposed team brings the capabilities and coordination your assignment needs. That could include customer research, identity design, writing and development running together. Confirm that those capabilities are available to your project, whether they sit inside the agency or with named partners.",
+          "For an illustrative company launching several service lines, the workload might include one shared positioning decision, different service explanations and a coordinated website release. Ask who keeps those outputs consistent and how changes in one affect the others. This scenario describes a coordination need, not a reason to assume that every agency can meet it.",
+          "Meet the people expected to lead delivery and ask how specialist reviews work. A different person handling account coordination can be useful when responsibilities are clear. Senior involvement, thoughtful strategy and direct communication should be confirmed from the proposed arrangement rather than inferred from the agency name."
+        ]
       },
       {
-        id: "what-an-independent-is-built-for",
-        heading: "What an independent is built for",
-        paragraphs: [
-          "An independent strategist sells the thing agencies find hardest to guarantee: the person you evaluated is the person who does the work. Positioning, message architecture, voice, the decisions underneath identity, all senior judgement problems, all done best by one accountable brain close to the founder.",
-          "Pace is the second advantage. Decisions travel from conversation to document without passing through an account team, so an engagement that takes a quarter through agency process often lands in weeks. For a founder who decides quickly, that speed compounds.",
-          "The honest risks sit in capacity and coverage. One brain has finite hours, so a strategist worth hiring keeps few clients and says so; treat easy availability as a signal, in either direction. Heavy design production is usually contracted to trusted partners rather than held in house, which works well when the strategist directs it and poorly when nobody does. Ask exactly how that handoff runs.",
+        "id": "what-an-independent-is-built-for",
+        "heading": "When an independent strategist may fit the assignment",
+        "paragraphs": [
+          "An independent can suit a focused assignment when that person has the relevant experience and enough capacity. For example, a founder might need to agree a priority buyer and message before an existing designer updates the website. The strategist’s responsibility would need to include a usable handover to that designer.",
+          "Direct access can make discussion straightforward, but it does not remove the need for research, review or a realistic schedule. Some independents work with collaborators; some agencies offer close access to a small senior team. Ask who will participate rather than assuming either pattern.",
+          "Continuity deserves attention where delivery depends heavily on one person. Discuss availability, how progress is recorded and what happens if a key contributor cannot continue. For outside specialists, identify who briefs them, checks their work and agrees any change in cost."
         ],
-        bullets: [
-          "Ask an independent: how many clients do you hold at once, and who does your design production?",
-          "Ask an agency: name the person who will write our strategy, and put them in the room.",
-          "Ask both: show a redacted decision record from a past engagement, the artefact itself, before signing anything.",
-        ],
+        "bullets": [
+          "Can the proposed strategist show relevant decisions they have helped a business make?",
+          "Who turns the agreed direction into the materials this project requires?",
+          "Which parts of the work depend on a collaborator who has not yet been confirmed?"
+        ]
       },
       {
-        id: "the-money-follows-the-structure",
-        heading: "The money follows the structure",
-        paragraphs: [
-          "The pricing guide on this site covers the figures in detail; the structural summary belongs here. Agency fees carry the building: offices, layers, pitch losses, bench idle time. Independent fees carry attention. At every tier you pay for both substance and structure; the ratio is what changes.",
-          "This produces the market's quietest trap: the squeezed agency engagement. A founder stretches to afford a known firm, the fee only covers the agency's junior capacity, and the result is structure without substance, a process that feels serious and thinking that would have cost a third as much done well by one senior person.",
-          "The inverse trap exists too: hiring an independent for a coordination problem and watching one brain drown in production logistics that a bench would have absorbed. The fee saved gets spent twice in delays.",
+        "id": "the-money-follows-the-structure",
+        "heading": "Compare fees against a common scope",
+        "paragraphs": [
+          "Neither independent nor agency is a reliable price category by itself. Experience, research depth, deliverables and implementation can change the proposal. A strategy fee that excludes execution cannot be compared directly with a fee that includes the completed website.",
+          "The DBA proposal guidance asks buyers to clarify what will be delivered, how the project will run and what it will cost. For UK work, record the billing currency and ask about any applicable tax or additional supplier charges. Use the same brief for each comparison.",
+          "Consider an illustrative consultancy that already has a capable designer. A strategy engagement could give that designer the direction needed for the next stage. Another consultancy may need one supplier to manage the complete assignment. Compare the complete commitment in each case, including the approvals and coordination your own team will provide. This is a suggested comparison method, not a claim about typical savings."
         ],
-        callout: {
-          label: "The trap",
-          text: "The worst purchase in this market is agency structure at a squeezed price: the process of the tier above, the thinking of the tier below.",
-        },
+        "callout": {
+          "label": "A missing cost to examine",
+          "text": "If one proposal stops at strategy and another includes execution, identify how the first would reach the same finish line before comparing totals."
+        }
       },
       {
-        id: "how-this-practice-fits",
-        heading: "Where this practice sits, stated plainly",
-        paragraphs: [
-          "Branding Tatva is an independent practice by deliberate choice, and its published starting prices sit in the independent tier while the engagement structure mirrors what the tiers above sell: recorded decisions, evidence before opinions, artefacts a team can act on, direction available monthly after delivery.",
-          "The fit follows from everything above. Founder led businesses in the UK, US, and India whose problem is thinking, positioning that undersells the work, a message that explains everything except why to choose you, a brand that drifts between channels, get the model's full advantage: senior attention, founder pace, published prices. A multinational packaging rollout should hire the building, and this page will still be here when the thinking needs redoing.",
-          "That candour is the working method: the discovery call exists to establish fit in both directions, and a mismatch named early is cheaper for everyone than a polite engagement that serves nobody.",
-        ],
+        "id": "how-this-practice-fits",
+        "heading": "Where Branding Tatva may fit",
+        "paragraphs": [
+          "Branding Tatva is Suman Sharma’s independent brand strategy practice. The dedicated service pages describe positioning, brand audit and messaging engagements. Work is available remotely for businesses in the UK, USA, Canada and India, with scope agreed before the project begins.",
+          "A possible fit is a service business that needs to clarify the buyer, the offer or the explanation used across its website and proposals. The first conversation establishes the question and available evidence. A complete website rewrite, development or wider production assignment requires its own confirmed scope and delivery arrangements.",
+          "Ask this practice the same questions you ask an agency. Review the named project records and their stated limits. If the proposed work does not cover an essential capability or deadline, discuss that gap before committing. A published starting price does not by itself establish fit."
+        ]
       },
       {
-        id: "the-five-questions-that-expose-both",
-        heading: "The five questions that expose both",
-        paragraphs: [
-          "Whichever way you lean, the same five questions from the fit test separate substance from theatre in any proposal. Who authors the strategy, named, in the room. Which decisions the engagement commits to on paper. What evidence gathering the fee includes. Which artefacts survive delivery, shown as a redacted example. And what happens in month two, when the brand starts drifting the way every brand does.",
-          "Providers of both kinds who welcome those questions are selling the work. Providers who deflect to process diagrams and culture decks are selling the building. The questions cost nothing, and they routinely save the price of the entire engagement.",
+        "id": "the-five-questions-that-expose-both",
+        "heading": "Five questions to ask either provider",
+        "paragraphs": [
+          "Bring these questions to the same conversation rather than turning each into a separate pitch exercise. Ask for specific examples where they can be shared, and record anything that still needs confirmation.",
+          "After the conversation, write a short decision note: the candidate you prefer, the part of the brief they address, the evidence reviewed and the unresolved conditions. A discovery stage may be useful when the assignment itself is uncertain. A clear brief may instead support a direct appointment with an agreed proposal."
         ],
-      },
+        "bullets": [
+          "Which decision will this engagement help us make, and which decisions remain ours?",
+          "Who will perform and review the work, including contributions from outside specialists?",
+          "What evidence will you use, and what happens when customer access is unavailable?",
+          "What can our team use after handover, and what further work will it need?",
+          "How will we assess the delivered work against the original brief?"
+        ]
+      }
     ],
-    faq: [
+    "faq": [
       {
-        question: "Is a brand strategist cheaper than a branding agency?",
-        answer:
-          "Substantially, for the thinking itself. Independent strategists typically open defined engagements in the low four figures where boutique agencies open in the mid four to five figures and large agencies far above. The gap funds the agency's coordination structure rather than better decisions. Where an agency earns the difference is heavy multi market production, which an independent contracts out instead.",
+        "question": "Is a brand strategist cheaper than a branding agency?",
+        "answer": "There is no dependable price rule based on those labels alone. Compare the same research, deliverables, implementation and responsibilities. Branding Tatva’s UK Foundation engagement starts at £1,950, subject to an agreed proposal; that figure is specific to this practice and is not an agency market comparison."
       },
       {
-        question: "Can a solo strategist handle a full rebrand?",
-        answer:
-          "The strategy, naming, voice, and message architecture, yes, and often better, since one senior brain holds the whole picture. The production half depends on their partner network: identity design, web build, and asset production are usually delivered with trusted specialists under the strategist's direction. Ask exactly who those partners are and how the handoff runs; a good independent answers with names.",
+        "question": "Can a solo strategist handle a full rebrand?",
+        "answer": "That depends on the scope and the delivery team they can confirm. Strategy, writing, identity design and implementation involve different responsibilities. Ask which work the strategist performs, which work needs a specialist and who is accountable for the finished result."
       },
       {
-        question: "When is a branding agency genuinely the right choice?",
-        answer:
-          "When coordination is the problem: several markets or product lines moving at once, heavy packaging or campaign production, tight legal or regulatory review, or a board that requires an institutional name behind the change. In those situations the account structure founders otherwise overpay for becomes the product, and a solo practitioner would spend your fee drowning in logistics.",
+        "question": "When is a branding agency the right choice?",
+        "answer": "An agency may fit when its proposed team can deliver and coordinate the capabilities your brief needs. Relevant experience, available capacity and a clear proposal matter more than the agency label. The same tests apply to a small studio or an independent with collaborators."
       },
       {
-        question: "What should I ask before hiring either one?",
-        answer:
-          "Five things: the named author of the strategy, present in the room; the decisions the engagement commits to on paper; the evidence gathering included in the fee; a redacted example of the artefact that survives delivery; and the plan for month two, once the brand starts drifting. Both kinds of provider reveal themselves fast under those questions.",
+        "question": "What should I ask before hiring either one?",
+        "answer": "Clarify the decision, proposed people, evidence, handover materials and method of assessing the work. Ask what the fee excludes and what your team must contribute. Put unresolved questions into the proposal discussion before committing."
       },
       {
-        question: "Does an independent strategist work with international clients?",
-        answer:
-          "Routinely. Strategy work runs on conversations and documents, which travel better than production does, so remote founder led engagements across time zones have become the independent tier's normal mode. Branding Tatva, for example, works with founders across the United Kingdom, United States, Canada, and India with published starting prices for each region.",
-      },
+        "question": "Can I work remotely with a strategist outside the UK?",
+        "answer": "Yes, if the proposed working arrangement fits your brief. Branding Tatva offers remote engagements for UK businesses. Agree shared meeting times, customer research access, feedback responsibilities and any need for local production. Confirm the scope and billing currency before work starts."
+      }
     ],
-    relatedSlugs: [
+    "relatedSlugs": [
       "how-much-does-brand-strategy-cost",
       "how-to-position-a-consulting-business",
-      "founder-brand-vs-company-brand",
+      "founder-brand-vs-company-brand"
     ],
-  },
+    "useEditorialArtwork": false,
+    "sources": [
+      {
+        "title": "How to buy design: Getting started",
+        "publisher": "Design Business Association",
+        "url": "https://www.dba.org.uk/resources/review-advice-for-design-commissioners-how-to-buy-design/",
+        "note": "Describes different design specialisms and starting from the business challenge; it does not rank agencies against independents."
+      },
+      {
+        "title": "How to buy design: Asking for a proposal document",
+        "publisher": "Design Business Association",
+        "url": "https://www.dba.org.uk/resources/review-links-how-to-buy-design-08-asking-for-a-proposal-document/",
+        "note": "Guidance on the scope, delivery arrangements and costs a buyer should clarify in a proposal."
+      }
+    ]
+  }
 ];
