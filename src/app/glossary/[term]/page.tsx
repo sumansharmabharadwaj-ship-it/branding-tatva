@@ -53,6 +53,10 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
   const entry = findTerm(term);
   if (!entry) notFound();
   const pageUrl = `${site.url}/glossary/${entry.slug}`;
+  const serviceLink = entry.serviceLink ?? {
+    href: "/services#offerings",
+    label: "Compare brand strategy services",
+  };
   const updatedLabel = entry.updatedAt ? new Intl.DateTimeFormat("en-GB", {
     day: "numeric", month: "long", year: "numeric", timeZone: "UTC",
   }).format(new Date(`${entry.updatedAt}T00:00:00Z`)) : undefined;
@@ -219,8 +223,8 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                       Read Suman&apos;s guide: {article.title} <span aria-hidden="true">→</span>
                     </Link>
                   )}
-                  <Link href="/services#offerings" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
-                    See how Suman handles this decision <span aria-hidden="true">→</span>
+                  <Link href={serviceLink.href} className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
+                    {serviceLink.label} <span aria-hidden="true">→</span>
                   </Link>
                   <Link href="/services#proof" className="link-underline inline-flex min-h-11 items-center gap-2 text-clay-ink">
                     Read the project evidence <span aria-hidden="true">→</span>

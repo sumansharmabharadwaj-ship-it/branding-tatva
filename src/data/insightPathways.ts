@@ -99,8 +99,8 @@ export const insightPathways: Record<string, InsightPathway> = {
     },
     proof: {
       href: "/work/dr-haley-nutrition",
-      label: "See measured recognition signals in Dr. Haley Nutrition",
-      description: "A recorded two month engagement comparing content volume with followers and engagement earned per post.",
+      label: "See the Dr. Haley Nutrition content results",
+      description: "A recorded two month engagement comparing content volume with followers and engagement earned per post. Brand recall was outside the measurement scope.",
     },
     conversation: {
       href: "/contact",

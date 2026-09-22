@@ -13,6 +13,7 @@ export type GlossaryTerm = {
   slug: string;
   expanded: string;
   practice: string;
+  serviceLink?: { href: string; label: string };
   updatedAt?: string;
   sources?: { label: string; publisher: string; url: string }[];
   // The essays where this idea does real work, newest thinking first.
@@ -46,6 +47,7 @@ export const pillars: Pillar[] = [
       {
         term: "Positioning",
         slug: "positioning",
+        serviceLink: { href: "/brand-positioning", label: "Review the brand positioning scope" },
         essaySlugs: ["brand-positioning-strategy-service-businesses", "brand-positioning-statement-examples-why-generic", "how-to-position-a-consulting-business"],
         definition:
           "The decision about which single idea a brand should own in a buyer's head, made before any design work begins.",
@@ -57,6 +59,7 @@ export const pillars: Pillar[] = [
       {
         term: "Category design",
         slug: "category-design",
+        serviceLink: { href: "/brand-positioning", label: "Compare buyer alternatives in a positioning engagement" },
         essaySlugs: ["find-real-differentiator-crowded-service-market", "competitor-research-brand-strategy-without-copying-category"],
         definition:
           "Choosing, and sometimes creating, the market frame a brand competes in before competing in it.",
@@ -80,6 +83,7 @@ export const pillars: Pillar[] = [
       {
         term: "Distinctive assets",
         slug: "distinctive-assets",
+        serviceLink: { href: "/brand-audit", label: "Review existing brand assets in a brand audit" },
         essaySlugs: ["distinctive-brand-assets-audit", "what-rebrand-backlashes-teach-about-brand-memory", "why-ai-content-makes-brands-average"],
         definition:
           "The colors, shapes, sounds, and phrases a brand owns so thoroughly that people recognize it with the logo covered.",
@@ -112,6 +116,7 @@ export const pillars: Pillar[] = [
       {
         term: "Recognition",
         slug: "recognition",
+        serviceLink: { href: "/services#audit", label: "Try the brand recognition diagnostic" },
         essaySlugs: ["why-beautiful-brand-identity-can-be-forgettable", "reposition-established-service-business-without-losing-recognition", "brand-consistency-checklist-service-businesses"],
         definition: "The compound return of consistency: being known again without reintroduction.",
         expanded:
@@ -122,6 +127,7 @@ export const pillars: Pillar[] = [
       {
         term: "Category entry points",
         slug: "category-entry-points",
+        serviceLink: { href: "/brand-positioning", label: "Examine buying triggers in a positioning engagement" },
         updatedAt: glossaryUpdatedAt,
         essaySlugs: ["how-ai-assistants-choose-brands-to-recommend", "aeo-vs-seo-vs-geo", "brand-awareness-vs-brand-recall"],
         definition:
@@ -179,6 +185,7 @@ export const pillars: Pillar[] = [
       {
         term: "Verbal identity",
         slug: "verbal-identity",
+        serviceLink: { href: "/brand-messaging", label: "See the brand messaging and voice scope" },
         essaySlugs: ["brand-voice-guidelines-writers-can-use", "why-ai-content-makes-brands-average", "homepage-messaging-service-businesses", "how-to-name-a-brand-when-good-names-are-taken"],
         definition: "The words a brand owns: its vocabulary, its rhythm, the sentences only it would say.",
         expanded:
@@ -189,6 +196,7 @@ export const pillars: Pillar[] = [
       {
         term: "Tone of voice",
         slug: "tone-of-voice",
+        serviceLink: { href: "/brand-messaging", label: "See how a messaging engagement defines voice guidelines" },
         essaySlugs: ["brand-voice-guidelines-writers-can-use", "brand-messaging-framework"],
         definition:
           "The consistent personality in how a brand speaks, kept steady across every channel and every writer.",
@@ -244,6 +252,7 @@ export const pillars: Pillar[] = [
       {
         term: "Semiotics",
         slug: "semiotics",
+        serviceLink: { href: "/brand-audit", label: "Review identity and language in a brand audit" },
         essaySlugs: ["why-beautiful-brand-identity-can-be-forgettable", "what-rebrand-backlashes-teach-about-brand-memory"],
         definition:
           "The study of what signs and symbols mean to a culture, applied so a brand's codes say what it intends.",
