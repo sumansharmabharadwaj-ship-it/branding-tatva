@@ -220,6 +220,41 @@ export function GuidedView() {
 
   useEffect(() => {
     if (!menuOpen) return;
+    const guide = guideRef.current;
+    const menu = menuRef.current;
+    if (!guide || !menu) return;
+    const header = document.querySelector<HTMLElement>("[data-site-header]");
+    let frame = 0;
+    function fitMenu() {
+      frame = 0;
+      if (!guide || !menu) return;
+      // Reserve the header's full resting height even while it slides away.
+      // The gap is shared with CSS so the entrance transform cannot alter it.
+      const headerBottom = header ? header.offsetTop + header.offsetHeight : 0;
+      const safeTop = Math.max(headerBottom, window.visualViewport?.offsetTop ?? 0) + 8;
+      const gap = parseFloat(getComputedStyle(guide).getPropertyValue("--journey-menu-gap")) || 10;
+      const available = guide.getBoundingClientRect().top - Math.max(0, gap) - safeTop;
+      menu.style.setProperty("--journey-menu-space", `${Math.max(0, Math.floor(available))}px`);
+      const focused = document.activeElement;
+      const current = menuLinksRef.current.find((link) => link?.getAttribute("aria-current") === "location");
+      if (focused instanceof HTMLElement && menu.contains(focused)) revealMenuLink(focused);
+      else if (current) revealMenuLink(current);
+    }
+    function scheduleFit() {
+      if (!frame) frame = window.requestAnimationFrame(fitMenu);
+    }
+    fitMenu();
+    const resize = new ResizeObserver(scheduleFit);
+    resize.observe(guide);
+    if (header) resize.observe(header);
+    const notice = new MutationObserver(scheduleFit);
+    notice.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-consent-banner", "data-consent-banner-compact"],
+    });
+    window.addEventListener("resize", scheduleFit);
+    window.visualViewport?.addEventListener("resize", scheduleFit);
+    window.visualViewport?.addEventListener("scroll", scheduleFit);
     const requested = menuFocusRef.current;
     const currentLink = requested === null
       ? menuLinksRef.current.find((link) => link?.getAttribute("aria-current") === "location")
@@ -241,6 +276,13 @@ export function GuidedView() {
     document.addEventListener("pointerdown", dismiss);
     document.addEventListener("keydown", escape);
     return () => {
+      window.cancelAnimationFrame(frame);
+      resize.disconnect();
+      notice.disconnect();
+      window.removeEventListener("resize", scheduleFit);
+      window.visualViewport?.removeEventListener("resize", scheduleFit);
+      window.visualViewport?.removeEventListener("scroll", scheduleFit);
+      menu.style.removeProperty("--journey-menu-space");
       document.removeEventListener("pointerdown", dismiss);
       document.removeEventListener("keydown", escape);
     };
