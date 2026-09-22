@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, useAnimationControls, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollDrivenVisualizer } from "@/hooks/useScrollDrivenVisualizer";
 import { packages } from "@/data/services";
@@ -13,6 +13,7 @@ import {
   isServicesSituation,
   publishServicesSituation,
   readCompletedHomeDiagnosis,
+  servicesContactHrefForSituation,
   SERVICES_SITUATION_CLEARED_EVENT,
   SERVICES_SITUATION_EVENT,
   SERVICES_SITUATION_STORAGE_KEY,
@@ -96,6 +97,8 @@ export function PathsCinematicChapter() {
   const frameRef = useRef<HTMLDivElement>(null);
   const routeRef = useRef<HTMLOListElement>(null);
   const [frameFits, setFrameFits] = useState(false);
+  const [hasScrollLayout, setHasScrollLayout] = useState(false);
+  const [keyboardReading, setKeyboardReading] = useState(false);
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const previousIndexRef = useRef(0);
   const routeSeenRef = useRef<number | null>(null);
@@ -103,17 +106,19 @@ export function PathsCinematicChapter() {
   const scopeMotion = useAnimationControls();
   const routeMotion = useAnimationControls();
   const selectionId = useId();
-  const reducedMotion = Boolean(useHydratedReducedMotion());
-  const cinematicMotion = useMediaQuery(
-    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+  const { hydrated, prefersReducedMotion: reducedMotion } = useHydratedMotionPreference();
+  const readingStill = reducedMotion || keyboardReading;
+  const hasScrollRunway = useMediaQuery(
+    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
   );
-  const desktopStory = cinematicMotion && frameFits && !reducedMotion;
+  const heldLayout = hasScrollLayout && hasScrollRunway && frameFits;
+  const desktopStory = heldLayout && !reducedMotion;
   const sceneInView = useInView(sectionRef, { amount: 0.08 });
   const routeInView = useInView(routeRef, { amount: 0.35 });
   const visualizer = useScrollDrivenVisualizer({
     scrollHysteresis: 0.0125,
     preservePanelFocus: true,
-    focusScopeSelector: '[role="tabpanel"], [role="tablist"]',
+    focusScopeSelector: '[role="tabpanel"], [role="tablist"], [data-path-conversation]',
     count: PATHS.length,
     target: sectionRef,
     enabled: desktopStory && sceneInView,
@@ -123,6 +128,14 @@ export function PathsCinematicChapter() {
   const active = PATHS[activeIndex];
   const packageSlug = SITUATION_TO_PACKAGE[active.situation];
   const offering = packages.find((item) => item.slug === packageSlug)!;
+
+  useEffect(() => {
+    // Pause the timeline without collapsing a scroll frame already in use.
+    // An initial reduced-motion visit stays in flow. Actual viewport or
+    // content changes still release the hold so every control remains usable.
+    if (!hydrated || !hasScrollRunway || !frameFits) setHasScrollLayout(false);
+    else if (!reducedMotion) setHasScrollLayout(true);
+  }, [frameFits, hasScrollRunway, hydrated, reducedMotion]);
 
   useEffect(() => {
     function restore(saved: ServicesSituationId | null) {
@@ -254,10 +267,18 @@ export function PathsCinematicChapter() {
       data-cursor-world="light"
       data-scroll-story="paths"
       data-path-state={activeIndex}
-      data-path-story={desktopStory ? "held" : "flow"}
+      data-path-story={heldLayout ? "held" : "flow"}
+      data-path-scroll-active={desktopStory}
+      data-path-reading-still={readingStill}
       className={styles.paths}
       aria-labelledby="paths-cinematic-title"
-      onFocusCapture={(event) => { settleReading(); revealFocusedPath(event.target); }}
+      onFocusCapture={(event) => {
+        settleReading();
+        if (event.target instanceof HTMLElement && event.target.matches(":focus-visible")) setKeyboardReading(true);
+        revealFocusedPath(event.target);
+      }}
+      onKeyDownCapture={() => setKeyboardReading(true)}
+      onPointerDownCapture={() => setKeyboardReading(false)}
     >
       <div className={styles.scene}>
         <div className={styles.film} aria-hidden="true">
@@ -312,9 +333,10 @@ export function PathsCinematicChapter() {
             >
               {index === activeIndex && (
                 <motion.span
+                  key={readingStill ? "settled" : "animated"}
                   className={styles.selection}
-                  layoutId={`home-path-selection-${selectionId}`}
-                  transition={{ duration: reducedMotion ? 0 : 0.35, ease: EASE }}
+                  layoutId={readingStill ? undefined : `home-path-selection-${selectionId}`}
+                  transition={{ duration: readingStill ? 0 : 0.35, ease: EASE }}
                   aria-hidden="true"
                 />
               )}
@@ -404,7 +426,21 @@ export function PathsCinematicChapter() {
         </div>
 
         <footer className={styles.footer}>
-          <p>Find the scope your brand needs.</p>
+          <Link
+            href={servicesContactHrefForSituation(active.situation, "call")}
+            onClick={() => publishServicesSituation(active.situation, "home_paths")}
+            data-path-conversation
+          >
+            <span className={styles.readingStack}>
+              <span className={styles.readingMeasure} aria-hidden="true" inert>
+                {PATHS.map((path) => (
+                  <span key={path.situation}>Discuss {packages.find((item) => item.slug === SITUATION_TO_PACKAGE[path.situation])!.name}</span>
+                ))}
+              </span>
+              <span>Discuss {offering.name}</span>
+            </span>
+            <ArrowRight size={17} aria-hidden="true" />
+          </Link>
           <Link href="/services#audit">
             Start with the recognition audit <ArrowRight size={17} aria-hidden="true" />
           </Link>

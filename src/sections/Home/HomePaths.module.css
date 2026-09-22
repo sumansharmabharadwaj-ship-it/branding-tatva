@@ -154,19 +154,20 @@
   .footer { display: block; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .paths { height: auto; min-height: 100svh; }
-  .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
   .action, .action svg, .footer svg { transition: none; }
   .decisionConnector > span { transform: none !important; }
 }
-:global(html[data-motion="reduced"]) .paths { height: auto; min-height: 100svh; }
-:global(html[data-motion="reduced"]) .scene { position: relative; top: auto; height: auto; min-height: 100svh; }
+/* Layout belongs to data-path-story, independently of playback. A visitor
+   who starts with reduced motion gets flow; pausing an existing held scene
+   retains its geometry instead of removing a viewport from the document. */
 :global(html[data-motion="reduced"]) .decisionConnector > span { transform: none !important; }
 
 /* No delayed row animation can restart on resume or while reading by key. */
 :global(html[data-motion="reduced"]) .action,
 :global(html[data-motion="reduced"]) .action svg,
 :global(html[data-motion="reduced"]) .footer svg { transition: none; }
+.paths[data-path-reading-still="true"] :is(.action, .action svg, .footer svg) { transition: none; }
+.paths[data-path-reading-still="true"] :is(.action, .footer a):hover svg { transform: none; }
 
 /* Fifth instance of the frameFits dead band. The frame's natural height
    measured 921 to 929px at every viewport tried, so the held story ran
