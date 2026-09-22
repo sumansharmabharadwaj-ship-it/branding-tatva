@@ -75,9 +75,9 @@ export const insightPathways: Record<string, InsightPathway> = {
   },
   "brand-messaging": {
     service: {
-      href: "/services#offerings",
-      label: "See messaging, voice, and content scopes",
-      description: "See where verbal identity, content strategy and website structure sit inside the practice.",
+      href: "/brand-messaging",
+      label: "Brand messaging and voice for UK service businesses",
+      description: "Work with Suman on your core message, supporting evidence and voice guidelines. See what a messaging engagement covers.",
     },
     proof: {
       href: "/work/plaxonic-content-portfolio",

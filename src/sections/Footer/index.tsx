@@ -134,6 +134,7 @@ export function Footer({ compact = false, className, intro }: FooterProps) {
         <Link href="/services" className="inline-flex min-h-11 items-center underline underline-offset-4">Brand strategy services</Link>
         <Link href="/brand-positioning" className="inline-flex min-h-11 items-center underline underline-offset-4">Brand positioning</Link>
         <Link href="/brand-audit" className="inline-flex min-h-11 items-center underline underline-offset-4">Brand audit</Link>
+        <Link href="/brand-messaging" className="inline-flex min-h-11 items-center underline underline-offset-4">Brand messaging</Link>
       </nav>
 
       {/* Was sectionWash("space", 14) — rgb(234,221,211), a pale near-cream
