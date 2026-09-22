@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { motion } from "framer-motion";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import type { Element } from "@/data/elements";
 import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
 import { track } from "@/lib/analytics";
 import { motionTokens } from "@/lib/motionTokens";
+import styles from "./MobileAuthorityDeck.module.css";
 
 export type AuthorityLayer = {
   slug: Element["slug"];
@@ -20,11 +21,14 @@ export type AuthorityLayer = {
 export function MobileAuthorityDeck({
   layers,
   wavePath,
+  activeIndex,
+  onSelect,
 }: {
   layers: readonly AuthorityLayer[];
   wavePath: string;
+  activeIndex: number;
+  onSelect: (index: number) => void;
 }) {
-  const [activeIndex, setActiveIndex] = useState(0);
   const [transitionDirection, setTransitionDirection] = useState(1);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const prefersReducedMotion = useHydratedReducedMotion();
@@ -36,7 +40,7 @@ export function MobileAuthorityDeck({
       const direction =
         source === "previous" ? -1 : source === "next" ? 1 : index > activeIndex ? 1 : -1;
       setTransitionDirection(direction);
-      setActiveIndex(nextIndex);
+      onSelect(nextIndex);
     }
     // All tabs stay mounted, so focus can move immediately. Waiting for an
     // animation frame can strand focus when browser rendering is paused.
@@ -76,9 +80,12 @@ export function MobileAuthorityDeck({
     <div
       data-authority-mobile-deck="true"
       data-active-index={activeIndex}
+      data-section-jump-yield="true"
+      tabIndex={-1}
       className="mt-9 lg:hidden"
     >
-      <div className="border-b border-ivory/10 pb-4" aria-hidden="true">
+      <div data-authority-deck-heading="true" className="border-b border-ivory/10 pb-4">
+        <div data-authority-tablet-heading="true" aria-hidden="true">
         <div className="flex items-center justify-between gap-4">
           <p className="text-[0.6rem] font-medium uppercase tracking-[0.2em] text-ivory/50">
             What must exist before promotion
@@ -101,6 +108,29 @@ export function MobileAuthorityDeck({
             <path d={wavePath} stroke="#C6A97A" strokeWidth="5" strokeLinecap="round" opacity="0.12" />
           </motion.g>
         </svg>
+        </div>
+        <div className={styles.picker} data-authority-picker="true">
+          <div className={styles.pickerHeading}>
+            <label htmlFor="authority-layer-picker">Explore the five layers</label>
+            <span aria-hidden="true">{String(activeIndex + 1).padStart(2, "0")} / 05</span>
+          </div>
+          <div className={styles.pickerControls}>
+            <button type="button" aria-label="Previous brand layer" onClick={() => selectLayer(activeIndex - 1, false, "previous")}>
+              <span aria-hidden="true">←</span>
+            </button>
+            <select
+              id="authority-layer-picker"
+              value={activeIndex}
+              aria-controls={`authority-layer-panel-${activeLayer.slug}`}
+              onChange={(event) => selectLayer(Number(event.target.value), false, "picker")}
+            >
+              {layers.map((layer, index) => <option key={layer.slug} value={index}>{layer.label}</option>)}
+            </select>
+            <button type="button" aria-label="Next brand layer" onClick={() => selectLayer(activeIndex + 1, false, "next")}>
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div
@@ -161,7 +191,7 @@ export function MobileAuthorityDeck({
               key={layer.slug}
               id={`authority-layer-panel-${layer.slug}`}
               role="tabpanel"
-              aria-labelledby={`authority-layer-tab-${layer.slug}`}
+              aria-label={layer.label}
               aria-hidden={!selected}
               inert={!selected}
               tabIndex={selected ? 0 : -1}
@@ -177,7 +207,7 @@ export function MobileAuthorityDeck({
                   : { duration: 0.42, ease: motionTokens.easeOrganic }
               }
               className="rounded-2xl border border-ivory/12 bg-[rgba(10,13,15,0.58)] p-5 backdrop-blur-md"
-              style={{ borderTopColor: layer.color }}
+              style={{ borderTopColor: layer.color, "--authority-layer-color": layer.color } as CSSProperties}
             >
               <div className="flex items-start justify-between gap-5">
                 <div className="flex items-center gap-3">
@@ -194,7 +224,7 @@ export function MobileAuthorityDeck({
                 </span>
               </div>
               <p className="mt-6 text-base leading-relaxed text-ivory/92">{layer.line}</p>
-              <ul data-authority-decisions="true" aria-label={`Decisions within ${layer.label}`}>
+              <ul data-authority-decisions="true" data-authority-connections="true" aria-label={`Decisions within ${layer.label}`}>
                 {layer.outputs.map((output) => <li key={output}>{output}</li>)}
               </ul>
               <p className="mt-4 border-t border-ivory/10 pt-4 text-sm leading-relaxed text-ivory/62">
