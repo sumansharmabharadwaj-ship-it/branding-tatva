@@ -1,5 +1,5 @@
 .root { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: clamp(1.5rem,4vw,3.5rem); padding: clamp(1.25rem,3vw,2.5rem); border-radius: 1.75rem; border: 1px solid #dadccd; background: #f2f0e8f7; box-shadow: 0 20px 60px #12201726; color: #25392e; }
-.eyebrow { color: #53624a; font-size: 0.65rem; line-height: 1.6; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.eyebrow { color: #53624a; font-size: 0.75rem; line-height: 1.6; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
 .heading { margin-top: 0.5rem; font-family: var(--font-display),Georgia,serif; font-size: clamp(2rem,3vw,2.8rem); line-height: 1.04; font-weight: 400; text-wrap: balance; }
 .intro { margin-top: 0.85rem; max-width: 28rem; color: #53624a; font-size: 0.83rem; line-height: 1.7; }
 .choices { display: grid; gap: 0.5rem; margin-top: 1.3rem; }
@@ -21,19 +21,19 @@
 .reason { margin-top: 0.85rem; font-size: 0.88rem; line-height: 1.8; }
 .explanation { display: none; }
 .sketch { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 9rem; margin-top: 1.4rem; padding: 1rem; border: 1px solid #c8cbbd; border-radius: 1rem; background: #e4e7dc; overflow: hidden; }
-.positionInputs { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.62rem; line-height: 1.5; color: #53624a; }
+.positionInputs { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.75rem; line-height: 1.5; color: #53624a; }
 .positionInputs > span { border-bottom: 1px solid #8d9b7f; padding-bottom: 0.55rem; }
 .position > p { margin-top: 1rem; font-family: var(--font-display),Georgia,serif; font-size: 1.55rem; line-height: 1.15; }
 .positionLine { width: 100%; height: 2px; margin-top: 0.55rem; background: #7d8e52; transform-origin: left; }
 .reframe { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; align-items: center; }
 .reframe > div:last-child { border-left: 1px solid #bcc5af; padding-left: 1rem; }
-.reframe span { display: block; color: #53624a; font-size: 0.65rem; }
+.reframe span { display: block; color: #53624a; font-size: 0.75rem; }
 .reframe strong { display: block; margin-top: 0.4rem; font-family: var(--font-display),Georgia,serif; font-size: 1.35rem; font-weight: 400; line-height: 1.1; }
 .reframe i { display: block; margin-top: 0.7rem; width: 70%; height: 2px; background: #7d8e52; transform-origin: left; }
 .reframe > div:last-child i { background: #6f4e37; }
 .channels { gap: 0.65rem; }
 .channels > div { display: grid; grid-template-columns: 5rem 1fr; gap: 1rem; align-items: center; }
-.channels > div > span { font-size: 0.68rem; color: #53624a; }
+.channels > div > span { font-size: 0.75rem; color: #53624a; }
 .channels i { display: flex; align-items: center; gap: 0.35rem; }
 .channels b { display: block; height: 0.3rem; background: #7d8e52; border-radius: 1rem; }
 .channels b:first-child { width: 1.5rem; height: 0.6rem; background: #6f4e37; }
@@ -41,7 +41,7 @@
 .channels b:last-child { width: 18%; }
 .channels > p { margin-top: 0.15rem; font-family: var(--font-display),Georgia,serif; font-size: 1.3rem; line-height: 1.2; }
 .next { display: flex; flex-direction: column; gap: 0.75rem; margin-top: auto; padding-top: 1.4rem; }
-.next > p > span { display: block; color: #53624a; font-size: 0.65rem; }
+.next > p > span { display: block; color: #53624a; font-size: 0.75rem; }
 .next strong { display: block; margin-top: 0.2rem; font-family: var(--font-display),Georgia,serif; font-size: 1.65rem; line-height: 1.15; font-weight: 400; }
 .next a { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 3rem; padding: 0.75rem 1rem; border-radius: 999px; background: #29432f; color: #f7f3e9; font-size: 0.8rem; transition: background-color 200ms ease; }
 .next a:hover { background: #3b563d; }
@@ -61,7 +61,7 @@
   .number { align-self: center; padding-top: 0; font-size: 0.72rem; }
   .choiceCopy > strong { font-size: 0.72rem; }
   .choiceCopy > span,.check { display: none; }
-  .status { min-height: 2.3rem; font-size: 0.67rem; }
+  .status { min-height: 2.3rem; font-size: 0.75rem; }
   .panels { padding: 0.9rem 0 0; border-left: 0; border-top: 1px solid #c8cbbd; }
   .panel > h3 { margin-top: 0.4rem; font-size: 1.65rem; }
   .reason { display: none; }
@@ -74,7 +74,7 @@
   .explanation p { padding-bottom: 0.6rem; }
   .explanation p:first-of-type { color: #6f4e37; font-weight: 600; }
   .sketch { min-height: 6.25rem; padding: 0.75rem; margin-top: 0.85rem; }
-  .positionInputs { font-size: 0.6rem; }
+  .positionInputs { font-size: 0.75rem; }
   .position > p { font-size: 1.4rem; }
   .reframe { gap: 0.7rem; }
   .reframe > div:last-child { padding-left: 0.7rem; }

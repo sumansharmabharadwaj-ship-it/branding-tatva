@@ -41,7 +41,7 @@
 .shortlistedBrand > span { font-family: var(--font-display), serif; font-size: 2rem; line-height: 0.95; }
 .shortlistedBrand strong { margin-top: 0.35rem; font-size: 0.75rem; font-weight: 500; }
 .shortlistLabel { position: absolute; bottom: 0; left: 0; width: 100%; font-size: 0.76rem; color: #53604d; text-align: center; }
-.replayRow { display: flex; min-height: 2.75rem; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.25rem; border-bottom: 1px solid #72805d33; color: #65705c; font-size: 0.69rem; }
+.replayRow { display: flex; min-height: 2.75rem; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.25rem; border-bottom: 1px solid #72805d33; color: #65705c; font-size: 0.75rem; }
 .replayRow button { display: inline-flex; min-height: 2.75rem; align-items: center; gap: 0.45rem; padding: 0.35rem; border: 0; background: transparent; color: #344d36; font-size: 0.76rem; cursor: pointer; }
 .replayRow button:hover { text-decoration: underline; text-underline-offset: 0.2rem; }
 .replayRow button:focus-visible { outline: 2px solid #6f4e37; outline-offset: 2px; border-radius: 0.3rem; }
@@ -70,7 +70,7 @@
 @container buyer-memory (max-width: 360px) {
   .nameCard { top: 25%; width: 44%; padding: 0.65rem 0.5rem; }
   .nameCard strong { font-size: 1.35rem; }
-  .nameCard > span { display: block; font-size: 0.68rem; line-height: 1.4; }
+  .nameCard > span { display: block; font-size: 0.75rem; line-height: 1.4; }
   .definition { width: 44%; gap: 0.45rem; padding: 0.55rem; }
   .definition > span { gap: 0.4rem; font-size: 0.75rem; line-height: 1.4; }
   .brandName { gap: 0.25rem; padding: 0.4rem 0.3rem; }
@@ -81,11 +81,11 @@
   .shortlist { top: 50%; }
   .shortlist > div { min-height: 4.1rem; padding: 0.35rem; }
   .shortlistedBrand > span { font-size: 1.7rem; }
-  .shortlistedBrand strong { font-size: 0.67rem; white-space: nowrap; }
+  .shortlistedBrand strong { font-size: 0.75rem; white-space: nowrap; }
   .shortlistLabel { font-size: 0.7rem; line-height: 1.3; }
 }
 @container buyer-memory (max-width: 240px) {
-  .scene small { font-size: 0.65rem; }
+  .scene small { font-size: 0.75rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .scene[data-animate="true"] :is(.trace, .arrive, .resolve, .ripple) { animation: none; }

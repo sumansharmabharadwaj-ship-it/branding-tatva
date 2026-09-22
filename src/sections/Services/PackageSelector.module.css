@@ -1,6 +1,6 @@
 .root { max-width: 66rem; color: #25392e; }
 .heading { text-align: center; padding: 0.85rem 1.25rem; border-radius: 1.2rem; background: #f2f0e8ed; }
-.heading > p:first-child, .eyebrow { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: #53624a; }
+.heading > p:first-child, .eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.13em; text-transform: uppercase; color: #53624a; }
 .heading h2 { margin-top: 0.3rem; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 400; line-height: 1.02; }
 .intro { margin-top: 0.55rem; font-size: 0.85rem; line-height: 1.5; }
 .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; padding: 0.45rem; margin-top: 1rem; border: 1px solid #c8cbbd; border-radius: 1.15rem; background: #f2f0e8; }
@@ -76,7 +76,7 @@
   .choice small { display: none; }
   .controls { gap: 0.35rem; margin-top: 0.6rem; padding: 0.55rem; }
   :global(#desire) .controls :global([data-region-selector]) { width: 100%; justify-content: space-between; }
-  :global(#desire) .controls :global([data-region-selector-label]) { font-size: 0.67rem; }
+  :global(#desire) .controls :global([data-region-selector-label]) { font-size: 0.75rem; }
   :global(#desire) .controls select { max-width: 66%; font-size: 0.7rem; padding-inline: 0.5rem; }
   .controls > button { width: 100%; }
   .selection { min-height: 3.5rem; font-size: 0.7rem; }
@@ -96,3 +96,21 @@
 }
 :global(:root[data-motion="reduced"]) .root .card > .scope > .inclusions > li { animation: none; }
 :global(:root[data-motion="reduced"]) .root :is(button, a, summary > span) { transition: none; }
+
+
+@media (max-width: 820px) {
+  .card { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .scope { padding: 1rem 0 0; border-left: 0; border-top: 1px solid #b5bdad; }
+  .intro, .description { font-size: 1rem; line-height: 1.65; }
+  .inclusions li { font-size: .9375rem; line-height: 1.6; }
+  .choice strong, .controls > button, .proof, .start { font-size: .875rem; }
+  .quotation, .selection, .disclaimer p { font-size: .8125rem; line-height: 1.6; }
+  :global(#desire) .more summary, :global(#desire) .disclaimer summary { font-size: .875rem; }
+  :global(#desire) .controls :global([data-region-selector-label]) { font-size: .875rem; }
+  :global(#desire) .controls :global([data-region-selector]) { flex-wrap: wrap; gap: .5rem; }
+  :global(#desire) .controls select { max-width: 100%; font-size: 1rem; }
+}
+@media (max-width: 359px) {
+  .choices { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
+  .choice { flex-direction: row; justify-content: flex-start; gap: .75rem; min-height: 3rem; padding-inline: .85rem; text-align: left; }
+}

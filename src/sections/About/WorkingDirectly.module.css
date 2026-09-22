@@ -449,3 +449,11 @@
 :global(html[data-motion="reduced"]) .header { grid-template-columns: 1fr; gap: 1rem; }
 :global(html[data-motion="reduced"]) .sheetCamera { display: none; }
 :global(html[data-motion="reduced"]) .staticExperience { display: block; margin-top: 2.2rem; }
+
+
+/* The mobile reading edition keeps normal body type instead of miniaturising it. */
+@media (max-width: 820px) {
+  :global(html) .root .headerAside > p, :global(html) .root .staticExperience li p { font-size: 1rem; line-height: 1.65; }
+  :global(html) .root .staticExperience > p, :global(html) .root .staticExperience strong, :global(html) .root .staticPromise span, :global(html) .root .staticPromise p { font-size: .8125rem; line-height: 1.55; letter-spacing: .04em; }
+  :global(html) .root { padding-block: 5.5rem 3.5rem; }
+}

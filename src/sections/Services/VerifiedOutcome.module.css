@@ -1,5 +1,5 @@
 .root { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); padding: clamp(1.25rem, 3vw, 2.5rem); border: 1px solid #dadccd; border-radius: 1.75rem; background: #f2f0e8f7; color: #25392e; box-shadow: 0 20px 60px #12201726; }
-.eyebrow { font-size: 0.65rem; line-height: 1.6; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #53624a; }
+.eyebrow { font-size: 0.75rem; line-height: 1.6; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #53624a; }
 .eyebrow > span { padding-inline: 0.35rem; color: #8d9681; }
 .client { margin-top: 1.1rem; font-size: 0.9rem; font-weight: 600; color: #6f4e37; }
 .heading { margin-top: 0.45rem; font-family: var(--font-display), Georgia, serif; font-size: clamp(2rem, 3.1vw, 3rem); font-weight: 400; line-height: 1.04; text-wrap: balance; }
@@ -9,7 +9,7 @@
 .metric > span { max-width: 14rem; font-size: 0.82rem; line-height: 1.65; }
 .months { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; }
 .month > p { font-size: 0.72rem; line-height: 1.7; }
-.month > p:first-child { font-size: 0.68rem; color: #53624a; }
+.month > p:first-child { font-size: 0.75rem; color: #53624a; }
 .month strong { font-weight: 600; }
 .barTrack { height: 0.35rem; margin: 0.55rem 0 0.65rem; border-radius: 0.3rem; background: #dce0d2; overflow: hidden; }
 .barTrack > span { display: block; height: 100%; border-radius: inherit; background: #7d8e52; transform-origin: left; }

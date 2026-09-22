@@ -2532,3 +2532,39 @@ html[data-motion="reduced"] [data-contact-film] [data-contact-scene-seam] {
     bottom: calc(4.75rem + env(safe-area-inset-bottom)) !important;
   }
 }
+
+
+/* Mobile reading takes precedence over fitting every sentence into one frame. */
+@media (max-width: 767px) {
+  [data-contact-film] [data-contact-hero] { padding-top: max(6rem, calc(5.25rem + env(safe-area-inset-top, 0px))); }
+  [data-contact-film] [data-contact-hero-intro] {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+  [data-contact-film] :is([data-contact-pathway-description], [data-contact-pathway-best], [data-contact-call-intro], [data-contact-booking-description]) {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  [data-contact-film] [data-contact-hero-actions] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: .65rem;
+  }
+  [data-contact-film] [data-contact-hero-actions] > a {
+    justify-content: space-between;
+    min-height: 3.25rem;
+    padding: .85rem 1.1rem;
+    font-size: .9375rem;
+    line-height: 1.4;
+    white-space: normal;
+  }
+  [data-contact-film] [data-contact-hero-trust] { font-size: .75rem; letter-spacing: .07em; line-height: 1.6; }
+  [data-contact-film] [data-contact-required-grid] { grid-template-columns: minmax(0, 1fr); gap: 1.15rem; }
+  [data-contact-film] [data-contact-form-question] textarea { min-height: 8rem; height: auto; }
+  [data-contact-film] [data-contact-form-card] { padding: clamp(1rem, 4.5vw, 1.5rem); }
+  [data-contact-film] [data-contact-booking-options] { flex-wrap: wrap; gap: .75rem; }
+  [data-contact-film] [data-contact-booking-options] a { min-height: 2.75rem; }
+}

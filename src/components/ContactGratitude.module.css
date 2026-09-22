@@ -314,3 +314,11 @@
   .scene .botanicalLeft { transform: translate(-78%, 32px) scale(1.15) rotate(-8deg) !important; opacity: 0.76 !important; }
   .scene .botanicalRight { transform: translate(78%, 32px) scale(1.15) rotate(8deg) !important; opacity: 0.76 !important; }
 }
+
+
+@media (max-width: 767px) {
+  .eyebrow, .signature span:last-child, .reassurance { font-size: .8125rem; line-height: 1.55; }
+  .acknowledgement { font-size: 1rem; line-height: 1.65; }
+  .booking { white-space: normal; line-height: 1.4; }
+  .write { min-height: 2.75rem; }
+}

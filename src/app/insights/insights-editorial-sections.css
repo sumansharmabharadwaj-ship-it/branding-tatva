@@ -462,3 +462,23 @@ html[data-motion="reduced"] .insights-page .insights-library__folio-depth input:
   .insights-page .insights-library__pager button svg { transform: none !important; transition: none; }
   .insights-page .insights-library__folio-depth input::-webkit-slider-thumb { transform: none; transition: none; }
 }
+
+
+@media (max-width: 899px) {
+  .insights-page :is(.insights-decision-mirror__quests, .insights-atlas__paths, .insights-library__topics) {
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: .75rem;
+    padding-bottom: .5rem;
+  }
+  .insights-page :is(.insights-decision-mirror__quests, .insights-atlas__paths, .insights-library__topics) button {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+  .insights-page .insight-editorial-row__title-line strong { overflow-wrap: anywhere; }
+}
+@media (max-width: 479px) {
+  .insights-page .insights-notes-scene__cadence li { grid-template-columns: 1.5rem minmax(0, 1fr); gap: .5rem; }
+  .insights-page .insights-notes-scene__cadence li small { grid-column: 2; }
+  .insights-page .insight-editorial-row__title-line strong { font-size: clamp(1.75rem, 8vw, 2.25rem); }
+}

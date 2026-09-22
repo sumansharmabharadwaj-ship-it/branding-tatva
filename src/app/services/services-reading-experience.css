@@ -18,7 +18,7 @@ html[data-services-experience="active"] #situation[data-services-scene] {
   border-top: 1px solid #f2f0e829;
 }
 #authority [data-authority-signal-header] { display: block; }
-#authority [data-authority-signal-header] > p:first-child { color: #c4cbbb; font-size: 0.65rem; }
+#authority [data-authority-signal-header] > p:first-child { color: #c4cbbb; font-size: 0.75rem; }
 #authority [data-authority-signal-status] { margin-top: 0.75rem; text-align: left; }
 #authority [data-authority-signal-status] > span:first-child { display: none; }
 #authority [data-authority-signal-status] > span:last-child {
