@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useAnimationControls, useMotionValue, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
+import { motion, useAnimationControls, useInView, useMotionValue, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Clock3 } from "lucide-react";
 import { BackgroundVideo } from "@/components/BackgroundVideo";
-import { useHydratedReducedMotion } from "@/hooks/useHydratedReducedMotion";
+import { useHydratedMotionPreference } from "@/hooks/useHydratedReducedMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { consultation } from "@/data/site";
 import {
@@ -58,13 +59,30 @@ const INVITATIONS = {
 } as const;
 
 const STEP_LABELS = ["Bring the context", "Test the question", "Choose what comes next"] as const;
-const PREPARATION_QUESTIONS = [
-  "What has changed in the business that the brand still fails to show?",
-  "Where do customers need an explanation before they understand the offer?",
-  "Which decision would make the next piece of work easier to judge?",
-] as const;
+const PREPARATION_QUESTIONS = {
+  default: [
+    "What should people understand about the business first?",
+    "Where do customers need an explanation before they understand the offer?",
+    "Which decision would make the next piece of work easier to judge?",
+  ],
+  idea: [
+    "Who would choose this business, and what would they choose today?",
+    "Which assumption about the buyer needs evidence before the identity takes shape?",
+    "What should the name, message and first website all help people understand?",
+  ],
+  reposition: [
+    "What has changed in the business that the brand still fails to show?",
+    "Which familiar words or visual cues still earn recognition?",
+    "What deserves to stay, and what needs to change first?",
+  ],
+  ongoing: [
+    "Where do different teams or channels present different versions of the brand?",
+    "Which brand decision keeps returning because the rule remains unclear?",
+    "What shared rule would help the next piece of work feel like the same business?",
+  ],
+} as const;
 
-function ConversationReading({ index, step, expanded, still }: { index: number; step: string; expanded: boolean; still: boolean }) {
+function ConversationReading({ index, step, question, expanded, still }: { index: number; step: string; question: string; expanded: boolean; still: boolean }) {
   const reading = useAnimationControls();
   const previous = useRef(expanded);
   useEffect(() => {
@@ -76,18 +94,20 @@ function ConversationReading({ index, step, expanded, still }: { index: number; 
     reading.set({ y: expanded ? 3 : -3, opacity: .88 });
     void reading.start({ y: 0, opacity: 1, transition: { duration: .32, ease: [.22, 1, .36, 1] } });
     return () => reading.stop();
-  }, [expanded, still, reading]);
+  }, [expanded, question, still, reading]);
 
   return (
     <div className={choiceStyles.reading} data-still={still}>
       <div className={choiceStyles.measure} aria-hidden="true" inert>
         <p>{step}</p>
-        <p><span className={choiceStyles.exampleLabel}>A question to bring</span>{PREPARATION_QUESTIONS[index]}</p>
+        {Object.entries(PREPARATION_QUESTIONS).map(([situation, questions]) => (
+          <p key={situation}><span className={choiceStyles.exampleLabel}>A question to bring</span>{questions[index]}</p>
+        ))}
       </div>
       <motion.div className={choiceStyles.activeReading} initial={false} animate={reading}>
         <p hidden={expanded}>{step}</p>
         <p hidden={!expanded} id={`invitation-question-${index}`} aria-labelledby={`invitation-choice-${index}`} role="region">
-          <span className={choiceStyles.exampleLabel}>A question to bring</span>{PREPARATION_QUESTIONS[index]}
+          <span className={choiceStyles.exampleLabel}>A question to bring</span>{question}
         </p>
       </motion.div>
     </div>
@@ -123,10 +143,13 @@ export function FinalInvitation() {
   const [keyboardChoice, setKeyboardChoice] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const [frameFits, setFrameFits] = useState(false);
-  const reducedMotion = useHydratedReducedMotion();
+  const [hasScrollLayout, setHasScrollLayout] = useState(false);
+  const { hydrated, prefersReducedMotion: reducedMotion } = useHydratedMotionPreference();
   const still = reducedMotion || keyboardChoice;
-  const cinematicMotion = useMediaQuery(
-    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+  const inView = useInView(rootRef, { amount: .08 });
+  const motionActive = inView && !still;
+  const cinematicViewport = useMediaQuery(
+    "(min-width: 1181px) and (min-height: 761px) and (pointer: fine)",
   );
   const { scrollYProgress: entranceProgress } = useScroll({
     target: rootRef,
@@ -141,7 +164,14 @@ export function FinalInvitation() {
   const mediaX = useTransform(storyProgress, [0, 0.52, 1], ["0.8%", "0.25%", "0%"]);
   const signoffInk = useTransform(entranceProgress, [0.5, 1], ["#625a4d", "#70482f"]);
   const conversationProgress = useMotionValue(0);
-  const desktopStory = cinematicMotion && !reducedMotion && frameFits;
+  const desktopStory = cinematicViewport && frameFits && hasScrollLayout;
+
+  // A motion pause keeps the measured scroll space already in use. Initial
+  // reduced motion, compact screens and an overflowing frame use normal flow.
+  useEffect(() => {
+    if (!hydrated || !cinematicViewport || !frameFits) setHasScrollLayout(false);
+    else if (!reducedMotion) setHasScrollLayout(true);
+  }, [cinematicViewport, frameFits, hydrated, reducedMotion]);
 
   // The frame always keeps its natural height, even while sticky. Measuring
   // that height prevents longer personalised copy, zoom or font changes from
@@ -152,6 +182,7 @@ export function FinalInvitation() {
     const measure = () => setFrameFits(Math.max(frame.offsetHeight, frame.scrollHeight) <= window.innerHeight + 1);
     const observer = new ResizeObserver(measure);
     observer.observe(frame);
+    frame.querySelectorAll("[data-invitation-copy], aside").forEach((element) => observer.observe(element));
     window.addEventListener("resize", measure);
     measure();
     return () => {
@@ -160,16 +191,15 @@ export function FinalInvitation() {
     };
   }, []);
 
-  // Preference changes reflow the page. Keep the reading light on the same
-  // step until a fresh scroll gesture, rather than treating that reflow as input.
+  // Keep the reading light on the same step through pause and keyboard use.
   useEffect(() => {
-    if (reducedMotion) preserveStep.current = true;
-  }, [reducedMotion]);
+    if (still) preserveStep.current = true;
+  }, [still]);
 
   useEffect(() => {
     const root = rootRef.current;
     const agenda = agendaRef.current;
-    if (!root || !agenda || reducedMotion) return;
+    if (!root || !agenda || still) return;
     let frame = 0;
     function render() {
       frame = 0;
@@ -216,7 +246,7 @@ export function FinalInvitation() {
       window.removeEventListener("touchmove", release);
       window.removeEventListener("keydown", onKey);
     };
-  }, [conversationProgress, desktopStory, reducedMotion]);
+  }, [conversationProgress, desktopStory, still]);
 
   // Refresh the two local timelines after the hold changes the scene height.
   // A font, viewport or preference change can happen while scrolling is idle.
@@ -265,7 +295,11 @@ export function FinalInvitation() {
   }, []);
 
   const invitation = INVITATIONS[situation];
+  const questions = PREPARATION_QUESTIONS[situation];
   const contactHref = servicesContactHrefForSituation(situation === "default" ? null : situation, "call");
+  const writeHref = servicesContactHrefForSituation(situation === "default" ? null : situation, "write");
+
+  useEffect(() => { setAnnouncement(""); }, [situation]);
 
   function chooseStep(index: number, keyboard: boolean) {
     const opening = expandedStep !== index;
@@ -274,7 +308,7 @@ export function FinalInvitation() {
     setActiveStep(index);
     setExpandedStep(opening ? index : null);
     conversationProgress.set((index + .5) / STEP_LABELS.length);
-    setAnnouncement(`${STEP_LABELS[index]}. ${opening ? PREPARATION_QUESTIONS[index] : consultation.fullSteps[index]}`);
+    setAnnouncement(`${STEP_LABELS[index]}. ${opening ? questions[index] : consultation.fullSteps[index]}`);
   }
 
   function revealChoice(button: HTMLButtonElement) {
@@ -294,28 +328,43 @@ export function FinalInvitation() {
       data-invitation-situation={situation}
       data-invitation-step={activeStep + 1}
       data-invitation-story={desktopStory ? "held" : "flow"}
+      data-invitation-reading-still={still}
+      data-invitation-motion-active={motionActive}
+      onKeyDownCapture={() => setKeyboardChoice(true)}
+      onPointerDownCapture={() => setKeyboardChoice(false)}
+      onFocusCapture={(event) => {
+        if (event.target.matches(":focus-visible")) setKeyboardChoice(true);
+      }}
     >
       <LivingGradient contours preset="wanderlust" plain opacity={0.5} />
       <div className={styles.invitationMedia} aria-hidden="true">
         <motion.div
           className={styles.invitationMediaCamera}
           style={{
-            scale: desktopStory ? mediaScale : 1,
-            x: desktopStory ? mediaX : 0,
+            scale: desktopStory && !still ? mediaScale : 1,
+            x: desktopStory && !still ? mediaX : 0,
           }}
         >
-          <BackgroundVideo
+          {still ? (
+            <Image
+              src="/images/bt-home-invitation-ocean-dawn-poster.jpg"
+              alt=""
+              fill
+              sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: "50% 18%" }}
+            />
+          ) : <BackgroundVideo
             video="/videos/bt-home-invitation-ocean-dawn.mp4"
             videoMobile="/videos/bt-home-invitation-ocean-dawn-mobile.mp4"
             poster="/images/bt-home-invitation-ocean-dawn-poster.jpg"
             responsivePoster
             imagePosition="50% 18%"
             loop={false}
-          />
+          />}
         </motion.div>
       </div>
       <div ref={frameRef} className={styles.invitationFrame}>
-        <motion.div className={styles.invitationRule} style={{ scaleX: reducedMotion ? 1 : lineProgress }} aria-hidden="true" />
+        <motion.div className={styles.invitationRule} style={{ scaleX: still ? 1 : lineProgress }} aria-hidden="true" />
         <div className={styles.invitationCopy} data-invitation-copy>
           <div data-invitation-reading>
             <p className={styles.eyebrow}>{invitation.eyebrow}</p>
@@ -324,11 +373,16 @@ export function FinalInvitation() {
             <h2>{invitation.headline}</h2>
             <p className={styles.lede}>{invitation.body}</p>
           </div>
-          <Link href={contactHref} className={styles.bookButton}>
-            {consultation.actionLabel} <ArrowRight size={20} aria-hidden="true" />
-          </Link>
+          <div className={styles.invitationActions}>
+            <Link href={contactHref} className={styles.bookButton} prefetch={false}>
+              {consultation.actionLabel} <ArrowRight size={20} aria-hidden="true" />
+            </Link>
+            <Link href={writeHref} className={styles.textLink} prefetch={false}>
+              Write to Suman <ArrowRight size={17} aria-hidden="true" />
+            </Link>
+          </div>
           <p className={styles.preparation}>{consultation.preparation}</p>
-          <Link href={invitation.proofHref} className={styles.textLink}>
+          <Link href={invitation.proofHref} className={styles.textLink} prefetch={false}>
             {invitation.proofLabel} <ArrowRight size={17} aria-hidden="true" />
           </Link>
         </div>
@@ -340,7 +394,7 @@ export function FinalInvitation() {
           </div>
           <div className={styles.conversationAgenda}>
             <div className={styles.conversationTrack} aria-hidden="true">
-              <motion.i style={{ scaleY: reducedMotion ? 1 : conversationProgress }} />
+              <motion.i style={{ scaleY: still ? 1 : conversationProgress }} />
             </div>
             <ol ref={agendaRef} aria-label="Choose a conversation step">
               {consultation.fullSteps.map((step, index) => (
@@ -350,7 +404,7 @@ export function FinalInvitation() {
                     data-invitation-highlight
                     initial={false}
                     animate={{ opacity: activeStep === index ? 1 : 0 }}
-                    transition={{ duration: still ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: motionActive ? 0.38 : 0, ease: [0.22, 1, 0.36, 1] }}
                     aria-hidden="true"
                   />
                   <span className={styles.stepNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
@@ -369,7 +423,7 @@ export function FinalInvitation() {
                         <ArrowRight size={17} aria-hidden="true" />
                       </button>
                     </h3>
-                    <ConversationReading index={index} step={step} expanded={expandedStep === index} still={still} />
+                    <ConversationReading index={index} step={step} question={questions[index]} expanded={expandedStep === index} still={!motionActive} />
                   </div>
                 </li>
               ))}
@@ -381,7 +435,7 @@ export function FinalInvitation() {
         <motion.p
           className={styles.signoff}
           style={{
-            color: reducedMotion ? "#625a4d" : signoffInk,
+            color: still ? "#625a4d" : signoffInk,
           }}
         >
           Thank you for giving your brand the attention it deserves.
