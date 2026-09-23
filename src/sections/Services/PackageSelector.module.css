@@ -9,8 +9,14 @@
 .choice strong { font-size: 0.94rem; font-weight: 600; }
 .choice small { grid-column: 2; font-size: 0.74rem; line-height: 1.45; }
 .choice:hover { background: #dde2d4; }
-/* The numeral ignites on hover, same grammar as the hero act rows: a
-   quiet signal that these three rows are the decision, not a label. */
+/* The numeral ignites, same grammar as the hero act rows: a quiet
+   signal that these three rows are the decision, not a label.
+   :focus-visible pairs with :hover unconditionally (focus works on
+   every input device) so a keyboard visitor tabbing through gets the
+   same signal, not just the generic outline ring below. */
+.choice:focus-visible { transform: translateY(-2px); }
+.choice:focus-visible > span { color: #c6a97a; }
+.choice[aria-pressed="true"]:focus-visible > span { color: #d4b99a; }
 @media (hover: hover) and (pointer: fine) {
   .choice:hover { transform: translateY(-2px); }
   .choice:hover > span { color: #c6a97a; }

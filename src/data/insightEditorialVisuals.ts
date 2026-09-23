@@ -220,6 +220,12 @@ const FEATURED_VISUALS: Record<string, InsightEditorialVisual> = {
     depthKind: "worksheet",
     aspectRatio: 990 / 374,
   },
+  "how-long-does-a-rebrand-take": {
+    src: "/images/generated/insights-editorial/how-long-does-a-rebrand-take.png",
+    alt: "The four phase clock, drawn as an annotated worksheet: strategy, identity, approval, rollout, and switchover, with the decision it settles",
+    depthKind: "worksheet",
+    aspectRatio: 990 / 374,
+  },
   "brand-strategy-vs-brand-identity": {
     src: "/images/generated/insights-editorial/brand-strategy-vs-brand-identity.png",
     alt: "The spend order, drawn as an annotated worksheet: diagnosis, decisions, translation, system, and repetition, with the decision it settles",
