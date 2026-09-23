@@ -117,7 +117,7 @@ export const insightPathways: Record<string, InsightPathway> = {
 const articleServiceLinks: Record<string, InsightPathLink> = {
   "brand-positioning-strategy-service-businesses": {
     href: "/brand-positioning",
-    label: "Brand positioning for UK service businesses",
+    label: "Brand positioning for service businesses",
     description: "Work with Suman to define the buyer, compare alternatives and carry an agreed position into your messaging.",
   },
   "how-to-position-a-consulting-business": {
