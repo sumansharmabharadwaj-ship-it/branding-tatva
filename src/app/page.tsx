@@ -39,11 +39,11 @@ import { site } from "@/data/site";
 import { entityFacts } from "@/data/entityFacts";
 
 export const metadata: Metadata = {
-  title: { absolute: `${site.name} | Brand Strategy for UK Service Businesses` },
+  title: { absolute: `${site.name} | Brand Strategy for UK, USA & Canada` },
   description: site.description,
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${site.name} | Brand Strategy for UK Service Businesses`,
+    title: `${site.name} | Brand Strategy for UK, USA & Canada`,
     description: site.description,
     url: site.url,
     type: "website",
@@ -66,7 +66,7 @@ const homeStructuredData = {
       "@type": "WebPage",
       "@id": `${site.url}/#webpage`,
       url: site.url,
-      name: `${site.name} | Brand Strategy for UK Service Businesses`,
+      name: `${site.name} | Brand Strategy for UK, USA & Canada`,
       description: site.description,
       isPartOf: { "@id": `${site.url}/#website` },
       about: { "@id": `${site.url}/#organization` },

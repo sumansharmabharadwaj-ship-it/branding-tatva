@@ -7,6 +7,10 @@ import { professionalPracticeInsightPosts } from "@/data/professionalPracticeIns
 import { tradesInsightPosts } from "@/data/tradesInsights";
 import { identityPackageInsightPosts } from "@/data/identityPackageInsights";
 import { rebrandTimelineInsightPosts } from "@/data/rebrandTimelineInsights";
+import { agencyQuestionsInsightPosts } from "@/data/agencyQuestionsInsights";
+import { brandGuidelinesInsightPosts } from "@/data/brandGuidelinesInsights";
+import { budgetBrandingInsightPosts } from "@/data/budgetBrandingInsights";
+import { whenToRebrandInsightPosts } from "@/data/whenToRebrandInsights";
 import { aiEraInsightPosts } from "@/data/aiEraInsights";
 import { answerEngineInsightPosts } from "@/data/answerEngineInsights";
 import { pricingInsightPosts } from "@/data/pricingInsights";
@@ -91,6 +95,10 @@ const combinedPosts = [
   ...tradesInsightPosts,
   ...identityPackageInsightPosts,
   ...rebrandTimelineInsightPosts,
+  ...agencyQuestionsInsightPosts,
+  ...brandGuidelinesInsightPosts,
+  ...budgetBrandingInsightPosts,
+  ...whenToRebrandInsightPosts,
 ];
 
 const uniquePosts = combinedPosts.filter(
@@ -151,6 +159,10 @@ const relatedRegistrations = [
   { supportingSlug: "how-to-name-a-brand-when-good-names-are-taken", pillarSlugs: ["service-line-naming-strategy", "why-ai-content-makes-brands-average", "brand-voice-guidelines-writers-can-use", "distinctive-brand-assets-audit"] },
   { supportingSlug: "brand-strategy-vs-brand-identity", pillarSlugs: ["brand-positioning-strategy-service-businesses", "value-proposition-vs-positioning-vs-tagline", "why-beautiful-brand-identity-can-be-forgettable", "how-much-does-brand-strategy-cost"] },
   { supportingSlug: "how-long-does-a-rebrand-take", pillarSlugs: ["brand-refresh-vs-rebrand-how-much-change", "what-a-brand-identity-package-includes", "brand-audit-checklist-before-rebrand"] },
+  { supportingSlug: "questions-to-ask-branding-agency-before-hiring", pillarSlugs: ["brand-strategist-vs-branding-agency", "how-to-choose-a-branding-agency", "how-much-does-brand-strategy-cost"] },
+  { supportingSlug: "how-to-create-brand-guidelines", pillarSlugs: ["brand-consistency-checklist-service-businesses", "brand-voice-guidelines-writers-can-use", "what-a-brand-identity-package-includes"] },
+  { supportingSlug: "branding-on-a-budget-small-business", pillarSlugs: ["how-much-does-brand-strategy-cost", "brand-positioning-strategy-service-businesses", "brand-strategy-vs-brand-identity"] },
+  { supportingSlug: "when-to-rebrand-signs", pillarSlugs: ["brand-refresh-vs-rebrand-how-much-change", "brand-audit-checklist-before-rebrand", "how-long-does-a-rebrand-take"] },
 ] as const;
 
 for (const registration of relatedRegistrations) {
