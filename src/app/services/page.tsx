@@ -70,7 +70,7 @@ const servicesJsonLd = {
   url: SERVICES_URL,
   name: "Brand Strategy & Systems | Branding Tatva",
   description:
-    "Brand strategy, positioning, messaging, identity and content systems for UK service businesses, led remotely by Suman Sharma. Also serving founders in India and the US.",
+    "Brand strategy, positioning, messaging, identity and content systems for service businesses in the UK, US and Canada, led remotely by Suman Sharma. Also serving founders in India.",
   author: { "@id": PERSON_ID },
   publisher: { "@id": ORGANIZATION_ID },
   breadcrumb: {
@@ -151,14 +151,14 @@ const engagementsJsonLd = (region: Region) => ({
 });
 
 export const metadata: Metadata = {
-  title: "Brand Strategy for UK Service Businesses",
+  title: "Brand Strategy for UK, USA & Canada",
   description:
-    "Brand strategy for UK service businesses, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
+    "Brand strategy for service businesses in the UK, US and Canada, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
   alternates: { canonical: "/services" },
   openGraph: {
-    title: "Brand Strategy for UK Service Businesses | Branding Tatva",
+    title: "Brand Strategy for UK, USA & Canada | Branding Tatva",
     description:
-      "Brand strategy for UK service businesses, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
+      "Brand strategy for service businesses in the UK, US and Canada, led remotely by Suman Sharma. Explore positioning, messaging, identity and content systems built around your buyers.",
     type: "website",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
@@ -339,7 +339,7 @@ export default async function ServicesPage() {
                   Decide why they choose you. Build the brand around that.
                 </SplitReveal>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-ivory/90">
-                  Remote brand strategy for UK service businesses, led directly by Suman Sharma.
+                  Remote brand strategy for service businesses in the UK, US and Canada, led directly by Suman Sharma.
                   Position, language, identity, and the places buyers meet you.
                 </p>
                 {/* The hero's one quiet action — a visitor sold by the
